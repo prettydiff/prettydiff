@@ -1,0 +1,48 @@
+/*prettydiff.com api.topcoms: true, api.insize: 4, api.inchar: " " */
+/**********************************************************************
+This is written by Austin Cheney on 3 Mar 2009. Anybody may use this
+code without permission so long as this comment exists verbatim in each
+instance of its use.
+
+http://mailmarkup.org/
+http://prettydiff.com/
+***********************************************************************/
+
+@import url("color_white.css");
+@import url("color_canvas.css");
+@import url("color_shadow.css");
+@import url("global.css");
+@import url("reports.css");
+@import url("documentation.css");
+@import url("page_specific.css");
+
+@media print{
+    #prettydiff div{width:100%}
+    #prettydiff #webtool td{font-size:0.8em;white-space:normal}
+    #prettydiff #webtool p,
+    #prettydiff .options,
+    #prettydiff #Beautify,
+    #prettydiff #Minify,
+    #prettydiff #Parse,
+    #prettydiff #diff,
+    #prettydiff #webtool ul,
+    #prettydiff ul{display:none}
+}
+@media screen and (-webkit-min-device-pixel-ratio:0){
+    #prettydiff .beautify .count li{padding-top:0.546em}
+    #prettydiff .beautify .data li{line-height:1.3}
+}
+@media (max-width: 640px){
+    #prettydiff #codeInput label{display:none}
+    #prettydiff #diffBase,
+    #prettydiff #diffNew{width:46%}
+    #prettydiff #dcolorScheme{margin:0 0 1em}
+    #prettydiff #functionGroup,
+    #prettydiff #headline{height:4em}
+    #prettydiff #functionGroup span{margin-left:0.5em;position:relative;z-index:10}
+    #prettydiff #infolinks{margin:0}
+    #prettydiff #reports{display:none}
+    #prettydiff #update{margin-top:2.75em}
+    #prettydiff .labeltext input,
+    #prettydiff .file input{width:12em}
+}

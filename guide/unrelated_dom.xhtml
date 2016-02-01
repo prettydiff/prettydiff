@@ -1,1 +1,672 @@
-<?xml version='1.0' encoding='UTF-8' ?> <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'> <html xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'> <head> <title>Pretty Diff - Guide, The DOM Explained, Quick and Simple</title> <link href="../diffview.css" media="all" rel="stylesheet" type="text/css"/> <link href="guide.css" media="all" rel="stylesheet" type="text/css"/> <link href='http://prettydiff.com/guide/unrelated_dom.xhtml' rel='canonical' type='application/xhtml+xml'/> <link href="http://prettydiff.com/images/favicon.ico" rel="icon" type="image/x-icon"/> <link href="http://prettydiff.com/labels.rdf" rel="meta" title="ICRA labels" type="application/rdf+xml"/> <meta content="width=device-width, initial-scale=1" name="viewport"/> <meta content="index, follow" name="robots"/> <meta content="Pretty Diff - Guide, The DOM Explained, Quick and Simple" name="DC.title"/> <meta content='(pics-1.1 "http://www.icra.org/pics/vocabularyv03/" l gen true for "http://prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for "http://www.prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))' http-equiv="pics-Label"/> <meta content="Austin Cheney" name="author"/> <meta content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML." name="description"/> <meta content="Global" name="distribution"/> <meta content="en" http-equiv="Content-Language"/> <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/> <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/> <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/> <meta content="text/css" http-equiv="content-style-type"/> <meta content="application/javascript" http-equiv="content-script-type"/> <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E" name="google-site-verification"/> </head> <body class="white" id="doc"> <h1> <svg height="2000.000000pt" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg"> <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)"> <path d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g> </svg> <a href="http://prettydiff.com/">Pretty Diff</a> - Guide</h1> <p id="dcolorScheme"><label class="label" for="colorScheme">Color Scheme</label> <select id="colorScheme"><option>Canvas</option> <option>Shadow</option> <option selected="selected">White</option></select> </p> <h2>The DOM Explained, Quick and Simple</h2> <div id="doc_contents" class="guidebody"> <h3>Table of Contents</h3> <ol> <li><a href="#intro">Introduction</a> <ol> <li><a href="#intro-scope">Scope of this Document</a></li> <li><a href="#intro-domis">What the DOM Is</a></li> </ol> </li> <li><a href="#history">History of the DOM</a></li> <li><a href="#define">How HTML Loads in Modern Browsers</a></li> <li><a href="#access">Accessing the DOM in JavaScript</a> <ol> <li><a href="#access-search">Methods for Searching the DOM</a></li> <li><a href="#access-walking">Walking the DOM</a></li> <li><a href="#access-changing">Changing the DOM</a></li> </ol> </li> <li><a href="#chaining">Examples of Method Chaining</a></li> </ol> </div> <div id="intro" class="guidebody"> <h3>Introduction</h3> <div id="intro-scope"> <h4>Scope of this Document</h4> <p>This document will only focus upon DOM Level 2. Although DOM Level 1 is still universally supported this document views it as an expired and purely legacy artifact. XML namespaces and event execution, as well its memory management, will not be discussed thereby negating need to dwell upon DOM Level 3 and 4.</p> <p>This document is an attempt to explain what the DOM is, how to use it, and why it is defined the way it is. The intended audience is anybody wanting to enrich their understanding of the DOM. Although the DOM is language agnostic this document is writing from the perspective of JavaScript.</p> <p>This is not a <em>how to</em> article. This document does not discuss abstractions, frameworks, or other helpers. This document seeks to be educational, which is to say this document seeks to explain things. This document does not attempt to provide tools or suggestions.</p> </div> <div id="intro-domis"> <h4>What the DOM Is</h4> <p>The DOM serves primarily as an API for JavaScript to access and interpret any markup language based upon the XML syntax, which still includes HTML. It is language agnostic so that it can be used and defined by a variety of languages in a variety of ways. As expressed in JavaScript, the DOM is a collection of objects that inherit from a master object named: <em>document</em>. Each data facet conveyed by the DOM is an object. The inheritance and relationships naturally demonstrated through the document structure of the markup (functional inheritance) is defined in the DOM through methods inherited from the document object.</p> <p>It is important to recognize the DOM is the standard way that web browsers interact with HTML. Every JavaScript framework, library, and abstraction that accesses the DOM ultimately does so through the standard DOM methods. A proper understanding of the DOM is critical for accessibility, performance, semantics, and basic problem solving.</p> <p>Every data facet expressed by the DOM is referred to as a <em>node</em>. Every node is defined of one of <a href="http://www.w3.org/TR/DOM-Level-2-Core/core.html">twelve types</a>. Only the types: element, text, and attribute are commonly used in the web though every type is available in modern web browsers. The objects representative of the nodes feature properties that define their relationships or inherit methods that can define their relationships, such as the parentNode property.</p> <p>Because DOM Level 2, and later versions, are based upon XML syntax the DOM is case-sensitive. When accessing HTML, which is not case-sensitive, case-sensitivity can vary browser and browser version. It is recommended to always use lower case to access HTML from the DOM to eliminate minor conformance differences by browser and also force HTML elements and attribute names to lower case when interpreting names returned from the DOM.</p> <p>There is a standard alternative to the DOM with a lighter memory footprint and arguably far faster execution time called XPath. Unfortunately, XPath is not universally supported as native access method. This further reinforces the importance of learning the DOM as the only universally supported and standard API to access a markup document structure.</p> <p>The well known <em>innerHTML</em> and <em>outerHTML</em> properties are not defined in the DOM. As such they will not be discussed here.</p> </div> </div> <div id="history" class="guidebody"> <h3>History of the DOM</h3> <div> <p>The DOM originally came about as a standard means for accessing HTML from JavaScript. Prior to the first DOM standard IE and Netscape had separate and unrelated means of accessing HTML. The first standard is the original <a href="http://www.w3.org/TR/REC-DOM-Level-1/">DOM Specification</a>, later called DOM Level 1, from 1997. There was an immediate and vital need for conformity so this document was released earlier than other <a href="http://w3.org/">W3C</a> technologies.</p> <p>In 1998 work began on the <a href="http://www.w3.org/TR/DOM-Level-2-Core/">DOM Level 2</a> specification that became a recommendation in late 2000. If you compare the proposed properties of the Level 2 document to the Level 1 document you can see there are wild differences. For instance DOM Level 1 identifies properties directly related to tags required in HTML while DOM Level 2 is fully language agnostic. The DOM Level 2 specification was written in parallel with the <a href="http://www.w3.org/TR/xmlschema-1/">XML Schema Part 1: Structures</a> specification. DOM Level 2 specification released revisions shortly after each XML specification revision and became a formal recommendation only after XML Schema became a recommendation. DOM Level 2 is primarily concerned with node definitions, node types, and access to nodes via their relationships.</p> <p>In 2004 the <a href="http://www.w3.org/TR/DOM-Level-3-Core/">DOM Level 3 specification</a> became a recommendation on the same date DOM Level 2 received its final update. This was also just three weeks after a major revision to the <a href="http://www.w3.org/TR/2004/PER-xmlschema-1-20040318/">XML Schema Part 1 Second Edition Edit Recommendation</a> was released. Notice that DOM Level 3 extends DOM Level 2 but does not extend DOM Level 1. DOM Level 3 is primarily concerned with namespaces, inheritance, and extension of node names and definitions.</p> <p>At this time <a href="http://www.w3.org/TR/dom/">DOM Level 4</a> is nearing final review. DOM Level 4 is worthy of note in that it extends DOM Level 2 and 3 but is focused primarily upon interaction and events instead of anything related to structure or node relationships. A primary example is that <em>garbage collection</em> is described in the specification where in the past these discussions were left entirely to the implementation of JavaScript interpreters. In a purely desktop driven experience DOM Level 4 might be considered unnecessarily and excessive. New platforms like mobile and tablets have proven that standard definitions for events and interaction is not enough. There must also be standard guidance on implementation of those events to achieve conformance, such as when the two largest mobile platform developers cannot produce interfaces that execute to the standards they helped write.</p> </div> </div> <div id="define" class="guidebody"> <h3>How HTML Loads in Modern Browsers</h3> <div> <p>It is important to understand how the DOM is created. If a cached JavaScript file is requested at the top of a document and is well written it is quite possible that it may request access to the DOM before objects of the DOM are created, which can result in unintended errors. For performance reasons it is often suggested that JavaScript be requested from the bottom of a document, which also provides the benefit of allowing the DOM to fully render before attempts to access it are executed.</p> <p>The first thing modern browsers do when encountering any markup language, such as HTML, is parse the markup. Parsing does not imply producing or rendering the DOM, which is a separate and later process. All modern documents use XML as a parsing foundation for any XML similar markup languages, which includes not well formed HTML. Because XML provides syntax rules that are terse and specific writing an XML parser is much faster, easier, and cheaper than writing an HTML parser. This means a smaller and faster executing parser, but more importantly it means a solid foundation on which to provide additional rules necessary for parsing HTML. An example of standard parsing guidance can be found in the <a href="http://www.w3.org/TR/xml-infoset/">XML Information Set</a>.</p> <p>Once the markup is parsed requests for additional resources are identified and those requests are executed. It is absolutely essential that the requests for additional resources execute as immediately as possible as the transmission time necessary to return these resources can occur simultaneously to the DOM rendering. For performance it is considered a good idea to put requests for visual artifacts, particularly stylesheets, as high in the document as possible so that the page can render visually as the DOM renders without repainting later. Another reason the DOM is created separate from the parsing process is because it is significantly larger, and thus slower to produce and populate into memory, than the parse data.</p> <p>After the DOM is fully rendered, all requests for additional resources have executed, and all initially requested JavaScript is interpreted the load of the page is complete. It is only at this time that the <em>onload</em> executes. It is important to take note that older versions of Internet Explorer require receipt of an HTTP response for all requested resources, which means that if an HTTP response is never returned the onload event never executes. It is also important to notice that requests for JavaScript not made from the HTML have no bearing on the execution of the onload event and neither do any JavaScript executions that occur outside of initial interpretation or through any other API.</p> </div> </div> <div id="access" class="guidebody"> <h3>Accessing the DOM in JavaScript</h3> <div id="access-search"> <h4>Methods for Searching the DOM</h4> <p>The DOM is searched using methods defined on the <em>document</em> object. Some methods defined in that object are inherited by other DOM objects and some methods are not. Any DOM access method executed on the document object search from the <em>document.documentElement</em> object that represents the root node of the markup, typically the <em>&lt;html&gt;</em> element. The most common methods for accessing the DOM are:</p> <ul> <li> <h5 class="code"><em>getElementById</em> - DOM Level 2</h5> <p>This method is only available from the document object or documentFragment type object and requires a string argument. The method will search the document for the first node with an <em>id</em> attribute whose value matches the value of the provided string argument. This method returns either null or the first DOM element node with a matching ID attribute value.</p> <code>document.getElementById("idValue"); <span>//returns null or element node</span></code> </li> <li> <h5 class="code"><em>getElementsByTagName</em> - DOM Level 2</h5> <p>This method is inherited to all element node types and requires a string argument. This method will search from the object it is executed on for all elements with a tag name matching the provided string. A node list is always returned. If there are no matching elements a node list with 0 indexes is returned.</p> <code>document.getElementsByTagName("div"); <span>//returns a node list</span></code> <code>myElementNode.getElementsByTagName("div");<span>//returns a node list</span></code> </li> <li> <h5 class="code"><em>getElementsByClassName</em> - DOM Level 4</h5> <p>This method is inherited to all element node types and requires a string argument. This method will search from the object it is executed on for all elements with a class attribute value matching any class name in the class attribute of any element. Class names are represented as a space separated list in the class attribute value. A node list is always returned. If there are no matching elements a node list with 0 indexes is returned.</p> <code>document.getElementsByClassName("classValueToken"); <span>//returns a node list</span></code> <code>myElementNode.getElementsByClassName("classValueToken"); <span>//returns a node list</span></code> </li> <li> <h5 class="code"><em>getAttribute</em> - DOM Level 2</h5> <p>This method is inherited to all element node types and requires a string argument. This method will return the string value of the attribute matching the attribute name supplied in the string argument. If no matching attribute exists it will return null.</p> <code>myElementNode.getAttribute("attributeName"); <span>//returns null or a string</span></code> </li> <li> <h5 class="code"><em>cloneNode</em> - DOM Level 2</h5> <p>This method is inherited to all DOM nodes. If this method is used on an element node all values, attributes, and properties are cloned. This method takes one argument of type boolean, which if true also clones all child and descendant nodes.</p> <code>myNode.cloneNode(true); <span>//returns a copy of a node including all descendants</span></code> <code>myNode.cloneNode(); <span>//returns a copy of a node not including descendants</span></code> </li> </ul> </div> <div id="access-walking"> <h4>Walking the DOM</h4> <p>Another means of accessing the DOM is by starting from a DOM element node and moving from node to node using relationships defined in the properties of each element's DOM object. This is called <em>walking the DOM</em>. Here are a list of the most common properties to demonstrate those relationships:</p> <ul> <li> <h5 class="code"><em>parentNode</em> - DOM Level 2</h5> <p>The parentNode property is available to every DOM node regardless of node type. This property returns the element node immediately containing the current DOM node. When the parentNode property is executed on the document.documentElement object the document object is returned.</p> <code>myNode.parentNode; <span>//returns an element node</span></code> </li> <li> <h5 class="code"><em>childNodes</em> - DOM Level 2</h5> <p>The childNodes property is available to every element node type. When executed this property will return a node list of child nodes regardless of type, but it will not return descendant nodes, which are nodes that are children of the immediate child nodes. The child nodes are always returned in the same order in which they occur in the DOM. Versions of Internet Explorer 8, and earlier, intentionally omitted text nodes containing only white space characters from the childNodes property thereby creating conformance problems. The childNodes property does not return attribute nodes.</p> <code>myElementNode.childNodes; <span>//returns a node list</span></code> </li> <li> <h5 class="code"><em>firstChild</em> - DOM Level 2</h5> <p>The firstChild property is available to all element, document, and documentFragment node types. It returns the first child node from the childNodes node list. If this property is executed on the document element it will return a documentType node type.</p> <code>myElementNode.firstChild; <span>//returns first child node</span></code> </li> <li> <h5 class="code"><em>lastChild</em> - DOM Level 2</h5> <p>This property returns the node in position: childNodes[childNodes.lenght - 1], but is otherwise identical to the firstChild property.</p> <code>myElementNode.lastChild; <span>//returns last child node</span></code> </li> <li> <h5 class="code"><em>nextSibling</em> - DOM Level 2</h5> <p>The nextSibling property is available to every DOM node and returns the next child element of the parent node. If the current node is the last child of its parent this property will return null.</p> <code>myNode.nextSibling; <span>//returns next adjacent node</span></code> </li> <li> <h5 class="code"><em>previousSibling</em> - DOM Level 2</h5> <p>The perviousSibling property is available to every DOM node and returns the previous child element of the parent node. If the current node is the first child of its parent this property will return null.</p> <code>myNode.nextSibling; <span>//returns prior adjacent node</span></code> </li> <li> <h5 class="code"><em>attributes</em> - DOM Level 3</h5> <p>The attributes property is only available to element type nodes. It returns a node list of all attributes, as well as their values, represented on that element. If an element has no attributes then a list of length 0 is returned.</p> <code>myElementNode.attributes; <span>//returns a node list of format: attributeName="value"</span></code> </li> <li> <h5 class="code"><em>nodeType</em> - DOM Level 2</h5> <p>This property is available to every DOM node. It always returns a number depend upon the node type as described in the following list order.</p> <ol> <li>ELEMENT_NODE</li> <li>ATTRIBUTE_NODE</li> <li>TEXT_NODE</li> <li>CDATA_SECTION_NODE</li> <li>ENTITY_REFERENCE_NODE</li> <li>ENTITY_NODE</li> <li>PROCESSING_INSTRUCTION_NODE</li> <li>COMMENT_NODE</li> <li>DOCUMENT_NODE</li> <li>DOCUMENT_TYPE_NODE</li> <li>DOCUMENT_FRAGMENT_NODE</li> <li>NOTATION_NODE</li> </ol> <code>myNode.nodeType; <span>//returns a number 1 - 12</span></code> </li> <li> <h5 class="code"><em>nodeName</em> - DOM Level 2</h5> <p>This property always returns either a string or null depending upon the node type. Please see this <a href="http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-1841493061">table in the specification</a> for value definitions. According to conformance with the XML specification the value returned this property should always be case sensitive and specifically match the node it is applied against. With HTML, however, this is frequently not the case and differs by browser and version. I recommend always using the JavaScript <em>toLowerCase</em> against the value returned for nodeType to safely force conformity.</p> <code>myNode.nodeName; <span>//returns a string of variant definition by node type</span></code> </li> <li> <h5 class="code"><em>nodeValue</em> - DOM Level 2</h5> <p>This property always returns either a string or null depending upon the node type. Please see this <a href="http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-1841493061">table in the specification</a> for value definitions.</p> <code>myNode.nodeValue; <span>//returns either null for a string of variant definition by node type</span></code> </li> </ul> </div> <div id="access-changing"> <h4>Changing the DOM</h4> <p>The DOM can also be manipulated and altered through various means. The following is a list of common means to change the DOM:</p> <ul> <li> <h5 class="code"><em>createElement</em> - DOM Level 2</h5> <p>The createElement method is available from the document object or a documentFragment type object and takes a single string argument. The value of the string argument is the name of an element type node to create, so this method will throw an error if the supplied string violates syntax rules for element names.</p> <code>document.createElement("div"); <span>//returns a new element node not bound to the document</span></code> </li> <li> <h5 class="code"><em>createTextNode</em> - DOM Level 2</h5> <p>The createTextNode method is available from the document object or a documentFragment type object and takes a single string argument. The value of the string argument is the text content of the node.</p> <code>document.createTextNode("some text here"); <span>//returns a new text node not bound to the document</span></code> </li> <li> <h5 class="code"><em>appendChild</em> - DOM Level 2</h5> <p>This method is available to every element type node. It takes a single argument of a reference to a node object, which is an object node to add to the DOM, and adds this node after every other child node. The object node must not already have an assigned parent node.</p> <code>myElementNode.appendChild(newNode); <span>//returns the appended node</span></code> </li> <li> <h5 class="code"><em>insertBefore</em> - DOM Level 2</h5> <p>This method is available to every element type node. It takes a two arguments which is a reference node and a reference to a new node object, adds this new node before the reference node. The object node must not already have an assigned parent node.</p> <code>myElementNode.insertBefore(referenceNode, newNode); <span>//returns the newNode</span></code> </li> <li> <h5 class="code"><em>removeChild</em> - DOM Level 2</h5> <p>This method is available to every element type node. It takes a single argument of a reference to a node object, which must be a child node of the current node. The supplied node is removed from its parent node and so it is effectively removed from the document. As long as the JavaScript reference to this node can still be accessed the node will remain alive in memory so that it can be changed and added back to the document later.</p> <code>myElementNode.removeChild(anotherNode); <span>//returns anotherNode</span></code> <code>myElementNode.removeChild(myElementNode.lastChild); <span>//returns myElementNode.lastChild</span></code> <code>myElementNode.removeChild(myElementNode.childNodes[3]); <span>//returns myElementNode.childNodes[3]</span></code> </li> <li> <h5 class="code"><em>replaceChild</em> - DOM Level 2</h5> <p>This method is available to every element type node. It takes a two arguments. The first is a new DOM node and the second is a DOM node to replace. The new DOM node cannot have an assigned parentNode and the old DOM node will have its parentNode unassigned effectively removing it from the document. The old DOM node will continue to reside in memory so long as a variable reference to it remains available.</p> <code>myElementNode.replaceChild(newNode, originalNode); <span>//returns originalNode</span></code> </li> <li> <h5 class="code"><em>removeAttribute</em> - DOM Level 2</h5> <p>This method is available to every element type node. It takes a single argument representing an attribute name and if that attribute exists it is removed from its parent element.</p> <code>myElementNode.removeAttribute("class"); <span>//returns nothing</span></code> </li> <li> <h5 class="code"><em>setAttribute</em> - DOM Level 2</h5> <p>This method is available to every element type node. It takes two arguments of which both are strings. The first argument is the name of the attribute and the second argument is the value to assign. If an attribute with that name already exists it will be over written otherwise a new attribute will be created.</p> <code>myElementNode.removeAttribute("class", "myAttributeValue"); <span>//returns nothing</span></code> </li> </ul> </div> </div> <div id="chaining" class="guidebody"> <h3>Examples of Method Chaining</h3> <div><p>It is frequently necessary to use multiple DOM methods together to target a specific node relative some starting point. This process is commonly referred to as <em>walking the DOM</em>. This is the only means a web browser uses to access pieces of an HTML/XML document from JavaScript. All frameworks and querySelector methods sugar down to the DOM methods, and all modern web browsers provide the bulk of their optimizations to this API, so learning how these methods are used together will allow for writing faster executing web applications. I have provided some brief examples:</p> <ul> <li><code>document.getElementById("someID").childNodes <span>//get all child nodes from a targeted element</span></code> </li> <li><code>document.getElementById("someID").childNodes.length <span>//how many children does the targeted node contain</span></code> </li> <li><code>document.getElementById("someID").getElementsByTagName("p") <span>//get all p nodes in the tree of a targeted node</span></code> </li> <li><code>document.getElementById("someID").firstChild.nodeType <span>//determine the type of node of a target elements first child node</span></code> </li> <li><code>document.getElementById("someID").previousSibling.firstChild <span>//get the first child of a targeted element's previous sibling</span></code> </li> <li><code>document.getElementById("someID").nextSibling.childNodes[2] <span>//get the third child of a targeted element's next sibling</span></code> </li> <li><code>document.getElementsByTagName("h3")[4].parentNode.parentNode <span>//find the grandfather element of the fifth h3 element</span></code> </li> <li><code>document.getElementsByTagName("h3")[4].getAttribute("id") <span>//get the id attribute value of the fifth h3 element in the document</span></code> </li> </ul> </div> </div> <script src="../api/dom.js" type="application/javascript"></script> </body> </html>
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Pretty Diff - Guide, The DOM Explained, Quick and Simple</title>
+        <link href="../css/index.css" media="all" rel="stylesheet" type="text/css"/>
+        <link
+            href="http://prettydiff.com/guide/unrelated_dom.xhtml"
+            rel="canonical"
+            type="application/xhtml+xml"/>
+        <link
+            href="http://prettydiff.com/images/favicon.ico"
+            rel="icon"
+            type="image/x-icon"/>
+        <link
+            href="http://prettydiff.com/labels.rdf"
+            rel="meta"
+            title="ICRA labels"
+            type="application/rdf+xml"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <meta content="index, follow" name="robots"/>
+        <meta
+            content="Pretty Diff - Guide, The DOM Explained, Quick and Simple"
+            name="DC.title"/>
+        <meta
+            content="(pics-1.1 'http://www.icra.org/pics/vocabularyv03/' l gen true for 'http://prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for 'http://www.prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))"
+            http-equiv="pics-Label"/>
+        <meta content="Austin Cheney" name="author"/>
+        <meta
+            content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML."
+            name="description"/>
+        <meta content="Global" name="distribution"/>
+        <meta content="en" http-equiv="Content-Language"/>
+        <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/>
+        <meta content="text/css" http-equiv="content-style-type"/>
+        <meta content="application/javascript" http-equiv="content-script-type"/>
+        <meta
+            content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
+            name="google-site-verification"/>
+    </head>
+    <body class="white" id="prettydiff">
+        <div class="contentarea" id="page">
+            <section role="heading">
+                <h1>
+                    <svg height="2000.000000pt" id="pdlogo" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
+                            <path
+                                d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
+                    </svg>
+                    <a href="prettydiff.com.xhtml">Pretty Diff</a>
+                    - Guide: The DOM Explained, Quick and Simple/h1>
+                <p id="dcolorScheme">
+                    <label class="label" for="colorScheme">Color Scheme</label>
+                    <select id="colorScheme">
+                        <option>Canvas</option>
+                        <option>Shadow</option>
+                        <option selected="selected">White</option>
+                    </select>
+                </p>
+                <p>Explore some
+                    <a href="samples.xhtml">samples</a>. For any questions, comments, requests, or feedback please join the
+                    <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff mailing list</a>
+                    or chat on
+                    <a href="https://gitter.im/prettydiff/prettydiff?utm_source=badge%26utm_medium=badge%26utm_campaign=pr-badge%26utm_content=badge">Gitter</a>. Find
+                    <a href="https://github.com/prettydiff/prettydiff">Pretty Diff on GitHub</a>.</p>
+            </section>
+            <section role="main">
+                <h2>The DOM Explained, Quick and Simple</h2>
+                <div class="segment" id="doc_contents">
+                    <h3>Table of Contents</h3>
+                    <ol>
+                        <li>
+                            <a href="#intro">Introduction</a>
+                            <ol>
+                                <li>
+                                    <a href="#intro-scope">Scope of this Document</a>
+                                </li>
+                                <li>
+                                    <a href="#intro-domis">What the DOM Is</a>
+                                </li>
+                            </ol>
+                        </li>
+                        <li>
+                            <a href="#history">History of the DOM</a>
+                        </li>
+                        <li>
+                            <a href="#define">How HTML Loads in Modern Browsers</a>
+                        </li>
+                        <li>
+                            <a href="#access">Accessing the DOM in JavaScript</a>
+                            <ol>
+                                <li>
+                                    <a href="#access-search">Methods for Searching the DOM</a>
+                                </li>
+                                <li>
+                                    <a href="#access-walking">Walking the DOM</a>
+                                </li>
+                                <li>
+                                    <a href="#access-changing">Changing the DOM</a>
+                                </li>
+                            </ol>
+                        </li>
+                        <li>
+                            <a href="#chaining">Examples of Method Chaining</a>
+                        </li>
+                    </ol>
+                </div>
+                <div class="segment" id="intro">
+                    <h3>Introduction</h3>
+                    <div class="segment" id="intro-scope">
+                        <h4>Scope of this Document</h4>
+                        <p>This document will only focus upon DOM Level 2. Although DOM Level 1 is still
+                            universally supported this document views it as an expired and purely legacy
+                            artifact. XML namespaces and event execution, as well its memory management,
+                            will not be discussed thereby negating need to dwell upon DOM Level 3 and 4.</p>
+                        <p>This document is an attempt to explain what the DOM is, how to use it, and
+                            why it is defined the way it is. The intended audience is anybody wanting to
+                            enrich their understanding of the DOM. Although the DOM is language agnostic
+                            this document is writing from the perspective of JavaScript.</p>
+                        <p>This is not a
+                            <em>how to</em>
+                            article. This document does not discuss abstractions, frameworks, or other
+                            helpers. This document seeks to be educational, which is to say this document
+                            seeks to explain things. This document does not attempt to provide tools or
+                            suggestions.</p>
+                    </div>
+                    <div class="segment" id="intro-domis">
+                        <h4>What the DOM Is</h4>
+                        <p>The DOM serves primarily as an API for JavaScript to access and interpret any
+                            markup language based upon the XML syntax, which still includes HTML. It is
+                            language agnostic so that it can be used and defined by a variety of languages
+                            in a variety of ways. As expressed in JavaScript, the DOM is a collection of
+                            objects that inherit from a master object named:
+                            <em>document</em>. Each data facet conveyed by the DOM is an object. The
+                            inheritance and relationships naturally demonstrated through the document
+                            structure of the markup (functional inheritance) is defined in the DOM through
+                            methods inherited from the document object.</p>
+                        <p>It is important to recognize the DOM is the standard way that web browsers
+                            interact with HTML. Every JavaScript framework, library, and abstraction that
+                            accesses the DOM ultimately does so through the standard DOM methods. A proper
+                            understanding of the DOM is critical for accessibility, performance, semantics,
+                            and basic problem solving.</p>
+                        <p>Every data facet expressed by the DOM is referred to as a
+                            <em>node</em>. Every node is defined of one of
+                            <a href="http://www.w3.org/TR/DOM-Level-2-Core/core.html">twelve types</a>. Only
+                            the types: element, text, and attribute are commonly used in the web though
+                            every type is available in modern web browsers. The objects representative of
+                            the nodes feature properties that define their relationships or inherit methods
+                            that can define their relationships, such as the parentNode property.</p>
+                        <p>Because DOM Level 2, and later versions, are based upon XML syntax the DOM is
+                            case-sensitive. When accessing HTML, which is not case-sensitive,
+                            case-sensitivity can vary browser and browser version. It is recommended to
+                            always use lower case to access HTML from the DOM to eliminate minor conformance
+                            differences by browser and also force HTML elements and attribute names to lower
+                            case when interpreting names returned from the DOM.</p>
+                        <p>There is a standard alternative to the DOM with a lighter memory footprint
+                            and arguably far faster execution time called XPath. Unfortunately, XPath is not
+                            universally supported as native access method. This further reinforces the
+                            importance of learning the DOM as the only universally supported and standard
+                            API to access a markup document structure.</p>
+                        <p>The well known
+                            <em>innerHTML</em>
+                            and
+                            <em>outerHTML</em>
+                            properties are not defined in the DOM. As such they will not be discussed here.</p>
+                    </div>
+                </div>
+                <div class="segment" id="history">
+                    <h3>History of the DOM</h3>
+                    <div class="segment">
+                        <p>The DOM originally came about as a standard means for accessing HTML from
+                            JavaScript. Prior to the first DOM standard IE and Netscape had separate and
+                            unrelated means of accessing HTML. The first standard is the original
+                            <a href="http://www.w3.org/TR/REC-DOM-Level-1/">DOM Specification</a>, later
+                            called DOM Level 1, from 1997. There was an immediate and vital need for
+                            conformity so this document was released earlier than other
+                            <a href="http://w3.org/">W3C</a>
+                            technologies.</p>
+                        <p>In 1998 work began on the
+                            <a href="http://www.w3.org/TR/DOM-Level-2-Core/">DOM Level 2</a>
+                            specification that became a recommendation in late 2000. If you compare the
+                            proposed properties of the Level 2 document to the Level 1 document you can see
+                            there are wild differences. For instance DOM Level 1 identifies properties
+                            directly related to tags required in HTML while DOM Level 2 is fully language
+                            agnostic. The DOM Level 2 specification was written in parallel with the
+                            <a href="http://www.w3.org/TR/xmlschema-1/">XML Schema Part 1: Structures</a>
+                            specification. DOM Level 2 specification released revisions shortly after each
+                            XML specification revision and became a formal recommendation only after XML
+                            Schema became a recommendation. DOM Level 2 is primarily concerned with node
+                            definitions, node types, and access to nodes via their relationships.</p>
+                        <p>In 2004 the
+                            <a href="http://www.w3.org/TR/DOM-Level-3-Core/">DOM Level 3 specification</a>
+                            became a recommendation on the same date DOM Level 2 received its final update.
+                            This was also just three weeks after a major revision to the
+                            <a href="http://www.w3.org/TR/2004/PER-xmlschema-1-20040318/">XML Schema Part 1 Second Edition Edit Recommendation</a>
+                            was released. Notice that DOM Level 3 extends DOM Level 2 but does not extend
+                            DOM Level 1. DOM Level 3 is primarily concerned with namespaces, inheritance,
+                            and extension of node names and definitions.</p>
+                        <p>At this time
+                            <a href="http://www.w3.org/TR/dom/">DOM Level 4</a>
+                            is nearing final review. DOM Level 4 is worthy of note in that it extends DOM
+                            Level 2 and 3 but is focused primarily upon interaction and events instead of
+                            anything related to structure or node relationships. A primary example is that
+                            <em>garbage collection</em>
+                            is described in the specification where in the past these discussions were left
+                            entirely to the implementation of JavaScript interpreters. In a purely desktop
+                            driven experience DOM Level 4 might be considered unnecessarily and excessive.
+                            New platforms like mobile and tablets have proven that standard definitions for
+                            events and interaction is not enough. There must also be standard guidance on
+                            implementation of those events to achieve conformance, such as when the two
+                            largest mobile platform developers cannot produce interfaces that execute to the
+                            standards they helped write.</p>
+                    </div>
+                </div>
+                <div class="segment" id="define">
+                    <h3>How HTML Loads in Modern Browsers</h3>
+                    <div class="segment">
+                        <p>It is important to understand how the DOM is created. If a cached JavaScript
+                            file is requested at the top of a document and is well written it is quite
+                            possible that it may request access to the DOM before objects of the DOM are
+                            created, which can result in unintended errors. For performance reasons it is
+                            often suggested that JavaScript be requested from the bottom of a document,
+                            which also provides the benefit of allowing the DOM to fully render before
+                            attempts to access it are executed.</p>
+                        <p>The first thing modern browsers do when encountering any markup language,
+                            such as HTML, is parse the markup. Parsing does not imply producing or rendering
+                            the DOM, which is a separate and later process. All modern documents use XML as
+                            a parsing foundation for any XML similar markup languages, which includes not
+                            well formed HTML. Because XML provides syntax rules that are terse and specific
+                            writing an XML parser is much faster, easier, and cheaper than writing an HTML
+                            parser. This means a smaller and faster executing parser, but more importantly
+                            it means a solid foundation on which to provide additional rules necessary for
+                            parsing HTML. An example of standard parsing guidance can be found in the
+                            <a href="http://www.w3.org/TR/xml-infoset/">XML Information Set</a>.</p>
+                        <p>Once the markup is parsed requests for additional resources are identified
+                            and those requests are executed. It is absolutely essential that the requests
+                            for additional resources execute as immediately as possible as the transmission
+                            time necessary to return these resources can occur simultaneously to the DOM
+                            rendering. For performance it is considered a good idea to put requests for
+                            visual artifacts, particularly stylesheets, as high in the document as possible
+                            so that the page can render visually as the DOM renders without repainting
+                            later. Another reason the DOM is created separate from the parsing process is
+                            because it is significantly larger, and thus slower to produce and populate into
+                            memory, than the parse data.</p>
+                        <p>After the DOM is fully rendered, all requests for additional resources have
+                            executed, and all initially requested JavaScript is interpreted the load of the
+                            page is complete. It is only at this time that the
+                            <em>onload</em>
+                            executes. It is important to take note that older versions of Internet Explorer
+                            require receipt of an HTTP response for all requested resources, which means
+                            that if an HTTP response is never returned the onload event never executes. It
+                            is also important to notice that requests for JavaScript not made from the HTML
+                            have no bearing on the execution of the onload event and neither do any
+                            JavaScript executions that occur outside of initial interpretation or through
+                            any other API.</p>
+                    </div>
+                </div>
+                <div class="segment" id="access">
+                    <h3>Accessing the DOM in JavaScript</h3>
+                    <div class="segment" id="access-search">
+                        <h4>Methods for Searching the DOM</h4>
+                        <p>The DOM is searched using methods defined on the
+                            <em>document</em>
+                            object. Some methods defined in that object are inherited by other DOM objects
+                            and some methods are not. Any DOM access method executed on the document object
+                            search from the
+                            <em>document.documentElement</em>
+                            object that represents the root node of the markup, typically the
+                            <em>&lt;html&gt;</em>
+                            element. The most common methods for accessing the DOM are:</p>
+                        <ul>
+                            <li>
+                                <h5 class="code">
+                                    <em>getElementById</em>
+                                    - DOM Level 2</h5>
+                                <p>This method is only available from the document object or documentFragment
+                                    type object and requires a string argument. The method will search the document
+                                    for the first node with an
+                                    <em>id</em>
+                                    attribute whose value matches the value of the provided string argument. This
+                                    method returns either null or the first DOM element node with a matching ID
+                                    attribute value.</p>
+                                <code>document.getElementById("idValue");
+                                    <span>//returns null or element node</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>getElementsByTagName</em>
+                                    - DOM Level 2</h5>
+                                <p>This method is inherited to all element node types and requires a string
+                                    argument. This method will search from the object it is executed on for all
+                                    elements with a tag name matching the provided string. A node list is always
+                                    returned. If there are no matching elements a node list with 0 indexes is
+                                    returned.</p>
+                                <code>document.getElementsByTagName("div");
+                                    <span>//returns a node list</span>
+                                </code>
+                                <code>myElementNode.getElementsByTagName("div");
+                                    <span>//returns a node list</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>getElementsByClassName</em>
+                                    - DOM Level 4</h5>
+                                <p>This method is inherited to all element node types and requires a string
+                                    argument. This method will search from the object it is executed on for all
+                                    elements with a class attribute value matching any class name in the class
+                                    attribute of any element. Class names are represented as a space separated list
+                                    in the class attribute value. A node list is always returned. If there are no
+                                    matching elements a node list with 0 indexes is returned.</p>
+                                <code>document.getElementsByClassName("classValueToken");
+                                    <span>//returns a node list</span>
+                                </code>
+                                <code>myElementNode.getElementsByClassName("classValueToken");
+                                    <span>//returns a node list</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>getAttribute</em>
+                                    - DOM Level 2</h5>
+                                <p>This method is inherited to all element node types and requires a string
+                                    argument. This method will return the string value of the attribute matching the
+                                    attribute name supplied in the string argument. If no matching attribute exists
+                                    it will return null.</p>
+                                <code>myElementNode.getAttribute("attributeName");
+                                    <span>//returns null or a string</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>cloneNode</em>
+                                    - DOM Level 2</h5>
+                                <p>This method is inherited to all DOM nodes. If this method is used on an
+                                    element node all values, attributes, and properties are cloned. This method
+                                    takes one argument of type boolean, which if true also clones all child and
+                                    descendant nodes.</p>
+                                <code>myNode.cloneNode(true);
+                                    <span>//returns a copy of a node including all descendants</span>
+                                </code>
+                                <code>myNode.cloneNode();
+                                    <span>//returns a copy of a node not including descendants</span>
+                                </code>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="segment" id="access-walking">
+                        <h4>Walking the DOM</h4>
+                        <p>Another means of accessing the DOM is by starting from a DOM element node and
+                            moving from node to node using relationships defined in the properties of each
+                            element's DOM object. This is called
+                            <em>walking the DOM</em>. Here are a list of the most common properties to
+                            demonstrate those relationships:</p>
+                        <ul>
+                            <li>
+                                <h5 class="code">
+                                    <em>parentNode</em>
+                                    - DOM Level 2</h5>
+                                <p>The parentNode property is available to every DOM node regardless of node
+                                    type. This property returns the element node immediately containing the current
+                                    DOM node. When the parentNode property is executed on the
+                                    document.documentElement object the document object is returned.</p>
+                                <code>myNode.parentNode;
+                                    <span>//returns an element node</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>childNodes</em>
+                                    - DOM Level 2</h5>
+                                <p>The childNodes property is available to every element node type. When
+                                    executed this property will return a node list of child nodes regardless of
+                                    type, but it will not return descendant nodes, which are nodes that are children
+                                    of the immediate child nodes. The child nodes are always returned in the same
+                                    order in which they occur in the DOM. Versions of Internet Explorer 8, and
+                                    earlier, intentionally omitted text nodes containing only white space characters
+                                    from the childNodes property thereby creating conformance problems. The
+                                    childNodes property does not return attribute nodes.</p>
+                                <code>myElementNode.childNodes;
+                                    <span>//returns a node list</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>firstChild</em>
+                                    - DOM Level 2</h5>
+                                <p>The firstChild property is available to all element, document, and
+                                    documentFragment node types. It returns the first child node from the childNodes
+                                    node list. If this property is executed on the document element it will return a
+                                    documentType node type.</p>
+                                <code>myElementNode.firstChild;
+                                    <span>//returns first child node</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>lastChild</em>
+                                    - DOM Level 2</h5>
+                                <p>This property returns the node in position: childNodes[childNodes.lenght -
+                                    1], but is otherwise identical to the firstChild property.</p>
+                                <code>myElementNode.lastChild;
+                                    <span>//returns last child node</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>nextSibling</em>
+                                    - DOM Level 2</h5>
+                                <p>The nextSibling property is available to every DOM node and returns the next
+                                    child element of the parent node. If the current node is the last child of its
+                                    parent this property will return null.</p>
+                                <code>myNode.nextSibling;
+                                    <span>//returns next adjacent node</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>previousSibling</em>
+                                    - DOM Level 2</h5>
+                                <p>The perviousSibling property is available to every DOM node and returns the
+                                    previous child element of the parent node. If the current node is the first
+                                    child of its parent this property will return null.</p>
+                                <code>myNode.nextSibling;
+                                    <span>//returns prior adjacent node</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>attributes</em>
+                                    - DOM Level 3</h5>
+                                <p>The attributes property is only available to element type nodes. It returns a
+                                    node list of all attributes, as well as their values, represented on that
+                                    element. If an element has no attributes then a list of length 0 is returned.</p>
+                                <code>myElementNode.attributes;
+                                    <span>//returns a node list of format: attributeName="value"</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>nodeType</em>
+                                    - DOM Level 2</h5>
+                                <p>This property is available to every DOM node. It always returns a number
+                                    depend upon the node type as described in the following list order.</p>
+                                <ol>
+                                    <li>ELEMENT_NODE</li>
+                                    <li>ATTRIBUTE_NODE</li>
+                                    <li>TEXT_NODE</li>
+                                    <li>CDATA_SECTION_NODE</li>
+                                    <li>ENTITY_REFERENCE_NODE</li>
+                                    <li>ENTITY_NODE</li>
+                                    <li>PROCESSING_INSTRUCTION_NODE</li>
+                                    <li>COMMENT_NODE</li>
+                                    <li>DOCUMENT_NODE</li>
+                                    <li>DOCUMENT_TYPE_NODE</li>
+                                    <li>DOCUMENT_FRAGMENT_NODE</li>
+                                    <li>NOTATION_NODE</li>
+                                </ol>
+                                <code>myNode.nodeType;
+                                    <span>//returns a number 1 - 12</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>nodeName</em>
+                                    - DOM Level 2</h5>
+                                <p>This property always returns either a string or null depending upon the node
+                                    type. Please see this
+                                    <a href="http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-1841493061">table in the specification</a>
+                                    for value definitions. According to conformance with the XML specification the
+                                    value returned this property should always be case sensitive and specifically
+                                    match the node it is applied against. With HTML, however, this is frequently not
+                                    the case and differs by browser and version. I recommend always using the
+                                    JavaScript
+                                    <em>toLowerCase</em>
+                                    against the value returned for nodeType to safely force conformity.</p>
+                                <code>myNode.nodeName;
+                                    <span>//returns a string of variant definition by node type</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>nodeValue</em>
+                                    - DOM Level 2</h5>
+                                <p>This property always returns either a string or null depending upon the node
+                                    type. Please see this
+                                    <a href="http://www.w3.org/TR/DOM-Level-2-Core/core.html#ID-1841493061">table in the specification</a>
+                                    for value definitions.</p>
+                                <code>myNode.nodeValue;
+                                    <span>//returns either null for a string of variant definition by node type</span>
+                                </code>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="segment" id="access-changing">
+                        <h4>Changing the DOM</h4>
+                        <p>The DOM can also be manipulated and altered through various means. The
+                            following is a list of common means to change the DOM:</p>
+                        <ul>
+                            <li>
+                                <h5 class="code">
+                                    <em>createElement</em>
+                                    - DOM Level 2</h5>
+                                <p>The createElement method is available from the document object or a
+                                    documentFragment type object and takes a single string argument. The value of
+                                    the string argument is the name of an element type node to create, so this
+                                    method will throw an error if the supplied string violates syntax rules for
+                                    element names.</p>
+                                <code>document.createElement("div");
+                                    <span>//returns a new element node not bound to the document</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>createTextNode</em>
+                                    - DOM Level 2</h5>
+                                <p>The createTextNode method is available from the document object or a
+                                    documentFragment type object and takes a single string argument. The value of
+                                    the string argument is the text content of the node.</p>
+                                <code>document.createTextNode("some text here");
+                                    <span>//returns a new text node not bound to the document</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>appendChild</em>
+                                    - DOM Level 2</h5>
+                                <p>This method is available to every element type node. It takes a single
+                                    argument of a reference to a node object, which is an object node to add to the
+                                    DOM, and adds this node after every other child node. The object node must not
+                                    already have an assigned parent node.</p>
+                                <code>myElementNode.appendChild(newNode);
+                                    <span>//returns the appended node</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>insertBefore</em>
+                                    - DOM Level 2</h5>
+                                <p>This method is available to every element type node. It takes a two arguments
+                                    which is a reference node and a reference to a new node object, adds this new
+                                    node before the reference node. The object node must not already have an
+                                    assigned parent node.</p>
+                                <code>myElementNode.insertBefore(referenceNode, newNode);
+                                    <span>//returns the newNode</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>removeChild</em>
+                                    - DOM Level 2</h5>
+                                <p>This method is available to every element type node. It takes a single
+                                    argument of a reference to a node object, which must be a child node of the
+                                    current node. The supplied node is removed from its parent node and so it is
+                                    effectively removed from the document. As long as the JavaScript reference to
+                                    this node can still be accessed the node will remain alive in memory so that it
+                                    can be changed and added back to the document later.</p>
+                                <code>myElementNode.removeChild(anotherNode);
+                                    <span>//returns anotherNode</span>
+                                </code>
+                                <code>myElementNode.removeChild(myElementNode.lastChild);
+                                    <span>//returns myElementNode.lastChild</span>
+                                </code>
+                                <code>myElementNode.removeChild(myElementNode.childNodes[3]);
+                                    <span>//returns myElementNode.childNodes[3]</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>replaceChild</em>
+                                    - DOM Level 2</h5>
+                                <p>This method is available to every element type node. It takes a two
+                                    arguments. The first is a new DOM node and the second is a DOM node to replace.
+                                    The new DOM node cannot have an assigned parentNode and the old DOM node will
+                                    have its parentNode unassigned effectively removing it from the document. The
+                                    old DOM node will continue to reside in memory so long as a variable reference
+                                    to it remains available.</p>
+                                <code>myElementNode.replaceChild(newNode, originalNode);
+                                    <span>//returns originalNode</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>removeAttribute</em>
+                                    - DOM Level 2</h5>
+                                <p>This method is available to every element type node. It takes a single
+                                    argument representing an attribute name and if that attribute exists it is
+                                    removed from its parent element.</p>
+                                <code>myElementNode.removeAttribute("class");
+                                    <span>//returns nothing</span>
+                                </code>
+                            </li>
+                            <li>
+                                <h5 class="code">
+                                    <em>setAttribute</em>
+                                    - DOM Level 2</h5>
+                                <p>This method is available to every element type node. It takes two arguments
+                                    of which both are strings. The first argument is the name of the attribute and
+                                    the second argument is the value to assign. If an attribute with that name
+                                    already exists it will be over written otherwise a new attribute will be
+                                    created.</p>
+                                <code>myElementNode.removeAttribute("class", "myAttributeValue");
+                                    <span>//returns nothing</span>
+                                </code>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="segment" id="chaining">
+                    <h3>Examples of Method Chaining</h3>
+                    <div class="segment">
+                        <p>It is frequently necessary to use multiple DOM methods together to target a
+                            specific node relative some starting point. This process is commonly referred to
+                            as
+                            <em>walking the DOM</em>. This is the only means a web browser uses to access
+                            pieces of an HTML/XML document from JavaScript. All frameworks and querySelector
+                            methods sugar down to the DOM methods, and all modern web browsers provide the
+                            bulk of their optimizations to this API, so learning how these methods are used
+                            together will allow for writing faster executing web applications. I have
+                            provided some brief examples:</p>
+                        <ul>
+                            <li>
+                                <code>document.getElementById("someID").childNodes
+                                    <span>//get all child nodes from a targeted element</span>
+                                </code>
+                            </li>
+                            <li>
+                                <code>document.getElementById("someID").childNodes.length
+                                    <span>//how many children does the targeted node contain</span>
+                                </code>
+                            </li>
+                            <li>
+                                <code>document.getElementById("someID").getElementsByTagName("p")
+                                    <span>//get all p nodes in the tree of a targeted node</span>
+                                </code>
+                            </li>
+                            <li>
+                                <code>document.getElementById("someID").firstChild.nodeType
+                                    <span>//determine the type of node of a target elements first child node</span>
+                                </code>
+                            </li>
+                            <li>
+                                <code>document.getElementById("someID").previousSibling.firstChild
+                                    <span>//get the first child of a targeted element's previous sibling</span>
+                                </code>
+                            </li>
+                            <li>
+                                <code>document.getElementById("someID").nextSibling.childNodes[2]
+                                    <span>//get the third child of a targeted element's next sibling</span>
+                                </code>
+                            </li>
+                            <li>
+                                <code>document.getElementsByTagName("h3")[4].parentNode.parentNode
+                                    <span>//find the grandfather element of the fifth h3 element</span>
+                                </code>
+                            </li>
+                            <li>
+                                <code>document.getElementsByTagName("h3")[4].getAttribute("id")
+                                    <span>//get the id attribute value of the fifth h3 element in the document</span>
+                                </code>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <script src="../api/dom.js" type="application/javascript"></script>
+    </body>
+</html>

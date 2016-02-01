@@ -2,9 +2,8 @@
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>
 <html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <title>Pretty Diff - JavaScript style guide support</title>
-        <link href="../diffview.css" media="all" rel="stylesheet" type="text/css"/>
-        <link href="guide.css" media="all" rel="stylesheet" type="text/css"/>
+        <title>Pretty Diff - JavaScript styleguide Option</title>
+        <link href="../css/index.css" media="all" rel="stylesheet" type="text/css"/>
         <link href="http://prettydiff.com/guide/styleguide.xhtml" rel="canonical"
             type="application/xhtml+xml"/>
         <link href="http://prettydiff.com/images/favicon.ico" rel="icon"
@@ -32,433 +31,118 @@
         <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
             name="google-site-verification"/>
     </head>
-    <body class="white" id="doc">
-        <h1>
-            <svg height="2000.000000pt" preserveAspectRatio="xMidYMid meet" version="1.0"
-                viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt"
-                xmlns="http://www.w3.org/2000/svg">
-                <g fill="#999" stroke="none"
-                    transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
-                    <path
-                        d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
-            </svg>
-            <a href="http://prettydiff.com/">Pretty Diff</a>
-            - Guide</h1>
-        <p id="dcolorScheme">
-            <label class="label" for="colorScheme">Color Scheme</label>
-            <select id="colorScheme">
-                <option>Canvas</option>
-                <option>Shadow</option>
-                <option selected="selected">White</option>
-            </select>
-        </p>
-        <h2>JavaScript style guide support</h2>
-        <div>
-            <div>
-                <h3>Description of support</h3>
-                <p>Pretty Diff offers some conformance support to the requirements of several
-                    popular style guides. The objective is to automate certain particular
-                    requirements of style guide conformance so that code authors can focus on more
-                    important things. Pretty Diff does not attempt to magically fix code to be 100%
-                    conformant to any style guide.</p>
-                <p>This support is provided by use of an option,
-                    <em>styleguide</em>
-                    to the
-                    <a href="../prettydiff.js">prettydiff.js</a>
-                    and
-                    <a href="../lib/jspretty.js">jspretty.js</a>
-                    libraries. When this option is passed with an accepted value the settings of
-                    other various options are overwritten. This forcefulness is intentional so that
-                    code is modified according to rules applied by a group setting in opposition to
-                    an individual's preferences.</p>
-                <p>If your organization has a style guide you would like represented by the
-                    Pretty Diff tool please open an
-                    <a href="https://github.com/prettydiff/prettydiff/issues">issue on Github</a>.
-                    Please include a link to the style guide documentation and any additional
-                    information or requests. All I ask in payment is your kind support in spreading
-                    awareness of this tool.</p>
-                <p>A styleguide setting can be automatically defined within the code without
-                    specifying anything in the Pretty Diff options. Setting the style guide in this
-                    way binds a setting to a code file and prevents interference from any
-                    potentially conflicting settings defined elsewhere. Assuming you wish to specify
-                    <em>google</em>
-                    as a style guide value just add a code comment like the following above the
-                    first line of code:</p>
-                <code>/*prettydiff.com styleguide:google*/</code>
-            </div>
-            <div>
-                <h3>Limitations</h3>
-                <p>Pretty Diff suggests use of something like
-                    <strong>
-                        <a href="http://jscs.info/">JSCS</a>
-                    </strong>
-                    to achieve complete conformance to a code style. The JSCS tool is a validator
-                    designed to yell at code authors when their code violates style rules and it
-                    does not alter a code sample. Using the style guide feature of Pretty Diff
-                    together with JSCS can help a code author to achieve 100% conformance to code
-                    style rules while allowing the code author to automate away many minor code
-                    style violations.</p>
-                <p>Manipulating code is risky business. Changing code can result in unplanned
-                    consequences they may alter or break the code from the author's intentions. Due
-                    to this risk there are certain alterations that Pretty Diff will intentionally
-                    not perform. In those cases a code author should be held accountable to make
-                    decisions about why code was written in a particular way. Here is an incomplete
-                    list of things Pretty Diff intentionally does not change.</p>
-                <h4>Hoisting</h4>
-                <p>Pretty Diff will not hoist or move around reference declarations in the code.
-                    References declared with the
-                    <em>var</em>
-                    are naturally hoisted by JavaScript interpreters, but references declared with
-                    the ES6 keyword
-                    <em>let</em>
-                    will not be hoisted. Moving around references declarations with
-                    <em>let</em>
-                    is a change in logic that can alter how a given set of code is interpreted.</p>
-                <h4>Variable order</h4>
-                <p>Pretty Diff will not reorder consecutively declared variables. This change
-                    can result in an error when one variable makes use of another variable at
-                    declaration time, and changing variable order in this case will break the code.</p>
-                <h4>Logic sequence</h4>
-                <p>Pretty Diff will not change the order or logic, except for trivial and
-                    predictable syntax changes. The one major exception to this rule is that Pretty
-                    Diff can alphabetize object properties.</p>
-            </div>
-            <div>
-                <h3>Contributions and requests</h3>
-                <p>If you have ideas for additional automation rules or rule sets please open a
-                    <a href="https://github.com/prettydiff/prettydiff/issues">Github issue</a>
-                    or submit a pull request.</p>
-            </div>
-            <div>
-                <h3>Supported style guide rules</h3>
-                <p>The following list is presented as list of Pretty Diff supported style guide
-                    values and corresponding option values. For definitions of the various options
-                    please see the
-                    <a href="../documentation.xhtml">documentation</a>.</p>
-                <ul id="styleguidelist">
-                    <li>
-                        <h4>
-                            <a href="https://github.com/airbnb/javascript">airbnb</a>
-                        </h4>
-                        <ul>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#correct">correct</a>
-                                </strong>
-                                true</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#endcomma">endcomma</a>
-                                </strong>
-                                true</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#inchar">inchar</a>
-                                </strong>
-                                (space)</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#insize">insize</a>
-                                </strong>
-                                2</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#quoteConvert">quoteConvert</a>
-                                </strong>
-                                "single"</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#preserve">preserve</a>
-                                </strong>
-                                true</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#varword">varword</a>
-                                </strong>
-                                "each"</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#wrap">wrap</a>
-                                </strong>
-                                80</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <h4>
-                            <a href="http://www.jslint.com/lint.html">crockford</a>
-                        </h4>
-                        <ul>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#bracepadding">bracepadding</a>
-                                </strong>
-                                false</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#correct">correct</a>
-                                </strong>
-                                true</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#elseline">elseline</a>
-                                </strong>
-                                false</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#endcomma">endcomma</a>
-                                </strong>
-                                false</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#inchar">inchar</a>
-                                </strong>
-                                (space)</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#insize">insize</a>
-                                </strong>
-                                4</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#space">space</a>
-                                </strong>
-                                true</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#varword">varword</a>
-                                </strong>
-                                "list"</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <h4>
-                            <a href="https://google-styleguide.googlecode.com/svn/trunk/javascriptguide.xml">google</a>
-                        </h4>
-                        <ul>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#correct">correct</a>
-                                </strong>
-                                true</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#inchar">inchar</a>
-                                </strong>
-                                (space)</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#insize">insize</a>
-                                </strong>
-                                4</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#preserve">preserve</a>
-                                </strong>
-                                true</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#quoteConvert">quoteConvert</a>
-                                </strong>
-                                "single"</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#vertical">vertical</a>
-                                </strong>
-                                false</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#wrap">wrap</a>
-                                </strong>
-                                -1</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <h4>
-                            <a href="http://gruntjs.com/contributing#syntax">grunt</a>
-                        </h4>
-                        <ul>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#inchar">inchar</a>
-                                </strong>
-                                (space)</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#insize">insize</a>
-                                </strong>
-                                2</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#quoteConvert">quoteConvert</a>
-                                </strong>
-                                "single"</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#varword">varword</a>
-                                </strong>
-                                "each"</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#wrap">wrap</a>
-                                </strong>
-                                -1</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <h4>
-                            <a href="https://contribute.jquery.org/style-guide/js/">jquery</a>
-                        </h4>
-                        <ul>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#bracepadding">bracepadding</a>
-                                </strong>
-                                true</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#correct">correct</a>
-                                </strong>
-                                true</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#inchar">inchar</a>
-                                </strong>
-                                (tab)</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#insize">insize</a>
-                                </strong>
-                                1</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#quoteConvert">quoteConvert</a>
-                                </strong>
-                                "double"</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#varword">varword</a>
-                                </strong>
-                                "each"</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#wrap">wrap</a>
-                                </strong>
-                                80</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <h4>
-                            <a href="https://www.mediawiki.org/wiki/Manual:Coding_conventions/JavaScript">mediawiki</a>
-                        </h4>
-                        <ul>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#bracepadding">bracepadding</a>
-                                </strong>
-                                true</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#correct">correct</a>
-                                </strong>
-                                true</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#inchar">inchar</a>
-                                </strong>
-                                (tab)</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#insize">insize</a>
-                                </strong>
-                                1</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#preserve">preserve</a>
-                                </strong>
-                                true</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#quoteConvert">quoteConvert</a>
-                                </strong>
-                                "single"</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#space">space</a>
-                                </strong>
-                                false</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#vertical">vertical</a>
-                                </strong>
-                                false</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#wrap">wrap</a>
-                                </strong>
-                                80</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <h4>
-                            <a href="https://github.com/meteor/meteor/wiki/Meteor-Style-Guide">meteor</a>
-                        </h4>
-                        <ul>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#correct">correct</a>
-                                </strong>
-                                true</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#inchar">inchar</a>
-                                </strong>
-                                (space)</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#insize">insize</a>
-                                </strong>
-                                2</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#wrap">wrap</a>
-                                </strong>
-                                80</li>
-                        </ul>
-                    </li>
-                    <li>
-                        <h4>
-                            <a href="https://github.com/yandex/codestyle/blob/master/javascript.md">yandex</a>
-                        </h4>
-                        <ul>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#bracepadding">bracepadding</a>
-                                </strong>
-                                true</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#correct">correct</a>
-                                </strong>
-                                true</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#quoteConvert">quoteConvert</a>
-                                </strong>
-                                "single"</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#varword">varword</a>
-                                </strong>
-                                "each"</li>
-                            <li>
-                                <strong>
-                                    <a href="../documentation.xhtml#vertical">vertical</a>
-                                </strong>
-                                false</li>
-                        </ul>
-                    </li>
-                </ul>
-            </div>
+    <body class="white" id="prettydiff">
+        <div class="contentarea" id="page">
+            <section role="heading">
+                <h1>
+                    <svg height="2000.000000pt" id="pdlogo" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
+                            <path
+                                d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
+                    </svg>
+                    <a href="prettydiff.com.xhtml">Pretty Diff</a>
+                    - Guide: JavaScript styleguide Option</h1>
+                <p id="dcolorScheme">
+                    <label class="label" for="colorScheme">Color Scheme</label>
+                    <select id="colorScheme">
+                        <option>Canvas</option>
+                        <option>Shadow</option>
+                        <option selected="selected">White</option>
+                    </select>
+                </p>
+                <p>Explore some
+                    <a href="samples.xhtml">samples</a>. For any questions, comments, requests, or feedback please join the
+                    <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff mailing list</a>
+                    or chat on
+                    <a href="https://gitter.im/prettydiff/prettydiff?utm_source=badge%26utm_medium=badge%26utm_campaign=pr-badge%26utm_content=badge">Gitter</a>. Find
+                    <a href="https://github.com/prettydiff/prettydiff">Pretty Diff on GitHub</a>.</p>
+            </section>
+            <section role="main">
+                <h2>JavaScript style guide support</h2>
+                <div class="segment">
+                    <h3>Description of support</h3>
+                    <p>Pretty Diff offers some conformance support to the requirements of several
+                        popular style guides. The objective is to automate certain particular
+                        requirements of style guide conformance so that code authors can focus on more
+                        important things. Pretty Diff does not attempt to magically fix code to be 100%
+                        conformant to any style guide.</p>
+                    <p>This support is provided by use of an option,
+                        <em>styleguide</em>
+                        to the
+                        <a href="../prettydiff.js">prettydiff.js</a>
+                        and
+                        <a href="../lib/jspretty.js">jspretty.js</a>
+                        libraries. When this option is passed with an accepted value the settings of
+                        other various options are overwritten. This forcefulness is intentional so that
+                        code is modified according to rules applied by a group setting in opposition to
+                        an individual's preferences.</p>
+                    <p>If your organization has a style guide you would like represented by the
+                        Pretty Diff tool please open an
+                        <a href="https://github.com/prettydiff/prettydiff/issues">issue on Github</a>.
+                        Please include a link to the style guide documentation and any additional
+                        information or requests. All I ask in payment is your kind support in spreading
+                        awareness of this tool.</p>
+                    <p>A styleguide setting can be automatically defined within the code without
+                        specifying anything in the Pretty Diff options. Setting the style guide in this
+                        way binds a setting to a code file and prevents interference from any
+                        potentially conflicting settings defined elsewhere. Assuming you wish to specify
+                        <em>google</em>
+                        as a style guide value just add a code comment like the following above the
+                        first line of code:</p>
+                    <code>/*prettydiff.com styleguide:google*/</code>
+                </div>
+                <div class="segment">
+                    <h3>Limitations</h3>
+                    <p>Pretty Diff suggests use of something like
+                        <strong>
+                            <a href="http://jscs.info/">JSCS</a>
+                        </strong>
+                        to achieve complete conformance to a code style. The JSCS tool is a validator
+                        designed to yell at code authors when their code violates style rules and it
+                        does not alter a code sample. Using the style guide feature of Pretty Diff
+                        together with JSCS can help a code author to achieve 100% conformance to code
+                        style rules while allowing the code author to automate away many minor code
+                        style violations.</p>
+                    <p>Manipulating code is risky business. Changing code can result in unplanned
+                        consequences they may alter or break the code from the author's intentions. Due
+                        to this risk there are certain alterations that Pretty Diff will intentionally
+                        not perform. In those cases a code author should be held accountable to make
+                        decisions about why code was written in a particular way. Here is an incomplete
+                        list of things Pretty Diff intentionally does not change.</p>
+                    <h4>Hoisting</h4>
+                    <p>Pretty Diff will not hoist or move around reference declarations in the code.
+                        References declared with the
+                        <em>var</em>
+                        are naturally hoisted by JavaScript interpreters, but references declared with
+                        the ES6 keyword
+                        <em>let</em>
+                        will not be hoisted. Moving around references declarations with
+                        <em>let</em>
+                        is a change in logic that can alter how a given set of code is interpreted.</p>
+                    <h4>Variable order</h4>
+                    <p>Pretty Diff will not reorder consecutively declared variables. This change
+                        can result in an error when one variable makes use of another variable at
+                        declaration time, and changing variable order in this case will break the code.</p>
+                    <h4>Logic sequence</h4>
+                    <p>Pretty Diff will not change the order or logic, except for trivial and
+                        predictable syntax changes. The one major exception to this rule is that Pretty
+                        Diff can alphabetize object properties.</p>
+                </div>
+                <div class="segment">
+                    <h3>Contributions and requests</h3>
+                    <p>If you have ideas for additional automation rules or rule sets please open a
+                        <a href="https://github.com/prettydiff/prettydiff/issues">Github issue</a>
+                        or submit a pull request.</p>
+                </div>
+                <div class="segment">
+                    <h3>Supported style guide rules</h3>
+                    <p>See the most current style guide definitions at the top of the
+                        <a href="https://github.com/prettydiff/prettydiff/blob/master/lib/jspretty.js#L204">jspretty.js</a>
+                        file.  The options present for each style guide rule follow the Pretty Diff
+                        options listed in the
+                        <a href="../documentation.xhtml">documentation</a>.</p>
+                </div>
+            </section>
         </div>
         <script src="../api/dom.js" type="application/javascript"></script>
     </body>

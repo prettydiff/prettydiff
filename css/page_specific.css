@@ -1,0 +1,13 @@
+/*samples - layout for samples page*/
+#prettydiff #pdsamples{list-style-position:inside;margin:0;padding:1em;position:relative;z-index:10}
+#prettydiff #pdsamples > li{border-style:none none dashed;border-width:0 0 0.1em;margin:0 0 1em}
+#prettydiff #pdsamples li div{border-style:solid;border-width:0.05em;margin:0;padding:1em}
+#prettydiff #pdsamples li p{display:inline-block;font-size:1em;margin:0}
+#prettydiff #pdsamples li p a{display:block;margin:0 0 1em 2em}
+#prettydiff #pdsamples li ul{margin:0 0 0 2em;padding:0}
+
+#prettydiff #samples h2,
+#prettydiff #page h2{font-size:3em}
+#prettydiff #page > div{border-style:none}
+#prettydiff #page code,
+#prettydiff #page textarea{font-size:1.6em}

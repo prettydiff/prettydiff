@@ -1,0 +1,4 @@
+<person>
+<!-- comment -->
+    <name>bob</name>
+</person>

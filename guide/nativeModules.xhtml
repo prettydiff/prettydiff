@@ -2,9 +2,8 @@
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>
 <html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <title>Pretty Diff - Core Documentation, Native Modules</title>
-        <link href="../diffview.css" media="all" rel="stylesheet" type="text/css"/>
-        <link href="guide.css" media="all" rel="stylesheet" type="text/css"/>
+        <title>Pretty Diff - Native JavaScript Modules</title>
+        <link href="../css/index.css" media="all" rel="stylesheet" type="text/css"/>
         <link href="http://prettydiff.com/guide/jshtml.xhtml" rel="canonical"
             type="application/xhtml+xml"/>
         <link href="http://prettydiff.com/images/favicon.ico" rel="icon"
@@ -32,75 +31,82 @@
         <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
             name="google-site-verification"/>
     </head>
-    <body class="white" id="doc">
-        <h1>
-            <svg height="2000.000000pt" preserveAspectRatio="xMidYMid meet" version="1.0"
-                viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt"
-                xmlns="http://www.w3.org/2000/svg">
-                <g fill="#999" stroke="none"
-                    transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
-                    <path
-                        d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
-            </svg>
-            <a href="http://prettydiff.com/">Pretty Diff</a>
-            - Core Documentation</h1>
-        <p id="dcolorScheme">
-            <label class="label" for="colorScheme">Color Scheme</label>
-            <select id="colorScheme">
-                <option>Canvas</option>
-                <option>Shadow</option>
-                <option selected="selected">White</option>
-            </select>
-        </p>
-        <h2>Native Modules</h2>
-        <div>
-            <div id="introduction">
-                <h3>Introduction</h3>
-                <p>This document was last updated on 8 October 2015 for version 1.14.6.</p>
-                <p>This document intends to fully describe how code modularity occurs in Pretty Diff.  At the time of this writing there is a standard module convention in JavaScript commonly referred to as <em>ES6 modules</em>, but it is not supported anywhere.  In order to achieve modular code directly without a build process that allows the code to execute directly on various platforms a series of conventions employed together and unique problems were discovered.</p>
-                <p>The common solution to modules is a build process. I did not wish to use a build process with Pretty Diff, because I don't want to maintain a separate process for each and every environment supported or consumed by this application. Build processes tend to be domain specific tools.  For ease of testing and ease of execution the same application code should execute everywhere JavaScript can execute in exactly the same way.</p>
-            </div>
-            <div id="separation">
-                <h3>Code Separation</h3>
-                <p>Prior to embarking upon this adventure all application code existed in a single file, <a href="../prettydiff.js">prettydiff.js</a>.  There were several conveniences to keeping all code in one file, such as</p>
-                <ul>
-                    <li>Fix all bugs and provide nearly all enhancements within a single file.</li>
-                    <li>Find nearly any logic in the entire application using an editor's find function (CTRL+F)</li>
-                    <li>It is always easier to send people one monolithic file than many small files.</li>
-                    <li>It forced me to do line by line code reviews before publishing changes. I would keep the copies of the libraries in individual files in case anybody wanted to use them, but they did not execute as primary component of the Pretty Diff application.  Keeping these libraries in sync with the corresponding logic in the prettydiff.js file forced me to rethink some of my decisions.</li>
-                </ul>
-                <p>While having virtually all of the application logic in a single file helped me to quick extend the logic and debug complex issues, particularly issues spanning multiple libraries, it came at a cost.  Here is what I was missing:</p>
-                <ul>
-                    <li>Other developers were intimidated to jump into an application containing more than 11,000 lines of terse logic.</li>
-                    <li>A single monolithic file was not desirable to many developers who only wanted to use one of the contained libraries.</li>
-                    <li>The forced code reviews, while beneficial, were exceedingly time consuming for every release even when they weren't necessary or helpful.</li>
-                    <li>Having all application logic in one file meant quicks in one library were stuck waiting for resolution on a large enhancement in another library before the updates could be launched to production.</li>
-                </ul>
-                <p>Separated code files have proven extremely liberating. There is flexibility where it did not exist before. While it was helpful to be able to search a large monolithic file to find a specific piece of code I have not missed this feature, since I generally know in which library to look in anyways.</p>
-            </div>
-            <div id="problems">
-                <h3>Identified</h3>
-                <p>Breaking apart code seems into smaller pieces seems like it would be easy, but there several problems I discovered.</p>
-                <ul>
-                    <li>Achieving modularity across all environments without a build process means each and every module must be specified manually per environment or loaded through dynamic dependency injection equally across all environments. Manual definition of modules is not actually not a big deal if the collection of modules is small, but provides maintenance challenges across environments as the number of modules increases. Dynamic module injection should be avoided due to the added HTTP overhead in the browser.</li>
-                    <li>The only way to achieve modularity in the browser without a build process is by using a script tag per module in the HTML.  This means an extra HTTP request per module.  It also means there are no dependency chains since requests from the browser are flat.</li>
-                    <li>In environments that use Node, but only as a secondary tool there are no relative paths. process.cwd() always returns "/" for root.  So, relative paths to modules must always be absolute paths using <em>__dirname</em>. The namespace must exist in the global scope and be available across all files and environments. For consistency this logic should be applied for every exports statement and every require statement related to a module file.</li>
-                    <li>In Node the modules cannot <em>require</em> each other directly, because this produces an infinite recursive loop.  Instead modules must be assigned to a namespace upon require.  I chose to assign to <em>global</em> because it is available from Node exactly for reasons like this.</li>
-                    <li>Because of the use of an object named <em>global</em> from Node, I had to create an empty object for all other environments.  The secondary consequence is that all modules must be universally referenced as properties of an object named <em>global</em>.</li>
-                    <li>In Node modules are loaded, via require, in a synchronous fashion. Therefore the order the order in which modules are loaded is irrelevant provided they are all required in the location of the code and not executed until after all modules are required.  This is not so in the browser where instead modules (just files requested from different script tags) are loaded asynchronously. If a reference is used in an early file but defined in a later file it's reference must be delayed to prevent errors using something similar to a promise.</li>
-                    <li>In achieving compliance with <a href="http://jslint.com/">JSLint</a> the reference <em>global</em> must be mentioned in the JSLint's global comment for every file.  The modules cannot be declared as properties of this object though, so instead they should be declared by their actual name even though they will be universally referenced as properties of an object named <em>global</em>. While this is easily accomplished it still means polluting the global scope with one reference per module.</li>
-                </ul>
-            </div>
-            <div id="solution">
-                <h3>The Solution</h3>
-                <p>To turn a module into a library a couple of things need to happen.  First, each module needs to require its dependencies to the <em>global</em> object. If the require function is available then require the appropriate dependencies otherwise, in the case of the browser, just assign the dependency to a link name in the global object.</p>
-                <p>Secondly, each and every module needs to specify an exports point. In the case of Pretty Diff I always used a property named <em>api</em> for this.  I recommend following the examples provided in the Pretty Diff libraries because exports are applied differently between the Node way and the <a href="http://www.requirejs.org/">requirejs</a> way.</p>
-            </div>
-            <div id="summary">
-                <h3>Summary of Results</h3>
-                <p>I was able to achieve native JavaScript modules across all environments without any build process and without the ES6 module convention, but it took several mistakes in production to identify the known edge cases.  Fortunately, the Pretty Diff project is consumed regularly enough in a wide distribution of tools at this time that any remaining edge cases should be little or none.</p>
-                <p>Because Pretty Diff is only using six modules all from the same domain there is no perceived difference in load time or execution time. It also helps that the Pretty Diff project is fully self-contained with its only dependency being the <a href="http://ace.c9.io">Ace Editor</a>, which is still served from the same domain and only available to the browser.</p>
-            </div>
+    <body class="white" id="prettydiff">
+        <div class="contentarea" id="page">
+            <section role="heading">
+                <h1>
+                    <svg height="2000.000000pt" id="pdlogo" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
+                            <path
+                                d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
+                    </svg>
+                    <a href="prettydiff.com.xhtml">Pretty Diff</a>
+                    - Guide: Native JavaScript Modules</h1>
+                <p id="dcolorScheme">
+                    <label class="label" for="colorScheme">Color Scheme</label>
+                    <select id="colorScheme">
+                        <option>Canvas</option>
+                        <option>Shadow</option>
+                        <option selected="selected">White</option>
+                    </select>
+                </p>
+                <p>Explore some
+                    <a href="samples.xhtml">samples</a>. For any questions, comments, requests, or feedback please join the
+                    <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff mailing list</a>
+                    or chat on
+                    <a href="https://gitter.im/prettydiff/prettydiff?utm_source=badge%26utm_medium=badge%26utm_campaign=pr-badge%26utm_content=badge">Gitter</a>. Find
+                    <a href="https://github.com/prettydiff/prettydiff">Pretty Diff on GitHub</a>.</p>
+            </section>
+            <section role="main">
+                <h2>Native Modules</h2>
+                <div id="introduction" class="segment">
+                    <h3>Introduction</h3>
+                    <p>This document was last updated on 8 October 2015 for version 1.14.6.</p>
+                    <p>This document intends to fully describe how code modularity occurs in Pretty Diff.  At the time of this writing there is a standard module convention in JavaScript commonly referred to as <em>ES6 modules</em>, but it is not supported anywhere.  In order to achieve modular code directly without a build process that allows the code to execute directly on various platforms a series of conventions employed together and unique problems were discovered.</p>
+                    <p>The common solution to modules is a build process. I did not wish to use a build process with Pretty Diff, because I don't want to maintain a separate process for each and every environment supported or consumed by this application. Build processes tend to be domain specific tools.  For ease of testing and ease of execution the same application code should execute everywhere JavaScript can execute in exactly the same way.</p>
+                </div>
+                <div id="separation" class="segment">
+                    <h3>Code Separation</h3>
+                    <p>Prior to embarking upon this adventure all application code existed in a single file, <a href="../prettydiff.js">prettydiff.js</a>.  There were several conveniences to keeping all code in one file, such as</p>
+                    <ul>
+                        <li>Fix all bugs and provide nearly all enhancements within a single file.</li>
+                        <li>Find nearly any logic in the entire application using an editor's find function (CTRL+F)</li>
+                        <li>It is always easier to send people one monolithic file than many small files.</li>
+                        <li>It forced me to do line by line code reviews before publishing changes. I would keep the copies of the libraries in individual files in case anybody wanted to use them, but they did not execute as primary component of the Pretty Diff application.  Keeping these libraries in sync with the corresponding logic in the prettydiff.js file forced me to rethink some of my decisions.</li>
+                    </ul>
+                    <p>While having virtually all of the application logic in a single file helped me to quick extend the logic and debug complex issues, particularly issues spanning multiple libraries, it came at a cost.  Here is what I was missing:</p>
+                    <ul>
+                        <li>Other developers were intimidated to jump into an application containing more than 11,000 lines of terse logic.</li>
+                        <li>A single monolithic file was not desirable to many developers who only wanted to use one of the contained libraries.</li>
+                        <li>The forced code reviews, while beneficial, were exceedingly time consuming for every release even when they weren't necessary or helpful.</li>
+                        <li>Having all application logic in one file meant quicks in one library were stuck waiting for resolution on a large enhancement in another library before the updates could be launched to production.</li>
+                    </ul>
+                    <p>Separated code files have proven extremely liberating. There is flexibility where it did not exist before. While it was helpful to be able to search a large monolithic file to find a specific piece of code I have not missed this feature, since I generally know in which library to look in anyways.</p>
+                </div>
+                <div id="problems" class="segment">
+                    <h3>Identified</h3>
+                    <p>Breaking apart code seems into smaller pieces seems like it would be easy, but there several problems I discovered.</p>
+                    <ul>
+                        <li>Achieving modularity across all environments without a build process means each and every module must be specified manually per environment or loaded through dynamic dependency injection equally across all environments. Manual definition of modules is not actually not a big deal if the collection of modules is small, but provides maintenance challenges across environments as the number of modules increases. Dynamic module injection should be avoided due to the added HTTP overhead in the browser.</li>
+                        <li>The only way to achieve modularity in the browser without a build process is by using a script tag per module in the HTML.  This means an extra HTTP request per module.  It also means there are no dependency chains since requests from the browser are flat.</li>
+                        <li>In environments that use Node, but only as a secondary tool there are no relative paths. process.cwd() always returns "/" for root.  So, relative paths to modules must always be absolute paths using <em>__dirname</em>. The namespace must exist in the global scope and be available across all files and environments. For consistency this logic should be applied for every exports statement and every require statement related to a module file.</li>
+                        <li>In Node the modules cannot <em>require</em> each other directly, because this produces an infinite recursive loop.  Instead modules must be assigned to a namespace upon require.  I chose to assign to <em>global</em> because it is available from Node exactly for reasons like this.</li>
+                        <li>Because of the use of an object named <em>global</em> from Node, I had to create an empty object for all other environments.  The secondary consequence is that all modules must be universally referenced as properties of an object named <em>global</em>.</li>
+                        <li>In Node modules are loaded, via require, in a synchronous fashion. Therefore the order the order in which modules are loaded is irrelevant provided they are all required in the location of the code and not executed until after all modules are required.  This is not so in the browser where instead modules (just files requested from different script tags) are loaded asynchronously. If a reference is used in an early file but defined in a later file it's reference must be delayed to prevent errors using something similar to a promise.</li>
+                        <li>In achieving compliance with <a href="http://jslint.com/">JSLint</a> the reference <em>global</em> must be mentioned in the JSLint's global comment for every file.  The modules cannot be declared as properties of this object though, so instead they should be declared by their actual name even though they will be universally referenced as properties of an object named <em>global</em>. While this is easily accomplished it still means polluting the global scope with one reference per module.</li>
+                    </ul>
+                </div>
+                <div id="solution" class="segment">
+                    <h3>The Solution</h3>
+                    <p>To turn a module into a library a couple of things need to happen.  First, each module needs to require its dependencies to the <em>global</em> object. If the require function is available then require the appropriate dependencies otherwise, in the case of the browser, just assign the dependency to a link name in the global object.</p>
+                    <p>Secondly, each and every module needs to specify an exports point. In the case of Pretty Diff I always used a property named <em>api</em> for this.  I recommend following the examples provided in the Pretty Diff libraries because exports are applied differently between the Node way and the <a href="http://www.requirejs.org/">requirejs</a> way.</p>
+                </div>
+                <div id="summary" class="segment">
+                    <h3>Summary of Results</h3>
+                    <p>I was able to achieve native JavaScript modules across all environments without any build process and without the ES6 module convention, but it took several mistakes in production to identify the known edge cases.  Fortunately, the Pretty Diff project is consumed regularly enough in a wide distribution of tools at this time that any remaining edge cases should be little or none.</p>
+                    <p>Because Pretty Diff is only using six modules all from the same domain there is no perceived difference in load time or execution time. It also helps that the Pretty Diff project is fully self-contained with its only dependency being the <a href="http://ace.c9.io">Ace Editor</a>, which is still served from the same domain and only available to the browser.</p>
+                </div>
+            </section>
         </div>
         <script src="../api/dom.js" type="application/javascript"></script>
     </body>

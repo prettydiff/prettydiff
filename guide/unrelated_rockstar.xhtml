@@ -1,15 +1,21 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>
-<html xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>Pretty Diff - Guide, Becoming a JavaScript Rock Star (In the Real World)</title>
-        <link href="../diffview.css" media="all" rel="stylesheet" type="text/css"/>
-        <link href="guide.css" media="all" rel="stylesheet" type="text/css"/>
-        <link href='http://prettydiff.com/guide/unrelated_dom.xhtml' rel='canonical'
-            type='application/xhtml+xml'/>
-        <link href="http://prettydiff.com/images/favicon.ico" rel="icon"
+        <link href="../css/index.css" media="all" rel="stylesheet" type="text/css"/>
+        <link
+            href="http://prettydiff.com/guide/unrelated_dom.xhtml"
+            rel="canonical"
+            type="application/xhtml+xml"/>
+        <link
+            href="http://prettydiff.com/images/favicon.ico"
+            rel="icon"
             type="image/x-icon"/>
-        <link href="http://prettydiff.com/labels.rdf" rel="meta" title="ICRA labels"
+        <link
+            href="http://prettydiff.com/labels.rdf"
+            rel="meta"
+            title="ICRA labels"
             type="application/rdf+xml"/>
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
         <meta content="index, follow" name="robots"/>
@@ -17,7 +23,7 @@
             content="Pretty Diff - Guide, Becoming a JavaScript Rock Star (In the Real World)"
             name="DC.title"/>
         <meta
-            content='(pics-1.1 "http://www.icra.org/pics/vocabularyv03/" l gen true for "http://prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for "http://www.prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))'
+            content="(pics-1.1 'http://www.icra.org/pics/vocabularyv03/' l gen true for 'http://prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for 'http://www.prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))"
             http-equiv="pics-Label"/>
         <meta content="Austin Cheney" name="author"/>
         <meta
@@ -30,319 +36,340 @@
         <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/>
         <meta content="text/css" http-equiv="content-style-type"/>
         <meta content="application/javascript" http-equiv="content-script-type"/>
-        <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
+        <meta
+            content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
             name="google-site-verification"/>
     </head>
-    <body class="white" id="doc">
-        <h1>
-            <svg height="2000.000000pt" preserveAspectRatio="xMidYMid meet" version="1.0"
-                viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt"
-                xmlns="http://www.w3.org/2000/svg">
-                <g fill="#999" stroke="none"
-                    transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
-                    <path
-                        d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
-            </svg>
-            <a href="http://prettydiff.com/">Pretty Diff</a>
-            - Guide</h1>
-        <p id="dcolorScheme">
-            <label class="label" for="colorScheme">Color Scheme</label>
-            <select id="colorScheme">
-                <option>Canvas</option>
-                <option>Shadow</option>
-                <option selected="selected">White</option>
-            </select>
-        </p>
-        <h2>Becoming a JavaScript Rock Star (In the Real World)</h2>
-        <div id="doc_contents">
-            <h3>Table of Contents</h3>
-            <ol>
-                <li>
-                    <a href="#realworld">In the real world</a>
-                </li>
-                <li>
-                    <a href="#personality">Personality</a>
-                </li>
-                <li>
-                    <a href="#honesty">Honesty</a>
-                </li>
-                <li>
-                    <a href="#confidence">Confidence</a>
-                </li>
-                <li>
-                    <a href="#popularity">Disregard for popularity</a>
-                </li>
-                <li>
-                    <a href="#criticality">Criticality in all things</a>
-                </li>
-                <li>
-                    <a href="#expectations">Set higher expectations</a>
-                </li>
-                <li>
-                    <a href="#directness">Technical directness</a>
-                </li>
-                <li>
-                    <a href="#whoIam">Who I am</a>
-                </li>
-            </ol>
-        </div>
-        <div id="realworld">
-            <h3>In the real world</h3>
-            <div>
-                <p>Becoming a rock star developer is all about competence, capability, and
-                    personality. These are factors that often do not perfectly align to online
-                    communities. In the real world it always comes down to the ability to solve a
-                    given problem, the speed and durability with which that problem is solved, and
-                    the ability to work with others and mentor.</p>
-                <p>In the real world a developer has to work with people. These people could be
-                    other developers, non-technical peers, corporate leadership, partner companies,
-                    clients, or others. These people always notice how quickly a given effort is
-                    completed relative to other developers and how well the solution works once
-                    completed. These factors go towards a phenomenon called
-                    <em>competence</em>. Competence is always under evaluation.</p>
-                <p>In online communities the factors that govern success are generally tethered
-                    to qualities of branding, product, and self-marketing. In the real world these
-                    factors are nice to have, but are largely insignificant compared to the 3 prior
-                    mentioned primary qualities. When self-promotion becomes an individual's most
-                    enduring quality the individual will generally be labeled as political,
-                    unfocused, or insensitive. Nobody in real world want's to work with people like
-                    this, even other people sharing this same quality.</p>
-            </div>
-        </div>
-        <div id="personality">
-            <h3>Personality</h3>
-            <div>
-                <p>Competence alone is not enough. The ability to receive a favorable evaluation
-                    from people in the real world is directly biased by the developer's personality.
-                    For example, an asshole will never be held up to the same level of capability as
-                    a slightly less competent developer who is always pleasant to work with. This is
-                    an internal bias that everybody carries and never goes away. In this manner
-                    personality is a more important quality than technical competence, because
-                    personality is generally easier to observe and faster to evaluate.</p>
-                <p>The biggest challenge regarding personality is the ability to listen to and
-                    perceive the non-verbal communication of those around you. In other words if you
-                    cannot determine if you are an asshole by reading the people around you then you
-                    probably are an asshole. People who struggle in this regard are almost
-                    helplessly handicapped from becoming a rock star in the real world.</p>
-                <p>Niceness is not directly related to a rock star personality. A rock star is
-                    capable of exercising equal parts charm and authoritarian decisiveness depending
-                    upon the given situation. The goal is often not to make friends, and certainly
-                    not to make enemies, but to accomplish the current given task efficiently and
-                    build enduring relationships in the process.</p>
-            </div>
-        </div>
-        <div id="honest">
-            <h3>Honesty</h3>
-            <div>
-                <p>A rock star strives for honesty always. Honesty is a challenge that many
-                    people frequently fail at. Total honesty requires a dedicated alertness into an
-                    individual's own three forms of communication: verbal, non-verbal, and desire.
-                    Verbal honesty relates to the truthfulness of what a person says. Non-verbal
-                    honesty relates to a person's body language when speaking and the physical
-                    responses when listening or receiving communication both verbal and non-verbal.
-                    Honesty of desire describes a person's goals, intentions, and motivations.</p>
-                <p>Honesty in desire is something many people struggle with. This struggle is
-                    frequently referred by terms like
-                    <em>cognitive complexity</em>
-                    and possibly
-                    <em>cognitive conservatism</em>. This is challenging because many people are not
-                    honest with themselves. For instance a person may claim to make a decision for
-                    the health of the product when instead they could be trying to impress a boss or
-                    complete an unrelated objective. This internalized self-dishonesty results in a
-                    pattern of behaviors that leave observers confused and filled with doubt or
-                    remorse.</p>
-                <p>It is challenging to detect honesty, and it is much easier to detect
-                    dishonesty. This likely explains why external observers are frequently more apt
-                    at detecting an individual's internal confusion than the individual. Dishonesty
-                    is the greatest enemy of trust and rock star is somebody who has no trouble
-                    inspiring trust. To avoid dishonesty means harmonizing verbal communications,
-                    non-verbal communications, and desires.</p>
-                <p>Once a total communication harmony is achieved positive behaviors replace
-                    distracting behaviors, particularly: humbleness, dedication, and focus. It also
-                    means a person is quick to accept and volunteer blame for failure and a
-                    willingness to ask for mentorship. Rock stars are quick to admit when they have
-                    shortcomings and welcome assistance.</p>
-            </div>
-        </div>
-        <div id="confidence">
-            <h3>Confidence</h3>
-            <div>
-                <p>An unintended benefit to total honesty is
-                    <em>confidence</em>. Even in the event that probability of failure is extremely
-                    high a rock star is willing to openly discuss the perception of failure
-                    particularly when not politically expedient. In other words a rock star remains
-                    maintains confidence long after doubts are exposed.</p>
-                <p>A common and extremely destructive quality that frequently emerges in the
-                    absence of confidence is
-                    <em>defensiveness</em>. Like with other desires an individual may not realize
-                    when they are being defensive, but everybody around them will see it with
-                    crystal clear clarity. Emotional defensiveness is an unproductive selfish
-                    quality that distracts from a team effort.</p>
-                <p>High confidence is required to challenge deeply held beliefs whether those
-                    beliefs come from superiors, peers, or the rock star themself. This challenge is
-                    called
-                    <em>critical evaluation</em>. The ability to examine a new approach and
-                    determine whether this new approach should replace conventions universally
-                    taught by a highly respected university are often necessary and can cause
-                    friction. The ability to perform this evaluation requires technical competence,
-                    confidence, and a devotion to product and the current technology. It also
-                    requires an ability to challenge popular concepts.</p>
-            </div>
-        </div>
-        <div id="popularity">
-            <h3>Disregard for popularity</h3>
-            <div>
-                <p>Imagine, if you will, a bell curve diagram. If you need help there are plenty
-                    examples online of the bell curve. In a measure of trends and competence the
-                    substantial bulk of a given demographic will (almost universally) reside close
-                    to the average of those surveyed. The exceedingly incompetent, as statistically
-                    measured against the entire body of sample data, will be on one extreme end of
-                    the bell curve and the rock star on the opposite end of the bell curve.</p>
-                <p>The important consideration in examining data against a bell curve is that
-                    both the incompetent people and the rock stars tend to be extreme minorities
-                    once a large enough sample of persons is evaluated. This means there is
-                    something different or irregular about rock stars that the general body of
-                    developers don't have. This single special factor can be summarized as a
-                    willingness to do things that are not popular. If, as a developer, you only work
-                    towards popular concepts you are statically incapable of ever becoming a rock
-                    star.</p>
-                <p>This makes sense if considered from the perspective of technical challenges.
-                    Challenging things will always be less popular, because challenge suggests
-                    opportunity for failure, which in turn causes fear. A rock star developer will
-                    tend to be both risk adverse and simultaneously really good at risk analysis.
-                    That combination of factors eliminates the fear that comes with challenges and
-                    allows the rock star the willingness and capability average developers do not
-                    possess.</p>
-                <p>My favorite example of this concept is
-                    <em>jQuery</em>. A few years ago the jQuery framework achieved religious status.
-                    Many developers required this tool and could not do their jobs without it. The
-                    religious concept was so deeply embedded that many developers would never
-                    consider questioning the use of jQuery, as in such a though process would never
-                    arise. I had several developers refuse to attend job interviews once they became
-                    aware there would be a technical evaluation and they could not use jQuery. A
-                    rock star developer would either or already have the skills to operate without
-                    this tool or would be willing to rise to the challenge.</p>
-            </div>
-        </div>
-        <div id="criticality">
-            <h3>Criticality in all things</h3>
-            <div>
-                <p>Perhaps the most obvious trait that comprises a rock star is the ability to
-                    solve problems that few other people are capable of solving, but doing so
-                    quickly with a simple and elegant approach. How to arrive to that potential is
-                    certainly less than obvious. A significant factor is the ability to quickly form
-                    independent and original conclusions. That means answering the
-                    <em>why</em>
-                    questions with confidence and with profound individuality. This is referred to
-                    as
-                    <em>critical decision making</em>. Being critical absolutely reinforces decision
-                    making that has no regard for popularity.</p>
-                <p>For an extreme minority of any given social population this sort of critical
-                    reasoning comes naturally. The
-                    <a href="https://en.wikipedia.org/wiki/Myers%E2%80%93Briggs_Type_Indicator">Meyers-Briggs Type Indicator</a>
-                    personality describes these sort of natural engineers as INTP and INTJ
-                    personality types who combined comprise 5-9% of any larger group. Other
-                    personality segments must tirelessly work to achieve a critical focus and often
-                    in defiance of their most inclusive social reference group.</p>
-                <p>A continuous critical focus allows a person a greater ability to perceive any
-                    problem according to its technical merits without distraction from popular
-                    conclusions. For many people this is extremely challenging because most
-                    personality types strive to achieve peace and tranquility through arriving at a
-                    perceived social mean. A critical focus allows a person to separate the social
-                    merits of a proposed solution from technical merits, which is frequently seen as
-                    challenging and disruptive. As a developer an extreme critical nature is often
-                    met with frustration from less critical personalities operating in a technical
-                    capacity and often applauded by non-technical decision makers. This is perhaps
-                    the most striking difference between a real world rockstar and an online rock
-                    star.</p>
-                <p>The ability to separate the technical merits from the social merits of a
-                    proposed solution and challenge opinions directly is not always welcome in many
-                    online communities. In the professional world this is often an extremely well
-                    valued trait frequently referred to as
-                    <em>positive confrontations</em>. The ability to focus on the given problem
-                    directly and put politics aside is absolutely required to achieve rock star
-                    status.</p>
-                <p>In regard for political versus technical merit it is generally easy to weed
-                    out weaker engineers from the actual and potential rock stars. When a technical
-                    conversation ever shifts focus to a developer in the conversation instead of the
-                    technology the conversation has immediately failed, and can safely be referred
-                    to an
-                    <a href="https://en.wikipedia.org/wiki/Ad_hominem">ad hominem</a>. Often when a
-                    technical conversation becomes stuck in political muck it is often because one
-                    or more developers in the conversation lacks confidence to continue approaching
-                    the conversation independently. From a critical perspective a technical opinion,
-                    even if wrong, is more valuable than competing opinions if it continues to stand
-                    its ground with original argumentation and is never distracted by less technical
-                    considerations.</p>
-                <p>Critical personalities strongly avoid absolute language. Absolute language suggests that a provided opinion is formally complete without need for challenge and frequently makes use of words like: <em>always</em>, <em>never</em>, <em>will</em>, <em>must</em>, <em>right</em>, and <em>wrong</em>. Critical thinking requires that every decision point is open to challenge and independent consideration. I recently had a conversation that suggested looping through arrays is always inferior to using a <em>foreach</em> method. A rock star developer would consider each option uniquely against a currently problem and make an independent decision. Rock stars generally perceive absolute opinions as less mature or an inferior reasoning.</p>
-            </div>
-        </div>
-        <div id="expectations">
-            <h3>Set higher expectations</h3>
-            <div>
-                <p>Rock stars set unpopular high expectations that may impede progress in the
-                    short-term but dramatically increase developer productivity in the long term.
-                    Strong standards will unintentionally lower maintenance churn. A rock star will
-                    limit the high standards they wish to impose. A real rock star does not set
-                    standards merely for the point of writing standards or fulfilling a personality
-                    disorder, such as
-                    <em>Obsessive Compulsive Disorder</em>.</p>
-                <p>The primary difference between the high standards set by a rock star versus
-                    those set by somebody with OCD is that a rock star can speak to qualities of
-                    risk analysis, performance, profiling, searchability, and understandability
-                    using research and quantitative data. The high standards set by an OCD type are
-                    generally motivated by stylistic concerns (code vanity), irrational ordering
-                    conventions, and other emotionally motivated factors that are hard to quantify.</p>
-                <p>I like to use the tool
-                    <em>JSHint</em>
-                    as an example. It is far more popular than the older JSLint and it is also less
-                    terse and more flexible. JSLint is a far stricter tool, which makes it far less
-                    popular, but any code that passes JSLint will always pass JSHint. The common
-                    argument for favoring JSHint against JSLint is something along the lines of
-                    "It's too opinionated.", which is completely misleading because JSLint is
-                    extremely opinionated about its options and settings and so is JSHint. For many
-                    years JSLint's motto was, "it will hurt your feelings."</p>
-            </div>
-        </div>
-        <div id="directness">
-            <h3>Technical directness</h3>
-            <div>
-                <p>Rock star developers are able to approach problems directly and reason about
-                    related technologies with a rare and excessive depth. For instance, HTML is
-                    often regarded as s simplistic technology demanding of trivial care. A rock star
-                    client-side web developer would separate themselves from average developers by
-                    learning more about HTML by studying how markup languages are formed and solving
-                    for various language design problems and identifying constraints. A greater
-                    depth of expertise allows a superior understanding of advanced concerns like
-                    accessibility and semantics that average developers would likely miss
-                    completely. It provides a deep understanding of why the Document Object Model
-                    (DOM) was designed the way it is how it actually works. I remember a recent
-                    conversation I had with somebody representing a major standards body who
-                    represented the DOM standards specification and did not have this history. Their
-                    understanding of the technology they represented was shallow and less complete
-                    causing major missteps in their reasoning about this technology.</p>
-                <p>Learning JavaScript directly means the ability to write in that language
-                    without assistance from additional technologies and understanding why certain
-                    code design decisions work better than alternative decisions. It also means
-                    learning about how the language works and what makes it different from other
-                    languages. It requires studying the language's history and learning why the
-                    language was designed as it is and the ability to independently consider the
-                    pros and cons of those decisions.</p>
-                <p>A rock star JavaScript developer is completely comfortable writing JavaScript without frameworks and reasoning about the DOM directly. They fully understand the language's scope model and separately understand the model of inheritance and why certain features of other languages compete with this scope model. They understand the actual value and weaknesses of popular JavaScript frameworks before ever recommending their use.</p></div>
-        </div>
-        <div id="whoIam">
-            <h3>
-                Who I am
-            </h3>
-            <div>
-                <p>
-                    I am a Sergeant First Class (SFC) in the US Army with 18 years of military
-                    experience and 3 overseas deployments. I have been writing JavaScript full-time
-                    for seven years and work for
-                    <a href="http://www.orbitz.com/">
-                        Orbitz
-                    </a>.</p>
-            </div>
+    <body class="white" id="prettydiff">
+        <div class="contentarea" id="page">
+            <section role="heading">
+                <h1>
+                    <svg
+                        height="2000.000000pt"
+                        id="pdlogo"
+                        preserveAspectRatio="xMidYMid meet"
+                        version="1.0"
+                        viewBox="0 0 2000.000000 2000.000000"
+                        width="2000.000000pt"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <g
+                            fill="#999"
+                            stroke="none"
+                            transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
+                            <path
+                                d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
+                    </svg>
+                    <a href="prettydiff.com.xhtml">Pretty Diff</a>
+                    - Guide: Becoming a JavaScript Rock Star (In the Real World)</h1>
+                <p id="dcolorScheme">
+                    <label class="label" for="colorScheme">Color Scheme</label>
+                    <select id="colorScheme">
+                        <option>Canvas</option>
+                        <option>Shadow</option>
+                        <option selected="selected">White</option>
+                    </select>
+                </p>
+                <p>Explore some
+                    <a href="samples.xhtml">samples</a>. For any questions, comments, requests, or feedback please join the
+                    <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff mailing list</a>
+                    or chat on
+                    <a
+                        href="https://gitter.im/prettydiff/prettydiff?utm_source=badge%26utm_medium=badge%26utm_campaign=pr-badge%26utm_content=badge">Gitter</a>. Find
+                    <a href="https://github.com/prettydiff/prettydiff">Pretty Diff on GitHub</a>.</p>
+            </section>
+            <section role="main">
+                <h2>Becoming a JavaScript Rock Star (In the Real World)</h2>
+                <div class="segment">
+                    <h3>Table of Contents</h3>
+                    <ol>
+                        <li>
+                            <a href="#realworld">In the real world</a>
+                        </li>
+                        <li>
+                            <a href="#personality">Personality</a>
+                        </li>
+                        <li>
+                            <a href="#honesty">Honesty</a>
+                        </li>
+                        <li>
+                            <a href="#confidence">Confidence</a>
+                        </li>
+                        <li>
+                            <a href="#popularity">Disregard for popularity</a>
+                        </li>
+                        <li>
+                            <a href="#criticality">Criticality in all things</a>
+                        </li>
+                        <li>
+                            <a href="#expectations">Set higher expectations</a>
+                        </li>
+                        <li>
+                            <a href="#directness">Technical directness</a>
+                        </li>
+                        <li>
+                            <a href="#whoIam">Who I am</a>
+                        </li>
+                    </ol>
+                </div>
+                <div class="segment" id="realworld">
+                    <h3>In the real world</h3>
+                    <p>Becoming a rock star developer is all about competence, capability, and
+                        personality. These are factors that often do not perfectly align to online
+                        communities. In the real world it always comes down to the ability to solve a
+                        given problem, the speed and durability with which that problem is solved, and
+                        the ability to work with others and mentor.</p>
+                    <p>In the real world a developer has to work with people. These people could be
+                        other developers, non-technical peers, corporate leadership, partner companies,
+                        clients, or others. These people always notice how quickly a given effort is
+                        completed relative to other developers and how well the solution works once
+                        completed. These factors go towards a phenomenon called
+                        <em>competence</em>. Competence is always under evaluation.</p>
+                    <p>In online communities the factors that govern success are generally tethered
+                        to qualities of branding, product, and self-marketing. In the real world these
+                        factors are nice to have, but are largely insignificant compared to the 3 prior
+                        mentioned primary qualities. When self-promotion becomes an individual's most
+                        enduring quality the individual will generally be labeled as political,
+                        unfocused, or insensitive. Nobody in real world want's to work with people like
+                        this, even other people sharing this same quality.</p>
+                </div>
+                <div class="segment" id="personality">
+                    <h3>Personality</h3>
+                    <p>Competence alone is not enough. The ability to receive a favorable evaluation
+                        from people in the real world is directly biased by the developer's personality.
+                        For example, an asshole will never be held up to the same level of capability as
+                        a slightly less competent developer who is always pleasant to work with. This is
+                        an internal bias that everybody carries and never goes away. In this manner
+                        personality is a more important quality than technical competence, because
+                        personality is generally easier to observe and faster to evaluate.</p>
+                    <p>The biggest challenge regarding personality is the ability to listen to and
+                        perceive the non-verbal communication of those around you. In other words if you
+                        cannot determine if you are an asshole by reading the people around you then you
+                        probably are an asshole. People who struggle in this regard are almost
+                        helplessly handicapped from becoming a rock star in the real world.</p>
+                    <p>Niceness is not directly related to a rock star personality. A rock star is
+                        capable of exercising equal parts charm and authoritarian decisiveness depending
+                        upon the given situation. The goal is often not to make friends, and certainly
+                        not to make enemies, but to accomplish the current given task efficiently and
+                        build enduring relationships in the process.</p>
+                </div>
+                <div class="segment" id="honest">
+                    <h3>Honesty</h3>
+                    <p>A rock star strives for honesty always. Honesty is a challenge that many
+                        people frequently fail at. Total honesty requires a dedicated alertness into an
+                        individual's own three forms of communication: verbal, non-verbal, and desire.
+                        Verbal honesty relates to the truthfulness of what a person says. Non-verbal
+                        honesty relates to a person's body language when speaking and the physical
+                        responses when listening or receiving communication both verbal and non-verbal.
+                        Honesty of desire describes a person's goals, intentions, and motivations.</p>
+                    <p>Honesty in desire is something many people struggle with. This struggle is
+                        frequently referred by terms like
+                        <em>cognitive complexity</em>
+                        and possibly
+                        <em>cognitive conservatism</em>. This is challenging because many people are not
+                        honest with themselves. For instance a person may claim to make a decision for
+                        the health of the product when instead they could be trying to impress a boss or
+                        complete an unrelated objective. This internalized self-dishonesty results in a
+                        pattern of behaviors that leave observers confused and filled with doubt or
+                        remorse.</p>
+                    <p>It is challenging to detect honesty, and it is much easier to detect
+                        dishonesty. This likely explains why external observers are frequently more apt
+                        at detecting an individual's internal confusion than the individual. Dishonesty
+                        is the greatest enemy of trust and rock star is somebody who has no trouble
+                        inspiring trust. To avoid dishonesty means harmonizing verbal communications,
+                        non-verbal communications, and desires.</p>
+                    <p>Once a total communication harmony is achieved positive behaviors replace
+                        distracting behaviors, particularly: humbleness, dedication, and focus. It also
+                        means a person is quick to accept and volunteer blame for failure and a
+                        willingness to ask for mentorship. Rock stars are quick to admit when they have
+                        shortcomings and welcome assistance.</p>
+                </div>
+                <div class="segment" id="confidence">
+                    <h3>Confidence</h3>
+                    <p>An unintended benefit to total honesty is
+                        <em>confidence</em>. Even in the event that probability of failure is extremely
+                        high a rock star is willing to openly discuss the perception of failure
+                        particularly when not politically expedient. In other words a rock star remains
+                        maintains confidence long after doubts are exposed.</p>
+                    <p>A common and extremely destructive quality that frequently emerges in the
+                        absence of confidence is
+                        <em>defensiveness</em>. Like with other desires an individual may not realize
+                        when they are being defensive, but everybody around them will see it with
+                        crystal clear clarity. Emotional defensiveness is an unproductive selfish
+                        quality that distracts from a team effort.</p>
+                    <p>High confidence is required to challenge deeply held beliefs whether those
+                        beliefs come from superiors, peers, or the rock star themself. This challenge is
+                        called
+                        <em>critical evaluation</em>. The ability to examine a new approach and
+                        determine whether this new approach should replace conventions universally
+                        taught by a highly respected university are often necessary and can cause
+                        friction. The ability to perform this evaluation requires technical competence,
+                        confidence, and a devotion to product and the current technology. It also
+                        requires an ability to challenge popular concepts.</p>
+                </div>
+                <div class="segment" id="popularity">
+                    <h3>Disregard for popularity</h3>
+                    <p>Imagine, if you will, a bell curve diagram. If you need help there are plenty
+                        examples online of the bell curve. In a measure of trends and competence the
+                        substantial bulk of a given demographic will (almost universally) reside close
+                        to the average of those surveyed. The exceedingly incompetent, as statistically
+                        measured against the entire body of sample data, will be on one extreme end of
+                        the bell curve and the rock star on the opposite end of the bell curve.</p>
+                    <p>The important consideration in examining data against a bell curve is that
+                        both the incompetent people and the rock stars tend to be extreme minorities
+                        once a large enough sample of persons is evaluated. This means there is
+                        something different or irregular about rock stars that the general body of
+                        developers don't have. This single special factor can be summarized as a
+                        willingness to do things that are not popular. If, as a developer, you only work
+                        towards popular concepts you are statically incapable of ever becoming a rock
+                        star.</p>
+                    <p>This makes sense if considered from the perspective of technical challenges.
+                        Challenging things will always be less popular, because challenge suggests
+                        opportunity for failure, which in turn causes fear. A rock star developer will
+                        tend to be both risk adverse and simultaneously really good at risk analysis.
+                        That combination of factors eliminates the fear that comes with challenges and
+                        allows the rock star the willingness and capability average developers do not
+                        possess.</p>
+                    <p>My favorite example of this concept is
+                        <em>jQuery</em>. A few years ago the jQuery framework achieved religious status.
+                        Many developers required this tool and could not do their jobs without it. The
+                        religious concept was so deeply embedded that many developers would never
+                        consider questioning the use of jQuery, as in such a though process would never
+                        arise. I had several developers refuse to attend job interviews once they became
+                        aware there would be a technical evaluation and they could not use jQuery. A
+                        rock star developer would either or already have the skills to operate without
+                        this tool or would be willing to rise to the challenge.</p>
+                </div>
+                <div class="segment" id="criticality">
+                    <h3>Criticality in all things</h3>
+                    <p>Perhaps the most obvious trait that comprises a rock star is the ability to
+                        solve problems that few other people are capable of solving, but doing so
+                        quickly with a simple and elegant approach. How to arrive to that potential is
+                        certainly less than obvious. A significant factor is the ability to quickly form
+                        independent and original conclusions. That means answering the
+                        <em>why</em>
+                        questions with confidence and with profound individuality. This is referred to
+                        as
+                        <em>critical decision making</em>. Being critical absolutely reinforces decision
+                        making that has no regard for popularity.</p>
+                    <p>For an extreme minority of any given social population this sort of critical
+                        reasoning comes naturally. The
+                        <a href="https://en.wikipedia.org/wiki/Myers%E2%80%93Briggs_Type_Indicator">Meyers-Briggs Type Indicator</a>
+                        personality describes these sort of natural engineers as INTP and INTJ
+                        personality types who combined comprise 5-9% of any larger group. Other
+                        personality segments must tirelessly work to achieve a critical focus and often
+                        in defiance of their most inclusive social reference group.</p>
+                    <p>A continuous critical focus allows a person a greater ability to perceive any
+                        problem according to its technical merits without distraction from popular
+                        conclusions. For many people this is extremely challenging because most
+                        personality types strive to achieve peace and tranquility through arriving at a
+                        perceived social mean. A critical focus allows a person to separate the social
+                        merits of a proposed solution from technical merits, which is frequently seen as
+                        challenging and disruptive. As a developer an extreme critical nature is often
+                        met with frustration from less critical personalities operating in a technical
+                        capacity and often applauded by non-technical decision makers. This is perhaps
+                        the most striking difference between a real world rockstar and an online rock
+                        star.</p>
+                    <p>The ability to separate the technical merits from the social merits of a
+                        proposed solution and challenge opinions directly is not always welcome in many
+                        online communities. In the professional world this is often an extremely well
+                        valued trait frequently referred to as
+                        <em>positive confrontations</em>. The ability to focus on the given problem
+                        directly and put politics aside is absolutely required to achieve rock star
+                        status.</p>
+                    <p>In regard for political versus technical merit it is generally easy to weed
+                        out weaker engineers from the actual and potential rock stars. When a technical
+                        conversation ever shifts focus to a developer in the conversation instead of the
+                        technology the conversation has immediately failed, and can safely be referred
+                        to an
+                        <a href="https://en.wikipedia.org/wiki/Ad_hominem">ad hominem</a>. Often when a
+                        technical conversation becomes stuck in political muck it is often because one
+                        or more developers in the conversation lacks confidence to continue approaching
+                        the conversation independently. From a critical perspective a technical opinion,
+                        even if wrong, is more valuable than competing opinions if it continues to stand
+                        its ground with original argumentation and is never distracted by less technical
+                        considerations.</p>
+                    <p>Critical personalities strongly avoid absolute language. Absolute language
+                        suggests that a provided opinion is formally complete without need for challenge
+                        and frequently makes use of words like:
+                        <em>always</em>,
+                        <em>never</em>,
+                        <em>will</em>,
+                        <em>must</em>,
+                        <em>right</em>, and
+                        <em>wrong</em>. Critical thinking requires that every decision point is open to
+                        challenge and independent consideration. I recently had a conversation that
+                        suggested looping through arrays is always inferior to using a
+                        <em>foreach</em>
+                        method. A rock star developer would consider each option uniquely against a
+                        currently problem and make an independent decision. Rock stars generally
+                        perceive absolute opinions as less mature or an inferior reasoning.</p>
+                </div>
+                <div class="segment" id="expectations">
+                    <h3>Set higher expectations</h3>
+                    <p>Rock stars set unpopular high expectations that may impede progress in the
+                        short-term but dramatically increase developer productivity in the long term.
+                        Strong standards will unintentionally lower maintenance churn. A rock star will
+                        limit the high standards they wish to impose. A real rock star does not set
+                        standards merely for the point of writing standards or fulfilling a personality
+                        disorder, such as
+                        <em>Obsessive Compulsive Disorder</em>.</p>
+                    <p>The primary difference between the high standards set by a rock star versus
+                        those set by somebody with OCD is that a rock star can speak to qualities of
+                        risk analysis, performance, profiling, searchability, and understandability
+                        using research and quantitative data. The high standards set by an OCD type are
+                        generally motivated by stylistic concerns (code vanity), irrational ordering
+                        conventions, and other emotionally motivated factors that are hard to quantify.</p>
+                    <p>I like to use the tool
+                        <em>JSHint</em>
+                        as an example. It is far more popular than the older JSLint and it is also less
+                        terse and more flexible. JSLint is a far stricter tool, which makes it far less
+                        popular, but any code that passes JSLint will always pass JSHint. The common
+                        argument for favoring JSHint against JSLint is something along the lines of
+                        "It's too opinionated.", which is completely misleading because JSLint is
+                        extremely opinionated about its options and settings and so is JSHint. For many
+                        years JSLint's motto was, "it will hurt your feelings."</p>
+                </div>
+                <div class="segment" id="directness">
+                    <h3>Technical directness</h3>
+                    <p>Rock star developers are able to approach problems directly and reason about
+                        related technologies with a rare and excessive depth. For instance, HTML is
+                        often regarded as s simplistic technology demanding of trivial care. A rock star
+                        client-side web developer would separate themselves from average developers by
+                        learning more about HTML by studying how markup languages are formed and solving
+                        for various language design problems and identifying constraints. A greater
+                        depth of expertise allows a superior understanding of advanced concerns like
+                        accessibility and semantics that average developers would likely miss
+                        completely. It provides a deep understanding of why the Document Object Model
+                        (DOM) was designed the way it is how it actually works. I remember a recent
+                        conversation I had with somebody representing a major standards body who
+                        represented the DOM standards specification and did not have this history. Their
+                        understanding of the technology they represented was shallow and less complete
+                        causing major missteps in their reasoning about this technology.</p>
+                    <p>Learning JavaScript directly means the ability to write in that language
+                        without assistance from additional technologies and understanding why certain
+                        code design decisions work better than alternative decisions. It also means
+                        learning about how the language works and what makes it different from other
+                        languages. It requires studying the language's history and learning why the
+                        language was designed as it is and the ability to independently consider the
+                        pros and cons of those decisions.</p>
+                    <p>A rock star JavaScript developer is completely comfortable writing JavaScript
+                        without frameworks and reasoning about the DOM directly. They fully understand
+                        the language's scope model and separately understand the model of inheritance
+                        and why certain features of other languages compete with this scope model. They
+                        understand the actual value and weaknesses of popular JavaScript frameworks
+                        before ever recommending their use.</p>
+                </div>
+                <div class="segment" id="whoIam">
+                    <h3>Who I am</h3>
+                    <p>
+                        I am a Sergeant First Class (SFC) in the US Army with 18 years of military
+                        experience and 3 overseas deployments. I have been writing JavaScript full-time
+                        for seven years and work for
+                        <a href="http://www.expedia.com/">
+                            Expedia
+                        </a>.</p>
+                </div>
+            </section>
         </div>
         <script src="../api/dom.js" type="application/javascript"></script>
     </body>

@@ -3,7 +3,7 @@
 <html xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
     <head>
         <title>Pretty Diff - The difference tool</title>
-        <link href="diffview.css" media="all" rel="stylesheet" type="text/css"/>
+        <link href="css/index.css" media="all" rel="stylesheet" type="text/css"/>
         <link href='http://prettydiff.com/samples.php' rel='canonical' type='application/xhtml+xml'/>
         <link href="http://prettydiff.com/images/favicon.ico" rel="icon" type="image/x-icon"/>
         <link href="http://prettydiff.com/labels.rdf" rel="meta" title="ICRA labels" type="application/rdf+xml"/>
@@ -22,165 +22,173 @@
         <meta content="application/javascript" http-equiv="content-script-type"/>
         <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E" name="google-site-verification"/>
     </head>
-    <body class="white" id="samples">
-        <h1>
-            <svg height="2000.000000pt"
-                    preserveAspectRatio="xMidYMid meet"
-                    version="1.0"
-                    viewBox="0 0 2000.000000 2000.000000"
-                    width="2000.000000pt"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <g fill="#999"
-                        stroke="none"
-                        transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
-                        <path d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
-                </svg>
-            <a href="http://prettydiff.com/">Pretty Diff</a>
-            - Samples</h1>
-        <p id="dcolorScheme"><label class="label" for="colorScheme">Color
-            Scheme</label>
-            <select id="colorScheme"><option>Canvas</option>
-                <option>Shadow</option>
-                <option selected="selected">White</option></select>
-        </p>
-        <h2>Try these samples to get a feel for how Pretty Diff works.</h2>
-        <ol id="pdsamples">
-            <li>
-                <p><a href="http://prettydiff.com/?m=diff&amp;s=http://prettydiff.com/prettydiff.js&amp;d=http://prettydiff.com/prettydiff-min.js">Diff
-                    a minified JavaScript source from Pretty Diff to a duplicate but
-                    unminified code source.</a></p>
-                <div><p>Raw code used for this example:</p>
-                    <ul>
-                        <li><a href="http://prettydiff.com/prettydiff.js">http://prettydiff.com/prettydiff.js</a></li>
-                        <li><a href="http://prettydiff.com/prettydiff-min.js">http://prettydiff.com/prettydiff-min.js</a></li>
-                    </ul>
-                </div>
-            </li>
-            <li>
-                <p><a href="http://prettydiff.com/?m=diff&amp;l=html&amp;s=http://nodejs.org/docs/v0.6.15/api/all.html&amp;d=http://nodejs.org/docs/v0.6.13/api/all.html">Diff
-                    complete Node.js v0.6.15 documentation to v0.6.13 documentation.
-                    Warning, big execution!!</a></p>
-                <div><p>Raw code used for this example:</p>
-                    <ul>
-                        <li><a href="http://nodejs.org/docs/v0.6.15/api/all.html">http://nodejs.org/docs/v0.6.15/api/all.html</a></li>
-                        <li><a href="http://nodejs.org/docs/v0.6.13/api/all.html">http://nodejs.org/docs/v0.6.13/api/all.html</a></li>
-                    </ul>
-                </div>
-            </li>
-            <li>
-                <p><a href="http://prettydiff.com/?m=diff&amp;s=http://code.jquery.com/jquery-1.7.2.js&amp;d=http://code.jquery.com/jquery-1.7.2.min.js">Diff
-                    a JavaScript source from jQuery to obfuscated code. Demonstrates why I
-                    dislike obfuscation. Warning, big execution!!</a></p>
-                <div><p>Raw code used for this example:</p>
-                    <ul>
-                        <li><a href="http://code.jquery.com/jquery-1.7.2.js">http://code.jquery.com/jquery-1.7.2.js</a></li>
-                        <li><a href="http://code.jquery.com/jquery-1.7.2.min.js">http://code.jquery.com/jquery-1.7.2.min.js</a></li>
-                    </ul>
-                </div>
-            </li>
-            <li>
-                <p><a href="http://prettydiff.com/?m=diff&amp;s=http://prettydiff.com/&amp;d=http://prettydiff.com/prettydiff.com.xhtml">Diff
-                    a minified HTML sample to a similar different minified HTML source.</a></p>
-                <div><p>Raw code used for this example:</p>
-                    <ul>
-                        <li><a href="http://prettydiff.com/">http://prettydiff.com/</a></li>
-                        <li><a href="http://prettydiff.com/prettydiff.com.xhtml">http://prettydiff.com/prettydiff.com.xhtml</a></li>
-                    </ul>
-                </div>
-            </li>
-            <li>
-                <p><a href="http://prettydiff.com/?m=beautify&amp;s=http://prettydiff.com/unit_tests/beautification_javascript_obfuscated_adobe.txt">Beautify
-                    (pretty-print) a large JavaScript code sample.</a></p>
-                <div><p>Raw code used for this example:</p>
-                    <ul>
-                        <li><a href="http://prettydiff.com/unit_tests/beautification_javascript_obfuscated_adobe.txt">http://prettydiff.com/unit_tests/beautification_javascript_obfuscated_adobe.txt</a></li>
-                    </ul>
-                </div>
-            </li>
-            <li>
-                <p><a href="http://prettydiff.com/?m=beautify&amp;jscorrect&amp;s=http://prettydiff.com/unit_tests/beautification_javascript_obfuscated_tvly.txt">Beautify
-                    (pretty-print) a large JavaScript code sample with some auto-correction
-                    for missing or sloppy syntax.</a></p>
-                <div><p>Raw code used for this example:</p>
-                    <ul>
-                        <li><a href="http://prettydiff.com/unit_tests/beautification_javascript_obfuscated_tvly.txt">http://prettydiff.com/unit_tests/beautification_javascript_obfuscated_tvly.txt</a></li>
-                    </ul>
-                </div>
-            </li>
-            <li>
-                <p><a href="http://prettydiff.com/?m=beautify&amp;jsscope&amp;c=white&amp;s=http://prettydiff.com/lib/markup_beauty.js">Scope
-                    analysis of a deeply nested JavaScript code sample.</a></p>
-                <div><p>Raw code used for this example:</p>
-                    <ul>
-                        <li><a href="http://prettydiff.com/lib/markup_beauty.js">http://prettydiff.com/lib/markup_beauty.js</a></li>
-                    </ul>
-                </div>
-            </li>
-            <li>
-                <p><a href="http://prettydiff.com/?m=beautify&amp;s=http://stackoverflow.com/">Beautify
-                    (pretty-print) the HTML of the Stackoverflow.com homepage as XML.</a></p>
-                <div><p>Raw code used for this example:</p>
-                    <ul>
-                        <li><a href="http://stackoverflow.com/">http://stackoverflow.com/</a></li>
-                    </ul>
-                </div>
-            </li>
-            <li>
-                <p><a href="http://prettydiff.com/?m=beautify&amp;s=http://w3schools.com/jsref/jsref_obj_regexp.asp&amp;l=html">Beautify
-                    (pretty-print) the HTML of the W3Schools JavaScript RegExp reference as
-                    HTML.</a></p>
-                <div><p>Raw code used for this example:</p>
-                    <ul>
-                        <li><a href="http://w3schools.com/jsref/jsref_obj_regexp.asp">http://w3schools.com/jsref/jsref_obj_regexp.asp</a></li>
-                    </ul>
-                </div>
-            </li>
-            <li>
-                <p><a href="http://prettydiff.com/?m=beautify&amp;s=http://nodejs.org/docs/v0.6.15/api/all.html">Beautify
-                    (pretty-print) the HTML of the full Node.js documentation.</a></p>
-                <div><p>Raw code used for this example:</p>
-                    <ul>
-                        <li><a href="http://nodejs.org/docs/v0.6.15/api/all.html">http://nodejs.org/docs/v0.6.15/api/all.html</a></li>
-                    </ul>
-                </div>
-            </li>
-            <li>
-                <p><a href="http://prettydiff.com/?m=beautify&amp;s=http://prettydiff.com/unit_tests/beautification_javascript_jsx.txt">Beautify
-                    (pretty-print) React JSX format.</a></p>
-                <div><p>Raw code used for this example:</p>
-                    <ul>
-                        <li><a href="http://prettydiff.com/unit_tests/beautification_javascript_jsx.txt">http://prettydiff.com/unit_tests/beautification_javascript_jsx.txt</a></li>
-                    </ul>
-                </div>
-            </li>
-            <li>
-                <p><a href="http://prettydiff.com/?m=minify&amp;s=http://w3schools.com/jsref/jsref_obj_regexp.asp&amp;l=html">Minify
-                    the HTML of the W3Schools JavaScript RegExp reference as HTML.</a></p>
-                <div><p>Raw code used for this example:</p>
-                    <ul>
-                        <li><a href="http://w3schools.com/jsref/jsref_obj_regexp.asp">http://w3schools.com/jsref/jsref_obj_regexp.asp</a></li>
-                    </ul>
-                </div>
-            </li>
-            <li>
-                <p><a href="http://prettydiff.com/?m=minify&amp;s=http://mailmarkup.org/hcl/hcl1_0-documentation.xsd">Minify
-                    a large XML Schema with verbose annotations.</a></p>
-                <div><p>Raw code used for this example:</p>
-                    <ul>
-                        <li><a href="http://mailmarkup.org/hcl/hcl1_0-documentation.xsd">http://mailmarkup.org/hcl/hcl1_0-documentation.xsd</a></li>
-                    </ul>
-                </div>
-            </li>
-            <li>
-                <p><a href="http://prettydiff.com/?m=minify&amp;s=http://nodejs.org/docs/v0.6.15/api/all.html&amp;l=html">Minify
-                    the HTML of the full Node.js documentation.</a></p>
-                <div><p>Raw code used for this example:</p>
-                    <ul>
-                        <li><a href="http://nodejs.org/docs/v0.6.15/api/all.html">http://nodejs.org/docs/v0.6.15/api/all.html</a></li>
-                    </ul>
-                </div>
-            </li>
-        </ol>
+    <body class="white" id="prettydiff">
+        <div class="contentarea" id="samples">
+            <section role="heading">
+                <h1>
+                    <svg height="2000.000000pt" id="pdlogo" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
+                            <path
+                                d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
+                    </svg>
+                    <a href="prettydiff.com.xhtml">Pretty Diff</a>
+                    - Samples</h1>
+                <p id="dcolorScheme">
+                    <label class="label" for="colorScheme">Color Scheme</label>
+                    <select id="colorScheme">
+                        <option>Canvas</option>
+                        <option>Shadow</option>
+                        <option selected="selected">White</option>
+                    </select>
+                </p>
+                <p>Explore some
+                    <a href="samples.xhtml">samples</a>. For any questions, comments, requests, or feedback please join the
+                    <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff mailing list</a>
+                    or chat on
+                    <a href="https://gitter.im/prettydiff/prettydiff?utm_source=badge%26utm_medium=badge%26utm_campaign=pr-badge%26utm_content=badge">Gitter</a>. Find
+                    <a href="https://github.com/prettydiff/prettydiff">Pretty Diff on GitHub</a>.</p>
+            </section>
+            <section role="main">
+                <h2>Try these samples to get a feel for how Pretty Diff works.</h2>
+                <ol id="pdsamples" class="segment">
+                    <li>
+                        <p><a href="http://prettydiff.com/?m=diff&amp;s=http://prettydiff.com/prettydiff.js&amp;d=http://prettydiff.com/prettydiff-min.js">Diff
+                            a minified JavaScript source from Pretty Diff to a duplicate but
+                            unminified code source.</a></p>
+                        <div><p>Raw code used for this example:</p>
+                            <ul>
+                                <li><a href="http://prettydiff.com/prettydiff.js">http://prettydiff.com/prettydiff.js</a></li>
+                                <li><a href="http://prettydiff.com/prettydiff-min.js">http://prettydiff.com/prettydiff-min.js</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <p><a href="http://prettydiff.com/?m=diff&amp;l=html&amp;s=http://nodejs.org/docs/v0.6.15/api/all.html&amp;d=http://nodejs.org/docs/v0.6.13/api/all.html">Diff
+                            complete Node.js v0.6.15 documentation to v0.6.13 documentation.
+                            Warning, big execution!!</a></p>
+                        <div><p>Raw code used for this example:</p>
+                            <ul>
+                                <li><a href="http://nodejs.org/docs/v0.6.15/api/all.html">http://nodejs.org/docs/v0.6.15/api/all.html</a></li>
+                                <li><a href="http://nodejs.org/docs/v0.6.13/api/all.html">http://nodejs.org/docs/v0.6.13/api/all.html</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <p><a href="http://prettydiff.com/?m=diff&amp;s=http://code.jquery.com/jquery-1.7.2.js&amp;d=http://code.jquery.com/jquery-1.7.2.min.js">Diff
+                            a JavaScript source from jQuery to obfuscated code. Demonstrates why I
+                            dislike obfuscation. Warning, big execution!!</a></p>
+                        <div><p>Raw code used for this example:</p>
+                            <ul>
+                                <li><a href="http://code.jquery.com/jquery-1.7.2.js">http://code.jquery.com/jquery-1.7.2.js</a></li>
+                                <li><a href="http://code.jquery.com/jquery-1.7.2.min.js">http://code.jquery.com/jquery-1.7.2.min.js</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <p><a href="http://prettydiff.com/?m=diff&amp;s=http://prettydiff.com/&amp;d=http://prettydiff.com/prettydiff.com.xhtml">Diff
+                            a minified HTML sample to a similar different minified HTML source.</a></p>
+                        <div><p>Raw code used for this example:</p>
+                            <ul>
+                                <li><a href="http://prettydiff.com/">http://prettydiff.com/</a></li>
+                                <li><a href="http://prettydiff.com/prettydiff.com.xhtml">http://prettydiff.com/prettydiff.com.xhtml</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <p><a href="http://prettydiff.com/?m=beautify&amp;s=http://prettydiff.com/unit_tests/beautification_javascript_obfuscated_adobe.txt">Beautify
+                            (pretty-print) a large JavaScript code sample.</a></p>
+                        <div><p>Raw code used for this example:</p>
+                            <ul>
+                                <li><a href="http://prettydiff.com/unit_tests/beautification_javascript_obfuscated_adobe.txt">http://prettydiff.com/unit_tests/beautification_javascript_obfuscated_adobe.txt</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <p><a href="http://prettydiff.com/?m=beautify&amp;jscorrect&amp;s=http://prettydiff.com/unit_tests/beautification_javascript_obfuscated_tvly.txt">Beautify
+                            (pretty-print) a large JavaScript code sample with some auto-correction
+                            for missing or sloppy syntax.</a></p>
+                        <div><p>Raw code used for this example:</p>
+                            <ul>
+                                <li><a href="http://prettydiff.com/unit_tests/beautification_javascript_obfuscated_tvly.txt">http://prettydiff.com/unit_tests/beautification_javascript_obfuscated_tvly.txt</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <p><a href="http://prettydiff.com/?m=beautify&amp;jsscope&amp;c=white&amp;s=http://prettydiff.com/lib/markup_beauty.js">Scope
+                            analysis of a deeply nested JavaScript code sample.</a></p>
+                        <div><p>Raw code used for this example:</p>
+                            <ul>
+                                <li><a href="http://prettydiff.com/lib/markup_beauty.js">http://prettydiff.com/lib/markup_beauty.js</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <p><a href="http://prettydiff.com/?m=beautify&amp;s=http://stackoverflow.com/">Beautify
+                            (pretty-print) the HTML of the Stackoverflow.com homepage as XML.</a></p>
+                        <div><p>Raw code used for this example:</p>
+                            <ul>
+                                <li><a href="http://stackoverflow.com/">http://stackoverflow.com/</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <p><a href="http://prettydiff.com/?m=beautify&amp;s=http://w3schools.com/jsref/jsref_obj_regexp.asp&amp;l=html">Beautify
+                            (pretty-print) the HTML of the W3Schools JavaScript RegExp reference as
+                            HTML.</a></p>
+                        <div><p>Raw code used for this example:</p>
+                            <ul>
+                                <li><a href="http://w3schools.com/jsref/jsref_obj_regexp.asp">http://w3schools.com/jsref/jsref_obj_regexp.asp</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <p><a href="http://prettydiff.com/?m=beautify&amp;s=http://nodejs.org/docs/v0.6.15/api/all.html">Beautify
+                            (pretty-print) the HTML of the full Node.js documentation.</a></p>
+                        <div><p>Raw code used for this example:</p>
+                            <ul>
+                                <li><a href="http://nodejs.org/docs/v0.6.15/api/all.html">http://nodejs.org/docs/v0.6.15/api/all.html</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <p><a href="http://prettydiff.com/?m=beautify&amp;s=http://prettydiff.com/unit_tests/beautification_javascript_jsx.txt">Beautify
+                            (pretty-print) React JSX format.</a></p>
+                        <div><p>Raw code used for this example:</p>
+                            <ul>
+                                <li><a href="http://prettydiff.com/unit_tests/beautification_javascript_jsx.txt">http://prettydiff.com/unit_tests/beautification_javascript_jsx.txt</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <p><a href="http://prettydiff.com/?m=minify&amp;s=http://w3schools.com/jsref/jsref_obj_regexp.asp&amp;l=html">Minify
+                            the HTML of the W3Schools JavaScript RegExp reference as HTML.</a></p>
+                        <div><p>Raw code used for this example:</p>
+                            <ul>
+                                <li><a href="http://w3schools.com/jsref/jsref_obj_regexp.asp">http://w3schools.com/jsref/jsref_obj_regexp.asp</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <p><a href="http://prettydiff.com/?m=minify&amp;s=http://mailmarkup.org/hcl/hcl1_0-documentation.xsd">Minify
+                            a large XML Schema with verbose annotations.</a></p>
+                        <div><p>Raw code used for this example:</p>
+                            <ul>
+                                <li><a href="http://mailmarkup.org/hcl/hcl1_0-documentation.xsd">http://mailmarkup.org/hcl/hcl1_0-documentation.xsd</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                    <li>
+                        <p><a href="http://prettydiff.com/?m=minify&amp;s=http://nodejs.org/docs/v0.6.15/api/all.html&amp;l=html">Minify
+                            the HTML of the full Node.js documentation.</a></p>
+                        <div><p>Raw code used for this example:</p>
+                            <ul>
+                                <li><a href="http://nodejs.org/docs/v0.6.15/api/all.html">http://nodejs.org/docs/v0.6.15/api/all.html</a></li>
+                            </ul>
+                        </div>
+                    </li>
+                </ol>
+            </section>
+        </div>
         <script src="api/dom.js" type="application/javascript"></script>
         <script src="lib/safeSort.js" type="application/javascript"></script>
         <script src="lib/csspretty.js" type="application/javascript"></script>

@@ -1,1 +1,209 @@
-<?xml version='1.0' encoding='UTF-8' ?> <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'> <html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"> <head> <title>Pretty Diff - Overview</title> <link href="diffview.css" media="all" rel="stylesheet" type="text/css"/> <link href="http://prettydiff.com/overview.xhtml" rel="canonical" type="application/xhtml+xml"/> <link href="http://prettydiff.com/images/favicon.ico" rel="icon" type="image/x-icon"/> <link href="http://prettydiff.com/labels.rdf" rel="meta" title="ICRA labels" type="application/rdf+xml"/> <meta content="width=device-width, initial-scale=1" name="viewport"/> <meta content="index, follow" name="robots"/> <meta content="Pretty Diff - Overview" name="DC.title"/> <meta content="(pics-1.1 &#x22;http://www.icra.org/pics/vocabularyv03/&#x22; l gen true for &#x22;http://prettydiff.com&#x22; r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for &#x22;http://www.prettydiff.com&#x22; r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))" http-equiv="pics-Label"/> <meta content="Austin Cheney" name="author"/> <meta content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML." name="description"/> <meta content="Global" name="distribution"/> <meta content="en" http-equiv="Content-Language"/> <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/> <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/> <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/> <meta content="text/css" http-equiv="content-style-type"/> <meta content="application/javascript" http-equiv="content-script-type"/> <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E" name="google-site-verification"/> </head> <body class="white" id="doc"> <h1> <svg height="2000.000000pt" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg"> <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)"> <path d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g> </svg> <a href="prettydiff.com.xhtml">Pretty Diff</a> - Overview</h1> <p id="dcolorScheme"><label class="label" for="colorScheme">Color Scheme</label> <select id="colorScheme"><option>Canvas</option> <option>Shadow</option> <option selected="selected">White</option></select> </p> <p>Explore some <a href="samples.xhtml">samples</a>. For any questions, comments, requests, or feedback please join the <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff mailing list</a> or chat on Gitter: <a href="https://gitter.im/prettydiff/prettydiff?utm_source=badge%26utm_medium=badge%26utm_campaign=pr-badge%26utm_content=badge"><img alt="chat on gitter" src="images/gitter.svg"/></a>. Find <a href="https://github.com/prettydiff/prettydiff">Pretty Diff on GitHub</a>.</p> <div> <h2>Introduction</h2> <div> <h3>Motivation</h3> <p>Years ago when I was working at Travelocity we had three code environments: dev, cert, and production. The dev environment contained the latest code, the cert environment contained the latest code in a minified form, and the production environment contained minified code from the previous release. If a regression error slipped through the unit tests into production it could be hard to immediately identify against the code. Even the most intelligent diff tools proved worthless.</p> <p>Another motivation was linting in the popular <a href="http://jslint.com/">JSLint</a>. When I first needed this application tools like <a href="http://jshint.com/">JSHint</a> and <a href="http://eslint.org/">ESLint</a> did not exist. JSLint was the go to tool for validation. It complained about white space, so I needed something that could beautify code according to the rules of JSLint. As far as I could tell nothing like that existed at the time. The popular <a href="http://jsbeautifier.org/">js-beautify</a> tool could not do this at the time and was painful to extend.</p> <p>I wrote this application as a personal tool. It helped me to become a more productive coder. By having flexible pocket parsers at my disposal I could instantly beautify and compare code against a variety of needs. Never again would I have to worry if a team or tool demanded a certain kind of formatting. Instead of wasting time on unnecessary tasks that software is better suited to perform I can reserve my concentration on my challenging problems. Eventually other people found the tool useful as well and provided suggestions and recommendations that others also needed.</p> </div> <div> <h3>About the tool</h3> <p>Pretty Diff combines language parsers for popular web languages with a comparison tool to create a language aware diff tool. This tool can instantaneously compare minified code to its development counterpart.</p> <p>Since the tool contains language parsers that perform beautify (pretty print) operations a large number of features are available and many more are possible.</p> </div> <div> <h3>Wish to Contribute?</h3> <p>Writing and maintaining multiple language parsers is hard work. Sometimes help is needed to identify a defect. When defects are identified please <a href="https://github.com/prettydiff/prettydiff/issues">let the world know</a>! Pretty Diff also accepts pull requests and feature requests.</p> </div> </div> <div> <h2>Major Features</h2> <div> <ul> <li><strong>ES6 / JS2015 ready!</strong> &mdash; Pretty Diff provides support for the new technologies available in the latest version of ECMAScript.</li> <li><strong><a href="https://atom.io/">Atom.io</a> integration</strong> &mdash; Integrated directly into the popular IDE Atom.io as the default beautifier for several languages thanks to <a href="https://atom.io/packages/atom-beautify/">atom-beautify</a>.</li><li><strong>React JSX format support</strong> &mdash; JSX format can be a real challenge to parse and beautify. It is XML embedded within JavaScript that can then be embedded within HTML. Pretty Diff has this covered with complete support. Read this guide for information on how Pretty Diff accomplished <a href="guide/react_jsx.xhtml">JSX support</a>.</li> <li><strong>LESS and SCSS (Sass) CSS support</strong> &mdash; Pretty Diff's <a href="lib/csspretty.js">CSS parser</a> is fully aware that CSS can be extended in support for more powerful languages. This support has earned Pretty Diff inclusion to the <a href="https://github.com/Glavin001/atom-beautify/">atom-beautify</a> project for the popular IDE <a href="https://atom.io/">Atom.io</a>.</li> <li><strong>Command Line</strong> &mdash; According to my stats Pretty Diff appears to be several times more popular on the command line. Pretty Diff provides a handy library, api/node-local.js, that is <a href="http://nodejs.org/">Node.js</a> and <a href="https://iojs.org/en/index.html">io.js</a> compatible. The command line operation can read/write files and even recursively crawl entire directory trees. This could be helpful when you need to compare dependencies by project version. Read this handy guide for <a href="guide/diffcli.xhtml">examples and instructions</a>.</li> <li><strong>jsscope</strong> &mdash; Ever curious where a variable is declared in a mess of large code? Ever wish you could more easily understand closure and lexical scope? The jsscope feature provides colorful output to identify scope by color and color variables by the scope they are declared. Read these guides about <a href="guide/closure">closure with jsscope</a> and <a href="guide/jshtml.xhtml">generating color JavaScript</a> for examples and instructions.</li> <li><strong>style guide</strong> &mdash; There is a fantastic tool called <a href="http://jscs.info/">JSCS</a> that validates code against a variety of style guide rules. Conformance to many of these rules can be easily automated. Pretty Diff added support for style guides which bundle a variety of option settings so that when used with JSCS code authors can focus on more important decisions related to style validation. Read the Pretty Diff <a href="guide/styleguide.xhtml">guide</a> for support and documentation. Pretty Diff is always willing to support additional style guides. If you wish for your organization's style guide to be presented just open an issue on <a href="https://github.com/prettydiff/prettydiff/issues">Github</a>.</li> <li><strong>markup tag ignore</strong> &mdash; When beautifying markup sometimes there are elements that should not be altered. This is particularly true for any element that receives a CSS rule of <em>white-space: pre</em>. Pretty Diff provides this support via a data attribute. Read the <a href="guide/tag_ignore.xhtml">tag ignore guide</a> for details.</li> <li><strong>intelligent markup beautification</strong> &mdash; White space in XML and HTML is a text node. Pretty Diff is aware that accidentally creating these text nodes can introduce problems when using the DOM or rendering content to the user. Intelligent beautification is a foundational concern of markup parsing in both the beautification and minification processes.</li> <li><strong>JavaScript auto-correct</strong> &mdash; Missing curly braces, missing semicolons, and other things can make code really hard to read and guess at the author's intentions. Pretty Diff can supply corrections to the code for these issues. For more information read the <a href="guide/jscorrect.xhtml">details</a> and the <a href="documentation.xhtml#correct">documentation</a>.</li> </ul> </div> </div> <script src="prettydiff.js" type="application/javascript"></script> <script src="api/dom.js" type="application/javascript"></script> </body> </html>
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Pretty Diff - Overview</title>
+        <link href="css/index.css" media="all" rel="stylesheet" type="text/css"/>
+        <link
+            href="http://prettydiff.com/overview.xhtml"
+            rel="canonical"
+            type="application/xhtml+xml"/>
+        <link
+            href="http://prettydiff.com/images/favicon.ico"
+            rel="icon"
+            type="image/x-icon"/>
+        <link
+            href="http://prettydiff.com/labels.rdf"
+            rel="meta"
+            title="ICRA labels"
+            type="application/rdf+xml"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <meta content="index, follow" name="robots"/>
+        <meta content="Pretty Diff - Overview" name="DC.title"/>
+        <meta
+            content="(pics-1.1 &#x22;http://www.icra.org/pics/vocabularyv03/&#x22; l gen true for &#x22;http://prettydiff.com&#x22; r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for &#x22;http://www.prettydiff.com&#x22; r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))"
+            http-equiv="pics-Label"/>
+        <meta content="Austin Cheney" name="author"/>
+        <meta
+            content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML."
+            name="description"/>
+        <meta content="Global" name="distribution"/>
+        <meta content="en" http-equiv="Content-Language"/>
+        <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/>
+        <meta content="text/css" http-equiv="content-style-type"/>
+        <meta content="application/javascript" http-equiv="content-script-type"/>
+        <meta
+            content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
+            name="google-site-verification"/>
+    </head>
+    <body class="white" id="prettydiff">
+        <div class="contentarea" id="documentation">
+            <section role="heading">
+                <h1>
+                    <svg height="2000.000000pt" id="pdlogo" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
+                            <path
+                                d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
+                    </svg>
+                    <a href="prettydiff.com.xhtml">Pretty Diff</a>
+                    - Overview</h1>
+                <p id="dcolorScheme">
+                    <label class="label" for="colorScheme">Color Scheme</label>
+                    <select id="colorScheme">
+                        <option>Canvas</option>
+                        <option>Shadow</option>
+                        <option selected="selected">White</option>
+                    </select>
+                </p>
+                <p>Explore some
+                    <a href="samples.xhtml">samples</a>. For any questions, comments, requests, or feedback please join the
+                    <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff mailing list</a>
+                    or chat on
+                    <a href="https://gitter.im/prettydiff/prettydiff?utm_source=badge%26utm_medium=badge%26utm_campaign=pr-badge%26utm_content=badge">Gitter</a>. Find
+                    <a href="https://github.com/prettydiff/prettydiff">Pretty Diff on GitHub</a>.</p>
+            </section>
+            <section role="main" id="page">
+                <div>
+                    <h2>Introduction</h2>
+                    <div class="segment">
+                        <h3>Motivation</h3>
+                        <p>Years ago when I was working at Travelocity we had three code environments:
+                            dev, cert, and production. The dev environment contained the latest code, the
+                            cert environment contained the latest code in a minified form, and the
+                            production environment contained minified code from the previous release. If a
+                            regression error slipped through the unit tests into production it could be hard
+                            to immediately identify against the code. Even the most intelligent diff tools
+                            proved worthless.</p>
+                        <p>Another motivation was linting in the popular
+                            <a href="http://jslint.com/">JSLint</a>. When I first needed this application tools like
+                            <a href="http://jshint.com/">JSHint</a>
+                            and
+                            <a href="http://eslint.org/">ESLint</a>
+                            did not exist. JSLint was the go to tool for validation. It complained about
+                            white space, so I needed something that could beautify code according to the
+                            rules of JSLint. As far as I could tell nothing like that existed at the time.
+                            The popular
+                            <a href="http://jsbeautifier.org/">js-beautify</a>
+                            tool could not do this at the time and was painful to extend.</p>
+                        <p>I wrote this application as a personal tool. It helped me to become a more
+                            productive coder. By having flexible pocket parsers at my disposal I could
+                            instantly beautify and compare code against a variety of needs. Never again
+                            would I have to worry if a team or tool demanded a certain kind of formatting.
+                            Instead of wasting time on unnecessary tasks that software is better suited to
+                            perform I can reserve my concentration on my challenging problems. Eventually
+                            other people found the tool useful as well and provided suggestions and
+                            recommendations that others also needed.</p>
+                    </div>
+                    <div class="segment">
+                        <h3>About the tool</h3>
+                        <p>Pretty Diff combines language parsers for popular web languages with a
+                            comparison tool to create a language aware diff tool. This tool can
+                            instantaneously compare minified code to its development counterpart.</p>
+                        <p>Since the tool contains language parsers that perform beautify (pretty print)
+                            operations a large number of features are available and many more are possible.</p>
+                    </div>
+                    <div class="segment">
+                        <h3>Wish to Contribute?</h3>
+                        <p>Writing and maintaining multiple language parsers is hard work. Sometimes
+                            help is needed to identify a defect. When defects are identified please
+                            <a href="https://github.com/prettydiff/prettydiff/issues">let the world know</a>! Pretty Diff also accepts pull requests and feature requests.</p>
+                    </div>
+                </div>
+                <div>
+                    <h2>Major Features</h2>
+                    <div class="segment">
+                        <ul>
+                            <li>
+                                <strong>ES6 / JS2015 ready!</strong>
+                                &mdash; Pretty Diff provides support for the new technologies available in the
+                                latest version of ECMAScript.</li>
+                            <li>
+                                <strong>
+                                    <a href="https://atom.io/">Atom.io</a>
+                                    integration</strong>
+                                &mdash; Integrated directly into the popular IDE Atom.io as the default
+                                beautifier for several languages thanks to
+                                <a href="https://atom.io/packages/atom-beautify/">atom-beautify</a>.</li>
+                            <li>
+                                <strong>React JSX format support</strong>
+                                &mdash; JSX format can be a real challenge to parse and beautify. It is XML
+                                embedded within JavaScript that can then be embedded within HTML. Pretty Diff
+                                has this covered with complete support. Read this guide for information on how
+                                Pretty Diff accomplished
+                                <a href="guide/react_jsx.xhtml">JSX support</a>.</li>
+                            <li>
+                                <strong>LESS and SCSS (Sass) CSS support</strong>
+                                &mdash; Pretty Diff's
+                                <a href="lib/csspretty.js">CSS parser</a>
+                                is fully aware that CSS can be extended in support for more powerful languages.
+                                This support has earned Pretty Diff inclusion to the
+                                <a href="https://github.com/Glavin001/atom-beautify/">atom-beautify</a>
+                                project for the popular IDE
+                                <a href="https://atom.io/">Atom.io</a>.</li>
+                            <li>
+                                <strong>Command Line</strong>
+                                &mdash; According to my stats Pretty Diff appears to be several times more
+                                popular on the command line. Pretty Diff provides a handy library,
+                                api/node-local.js, that is
+                                <a href="http://nodejs.org/">Node.js</a>
+                                and
+                                <a href="https://iojs.org/en/index.html">io.js</a>
+                                compatible. The command line operation can read/write files and even recursively
+                                crawl entire directory trees. This could be helpful when you need to compare
+                                dependencies by project version. Read this handy guide for
+                                <a href="guide/diffcli.xhtml">examples and instructions</a>.</li>
+                            <li>
+                                <strong>jsscope</strong>
+                                &mdash; Ever curious where a variable is declared in a mess of large code? Ever
+                                wish you could more easily understand closure and lexical scope? The jsscope
+                                feature provides colorful output to identify scope by color and color variables
+                                by the scope they are declared. Read these guides about
+                                <a href="guide/closure">closure with jsscope</a>
+                                and
+                                <a href="guide/jshtml.xhtml">generating color JavaScript</a>
+                                for examples and instructions.</li>
+                            <li>
+                                <strong>style guide</strong>
+                                &mdash; There is a fantastic tool called
+                                <a href="http://jscs.info/">JSCS</a>
+                                that validates code against a variety of style guide rules. Conformance to many
+                                of these rules can be easily automated. Pretty Diff added support for style
+                                guides which bundle a variety of option settings so that when used with JSCS
+                                code authors can focus on more important decisions related to style validation.
+                                Read the Pretty Diff
+                                <a href="guide/styleguide.xhtml">guide</a>
+                                for support and documentation. Pretty Diff is always willing to support
+                                additional style guides. If you wish for your organization's style guide to be
+                                presented just open an issue on
+                                <a href="https://github.com/prettydiff/prettydiff/issues">Github</a>.</li>
+                            <li>
+                                <strong>markup tag ignore</strong>
+                                &mdash; When beautifying markup sometimes there are elements that should not be
+                                altered. This is particularly true for any element that receives a CSS rule of
+                                <em>white-space: pre</em>. Pretty Diff provides this support via a data attribute. Read the
+                                <a href="guide/tag_ignore.xhtml">tag ignore guide</a>
+                                for details.</li>
+                            <li>
+                                <strong>intelligent markup beautification</strong>
+                                &mdash; White space in XML and HTML is a text node. Pretty Diff is aware that
+                                accidentally creating these text nodes can introduce problems when using the DOM
+                                or rendering content to the user. Intelligent beautification is a foundational
+                                concern of markup parsing in both the beautification and minification processes.</li>
+                            <li>
+                                <strong>JavaScript auto-correct</strong>
+                                &mdash; Missing curly braces, missing semicolons, and other things can make code
+                                really hard to read and guess at the author's intentions. Pretty Diff can supply
+                                corrections to the code for these issues. For more information read the
+                                <a href="guide/jscorrect.xhtml">details</a>
+                                and the
+                                <a href="documentation.xhtml#correct">documentation</a>.</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <script src="api/dom.js" type="application/javascript"></script>
+    </body>
+</html>

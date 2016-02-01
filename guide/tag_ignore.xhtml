@@ -1,1 +1,116 @@
-<?xml version='1.0' encoding='UTF-8' ?> <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'> <html xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'> <head> <title>Pretty Diff - Guide, Ignoring specified tags from markup beautification</title> <link href="../diffview.css" media="all" rel="stylesheet" type="text/css"/> <link href="guide.css" media="all" rel="stylesheet" type="text/css"/> <link href='http://prettydiff.com/guide/tag_ignore.xhtml' rel='canonical' type='application/xhtml+xml'/> <link href="http://prettydiff.com/images/favicon.ico" rel="icon" type="image/x-icon"/> <link href="http://prettydiff.com/labels.rdf" rel="meta" title="ICRA labels" type="application/rdf+xml"/> <meta content="width=device-width, initial-scale=1" name="viewport"/> <meta content="index, follow" name="robots"/> <meta content="Pretty Diff - Guide, Ignoring specified tags from markup beautification" name="DC.title"/> <meta content='(pics-1.1 "http://www.icra.org/pics/vocabularyv03/" l gen true for "http://prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for "http://www.prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))' http-equiv="pics-Label"/> <meta content="Austin Cheney" name="author"/> <meta content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML." name="description"/> <meta content="Global" name="distribution"/> <meta content="en" http-equiv="Content-Language"/> <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/> <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/> <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/> <meta content="text/css" http-equiv="content-style-type"/> <meta content="application/javascript" http-equiv="content-script-type"/> <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E" name="google-site-verification"/> </head> <body class="white" id="doc"> <h1> <svg height="2000.000000pt" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg"> <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)"> <path d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g> </svg> <a href="http://prettydiff.com/">Pretty Diff</a> - Guide</h1> <p id="dcolorScheme"><label class="label" for="colorScheme">Color Scheme</label> <select id="colorScheme"><option>Canvas</option> <option>Shadow</option> <option selected="selected">White</option></select> </p> <h2>Ignoring specified tags from markup beautification</h2> <div> <div><h3>Introduction</h3> <p>There are moments we could sell a markup beautification program to selectively ignore certain tags from beautification. This is particularly important when certain elements are used in connection with CSS's <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/white-space?redirectlocale=en-US%26redirectslug=CSS%2Fwhite-space">white-space</a> property where the white space characters will be literally formatted as output.</p> </div> <div><h3>Custom data attribute</h3> <p>The <a href="../lib/markup_beauty.js">markup_beauty</a> and <a href="../lib/markupmin.js">markupmin</a> libraries attempts to solve this problem by watching for a custom data attribute. When this data attribute is encountered on a start tag all contents up to and including the matching end tag are skipped over. Since the library attempts to couple the end tag and everything in between this means all ancestor nodes escape beautification or minification. If the data attribute is present on the root element then the entire document will be escaped from processing. The data attribute is:</p> <code><strong>data-prettydiff-ignore</strong></code> <p>The markup_beauty library is only looking for the attribute name and not any particular value. XML syntax requires the use of a value, so for correctness I provide the value <em>true</em>. For an example try to beautify the code from the <a href="diffcli.xhtml">diff command line guide</a> and examine the <em>code</em> tags.</p> <p>This data attribute is automatically included on the HTML output for the <a href="jshtml.xhtml">jsscope feature</a> with several examples on the <a href="closure_with_jsscope.xhtml">closure guide</a>.</p> </div> </div> <p>For additional options check out the <a href="../documentation.xhtml">documentation</a>. I take bug and suggestions for enhancements via email and at <a href="https://github.com/austincheney/Pretty-Diff">Github</a>.</p> <script src="../api/dom.js" type="application/javascript"></script> </body> </html>
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Pretty Diff - Ignoring specified tags from markup beautification</title>
+        <link href="../css/index.css" media="all" rel="stylesheet" type="text/css"/>
+        <link
+            href="http://prettydiff.com/guide/tag_ignore.xhtml"
+            rel="canonical"
+            type="application/xhtml+xml"/>
+        <link
+            href="http://prettydiff.com/images/favicon.ico"
+            rel="icon"
+            type="image/x-icon"/>
+        <link
+            href="http://prettydiff.com/labels.rdf"
+            rel="meta"
+            title="ICRA labels"
+            type="application/rdf+xml"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <meta content="index, follow" name="robots"/>
+        <meta
+            content="Pretty Diff - Guide, Ignoring specified tags from markup beautification"
+            name="DC.title"/>
+        <meta
+            content="(pics-1.1 'http://www.icra.org/pics/vocabularyv03/' l gen true for 'http://prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for 'http://www.prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))"
+            http-equiv="pics-Label"/>
+        <meta content="Austin Cheney" name="author"/>
+        <meta
+            content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML."
+            name="description"/>
+        <meta content="Global" name="distribution"/>
+        <meta content="en" http-equiv="Content-Language"/>
+        <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/>
+        <meta content="text/css" http-equiv="content-style-type"/>
+        <meta content="application/javascript" http-equiv="content-script-type"/>
+        <meta
+            content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
+            name="google-site-verification"/>
+    </head>
+    <body class="white" id="prettydiff">
+        <div class="contentarea" id="page">
+            <section role="heading">
+                <h1>
+                    <svg height="2000.000000pt" id="pdlogo" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
+                            <path
+                                d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
+                    </svg>
+                    <a href="prettydiff.com.xhtml">Pretty Diff</a>
+                    - Guide: Ignoring specified tags from markup beautification</h1>
+                <p id="dcolorScheme">
+                    <label class="label" for="colorScheme">Color Scheme</label>
+                    <select id="colorScheme">
+                        <option>Canvas</option>
+                        <option>Shadow</option>
+                        <option selected="selected">White</option>
+                    </select>
+                </p>
+                <p>Explore some
+                    <a href="samples.xhtml">samples</a>. For any questions, comments, requests, or feedback please join the
+                    <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff mailing list</a>
+                    or chat on
+                    <a href="https://gitter.im/prettydiff/prettydiff?utm_source=badge%26utm_medium=badge%26utm_campaign=pr-badge%26utm_content=badge">Gitter</a>. Find
+                    <a href="https://github.com/prettydiff/prettydiff">Pretty Diff on GitHub</a>.</p>
+            </section>
+            <section role="main">
+                <h2>Ignoring specified tags from markup beautification</h2>
+                <div class="segment">
+                    <h3>Introduction</h3>
+                    <p>There are moments we could sell a markup beautification program to
+                        selectively ignore certain tags from beautification. This is particularly
+                        important when certain elements are used in connection with CSS's
+                        <a
+                            href="https://developer.mozilla.org/en-US/docs/Web/CSS/white-space?redirectlocale=en-US%26redirectslug=CSS%2Fwhite-space">white-space</a>
+                        property where the white space characters will be literally formatted as output.</p>
+                </div>
+                <div class="segment">
+                    <h3>Custom data attribute</h3>
+                    <p>The
+                        <a href="../lib/markup_beauty.js">markup_beauty</a>
+                        and
+                        <a href="../lib/markupmin.js">markupmin</a>
+                        libraries attempts to solve this problem by watching for a custom data
+                        attribute. When this data attribute is encountered on a start tag all contents
+                        up to and including the matching end tag are skipped over. Since the library
+                        attempts to couple the end tag and everything in between this means all ancestor
+                        nodes escape beautification or minification. If the data attribute is present on
+                        the root element then the entire document will be escaped from processing. The
+                        data attribute is:</p>
+                    <code>
+                        <strong>data-prettydiff-ignore</strong>
+                    </code>
+                    <p>The markup_beauty library is only looking for the attribute name and not any
+                        particular value. XML syntax requires the use of a value, so for correctness I
+                        provide the value
+                        <em>true</em>. For an example try to beautify the code from the
+                        <a href="diffcli.xhtml">diff command line guide</a>
+                        and examine the
+                        <em>code</em>
+                        tags.</p>
+                    <p>This data attribute is automatically included on the HTML output for the
+                        <a href="jshtml.xhtml">jsscope feature</a>
+                        with several examples on the
+                        <a href="closure_with_jsscope.xhtml">closure guide</a>.</p>
+                </div>
+                <p>For additional options check out the
+                    <a href="../documentation.xhtml">documentation</a>. I take bug and suggestions for enhancements via email and at
+                    <a href="https://github.com/austincheney/Pretty-Diff">Github</a>.</p>
+            </section>
+        </div>
+        <script src="../api/dom.js" type="application/javascript"></script>
+    </body>
+</html>

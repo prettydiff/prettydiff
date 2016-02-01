@@ -1,1 +1,210 @@
-<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"><head><title>Pretty Diff - Guide, Explaining Closure To A Child</title> <link href="../diffview.css" media="all" rel="stylesheet" type="text/css"/> <link href="guide.css" media="all" rel="stylesheet" type="text/css"/> <link href="http://prettydiff.com/guide/unrelated_closureToAChild.xhtml" rel="canonical" type="application/xhtml+xml"/> <link href="http://prettydiff.com/images/favicon.ico" rel="icon" type="image/x-icon"/> <link href="http://prettydiff.com/labels.rdf" rel="meta" title="ICRA labels" type="application/rdf+xml"/> <meta content="width=device-width, initial-scale=1" name="viewport"/> <meta content="index, follow" name="robots"/> <meta content="Pretty Diff - Guide, Explaining Closure To A Child" name="DC.title"/> <meta content="(pics-1.1 'http://www.icra.org/pics/vocabularyv03/' l gen true for 'http://prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for 'http://www.prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))" http-equiv="pics-Label"/> <meta content="Austin Cheney" name="author"/> <meta content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML." name="description"/> <meta content="Global" name="distribution"/> <meta content="en" http-equiv="Content-Language"/> <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/> <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/> <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/> <meta content="text/css" http-equiv="content-style-type"/> <meta content="application/javascript" http-equiv="content-script-type"/> <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E" name="google-site-verification"/> </head><body class="white" id="doc"><h1><svg height="2000.000000pt" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg"><g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)"> <path d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g></svg><a href="http://prettydiff.com/">Pretty Diff</a> - Guide</h1><p id="dcolorScheme"><label class="label" for="colorScheme">Color Scheme</label><select id="colorScheme"><option>Canvas</option><option>Shadow</option><option selected="selected">White</option></select></p><h2>Explaining Closure To A Child</h2><div><h3>Playing with marbles</h3><div><h4>The placement of things</h4><p>Imagine you have some cloth bags and some marbles. One bag is <span class="red">red</span> and another is <span class="blue">blue</span> and both are very dark. You put some marbles in each bag and leave some of the marbles on the ground. Finally you put the <span class="blue">blue bag</span> into the <span class="red">red bag</span>.</p><p>Now let's examine what we have. On the ground there are some marbles and a <span class="red">red bag</span>. Inside the <span class="red">red bag</span> are some marbles and a <span class="blue">blue bag</span>. Additional marbles are sitting inside the <span class="blue">blue bag</span>.</p></div><div><h4>The relationship of things</h4><p>The marbles sitting directly on the ground do not see the marbles in the <span class="red">red bag</span> or the marbles in the <span class="blue">blue bag</span>. The contents of each bag are only immediately aware of what is in their immediate bag. This means the marbles in the <span class="red">red bag</span> are aware they are in a bag and aware of their neighbor, the <span class="blue">blue bag</span>. The marbles in the <span class="blue">blue bag</span> are aware they are in the <span class="blue">blue bag</span>, which is then in another ( <span class="red">red</span>) bag.</p><p>Let's review the status of things so far. The <span class="blue">blue bag</span> is placed inside the <span class="red">red bag</span>. The marbles are aware of their immediate container, if their container contains a bag, or if they have no container at all.</p></div><div><h4>The visibility of things</h4><p>The marbles outside the <span class="red">red bag</span> are pretty helpless on their own. They know there is a <span class="red">red bag</span> but cannot see inside the darkness of the bag. The marbles in the <span class="red">red bag</span> cannot immediately see outside to the marbles on the ground unless they try really hard. The marbles in the <span class="red">red bag</span> cannot see into the darkness of inside the <span class="blue">blue bag</span>.</p><p>The marbles in the <span class="blue">blue bag</span> can only immediately see the marbles in the <span class="blue">blue bag</span>, but if they try really hard they can see the marbles in the <span class="red">red bag</span>. If these marbles in the <span class="blue">blue bag</span> try harder still they can even see the marbles sitting directly on the ground outside of any bags.</p></div><div><h4>Interacting with the marbles</h4><p>You are a child who wishes to play with the marbles, but there are only a few marbles on the ground. The rest of the marbles are in the cloth bags. All that can be moved around are the marbles on the ground and the <span class="red">red bag</span>. If you wish to move the marbles in the <span class="red">red bag</span> you would have to reach into the <span class="red">red bag</span> and pull those marbles out.</p></div></div><div><h3>Relating marbles to JavaScript</h3><div><h4>Defining the terms</h4><p>Functions are like bags. They store instructions and provide scope. The scope they provide is called <strong>function scope</strong>. The scope outside of any function is called <strong>global scope</strong>.</p><p>Data and containers, such as functions and objects, can be declared with the <em>var</em> keyword. The scope where they are declared determines where they live and what can see them.</p><p>Local references are immediately known. References that are declared in higher scopes must be identified. The <strong>scope chain</strong> is the progression and order of scopes that must be traveled to determine where a reference is defined.</p></div><div><h4>Relating the concepts</h4><p>Let's go back to the marbles and bags. The marbles and bags each represent references. The bags are functions and the marbles are data, objects, or arrays. The <span class="red">red bag</span> is a function declared in the global scope. The <span class="blue">blue bag</span> is a function declared in the <span class="red">red bag</span>.</p><p>The marbles in the <span class="red">red bag</span> can see the marbles in the <em>global scope</em>, the marbles on the ground, but it takes some effort. This effort is progressing the <em>scope chain</em>. The marbles declared in the <span class="blue">blue bag</span> require additional effort to see the marbles in the global scope. This because they have an extra step in the scope chain to travel.</p></div><div><h4>Wrapping it up</h4><p>Since a lower scope can see variables living, or declared, in a higher scope those variables can be used in lower scopes. Crossing scope boundaries like this is called <strong>closure</strong>.</p><p>Variables in a higher scope are widely available to lower scopes. These variables can be changed from lower scopes, and this is sometimes referred to as a <strong>side effect</strong>.</p><p>Higher scopes cannot see into lower scopes, but lower scopes can see into higher scopes. A closure can be used to provide a reference in a high scope to access of all references in a lower scope.</p></div></div><div><h3>A small code example</h3><p>A simple code example demonstrating scope with similar colors to the marble analogy.</p><div id="webtool"><div class="beautify" data-prettydiff-ignore="true"><ol class='count'><li>1</li><li>2</li><li class="fold" title="folds from line 3 to line 11">- 3</li><li>4</li><li class="fold" title="folds from line 5 to line 9">- 5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>10</li><li>11</li><li>12</li></ol><ol class='data'><li>var <em class='s0'>globalNumber</em> = 10,<em>&#xA;</em></li><li class='l0'>    <em class='s0'>otherNumber</em>  = 0,<em>&#xA;</em></li><li class='l0'>    <em class='s0'>outer</em>        = function () <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    var <em class='s1'>a</em>     = 20,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>inner</em> = function () <em class='s2'>{</em><em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        var <em class='s2'>b</em> = 30;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        <em class='s0'>otherNumber</em> = <em class='s2'>b</em>; //global accessing a reference in a lower scope<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        return <em class='s1'>a</em> + <em class='s2'>b</em> + <em class='s0'>globalNumber</em>;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em><em class='l1'>    </em>    <em class='s2'>}</em>;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    return <em class='s1'>inner</em>();<em>&#xA;</em></li><li class='l0'><em class='l0'>    </em><em class='s1'>}</em>;<em>&#xA;</em></li><li class='l0'>return <em class='s0'>outer</em>(); //returns 60<em>&#xA;</em></li></ol></div></div></div><script src="../api/dom.js" type="application/javascript"></script></body></html>
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Pretty Diff - Guide, Explaining Closure To A Child</title>
+        <link href="../css/index.css" media="all" rel="stylesheet" type="text/css"/>
+        <link
+            href="http://prettydiff.com/guide/unrelated_closureToAChild.xhtml"
+            rel="canonical"
+            type="application/xhtml+xml"/>
+        <link
+            href="http://prettydiff.com/images/favicon.ico"
+            rel="icon"
+            type="image/x-icon"/>
+        <link
+            href="http://prettydiff.com/labels.rdf"
+            rel="meta"
+            title="ICRA labels"
+            type="application/rdf+xml"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <meta content="index, follow" name="robots"/>
+        <meta
+            content="Pretty Diff - Guide, Explaining Closure To A Child"
+            name="DC.title"/>
+        <meta
+            content="(pics-1.1 'http://www.icra.org/pics/vocabularyv03/' l gen true for 'http://prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for 'http://www.prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))"
+            http-equiv="pics-Label"/>
+        <meta content="Austin Cheney" name="author"/>
+        <meta
+            content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML."
+            name="description"/>
+        <meta content="Global" name="distribution"/>
+        <meta content="en" http-equiv="Content-Language"/>
+        <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/>
+        <meta content="text/css" http-equiv="content-style-type"/>
+        <meta content="application/javascript" http-equiv="content-script-type"/>
+        <meta
+            content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
+            name="google-site-verification"/>
+    </head>
+    <body class="white" id="prettydiff">
+        <div class="contentarea" id="page">
+            <section role="heading">
+                <h1>
+                    <svg height="2000.000000pt" id="pdlogo" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
+                            <path
+                                d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
+                    </svg>
+                    <a href="prettydiff.com.xhtml">Pretty Diff</a>
+                    - Guide: Explaining Closure To A Child</h1>
+                <p id="dcolorScheme">
+                    <label class="label" for="colorScheme">Color Scheme</label>
+                    <select id="colorScheme">
+                        <option>Canvas</option>
+                        <option>Shadow</option>
+                        <option selected="selected">White</option>
+                    </select>
+                </p>
+                <p>Explore some
+                    <a href="samples.xhtml">samples</a>. For any questions, comments, requests, or feedback please join the
+                    <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff mailing list</a>
+                    or chat on
+                    <a href="https://gitter.im/prettydiff/prettydiff?utm_source=badge%26utm_medium=badge%26utm_campaign=pr-badge%26utm_content=badge">Gitter</a>. Find
+                    <a href="https://github.com/prettydiff/prettydiff">Pretty Diff on GitHub</a>.</p>
+            </section>
+            <section role="main">
+                <h2>Explaining Closure To A Child</h2>
+                <div class="segment">
+                    <h3>Playing with marbles</h3>
+                    <div class="segment">
+                        <h4>The placement of things</h4>
+                        <p>Imagine you have some cloth bags and some marbles. One bag is
+                            <span class="red">red</span>
+                            and another is
+                            <span class="blue">blue</span>
+                            and both are very dark. You put some marbles in each bag and leave some of the
+                            marbles on the ground. Finally you put the
+                            <span class="blue">blue bag</span>
+                            into the
+                            <span class="red">red bag</span>.</p>
+                        <p>Now let's examine what we have. On the ground there are some marbles and a
+                            <span class="red">red bag</span>. Inside the
+                            <span class="red">red bag</span>
+                            are some marbles and a
+                            <span class="blue">blue bag</span>. Additional marbles are sitting inside the
+                            <span class="blue">blue bag</span>.</p>
+                    </div>
+                    <div class="segment">
+                        <h4>The relationship of things</h4>
+                        <p>The marbles sitting directly on the ground do not see the marbles in the
+                            <span class="red">red bag</span>
+                            or the marbles in the
+                            <span class="blue">blue bag</span>. The contents of each bag are only
+                            immediately aware of what is in their immediate bag. This means the marbles in
+                            the
+                            <span class="red">red bag</span>
+                            are aware they are in a bag and aware of their neighbor, the
+                            <span class="blue">blue bag</span>. The marbles in the
+                            <span class="blue">blue bag</span>
+                            are aware they are in the
+                            <span class="blue">blue bag</span>, which is then in another (
+                            <span class="red">red</span>) bag.</p>
+                        <p>Let's review the status of things so far. The
+                            <span class="blue">blue bag</span>
+                            is placed inside the
+                            <span class="red">red bag</span>. The marbles are aware of their immediate
+                            container, if their container contains a bag, or if they have no container at
+                            all.</p>
+                    </div>
+                    <div class="segment">
+                        <h4>The visibility of things</h4>
+                        <p>The marbles outside the
+                            <span class="red">red bag</span>
+                            are pretty helpless on their own. They know there is a
+                            <span class="red">red bag</span>
+                            but cannot see inside the darkness of the bag. The marbles in the
+                            <span class="red">red bag</span>
+                            cannot immediately see outside to the marbles on the ground unless they try
+                            really hard. The marbles in the
+                            <span class="red">red bag</span>
+                            cannot see into the darkness of inside the
+                            <span class="blue">blue bag</span>.</p>
+                        <p>The marbles in the
+                            <span class="blue">blue bag</span>
+                            can only immediately see the marbles in the
+                            <span class="blue">blue bag</span>, but if they try really hard they can see the marbles in the
+                            <span class="red">red bag</span>. If these marbles in the
+                            <span class="blue">blue bag</span>
+                            try harder still they can even see the marbles sitting directly on the ground
+                            outside of any bags.</p>
+                    </div>
+                    <div class="segment">
+                        <h4>Interacting with the marbles</h4>
+                        <p>You are a child who wishes to play with the marbles, but there are only a few
+                            marbles on the ground. The rest of the marbles are in the cloth bags. All that
+                            can be moved around are the marbles on the ground and the
+                            <span class="red">red bag</span>. If you wish to move the marbles in the
+                            <span class="red">red bag</span>
+                            you would have to reach into the
+                            <span class="red">red bag</span>
+                            and pull those marbles out.</p>
+                    </div>
+                </div>
+                <div class="segment">
+                    <h3>Relating marbles to JavaScript</h3>
+                    <div class="segment">
+                        <h4>Defining the terms</h4>
+                        <p>Functions are like bags. They store instructions and provide scope. The scope
+                            they provide is called
+                            <strong>function scope</strong>. The scope outside of any function is called
+                            <strong>global scope</strong>.</p>
+                        <p>Data and containers, such as functions and objects, can be declared with the
+                            <em>var</em>
+                            keyword. The scope where they are declared determines where they live and what
+                            can see them.</p>
+                        <p>Local references are immediately known. References that are declared in
+                            higher scopes must be identified. The
+                            <strong>scope chain</strong>
+                            is the progression and order of scopes that must be traveled to determine where
+                            a reference is defined.</p>
+                    </div>
+                    <div class="segment">
+                        <h4>Relating the concepts</h4>
+                        <p>Let's go back to the marbles and bags. The marbles and bags each represent
+                            references. The bags are functions and the marbles are data, objects, or arrays.
+                            The
+                            <span class="red">red bag</span>
+                            is a function declared in the global scope. The
+                            <span class="blue">blue bag</span>
+                            is a function declared in the
+                            <span class="red">red bag</span>.</p>
+                        <p>The marbles in the
+                            <span class="red">red bag</span>
+                            can see the marbles in the
+                            <em>global scope</em>, the marbles on the ground, but it takes some effort. This
+                            effort is progressing the
+                            <em>scope chain</em>. The marbles declared in the
+                            <span class="blue">blue bag</span>
+                            require additional effort to see the marbles in the global scope. This because
+                            they have an extra step in the scope chain to travel.</p>
+                    </div>
+                    <div class="segment">
+                        <h4>Wrapping it up</h4>
+                        <p>Since a lower scope can see variables living, or declared, in a higher scope
+                            those variables can be used in lower scopes. Crossing scope boundaries like this
+                            is called
+                            <strong>closure</strong>.</p>
+                        <p>Variables in a higher scope are widely available to lower scopes. These
+                            variables can be changed from lower scopes, and this is sometimes referred to as
+                            a
+                            <strong>side effect</strong>.</p>
+                        <p>Higher scopes cannot see into lower scopes, but lower scopes can see into
+                            higher scopes. A closure can be used to provide a reference in a high scope to
+                            access of all references in a lower scope.</p>
+                    </div>
+                </div>
+                <div class="segment">
+                    <h3>A small code example</h3>
+                    <p>A simple code example demonstrating scope with similar colors to the marble
+                        analogy.</p>
+                    <div class="beautify" data-prettydiff-ignore="true"><ol class='count'><li>1</li><li>2</li><li class="fold" title="folds from line 3 to line 11">- 3</li><li>4</li><li class="fold" title="folds from line 5 to line 9">- 5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>10</li><li>11</li><li>12</li></ol><ol class='data'><li>var <em class='s0'>globalNumber</em> = 10,<em>&#xA;</em></li><li class='l0'>    <em class='s0'>otherNumber</em>  = 0,<em>&#xA;</em></li><li class='l0'>    <em class='s0'>outer</em>        = function () <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    var <em class='s1'>a</em>     = 20,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>inner</em> = function () <em class='s2'>{</em><em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        var <em class='s2'>b</em> = 30;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        <em class='s0'>otherNumber</em> = <em class='s2'>b</em>; //global accessing a reference in a lower scope<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        return <em class='s1'>a</em> + <em class='s2'>b</em> + <em class='s0'>globalNumber</em>;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em><em class='l1'>    </em>    <em class='s2'>}</em>;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    return <em class='s1'>inner</em>();<em>&#xA;</em></li><li class='l0'><em class='l0'>    </em><em class='s1'>}</em>;<em>&#xA;</em></li><li class='l0'>return <em class='s0'>outer</em>(); //returns 60<em>&#xA;</em></li></ol></div>
+                </div>
+            </section>
+        </div>
+        <script src="../api/dom.js" type="application/javascript"></script>
+    </body>
+</html>

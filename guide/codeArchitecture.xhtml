@@ -1,1 +1,350 @@
-<?xml version='1.0' encoding='UTF-8' ?><!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'><html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"><head><title>Pretty Diff - Core Documentation, Application Architecture</title> <link href="../diffview.css" media="all" rel="stylesheet" type="text/css"/> <link href="guide.css" media="all" rel="stylesheet" type="text/css"/> <link href="http://prettydiff.com/guide/jshtml.xhtml" rel="canonical" type="application/xhtml+xml"/> <link href="http://prettydiff.com/images/favicon.ico" rel="icon" type="image/x-icon"/> <link href="http://prettydiff.com/labels.rdf" rel="meta" title="ICRA labels" type="application/rdf+xml"/> <meta content="width=device-width, initial-scale=1" name="viewport"/> <meta content="index, follow" name="robots"/> <meta content="Pretty Diff - Core Documentation, Application Architecture" name="DC.title"/> <meta content="(pics-1.1 &#x22;http://www.icra.org/pics/vocabularyv03/&#x22; l gen true for &#x22;http://prettydiff.com&#x22; r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for &#x22;http://www.prettydiff.com&#x22; r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))" http-equiv="pics-Label"/> <meta content="Austin Cheney" name="author"/> <meta content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML." name="description"/> <meta content="Global" name="distribution"/> <meta content="en" http-equiv="Content-Language"/> <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/> <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/> <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/> <meta content="text/css" http-equiv="content-style-type"/> <meta content="application/javascript" http-equiv="content-script-type"/> <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E" name="google-site-verification"/> </head><body class="white" id="doc"><h1><svg height="2000.000000pt" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg"><g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)"> <path d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g></svg><a href="http://prettydiff.com/">Pretty Diff</a> - Core Documentation</h1><p id="dcolorScheme"><label class="label" for="colorScheme">Color Scheme</label><select id="colorScheme"><option>Canvas</option><option>Shadow</option><option selected="selected">White</option></select></p><h2>Application Architecture</h2><div><div id="doc_contents"><h3>Table of Contents</h3><ol><li><a href="#introduction">Introduction</a></li><li><a href="#codeStyle">Code Style</a><ol><li><a href="#codeStyle_approach">Coding Approach</a></li><li><a href="#codeStyle_order">Order of Declaration</a></li></ol></li><li><a href="#prettydiff">prettydiff Function</a><ol><li><a href="#prettydiff_organization">prettydiff Organization</a></li><li><a href="#prettydiff_core">core Function</a></li></ol></li><li><a href="#libraries">Libraries</a><ol><li><a href="#libraries_preface">Library Preface</a></li><li><a href="#libraries_csspretty">csspretty Library</a></li><li><a href="#libraries_csvpretty">csvpretty Library</a></li><li><a href="#libraries_diffview">diffview Library</a></li><li><a href="#libraries_jspretty">jspretty Library</a></li><li><a href="#libraries_markuppretty">markuppretty Library</a></li><li><a href="#libraries_safeSort">safeSort Library</a></li></ol></li></ol></div><div id="introduction"><h3>Introduction</h3><p>This document was last updated on 7 October 2015 for version 1.14.5.</p><p>This document intends to fully describe how the code is organized by module.</p></div><div id="codeStyle"><h3>Code Style</h3><div id="codeStyle_approach"><h4>Coding Approach</h4><p>Pretty Diff is written in a <em>functional imperative</em> style. Before diving further these terms need to be defined.</p><ul><li><strong>functional programming</strong><p>The idea behind functional programming is about isolation and decomposition. It is about starting with large ideas and breaking them into small composable fragments that may or may not work together. This is a fully inverted approach compared with the more commonly familiar <em>Object Oriented Programming (OOP)</em> approach.</p><p>Most common programming languages contain several forms of containers. JavaScript has objects, arrays, and functions. Functions are unique from objects and arrays in that they contain instructions instead of data. In JavaScript functions also provide scope. Prior to the ES6 version of the JavaScript language functions are the only means of providing scope.</p><p>Many functional programming paradigms are not afraid to nest functions. The internals of a function are generally hidden and unaccessable to everything outside the function. JavaScript also provides something called <em>lexical scope</em>, which allows something in a given scope to access everything in higher scopes. This means nesting functions in JavaScript creates a natural public/private model without any additional effort from the programmer.</p><p>Functional programming is not about passing things around. To be useful a function needs access to input and must provide some form of contribution. In a language with lexical scope it is not necessary to provide input to functions, such as function arguments, for functions to receive input. It is also not necessary that functions explicity return anything for there to be a contribution. When instructions within functions can access references outside the immediate scope, which are called <em>closures</em>, an implicit input state exists to the function. When instructions within a function are able to write to closures an implicit output state is also present.</p></li><li><strong>imperative programming</strong><p>Imperative programming is about writing code as directly and bluntly as possible. It is the opposite of the <em>declarative</em> approach to programming, which seeks to wrap a collection of instructions into a named interface. Proper naming is important in the declarative approach, because the name of the interface declares the intention, or use case, of the code it contains. Imperative code reads like a stereo instruction manual or a car owner's manual while the declarative approach reads more like elegant poetry written with incomplete sentences.</p><p>The primary differences in these two approaches is the behavior of the code author. Some developers prefer to think about application code as a modular abstraction best described by reading a given unit of code, or not described at all. Other developers may perfer to think about application code as a representational abstraction best described by a descriptive reference. These behaviors are resultant from differences in formative cognitive functions in the mind and require practice to adequetely develope. Imperative developers may describe declarative code as hidden, circular, or spaghetti code. Declarative developers may descrive imperative code as too complex, too terse, or overwhelming.</p></li></ul></div><div id="codeStyle_order"><h4>Order of Declaration</h4><p>JavaScript contains a feature called <em>hoisting</em>. When a function or a variable is declared these items are moved to the top of their immediate scope before interpreting instructions or evaluating expressions. Pretty Diff code is written to eliminate hoisting. It does this by using a single <em>var</em> keyword at the top of each function to declare a comma separated list of references and functions assigned to references.</p><p>Pretty Diff is written to comply with the default rules of JSLint. JSLint requires that a reference be declared before it is used, which influences the order in which things are declared. A function that references a variable in the same scope must be declared after that variable.</p></div></div><div id="prettydiff"><h3>prettydiff Function</h3><div id="prettydiff_organization"><h4>prettydiff Organization</h4><p>The Pretty Diff application logic is contained in a single function named <em>prettydiff</em>, which resides in a file named <em>prettydiff.js</em>. Other supporting code are the APIs provided in the <em>/api</em> directory.</p><p>The prettydiff function is composed of a function named <em>core</em> and a collection of a few libraries. The names for all the library functions are declared as empty functions at the top of the application. There is no way to determine which library should be declared first when two libraries reference each other, so all libraries are declared as empty functions in order to properly instantiate a named reference. The last thing to be declared is the <em>core</em> function, which references all the library functions. Each library function is assigned after the core function is declared.</p></div><div id="prettydiff_core"><h4>core Function</h4><p>The core function makes determinations on which libraries to access and how to format the output. The first thing to happen in this function is to set up the options. Internal references are created to values from submitted options or provide defaults where options are missing or invalid. After setting up options from the API core interprets the <em>prettydiff comment</em> if present. Options specified in the prettydiff comment override user submitted options.</p><p>The default language value is <em>auto</em>. When <em>auto</em> is the language value a complex series of regular expressions are used to guess at the closest supported language.</p><p>After language detection appropriate options are supplied to the appropriate libraries first by mode (diff, beautify, minify) and secondly by language. In the case of the <em>diff</em> mode multiple libraries are accessed for all operations. The minify and beautify options return an informative analysis summary in addition to altered code. The beautify summary differs by language while the minify summary is uniform for all languages. Operations that output formatted HTML, namely the diff mode and the jsscope option, do not produce these summary artifacts.</p></div></div><div id="libraries"><h3>Libraries</h3><div id="libraries_preface"><h4>Library Preface</h4><p>The libraries are primarily written as parsers. They parse code input, but they make no attempt to interpret or execute that code. Different from many other parsers is that these parsers prepare a list of code tokens and make no attempt to prepare an <a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">Abstract Syntax Tree</a>. This uniqueness is intentional so as to focus on analysis and formatting of the code directly instead of some abstract representation of the code.</p><p>The larger libraries primarilly store data in <a href="https://en.wikipedia.org/wiki/Parallel_array">parallel arrays</a> and use them in closures by various child functions. This allows for simple data structures that are supremely optimized for performance without any creative human effort. Fast performance is achieved by allowing access to only a particular classification of data at any time and preventing passing large data objects around, which is very slow. This means of coding is extremely imperative and challenging for many programmers to understand at first, but produces substantial reductions in maintenance over the life of code.</p></div><div id="libraries_csspretty"><h4>csspretty Library</h4><p>The csspretty library is the parser used for Cascading Style Sheets and similar languages, like <a href="http://lesscss.org/">LESS</a> and <a href="http://sass-lang.com/">SCSS (Sass)</a>. This library receives an option <em>mode</em>, which determines if code should be beautified or minified.</p><p>There are two parallel arrays principly used for storing parsed data: token and types. The token array stores parsed code tokens and the types array stores a category name determining the type of code at the given index of the token array.</p><p>The library is divided into three major sections: a parser (csspretty__tokenize), a formatter (csspretty__beautify), and an analysis summary (csspretty__summary). Unlike many of the other libraries in Pretty Diff the vast majority of the complexity and logic is stored in the parser. The parser is particularly complex because it provides logic to sort properties, vertically align the colon used for property assignment, and condense some values. The formatter is used only to beautify code while the minified code is little more than a join of the token array.</p></div><div id="libraries_csvpretty"><h4>csvbeauty Library</h4><p>The csvpretty library is a tiny parser for CSV format. It generates an array of arrays where each child array is a data record and each of its indexes are data cells.</p></div><div id="libraries_diffview"><h4>diffview Library</h4><p>The diffview library diffs slightly in code style from the other libraries as this the only remaining unoriginal code in the Pretty Diff project. The code comparisons are performed with this library.</p><p>This library contains two primary sections: a line by line difference analysis (diffview__opcodes), and report generation (diffview__report). The first section produces an array of arrays where each child array contains 4 numbers and a type label. This data determines where changes in comparison type occur and for how many lines the current type runs for each the submitted source sample and diff sample.</p><p>There are three forms of output currently supported. The default output type is a HTML report of four lists that resembles a table with four columns, which is referred to as the <em>side-by-side</em> version. The second format is the <em>inline</em> version which is three lists that resembles a three column layout. The side-by-side view appears to put two documents next to each other. The inline view uses one column for all code output with difference lines vertically adjacent. These two views are toggled using the <em>diffview</em> option.</p><p>The third output format is command line output. This option is only available if using this library independently of Pretty Diff or if using it with the api/node-local.js file. This format of output only outputs a list of results where a result is a collection of line numbers and the code that is different. The context option defaults to a value of 2 when used with this format. This format is activated with the <em>diffcli</em> option.</p><p>It is important to note that there is a massive child function, named <em>diffview__report_charcomp</em>, under the report generating function. This function performs fuzzy string comparison to identify specific character differences for each sample code line that is not equal.</p></div><div id="libraries_jspretty"><h4>jspretty Library</h4><p>The jspretty library parses JavaScript, JSON, and begins parsing for React JSX. This is the largest library in Pretty Diff by far.</p><p>There are several parallel arrays used: token, types, lines, level and meta. The arrays level and meta are used secondarily. The token array stores parsed code tokens. The types array stores names of various code types. The lines array identifies which tokens are followed by line breaks in the original input. The level array stores a formatting definition for use in beautification. The meta array stores information about variable declarations relative to their scope of declaration.</p><p>The first part of jspretty is the parser (jspretty__tokenize). The parser's purpose it to populate the token, types, and lines arrays. It contains additional logic to identify missing semicolons and missing curly braces. The missing artifacts are populated as pseudo-tokens to be ignored during final formatting or converted to proper tokens depending upon the value supplied for the <em>correct</em> option.</p><p>The second major part of jspretty is the beautification function (jspretty__algorithm). This section always populates the level array and may populate the meta array if the <em>jsscope</em> feature is used.</p><p>The third section of jspretty formats the output. Minification gets a unique formatting scheme named jspretty__minify. There are two forms of formatting for beautification: beautified code in text format (jspretty_result) and the colorful HTML format generated by the jsscope (jspretty_resultScope).</p><p>The final major section of jspretty (jspretty__report) creates a summarized analysis of the submitted code.</p></div><div id="markuppretty"><h4>markuppretty Library</h4><p>The markuppretty library's first major task is to parse the string input into a list of tokens. The bulk of the entire libraries logic is contained in the parser. The parser in this case is extremely robust because on one hand markup syntax is extremely predictable and this parser supports a huge list of syntax supporting various templating languages.</p><p>If option <em>mode</em> is provided a value of "parse" the library performs some quick white space insertion around text content and then returns an object of two arrays.</p><p>If option <em>mode</em> is provided a value of "minify" some additional things need to happen. Embedded CSS gets minified by the <em>csspretty</em> library and embedded JavaScript gets minified by the <em>jspretty</em> library. A string is returned containing all code on a single line.</p><p>When option <em>mode</em> is provided a value of "beautify" or "diff" a couple extra things happen. First the parsed tokens and types are analyzed to determine things should be beautified. This analysis is stored in an array named <em>level</em>. The next part of the library applies the beautification described by the level array.</p><p>The final section of the library is an analytical summary of the code sample and includes a more thorough accessibilty analysis.</p></div></div></div><script src="../api/dom.js" type="application/javascript"></script></body></html>
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Pretty Diff - Code Organization</title>
+        <link href="../css/index.css" media="all" rel="stylesheet" type="text/css"/>
+        <link
+            href="http://prettydiff.com/guide/jshtml.xhtml"
+            rel="canonical"
+            type="application/xhtml+xml"/>
+        <link
+            href="http://prettydiff.com/images/favicon.ico"
+            rel="icon"
+            type="image/x-icon"/>
+        <link
+            href="http://prettydiff.com/labels.rdf"
+            rel="meta"
+            title="ICRA labels"
+            type="application/rdf+xml"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <meta content="index, follow" name="robots"/>
+        <meta
+            content="Pretty Diff - Core Documentation, Application Architecture"
+            name="DC.title"/>
+        <meta
+            content="(pics-1.1 &#x22;http://www.icra.org/pics/vocabularyv03/&#x22; l gen true for &#x22;http://prettydiff.com&#x22; r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for &#x22;http://www.prettydiff.com&#x22; r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))"
+            http-equiv="pics-Label"/>
+        <meta content="Austin Cheney" name="author"/>
+        <meta
+            content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML."
+            name="description"/>
+        <meta content="Global" name="distribution"/>
+        <meta content="en" http-equiv="Content-Language"/>
+        <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/>
+        <meta content="text/css" http-equiv="content-style-type"/>
+        <meta content="application/javascript" http-equiv="content-script-type"/>
+        <meta
+            content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
+            name="google-site-verification"/>
+    </head>
+    <body class="white" id="prettydiff">
+        <div class="contentarea" id="page">
+            <section role="heading">
+                <h1>
+                    <svg height="2000.000000pt" id="pdlogo" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
+                            <path
+                                d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
+                    </svg>
+                    <a href="prettydiff.com.xhtml">Pretty Diff</a>
+                    - Guide: Code Organization</h1>
+                <p id="dcolorScheme">
+                    <label class="label" for="colorScheme">Color Scheme</label>
+                    <select id="colorScheme">
+                        <option>Canvas</option>
+                        <option>Shadow</option>
+                        <option selected="selected">White</option>
+                    </select>
+                </p>
+                <p>Explore some
+                    <a href="samples.xhtml">samples</a>. For any questions, comments, requests, or feedback please join the
+                    <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff mailing list</a>
+                    or chat on
+                    <a href="https://gitter.im/prettydiff/prettydiff?utm_source=badge%26utm_medium=badge%26utm_campaign=pr-badge%26utm_content=badge">Gitter</a>. Find
+                    <a href="https://github.com/prettydiff/prettydiff">Pretty Diff on GitHub</a>.</p>
+            </section>
+            <section role="main">
+                <h2>Application Architecture</h2>
+                <div id="introduction" class="segment">
+                    <h3>Introduction</h3>
+                    <p>This document was last updated on 7 October 2015 for version 1.14.5.</p>
+                    <p>This document intends to fully describe how the code is organized by module.</p>
+                </div>
+                <div id="codeStyle" class="segment">
+                    <h3>Code Style</h3>
+                    <div id="codeStyle_approach" class="segment">
+                        <h4>Coding Approach</h4>
+                        <p>Pretty Diff is written in a
+                            <em>functional imperative</em>
+                            style. Before diving further these terms need to be defined.</p>
+                        <ul>
+                            <li>
+                                <strong>functional programming</strong>
+                                <p>The idea behind functional programming is about isolation and decomposition.
+                                    It is about starting with large ideas and breaking them into small composable
+                                    fragments that may or may not work together. This is a fully inverted approach
+                                    compared with the more commonly familiar
+                                    <em>Object Oriented Programming (OOP)</em>
+                                    approach.</p>
+                                <p>Most common programming languages contain several forms of containers.
+                                    JavaScript has objects, arrays, and functions. Functions are unique from objects
+                                    and arrays in that they contain instructions instead of data. In JavaScript
+                                    functions also provide scope. Prior to the ES6 version of the JavaScript
+                                    language functions are the only means of providing scope.</p>
+                                <p>Many functional programming paradigms are not afraid to nest functions. The
+                                    internals of a function are generally hidden and unaccessable to everything
+                                    outside the function. JavaScript also provides something called
+                                    <em>lexical scope</em>, which allows something in a given scope to access
+                                    everything in higher scopes. This means nesting functions in JavaScript creates
+                                    a natural public/private model without any additional effort from the
+                                    programmer.</p>
+                                <p>Functional programming is not about passing things around. To be useful a
+                                    function needs access to input and must provide some form of contribution. In a
+                                    language with lexical scope it is not necessary to provide input to functions,
+                                    such as function arguments, for functions to receive input. It is also not
+                                    necessary that functions explicity return anything for there to be a
+                                    contribution. When instructions within functions can access references outside
+                                    the immediate scope, which are called
+                                    <em>closures</em>, an implicit input state exists to the function. When
+                                    instructions within a function are able to write to closures an implicit output
+                                    state is also present.</p>
+                            </li>
+                            <li>
+                                <strong>imperative programming</strong>
+                                <p>Imperative programming is about writing code as directly and bluntly as
+                                    possible. It is the opposite of the
+                                    <em>declarative</em>
+                                    approach to programming, which seeks to wrap a collection of instructions into a
+                                    named interface. Proper naming is important in the declarative approach, because
+                                    the name of the interface declares the intention, or use case, of the code it
+                                    contains. Imperative code reads like a stereo instruction manual or a car
+                                    owner's manual while the declarative approach reads more like elegant poetry
+                                    written with incomplete sentences.</p>
+                                <p>The primary differences in these two approaches is the behavior of the code
+                                    author. Some developers prefer to think about application code as a modular
+                                    abstraction best described by reading a given unit of code, or not described at
+                                    all. Other developers may perfer to think about application code as a
+                                    representational abstraction best described by a descriptive reference. These
+                                    behaviors are resultant from differences in formative cognitive functions in the
+                                    mind and require practice to adequetely develope. Imperative developers may
+                                    describe declarative code as hidden, circular, or spaghetti code. Declarative
+                                    developers may descrive imperative code as too complex, too terse, or
+                                    overwhelming.</p>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="codeStyle_order" class="segment">
+                        <h4>Order of Declaration</h4>
+                        <p>JavaScript contains a feature called
+                            <em>hoisting</em>. When a function or a variable is declared these items are
+                            moved to the top of their immediate scope before interpreting instructions or
+                            evaluating expressions. Pretty Diff code is written to eliminate hoisting. It
+                            does this by using a single
+                            <em>var</em>
+                            keyword at the top of each function to declare a comma separated list of
+                            references and functions assigned to references.</p>
+                        <p>Pretty Diff is written to comply with the default rules of JSLint. JSLint
+                            requires that a reference be declared before it is used, which influences the
+                            order in which things are declared. A function that references a variable in the
+                            same scope must be declared after that variable.</p>
+                    </div>
+                </div>
+                <div class="segment">
+                    <h3>prettydiff Function</h3>
+                    <div id="prettydiff_organization" class="segment">
+                        <h4>prettydiff Organization</h4>
+                        <p>The Pretty Diff application logic is contained in a single function named
+                            <em>prettydiff</em>, which resides in a file named
+                            <em>prettydiff.js</em>. Other supporting code are the APIs provided in the
+                            <em>/api</em>
+                            directory.</p>
+                        <p>The prettydiff function is composed of a function named
+                            <em>core</em>
+                            and a collection of a few libraries. The names for all the library functions are
+                            declared as empty functions at the top of the application. There is no way to
+                            determine which library should be declared first when two libraries reference
+                            each other, so all libraries are declared as empty functions in order to
+                            properly instantiate a named reference. The last thing to be declared is the
+                            <em>core</em>
+                            function, which references all the library functions. Each library function is
+                            assigned after the core function is declared.</p>
+                    </div>
+                    <div id="prettydiff_core" class="segment">
+                        <h4>core Function</h4>
+                        <p>The core function makes determinations on which libraries to access and how
+                            to format the output. The first thing to happen in this function is to set up
+                            the options. Internal references are created to values from submitted options or
+                            provide defaults where options are missing or invalid. After setting up options
+                            from the API core interprets the
+                            <em>prettydiff comment</em>
+                            if present. Options specified in the prettydiff comment override user submitted
+                            options.</p>
+                        <p>The default language value is
+                            <em>auto</em>. When
+                            <em>auto</em>
+                            is the language value a complex series of regular expressions are used to guess
+                            at the closest supported language.</p>
+                        <p>After language detection appropriate options are supplied to the appropriate
+                            libraries first by mode (diff, beautify, minify) and secondly by language. In
+                            the case of the
+                            <em>diff</em>
+                            mode multiple libraries are accessed for all operations. The minify and beautify
+                            options return an informative analysis summary in addition to altered code. The
+                            beautify summary differs by language while the minify summary is uniform for all
+                            languages. Operations that output formatted HTML, namely the diff mode and the
+                            jsscope option, do not produce these summary artifacts.</p>
+                    </div>
+                </div>
+                <div id="libraries" class="segment">
+                    <h3>Libraries</h3>
+                    <div id="libraries_preface" class="segment">
+                        <h4>Library Preface</h4>
+                        <p>The libraries are primarily written as parsers. They parse code input, but
+                            they make no attempt to interpret or execute that code. Different from many
+                            other parsers is that these parsers prepare a list of code tokens and make no
+                            attempt to prepare an
+                            <a href="https://en.wikipedia.org/wiki/Abstract_syntax_tree">Abstract Syntax Tree</a>.
+                            This uniqueness is intentional so as to focus on analysis and formatting of the
+                            code directly instead of some abstract representation of the code.</p>
+                        <p>The larger libraries primarilly store data in
+                            <a href="https://en.wikipedia.org/wiki/Parallel_array">parallel arrays</a>
+                            and use them in closures by various child functions. This allows for simple data
+                            structures that are supremely optimized for performance without any creative
+                            human effort. Fast performance is achieved by allowing access to only a
+                            particular classification of data at any time and preventing passing large data
+                            objects around, which is very slow. This means of coding is extremely imperative
+                            and challenging for many programmers to understand at first, but produces
+                            substantial reductions in maintenance over the life of code.</p>
+                    </div>
+                    <div id="libraries_csspretty" class="segment">
+                        <h4>csspretty Library</h4>
+                        <p>The csspretty library is the parser used for Cascading Style Sheets and
+                            similar languages, like
+                            <a href="http://lesscss.org/">LESS</a>
+                            and
+                            <a href="http://sass-lang.com/">SCSS (Sass)</a>. This library receives an option
+                            <em>mode</em>, which determines if code should be beautified or minified.</p>
+                        <p>There are two parallel arrays principly used for storing parsed data: token
+                            and types. The token array stores parsed code tokens and the types array stores
+                            a category name determining the type of code at the given index of the token
+                            array.</p>
+                        <p>The library is divided into three major sections: a parser
+                            (csspretty__tokenize), a formatter (csspretty__beautify), and an analysis
+                            summary (csspretty__summary). Unlike many of the other libraries in Pretty Diff
+                            the vast majority of the complexity and logic is stored in the parser. The
+                            parser is particularly complex because it provides logic to sort properties,
+                            vertically align the colon used for property assignment, and condense some
+                            values. The formatter is used only to beautify code while the minified code is
+                            little more than a join of the token array.</p>
+                    </div>
+                    <div id="libraries_csvpretty" class="segment">
+                        <h4>csvbeauty Library</h4>
+                        <p>The csvpretty library is a tiny parser for CSV format. It generates an array
+                            of arrays where each child array is a data record and each of its indexes are
+                            data cells.</p>
+                    </div>
+                    <div id="libraries_diffview" class="segment">
+                        <h4>diffview Library</h4>
+                        <p>The diffview library diffs slightly in code style from the other libraries as
+                            this the only remaining unoriginal code in the Pretty Diff project. The code
+                            comparisons are performed with this library.</p>
+                        <p>This library contains two primary sections: a line by line difference
+                            analysis (diffview__opcodes), and report generation (diffview__report). The
+                            first section produces an array of arrays where each child array contains 4
+                            numbers and a type label. This data determines where changes in comparison type
+                            occur and for how many lines the current type runs for each the submitted source
+                            sample and diff sample.</p>
+                        <p>There are three forms of output currently supported. The default output type
+                            is a HTML report of four lists that resembles a table with four columns, which
+                            is referred to as the
+                            <em>side-by-side</em>
+                            version. The second format is the
+                            <em>inline</em>
+                            version which is three lists that resembles a three column layout. The
+                            side-by-side view appears to put two documents next to each other. The inline
+                            view uses one column for all code output with difference lines vertically
+                            adjacent. These two views are toggled using the
+                            <em>diffview</em>
+                            option.</p>
+                        <p>The third output format is command line output. This option is only available
+                            if using this library independently of Pretty Diff or if using it with the
+                            api/node-local.js file. This format of output only outputs a list of results
+                            where a result is a collection of line numbers and the code that is different.
+                            The context option defaults to a value of 2 when used with this format. This
+                            format is activated with the
+                            <em>diffcli</em>
+                            option.</p>
+                        <p>It is important to note that there is a massive child function, named
+                            <em>diffview__report_charcomp</em>, under the report generating function. This
+                            function performs fuzzy string comparison to identify specific character
+                            differences for each sample code line that is not equal.</p>
+                    </div>
+                    <div id="libraries_jspretty" class="segment">
+                        <h4>jspretty Library</h4>
+                        <p>The jspretty library parses JavaScript, JSON, and begins parsing for React
+                            JSX. This is the largest library in Pretty Diff by far.</p>
+                        <p>There are several parallel arrays used: token, types, lines, level and meta.
+                            The arrays level and meta are used secondarily. The token array stores parsed
+                            code tokens. The types array stores names of various code types. The lines array
+                            identifies which tokens are followed by line breaks in the original input. The
+                            level array stores a formatting definition for use in beautification. The meta
+                            array stores information about variable declarations relative to their scope of
+                            declaration.</p>
+                        <p>The first part of jspretty is the parser (jspretty__tokenize). The parser's
+                            purpose it to populate the token, types, and lines arrays. It contains
+                            additional logic to identify missing semicolons and missing curly braces. The
+                            missing artifacts are populated as pseudo-tokens to be ignored during final
+                            formatting or converted to proper tokens depending upon the value supplied for
+                            the
+                            <em>correct</em>
+                            option.</p>
+                        <p>The second major part of jspretty is the beautification function
+                            (jspretty__algorithm). This section always populates the level array and may
+                            populate the meta array if the
+                            <em>jsscope</em>
+                            feature is used.</p>
+                        <p>The third section of jspretty formats the output. Minification gets a unique
+                            formatting scheme named jspretty__minify. There are two forms of formatting for
+                            beautification: beautified code in text format (jspretty_result) and the
+                            colorful HTML format generated by the jsscope (jspretty_resultScope).</p>
+                        <p>The final major section of jspretty (jspretty__report) creates a summarized
+                            analysis of the submitted code.</p>
+                    </div>
+                    <div id="markuppretty" class="segment">
+                        <h4>markuppretty Library</h4>
+                        <p>The markuppretty library's first major task is to parse the string input into
+                            a list of tokens. The bulk of the entire libraries logic is contained in the
+                            parser. The parser in this case is extremely robust because on one hand markup
+                            syntax is extremely predictable and this parser supports a huge list of syntax
+                            supporting various templating languages.</p>
+                        <p>If option
+                            <em>mode</em>
+                            is provided a value of "parse" the library performs some quick white space
+                            insertion around text content and then returns an object of two arrays.</p>
+                        <p>If option
+                            <em>mode</em>
+                            is provided a value of "minify" some additional things need to happen. Embedded
+                            CSS gets minified by the
+                            <em>csspretty</em>
+                            library and embedded JavaScript gets minified by the
+                            <em>jspretty</em>
+                            library. A string is returned containing all code on a single line.</p>
+                        <p>When option
+                            <em>mode</em>
+                            is provided a value of "beautify" or "diff" a couple extra things happen. First
+                            the parsed tokens and types are analyzed to determine things should be
+                            beautified. This analysis is stored in an array named
+                            <em>level</em>. The next part of the library applies the beautification
+                            described by the level array.</p>
+                        <p>The final section of the library is an analytical summary of the code sample
+                            and includes a more thorough accessibilty analysis.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <script src="../api/dom.js" type="application/javascript"></script>
+    </body>
+</html>

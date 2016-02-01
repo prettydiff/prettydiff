@@ -1,5 +1,13 @@
 # Pretty Diff change log
 
+## v1.16.23
+
+ * Fixed #257
+ * Fixed #258
+ * Fixed a couple minor defects
+ * Rewrote CSS code from scratch
+ * Rewrote HTML document generation from scratch
+
 ## v1.16.12
 
  * Fixed #252

@@ -87,3 +87,14 @@
 <a>
     <script src="asdf"></script>
 </a>
+<A>
+    <B>1</B>
+    <script1>
+        b</script1>
+    <script>
+        q;
+    </script>
+    <Script>
+        123;
+    </Script>
+</A>

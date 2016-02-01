@@ -1,1 +1,606 @@
-<?xml version='1.0' encoding='UTF-8' ?> <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'> <html xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'> <head> <title>Pretty Diff - Guide, A/B Testing for the Web</title> <link href="../diffview.css" media="all" rel="stylesheet" type="text/css"/> <link href="guide.css" media="all" rel="stylesheet" type="text/css"/> <link href='http://prettydiff.com/guide/react_jsx.xhtml' rel='canonical' type='application/xhtml+xml'/> <link href="http://prettydiff.com/images/favicon.ico" rel="icon" type="image/x-icon"/> <link href="http://prettydiff.com/labels.rdf" rel="meta" title="ICRA labels" type="application/rdf+xml"/> <meta content="width=device-width, initial-scale=1" name="viewport"/> <meta content="index, follow" name="robots"/> <meta content="Pretty Diff - Guide, A/B Testing for the Web" name="DC.title"/> <meta content='(pics-1.1 "http://www.icra.org/pics/vocabularyv03/" l gen true for "http://prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for "http://www.prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))' http-equiv="pics-Label"/> <meta content="Austin Cheney" name="author"/> <meta content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML." name="description"/> <meta content="Global" name="distribution"/> <meta content="en" http-equiv="Content-Language"/> <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/> <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/> <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/> <meta content="text/css" http-equiv="content-style-type"/> <meta content="application/javascript" http-equiv="content-script-type"/> <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E" name="google-site-verification"/> </head> <body class="white" id="doc"> <h1> <svg height="2000.000000pt" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg"> <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)"> <path d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g> </svg> <a href="http://prettydiff.com/">Pretty Diff</a> - Guide</h1> <p id="dcolorScheme"><label class="label" for="colorScheme">Color Scheme</label> <select id="colorScheme"><option>Canvas</option> <option>Shadow</option> <option selected="selected">White</option></select> </p> <h2>A/B Testing for the Web</h2> <div> <div class="guidebody" id="doc_contents"><h3>Table of contents</h3> <ol> <li><a href="#intro">Introduction</a></li> <li><a href="#definition">Definition of terms</a></li> <li><a href="#business">Business value</a></li> <li><a href="#whattest">What can be tested?</a></li> <li><a href="#nottest">When to avoid testing</a></li> <li><a href="#management">Experiment management</a> <ol> <li><a href="#management-knowledge">Knowledge sharing</a></li> <li><a href="#management-traffic">Traffic management</a></li> <li><a href="#management-reports">Reports</a></li> </ol> </li> <li><a href="#engineering">Experiment engineering</a> <ol> <li><a href="#engineering-overview">Code overview</a></li> <li><a href="#engineering-injection">Code injection</a></li> <li><a href="#engineering-promise">Promise polyfill</a></li> <li><a href="#engineering-hacker">Think like a hacker (or Special Forces)</a></li> <li><a href="#engineering-ie8">Developing for IE8</a></li> <li><a href="#engineering-multipage">Experiments spanning multiple pages</a></li> </ol> </li> <li><a href="#verifying">Verifying results</a></li> </ol> </div> <div id="intro"><h3>Introduction</h3> <p>A/B testing is a process of experimentation where live business traffic is segmented into separately monitored traffic funnels. The most common technical intention is to supply a change limited to one traffic funnel and compare the difference in user behavior against a separate unaltered traffic funnel of equivalent volume. The goal is always the same: <strong>form new knowledge</strong> using the following steps.</p> <ul> <li>Define the experiment</li> <li>Document all requirements and summarize known contributing factors</li> <li>Form a hypothesis</li> <li>Gather data</li> <li>Determine the actual performance difference from the data</li> <li>Suggest and investigate possible causes, influencers, and side effects</li> <li>Report a summary of findings</li> </ul> <p>The most typical business scenario is to determine if a proposed idea represents a positive or negative short-term impact to revenue when supplied to live traffic. The inherent institutional value is that data is non-political and typically speaks directly to revenue impact, so therefore decision making is preferentially biased towards revenue disruption opposed to expert projections.</p> </div> <div id="definition"><h3>Definition of terms</h3> <ul> <li><strong>conversion</strong> <p>When an end user changes from a visitor to a purchaser.</p></li> <li><strong>control</strong> <p>A control is a traffic population in an experiment that receives normal operation. There may be more than one control in a given experiment, but there must be at least one. More than one control population is a strong way to determine the level of noise in the experiment by comparing the control populations against each other.</p></li> <li><strong>variant</strong> <p>A variant is a traffic population in an experiment that is directed to receive a specific change from normal operation. There may be more than one variant in a given experiment each with a different variation of the experimental change.</p></li> <li><strong>bias</strong> <p>Bias is a quality added into an experiment, often unintentionally, that is outside of the experiment's business requirements. Even a perceptibly irrelevant bias can wildly distort an experiment's data depending upon technical factors in the given experiment. Bias is generally considered the most negative quality in experimentation because it is so easily introduced and challenging to identify.</p></li> <li><strong>noise</strong> <p>Noise refers to data fluctuation. If the data from an experiment is wildly moving in different directions it is difficult to reason about the experiment's results. There exists statistic formulations to account for noise in the numbers, such as cumulative averaging over a given duration.</p></li> <li><strong>confidence</strong> <p>Confidence is often rated as a percentage that reflects a collision of factors from noise, volume, and duration. Confidence calculations are typically the defining statistical characteristic governing test completion. Predictions of when confidence achieves an acceptable threshold are highly predictable given knowledge of traffic volumes and external revenue factors.</p></li> <li><strong>blink</strong> <p>Blink is what happens when injected experiment code loads too slowly. It allows for the control condition to visually render on the screen for some noticeable time before the injected code executes and changes something on the page. The noticeable delayed change on the page looks like a one time blink. It is important to always avoid blink as it will negatively bias variant traffic populations.</p></li> <li><strong>Document Object Model (DOM)</strong> <p>The DOM is an abstract model residing in memory of the elements that comprise an instance of markup code, such as HTML, and the relationships of those elements. The various facets that comprise the DOM, which includes tag elements, are called nodes. When JavaScript wants to read or manipulate an instance of markup it actually operates only upon the DOM. <a href="unrelated_dom.xhtml">Read this guide for more information about the DOM</a>.</p> </li> </ul> </div> <div id="business"><h3>Business value</h3> <p>The ultimate business objective in testing is to determine if a proposed idea is harmful or beneficial in the immediate short-term. A/B testing provides no indication of whether a provided idea is beneficial in a time-frame greatly exceeding the test duration. One example of where this has proven true is with online advertising. We were able to prove from correlated historical numbers that increases in advertising visibility increased revenue immediately but cannibalized traffic on the site over the period of about a year, which ultimately destroyed revenue growth in the aggregate. Although online advertising revenue carries essentially no expense it is entirely offset by the revenue from the margins of retail goods/services thereby often resulting in a deficit. Since the benefits of increased advertising visibility are immediate A/B test always suggested increased advertising makes for a fantastic business decision, which is not accurate.</p> <p>In the land of experimentation analysis big numbers are better. While the claimed business priority may be clarity around decision making the actual experimentation objective is to learn more about your business. A highly disruptive test that definitively proves a proposed idea costs the business 10% revenue is an extremely valuable test. That is information you absolutely want to know before spending millions of dollars to develop the idea and launch it on your website. An experiment indicating a 10% harm is twice as beneficial as a test which indicates 5% growth. The idea is to measure disruption and learn as much about that disruption as possible. <strong>This learning is the most important result of testing.</strong></p> <p>The best A/B tests are ones that require the least effort, least coordination, and greatest increases in revenue. The absolute ideal experiment is one that can be coded and tested within an hour and drives a multi-million dollar surge in revenue without any other development assistance. <strong>It is absolutely essential to remember that experiment code is always throw away code.</strong> The priority is always lowest development cost and greatest disruption. This is how every test must be prioritized when experiments are competing for development resources or traffic availability.</p> <p>In summary the most valuable experiments are those that cost as little as possible to execute and indicate the greatest immediate disruption even if it is a negative disruption.</p> </div> <div id="whattest"><h3>What can be tested?</h3> <p>Nearly any idea can be tested. There are two factors that limit test potential: available data and sloppiness of the underlying page. Since experiment code is injected into existing pages it only has access to data already available in the given page unless additional data is made available at the server for the experiment code to access. Regardless of how additional data is provided or accessed additional effort is required at the server.</p> <p>The greatest limitation to experiment potential are land-mines and pitfalls from poorly written code already present on a page. This typically refers to excessive and unnecessary JavaScript interactions bogging down the page, but may also refer to poorly written HTML that is challenging for assisting applications to understand or broken application code on the server. Some of these failures directly harm business in their own right before the test code is ever injected into the page. Other failures do not appear to harm business until there is an A/B test that experiments with removing the troubling feature from the page. The most troubling failures are those an experiment engineer must spend extra care to modify and not break due to extremely fragile or faulty execution.</p> <p>Provided the experiment code is written with performance and precision in mind nearly anything can be tested. Experiments can span multiple pages and completely redesign the layout and interactivity of complex pages.</p> </div> <div id="nottest"><h3>When to avoid testing</h3> <p>Experiments often launch when it is most convenient for the experiment team opposed to formal release schedules planned by the technology department. As a result there is a lot of temptation from business and technology to use experiment applications to quickly inject changes to the site instead of waiting for technology to catch up. These are often poorly formed decisions from ignorance of the associated risks. The test engineer must always push back against these types of requests until so ordered, or their boss, by a senior executive in writing. <strong>Experiment applications are for delivering experiments only.</strong> The technology department of any given organization has slower release cycles because they are performing due diligence for quality assurance, technical reviews, and documentation of funded efforts.</p> </div> <div id="management"><h3>Experiment management</h3> <div id="management-knowledge"><h4>Knowledge sharing</h4> <p>The ultimate goal of testing is to create knowledge. Sharing this knowledge unlocks a shared understanding in the organization, which the principle of wisdom. Everybody in the organization needs to be empowered to offer suggestions and make business decisions. Arrogant organizations that scoff at the little guy tend to stagnate over time because decision making is confined to a selected few and enforced by legion of <em>yes men/women</em>. Anybody can innovate, but innovation requires novel ideas. Fresh thinking most typically comes from brilliant people at the bottom who are doing the real work and frequently encounter the most devastating problems and impact-full opportunities. In healthy organizations the people at the top are burdened by great ideas from beneath that come packaged with evidence, funding evaluations, and risk analysis. I have seen top military generals desperate for feedback from young enlisted soldiers, and change major decisions because of this feedback.</p> <p>In many large organizations the people at the bottom are entirely isolated from the people at the top. One way to change this is to actively seek ideas from across the organization. Create an internal dashboard for testing. Use this tool to store business requirements for experiments, documentation about roadblocks encountered, data from the experiment, and the concluding analysis. Allow anybody in the company to suggest experiment ideas. Reward employees who submit ideas that prove wildly disruptive. When decisions are made primarily upon data and this process is fully transparent everybody wins.</p> </div> <div id="management-traffic"><h4>Traffic management</h4> <p>Experiments require a large traffic volume to achieve high confidence. The more variants contained in an experiment the greater the traffic volume required to achieve confidence within a given duration. Organizations that receive plenty of traffic still need to allow enough time in an experiment to account for noise and purchase cycles.</p> <p>For ease of analysis every traffic distribution in an experiment should receive equal volume. The clarity provided by equal distributions is important not for the analysts who can easily perform the necessary math, but for everybody else in the organization who looks at the data and the conclusions. It is particularly helpful when the data is elegantly simple when writing reports presented to senior executives.</p> <p>It is always important that experiments be isolated from each other. It is extremely likely that experiments will bias each other when simultaneously running experiments share traffic, and unfortunately the significance of this bias is extremely hard to detect. If two experiments are required to run on the same pages at the same time traffic must be divided between the experiments, which may mean increased experiment duration. This separation must occur everywhere on the site, which is management and enforced different in different experiment applications.</p> <p>If traffic is limited precision is required in the management of experiments. Duration calculations need to be precise. Experiments need to be ready for execution in advance and queued for launch. Somebody must be tasked with watching the numbers and balancing traffic distribution against test availability and against business expectations.</p> </div> <div id="management-reports"><h4>Reports</h4> <p>Once analysis is complete for a given experiment the conclusions need to be communicated. The typical format for any audit, experiment, or survey is a formal report. It is always best to draft reports in two flavors: a data report and an executive report. The data report should read like formal research in that it should fully describe the experiment, discuss the methods used, include the data, and a highly specific set of conclusions. The executive report should include pie charts, and very few specifically chosen words. The idea is that a 12 year old can read the executive report and form opinions immediately while anybody that wishes to fully understand or reproduce the experiment has the data report as a reference.</p> </div> </div> <div id="engineering"><h3>Experiment engineering</h3> <div id="engineering-overview"><h4>Code overview</h4> <p>A good A/B test code sample must do two things extremely well: execute quickly and not break existing functionality. This can be especially challenging to achieve since A/B test code is typically served through injection on top of existing code. The code must execute as quickly as possible because any delays in execution introduces a bias in the experiment. Since performance is so essential it takes preference over any stylistic quality of the code.</p> <p>The injected experiment code cannot break, or even fix, existing functionality of the page it is injected into. The only disruption test code may introduce is that defined by the business requirement for the provided experiment. With this in mind code quality becomes important, but in a way that is different from code released through a more formal release process. All identified defects of a given page must be documented before an experiment on that page can launch and must be reviewed and verified against the experiment code.</p> <p>In order to achieve these two acceptance criteria experiment code should not be abstracted. This means vanilla imperative JavaScript with a strong understanding of performance and reliability with thorough testing by both the developer an a quality assurance technician familiar with experimentation. This sort of precision and performance always means a thorough understanding the Document Object Model on the part of the experiment engineer. Fortunately, experiment code is throw away code thereby making maintainability largely unnecessary. With maintainability out of the way experiment engineers are far more free to make decisions around extremely optimized performance without burden of architectural concerns.</p> </div> <div id="engineering-injection"><h4>Code injection</h4> <p>Experiment code is injected into a website location for it to execute. This is necessary so that an experiment application can determine which code samples are injected into which locations for which users at which times. In order for this injection to occur three code artifacts must be present in a given page:</p> <ul> <li><strong>Data object</strong> <p>A data object identifies an injection location with a unique identifier. It also provides the opportunity to send additional data to the experiment application that can determine if the user should or should not be included in a given experiment.</p></li> <li><strong>Injection point</strong> <p>The injection point is just an empty element in a page, typically a <em>div</em> element. It contains an <em>id</em> attribute whose value identifies this element as the injection point for incoming experiment code.</p> </li> <li><strong>Script request</strong> <p>The experiment application will provide a script reference. This script identifies a user account with the experimentation service, sends the data object to the experiment application, and identifies the DOM injection point to the experiment application.</p></li> </ul> <p>I am going to refer to the previous list as a code beacon. Adobe recommends for ease of execution to include code beacons where ever they are needed. This is bad advise. Only one code beacon is needed per page. If you are serious about testing then include a code beacon on every page of your site. Many experiment applications charge money per traffic impression generated from the script request in the code beacon, so when experiments are not running always be sure to turn off the beacon's response from within the experiment application.</p> <p>It is a general best practice to always include script requests, including those from other analytics tools, at the bottom of your page. The ideal placement for a code beacon is directly after the opening <em>body</em> tag in the page HTML, so testing represents a rare exception to this rule of script request placement. This is important because experiment code can be injected and executed before the page visually renders to the screen. Any delay in initial execution of the injected code produces the phenomena <em>blink</em>.</p> </div> <div id="engineering-promise"><h4>Promise polyfill</h4> <p>A promise is a newer feature introduced to JavaScript that watches for a change in some external state and fires a callback. Older web browsers do not recognize promises as available features, but fortunately this technology is easy to implement in any browser in exactly the same way. The alternate approach is called a <em>recursive setTimeout</em>. The setTimeout function is a feature web browsers provide to JavaScript that executes a function after a specified delay. A recursive setTimeout is a function that contains a setTimeout that automatically executes if some condition is met and otherwise calls the setTimeout's containing function.</p> <p>A recursive setTimeout is essentially a loop similar to a do while loop, except there is an asynchronous delay between each loop interval. The benefit to the two timers, setTimeout and setInterval, in JavaScript is that these features are APIs to functionality completely outside the JavaScript language, which makes them fully asynchronous. It is important to keep in mind that JavaScript is a single-thread synchronous language so even though the delay specified in a timer is executed separately from other execution in this language the referenced function is not asynchronously executed. This offers the advantage of delaying some code execution without delay to all code execution.</p> <p>The reason a recursive setTimeout is used instead of setInterval is for a couple of reasons. A recursive setTimeout is convenient in that when the delay is no longer needed the desired code can be immediately executed instead of another delay. A setInterval requires that a clearInterval function be used to prevent additional delays. Much like the timers the DOM is also composed completely outside the JavaScript language, which means updates to DOM nodes do not happen synchronously to JavaScript execution. This is problematic in that a setInterval can execute a function before the function from the previous delay has finished executing and since both the timer and DOM are external to JavaScript there is no way to for JavaScript to determine when this occurs until after it has already happened. A recursive setTimeout does not have this problem because it always looks to JavaScript logic to determine if another delay should occur instead of looking to a clock.</p> <p>A recursive setTimeout looks something like:</p><div class='beautify' data-prettydiff-ignore="true"><ol class='count'><li class="fold" title="folds from line 1 to line 10">- 1</li><li>2</li><li class="fold" title="folds from line 3 to line 9">- 3</li><li>4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>10</li></ol><ol class='data'><li>var <em class='s0'>experiment</em> = function () <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    var <em class='s1'>node</em>   = document.getElementById("phoneNumber"),<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>change</em> = function () <em class='s2'>{</em><em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        if (<em class='s1'>node</em> === null) {<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            setTimeout(<em class='s1'>change</em>, 100);<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        } else {<em>&#xA;</em></li><li class='c0'>                    //run experiment code<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        }<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em><em class='l1'>    </em>    <em class='s2'>}</em>;<em>&#xA;</em></li><li class='l0'><em class='l0'>    </em><em class='s1'>}</em>;<em>&#xA;</em></li></ol></div> <p>The primary need for a delay, such as a recursive setTimeout, is to ensure the injected code does not execute until the page is ready and then immediately at that time. If the injected code executes too early the expected DOM nodes will not be available and your code will likely break the page.</p> <p>100ms is typically appropriate for the delay. 100ms is about the minimum time for the human brain to process visual signals. At this rate a human will not experience blink and the code is not executing rapidly enough to degrade page performance overall. The delay can be pushed to a maximum of 250ms for code heavy pages, but some users may notice blink at this rate. I have found it is sometimes necessary to increase the rate to 50ms to catch dynamic changes to the page during initial rendering. A delay of 10ms is rapid enough to immediately catch changes to the DOM from other code, but at this rate of execution expect to noticeable delay in execution for the page overall. The theoretical minimum speed to interact with DOM nodes from JavaScript is about 3ms.</p> <p>Depending upon the requirements for the experiment and/or complexity of the underlying page it may be necessary to include multiple recursive setTimeout operations in a single page. This perfectly fine. So long as the code associated with each setTimeout operation targets different areas of the page these operations will not interfere with each other.</p> </div> <div id="engineering-hacker"><h4>Think like a hacker (or Special Forces)</h4> <p>Always remember that A/B test code is throw away code. It is silently injected into the page and executes with targeted precision. The end user must have no idea an experiment is present. It must also leave no evidence behind once the experiment is complete. If assistance is required from production code then the assisting artifacts should be well commented as to the experiment identification and duration, so that they can be deleted at a later time with confidence. If you absolutely must burden your user with cookies or localStorage then keep the lightest possible footprint.</p> <p>In order to minimize disruption from your injected code always attempt to make the minimum changes to the DOM possible. Never make changes that are outside the experiment's business requirements. Make all presentation decisions on new elements before adding them to the page.</p> </div> <div id="engineering-ie8"><h4>Developing for IE8</h4> <p>IE8 does not contain the helpers <em>querySelector</em> or <em>querySelectorAll</em> and your A/B test code will enter the page and begin executing before any libraries. Punishing your users by forcing libraries into your experiment code is not acceptable. It is important to keep in mind that <strong>IE8 is slow</strong> and adding unnecessary libraries or frameworks will only make things slower and increase risk of collisions with libraries already present in the page. This will increase the artifacts in the page which then causes the entire page to run more slowly, delays the execution of your test code, and increases risks overall.</p> <p>When support for IE8 is required the experiment engineer <strong>must learn to walk the DOM</strong>. I strongly recommend writing your code as though support for IE8 is always mandatory, because the code will be more stable and execute more quickly. The querySelector method, querySelectorAll method, and every popular library to help access the DOM all sugar down to the DOM api methods.</p> <p>All browsers feature a unique scheme to determine if JavaScript is taking too long to execute. Most browsers use a clock to make this determination, but IE8 uses number of instructions fed into the interpreter. If IE8 determines more than 5 million JavaScript instructions are present from a given page, including iframes, it will warn the user that script is taking too long to execute. Popular libraries like jQuery make this reality extremely common on pages with many complex interactions. Problems like this can bias the experiment to the point of absolute irrelevance.</p> <p>Never disqualify old browsers from experiments merely because the injected code takes longer to write. End users who refuse to update their browsers have unique behaviors that needs to be represented in the experiment data. Old web browsers should only targeted for experiment exclusion after every step has been taken to operate in those browsers and problems continue to introduce bias. It is important to understand selectively targeting particular audiences for exclusion will bias the data.</p> </div> <div id="engineering-multipage"><h4>Experiments spanning multiple pages</h4> <p>Experiments that must span multiple pages are common. For instance changing the way a brand displays a certain type of information would likely require this information be changed uniformly everywhere. In many experiment applications this is a simple matter for specifying additional pages to inject code onto and is generally more challenging for traffic management.</p> <p>There are some cases where experiment data from one page must be carried forward to another page. If the data is a single facet that does not contain human expressible language the best bet is to change the address of the next page to include a URI parameter for the experiment. This allows the next page to access the data by looking at the page address and leaves no artifacts behind once the experiment concludes.</p> <p>When an experiments requires complex dynamic data be pushed from one page to the next it is best to use <em>localStorage</em>. This will leave an artifact behind once the experiment concludes, but you can put anything in there so long as it is converted to a string. I recommend always naming localStorage properties after the experiment, for example test531a. This is a safety measure to ensure that localStorage use does not clobber use of a property required elsewhere on the production site or from another experiment.</p> <p>Some experiments require removing a page. This means any link between a current page and a following page must be replaced with a call to a JavaScript function that contains a location.replace method. This method ensures the address of the page is changed to a new address and the step in navigation history is replaced. The back button always goes back to the correct page without blinking at the skipped page. This can become complicated in the case where movement to the next page is the result of a form submission, particularly when that form submission changes address protocol (HTTP to HTTPS). The safest course of action is then to replace the landing page, but will likely require a custom solution.</p> </div> <div id="verifying"><h3>Verifying results</h3> <p>Sometimes tests prove negatively disruptive immediately. Organization management may issue a call to terminate the experiment in such cases. Always allow at least <strong>a minimum of four days</strong> before terminating an experiment. It is common for the numbers to even out in the short-term and often change direction from negative to positive disruption. Always keep in mind the primary goal is to gain knowledge and not revenue from an experiment.</p> <p>Sometimes it is necessary to verify the accuracy of an experiment, particularly when controversy emerges. The most sure way to accomplish test verification is to run the test again several months later and compare the results. Seasonality may impact traffic to the site differently at different times of the year and may also impact conversion rates differently. What is most important is that the spread across the various traffic funnels is similar between the two experiment attempts. When the distribution of success rates differs between test attempts it is time for some deep investigation to determine what could have caused this difference to occur. It could be that one of the test attempts was faulty or biased, but it could also be the result of unknown technical problems.</p> </div> </div> </div> <script src="../api/dom.js" type="application/javascript"></script> </body> </html>
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Pretty Diff - Guide, A/B Testing for the Web</title>
+        <link href="../css/index.css" media="all" rel="stylesheet" type="text/css"/>
+        <link
+            href="http://prettydiff.com/guide/react_jsx.xhtml"
+            rel="canonical"
+            type="application/xhtml+xml"/>
+        <link
+            href="http://prettydiff.com/images/favicon.ico"
+            rel="icon"
+            type="image/x-icon"/>
+        <link
+            href="http://prettydiff.com/labels.rdf"
+            rel="meta"
+            title="ICRA labels"
+            type="application/rdf+xml"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <meta content="index, follow" name="robots"/>
+        <meta content="Pretty Diff - Guide, A/B Testing for the Web" name="DC.title"/>
+        <meta
+            content="(pics-1.1 'http://www.icra.org/pics/vocabularyv03/' l gen true for 'http://prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for 'http://www.prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))"
+            http-equiv="pics-Label"/>
+        <meta content="Austin Cheney" name="author"/>
+        <meta
+            content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML."
+            name="description"/>
+        <meta content="Global" name="distribution"/>
+        <meta content="en" http-equiv="Content-Language"/>
+        <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/>
+        <meta content="text/css" http-equiv="content-style-type"/>
+        <meta content="application/javascript" http-equiv="content-script-type"/>
+        <meta
+            content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
+            name="google-site-verification"/>
+    </head>
+    <body class="white" id="prettydiff">
+        <div class="contentarea" id="page">
+            <section role="heading">
+                <h1>
+                    <svg height="2000.000000pt" id="pdlogo" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
+                            <path
+                                d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
+                    </svg>
+                    <a href="prettydiff.com.xhtml">Pretty Diff</a>
+                    - Guide: A/B Tesing for the Web</h1>
+                <p id="dcolorScheme">
+                    <label class="label" for="colorScheme">Color Scheme</label>
+                    <select id="colorScheme">
+                        <option>Canvas</option>
+                        <option>Shadow</option>
+                        <option selected="selected">White</option>
+                    </select>
+                </p>
+                <p>Explore some
+                    <a href="samples.xhtml">samples</a>. For any questions, comments, requests, or feedback please join the
+                    <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff mailing list</a>
+                    or chat on
+                    <a href="https://gitter.im/prettydiff/prettydiff?utm_source=badge%26utm_medium=badge%26utm_campaign=pr-badge%26utm_content=badge">Gitter</a>. Find
+                    <a href="https://github.com/prettydiff/prettydiff">Pretty Diff on GitHub</a>.</p>
+            </section>
+            <section role="main">
+                <h2>A/B Testing for the Web</h2>
+                <div class="segment" id="doc_contents">
+                    <h3>Table of contents</h3>
+                    <ol>
+                        <li>
+                            <a href="#intro">Introduction</a>
+                        </li>
+                        <li>
+                            <a href="#definition">Definition of terms</a>
+                        </li>
+                        <li>
+                            <a href="#business">Business value</a>
+                        </li>
+                        <li>
+                            <a href="#whattest">What can be tested?</a>
+                        </li>
+                        <li>
+                            <a href="#nottest">When to avoid testing</a>
+                        </li>
+                        <li>
+                            <a href="#management">Experiment management</a>
+                            <ol>
+                                <li>
+                                    <a href="#management-knowledge">Knowledge sharing</a>
+                                </li>
+                                <li>
+                                    <a href="#management-traffic">Traffic management</a>
+                                </li>
+                                <li>
+                                    <a href="#management-reports">Reports</a>
+                                </li>
+                            </ol>
+                        </li>
+                        <li>
+                            <a href="#engineering">Experiment engineering</a>
+                            <ol>
+                                <li>
+                                    <a href="#engineering-overview">Code overview</a>
+                                </li>
+                                <li>
+                                    <a href="#engineering-injection">Code injection</a>
+                                </li>
+                                <li>
+                                    <a href="#engineering-promise">Promise polyfill</a>
+                                </li>
+                                <li>
+                                    <a href="#engineering-hacker">Think like a hacker (or Special Forces)</a>
+                                </li>
+                                <li>
+                                    <a href="#engineering-ie8">Developing for IE8</a>
+                                </li>
+                                <li>
+                                    <a href="#engineering-multipage">Experiments spanning multiple pages</a>
+                                </li>
+                            </ol>
+                        </li>
+                        <li>
+                            <a href="#verifying">Verifying results</a>
+                        </li>
+                    </ol>
+                </div>
+                <div class="segment" id="intro">
+                    <h3>Introduction</h3>
+                    <p>A/B testing is a process of experimentation where live business traffic is
+                        segmented into separately monitored traffic funnels. The most common technical
+                        intention is to supply a change limited to one traffic funnel and compare the
+                        difference in user behavior against a separate unaltered traffic funnel of
+                        equivalent volume. The goal is always the same:
+                        <strong>form new knowledge</strong>
+                        using the following steps.</p>
+                    <ul>
+                        <li>Define the experiment</li>
+                        <li>Document all requirements and summarize known contributing factors</li>
+                        <li>Form a hypothesis</li>
+                        <li>Gather data</li>
+                        <li>Determine the actual performance difference from the data</li>
+                        <li>Suggest and investigate possible causes, influencers, and side effects</li>
+                        <li>Report a summary of findings</li>
+                    </ul>
+                    <p>The most typical business scenario is to determine if a proposed idea
+                        represents a positive or negative short-term impact to revenue when supplied to
+                        live traffic. The inherent institutional value is that data is non-political and
+                        typically speaks directly to revenue impact, so therefore decision making is
+                        preferentially biased towards revenue disruption opposed to expert projections.</p>
+                </div>
+                <div class="segment" id="definition">
+                    <h3>Definition of terms</h3>
+                    <ul>
+                        <li>
+                            <strong>conversion</strong>
+                            <p>When an end user changes from a visitor to a purchaser.</p>
+                        </li>
+                        <li>
+                            <strong>control</strong>
+                            <p>A control is a traffic population in an experiment that receives normal
+                                operation. There may be more than one control in a given experiment, but there
+                                must be at least one. More than one control population is a strong way to
+                                determine the level of noise in the experiment by comparing the control
+                                populations against each other.</p>
+                        </li>
+                        <li>
+                            <strong>variant</strong>
+                            <p>A variant is a traffic population in an experiment that is directed to
+                                receive a specific change from normal operation. There may be more than one
+                                variant in a given experiment each with a different variation of the
+                                experimental change.</p>
+                        </li>
+                        <li>
+                            <strong>bias</strong>
+                            <p>Bias is a quality added into an experiment, often unintentionally, that is
+                                outside of the experiment's business requirements. Even a perceptibly irrelevant
+                                bias can wildly distort an experiment's data depending upon technical factors in
+                                the given experiment. Bias is generally considered the most negative quality in
+                                experimentation because it is so easily introduced and challenging to identify.</p>
+                        </li>
+                        <li>
+                            <strong>noise</strong>
+                            <p>Noise refers to data fluctuation. If the data from an experiment is wildly
+                                moving in different directions it is difficult to reason about the experiment's
+                                results. There exists statistic formulations to account for noise in the
+                                numbers, such as cumulative averaging over a given duration.</p>
+                        </li>
+                        <li>
+                            <strong>confidence</strong>
+                            <p>Confidence is often rated as a percentage that reflects a collision of
+                                factors from noise, volume, and duration. Confidence calculations are typically
+                                the defining statistical characteristic governing test completion. Predictions
+                                of when confidence achieves an acceptable threshold are highly predictable given
+                                knowledge of traffic volumes and external revenue factors.</p>
+                        </li>
+                        <li>
+                            <strong>blink</strong>
+                            <p>Blink is what happens when injected experiment code loads too slowly. It
+                                allows for the control condition to visually render on the screen for some
+                                noticeable time before the injected code executes and changes something on the
+                                page. The noticeable delayed change on the page looks like a one time blink. It
+                                is important to always avoid blink as it will negatively bias variant traffic
+                                populations.</p>
+                        </li>
+                        <li>
+                            <strong>Document Object Model (DOM)</strong>
+                            <p>The DOM is an abstract model residing in memory of the elements that comprise
+                                an instance of markup code, such as HTML, and the relationships of those
+                                elements. The various facets that comprise the DOM, which includes tag elements,
+                                are called nodes. When JavaScript wants to read or manipulate an instance of
+                                markup it actually operates only upon the DOM.
+                                <a href="unrelated_dom.xhtml">Read this guide for more information about the DOM</a>.</p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="segment" id="business">
+                    <h3>Business value</h3>
+                    <p>The ultimate business objective in testing is to determine if a proposed idea
+                        is harmful or beneficial in the immediate short-term. A/B testing provides no
+                        indication of whether a provided idea is beneficial in a time-frame greatly
+                        exceeding the test duration. One example of where this has proven true is with
+                        online advertising. We were able to prove from correlated historical numbers
+                        that increases in advertising visibility increased revenue immediately but
+                        cannibalized traffic on the site over the period of about a year, which
+                        ultimately destroyed revenue growth in the aggregate. Although online
+                        advertising revenue carries essentially no expense it is entirely offset by the
+                        revenue from the margins of retail goods/services thereby often resulting in a
+                        deficit. Since the benefits of increased advertising visibility are immediate
+                        A/B test always suggested increased advertising makes for a fantastic business
+                        decision, which is not accurate.</p>
+                    <p>In the land of experimentation analysis big numbers are better. While the
+                        claimed business priority may be clarity around decision making the actual
+                        experimentation objective is to learn more about your business. A highly
+                        disruptive test that definitively proves a proposed idea costs the business 10%
+                        revenue is an extremely valuable test. That is information you absolutely want
+                        to know before spending millions of dollars to develop the idea and launch it on
+                        your website. An experiment indicating a 10% harm is twice as beneficial as a
+                        test which indicates 5% growth. The idea is to measure disruption and learn as
+                        much about that disruption as possible.
+                        <strong>This learning is the most important result of testing.</strong>
+                    </p>
+                    <p>The best A/B tests are ones that require the least effort, least
+                        coordination, and greatest increases in revenue. The absolute ideal experiment
+                        is one that can be coded and tested within an hour and drives a multi-million
+                        dollar surge in revenue without any other development assistance.
+                        <strong>It is absolutely essential to remember that experiment code is always
+                            throw away code.</strong>
+                        The priority is always lowest development cost and greatest disruption. This is
+                        how every test must be prioritized when experiments are competing for
+                        development resources or traffic availability.</p>
+                    <p>In summary the most valuable experiments are those that cost as little as
+                        possible to execute and indicate the greatest immediate disruption even if it is
+                        a negative disruption.</p>
+                </div>
+                <div class="segment" id="whattest">
+                    <h3>What can be tested?</h3>
+                    <p>Nearly any idea can be tested. There are two factors that limit test
+                        potential: available data and sloppiness of the underlying page. Since
+                        experiment code is injected into existing pages it only has access to data
+                        already available in the given page unless additional data is made available at
+                        the server for the experiment code to access. Regardless of how additional data
+                        is provided or accessed additional effort is required at the server.</p>
+                    <p>The greatest limitation to experiment potential are land-mines and pitfalls
+                        from poorly written code already present on a page. This typically refers to
+                        excessive and unnecessary JavaScript interactions bogging down the page, but may
+                        also refer to poorly written HTML that is challenging for assisting applications
+                        to understand or broken application code on the server. Some of these failures
+                        directly harm business in their own right before the test code is ever injected
+                        into the page. Other failures do not appear to harm business until there is an
+                        A/B test that experiments with removing the troubling feature from the page. The
+                        most troubling failures are those an experiment engineer must spend extra care
+                        to modify and not break due to extremely fragile or faulty execution.</p>
+                    <p>Provided the experiment code is written with performance and precision in
+                        mind nearly anything can be tested. Experiments can span multiple pages and
+                        completely redesign the layout and interactivity of complex pages.</p>
+                </div>
+                <div class="segment" id="nottest">
+                    <h3>When to avoid testing</h3>
+                    <p>Experiments often launch when it is most convenient for the experiment team
+                        opposed to formal release schedules planned by the technology department. As a
+                        result there is a lot of temptation from business and technology to use
+                        experiment applications to quickly inject changes to the site instead of waiting
+                        for technology to catch up. These are often poorly formed decisions from
+                        ignorance of the associated risks. The test engineer must always push back
+                        against these types of requests until so ordered, or their boss, by a senior
+                        executive in writing.
+                        <strong>Experiment applications are for delivering experiments only.</strong>
+                        The technology department of any given organization has slower release cycles
+                        because they are performing due diligence for quality assurance, technical
+                        reviews, and documentation of funded efforts.</p>
+                </div>
+                <div class="segment" id="management">
+                    <h3>Experiment management</h3>
+                    <div class="segment" id="management-knowledge">
+                        <h4>Knowledge sharing</h4>
+                        <p>The ultimate goal of testing is to create knowledge. Sharing this knowledge
+                            unlocks a shared understanding in the organization, which the principle of
+                            wisdom. Everybody in the organization needs to be empowered to offer suggestions
+                            and make business decisions. Arrogant organizations that scoff at the little guy
+                            tend to stagnate over time because decision making is confined to a selected few
+                            and enforced by legion of
+                            <em>yes men/women</em>. Anybody can innovate, but innovation requires novel
+                            ideas. Fresh thinking most typically comes from brilliant people at the bottom
+                            who are doing the real work and frequently encounter the most devastating
+                            problems and impact-full opportunities. In healthy organizations the people at
+                            the top are burdened by great ideas from beneath that come packaged with
+                            evidence, funding evaluations, and risk analysis. I have seen top military
+                            generals desperate for feedback from young enlisted soldiers, and change major
+                            decisions because of this feedback.</p>
+                        <p>In many large organizations the people at the bottom are entirely isolated
+                            from the people at the top. One way to change this is to actively seek ideas
+                            from across the organization. Create an internal dashboard for testing. Use this
+                            tool to store business requirements for experiments, documentation about
+                            roadblocks encountered, data from the experiment, and the concluding analysis.
+                            Allow anybody in the company to suggest experiment ideas. Reward employees who
+                            submit ideas that prove wildly disruptive. When decisions are made primarily
+                            upon data and this process is fully transparent everybody wins.</p>
+                    </div>
+                    <div class="segment" id="management-traffic">
+                        <h4>Traffic management</h4>
+                        <p>Experiments require a large traffic volume to achieve high confidence. The
+                            more variants contained in an experiment the greater the traffic volume required
+                            to achieve confidence within a given duration. Organizations that receive plenty
+                            of traffic still need to allow enough time in an experiment to account for noise
+                            and purchase cycles.</p>
+                        <p>For ease of analysis every traffic distribution in an experiment should
+                            receive equal volume. The clarity provided by equal distributions is important
+                            not for the analysts who can easily perform the necessary math, but for
+                            everybody else in the organization who looks at the data and the conclusions. It
+                            is particularly helpful when the data is elegantly simple when writing reports
+                            presented to senior executives.</p>
+                        <p>It is always important that experiments be isolated from each other. It is
+                            extremely likely that experiments will bias each other when simultaneously
+                            running experiments share traffic, and unfortunately the significance of this
+                            bias is extremely hard to detect. If two experiments are required to run on the
+                            same pages at the same time traffic must be divided between the experiments,
+                            which may mean increased experiment duration. This separation must occur
+                            everywhere on the site, which is management and enforced different in different
+                            experiment applications.</p>
+                        <p>If traffic is limited precision is required in the management of experiments.
+                            Duration calculations need to be precise. Experiments need to be ready for
+                            execution in advance and queued for launch. Somebody must be tasked with
+                            watching the numbers and balancing traffic distribution against test
+                            availability and against business expectations.</p>
+                    </div>
+                    <div class="segment" id="management-reports">
+                        <h4>Reports</h4>
+                        <p>Once analysis is complete for a given experiment the conclusions need to be
+                            communicated. The typical format for any audit, experiment, or survey is a
+                            formal report. It is always best to draft reports in two flavors: a data report
+                            and an executive report. The data report should read like formal research in
+                            that it should fully describe the experiment, discuss the methods used, include
+                            the data, and a highly specific set of conclusions. The executive report should
+                            include pie charts, and very few specifically chosen words. The idea is that a
+                            12 year old can read the executive report and form opinions immediately while
+                            anybody that wishes to fully understand or reproduce the experiment has the data
+                            report as a reference.</p>
+                    </div>
+                </div>
+                <div class="segment" id="engineering">
+                    <h3>Experiment engineering</h3>
+                    <div class="segment" id="engineering-overview">
+                        <h4>Code overview</h4>
+                        <p>A good A/B test code sample must do two things extremely well: execute
+                            quickly and not break existing functionality. This can be especially challenging
+                            to achieve since A/B test code is typically served through injection on top of
+                            existing code. The code must execute as quickly as possible because any delays
+                            in execution introduces a bias in the experiment. Since performance is so
+                            essential it takes preference over any stylistic quality of the code.</p>
+                        <p>The injected experiment code cannot break, or even fix, existing
+                            functionality of the page it is injected into. The only disruption test code may
+                            introduce is that defined by the business requirement for the provided
+                            experiment. With this in mind code quality becomes important, but in a way that
+                            is different from code released through a more formal release process. All
+                            identified defects of a given page must be documented before an experiment on
+                            that page can launch and must be reviewed and verified against the experiment
+                            code.</p>
+                        <p>In order to achieve these two acceptance criteria experiment code should not
+                            be abstracted. This means vanilla imperative JavaScript with a strong
+                            understanding of performance and reliability with thorough testing by both the
+                            developer an a quality assurance technician familiar with experimentation. This
+                            sort of precision and performance always means a thorough understanding the
+                            Document Object Model on the part of the experiment engineer. Fortunately,
+                            experiment code is throw away code thereby making maintainability largely
+                            unnecessary. With maintainability out of the way experiment engineers are far
+                            more free to make decisions around extremely optimized performance without
+                            burden of architectural concerns.</p>
+                    </div>
+                    <div class="segment" id="engineering-injection">
+                        <h4>Code injection</h4>
+                        <p>Experiment code is injected into a website location for it to execute. This
+                            is necessary so that an experiment application can determine which code samples
+                            are injected into which locations for which users at which times. In order for
+                            this injection to occur three code artifacts must be present in a given page:</p>
+                        <ul>
+                            <li>
+                                <strong>Data object</strong>
+                                <p>A data object identifies an injection location with a unique identifier. It
+                                    also provides the opportunity to send additional data to the experiment
+                                    application that can determine if the user should or should not be included in a
+                                    given experiment.</p>
+                            </li>
+                            <li>
+                                <strong>Injection point</strong>
+                                <p>The injection point is just an empty element in a page, typically a
+                                    <em>div</em>
+                                    element. It contains an
+                                    <em>id</em>
+                                    attribute whose value identifies this element as the injection point for
+                                    incoming experiment code.</p>
+                            </li>
+                            <li>
+                                <strong>Script request</strong>
+                                <p>The experiment application will provide a script reference. This script
+                                    identifies a user account with the experimentation service, sends the data
+                                    object to the experiment application, and identifies the DOM injection point to
+                                    the experiment application.</p>
+                            </li>
+                        </ul>
+                        <p>I am going to refer to the previous list as a code beacon. Adobe recommends
+                            for ease of execution to include code beacons where ever they are needed. This
+                            is bad advise. Only one code beacon is needed per page. If you are serious about
+                            testing then include a code beacon on every page of your site. Many experiment
+                            applications charge money per traffic impression generated from the script
+                            request in the code beacon, so when experiments are not running always be sure
+                            to turn off the beacon's response from within the experiment application.</p>
+                        <p>It is a general best practice to always include script requests, including
+                            those from other analytics tools, at the bottom of your page. The ideal
+                            placement for a code beacon is directly after the opening
+                            <em>body</em>
+                            tag in the page HTML, so testing represents a rare exception to this rule of
+                            script request placement. This is important because experiment code can be
+                            injected and executed before the page visually renders to the screen. Any delay
+                            in initial execution of the injected code produces the phenomena
+                            <em>blink</em>.</p>
+                    </div>
+                    <div class="segment" id="engineering-promise">
+                        <h4>Promise polyfill</h4>
+                        <p>A promise is a newer feature introduced to JavaScript that watches for a
+                            change in some external state and fires a callback. Older web browsers do not
+                            recognize promises as available features, but fortunately this technology is
+                            easy to implement in any browser in exactly the same way. The alternate approach
+                            is called a
+                            <em>recursive setTimeout</em>. The setTimeout function is a feature web browsers
+                            provide to JavaScript that executes a function after a specified delay. A
+                            recursive setTimeout is a function that contains a setTimeout that automatically
+                            executes if some condition is met and otherwise calls the setTimeout's
+                            containing function.</p>
+                        <p>A recursive setTimeout is essentially a loop similar to a do while loop,
+                            except there is an asynchronous delay between each loop interval. The benefit to
+                            the two timers, setTimeout and setInterval, in JavaScript is that these features
+                            are APIs to functionality completely outside the JavaScript language, which
+                            makes them fully asynchronous. It is important to keep in mind that JavaScript
+                            is a single-thread synchronous language so even though the delay specified in a
+                            timer is executed separately from other execution in this language the
+                            referenced function is not asynchronously executed. This offers the advantage of
+                            delaying some code execution without delay to all code execution.</p>
+                        <p>The reason a recursive setTimeout is used instead of setInterval is for a
+                            couple of reasons. A recursive setTimeout is convenient in that when the delay
+                            is no longer needed the desired code can be immediately executed instead of
+                            another delay. A setInterval requires that a clearInterval function be used to
+                            prevent additional delays. Much like the timers the DOM is also composed
+                            completely outside the JavaScript language, which means updates to DOM nodes do
+                            not happen synchronously to JavaScript execution. This is problematic in that a
+                            setInterval can execute a function before the function from the previous delay
+                            has finished executing and since both the timer and DOM are external to
+                            JavaScript there is no way to for JavaScript to determine when this occurs until
+                            after it has already happened. A recursive setTimeout does not have this problem
+                            because it always looks to JavaScript logic to determine if another delay should
+                            occur instead of looking to a clock.</p>
+                        <p>A recursive setTimeout looks something like:</p>
+                        <div class="beautify" data-prettydiff-ignore="true"><ol class='count'><li class="fold" title="folds from line 1 to line 10">- 1</li><li>2</li><li class="fold" title="folds from line 3 to line 9">- 3</li><li>4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>10</li></ol><ol class='data'><li>var <em class='s0'>experiment</em> = function () <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    var <em class='s1'>node</em>   = document.getElementById("phoneNumber"),<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>change</em> = function () <em class='s2'>{</em><em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        if (<em class='s1'>node</em> === null) {<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            setTimeout(<em class='s1'>change</em>, 100);<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        } else {<em>&#xA;</em></li><li class='c0'>                    //run experiment code<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        }<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em><em class='l1'>    </em>    <em class='s2'>}</em>;<em>&#xA;</em></li><li class='l0'><em class='l0'>    </em><em class='s1'>}</em>;<em>&#xA;</em></li></ol></div>
+                        <p>The primary need for a delay, such as a recursive setTimeout, is to ensure
+                            the injected code does not execute until the page is ready and then immediately
+                            at that time. If the injected code executes too early the expected DOM nodes
+                            will not be available and your code will likely break the page.</p>
+                        <p>100ms is typically appropriate for the delay. 100ms is about the minimum time
+                            for the human brain to process visual signals. At this rate a human will not
+                            experience blink and the code is not executing rapidly enough to degrade page
+                            performance overall. The delay can be pushed to a maximum of 250ms for code
+                            heavy pages, but some users may notice blink at this rate. I have found it is
+                            sometimes necessary to increase the rate to 50ms to catch dynamic changes to the
+                            page during initial rendering. A delay of 10ms is rapid enough to immediately
+                            catch changes to the DOM from other code, but at this rate of execution expect
+                            to noticeable delay in execution for the page overall. The theoretical minimum
+                            speed to interact with DOM nodes from JavaScript is about 3ms.</p>
+                        <p>Depending upon the requirements for the experiment and/or complexity of the
+                            underlying page it may be necessary to include multiple recursive setTimeout
+                            operations in a single page. This perfectly fine. So long as the code associated
+                            with each setTimeout operation targets different areas of the page these
+                            operations will not interfere with each other.</p>
+                    </div>
+                    <div class="segment" id="engineering-hacker">
+                        <h4>Think like a hacker (or Special Forces)</h4>
+                        <p>Always remember that A/B test code is throw away code. It is silently
+                            injected into the page and executes with targeted precision. The end user must
+                            have no idea an experiment is present. It must also leave no evidence behind
+                            once the experiment is complete. If assistance is required from production code
+                            then the assisting artifacts should be well commented as to the experiment
+                            identification and duration, so that they can be deleted at a later time with
+                            confidence. If you absolutely must burden your user with cookies or localStorage
+                            then keep the lightest possible footprint.</p>
+                        <p>In order to minimize disruption from your injected code always attempt to
+                            make the minimum changes to the DOM possible. Never make changes that are
+                            outside the experiment's business requirements. Make all presentation decisions
+                            on new elements before adding them to the page.</p>
+                    </div>
+                    <div class="segment" id="engineering-ie8">
+                        <h4>Developing for IE8</h4>
+                        <p>IE8 does not contain the helpers
+                            <em>querySelector</em>
+                            or
+                            <em>querySelectorAll</em>
+                            and your A/B test code will enter the page and begin executing before any
+                            libraries. Punishing your users by forcing libraries into your experiment code
+                            is not acceptable. It is important to keep in mind that
+                            <strong>IE8 is slow</strong>
+                            and adding unnecessary libraries or frameworks will only make things slower and
+                            increase risk of collisions with libraries already present in the page. This
+                            will increase the artifacts in the page which then causes the entire page to run
+                            more slowly, delays the execution of your test code, and increases risks
+                            overall.</p>
+                        <p>When support for IE8 is required the experiment engineer
+                            <strong>must learn to walk the DOM</strong>. I strongly recommend writing your
+                            code as though support for IE8 is always mandatory, because the code will be
+                            more stable and execute more quickly. The querySelector method, querySelectorAll
+                            method, and every popular library to help access the DOM all sugar down to the
+                            DOM api methods.</p>
+                        <p>All browsers feature a unique scheme to determine if JavaScript is taking too
+                            long to execute. Most browsers use a clock to make this determination, but IE8
+                            uses number of instructions fed into the interpreter. If IE8 determines more
+                            than 5 million JavaScript instructions are present from a given page, including
+                            iframes, it will warn the user that script is taking too long to execute.
+                            Popular libraries like jQuery make this reality extremely common on pages with
+                            many complex interactions. Problems like this can bias the experiment to the
+                            point of absolute irrelevance.</p>
+                        <p>Never disqualify old browsers from experiments merely because the injected
+                            code takes longer to write. End users who refuse to update their browsers have
+                            unique behaviors that needs to be represented in the experiment data. Old web
+                            browsers should only targeted for experiment exclusion after every step has been
+                            taken to operate in those browsers and problems continue to introduce bias. It
+                            is important to understand selectively targeting particular audiences for
+                            exclusion will bias the data.</p>
+                    </div>
+                    <div class="segment" id="engineering-multipage">
+                        <h4>Experiments spanning multiple pages</h4>
+                        <p>Experiments that must span multiple pages are common. For instance changing
+                            the way a brand displays a certain type of information would likely require this
+                            information be changed uniformly everywhere. In many experiment applications
+                            this is a simple matter for specifying additional pages to inject code onto and
+                            is generally more challenging for traffic management.</p>
+                        <p>There are some cases where experiment data from one page must be carried
+                            forward to another page. If the data is a single facet that does not contain
+                            human expressible language the best bet is to change the address of the next
+                            page to include a URI parameter for the experiment. This allows the next page to
+                            access the data by looking at the page address and leaves no artifacts behind
+                            once the experiment concludes.</p>
+                        <p>When an experiments requires complex dynamic data be pushed from one page to
+                            the next it is best to use
+                            <em>localStorage</em>. This will leave an artifact behind once the experiment
+                            concludes, but you can put anything in there so long as it is converted to a
+                            string. I recommend always naming localStorage properties after the experiment,
+                            for example test531a. This is a safety measure to ensure that localStorage use
+                            does not clobber use of a property required elsewhere on the production site or
+                            from another experiment.</p>
+                        <p>Some experiments require removing a page. This means any link between a
+                            current page and a following page must be replaced with a call to a JavaScript
+                            function that contains a location.replace method. This method ensures the
+                            address of the page is changed to a new address and the step in navigation
+                            history is replaced. The back button always goes back to the correct page
+                            without blinking at the skipped page. This can become complicated in the case
+                            where movement to the next page is the result of a form submission, particularly
+                            when that form submission changes address protocol (HTTP to HTTPS). The safest
+                            course of action is then to replace the landing page, but will likely require a
+                            custom solution.</p>
+                    </div>
+                    <div class="segment" id="verifying">
+                        <h3>Verifying results</h3>
+                        <p>Sometimes tests prove negatively disruptive immediately. Organization
+                            management may issue a call to terminate the experiment in such cases. Always
+                            allow at least
+                            <strong>a minimum of four days</strong>
+                            before terminating an experiment. It is common for the numbers to even out in
+                            the short-term and often change direction from negative to positive disruption.
+                            Always keep in mind the primary goal is to gain knowledge and not revenue from
+                            an experiment.</p>
+                        <p>Sometimes it is necessary to verify the accuracy of an experiment,
+                            particularly when controversy emerges. The most sure way to accomplish test
+                            verification is to run the test again several months later and compare the
+                            results. Seasonality may impact traffic to the site differently at different
+                            times of the year and may also impact conversion rates differently. What is most
+                            important is that the spread across the various traffic funnels is similar
+                            between the two experiment attempts. When the distribution of success rates
+                            differs between test attempts it is time for some deep investigation to
+                            determine what could have caused this difference to occur. It could be that one
+                            of the test attempts was faulty or biased, but it could also be the result of
+                            unknown technical problems.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <script src="../api/dom.js" type="application/javascript"></script>
+    </body>
+</html>

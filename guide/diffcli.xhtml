@@ -1,12 +1,153 @@
-<?xml version='1.0' encoding='UTF-8' ?> <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'> <html xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'> <head> <title>Pretty Diff - Guide, So its kind like recursive command line diff, but in JavaScript</title> <link href="../diffview.css" media="all" rel="stylesheet" type="text/css"/> <link href="guide.css" media="all" rel="stylesheet" type="text/css"/> <link href='http://prettydiff.com/guide/diffcli.xhtml' rel='canonical' type='application/xhtml+xml'/> <link href="http://prettydiff.com/images/favicon.ico" rel="icon" type="image/x-icon"/> <link href="http://prettydiff.com/labels.rdf" rel="meta" title="ICRA labels" type="application/rdf+xml"/> <meta content="width=device-width, initial-scale=1" name="viewport"/> <meta content="index, follow" name="robots"/> <meta content="Pretty Diff - Guide, So its kind like recursive command line diff, but in JavaScript" name="DC.title"/> <meta content='(pics-1.1 "http://www.icra.org/pics/vocabularyv03/" l gen true for "http://prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for "http://www.prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))' http-equiv="pics-Label"/> <meta content="Austin Cheney" name="author"/> <meta content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML." name="description"/> <meta content="Global" name="distribution"/> <meta content="en" http-equiv="Content-Language"/> <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/> <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/> <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/> <meta content="text/css" http-equiv="content-style-type"/> <meta content="application/javascript" http-equiv="content-script-type"/> <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E" name="google-site-verification"/> </head> <body class="white" id="doc"> <h1> <svg height="2000.000000pt" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg"> <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)"> <path d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g> </svg> <a href="http://prettydiff.com/">Pretty Diff</a> - Guide</h1> <p id="dcolorScheme"><label class="label" for="colorScheme">Color Scheme</label> <select id="colorScheme"><option>Canvas</option> <option>Shadow</option> <option selected="selected">White</option></select> </p> <h2>So its kind like recursive command line diff, but in JavaScript</h2> <div> <div><h3>Introduction</h3> <p>Ye ol Unix diff application provides the means to compare changes of all files in a directory tree. diff is awesome at its job, but it certainly isn't Pretty Diff.</p> <p>When used with Node.js <a href="http://prettydiff.com/">Pretty Diff</a> can now output diffs to the command line in color for entire directory trees just like git diff. If you needed to compare an NPM package and all of its dependencies, for example, to a prior version of that package now you can. Changes in each modified file will be listed to the command line as well as files removed and added.</p> </div> <div><h3>A brief example</h3> <p>If I wanted to execute Pretty Diff from the command line with minimal effort I could do the following:</p><code class="commandLine" data-prettydiff-ignore="true"><span>&gt; npm install prettydiff</span>
-<span>&gt; cd node_modules/prettydiff</span>
-<span>&gt; node api/node-local.js source:"../gulp" diff:"../gulpa"</span>
-</code> <p>The above command downloads the application with NPM tells Node to execute the file api/node-local.js file relatively from the Pretty Diff application. I am going to pass in two arguments which are the source and something to compare it to. In the following example there will be a change to a single line in one file, which could look like the following:</p><code class="commandLine" data-prettydiff-ignore="true"><span class="meta">node_modules/lib/somefile.js</span>
-<span class="meta">Line 34</span>
-<span>                            } else if (x[cc] === "[") {</span>
-<span>                                block = "]";</span>
-<span class="delete">                                e<strong>e</strong>    += <strong>1</strong>;</span>
-<span class="insert">                                e<strong>f</strong>    += <strong>3</strong>;</span>
-<span>                                dd    += 1;</span>
-<span>                            }</span>
-</code> <p>A line of code with two changes.</p> </div> <div> <h3>How this executes</h3> <p>The default presentation is to wrap each modification with two lines of unchanged code to provide some context. This can be changed by passing in the <em>context</em> option. If the context option is provided a non-negative integer you get that many lines of context, and if you provide any other value to this option you get the entire file contents.</p> <p>The output is written with just console.log by Node. The entire process is asynchronous, except one point between the moment of reading files and performing the code comparison. The application must sort and compare relative paths to determine if a file is modified and thus needs a formal comparison or is either deleted or inserted.</p> <p>The node file supplied with Pretty Diff can auto-detect file types. This is helpful if Pretty Diff is told to compare two resources but not told what those resources are. If Pretty Diff is provided directories to compare and not told how to read these resources with the <em>readmethod</em> option it will make the assumption that all files in all subdirectories should be analyzed.</p> <p>The command line output is the default behavior if the <em>output</em> option is omitted, which tells Pretty Diff where to save files of the diff results. The command line output can also be forced if the <em>diffcli</em> option is provided with a value of "true".</p> <p>The original intention of Pretty Diff is to be a language aware code analysis tool, but this can be overridden as well. To perform traditional literal text comparisons just pass in the option <em>lang</em> with a value of "text".</p> <p>When I tested the application on a mutilated gulp module I was able to perform several dozen comparisons from over a 1000 evaluated files around 1 second in time.</p> <p>Using all these options on the command line may look something like:</p><code class="commandLine" data-prettydiff-ignore="true">&gt; node api/node-local.js source:"../gulp" diff:"../gulpa" diffcli:"true" context:5 lang:"text" readmethod:"subdirectory"</code> </div> </div> <p>For additional options check out the <a href="../documentation.xhtml">documentation</a>. I take bug and suggestions for enhancements via email and at <a href="https://github.com/austincheney/Pretty-Diff">Github</a>.</p> <script src="../api/dom.js" type="application/javascript"></script> </body> </html>
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Pretty Diff - So its kind like recursive command line diff, but in
+            JavaScript</title>
+        <link href="../css/index.css" media="all" rel="stylesheet" type="text/css"/>
+        <link
+            href="http://prettydiff.com/guide/diffcli.xhtml"
+            rel="canonical"
+            type="application/xhtml+xml"/>
+        <link
+            href="http://prettydiff.com/images/favicon.ico"
+            rel="icon"
+            type="image/x-icon"/>
+        <link
+            href="http://prettydiff.com/labels.rdf"
+            rel="meta"
+            title="ICRA labels"
+            type="application/rdf+xml"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <meta content="index, follow" name="robots"/>
+        <meta
+            content="Pretty Diff - Guide, So its kind like recursive command line diff, but in JavaScript"
+            name="DC.title"/>
+        <meta
+            content="(pics-1.1 'http://www.icra.org/pics/vocabularyv03/' l gen true for 'http://prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for 'http://www.prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))"
+            http-equiv="pics-Label"/>
+        <meta content="Austin Cheney" name="author"/>
+        <meta
+            content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML."
+            name="description"/>
+        <meta content="Global" name="distribution"/>
+        <meta content="en" http-equiv="Content-Language"/>
+        <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/>
+        <meta content="text/css" http-equiv="content-style-type"/>
+        <meta content="application/javascript" http-equiv="content-script-type"/>
+        <meta
+            content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
+            name="google-site-verification"/>
+    </head>
+    <body class="white" id="prettydiff">
+        <div class="contentarea" id="page">
+            <section role="heading">
+                <h1>
+                    <svg height="2000.000000pt" id="pdlogo" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
+                            <path
+                                d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
+                    </svg>
+                    <a href="prettydiff.com.xhtml">Pretty Diff</a>
+                    - So its kind like recursive command line diff, but in JavaScript</h1>
+                <p id="dcolorScheme">
+                    <label class="label" for="colorScheme">Color Scheme</label>
+                    <select id="colorScheme">
+                        <option>Canvas</option>
+                        <option>Shadow</option>
+                        <option selected="selected">White</option>
+                    </select>
+                </p>
+                <p>Explore some
+                    <a href="samples.xhtml">samples</a>. For any questions, comments, requests, or feedback please join the
+                    <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff mailing list</a>
+                    or chat on
+                    <a href="https://gitter.im/prettydiff/prettydiff?utm_source=badge%26utm_medium=badge%26utm_campaign=pr-badge%26utm_content=badge">Gitter</a>. Find
+                    <a href="https://github.com/prettydiff/prettydiff">Pretty Diff on GitHub</a>.</p>
+            </section>
+            <section role="main">
+                <h2>So its kind like recursive command line diff, but in JavaScript</h2>
+                <div class="segment">
+                    <h3>Introduction</h3>
+                    <p>Ye ol Unix diff application provides the means to compare changes of all
+                        files in a directory tree. diff is awesome at its job, but it certainly isn't
+                        Pretty Diff.</p>
+                    <p>When used with Node.js
+                        <a href="http://prettydiff.com/">Pretty Diff</a>
+                        can now output diffs to the command line in color for entire directory trees
+                        just like git diff. If you needed to compare an NPM package and all of its
+                        dependencies, for example, to a prior version of that package now you can.
+                        Changes in each modified file will be listed to the command line as well as
+                        files removed and added.</p>
+                </div>
+                <div class="segment">
+                    <h3>A brief example</h3>
+                    <p>If I wanted to execute Pretty Diff from the command line with minimal effort
+                        I could do the following:</p>
+                    <code class="commandLine" data-prettydiff-ignore="true"><span>&gt; npm install prettydiff</span>
+    <span>&gt; cd node_modules/prettydiff</span>
+    <span>&gt; node api/node-local.js source:"../gulp" diff:"../gulpa"</span>
+    </code>
+                    <p>The above command downloads the application with NPM tells Node to execute
+                        the file api/node-local.js file relatively from the Pretty Diff application. I
+                        am going to pass in two arguments which are the source and something to compare
+                        it to. In the following example there will be a change to a single line in one
+                        file, which could look like the following:</p>
+                    <code class="commandLine" data-prettydiff-ignore="true"><span class="meta">node_modules/lib/somefile.js</span>
+    <span class="meta">Line 34</span>
+    <span>                            } else if (x[cc] === "[") {</span>
+    <span>                                block = "]";</span>
+    <span class="delete">                                e<strong>e</strong>    += <strong>1</strong>;</span>
+    <span class="insert">                                e<strong>f</strong>    += <strong>3</strong>;</span>
+    <span>                                dd    += 1;</span>
+    <span>                            }</span>
+    </code>
+                    <p>A line of code with two changes.</p>
+                </div>
+                <div class="segment">
+                    <h3>How this executes</h3>
+                    <p>The default presentation is to wrap each modification with two lines of
+                        unchanged code to provide some context. This can be changed by passing in the
+                        <em>context</em>
+                        option. If the context option is provided a non-negative integer you get that
+                        many lines of context, and if you provide any other value to this option you get
+                        the entire file contents.</p>
+                    <p>The output is written with just console.log by Node. The entire process is
+                        asynchronous, except one point between the moment of reading files and
+                        performing the code comparison. The application must sort and compare relative
+                        paths to determine if a file is modified and thus needs a formal comparison or
+                        is either deleted or inserted.</p>
+                    <p>The node file supplied with Pretty Diff can auto-detect file types. This is
+                        helpful if Pretty Diff is told to compare two resources but not told what those
+                        resources are. If Pretty Diff is provided directories to compare and not told
+                        how to read these resources with the
+                        <em>readmethod</em>
+                        option it will make the assumption that all files in all subdirectories should
+                        be analyzed.</p>
+                    <p>The command line output is the default behavior if the
+                        <em>output</em>
+                        option is omitted, which tells Pretty Diff where to save files of the diff
+                        results. The command line output can also be forced if the
+                        <em>diffcli</em>
+                        option is provided with a value of "true".</p>
+                    <p>The original intention of Pretty Diff is to be a language aware code analysis
+                        tool, but this can be overridden as well. To perform traditional literal text
+                        comparisons just pass in the option
+                        <em>lang</em>
+                        with a value of "text".</p>
+                    <p>When I tested the application on a mutilated gulp module I was able to
+                        perform several dozen comparisons from over a 1000 evaluated files around 1
+                        second in time.</p>
+                    <p>Using all these options on the command line may look something like:</p>
+                    <code class="commandLine" data-prettydiff-ignore="true">&gt; node api/node-local.js source:"../gulp" diff:"../gulpa" diffcli:"true" context:5 lang:"text" readmethod:"subdirectory"</code>
+                </div>
+                <p>For additional options check out the
+                    <a href="../documentation.xhtml">documentation</a>. I take bug and suggestions for enhancements via email and at
+                    <a href="https://github.com/austincheney/Pretty-Diff">Github</a>.</p>
+            </section>
+        </div>
+        <script src="../api/dom.js" type="application/javascript"></script>
+    </body>
+</html>

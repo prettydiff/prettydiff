@@ -6,6 +6,7 @@ Try it online at [http://prettydiff.com/](http://prettydiff.com/).
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/prettydiff/prettydiff?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![npm version](https://badge.fury.io/js/prettydiff.svg)](https://www.npmjs.com/package/prettydiff)
 [![Dependency Status](https://david-dm.org/prettydiff/prettydiff.svg)](https://david-dm.org/prettydiff/prettydiff)
+[![Dev Dependency Status](https://david-dm.org/prettydiff/prettydiff/dev-status.svg)](https://david-dm.org/prettydiff/prettydiff/dev-status.svg)
 [![npm downloads](https://img.shields.io/npm/dm/prettydiff.svg)](https://www.npmjs.com/package/prettydiff)
 [![Twitter Tweets](https://img.shields.io/twitter/url/http/prettydiff.com.svg?style=social)](https://twitter.com/intent/tweet?text=Handy%20web%20development%20tool:%20%20url=http%3A%2F%2Fprettydiff.com)
 
@@ -29,9 +30,9 @@ Language aware code comparison tool for several web based languages. It also bea
 
 ## Executing Pretty Diff
 
-### Run with Node.js / io.js / CommonJS / RequireJS
+### Run with Node.js / CommonJS / RequireJS
 
-Node.js and io.js support is provided by api/node-local.js.  This file can execute in the following modes:
+A Node.js command line utility is provided by api/node-local.js.  This file can execute in the following modes:
 
 * auto - Determine if the resource is text, a file, or a directory and process as such (except that directories are processed with the subdirectory option)
 * screen - code input is on the command line and output is to the command line
@@ -89,12 +90,18 @@ The .prettydiffrc first checks for JSON format. This allows a simple means of de
 
 ### Run in a web browser with api/dom.js
 
-Please feel free to use prettydiff.com.xhtml file to supplement dom.js.  Otherwise, dom.js requires supplemental assistance to map DOM nodes from an HTML source.  dom.js is fault tolerant so nodes mapped to the supplied prettydiff.com.xhtml don't need to be supported from custom HTML.
+Please feel free to use index.xhtml file to supplement dom.js.  Otherwise, dom.js requires supplemental assistance to map DOM nodes from an HTML source.  dom.js is fault tolerant so nodes mapped to the supplied index.xhtml don't need to be supported from custom HTML.
 
-To run Pretty Diff using dom.js include the following two script tags and bind the pd.recycle() function to the executing event.  Please refer to prettydiff.com.xhtml for an HTML example and documentation.xhtml for option and execution information.
+To run Pretty Diff using dom.js include the following two script tags and bind the pd.recycle() function to the executing event.  Please refer to index.xhtml for an HTML example and documentation.xhtml for option and execution information.
 
-    <script type="application/javascript" src="prettydiff.js"></script>
-    <script type="application/javascript" src="api/dom.js"></script>
+    <script src="api/dom.js" type="application/javascript"></script>
+    <script src="lib/safeSort.js" type="application/javascript"></script>
+    <script src="lib/csspretty.js" type="application/javascript"></script>
+    <script src="lib/csvpretty.js" type="application/javascript"></script>
+    <script src="lib/diffview.js" type="application/javascript"></script>
+    <script src="lib/jspretty.js" type="application/javascript"></script>
+    <script src="lib/markuppretty.js" type="application/javascript"></script>
+    <script src="prettydiff.js" type="application/javascript"></script>
 
 ### Run on Windows command line with WSH
 

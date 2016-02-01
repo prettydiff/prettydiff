@@ -1,1 +1,413 @@
-<?xml version='1.0' encoding='UTF-8' ?> <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'> <html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml"> <head> <title>Pretty Diff - Guide, Using jsscope to understand scope, inheritance, and scope chains in JavaScript</title> <link href="../diffview.css" media="all" rel="stylesheet" type="text/css"/> <link href="guide.css" media="all" rel="stylesheet" type="text/css"/> <link href="http://prettydiff.com/guide/closure_with_jsscope.xhtml" rel="canonical" type="application/xhtml+xml"/> <link href="http://prettydiff.com/images/favicon.ico" rel="icon" type="image/x-icon"/> <link href="http://prettydiff.com/labels.rdf" rel="meta" title="ICRA labels" type="application/rdf+xml"/> <meta content="width=device-width, initial-scale=1" name="viewport"/> <meta content="index, follow" name="robots"/> <meta content="Pretty Diff - Guide, Using jsscope to understand scope, inheritance, and scope chains in JavaScript" name="DC.title"/> <meta content="(pics-1.1 &#x22;http://www.icra.org/pics/vocabularyv03/&#x22; l gen true for &#x22;http://prettydiff.com&#x22; r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for &#x22;http://www.prettydiff.com&#x22; r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))" http-equiv="pics-Label"/> <meta content="Austin Cheney" name="author"/> <meta content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML." name="description"/> <meta content="Global" name="distribution"/> <meta content="en" http-equiv="Content-Language"/> <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/> <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/> <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/> <meta content="text/css" http-equiv="content-style-type"/> <meta content="application/javascript" http-equiv="content-script-type"/> <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E" name="google-site-verification"/> </head> <body class="white" id="doc"> <h1> <svg height="2000.000000pt" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg"> <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)"> <path d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g> </svg> <a href="http://prettydiff.com/">Pretty Diff</a> - Guide</h1> <p id="dcolorScheme"><label class="label" for="colorScheme">Color Scheme</label> <select id="colorScheme"><option>Canvas</option> <option>Shadow</option> <option selected="selected">White</option></select> </p> <h2>Using jsscope to understand scope, inheritance, and scope chains in JavaScript</h2> <div id="webtool"> <div><h3>Introduction</h3> <p>Scope is perhaps one of the most challenging concepts to understand for experienced programmers who are new to JavaScript. This is primarily because JavaScript is an object oriented language that offers poly-instantiation similar to how these concepts are offered in Java or C++, but unlike these other languages scope follows a separate and unrelated model.</p> <p>Since functional programming has always been natively available in JavaScript I never find myself needing to use object oriented programming techniques in this language. I am able to program faster by never needing to use constructors, <em>bind</em>, <em>call</em>, <em>apply</em>, or <em>Object.create</em>. I only use <em>this</em> in callbacks and <em>new</em> to access global objects that require it. It is possible to program large decomposable applications in JavaScript without OOP, and doing so will increase your programming speed, reduce the complexity of your code, and shrink the lines of code in your applications.</p> <blockquote>No matter what language you work in, programming in a functional style provides benefits. You should do it whenever it is convenient, and you should think hard about the decision when it isn't convenient. <span>&mdash; <a href="http://gamasutra.com/view/news/169296/Indepth_Functional_programming_in_C.php">John Carmack</a></span> </blockquote> </div> <div><h3>Key Points</h3> <ol> <li>Functions provide scope.</li> <li>Closure is crossing scope boundaries.</li> <li>Variables are resolved through a succession of scope, scope chain.</li> <li>Where in the scope chain variables are declared structures a functional application.</li> <li>The <a href="../prettydiff.js">Pretty Diff</a> application is an example of functional programming and decomposition.</li> <li>Leaky functions allow for manually controlled side effects.</li> <li>ECMAScript 6 will introduce block scope with the <em>let</em> keyword.</li> </ol> </div> <div><h3>JSScope</h3> <p>Each of the following code samples is prepared using the <a href="jshtml.xhtml">jsscope</a> feature of Pretty Diff's <a href="../lib/jspretty.js">jspretty.js</a> library. This feature beautifies the supplied JavaScript and then outputs the code as formatted HTML. It also colors the background of functions and variables to indicate scope depth, which is explained in further detail below.</p> <p>The jsscope feature can be accessed in code by providing a value of <em>true</em> to the Pretty Diff option <strong>jsscope</strong> or by selecting the option <em> Scope analysis output</em> from the webtool. It also possible to link directly a jsscope operation by providing an address parameter of <em>jsscope</em> and a parameter of <em>s</em> that links to a code sample. Example:</p> <code>http://prettydiff.com/?m=beautify&amp;s=http://prettydiff.com/lib/jspretty.js&amp;jsscope</code> </div> <div><h3>Function Scope</h3> <p>Many languages offer block scope. Prior to ECMAScript 6 JavaScript only offers global scope and function scope. I will speak to block scope with ECMAScript 6 much later.</p> <p>Functions are powerful. They can be treated like dumb object literals and assigned properties. Functions can store instructions, return values, and provide a limited scope to variables. Variables are instantiated with the <em>var</em> keyword.</p><div class='beautify' data-prettydiff-ignore="true"><h4>A simple code sample showing a single function containing a single variable and a global variable.</h4><ol class='count'><li>1</li><li class="fold" title="folds from line 2 to line 4">- 2</li><li>3</li><li>4</li></ol><ol class='data'><li>var <em class='s0'>globalNumber</em> = 10,<em>&#xA;</em></li><li class='l0'>    <em class='s0'>outer</em>        = function () <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    var <em class='s1'>a</em> = 20;<em>&#xA;</em></li><li class='l0'><em class='l0'>    </em><em class='s1'>}</em>;<em>&#xA;</em></li></ol></div> <p>In the above code sample we can see a function assigned to the reference <em>outer</em> in the global scope and containing a single variable named <em>a</em>. We can also see a second global variable named <em>globalNumber</em>. Variable <em>a</em> resides in the scope provided by its containing function, <em>outer</em>.</p> <p>Functions are private spaces, somewhat like a top secret military base. You can see out to the rest of the world from inside, but the outside cannot peer inside. In the case of our code example the global scope cannot see inside the function's scope, which means variable <em>a</em> does not exist in the global scope where <em>globalNumber</em> is declared. Since variable <em>a</em> does not exist in the global space it cannot used in this area for any operation. It simply doesn't exist and cannot be found.</p> <p>The scope of a function can see outside. We know that variable <em>a</em> cannot be accessed in the lower function scope from global, so instead let's think about this in the opposite direction. Because the scope of a function can see outside it can access the global scope. The variables <em>a</em> and <em>globalNumber</em> can be accessed together to perform an addition operation that provides a value of 30, <strong>but only from inside the function</strong>.</p><div class='beautify' data-prettydiff-ignore="true"><h4>A simpled code example of closure.</h4> <ol class='count'><li>1</li><li class="fold" title="folds from line 2 to line 5">- 2</li><li>3</li><li>4</li><li>5</li><li>6</li></ol><ol class='data'><li>var <em class='s0'>globalNumber</em> = 10,<em>&#xA;</em></li><li class='l0'>    <em class='s0'>outer</em>        = function () <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    var <em class='s1'>a</em> = 20;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    return <em class='s1'>a</em> + <em class='s0'>globalNumber</em>;<em>&#xA;</em></li><li class='l0'><em class='l0'>    </em><em class='s1'>}</em>;<em>&#xA;</em></li><li class='l0'>return <em class='s0'>outer</em>(); //returns 30<em>&#xA;</em></li></ol></div> </div> <div><h3>Block Scope</h3> <p></p> </div> <div><h3>Closure</h3> <p>Most simply speaking closure is the process of crossing a scope boundary to access a resource. In the second code sample we had to leave the local function scope to find and access the variable <em>globalNumber</em>. In computer science terms this idea of scope compartmentalization is called <a href="https://en.wikipedia.org/wiki/Scope_%28computer_science%29#Lexical_scoping">lexical scope</a>. To understand why this concept is so frustrating to experienced programmers we need to example a more complex code sample.</p><div class='beautify' data-prettydiff-ignore="true"><h4>A third code sample showing a function nested inside the outer function.</h4><ol class='count'><li>1</li><li class="fold" title="folds from line 2 to line 9">- 2</li><li>3</li><li class="fold" title="folds from line 4 to line 7">- 4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>10</li></ol><ol class='data'><li>var <em class='s0'>globalNumber</em> = 10,<em>&#xA;</em></li><li class='l0'>    <em class='s0'>outer</em>        = function () <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    var <em class='s1'>a</em>     = 20,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>inner</em> = function () <em class='s2'>{</em><em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        var <em class='s2'>b</em> = 30;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        return <em class='s1'>a</em> + <em class='s2'>b</em> + <em class='s0'>globalNumber</em>;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em><em class='l1'>    </em>    <em class='s2'>}</em>;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    return <em class='s1'>inner</em>();<em>&#xA;</em></li><li class='l0'><em class='l0'>    </em><em class='s1'>}</em>;<em>&#xA;</em></li><li class='l0'>return <em class='s0'>outer</em>(); //returns 60<em>&#xA;</em></li></ol></div> <p>In the third code sample we can see three scopes. All the discussed logic about private and public access still applies. The scope of a function can see out, but things cannot see inside.</p> <p>When writing object oriented programming in a language like Java public and private states of objects must be manually declared by the code author. In the case of this sample code there are private and public areas, but these states are automatically applied by the nature of functions and their position relative to each other.</p> <p>Object oriented programming is powerful because it allows a code author to define an object and conditionally extend that object at a later time only when needed. This means there must be some high level generic object that gradually becomes more specific as children are attached. This is a top down model of organization where vague definitions start in a high level and expect to be consumed by lower level code. This also means the consuming code must specify the object it wishes to extend, which provides some manual effort on behalf of the code author and allows tighter control of code behavior.</p> <p>The functional approach is often challenging for programmers experienced with object oriented programming. So much of the manual linking, referencing, and extending are instantly irrelevant as they are automatically known as a component of the code architecture. While OOP is a top down model of programming the functional approach is very much a bottom up model. This bottom up model is called the scope chain.</p> <p>The functional programming paradigm is trending up because it requires less effort on the part of the programmer and in some cases executes much faster. Since functional programming is architecturally based instead of reference based it reduces risk and maintenance in the code substantially. Its not completely wonderful though, applications written with the functional programming model tend to consume far greater memory.</p> </div> <div><h3>Scope Chain</h3> <p>The scope chain is the process a language uses to resolve non-local references in the lexical inheritance model of programming. Everytime JavaScript encounters a variable reference it attempts to resolve this reference in the local scope. If the reference is declared in the local function then it is easy to find and the program and knows which scope the reference is bound. Looking at the third code sample variable <em>globalNumber</em> is used in the scope of function <em>inner</em>, but is not declared there. To resolve this reference the application must step into the containing scope, function <em>outer</em>, to find the reference. It still cannot be found, so the application continues looking into the next higher scope, global. Now the reference can be resolved.</p> <p>This process of gradually stepping up the higher scopes is JavaScript's primary scope chain. A second hidden scope chain exists for prototypes. In earlier versions of the language prototypes were always faster to access, because even though the prototype resolution chain is not accessed until the primary scope chain is exhausted their existence was always cached in memory, much like classes in Java and C++. In modern execution of the language all references are cached so the only observable benefit to continued use of prototypes is to allow object oriented programming styles instead of purely functional programming styles.</p> </div> <div><h3>Structure and Code Reuse</h3> <p>To reduce clutter in your application references should always be defined as locally, which means in the lowest scope available, as possible. If a reference is defined locally in a function, but needs to be accessed from a function not available to the current scope then move the reference declaration into a higher scope to enable access. By balancing the needs of access versus the need to localize references the placement of variables in your application will be natural without extensive manual effort.</p> <p>I commonly use arrays as closures. This is particularly helpful when writing language parsers. An array stores all the data about a code sample into fragments I call tokens. A variety of analysis needs to be performed against this data. By declaring the array high in a parsing library it can be accessed by a variety of functions each containing a different type of analysis. This is helpful because I can access the array regardless of scope depth no differently than a local variable and the changes made to the array are made in the scope where the array is declared. There are no objects to extend and no instructions to control reuse or access.</p> </div> <div><h3>Using an Excerpt of Pretty Diff as an Example</h3> <p>Even after the concepts of functional programming are taught they tend to remain challenging to experienced programmers from an architectural perspective. If programmers are formally educated to learn programming in the context of object oriented code then application architecture is known primarily in that fashion. This frustration is often evident when a programmer attempts to learn this model of programming in the context of existing models that are more emotionally comforting, which results in working harder than necessary and understanding less than expected. Functional programming is actually massively easier to understand with regards to code architecture because it is rather primitive and the code architecture handles all the challenging concepts automatically, but as a programmer you must be willing to concede that it is okay to give up absolute control of where references are consumed.</p> <p>The <a href="../lib/markupmin.js">markupmin.js</a> library is written in a purely functional form. I will use this as an example of functional programming architecture. I recommend opening the markupmin.js file in a code editor that allows code folding on blocks and functions, because the application file is rather large. After the file contents are in your code editor fold absolutely everything so that you can see code that looks like less than 200 lines.</p> <div class='beautify' data-prettydiff-ignore='true'><ol class='count'><li class='fold' title='folds from line 1 to line 52'>- 1</li><li>2</li><li>3</li><li>4</li><li>5</li><li>6</li><li>7</li><li class='fold' title='folds from line 8 to line 51'>- 8</li><li>9</li><li>10</li><li>11</li><li>12</li><li class='fold' title='folds from line 13 to line 21'>- 13</li><li>14</li><li>15</li><li>16</li><li>17</li><li>18</li><li>19</li><li>20</li><li>21</li><li>22</li><li>23</li><li>24</li><li>25</li><li>26</li><li>27</li><li>28</li><li>29</li><li>30</li><li>31</li><li>32</li><li>33</li><li>34</li><li>35</li><li>36</li><li>37</li><li>38</li><li>39</li><li>40</li><li>41</li><li>42</li><li>43</li><li>44</li><li>45</li><li>46</li><li>47</li><li>48</li><li>49</li><li>50</li><li>51</li><li>52</li><li>53</li></ol><ol class='data'><li>var <em class='s0'>markupmin</em> = function <em class='s1'>markupmin</em>(<em class='s1'>args</em>) <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    var <em class='s1'>i</em>       = 0,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>x</em>       = (typeof <em class='s1'>args</em>.source === "string") ? <em class='s1'>args</em>.source.split("") : [<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>            "E", "r", "r", "o", "r", ":", " ", "n", "o", " ", "c", "o", "n", "t", "e", "n", "t", " ", "s", "u", "p", "p", "l", "i", "e", "d", " ", "t", "o", " ", "m", "a", "r", "k", "u", "p", "."<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        ],<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>inchar</em>  = (typeof <em class='s1'>args</em>.inchar === "string" &amp;&amp; <em class='s1'>args</em>.inchar.length &gt; 0) ? <em class='s1'>args</em>.inchar : " ",<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>insize</em>  = (isNaN(<em class='s1'>args</em>.insize) === false &amp;&amp; Number(<em class='s1'>args</em>.insize) &gt;= 0) ? Number(<em class='s1'>args</em>.insize) : 4,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>jsxItem</em> = function <em class='s2'>markupmin__jsxItem</em>(<em class='s2'>index</em>, <em class='s2'>space</em>) <em class='s2'>{</em><em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        var <em class='s2'>a</em>      = 0,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            <em class='s2'>end</em>    = <em class='s1'>x</em>.length,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            <em class='s2'>count</em>  = 0,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            <em class='s2'>store</em>  = [],<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            <em class='s2'>tabReg</em> = (function <em class='s3'>markupmin__jsxItem_tabReg</em>() <em class='s3'>{</em><em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>            var <em class='s3'>b</em>     = 0,<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>                <em class='s3'>tabby</em> = [];<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>            for (<em class='s3'>b</em> = 0; <em class='s3'>b</em> &lt; <em class='s1'>insize</em>; <em class='s3'>b</em> += 1) {<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>                <em class='s3'>tabby</em>.push("\\");<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>                <em class='s3'>tabby</em>.push(<em class='s1'>inchar</em>);<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>            }<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>            return new RegExp("^(\\s*\\{\\s*" + <em class='s3'>tabby</em>.join("") + "+)");<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>        <em class='s3'>}</em>());<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        if (<em class='s2'>space</em> === undefined) {<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            <em class='s2'>space</em> = "";<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        }<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        for (<em class='s2'>a</em> = <em class='s2'>index</em>; <em class='s2'>a</em> &lt; <em class='s2'>end</em>; <em class='s2'>a</em> += 1) {<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            <em class='s2'>store</em>.push(<em class='s1'>x</em>[<em class='s2'>a</em>]);<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            if (<em class='s1'>x</em>[<em class='s2'>a</em>] === "{") {<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>                <em class='s2'>count</em> += 1;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            }<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            if (<em class='s1'>x</em>[<em class='s2'>a</em>] === "}") {<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>                <em class='s2'>count</em> -= 1;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>                if (<em class='s2'>count</em> === 0) {<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>                    <em class='s1'>x</em>[<em class='s2'>a</em>] = "";<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>                    break;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>                }<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            }<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            <em class='s1'>x</em>[<em class='s2'>a</em>] = "";<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        }<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        <em class='s1'>x</em>[<em class='s2'>a</em>] = <em class='s2'>space</em> + jspretty({<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            inchar : <em class='s1'>inchar</em>,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            insize : <em class='s1'>insize</em>,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            jsscope: minjsscope,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            jsx    : true,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            mode   : (comments === "beautify") ? "beautify" : "minify",<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            source : <em class='s2'>store</em>.join("")<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        }).replace(<em class='s2'>tabReg</em>, "{").replace(/(\s*\}\s*)$/, "}");<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        if (<em class='s1'>x</em>[<em class='s2'>a</em>] === "{};" || <em class='s1'>x</em>[<em class='s2'>a</em>] === "{}") {<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            <em class='s1'>x</em>[<em class='s2'>a</em>] = "";<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        }<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        return <em class='s2'>a</em>;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em><em class='l1'>    </em>    <em class='s2'>}</em>;<em>&#xA;</em></li><li class='l0'><em class='l0'>    </em><em class='s1'>}</em>;<em>&#xA;</em></li><li class='l0'>};<em>&#xA;</em></li></ol></div> <p>We can see a couple of variables defined at the top and some nested functions. Each function performs a specific task. Some specific tasks require a series of instructions that can be reused apart from the larger structure. This is why multiple functions are used, but some of these functions don't need to be universally available, so they can be conveniently nested for easier reading and faster execution.</p> <p>I have written the code in a way that the libraries can be completely independent of the larger Pretty Diff application. The <em>csspretty</em> library is being used in the <a href="https://github.com/Glavin001/atom-beautify">atom-beautify</a> project, for instance. This ability to instantly pull a function out of a larger project and execute it independently exemplifies the decomposable nature of functional programming. There is no ceremony or boiler plate that must go with code when a function is subdivided into an independent application, but there must be some internalized planning in the function for it to receive input independent of its containing application.</p> <p>Each of the libraries are divided into a few large functions that act as primary sub-components. These sub-components then contain functions of their own, and so on.</p> </div> <div><h3>Leaky Functions</h3> <p>Through a clever use of closure it is possible to easily cheat the public/private nature of functional programming. This is what I call leaky functions. Look back at the code sample from the Pretty Diff application and notice the variable <em>summary</em>. This variable declared outside of the libraries. When used inside the library functions it has access to all of the logic and references that is otherwise hidden in those functions. I use this variable to fully access the library code, perform some deep analysis of how code is parsed, and then leak a report of my analysis. Because of the leaky function concept I can cheat the bottom-up model of functional programming to access the logic than I need and only when I need it. This demonstrates the simple and expressive power of closures.</p> </div> <div><h3>Block Scope ECMAScript 6 and <em>let</em></h3> <p>The next version of JavaScript called <a href="http://wiki.ecmascript.org/doku.php?id=harmony:specification_drafts">ECMAScript 6</a> will feature a new way to declare references with the <em>let</em> keyword. The <em>var</em> keyword is limited to function scope, but the <em>let</em> keyword will enable block scope. A block of code is generally anything wrapped in curly braces: loops, conditions, and of course functions. References declared with the let keyword will still follow the bottom-up lexical model that the var keyword follows.</p> <p>The benefit is that references of extremely limited use can be declared where they are used instead of needing a function. This benefit does not come at conflict to anything previously discussed about functional programming, which also means the let keyword can effectively replace all uses of the var keyword. ECMAScript 6 is not final at the time of this writing and I await to see how its use always my perceptions of functional programming in JavaScript.</p> <p>There is one other big difference between the <em>let</em> and <em>var</em> keywords. Variables declared with <em>let</em> are not hoisted. This means a reference used before it is declared, even within the same block, will throw an error. Consider the following code example:</p> <div class='beautify' data-prettydiff-ignore='true'><ol class='count'><li class='fold' title='folds from line 1 to line xxx'>- 1</li><li>2</li><li>3</li><li>4</li><li>5</li><li>6</li><li class='fold' title='folds from line 7 to line xxx'>- 7</li><li>8</li><li>9</li><li>10</li><li>11</li><li>12</li><li>13</li><li>14</li><li>15</li><li>16</li></ol><ol class='data'><li>var <em class='s0'>a</em> = function (<em class='s1'>b</em>) <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>var <em class='s1'>c</em> = 1,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>d</em> = 2;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>if (e) {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    r;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    t;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>let <em class='s2'>r</em>;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>p;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em><em class='s2'>r</em>;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>let <em class='s2'>p</em> = 3,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>    <em class='s2'>t</em> = 4;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em><em class='s2'>p</em>;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em><em class='s2'>r</em>;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em><em class='s2'>t</em>;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em><em class='s2'>}</em><em>&#xA;</em></li><li class='l0'><em class='s1'>}</em>;<em>&#xA;</em></li></ol></div> <p>The jsscope feature attempts to account for the lack of hoisting with a couple of limitations. First, block scope is not highlighted until the first <em>let</em> keyword is reached. Additionally, variables are not indicated with colorful emphasis until they are declared.</p> </div> <div><h3>Faulty Criticisms</h3> <p>These are actual criticisms to this approach I have heard. I wish I were making this up.</p> <ul> <li><strong>This style of coding will produce a big messy file.</strong> This style of coding may result in a large code file if the given application is large, but large and messy are entirely unrelated just as with literature and novels. This approach to writing code will likely help to make less messy, because the declarations are bound to the architecture that defines the depth of scope for the application. Most JavaScript applications tend to always become large messy files as the result of build systems from application pre-processors, like: Grunt, Gulp, or Browserify. The functional approach commonly results in substantially less code since there are fewer declarations and fewer logical conventions in the code.</li> <li><strong>Everything can access the same variables, which will be a conflict of too many things accessing the variables at once.</strong> JavaScript execution is so far always synchronous and single threaded. Without events and other externalizing APIs it is impossible that collisions will occur from different things attempting to access a variable at the same time. Even with events and externalizing APIs this is incredibly unlikely to occur and even more unlikely that it will cause a problem.</li> <li><strong>This is not the computer science definition of inheritance.</strong> Inheritance is an English language word that has existed since Middle English when the language was trying to merge higher French vocabulary with the common Germanic vocabulary regularly in use. All uses of this word in programming subscribe to the proper dictionary definition. Perhaps this statement was meant to describe this use of inheritance as foreign to formalized concepts of object oriented programming, which assumes one believes this is the limit of computer science education.</li> </ul> </div> <p>If you believe anything in this article is in error or need of improvement please <a href="https://github.com/austincheney/prettydiff/issues">open a bug</a>. I have thick skin and appreciate a healthy dose of criticism.</p> </div> <script src="../api/dom.js" type="application/javascript"></script> </body> </html>
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Pretty Diff - Using jsscope to understand scope, inheritance, and
+            scope chains in JavaScript</title>
+        <link href="../css/index.css" media="all" rel="stylesheet" type="text/css"/>
+        <link
+            href="http://prettydiff.com/guide/closure_with_jsscope.xhtml"
+            rel="canonical"
+            type="application/xhtml+xml"/>
+        <link
+            href="http://prettydiff.com/images/favicon.ico"
+            rel="icon"
+            type="image/x-icon"/>
+        <link
+            href="http://prettydiff.com/labels.rdf"
+            rel="meta"
+            title="ICRA labels"
+            type="application/rdf+xml"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <meta content="index, follow" name="robots"/>
+        <meta
+            content="Pretty Diff - Guide, Using jsscope to understand scope, inheritance, and scope chains in JavaScript"
+            name="DC.title"/>
+        <meta
+            content="(pics-1.1 &#x22;http://www.icra.org/pics/vocabularyv03/&#x22; l gen true for &#x22;http://prettydiff.com&#x22; r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for &#x22;http://www.prettydiff.com&#x22; r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))"
+            http-equiv="pics-Label"/>
+        <meta content="Austin Cheney" name="author"/>
+        <meta
+            content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML."
+            name="description"/>
+        <meta content="Global" name="distribution"/>
+        <meta content="en" http-equiv="Content-Language"/>
+        <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/>
+        <meta content="text/css" http-equiv="content-style-type"/>
+        <meta content="application/javascript" http-equiv="content-script-type"/>
+        <meta
+            content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
+            name="google-site-verification"/>
+    </head>
+    <body class="white" id="prettydiff">
+        <div class="contentarea" id="page">
+            <section role="heading">
+                <h1>
+                    <svg height="2000.000000pt" id="pdlogo" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
+                            <path
+                                d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
+                    </svg>
+                    <a href="prettydiff.com.xhtml">Pretty Diff</a>
+                    - Guide: Using jsscope to understand scope, inheritance, and
+                        scope chains in JavaScript</h1>
+                <p id="dcolorScheme">
+                    <label class="label" for="colorScheme">Color Scheme</label>
+                    <select id="colorScheme">
+                        <option>Canvas</option>
+                        <option>Shadow</option>
+                        <option selected="selected">White</option>
+                    </select>
+                </p>
+                <p>Explore some
+                    <a href="samples.xhtml">samples</a>. For any questions, comments, requests, or feedback please join the
+                    <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff mailing list</a>
+                    or chat on
+                    <a href="https://gitter.im/prettydiff/prettydiff?utm_source=badge%26utm_medium=badge%26utm_campaign=pr-badge%26utm_content=badge">Gitter</a>. Find
+                    <a href="https://github.com/prettydiff/prettydiff">Pretty Diff on GitHub</a>.</p>
+            </section>
+            <section role="main">
+                <h2>Using jsscope to understand scope, inheritance, and scope chains in JavaScript</h2>
+                <div class="segment">
+                    <h3>Introduction</h3>
+                    <p>Scope is perhaps one of the most challenging concepts to understand for
+                        experienced programmers who are new to JavaScript. This is primarily because
+                        JavaScript is an object oriented language that offers poly-instantiation similar
+                        to how these concepts are offered in Java or C++, but unlike these other
+                        languages scope follows a separate and unrelated model.</p>
+                    <p>Since functional programming has always been natively available in JavaScript
+                        I never find myself needing to use object oriented programming techniques in
+                        this language. I am able to program faster by never needing to use constructors,
+                        <em>bind</em>,
+                        <em>call</em>,
+                        <em>apply</em>, or
+                        <em>Object.create</em>. I only use
+                        <em>this</em>
+                        in callbacks and
+                        <em>new</em>
+                        to access global objects that require it. It is possible to program large
+                        decomposable applications in JavaScript without OOP, and doing so will increase
+                        your programming speed, reduce the complexity of your code, and shrink the lines
+                        of code in your applications.</p>
+                    <blockquote>No matter what language you work in, programming in a functional
+                        style provides benefits. You should do it whenever it is convenient, and you
+                        should think hard about the decision when it isn't convenient.
+                        <span>&mdash;
+                            <a
+                                href="http://gamasutra.com/view/news/169296/Indepth_Functional_programming_in_C.php">John Carmack</a>
+                        </span>
+                    </blockquote>
+                </div>
+                <div class="segment">
+                    <h3>Key Points</h3>
+                    <ol>
+                        <li>Functions provide scope.</li>
+                        <li>Closure is crossing scope boundaries.</li>
+                        <li>Variables are resolved through a succession of scope, scope chain.</li>
+                        <li>Where in the scope chain variables are declared structures a functional
+                            application.</li>
+                        <li>The
+                            <a href="../prettydiff.js">Pretty Diff</a>
+                            application is an example of functional programming and decomposition.</li>
+                        <li>Leaky functions allow for manually controlled side effects.</li>
+                        <li>ECMAScript 6 will introduce block scope with the
+                            <em>let</em>
+                            keyword.</li>
+                    </ol>
+                </div>
+                <div class="segment">
+                    <h3>JSScope</h3>
+                    <p>Each of the following code samples is prepared using the
+                        <a href="jshtml.xhtml">jsscope</a>
+                        feature of Pretty Diff's
+                        <a href="../lib/jspretty.js">jspretty.js</a>
+                        library. This feature beautifies the supplied JavaScript and then outputs the
+                        code as formatted HTML. It also colors the background of functions and variables
+                        to indicate scope depth, which is explained in further detail below.</p>
+                    <p>The jsscope feature can be accessed in code by providing a value of
+                        <em>true</em>
+                        to the Pretty Diff option
+                        <strong>jsscope</strong>
+                        or by selecting the option
+                        <em>
+                            Scope analysis output</em>
+                        from the webtool. It also possible to link directly a jsscope operation by
+                        providing an address parameter of
+                        <em>jsscope</em>
+                        and a parameter of
+                        <em>s</em>
+                        that links to a code sample. Example:</p>
+                    <code>http://prettydiff.com/?m=beautify&amp;s=http://prettydiff.com/lib/jspretty.js&amp;jsscope</code>
+                </div>
+                <div class="segment">
+                    <h3>Function Scope</h3>
+                    <p>Many languages offer block scope. Prior to ECMAScript 6 JavaScript only
+                        offers global scope and function scope. I will speak to block scope with
+                        ECMAScript 6 much later.</p>
+                    <p>Functions are powerful. They can be treated like dumb object literals and
+                        assigned properties. Functions can store instructions, return values, and
+                        provide a limited scope to variables. Variables are instantiated with the
+                        <em>var</em>
+                        keyword.</p>
+                    <div class="beautify" data-prettydiff-ignore="true"><h4>A simple code sample showing a single function containing a single variable and a global variable.</h4><ol class='count'><li>1</li><li class="fold" title="folds from line 2 to line 4">- 2</li><li>3</li><li>4</li></ol><ol class='data'><li>var <em class='s0'>globalNumber</em> = 10,<em>&#xA;</em></li><li class='l0'>    <em class='s0'>outer</em>        = function () <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    var <em class='s1'>a</em> = 20;<em>&#xA;</em></li><li class='l0'><em class='l0'>    </em><em class='s1'>}</em>;<em>&#xA;</em></li></ol></div>
+                    <p>In the above code sample we can see a function assigned to the reference
+                        <em>outer</em>
+                        in the global scope and containing a single variable named
+                        <em>a</em>. We can also see a second global variable named
+                        <em>globalNumber</em>. Variable
+                        <em>a</em>
+                        resides in the scope provided by its containing function,
+                        <em>outer</em>.</p>
+                    <p>Functions are private spaces, somewhat like a top secret military base. You
+                        can see out to the rest of the world from inside, but the outside cannot peer
+                        inside. In the case of our code example the global scope cannot see inside the
+                        function's scope, which means variable
+                        <em>a</em>
+                        does not exist in the global scope where
+                        <em>globalNumber</em>
+                        is declared. Since variable
+                        <em>a</em>
+                        does not exist in the global space it cannot used in this area for any
+                        operation. It simply doesn't exist and cannot be found.</p>
+                    <p>The scope of a function can see outside. We know that variable
+                        <em>a</em>
+                        cannot be accessed in the lower function scope from global, so instead let's
+                        think about this in the opposite direction. Because the scope of a function can
+                        see outside it can access the global scope. The variables
+                        <em>a</em>
+                        and
+                        <em>globalNumber</em>
+                        can be accessed together to perform an addition operation that provides a value
+                        of 30,
+                        <strong>but only from inside the function</strong>.</p>
+                    <div class="beautify" data-prettydiff-ignore="true"><h4>A simpled code example of closure.</h4> <ol class='count'><li>1</li><li class="fold" title="folds from line 2 to line 5">- 2</li><li>3</li><li>4</li><li>5</li><li>6</li></ol><ol class='data'><li>var <em class='s0'>globalNumber</em> = 10,<em>&#xA;</em></li><li class='l0'>    <em class='s0'>outer</em>        = function () <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    var <em class='s1'>a</em> = 20;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    return <em class='s1'>a</em> + <em class='s0'>globalNumber</em>;<em>&#xA;</em></li><li class='l0'><em class='l0'>    </em><em class='s1'>}</em>;<em>&#xA;</em></li><li class='l0'>return <em class='s0'>outer</em>(); //returns 30<em>&#xA;</em></li></ol></div>
+                </div>
+                <div class="segment">
+                    <h3>Block Scope</h3>
+                    <p></p>
+                </div>
+                <div class="segment">
+                    <h3>Closure</h3>
+                    <p>Most simply speaking closure is the process of crossing a scope boundary to
+                        access a resource. In the second code sample we had to leave the local function
+                        scope to find and access the variable
+                        <em>globalNumber</em>. In computer science terms this idea of scope compartmentalization is called
+                        <a
+                            href="https://en.wikipedia.org/wiki/Scope_%28computer_science%29#Lexical_scoping">lexical scope</a>.
+                        To understand why this concept is so frustrating to experienced programmers we
+                        need to example a more complex code sample.</p>
+                    <div class="beautify" data-prettydiff-ignore="true"><h4>A third code sample showing a function nested inside the outer function.</h4><ol class='count'><li>1</li><li class="fold" title="folds from line 2 to line 9">- 2</li><li>3</li><li class="fold" title="folds from line 4 to line 7">- 4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>10</li></ol><ol class='data'><li>var <em class='s0'>globalNumber</em> = 10,<em>&#xA;</em></li><li class='l0'>    <em class='s0'>outer</em>        = function () <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    var <em class='s1'>a</em>     = 20,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>inner</em> = function () <em class='s2'>{</em><em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        var <em class='s2'>b</em> = 30;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        return <em class='s1'>a</em> + <em class='s2'>b</em> + <em class='s0'>globalNumber</em>;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em><em class='l1'>    </em>    <em class='s2'>}</em>;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    return <em class='s1'>inner</em>();<em>&#xA;</em></li><li class='l0'><em class='l0'>    </em><em class='s1'>}</em>;<em>&#xA;</em></li><li class='l0'>return <em class='s0'>outer</em>(); //returns 60<em>&#xA;</em></li></ol></div>
+                    <p>In the third code sample we can see three scopes. All the discussed logic
+                        about private and public access still applies. The scope of a function can see
+                        out, but things cannot see inside.</p>
+                    <p>When writing object oriented programming in a language like Java public and
+                        private states of objects must be manually declared by the code author. In the
+                        case of this sample code there are private and public areas, but these states
+                        are automatically applied by the nature of functions and their position relative
+                        to each other.</p>
+                    <p>Object oriented programming is powerful because it allows a code author to
+                        define an object and conditionally extend that object at a later time only when
+                        needed. This means there must be some high level generic object that gradually
+                        becomes more specific as children are attached. This is a top down model of
+                        organization where vague definitions start in a high level and expect to be
+                        consumed by lower level code. This also means the consuming code must specify
+                        the object it wishes to extend, which provides some manual effort on behalf of
+                        the code author and allows tighter control of code behavior.</p>
+                    <p>The functional approach is often challenging for programmers experienced with
+                        object oriented programming. So much of the manual linking, referencing, and
+                        extending are instantly irrelevant as they are automatically known as a
+                        component of the code architecture. While OOP is a top down model of programming
+                        the functional approach is very much a bottom up model. This bottom up model is
+                        called the scope chain.</p>
+                    <p>The functional programming paradigm is trending up because it requires less
+                        effort on the part of the programmer and in some cases executes much faster.
+                        Since functional programming is architecturally based instead of reference based
+                        it reduces risk and maintenance in the code substantially. Its not completely
+                        wonderful though, applications written with the functional programming model
+                        tend to consume far greater memory.</p>
+                </div>
+                <div class="segment">
+                    <h3>Scope Chain</h3>
+                    <p>The scope chain is the process a language uses to resolve non-local
+                        references in the lexical inheritance model of programming. Everytime JavaScript
+                        encounters a variable reference it attempts to resolve this reference in the
+                        local scope. If the reference is declared in the local function then it is easy
+                        to find and the program and knows which scope the reference is bound. Looking at
+                        the third code sample variable
+                        <em>globalNumber</em>
+                        is used in the scope of function
+                        <em>inner</em>, but is not declared there. To resolve this reference the
+                        application must step into the containing scope, function
+                        <em>outer</em>, to find the reference. It still cannot be found, so the
+                        application continues looking into the next higher scope, global. Now the
+                        reference can be resolved.</p>
+                    <p>This process of gradually stepping up the higher scopes is JavaScript's
+                        primary scope chain. A second hidden scope chain exists for prototypes. In
+                        earlier versions of the language prototypes were always faster to access,
+                        because even though the prototype resolution chain is not accessed until the
+                        primary scope chain is exhausted their existence was always cached in memory,
+                        much like classes in Java and C++. In modern execution of the language all
+                        references are cached so the only observable benefit to continued use of
+                        prototypes is to allow object oriented programming styles instead of purely
+                        functional programming styles.</p>
+                </div>
+                <div class="segment">
+                    <h3>Structure and Code Reuse</h3>
+                    <p>To reduce clutter in your application references should always be defined as
+                        locally, which means in the lowest scope available, as possible. If a reference
+                        is defined locally in a function, but needs to be accessed from a function not
+                        available to the current scope then move the reference declaration into a higher
+                        scope to enable access. By balancing the needs of access versus the need to
+                        localize references the placement of variables in your application will be
+                        natural without extensive manual effort.</p>
+                    <p>I commonly use arrays as closures. This is particularly helpful when writing
+                        language parsers. An array stores all the data about a code sample into
+                        fragments I call tokens. A variety of analysis needs to be performed against
+                        this data. By declaring the array high in a parsing library it can be accessed
+                        by a variety of functions each containing a different type of analysis. This is
+                        helpful because I can access the array regardless of scope depth no differently
+                        than a local variable and the changes made to the array are made in the scope
+                        where the array is declared. There are no objects to extend and no instructions
+                        to control reuse or access.</p>
+                </div>
+                <div class="segment">
+                    <h3>Using an Excerpt of Pretty Diff as an Example</h3>
+                    <p>Even after the concepts of functional programming are taught they tend to
+                        remain challenging to experienced programmers from an architectural perspective.
+                        If programmers are formally educated to learn programming in the context of
+                        object oriented code then application architecture is known primarily in that
+                        fashion. This frustration is often evident when a programmer attempts to learn
+                        this model of programming in the context of existing models that are more
+                        emotionally comforting, which results in working harder than necessary and
+                        understanding less than expected. Functional programming is actually massively
+                        easier to understand with regards to code architecture because it is rather
+                        primitive and the code architecture handles all the challenging concepts
+                        automatically, but as a programmer you must be willing to concede that it is
+                        okay to give up absolute control of where references are consumed.</p>
+                    <p>The
+                        <a href="../lib/markupmin.js">markupmin.js</a>
+                        library is written in a purely functional form. I will use this as an example of
+                        functional programming architecture. I recommend opening the markupmin.js file
+                        in a code editor that allows code folding on blocks and functions, because the
+                        application file is rather large. After the file contents are in your code
+                        editor fold absolutely everything so that you can see code that looks like less
+                        than 200 lines.</p>
+                    <div class="beautify" data-prettydiff-ignore="true"><ol class='count'><li class='fold' title='folds from line 1 to line 52'>- 1</li><li>2</li><li>3</li><li>4</li><li>5</li><li>6</li><li>7</li><li class='fold' title='folds from line 8 to line 51'>- 8</li><li>9</li><li>10</li><li>11</li><li>12</li><li class='fold' title='folds from line 13 to line 21'>- 13</li><li>14</li><li>15</li><li>16</li><li>17</li><li>18</li><li>19</li><li>20</li><li>21</li><li>22</li><li>23</li><li>24</li><li>25</li><li>26</li><li>27</li><li>28</li><li>29</li><li>30</li><li>31</li><li>32</li><li>33</li><li>34</li><li>35</li><li>36</li><li>37</li><li>38</li><li>39</li><li>40</li><li>41</li><li>42</li><li>43</li><li>44</li><li>45</li><li>46</li><li>47</li><li>48</li><li>49</li><li>50</li><li>51</li><li>52</li><li>53</li></ol><ol class='data'><li>var <em class='s0'>markupmin</em> = function <em class='s1'>markupmin</em>(<em class='s1'>args</em>) <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    var <em class='s1'>i</em>       = 0,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>x</em>       = (typeof <em class='s1'>args</em>.source === "string") ? <em class='s1'>args</em>.source.split("") : [<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>            "E", "r", "r", "o", "r", ":", " ", "n", "o", " ", "c", "o", "n", "t", "e", "n", "t", " ", "s", "u", "p", "p", "l", "i", "e", "d", " ", "t", "o", " ", "m", "a", "r", "k", "u", "p", "."<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        ],<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>inchar</em>  = (typeof <em class='s1'>args</em>.inchar === "string" &amp;&amp; <em class='s1'>args</em>.inchar.length &gt; 0) ? <em class='s1'>args</em>.inchar : " ",<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>insize</em>  = (isNaN(<em class='s1'>args</em>.insize) === false &amp;&amp; Number(<em class='s1'>args</em>.insize) &gt;= 0) ? Number(<em class='s1'>args</em>.insize) : 4,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>jsxItem</em> = function <em class='s2'>markupmin__jsxItem</em>(<em class='s2'>index</em>, <em class='s2'>space</em>) <em class='s2'>{</em><em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        var <em class='s2'>a</em>      = 0,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            <em class='s2'>end</em>    = <em class='s1'>x</em>.length,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            <em class='s2'>count</em>  = 0,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            <em class='s2'>store</em>  = [],<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            <em class='s2'>tabReg</em> = (function <em class='s3'>markupmin__jsxItem_tabReg</em>() <em class='s3'>{</em><em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>            var <em class='s3'>b</em>     = 0,<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>                <em class='s3'>tabby</em> = [];<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>            for (<em class='s3'>b</em> = 0; <em class='s3'>b</em> &lt; <em class='s1'>insize</em>; <em class='s3'>b</em> += 1) {<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>                <em class='s3'>tabby</em>.push("\\");<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>                <em class='s3'>tabby</em>.push(<em class='s1'>inchar</em>);<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>            }<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>            return new RegExp("^(\\s*\\{\\s*" + <em class='s3'>tabby</em>.join("") + "+)");<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>        <em class='s3'>}</em>());<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        if (<em class='s2'>space</em> === undefined) {<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            <em class='s2'>space</em> = "";<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        }<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        for (<em class='s2'>a</em> = <em class='s2'>index</em>; <em class='s2'>a</em> &lt; <em class='s2'>end</em>; <em class='s2'>a</em> += 1) {<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            <em class='s2'>store</em>.push(<em class='s1'>x</em>[<em class='s2'>a</em>]);<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            if (<em class='s1'>x</em>[<em class='s2'>a</em>] === "{") {<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>                <em class='s2'>count</em> += 1;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            }<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            if (<em class='s1'>x</em>[<em class='s2'>a</em>] === "}") {<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>                <em class='s2'>count</em> -= 1;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>                if (<em class='s2'>count</em> === 0) {<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>                    <em class='s1'>x</em>[<em class='s2'>a</em>] = "";<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>                    break;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>                }<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            }<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            <em class='s1'>x</em>[<em class='s2'>a</em>] = "";<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        }<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        <em class='s1'>x</em>[<em class='s2'>a</em>] = <em class='s2'>space</em> + jspretty({<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            inchar : <em class='s1'>inchar</em>,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            insize : <em class='s1'>insize</em>,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            jsscope: minjsscope,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            jsx    : true,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            mode   : (comments === "beautify") ? "beautify" : "minify",<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            source : <em class='s2'>store</em>.join("")<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        }).replace(<em class='s2'>tabReg</em>, "{").replace(/(\s*\}\s*)$/, "}");<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        if (<em class='s1'>x</em>[<em class='s2'>a</em>] === "{};" || <em class='s1'>x</em>[<em class='s2'>a</em>] === "{}") {<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            <em class='s1'>x</em>[<em class='s2'>a</em>] = "";<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        }<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        return <em class='s2'>a</em>;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em><em class='l1'>    </em>    <em class='s2'>}</em>;<em>&#xA;</em></li><li class='l0'><em class='l0'>    </em><em class='s1'>}</em>;<em>&#xA;</em></li><li class='l0'>};<em>&#xA;</em></li></ol></div>
+                    <p>We can see a couple of variables defined at the top and some nested
+                        functions. Each function performs a specific task. Some specific tasks require a
+                        series of instructions that can be reused apart from the larger structure. This
+                        is why multiple functions are used, but some of these functions don't need to be
+                        universally available, so they can be conveniently nested for easier reading and
+                        faster execution.</p>
+                    <p>I have written the code in a way that the libraries can be completely
+                        independent of the larger Pretty Diff application. The
+                        <em>csspretty</em>
+                        library is being used in the
+                        <a href="https://github.com/Glavin001/atom-beautify">atom-beautify</a>
+                        project, for instance. This ability to instantly pull a function out of a larger
+                        project and execute it independently exemplifies the decomposable nature of
+                        functional programming. There is no ceremony or boiler plate that must go with
+                        code when a function is subdivided into an independent application, but there
+                        must be some internalized planning in the function for it to receive input
+                        independent of its containing application.</p>
+                    <p>Each of the libraries are divided into a few large functions that act as
+                        primary sub-components. These sub-components then contain functions of their
+                        own, and so on.</p>
+                </div>
+                <div class="segment">
+                    <h3>Leaky Functions</h3>
+                    <p>Through a clever use of closure it is possible to easily cheat the
+                        public/private nature of functional programming. This is what I call leaky
+                        functions. Look back at the code sample from the Pretty Diff application and
+                        notice the variable
+                        <em>summary</em>. This variable declared outside of the libraries. When used
+                        inside the library functions it has access to all of the logic and references
+                        that is otherwise hidden in those functions. I use this variable to fully access
+                        the library code, perform some deep analysis of how code is parsed, and then
+                        leak a report of my analysis. Because of the leaky function concept I can cheat
+                        the bottom-up model of functional programming to access the logic than I need
+                        and only when I need it. This demonstrates the simple and expressive power of
+                        closures.</p>
+                </div>
+                <div class="segment">
+                    <h3>Block Scope ECMAScript 6 and
+                        <em>let</em>
+                    </h3>
+                    <p>The next version of JavaScript called
+                        <a href="http://wiki.ecmascript.org/doku.php?id=harmony:specification_drafts">ECMAScript 6</a>
+                        will feature a new way to declare references with the
+                        <em>let</em>
+                        keyword. The
+                        <em>var</em>
+                        keyword is limited to function scope, but the
+                        <em>let</em>
+                        keyword will enable block scope. A block of code is generally anything wrapped
+                        in curly braces: loops, conditions, and of course functions. References declared
+                        with the let keyword will still follow the bottom-up lexical model that the var
+                        keyword follows.</p>
+                    <p>The benefit is that references of extremely limited use can be declared where
+                        they are used instead of needing a function. This benefit does not come at
+                        conflict to anything previously discussed about functional programming, which
+                        also means the let keyword can effectively replace all uses of the var keyword.
+                        ECMAScript 6 is not final at the time of this writing and I await to see how its
+                        use always my perceptions of functional programming in JavaScript.</p>
+                    <p>There is one other big difference between the
+                        <em>let</em>
+                        and
+                        <em>var</em>
+                        keywords. Variables declared with
+                        <em>let</em>
+                        are not hoisted. This means a reference used before it is declared, even within
+                        the same block, will throw an error. Consider the following code example:</p>
+                    <div class="beautify" data-prettydiff-ignore="true"><ol class='count'><li class='fold' title='folds from line 1 to line 16'>- 1</li><li>2</li><li>3</li><li>4</li><li>5</li><li>6</li><li class='fold' title='folds from line 7 to line 15'>- 7</li><li>8</li><li>9</li><li>10</li><li>11</li><li>12</li><li>13</li><li>14</li><li>15</li><li>16</li></ol><ol class='data'><li>var <em class='s0'>a</em> = function (<em class='s1'>b</em>) <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>var <em class='s1'>c</em> = 1,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>d</em> = 2;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>if (e) {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    r;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    t;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>let <em class='s2'>r</em>;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>p;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em><em class='s2'>r</em>;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>let <em class='s2'>p</em> = 3,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>    <em class='s2'>t</em> = 4;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em><em class='s2'>p</em>;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em><em class='s2'>r</em>;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em><em class='s2'>t</em>;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em><em class='s2'>}</em><em>&#xA;</em></li><li class='l0'><em class='s1'>}</em>;<em>&#xA;</em></li></ol></div>
+                    <p>The jsscope feature attempts to account for the lack of hoisting with a
+                        couple of limitations. First, block scope is not highlighted until the first
+                        <em>let</em>
+                        keyword is reached. Additionally, variables are not indicated with colorful
+                        emphasis until they are declared.</p>
+                </div>
+                <div class="segment">
+                    <h3>Faulty Criticisms</h3>
+                    <p>These are actual criticisms to this approach I have heard. I wish I were
+                        making this up.</p>
+                    <ul>
+                        <li>
+                            <strong>This style of coding will produce a big messy file.</strong>
+                            This style of coding may result in a large code file if the given application is
+                            large, but large and messy are entirely unrelated just as with literature and
+                            novels. This approach to writing code will likely help to make less messy,
+                            because the declarations are bound to the architecture that defines the depth of
+                            scope for the application. Most JavaScript applications tend to always become
+                            large messy files as the result of build systems from application
+                            pre-processors, like: Grunt, Gulp, or Browserify. The functional approach
+                            commonly results in substantially less code since there are fewer declarations
+                            and fewer logical conventions in the code.</li>
+                        <li>
+                            <strong>Everything can access the same variables, which will be a conflict of
+                                too many things accessing the variables at once.</strong>
+                            JavaScript execution is so far always synchronous and single threaded. Without
+                            events and other externalizing APIs it is impossible that collisions will occur
+                            from different things attempting to access a variable at the same time. Even
+                            with events and externalizing APIs this is incredibly unlikely to occur and even
+                            more unlikely that it will cause a problem.</li>
+                        <li>
+                            <strong>This is not the computer science definition of inheritance.</strong>
+                            Inheritance is an English language word that has existed since Middle English
+                            when the language was trying to merge higher French vocabulary with the common
+                            Germanic vocabulary regularly in use. All uses of this word in programming
+                            subscribe to the proper dictionary definition. Perhaps this statement was meant
+                            to describe this use of inheritance as foreign to formalized concepts of object
+                            oriented programming, which assumes one believes this is the limit of computer
+                            science education.</li>
+                    </ul>
+                </div>
+                <p>If you believe anything in this article is in error or need of improvement
+                    please
+                    <a href="https://github.com/austincheney/prettydiff/issues">open a bug</a>. I have thick skin and appreciate a healthy dose of criticism.</p>
+            </section>
+        </div>
+        <script src="../api/dom.js" type="application/javascript"></script>
+    </body>
+</html>

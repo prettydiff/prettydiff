@@ -1,0 +1,406 @@
+/*color - white, webtool only*/
+#prettydiff.white .filefocus,
+#prettydiff.white #feedreportbody .focus,
+#prettydiff.white #feedreportbody .active-focus{outline:0.1em dashed #06f}
+#prettydiff.white #headline,
+#prettydiff.white #functionGroup,
+#prettydiff.white #codeInput,
+#prettydiff.white #options,
+#prettydiff.white #addOptions,
+#prettydiff.white #footer,
+#prettydiff.white #textareaTabKey,
+#prettydiff.white .ace_editor{background:#fff;border-color:#999}
+#prettydiff.white .ace-tm .ace_marker-layer .ace_selection,
+#prettydiff.white .ace-canvas .ace_marker-layer .ace_selection,
+#prettydiff.white .ace_selection.ace_start{background:#def}
+#prettydiff.white .ace_marker-layer .ace_start{background:#f99}
+#prettydiff.white .box{box-shadow:0 0.25em 0.5em #999}
+#prettydiff.white .box .body{background:#eee;border-color:#999}
+#prettydiff.white #headline,
+#prettydiff.white #functionGroup,
+#prettydiff.white #codeInput,
+#prettydiff.white #options,
+#prettydiff.white #addOptions,
+#prettydiff.white #footer{box-shadow:0 0.5em 1em #999}
+#prettydiff.white #beautyoutput,
+#prettydiff.white #minifyoutput,
+#prettydiff.white #parseoutput{background:#f2f2f2;border-color:#999}
+#prettydiff.white #announcement{color:#00f}
+#prettydiff.white .ace_gutter{background:#ddd;border-color:#999}
+#prettydiff.white #update{background:#ddd;border-color:#999}
+#prettydiff.white #reports h3 button{background:#ddd;border-color:#999;color:#555}
+#prettydiff.white #webtool .output textarea{background:#ddd}
+#prettydiff.white #reports h3 button:hover{background:#eee;border-color:#999;box-shadow:0 0.25em 0.5em #ccc;color:#666}
+#prettydiff.white .save{background:#fc0;border-color:#a30;color:#a30}
+#prettydiff.white .minimize{background:#fcc;border-color:#c00;color:#c00}
+#prettydiff.white .maximize{background:#beb;border-color:#060;color:#060}
+#prettydiff.white .resize{background:#cdf;border-color:#03c;color:#03c}
+#prettydiff.white .save:hover{background:#ff6;border-color:#620;color:#620}
+#prettydiff.white .minimize:hover{background:#fee;border-color:#600;color:#600}
+#prettydiff.white .maximize:hover{background:#efe;border-color:#010;color:#010}
+#prettydiff.white .resize:hover{background:#eef8ff;border-color:#006;color:#006}
+#prettydiff.white #webtool th{background:#ddd}
+#prettydiff.white #webtool th.heading{background:#eee}
+#prettydiff.white #webtool thead th{background:#eef}
+#prettydiff.white #textareaTabKey em{color:#00f}
+#prettydiff.white #textareaTabKey strong{color:#b00}
+#prettydiff.white .box .body p em{color:#080}
+#prettydiff.white .box .body p strong{color:#009}
+#prettydiff.white #webtool textarea{background:#eee;border-color:#999;color:#009}
+
+/*color - canvas, webtool only*/
+#prettydiff.canvas .filefocus,
+#prettydiff.canvas #feedreportbody .focus,
+#prettydiff.canvas #feedreportbody .active-focus{outline:0.1em dashed #f00}
+#prettydiff.canvas #headline,
+#prettydiff.canvas #functionGroup,
+#prettydiff.canvas #codeInput,
+#prettydiff.canvas #options,
+#prettydiff.canvas #addOptions,
+#prettydiff.canvas #footer,
+#prettydiff.canvas #textareaTabKey,
+#prettydiff.canvas .ace_editor{background:#eeeee8;border-color:#420}
+#prettydiff.canvas .box{box-shadow:0 0.25em 0.5em #420}
+#prettydiff.canvas .box .body{background:#eee;border-color:#999}
+#prettydiff.canvas #headline,
+#prettydiff.canvas #functionGroup,
+#prettydiff.canvas #codeInput,
+#prettydiff.canvas #options,
+#prettydiff.canvas #addOptions,
+#prettydiff.canvas #footer{box-shadow:0 0.5em 1em #b8a899}
+#prettydiff.canvas #beautyinput,
+#prettydiff.canvas #minifyinput,
+#prettydiff.canvas #parseoinput,
+#prettydiff.canvas #baseText,
+#prettydiff.canvas #newText{background:#f2f2f2;border-color:#999}
+#prettydiff.canvas #beautyoutput,
+#prettydiff.canvas #minifyoutput,
+#prettydiff.canvas #parseoutput{background:#ccccc8;border-color:#999}
+#prettydiff.canvas #update{background:#ddd;border-color:#999}
+#prettydiff.canvas #webtool .output textarea{background:#ccccc8}
+#prettydiff.canvas .save{background:#fc0;border-color:#a30;color:#a30}
+#prettydiff.canvas .minimize{background:#fcc;border-color:#c00;color:#c00}
+#prettydiff.canvas .maximize{background:#beb;border-color:#060;color:#060}
+#prettydiff.canvas .resize{background:#cdf;border-color:#03c;color:#03c}
+#prettydiff.canvas .save:hover{background:#ff6;border-color:#620;color:#620}
+#prettydiff.canvas .minimize:hover{background:#fee;border-color:#600;color:#600}
+#prettydiff.canvas .maximize:hover{background:#efe;border-color:#010;color:#010}
+#prettydiff.canvas .resize:hover{background:#eef8ff;border-color:#006;color:#006}
+#prettydiff.canvas .ace_marker-layer .ace_start{background:#9f9}
+#prettydiff.canvas .ace_gutter{background:#ddddd8;border-color:#999}
+#prettydiff.canvas .ace-tm .ace_marker-layer .ace_selection,
+#prettydiff.canvas .ace-canvas .ace_marker-layer .ace_selection,
+#prettydiff.canvas .ace_selection.ace_start{background:#ffe}
+#prettydiff.canvas #announcement,
+#prettydiff.canvas #textareaTabKey em{color:#060}
+#prettydiff.canvas #textareaTabKey strong{color:#900}
+#prettydiff.canvas .box .body{background:#ddddd8}
+#prettydiff.canvas .box .body p em{color:#060}
+#prettydiff.canvas .box .body p strong{color:#009}
+#prettydiff.canvas #webtool textarea{background:#ddddd8;border-color:#999;color:#420}
+#prettydiff.canvas .box h3 button{background:#eeeee8;border-color:#420;color:#900}
+#prettydiff.canvas .box h3 button:hover{background:#ccb;border-color:#630;color:#630}
+
+/*color - shadow, webtool only*/
+#prettydiff.shadow .filefocus,
+#prettydiff.shadow #feedreportbody .focus,
+#prettydiff.shadow #feedreportbody .active-focus{outline:0.1em dashed #ff0}
+#prettydiff.shadow #headline,
+#prettydiff.shadow #functionGroup,
+#prettydiff.shadow #codeInput,
+#prettydiff.shadow #options,
+#prettydiff.shadow #addOptions,
+#prettydiff.shadow #footer,
+#prettydiff.shadow #textareaTabKey,
+#prettydiff.shadow .ace_editor{background:#333;border-color:#666}
+#prettydiff.shadow .box{box-shadow:0 0.25em 0.5em #000}
+#prettydiff.shadow .box .body{background:#333;border-color:#666}
+#prettydiff.shadow #headline,
+#prettydiff.shadow #functionGroup,
+#prettydiff.shadow #codeInput,
+#prettydiff.shadow #options,
+#prettydiff.shadow #addOptions,
+#prettydiff.shadow #footer{box-shadow:0 0.5em 1em #000}
+#prettydiff.shadow #beautyinput,
+#prettydiff.shadow #minifyinput,
+#prettydiff.shadow #parseoinput,
+#prettydiff.shadow #baseText,
+#prettydiff.shadow #newText{background:#111;border-color:#666}
+#prettydiff.shadow #beautyoutput,
+#prettydiff.shadow #minifyoutput,
+#prettydiff.shadow #parseoutput{background:#333;border-color:#666}
+#prettydiff.shadow #textareaTabKey,
+#prettydiff.shadow #update{background:#666;border-color:#999}
+#prettydiff.shadow #webtool .output textarea{background:#333}
+#prettydiff.shadow .save{background:#fc0;border-color:#a30;color:#a30}
+#prettydiff.shadow .minimize{background:#fcc;border-color:#c00;color:#c00}
+#prettydiff.shadow .maximize{background:#beb;border-color:#060;color:#060}
+#prettydiff.shadow .resize{background:#cdf;border-color:#03c;color:#03c}
+#prettydiff.shadow .save:hover{background:#ff6;border-color:#620;color:#620}
+#prettydiff.shadow .minimize:hover{background:#fee;border-color:#600;color:#600}
+#prettydiff.shadow .maximize:hover{background:#efe;border-color:#010;color:#010}
+#prettydiff.shadow .resize:hover{background:#eef8ff;border-color:#006;color:#006}
+#prettydiff.shadow .ace_marker-layer .ace_start{background:#9f9}
+#prettydiff.shadow .ace_gutter{background:#666;border-color:#333;color:#ff0}
+#prettydiff.shadow .ace-tm .ace_marker-layer .ace_selection,
+#prettydiff.shadow .ace-canvas .ace_marker-layer .ace_selection,
+#prettydiff.shadow .ace_selection.ace_start{background:#ffe}
+#prettydiff.shadow .ace_comment{color:#ce9}
+#prettydiff.shadow .ace_variable{color:#cef}
+#prettydiff.shadow .ace_active-line{background:#444}
+#prettydiff.shadow #announcement,
+#prettydiff.shadow #textareaTabKey em{color:#cf3}
+#prettydiff.shadow .box .body{background:#222}
+#prettydiff.shadow .box .body p em{color:#cf3}
+#prettydiff.shadow .box .body p strong{color:#9cf}
+#prettydiff.shadow #webtool textarea{background:#222;border-color:#999;color:#ddd}
+#prettydiff.shadow .box h3 button{background:#333;border-color:#666;color:#ccc}
+#prettydiff.shadow .box h3 button:hover{background:#777;border-color:#aaa;color:#fff}
+
+/*webtool - changing default ace colors to acheive minimum color contrast*/
+#prettydiff .ace_variable{color:#247284}
+#prettydiff .ace_comment{color:#375}
+#prettydiff .ace-tm .ace_support.ace_type,
+#prettydiff .ace-tm .ace_support.ace_class{color:#56d}
+#prettydiff #webtool .ace_editor,
+#prettydiff #webtool .ace_editor div{font-family:'Courier New',Courier,'Lucida Console',monospace;}
+#prettydiff #webtool #codeInput .ace_gutter{border-right-style:solid;border-right-width:0.1em}
+#prettydiff #codeInput div.ace_cursor{border-style:solid;border-width:0 0 0 0.2em}
+
+/*webtool - webtool page element*/
+#prettydiff #webtool.contentarea{box-shadow:none;max-width:100%}
+
+/*webtool - footer*/
+#prettydiff #footer{padding:0 1em}
+
+/*webtool - headings*/
+#prettydiff #webtool h2{display:inline-block;font-size:1.8em;font-weight:bold;margin:0 0.5em 0.5em 0;padding:0 0.2em}
+#prettydiff #webtool h3{font-size:1.6em}
+#prettydiff #webtool h4{font-size:1.4em}
+
+/*webtool - text items*/
+#prettydiff #webtool dd,
+#prettydiff #webtool dt,
+#prettydiff #webtool p,
+#prettydiff #webtool li,
+#prettydiff #webtool td,
+#prettydiff #webtool th{font-family:"Lucida Sans Unicode","Helvetica","Arial",sans-serif;font-size:1.2em}
+#prettydiff #webtool th.heading{border-width:0.05em;font-size:2em}
+#prettydiff #webtool div{font-family:"Century Gothic","Trebuchet MS";margin:0 auto;text-align:left;border-width:0.1em;border-style:solid}
+
+/*webtool - borders*/
+#prettydiff #webtool .box h3.heading button,
+#prettydiff #codeInput div,
+#prettydiff #webtool .metainfo,
+#prettydiff div#webtool,
+#prettydiff #webtool div.beautify,
+#prettydiff #doc-content > div,
+#prettydiff #doc-content > div > div,
+#prettydiff #webtool #reports{border-style:none}
+#prettydiff #diffBase,
+#prettydiff #diffNew,
+#prettydiff #Beautify,
+#prettydiff #Minify,
+#prettydiff #Parse,
+#prettydiff #option_comment,
+#prettydiff #functionGroup,
+#prettydiff #headline,
+#prettydiff #update,
+#prettydiff #footer,
+#prettydiff #codeInput div.ace_editor,
+#prettydiff .box h3.heading,
+#prettydiff .box .body,
+#prettydiff .options input[type=text],
+#prettydiff .options{border-style:solid;border-width:0.1em}
+
+/*webtool - functionGroup stores the mode radio buttons, headline is first thing on the page*/
+#prettydiff #functionGroup,
+#prettydiff #webtool #headline{padding:0.7em 1.2em}
+#prettydiff #functionGroup input{cursor:pointer}
+#prettydiff #functionGroup label{cursor:pointer;font-size:1em}
+#prettydiff #functionGroup span{display:inline-block;margin-left:2em}
+#prettydiff #webtool #headline{margin: 0 0 1em;}
+#prettydiff #webtool #headline h2{float:left;line-height:1;margin:0 0.25em 0 0;padding:0}
+#prettydiff #webtool #headline p{clear:none;float:left;font-size: 1.8em;line-height:1;margin:0}
+
+/*webtool - link menu adjacent to functionGroup*/
+#prettydiff #infolinks{float:right;margin:0 0 -4em}
+#prettydiff #infolinks li{display:inline-block;font-size:1.4em;list-style:none;margin:0.5em 1em 0}
+
+/*webtool - minor notifications that appear after a code operation directly next to "[mode] Code" heading*/
+#prettydiff #announcement{font-weight:bold;height:auto;left:14em;margin:0;overflow:hidden;position:absolute;text-overflow:ellipsis;top:0.5em;white-space:nowrap;width:40%;z-index:5}
+#prettydiff #announcement strong.duplicate{display:block}
+
+/*webtool - hidden input field manual indentation definitions*/
+#prettydiff #beau-other-span,
+#prettydiff #diff-other-span{left:-20em;position:absolute;width:0}
+
+/*webtool - option labels*/
+#prettydiff #beauops p strong,
+#prettydiff #options p strong,
+#prettydiff #diffops p strong,
+#prettydiff #miniops p strong,
+#prettydiff #parseops p strong,
+#prettydiff #options .label,
+#prettydiff #diffops .label,
+#prettydiff #miniops .label,
+#prettydiff #beauops .label,
+#prettydiff #parseops .label{display:block;float:none;font-size:1em;font-weight:bold;margin-bottom:0.5em}
+
+/*webtool - minimized report boxes*/
+#prettydiff #reports{height:4em}
+#prettydiff #reports h2{display:none}
+
+/*webtool - box, the system that provides a GUI for the report boxes*/
+#prettydiff #webtool .box{border-style:none;left:auto;margin:0;padding:0;position:absolute;z-index:10}
+#prettydiff .box .buttons button{border-radius:0;border-style:solid;border-width:0.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}
+#prettydiff .box .buttons button.resize{border-width:0.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:0.8em;line-height:0.5em;margin:-.85em 0 0;position:absolute;right:0.05em;top:100%;width:0.85em}
+#prettydiff .box .buttons button.minimize{margin:0.35em 4em 0 0}
+#prettydiff .box .buttons button.maximize{margin:0.35em 1.75em 0 0}
+#prettydiff .box .buttons button.save{margin:0.35em 6.25em 0 0}
+#prettydiff .box .buttons{float:right;margin:0}
+#prettydiff #webtool .box h3.heading{border-style:none;float:left;font-size:1em;height:3em;margin:0 0 -3.2em;padding:0;position:relative;width:17em;z-index:6}
+#prettydiff #webtool .box h3.heading button{border-radius:0;border-style:solid;border-width:0.075em;box-shadow:none;cursor:pointer;display:block;font-size:1.8em;height:100%;margin:0;padding:0.25em 0 0 0.5em;text-align:left}
+#prettydiff #webtool .box .body{border-style:solid;border-width:0.1em;clear:both;height:20em;margin-top:-.1em;overflow:scroll;padding:4.25em 1em 1em;position:relative;right:0;top:0;width:75em;z-index:5}
+#prettydiff #webtool div.report{border-style:none}
+
+/*webtool - feedreport is a floating and draggable box, stores a comment card (currently hidden from use)*/
+#prettydiff #feedreport{right:38.8em}
+#prettydiff #feedemail{display:block;width:100%}
+#prettydiff #feedreportbody{text-align:center}
+#prettydiff #feedreportbody .radiogroup .feedlabel{display:block;font-size:1.4em;margin:0 0 1em;width:auto}
+#prettydiff #feedreportbody .radiogroup span{display:inline-block;margin:0 0 2em;width:5em}
+#prettydiff #feedreportbody .radiogroup input{position:absolute;top:-2000em}
+#prettydiff #feedreportbody .radiogroup label{border-radius:50%;border-style:solid;border-width:0.1em;cursor:pointer;display:inline-block;height:1.5em;line-height:1.5;text-align:center;width:1.5em}
+#prettydiff #feedreportbody .radiogroup span span{display:block;font-size:0.8em;margin:0;width:auto}
+#prettydiff #feedsubmit{float:none;font-family:inherit;height:3em;margin:2.5em auto 0;position:static;text-shadow:none;width:50%}
+
+/*webtool - codereport is a floating and draggable box, stores report output*/
+#prettydiff #codereport{right:19.8em}
+
+/*webtool - statreport is a floating and draggable box, stores usage statistics*/
+#prettydiff #statreport{right:0.8em}
+#prettydiff #statreport .body p,
+#prettydiff #statreport .body li,
+#prettydiff #statreport .body h3{font-size:1.2em}
+#prettydiff #statreport .body h3{margin-top:0}
+#prettydiff #statreport .body ul{margin-top:1em}
+
+/*webtool - paragraphs containing textareas for code input/output*/
+#prettydiff #webtool .input,
+#prettydiff #webtool .output,
+#prettydiff #diffBase,
+#prettydiff #diffNew{clear:none;width:49%}
+#prettydiff #webtool .input,
+#prettydiff #diffBase{float:left}
+#prettydiff #webtool .output,
+#prettydiff #diffNew{float:right}
+#prettydiff #diffBase .input,
+#prettydiff #diffNew .input{float:none;width:100%}
+#prettydiff #webtool .output textarea,
+#prettydiff #diffNew textarea{margin-left:-0.2em}
+
+/*webtool - labels to textareas for code input/output*/
+#prettydiff #webtool .input label,
+#prettydiff #webtool .output label{display:block;font-weight:bold}
+
+/*webtool - file input*/
+#prettydiff #Beautify p.file,
+#prettydiff #Minify p.file,
+#prettydiff #Parse p.file{clear:none;float:none;margin:0.5em 0 1em}
+#prettydiff .file input{padding:0 0.1em}
+#prettydiff .file input,
+#prettydiff .labeltext input{display:inline-block;margin:0 0.7em 0 0;width:16em}
+#prettydiff .labeltext{margin:0.5em 0 1em}
+
+/*webtool - major section to contain textarea sections*/
+#prettydiff #codeInput{margin-bottom:1em;padding:1.2em}
+#prettydiff #codeInput #diffBase p,#codeInput #diffNew p{clear:both;float:none}
+#prettydiff #codeInput .input,
+#prettydiff #codeInput .output{margin:0}
+#prettydiff #codeInput label{font-size:1em}
+#prettydiff #codeInput textarea{font-size:1em;line-height:1.2em}
+
+/*webtool - accessibility alternate navigation messaging for keyboard users when a textarea gains focus*/
+#prettydiff #textareaTabKey{border-style:solid;border-width:0.1em;left:51%;margin:-1.1em 0 0 -0.2em;padding:0.5em;position:absolute;width:28em}
+#prettydiff #textareaTabKey strong{text-decoration:underline}
+#prettydiff #textareaTabKey em{font-weight:bold}#textreport{width:100%}
+
+/*webtool - option styles*/
+#prettydiff #webtool #options,
+#prettydiff #webtool #addOptions{margin:0 0 1.2em}
+#prettydiff #addOptions div{border-style:none}
+#prettydiff #addOptions p.button{margin:0 0 1em}
+#prettydiff #resetOptions{margin:0 0 -6em}
+#prettydiff #options p.apiname,
+#prettydiff #addOptions p.apiname{float:left;font-size:1.2em;line-height:2.4;margin:0 -40em 0 15em;padding:0}
+#prettydiff span.apiname{display:inline-block;float:none;font-size:1em;margin:0 0 0 1em;width:auto}
+#prettydiff .resetbutton{padding:0}
+#prettydiff #options button{float:right;height:2em;padding:0;width:15em}
+#prettydiff #options label{width:auto}
+#prettydiff #options p,
+#prettydiff #addOptions p{clear:both;font-size:1em;margin:0;padding:2em 0 0}
+#prettydiff #webtool .resetbutton,
+#prettydiff #webtool p.button{padding:0}
+#prettydiff #button-primary{margin:1em 0 0}
+#prettydiff #options p span{height:2em;margin:0 0 0 1em}
+#prettydiff fieldset{clear:both;margin:1em 0 0;padding:0 1em 1em}
+#prettydiff fieldset{clear:both;margin:1em 0 0;padding:0 1em 1em}
+#prettydiff .options select,
+#prettydiff .options fieldset select{float:left;margin:0 1em 0 0}
+#prettydiff .options{clear:both;margin-bottom:1em;padding:1em;width:auto}
+#prettydiff .options input[type=text]{margin-right:1em;width:11.6em}
+#prettydiff #webtool .options p span label,
+#prettydiff .options p span{font-size:1.1em;font-weight:normal}
+#prettydiff .options p span{display:block;float:left;margin-left:1em;min-width:16.5em;padding-bottom:0.5em}
+#prettydiff #webtool .options label,
+#prettydiff #webtool .options strong{font-size:1.2em}
+#prettydiff p button,
+#prettydiff h3 button,
+#prettydiff a.button{display:block;font-weight:bold;padding:0.2em 0;width:100%}
+#prettydiff p button:hover,
+#prettydiff h3 button:hover,
+#prettydiff a.button:hover{cursor:pointer}
+#prettydiff .button{text-align:center}
+#prettydiff .button button{border-width:0.05em;font-size:2em;margin:0 auto;width:50%}
+#prettydiff #codeInput .difflabel{float:right;margin:-1.5em 0 0}
+#prettydiff #webtool textarea{font-size:1.2em}
+#prettydiff #codeInput h2{margin:0;padding:0}
+
+/*webtool - csvchar*/
+#prettydiff #csvchar{width:13.1em}
+
+/*webtool - footer of the webtool page*/
+#prettydiff #diffoutput{width:100%}
+#prettydiff #diffoutput li em,
+#prettydiff #diffoutput p em{font-weight:bold}
+#prettydiff #diffoutput ul{font-size:1.2em;margin-top:1em}
+
+/*webtool - a modal that displays for certain browsers about saving output to file*/
+#prettydiff #modalSave p{background:#eee;color:#333;font-size:2em;padding:1em;position:absolute;text-align:center;top:10em;width:25em;z-index:9001}
+#prettydiff #modalSave p em{display:block;font-size:0.75em;margin-top:1em}
+#prettydiff #modalSave p strong{color:#c00;font-weight:bold}
+#prettydiff #modalSave span{background:#000;display:block;left:0;opacity:0.5;position:absolute;top:0;z-index:9000}
+
+/*webtool - option comment*/
+#prettydiff #option_comment{font-size:1.2em;height:2.5em;width:100%}
+#prettydiff #option_commentClear{margin:-1.5em -0.25em 0 0}
+
+/*webtool - update section (version and last update date)*/
+#prettydiff #webtool .metainfo{position:relative;}
+#prettydiff #update{clear:both;float:right;font-weight:bold;margin:0;padding:0.25em;position:absolute;right:0;top:0;z-index:2;}
+#prettydiff #update span{display:block}
+#prettydiff #update span span{display:inline-block;float:right}
+
+/*webtool - overrides*/
+#prettydiff #webtool .beautify,
+#prettydiff #webtool .beautify li,
+#prettydiff #webtool .diff,
+#prettydiff #webtool .diff li{font-family:"Courier New",Courier,"Lucida Console",monospace}
+#prettydiff #webtool #reports .beautify{border-style:solid}
+#prettydiff #webtool .diff-left{border-style:none;border-width:0}
+#prettydiff #webtool .diff-right{border-style:none none none solid;border-width:0 0 0 0.1em}
+#prettydiff #webtool .diff h3,
+#prettydiff #webtool .beautify h3,
+#prettydiff #webtool .diff h4,
+#prettydiff #webtool .beautify h4{margin:0}

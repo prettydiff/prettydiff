@@ -1,179 +1,112 @@
-<?xml version='1.0' encoding='UTF-8' ?> <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'> <html xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'> <head> <title>Pretty Diff - Saving colorful JavaScript code samples</title> <link href="../diffview.css" media="all" rel="stylesheet" type="text/css"/> <link href="guide.css" media="all" rel="stylesheet" type="text/css"/> <link href='http://prettydiff.com/guide/jshtml.xhtml' rel='canonical' type='application/xhtml+xml'/> <link href="http://prettydiff.com/images/favicon.ico" rel="icon" type="image/x-icon"/> <link href="http://prettydiff.com/labels.rdf" rel="meta" title="ICRA labels" type="application/rdf+xml"/> <meta content="width=device-width, initial-scale=1" name="viewport"/> <meta content="index, follow" name="robots"/> <meta content="Pretty Diff - Guide, Saving colorful JavaScript code samples" name="DC.title"/> <meta content='(pics-1.1 "http://www.icra.org/pics/vocabularyv03/" l gen true for "http://prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for "http://www.prettydiff.com" r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))' http-equiv="pics-Label"/> <meta content="Austin Cheney" name="author"/> <meta content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML." name="description"/> <meta content="Global" name="distribution"/> <meta content="en" http-equiv="Content-Language"/> <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/> <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/> <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/> <meta content="text/css" http-equiv="content-style-type"/> <meta content="application/javascript" http-equiv="content-script-type"/> <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E" name="google-site-verification"/> </head> <body class="white" id="doc"> <h1> <svg height="2000.000000pt" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg"> <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)"> <path d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g> </svg> <a href="http://prettydiff.com/">Pretty Diff</a> - Guide</h1> <p id="dcolorScheme"><label class="label" for="colorScheme">Color Scheme</label> <select id="colorScheme"><option>Canvas</option> <option>Shadow</option> <option selected="selected">White</option></select> </p> <h2>Saving colorful JavaScript code samples</h2> <div> <div><h3>Introduction</h3> <p>There are times when a coder really needs a sample of code to be pretty for blogs, presentations, or to supplement other content. For these raw code in a text format is not good enough not matter how well beautified. Pretty Diff allows this feature by providing the <em>jsscope</em> parameter to JSPretty with the value <strong>html</strong> or by selecting the option <strong>HTML output</strong> under the option heading <em>Scope Analysis (JavaScript Only)</em> from the web tool. <a href="closure_with_jsscope.xhtml">See multiple examples on one page</a> or see the required JavaScript below for another example.</p> <p>This feature works using the jsscope feature of the JSPretty library. The jsscope feature is intended to produce code that comprises an entire HTML document. The jsscope option is extended to allow immediate access for only enough HTML for formatting and description of the supplied code sample. As a result the necessary CSS and JavaScript code must be included separately.</p> </div> <div><h3>Required code assets</h3> <div id="webtool"><h4>JavaScript</h4> <div class='beautify' data-prettydiff-ignore='true'><ol class='count'><li>1</li><li class="fold" title="folds from line 2 to line 31">- 2</li><li>3</li><li>4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>10</li><li>11</li><li>12</li><li>13</li><li>14</li><li>15</li><li>16</li><li>17</li><li>18</li><li>19</li><li>20</li><li>21</li><li>22</li><li>23</li><li>24</li><li>25</li><li>26</li><li>27</li><li>28</li><li>29</li><li>30</li><li>31</li><li class="fold" title="folds from line 32 to line 51">- 32</li><li>33</li><li>34</li><li>35</li><li>36</li><li>37</li><li>38</li><li>39</li><li>40</li><li>41</li><li>42</li><li>43</li><li>44</li><li>45</li><li>46</li><li>47</li><li>48</li><li>49</li><li>50</li><li>51</li></ol><ol class='data'><li>var <em class='s0'>pd</em> = {};<em>&#xA;</em></li><li class='l0'><em class='s0'>pd</em>.beaufold = function <em class='s1'>dom__beaufold</em>() <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>'use strict';<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>var <em class='s1'>self</em>  = this,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>title</em> = <em class='s1'>self</em>.getAttribute('title').split('line '),<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>min</em>   = Number(<em class='s1'>title</em>[1].substr(0, <em class='s1'>title</em>[1].indexOf(' '))),<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>max</em>   = Number(<em class='s1'>title</em>[2]),<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>a</em>     = 0,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>b</em>     = '',<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>list</em>  = [<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>self</em>.parentNode.getElementsByTagName('li'), <em class='s1'>self</em>.parentNode.nextSibling.getElementsByTagName('li')<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    ];<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>if (<em class='s1'>self</em>.innerHTML.charAt(0) === '-') {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    for (<em class='s1'>a</em> = <em class='s1'>min</em>; <em class='s1'>a</em> &lt; <em class='s1'>max</em>; <em class='s1'>a</em> += 1) {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>list</em>[0][<em class='s1'>a</em>].style.display = 'none';<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>list</em>[1][<em class='s1'>a</em>].style.display = 'none';<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    }<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>self</em>.innerHTML = '+' + <em class='s1'>self</em>.innerHTML.substr(1);<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>} else {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    for (<em class='s1'>a</em> = <em class='s1'>min</em>; <em class='s1'>a</em> &lt; <em class='s1'>max</em>; <em class='s1'>a</em> += 1) {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>list</em>[0][<em class='s1'>a</em>].style.display = 'block';<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>list</em>[1][<em class='s1'>a</em>].style.display = 'block';<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        if (<em class='s1'>list</em>[0][<em class='s1'>a</em>].getAttribute('class') === 'fold' &amp;&amp; <em class='s1'>list</em>[0][<em class='s1'>a</em>].innerHTML.charAt(0) === '+') {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>            <em class='s1'>b</em> = <em class='s1'>list</em>[0][<em class='s1'>a</em>].getAttribute('title');<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>            <em class='s1'>b</em> = <em class='s1'>b</em>.substring(<em class='s1'>b</em>.indexOf('to line ') + 1);<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>            <em class='s1'>a</em> = Number(<em class='s1'>b</em>) - 1;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        }<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    }<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>self</em>.innerHTML = '-' + <em class='s1'>self</em>.innerHTML.substr(1);<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>}<em>&#xA;</em></li><li class='l0'><em class='s1'>}</em>;<em>&#xA;</em></li><li class='l0'>(function () <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>'use strict';<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>var <em class='s1'>lists</em>    = document.getElementsByTagName('ol'),<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>listslen</em> = <em class='s1'>lists</em>.length,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>list</em>     = [],<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>listlen</em>  = 0,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>a</em>        = 0,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>b</em>        = 0;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>for (<em class='s1'>a</em> = 0; <em class='s1'>a</em> &lt; <em class='s1'>listslen</em>; <em class='s1'>a</em> += 1) {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    if (<em class='s1'>lists</em>[<em class='s1'>a</em>].getAttribute('class') === 'count' &amp;&amp; <em class='s1'>lists</em>[<em class='s1'>a</em>].parentNode.getAttribute('class') === 'beautify') {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>list</em>    = <em class='s1'>lists</em>[<em class='s1'>a</em>].getElementsByTagName('li');<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>listlen</em> = <em class='s1'>list</em>.length;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        for (<em class='s1'>b</em> = 0; <em class='s1'>b</em> &lt; <em class='s1'>listlen</em>; <em class='s1'>b</em> += 1) {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>            if (<em class='s1'>list</em>[<em class='s1'>b</em>].getAttribute('class') === 'fold') {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>                <em class='s1'>list</em>[<em class='s1'>b</em>].onmousedown = <em class='s0'>pd</em>.beaufold;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>            }<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        }<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    }<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>}<em>&#xA;</em></li><li class='l0'><em class='s1'>}</em>());<em>&#xA;</em></li></ol></div> </div> <div><h4>CSS</h4> <code data-prettydiff-ignore="true">.beautify {
-    border     : 0.2em #999 solid;
-    display    : inline-block;
-    font-family: 'Courier New',Courier,'Lucida Console',monospace;
-    font-size  : 10px;
-    margin     : 0 1em 0 0;
-    max-width  : 100%;
-    overflow   : scroll;
-}
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-    .beautify .count li {
-        padding-top: 0.546em;
-    }
-    .beautify .data li {
-        line-height: 1.3;
-    }
-}
-.beautify .count li.fold {
-    color       : #900;
-    cursor      : pointer;
-    font-weight : bold;
-    padding-left: 0.5em;
-}
-.beautify .count {
-    border-style: solid;
-    border-width: 0 0.1em 0 0;
-    font-weight : normal;
-    padding     : 0;
-    text-align  : right;
-}
-.beautify .count li {
-    padding-left: 2em;
-}
-.beautify .data {
-    text-align : left;
-    white-space: pre;
-}
-s.beautify .data li {
-    padding-left: 0.5em;
-}
-.beautify ol {
-    display: table-cell;
-    margin : 0;
-    padding: 0;
-}
-.beautify li {
-    font-size      : 1.4em;
-    border-style   : none none solid;
-    border-width   : 0 0 0.1em;
-    display        : block;
-    line-height    : 1.2;
-    list-style-type: none;
-    margin         : 0;
-    padding-bottom : 0;
-    padding-right  : 0.5em;
-}
-.beautify .data em {
-    display    : inline-block;
-    font-style : normal;
-    font-weight: bold;
-    padding-top: 0.5em;
-}
-.beautify .count li {
-    background  : #eed;
-    border-color: #bbc;
-    color       : #886;
-    padding-top : 0.5em;
-}
-.beautify .data li {
-    background-color: #fff;
-    border-color    : #eee;
-    color           : #777;
-    white-space     : pre;
-}
-.beautify .data em.s0 {
-    color: #000;
-}
-.beautify .data em.s1 {
-    color: #f66;
-}
-.beautify .data em.s2 {
-    color: #12f;
-}
-.beautify .data em.s3 {
-    color: #090;
-}
-.beautify .data em.s4 {
-    color: #d6d;
-}
-.beautify .data em.s5 {
-    color: #7cc;
-}
-.beautify .data em.s6 {
-    color: #c85;
-}
-.beautify .data em.s7 {
-    color: #737;
-}
-.beautify .data em.s8 {
-    color: #6d0;
-}
-.beautify .data em.s9 {
-    color: #dd0;
-}
-.beautify .data em.s10 {
-    color: #893;
-}
-.beautify .data em.s11 {
-    color: #b97;
-}
-.beautify .data em.s12 {
-    color: #bbb;
-}
-.beautify .data em.s13 {
-    color: #cc3;
-}
-.beautify .data em.s14 {
-    color: #333;
-}
-.beautify .data em.s15 {
-    color: #9d9;
-}
-.beautify .data em.s16 {
-    color: #880;
-}
-.beautify .data .l0 {
-    background: #fff;
-}
-.beautify .data .l1 {
-    background: #fed;
-}
-.beautify .data .l2 {
-    background: #def;
-}
-.beautify .data .l3 {
-    background: #efe;
-}
-.beautify .data .l4 {
-    background: #fef;
-}
-.beautify .data .l5 {
-    background: #eef;
-}
-.beautify .data .l6 {
-    background: #fff8cc;
-}
-.beautify .data .l7 {
-    background: #ede;
-}
-.beautify .data .l8 {
-    background: #efc;
-}
-.beautify .data .l9 {
-    background: #ffd;
-}
-.beautify .data .l10 {
-    background: #edc;
-}
-.beautify .data .l11 {
-    background: #fdb;
-}
-.beautify .data .l12 {
-    background: #f8f8f8;
-}
-.beautify .data .l13 {
-    background: #ffb;
-}
-.beautify .data .l14 {
-    background: #eec;
-}
-.beautify .data .l15 {
-    background: #cfc;
-}
-.beautify .data .l16 {
-    background: #eea;
-}
-.beautify .data .c0 {
-    background: #ddd;
-}</code> </div> </div> </div> <script src="../api/dom.js" type="application/javascript"></script> </body> </html>
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Pretty Diff - Saving colorful JavaScript code samples</title>
+        <link href="../css/index.css" media="all" rel="stylesheet" type="text/css"/>
+        <link
+            href="http://prettydiff.com/guide/jshtml.xhtml"
+            rel="canonical"
+            type="application/xhtml+xml"/>
+        <link
+            href="http://prettydiff.com/images/favicon.ico"
+            rel="icon"
+            type="image/x-icon"/>
+        <link
+            href="http://prettydiff.com/labels.rdf"
+            rel="meta"
+            title="ICRA labels"
+            type="application/rdf+xml"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <meta content="index, follow" name="robots"/>
+        <meta
+            content="Pretty Diff - Guide, Saving colorful JavaScript code samples"
+            name="DC.title"/>
+        <meta
+            content="(pics-1.1 'http://www.icra.org/pics/vocabularyv03/' l gen true for 'http://prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for 'http://www.prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))"
+            http-equiv="pics-Label"/>
+        <meta content="Austin Cheney" name="author"/>
+        <meta
+            content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML."
+            name="description"/>
+        <meta content="Global" name="distribution"/>
+        <meta content="en" http-equiv="Content-Language"/>
+        <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/>
+        <meta content="text/css" http-equiv="content-style-type"/>
+        <meta content="application/javascript" http-equiv="content-script-type"/>
+        <meta
+            content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
+            name="google-site-verification"/>
+    </head>
+    <body class="white" id="prettydiff">
+        <div class="contentarea" id="page">
+            <section role="heading">
+                <h1>
+                    <svg height="2000.000000pt" id="pdlogo" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
+                            <path
+                                d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
+                    </svg>
+                    <a href="prettydiff.com.xhtml">Pretty Diff</a>
+                    - Guide: Saving colorful JavaScript code samples</h1>
+                <p id="dcolorScheme">
+                    <label class="label" for="colorScheme">Color Scheme</label>
+                    <select id="colorScheme">
+                        <option>Canvas</option>
+                        <option>Shadow</option>
+                        <option selected="selected">White</option>
+                    </select>
+                </p>
+                <p>Explore some
+                    <a href="samples.xhtml">samples</a>. For any questions, comments, requests, or feedback please join the
+                    <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff mailing list</a>
+                    or chat on
+                    <a href="https://gitter.im/prettydiff/prettydiff?utm_source=badge%26utm_medium=badge%26utm_campaign=pr-badge%26utm_content=badge">Gitter</a>. Find
+                    <a href="https://github.com/prettydiff/prettydiff">Pretty Diff on GitHub</a>.</p>
+            </section>
+            <section role="main">
+                <h2>Saving colorful JavaScript code samples</h2>
+                <div class="segment">
+                    <h3>Introduction</h3>
+                    <p>There are times when a coder really needs a sample of code to be pretty for
+                        blogs, presentations, or to supplement other content. For these raw code in a
+                        text format is not good enough not matter how well beautified. Pretty Diff
+                        allows this feature by providing the
+                        <em>jsscope</em>
+                        parameter to JSPretty with the value
+                        <strong>html</strong>
+                        or by selecting the option
+                        <strong>HTML output</strong>
+                        under the option heading
+                        <em>Scope Analysis (JavaScript Only)</em>
+                        from the web tool.
+                        <a href="closure_with_jsscope.xhtml">See multiple examples on one page</a>
+                        or see the required JavaScript below for another example.</p>
+                    <p>This feature works using the jsscope feature of the JSPretty library. The
+                        jsscope feature is intended to produce code that comprises an entire HTML
+                        document. The jsscope option is extended to allow immediate access for only
+                        enough HTML for formatting and description of the supplied code sample. As a
+                        result the necessary CSS and JavaScript code must be included separately.</p>
+                </div>
+                <div class="segment">
+                    <h3>Required code assets</h3>
+                    <div class="segment">
+                        <h4>JavaScript</h4>
+                        <div class="beautify" data-prettydiff-ignore="true"><ol class='count'><li>1</li><li class="fold" title="folds from line 2 to line 31">- 2</li><li>3</li><li>4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>10</li><li>11</li><li>12</li><li>13</li><li>14</li><li>15</li><li>16</li><li>17</li><li>18</li><li>19</li><li>20</li><li>21</li><li>22</li><li>23</li><li>24</li><li>25</li><li>26</li><li>27</li><li>28</li><li>29</li><li>30</li><li>31</li><li class="fold" title="folds from line 32 to line 51">- 32</li><li>33</li><li>34</li><li>35</li><li>36</li><li>37</li><li>38</li><li>39</li><li>40</li><li>41</li><li>42</li><li>43</li><li>44</li><li>45</li><li>46</li><li>47</li><li>48</li><li>49</li><li>50</li><li>51</li></ol><ol class='data'><li>var <em class='s0'>pd</em> = {};<em>&#xA;</em></li><li class='l0'><em class='s0'>pd</em>.beaufold = function <em class='s1'>dom__beaufold</em>() <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>'use strict';<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>var <em class='s1'>self</em>  = this,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>title</em> = <em class='s1'>self</em>.getAttribute('title').split('line '),<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>min</em>   = Number(<em class='s1'>title</em>[1].substr(0, <em class='s1'>title</em>[1].indexOf(' '))),<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>max</em>   = Number(<em class='s1'>title</em>[2]),<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>a</em>     = 0,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>b</em>     = '',<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>list</em>  = [<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>self</em>.parentNode.getElementsByTagName('li'), <em class='s1'>self</em>.parentNode.nextSibling.getElementsByTagName('li')<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    ];<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>if (<em class='s1'>self</em>.innerHTML.charAt(0) === '-') {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    for (<em class='s1'>a</em> = <em class='s1'>min</em>; <em class='s1'>a</em> &lt; <em class='s1'>max</em>; <em class='s1'>a</em> += 1) {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>list</em>[0][<em class='s1'>a</em>].style.display = 'none';<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>list</em>[1][<em class='s1'>a</em>].style.display = 'none';<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    }<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>self</em>.innerHTML = '+' + <em class='s1'>self</em>.innerHTML.substr(1);<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>} else {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    for (<em class='s1'>a</em> = <em class='s1'>min</em>; <em class='s1'>a</em> &lt; <em class='s1'>max</em>; <em class='s1'>a</em> += 1) {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>list</em>[0][<em class='s1'>a</em>].style.display = 'block';<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>list</em>[1][<em class='s1'>a</em>].style.display = 'block';<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        if (<em class='s1'>list</em>[0][<em class='s1'>a</em>].getAttribute('class') === 'fold' &amp;&amp; <em class='s1'>list</em>[0][<em class='s1'>a</em>].innerHTML.charAt(0) === '+') {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>            <em class='s1'>b</em> = <em class='s1'>list</em>[0][<em class='s1'>a</em>].getAttribute('title');<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>            <em class='s1'>b</em> = <em class='s1'>b</em>.substring(<em class='s1'>b</em>.indexOf('to line ') + 1);<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>            <em class='s1'>a</em> = Number(<em class='s1'>b</em>) - 1;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        }<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    }<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>self</em>.innerHTML = '-' + <em class='s1'>self</em>.innerHTML.substr(1);<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>}<em>&#xA;</em></li><li class='l0'><em class='s1'>}</em>;<em>&#xA;</em></li><li class='l0'>(function () <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>'use strict';<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>var <em class='s1'>lists</em>    = document.getElementsByTagName('ol'),<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>listslen</em> = <em class='s1'>lists</em>.length,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>list</em>     = [],<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>listlen</em>  = 0,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>a</em>        = 0,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>b</em>        = 0;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>for (<em class='s1'>a</em> = 0; <em class='s1'>a</em> &lt; <em class='s1'>listslen</em>; <em class='s1'>a</em> += 1) {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    if (<em class='s1'>lists</em>[<em class='s1'>a</em>].getAttribute('class') === 'count' &amp;&amp; <em class='s1'>lists</em>[<em class='s1'>a</em>].parentNode.getAttribute('class') === 'beautify') {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>list</em>    = <em class='s1'>lists</em>[<em class='s1'>a</em>].getElementsByTagName('li');<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>listlen</em> = <em class='s1'>list</em>.length;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        for (<em class='s1'>b</em> = 0; <em class='s1'>b</em> &lt; <em class='s1'>listlen</em>; <em class='s1'>b</em> += 1) {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>            if (<em class='s1'>list</em>[<em class='s1'>b</em>].getAttribute('class') === 'fold') {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>                <em class='s1'>list</em>[<em class='s1'>b</em>].onmousedown = <em class='s0'>pd</em>.beaufold;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>            }<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        }<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    }<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>}<em>&#xA;</em></li><li class='l0'><em class='s1'>}</em>());<em>&#xA;</em></li></ol></div>
+                    </div>
+                    <div class="segment">
+                        <h4>CSS</h4>
+                        <ul>
+                            <li><a href="http://prettydiff.com/css/global.css">http://prettydiff.com/css/global.css</a></li>
+                            <li><a href="http://prettydiff.com/css/report.css">http://prettydiff.com/css/report.css</a></li>
+                            <li><a href="http://prettydiff.com/css/color_white.css">http://prettydiff.com/css/color_white.css</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <script src="../api/dom.js" type="application/javascript"></script>
+    </body>
+</html>

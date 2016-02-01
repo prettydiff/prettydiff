@@ -1,0 +1,73 @@
+/*global - body element*/
+#prettydiff{text-align: center;font-size:10px;overflow-y:scroll}
+
+/*global - contentarea, the only immediate child of body*/
+#prettydiff .contentarea{border-style:solid;border-width:0.1em;font-family:"Century Gothic","Trebuchet MS";margin:0 auto;max-width:93em;padding:1em;text-align:left}
+
+/*global - text containers*/
+#prettydiff dd,
+#prettydiff dt,
+#prettydiff p,
+#prettydiff li,
+#prettydiff td,
+#prettydiff blockquote,
+#prettydiff th{clear:both;font-family:"Palatino Linotype","Book Antiqua",Palatino,serif;font-size:1.6em;line-height:1.6em;text-align:left}
+#prettydiff blockquote{font-style:italic}
+#prettydiff dt{font-size:1.4em;font-weight:bold;line-height:inherit}
+#prettydiff li li,
+#prettydiff li p{font-size:1em}
+#prettydiff th,
+#prettydiff td {border-style:solid;border-width:0.1em;padding:0.1em 0.2em}
+#prettydiff td span {display:block}
+#prettydiff code,
+#prettydiff textarea{font-family:'Courier New',Courier,'Lucida Console',monospace}
+#prettydiff code,
+#prettydiff textarea{display:block;font-size:0.8em;width:100%}
+#prettydiff code span{display:block;white-space:pre}
+#prettydiff code{border-style:solid;border-width:0.2em;line-height:1em}
+#prettydiff textarea{line-height:1.4em}
+#prettydiff label{display:inline;font-size:1.4em}
+#prettydiff legend{border-radius:1em;border-style:solid;border-width:0.1em;font-size:1.4em;font-weight:bold;margin-left:-0.25em;padding:0 0.5em}
+#prettydiff fieldset fieldset legend{font-size:1.2em}
+#prettydiff table{border-collapse:collapse}
+#prettydiff div.report{border-style:none}
+#prettydiff h2,
+#prettydiff h3,
+#prettydiff h4{clear:both}
+#prettydiff table{margin:0 0 1em}
+#prettydiff .analysis .bad,
+#prettydiff .analysis .good{font-weight:bold}
+
+/*global - headings*/
+#prettydiff h1{font-size:3em;font-weight:normal;margin-top:0}
+#prettydiff h1 span{font-size:0.5em}
+#prettydiff h1 svg{border-style:solid;border-width:0.05em;float:left;height:1.5em;margin-right:0.5em;width:1.5em}
+#prettydiff h2{border-style:none;background:transparent;font-size:1em;box-shadow:none;margin:0}
+#prettydiff h2 button{background:transparent;border-style:solid;cursor:pointer;display:block;font-size:2.5em;font-weight:normal;text-align:left;width:100%;border-width:0.05em;font-weight:normal;margin:1em 0 0;padding:0.1em}
+#prettydiff h2 span {display:block;float:right;font-size:0.5em}
+#prettydiff h3{font-size:2em;margin:0;background:transparent;box-shadow:none;border-style: none}
+#prettydiff h4{font-size:1.6em;font-family:"Century Gothic","Trebuchet MS";margin:0}
+#prettydiff li h4{font-size:1em}
+
+/*global - borders*/
+#prettydiff button,
+#prettydiff fieldset,
+#prettydiff div input,
+#prettydiff textarea{border-style:solid;border-width:0.1em}
+#prettydiff section{border-style:none}
+
+/*global - interactives*/
+#prettydiff h2 button,
+#prettydiff select,
+#prettydiff option {font-family:inherit}
+#prettydiff select{border-style:inset;border-width:0.1em;width:13.5em}
+
+/*global - colorscheme field*/
+#prettydiff #dcolorScheme{float:right;margin:-3em 0 0}
+#prettydiff #dcolorScheme label,
+#prettydiff #dcolorScheme label{display:inline-block;font-size:1em}
+
+/*global - remaining items*/
+#prettydiff .clear{clear:both;display:block}
+#prettydiff caption,
+#prettydiff .content-hide{height:1em;left:-1000em;overflow:hidden;position:absolute;top:-1000em;width:1em}

@@ -1,0 +1,111 @@
+#prettydiff #report.contentarea{font-family:"Lucida Sans Unicode","Helvetica","Arial",sans-serif;max-width:none;overflow:scroll}
+
+/*report - borders*/
+#prettydiff .diff .replace em,
+#prettydiff .diff .delete em,
+#prettydiff .diff .insert em{border-style:solid;border-width:0.1em}
+
+/*report - text containers*/
+#prettydiff #report dd,
+#prettydiff #report dt,
+#prettydiff #report p,
+#prettydiff #report li,
+#prettydiff #report td,
+#prettydiff #report blockquote,
+#prettydiff #report th{font-family:"Lucida Sans Unicode","Helvetica","Arial",sans-serif;font-size:1.2em}
+
+/*report - jspretty's jsscope output*/
+#prettydiff div#webtool{background:transparent;font-size:inherit;margin:0;padding:0}
+
+/*report - error messaging in jspretty's report output*/
+#prettydiff #jserror span{display:block}
+
+/*report - markuppretty's accessibility report*/
+#prettydiff #a11y{background:transparent;padding:0}
+#prettydiff #a11y div{margin:0.5em 0;border-style:solid;border-width:0.1em}
+#prettydiff #a11y h4{margin:0.25em 0}
+#prettydiff #a11y ol{border-style:solid;border-width:0.1em}
+
+/*report - csspretty's report*/
+#prettydiff #cssreport.doc table{clear:none;float:left;margin-left:1em}
+#prettydiff #css-size{left:24em}
+#prettydiff #css-uri{left:40em}
+#prettydiff #css-uri td{text-align:left}
+#prettydiff .report .analysis th{text-align:left}
+#prettydiff .report .analysis .parseData td{font-family:'Courier New',Courier,'Lucida Console',monospace;text-align:left;white-space:pre}
+#prettydiff .report .analysis td{text-align:right}
+#prettydiff .analysis{float:left;margin:0 1em 1em 0}
+#prettydiff .analysis td,
+#prettydiff .analysis th{padding:0.5em}
+
+/*report - stat report*/
+#prettydiff #statreport div{border-style:none}
+
+/*report - generated HTML artifacts*/
+#prettydiff .diff,
+#prettydiff .beautify{border-style:solid;border-width:0.1em;display:inline-block;margin:0 1em 1em 0;position:relative}
+#prettydiff .diff,
+#prettydiff .diff li
+#prettydiff .diff h3,
+#prettydiff .diff h4,
+#prettydiff .beautify,
+#prettydiff .beautify li,
+#prettydiff .beautify h3,
+#prettydiff .beautify h4{font-family:'Courier New',Courier,'Lucida Console',monospace}
+#prettydiff .diff li,
+#prettydiff .beautify li,
+#prettydiff .diff h3,
+#prettydiff .diff h4,
+#prettydiff .beautify h3,
+#prettydiff .beautify h4{border-style:none none solid none;border-width:0 0 0.1em 0;box-shadow:none;display:block;font-size:1.2em;margin:0 0 0 -.1em;padding:0.2em 2em;text-align:left}
+#prettydiff .diff .skip{border-style:none none solid;border-width:0 0 0.1em}
+#prettydiff .diff .diff-left{border-style:none;display:table-cell}
+#prettydiff .diff .diff-right{border-style:none none none solid;border-width:0 0 0 0.1em;display:table-cell;margin-left:-.1em;min-width:16.5em;right:0;top:0}
+#prettydiff .diff .data li,
+#prettydiff .beautify .data li{min-width:16.5em;padding:0.5em}
+#prettydiff .diff li,
+#prettydiff .diff p,
+#prettydiff .diff h3,
+#prettydiff .beautify li,
+#prettydiff .beautify p,
+#prettydiff .beautify h3{font-size:1.2em}
+#prettydiff .diff li em,
+#prettydiff .beautify li em{font-style:normal;font-weight:bold;margin:-0.5em -0.09em}
+#prettydiff .diff p.author{border-style:solid;border-width:0.2em 0.1em 0.1em;margin:0;overflow:hidden;padding:0.4em;text-align:right}
+#prettydiff .difflabel{display:block;height:0}
+#prettydiff .count{border-style:solid;border-width:0 0.1em 0 0;font-weight:normal;padding:0;text-align:right}
+#prettydiff .count li{padding:0.5em 1em;text-align:right}
+#prettydiff .count li.fold{cursor:pointer;font-weight:bold;padding-left:0.5em}
+#prettydiff .data{text-align:left;white-space:pre}
+#prettydiff .beautify .data em{display:inline-block;font-style:normal;font-weight:bold}
+#prettydiff .beautify li,
+#prettydiff .diff li{border-style:none none solid;border-width:0 0 0.1em;display:block;line-height:1.2;list-style-type:none;margin:0;white-space:pre}
+#prettydiff .beautify ol,
+#prettydiff .diff ol{display:table-cell;margin:0;padding:0}
+#prettydiff .beautify em.l0,
+#prettydiff .beautify em.l1,
+#prettydiff .beautify em.l2,
+#prettydiff .beautify em.l3,
+#prettydiff .beautify em.l4,
+#prettydiff .beautify em.l5,
+#prettydiff .beautify em.l6,
+#prettydiff .beautify em.l7,
+#prettydiff .beautify em.l8,
+#prettydiff .beautify em.l9,
+#prettydiff .beautify em.l10,
+#prettydiff .beautify em.l11,
+#prettydiff .beautify em.l12,
+#prettydiff .beautify em.l13,
+#prettydiff .beautify em.l14,
+#prettydiff .beautify em.l15,
+#prettydiff .beautify em.l16{height:2.2em;margin:0 0 -1em;position:relative;top:-0.5em}
+#prettydiff .beautify em.l0{margin-left:-0.5em;padding-left:0.5em}
+
+/*webtool - overrides*/
+#prettydiff #report .beautify,
+#prettydiff #report .beautify li,
+#prettydiff #report .diff,
+#prettydiff #report .diff li{font-family:"Courier New",Courier,"Lucida Console",monospace}
+#prettydiff #report .beautify{border-style:solid}
+#prettydiff #report .diff h3,
+#prettydiff #report .beautify h3{border-top-style:solid;border-top-width:0.1em;margin:0}

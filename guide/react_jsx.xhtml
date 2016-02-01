@@ -2,9 +2,8 @@
 <!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>
 <html xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
     <head>
-        <title>Pretty Diff - Guide, Processing the JSX format from Facebook's React</title>
-        <link href="../diffview.css" media="all" rel="stylesheet" type="text/css"/>
-        <link href="guide.css" media="all" rel="stylesheet" type="text/css"/>
+        <title>Pretty Diff - Processing the JSX format from Facebook's React</title>
+        <link href="../css/index.css" media="all" rel="stylesheet" type="text/css"/>
         <link href='http://prettydiff.com/guide/react_jsx.xhtml' rel='canonical'
             type='application/xhtml+xml'/>
         <link href="http://prettydiff.com/images/favicon.ico" rel="icon"
@@ -33,184 +32,188 @@
         <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
             name="google-site-verification"/>
     </head>
-    <body class="white" id="doc">
-        <h1>
-            <svg height="2000.000000pt" preserveAspectRatio="xMidYMid meet" version="1.0"
-                viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt"
-                xmlns="http://www.w3.org/2000/svg">
-                <g fill="#999" stroke="none"
-                    transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
-                    <path
-                        d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
-            </svg>
-            <a href="http://prettydiff.com/">Pretty Diff</a>
-            - Guide</h1>
-        <p id="dcolorScheme">
-            <label class="label" for="colorScheme">Color Scheme</label>
-            <select id="colorScheme">
-                <option>Canvas</option>
-                <option>Shadow</option>
-                <option selected="selected">White</option>
-            </select>
-        </p>
-        <h2>Processing the JSX format from Facebook's React</h2>
-        <div>
-            <div>
-                <h3>Introduction</h3>
-                <p>
-                    <a href="http://facebook.github.io/react">React.js</a>
-                    is a JavaScript template framework coming out of Facebook. Perhaps the most
-                    exciting feature of this technology is its data format for defining templates
-                    called
-                    <a href="http://facebook.github.io/jsx/">JSX</a>. Essentially, JSX allows
-                    writing HTML template code directly into a JavaScript function using XML syntax.
-                    Version 0.12 of React brought big changes to JSX to include:</p>
-                <ul>
-                    <li>Elimination of the previously required identifying pragma comment</li>
-                    <li>JavaScript comments may occur freely within the XML body outside of curly braces</li>
-                    <li>The means to walk in and out of JavaScript syntax and XML.</li>
-                </ul>
-            </div>
-            <div>
-                <h3>Overview of Pretty Diff support</h3>
-                <p>Pretty Diff claims to fully integrate v0.12 JSX support into all its modes
-                    and features. Supporting JSX properly means providing an XML parser to a
-                    JavaScript parser which can also call upon that JavaScript parser from within
-                    areas of JSX's XML tags. A good markup parser also makes use of a minifier to
-                    normalize white space within an XML element, aside from JavaScript comments that
-                    do not otherwise occur in XML. Pretty Diff makes use of these two parsers:</p>
-                <ul>
-                    <li>
-                        <a href="../lib/jspretty.js">jspretty</a>
-                    </li>
-                    <li>
-                        <a href="../lib/markuppretty.js">markuppretty</a>
-                    </li>
-                </ul>
-                <p>In order to support prior existing features of Pretty Diff, namely
-                    <a href="diffcli.xhtml">command line access to multiple various files</a>, JSX
-                    language detection is automatic and not provided as a user selectable choice.</p>
-                <p>Accounting for such novel complexity opens the potential for parsing problems
-                    that are otherwise entirely absent. For example, Pretty Diff does not claim
-                    support for intermixing the tag nesting features of JSTL syntax with the
-                    capabilities of JSX since each of these languages are supersets whose syntax
-                    violates each other. JSX parsing complexity is also challenging in that movement
-                    between various parsers is frequent and multidimensional, which makes debugging
-                    a bit more challenging compared to regular JavaScript or HTML.</p>
-            </div>
-            <div>
-                <h3>How Pretty Diff parses JSX</h3>
-                <div>
-                    <h4>Parsing with jspretty</h4>
-                    <p>JSX language is automatically detected from a JavaScript code sample. This
-                        means the code sample must begin as JavaScript syntax. If a document begins as
-                        XML syntax it will be parsed only as HTML or XML. JSX is detected by looking for
-                        less than characters, &lt;, that start an XML tag. These characters are
-                        operators in JavaScript syntax, so I look to see if the less than character is
-                        preceded immediately optionally by any white space characters or opening
-                        parenthesis and then preceded by either a
-                        <em>return</em>
-                        keyword or any operator. Once an XML body is detected it is followed all the way
-                        to the end of the XML body. This XML body is represented as a single token in
-                        the jspretty parser for hand off directly to markuppretty. Along with handing over a code sample the depth of
-                        indentation is also handed over so that the markup can be indented according to
-                        the wrapping JavaScript.</p>
-                </div>
-                <div>
-                    <h4>Parsing with markuppretty</h4>
-                    <p>The markuppretty parser will treat XML-like portions of JSX exactly as XML with added support for three forms of JavaScript within XML tags:</p>
+    <body class="white" id="prettydiff">
+        <div class="contentarea" id="page">
+            <section role="heading">
+                <h1>
+                    <svg height="2000.000000pt" id="pdlogo" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg">
+                        <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
+                            <path
+                                d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
+                    </svg>
+                    <a href="prettydiff.com.xhtml">Pretty Diff</a>
+                    - Guide: Processing the JSX format from Facebook's React</h1>
+                <p id="dcolorScheme">
+                    <label class="label" for="colorScheme">Color Scheme</label>
+                    <select id="colorScheme">
+                        <option>Canvas</option>
+                        <option>Shadow</option>
+                        <option selected="selected">White</option>
+                    </select>
+                </p>
+                <p>Explore some
+                    <a href="samples.xhtml">samples</a>. For any questions, comments, requests, or feedback please join the
+                    <a href="https://groups.google.com/d/forum/pretty-diff">Pretty Diff mailing list</a>
+                    or chat on
+                    <a href="https://gitter.im/prettydiff/prettydiff?utm_source=badge%26utm_medium=badge%26utm_campaign=pr-badge%26utm_content=badge">Gitter</a>. Find
+                    <a href="https://github.com/prettydiff/prettydiff">Pretty Diff on GitHub</a>.</p>
+            </section>
+            <section role="main">
+                <h2>Processing the JSX format from Facebook's React</h2>
+                <div class="segment">
+                    <h3>Introduction</h3>
+                    <p>
+                        <a href="http://facebook.github.io/react">React.js</a>
+                        is a JavaScript template framework coming out of Facebook. Perhaps the most
+                        exciting feature of this technology is its data format for defining templates
+                        called
+                        <a href="http://facebook.github.io/jsx/">JSX</a>. Essentially, JSX allows
+                        writing HTML template code directly into a JavaScript function using XML syntax.
+                        Version 0.12 of React brought big changes to JSX to include:</p>
                     <ul>
-                        <li>Block comments that begin with
-                            <em>/*</em>
-                            and end with
-                            <em>*/</em>
-                        </li>
-                        <li>Line comments that begin with
-                            <em>//</em>
-                            and end with
-                            <em>\n</em>
-                        </li>
-                        <li>All other JavaScript code may freely occur inside or outside an XML tag so
-                            long as it is wrapped in curly braces</li>
+                        <li>Elimination of the previously required identifying pragma comment</li>
+                        <li>JavaScript comments may occur freely within the XML body outside of curly braces</li>
+                        <li>The means to walk in and out of JavaScript syntax and XML.</li>
                     </ul>
-                    <p>Curly brace JavaScript, whether inside or outside of an XML tag, is packaged
-                        for handing back off to jspretty. This allows beautified or minified JavaScript
-                        to be included within the larger XML code sample that is handed back off to
-                        jspretty in a later step. If this sub-sample of JavaScript contains XML tags
-                        jspretty will interpret the tags correctly passing them back through this
-                        process as individual parsing tokens for precise interpretation.</p>
-                    <p>JavaScript comments are not passed back to jspretty. Line breaks are properly
-                        maintained for block comments and after line comments. White space preceding
-                        lines of code in block comments may not be precisely preserved by the entire
-                        Pretty Diff process. This is a non-critical edge case that occurs from various
-                        different parsers touching this code at various different times and sometimes
-                        more than once.</p>
-                    <p>This process allows for separate handling of embedded JavaScript and proper
-                        handling for XML syntax. JSX code is fully parsed at this point and
-                        features minimal complexity, aside from the intermixing of XML and JavaScript
-                        syntax, compared to regular HTML/XML.</p>
                 </div>
-            </div>
-            <div>
-                <h3>Extending JSX support to jsscope</h3>
-                <div>
-                    <h4>Intention</h4>
-                    <p>The jspretty library includes a feature called jsscope. This feature colors
-                        variables and the background of functions to associate variables with a given
-                        scope depth of declaration. The idea is to help educate the ideas of closure and
-                        functional programming while also providing a quick and easy form of code
-                        analysis and to extend the benefits of this feature to JavaScript variables
-                        expressed within JSX markup code. Read more about jsscope in the
-                        <a href="closure_with_jsscope.xhtml">guide about closures and jsscope</a>.</p>
+                <div class="segment">
+                    <h3>Overview of Pretty Diff support</h3>
+                    <p>Pretty Diff claims to fully integrate v0.12 JSX support into all its modes
+                        and features. Supporting JSX properly means providing an XML parser to a
+                        JavaScript parser which can also call upon that JavaScript parser from within
+                        areas of JSX's XML tags. A good markup parser also makes use of a minifier to
+                        normalize white space within an XML element, aside from JavaScript comments that
+                        do not otherwise occur in XML. Pretty Diff makes use of these two parsers:</p>
+                    <ul>
+                        <li>
+                            <a href="../lib/jspretty.js">jspretty</a>
+                        </li>
+                        <li>
+                            <a href="../lib/markuppretty.js">markuppretty</a>
+                        </li>
+                    </ul>
+                    <p>In order to support prior existing features of Pretty Diff, namely
+                        <a href="diffcli.xhtml">command line access to multiple various files</a>, JSX
+                        language detection is automatic and not provided as a user selectable choice.</p>
+                    <p>Accounting for such novel complexity opens the potential for parsing problems
+                        that are otherwise entirely absent. For example, Pretty Diff does not claim
+                        support for intermixing the tag nesting features of JSTL syntax with the
+                        capabilities of JSX since each of these languages are supersets whose syntax
+                        violates each other. JSX parsing complexity is also challenging in that movement
+                        between various parsers is frequent and multidimensional, which makes debugging
+                        a bit more challenging compared to regular JavaScript or HTML.</p>
                 </div>
-                <div>
-                    <h4>A deeper understanding of the problem</h4>
-                    <p>The jsscope feature operates by forming a list of variable names stored in an
-                        array index that represents the closing of a function where those variables are
-                        declared. This allows the application to know exactly what variables are
-                        declared in which functions. Unfortunately, this array is bound to the current
-                        execution context of the jspretty library and cannot be efficiently passed
-                        around.</p>
-                    <p>The jspretty library can identify when JSX markup is present in JavaScript,
-                        but does not parse that markup to know if it contains JavaScript variables. The
-                        markuppretty library does provide identification of JavaScript from within JSX
-                        markup and passes this code recursively back to jspretty. Once a child instance
-                        of jspretty is launched there is no access the variable identifying array from
-                        the previous execution instance, but word tokens can be identified from the
-                        JavaScript parsing.</p>
+                <div class="segment">
+                    <h3>How Pretty Diff parses JSX</h3>
+                    <div class="segment">
+                        <h4>Parsing with jspretty</h4>
+                        <p>JSX language is automatically detected from a JavaScript code sample. This
+                            means the code sample must begin as JavaScript syntax. If a document begins as
+                            XML syntax it will be parsed only as HTML or XML. JSX is detected by looking for
+                            less than characters, &lt;, that start an XML tag. These characters are
+                            operators in JavaScript syntax, so I look to see if the less than character is
+                            preceded immediately optionally by any white space characters or opening
+                            parenthesis and then preceded by either a
+                            <em>return</em>
+                            keyword or any operator. Once an XML body is detected it is followed all the way
+                            to the end of the XML body. This XML body is represented as a single token in
+                            the jspretty parser for hand off directly to markuppretty. Along with handing over a code sample the depth of
+                            indentation is also handed over so that the markup can be indented according to
+                            the wrapping JavaScript.</p>
+                    </div>
+                    <div class="segment">
+                        <h4>Parsing with markuppretty</h4>
+                        <p>The markuppretty parser will treat XML-like portions of JSX exactly as XML with added support for three forms of JavaScript within XML tags:</p>
+                        <ul>
+                            <li>Block comments that begin with
+                                <em>/*</em>
+                                and end with
+                                <em>*/</em>
+                            </li>
+                            <li>Line comments that begin with
+                                <em>//</em>
+                                and end with
+                                <em>\n</em>
+                            </li>
+                            <li>All other JavaScript code may freely occur inside or outside an XML tag so
+                                long as it is wrapped in curly braces</li>
+                        </ul>
+                        <p>Curly brace JavaScript, whether inside or outside of an XML tag, is packaged
+                            for handing back off to jspretty. This allows beautified or minified JavaScript
+                            to be included within the larger XML code sample that is handed back off to
+                            jspretty in a later step. If this sub-sample of JavaScript contains XML tags
+                            jspretty will interpret the tags correctly passing them back through this
+                            process as individual parsing tokens for precise interpretation.</p>
+                        <p>JavaScript comments are not passed back to jspretty. Line breaks are properly
+                            maintained for block comments and after line comments. White space preceding
+                            lines of code in block comments may not be precisely preserved by the entire
+                            Pretty Diff process. This is a non-critical edge case that occurs from various
+                            different parsers touching this code at various different times and sometimes
+                            more than once.</p>
+                        <p>This process allows for separate handling of embedded JavaScript and proper
+                            handling for XML syntax. JSX code is fully parsed at this point and
+                            features minimal complexity, aside from the intermixing of XML and JavaScript
+                            syntax, compared to regular HTML/XML.</p>
+                    </div>
                 </div>
-                <div>
-                    <h4>Providing a solution</h4>
-                    <p>In order to solve this problem jspretty must know that it is operating in a
-                        recursive instance and that the jsscope feature is requested. This requires that
-                        the jsscope option be identified to the markup_beauty library so that can be
-                        identified to the markuppretty library and then passed back to jspretty. The
-                        jspretty library believes the proper conditions are met when the jsscope option
-                        is enabled, the code instance starts with a curly brace, and the
-                        <em>jsxstatus</em>
-                        variable is set to true.</p>
-                    <p>Once word tokens are identified in the child instance of jspretty they are
-                        wrapped in pseudo tags:
-                        <em>[pdjsxscope]</em>. This is necessary to identify the word tokens in a way
-                        that will persist through several parsing libraries, but not be prematurely
-                        parsed as HTML. The output of jsscope is an HTML format, so all HTML tags
-                        contained in the output must be properly escaped.</p>
-                    <p>Once the markup is analyzed for beautification by jspretty the pseudo tags
-                        are identified for processing. The contained word token is compared to the array
-                        of identified variables, and if a match is found the pseudo tags are converted
-                        to
-                        <em>em</em>
-                        tags to properly color the variable to its respective functional depth. If there
-                        is no match the pseudo tags are simply removed.</p>
+                <div class="segment">
+                    <h3>Extending JSX support to jsscope</h3>
+                    <div class="segment">
+                        <h4>Intention</h4>
+                        <p>The jspretty library includes a feature called jsscope. This feature colors
+                            variables and the background of functions to associate variables with a given
+                            scope depth of declaration. The idea is to help educate the ideas of closure and
+                            functional programming while also providing a quick and easy form of code
+                            analysis and to extend the benefits of this feature to JavaScript variables
+                            expressed within JSX markup code. Read more about jsscope in the
+                            <a href="closure_with_jsscope.xhtml">guide about closures and jsscope</a>.</p>
+                    </div>
+                    <div class="segment">
+                        <h4>A deeper understanding of the problem</h4>
+                        <p>The jsscope feature operates by forming a list of variable names stored in an
+                            array index that represents the closing of a function where those variables are
+                            declared. This allows the application to know exactly what variables are
+                            declared in which functions. Unfortunately, this array is bound to the current
+                            execution context of the jspretty library and cannot be efficiently passed
+                            around.</p>
+                        <p>The jspretty library can identify when JSX markup is present in JavaScript,
+                            but does not parse that markup to know if it contains JavaScript variables. The
+                            markuppretty library does provide identification of JavaScript from within JSX
+                            markup and passes this code recursively back to jspretty. Once a child instance
+                            of jspretty is launched there is no access the variable identifying array from
+                            the previous execution instance, but word tokens can be identified from the
+                            JavaScript parsing.</p>
+                    </div>
+                    <div class="segment">
+                        <h4>Providing a solution</h4>
+                        <p>In order to solve this problem jspretty must know that it is operating in a
+                            recursive instance and that the jsscope feature is requested. This requires that
+                            the jsscope option be identified to the markup_beauty library so that can be
+                            identified to the markuppretty library and then passed back to jspretty. The
+                            jspretty library believes the proper conditions are met when the jsscope option
+                            is enabled, the code instance starts with a curly brace, and the
+                            <em>jsxstatus</em>
+                            variable is set to true.</p>
+                        <p>Once word tokens are identified in the child instance of jspretty they are
+                            wrapped in pseudo tags:
+                            <em>[pdjsxscope]</em>. This is necessary to identify the word tokens in a way
+                            that will persist through several parsing libraries, but not be prematurely
+                            parsed as HTML. The output of jsscope is an HTML format, so all HTML tags
+                            contained in the output must be properly escaped.</p>
+                        <p>Once the markup is analyzed for beautification by jspretty the pseudo tags
+                            are identified for processing. The contained word token is compared to the array
+                            of identified variables, and if a match is found the pseudo tags are converted
+                            to
+                            <em>em</em>
+                            tags to properly color the variable to its respective functional depth. If there
+                            is no match the pseudo tags are simply removed.</p>
+                    </div>
                 </div>
-            </div>
-            <p>There are likely to arise edge cases that I am not currently aware of. When a
-                bug is encountered please announce it to the world by opening an issue on
-                <a href="https://github.com/austincheney/prettydiff/issues">Github</a>.</p>
+                <p>There are likely to arise edge cases that I am not currently aware of. When a
+                    bug is encountered please announce it to the world by opening an issue on
+                    <a href="https://github.com/austincheney/prettydiff/issues">Github</a>.</p>
+            </section>
         </div>
-        <p>For additional options check out the
-            <a href="../documentation.xhtml">documentation</a>. I take bug and suggestions for enhancements via email and at
-            <a href="https://github.com/austincheney/Pretty-Diff">Github</a>.</p>
         <script src="../api/dom.js" type="application/javascript"></script>
     </body>
 </html>
