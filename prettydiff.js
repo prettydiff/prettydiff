@@ -1567,6 +1567,8 @@ var prettydiff = function prettydiff_(api) {
                             : "indent"),
                     //commline - If in markup a newline should be forced above comments
                     commline       : (api.commline === true || api.commline === "true"),
+                    // compressedcss - If the beautified CSS should contain minified properties
+                    compressedcss  : (api.compressedcss === true || api.compressedcss === "true"),
                     // conditional - should IE conditional comments be preserved during markup
                     // minification
                     conditional    : (api.conditional === true || api.conditional === "true"),
@@ -1616,6 +1618,8 @@ var prettydiff = function prettydiff_(api) {
                     // endcomma - if a trailing comma should be injected at the end of arrays and
                     // object literals in JavaScript
                     endcomma       : (api.endcomma === true || api.endcomma === "true"),
+                    // force_attribute - forces indentation of all markup attriubtes
+                    force_attribute: (api.force_attribute === true || api.force_attribute === "true"),
                     // force_indent - should markup beautification always force indentation even if
                     // disruptive
                     force_indent   : (api.force_indent === true || api.force_indent === "true"),
@@ -2470,23 +2474,23 @@ global.edition        = {
         ace: 150918
     },
     api          : {
-        dom      : 160201, //dom.js
-        nodeLocal: 160201, //node-local.js
-        wsh      : 160201
+        dom      : 160209, //dom.js
+        nodeLocal: 160209, //node-local.js
+        wsh      : 160209
     },
-    css          : 160201, //css files
-    csspretty    : 160201, //csspretty lib
+    css          : 160209, //css files
+    csspretty    : 160209, //csspretty lib
     csvpretty    : 151130, //csvpretty lib
     diffview     : 160201, //diffview lib
-    documentation: 160201, //documentation.xhtml
-    jspretty     : 160201, //jspretty lib
+    documentation: 160209, //documentation.xhtml
+    jspretty     : 160209, //jspretty lib
     latest       : 0,
-    lint         : 160201, //unit test and lint automation as test/lint.js
-    markuppretty : 160201, //markuppretty lib
-    prettydiff   : 160201, //this file
+    lint         : 160209, //unit test and lint automation as test/lint.js
+    markuppretty : 160209, //markuppretty lib
+    prettydiff   : 160209, //this file
     safeSort     : 151130, //safeSort lib
-    version      : "1.16.13", //version number
-    webtool      : 160201
+    version      : "1.16.14", //version number
+    webtool      : 160209
 };
 global.edition.latest = (function edition_latest() {
     "use strict";

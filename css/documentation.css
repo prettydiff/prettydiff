@@ -17,3 +17,4 @@
 
 /*documentation - showing content normally hidden from visual users*/
 #prettydiff .content-show {height:auto;position:static;width:auto}
+#prettydiff #documentation code{font-size:1em}

@@ -1,6 +1,14 @@
 # Pretty Diff change log
 
-## v1.16.23
+## v1.16.14
+ * Added option `compressedcss` - http://prettydiff.com/documentation.xhtml#compressedcss
+ * Added option `force_attribute` - http://prettydiff.com/documentation.xhtml#force_attribute
+ * Updated unit tests and fixed some directory level file reading/write issues from api/node-local.js
+ * Fixed two issues with CSS in issue #260
+ * Simplified JSX parsing in issue #261
+ * Minor bug fixes
+
+## v1.16.13
 
  * Fixed #257
  * Fixed #258

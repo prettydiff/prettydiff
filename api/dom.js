@@ -2339,6 +2339,10 @@ var pd     = {},
                         data = ["commline", "false"];
                     } else if (id === "bcommline-yes") {
                         data = ["commline", "true"];
+                    } else if (id === "bcompressedcss-no" || id === "dcompressedcss-no") {
+                        data = ["compressedcss", "false"];
+                    } else if (id === "bcompressedcss-yes" || id === "dcompressedcss-yes") {
+                        data = ["compressedcss", "true"];
                     } else if (id === "bdustno" || id === "ddustno" || id === "mdustno" || id === "pdustno") {
                         data = ["dustjs", "false"];
                     } else if (id === "bdustyes" || id === "ddustyes" || id === "mdustyes" || id === "pdustyes") {
@@ -2349,6 +2353,10 @@ var pd     = {},
                         data = ["endcomma", "false"];
                     } else if (id === "bendcomma-yes") {
                         data = ["endcomma", "true"];
+                    } else if (id === "bforce_attribute-no" || id === "dforce_attribute-no") {
+                        data = ["force_attribute", "false"];
+                    } else if (id === "bforce_attribute-yes" || id === "dforce_attribute-yes") {
+                        data = ["force_attribute", "true"];
                     } else if (id === "bforce_indent-no" || id === "dforce_indent-no") {
                         data = ["force_indent", "false"];
                     } else if (id === "bforce_indent-yes" || id === "dforce_indent-yes") {
@@ -4654,7 +4662,7 @@ var pd     = {},
                                 }
                                 len = token.length;
                                 if (types !== undefined) {
-                                    table.push("<div class='doc'><table class='analysis' summary='Parsed Arrays'><thead><tr> <th" +
+                                    table.push("<div class='report'><table class='analysis' summary='Parsed Arrays'><thead><tr> <th" +
                                             ">Index</th><th>types</th><th>token</th> </tr></thead><tbody class='parseData'>");
                                     for (a = 0; a < len; a += 1) {
                                         table.push("<tr> <td>");
@@ -5116,10 +5124,12 @@ var pd     = {},
                     chars        = pd.id("beau-space"),
                     comments     = pd.id("incomment-no"),
                     commline     = pd.id("bcommline-yes"),
+                    compressedcss = pd.id("bcompressedcss-yes"),
                     csslines     = pd.id("cssinsertlines-yes"),
                     dustjs       = pd.id("bdustyes"),
                     elseline     = pd.id("jselseline-yes"),
                     endcomma     = pd.id("bendcomma-yes"),
+                    forceAttribute = pd.id("bforce_attribute-yes"),
                     forceIndent  = pd.id("bforce_indent-yes"),
                     html         = pd.id("html-yes"),
                     jscorrect    = pd.id("jscorrect-yes"),
@@ -5209,12 +5219,14 @@ var pd     = {},
                     ? "noindent"
                     : "indent";
                 api.commline       = (commline !== null && commline.checked === true);
+                api.compressedcss  = (compressedcss !== null && compressedcss.checked === true);
                 api.correct        = (jscorrect !== null && jscorrect.checked === true);
                 api.cssinsertlines = (csslines !== null && csslines.checked === true);
                 api.dustjs         = (pd.data.langvalue[0] === "dustjs" || (dustjs !== null && dustjs.checked === true));
                 api.dustjs         = (dustjs !== null && dustjs.checked === true);
                 api.elseline       = (elseline !== null && elseline.checked === true);
                 api.endcomma       = (endcomma !== null && endcomma.checked === true);
+                api.force_attribute = (forceAttribute !== null && forceAttribute.checked === true);
                 api.force_indent   = (forceIndent !== null && forceIndent.checked === true);
                 api.html           = (html !== null && html.checked === true);
                 api.inlevel        = (offset === null || isNaN(offset.value) === true)
@@ -5380,12 +5392,14 @@ var pd     = {},
                     baseLabel       = pd.id("baselabel"),
                     chars           = pd.id("diff-space"),
                     comments        = pd.id("diffcommentsy"),
+                    compressedcss   = pd.id("compressedcss-yes"),
                     conditional     = pd.id("conditionald-yes"),
                     content         = pd.id("diffcontentn"),
                     context         = pd.id("contextSize"),
                     diffspaceignore = pd.id("diffspaceignorey"),
                     dustjs          = pd.id("ddustyes"),
                     elseline        = pd.id("jselselined-yes"),
+                    forceAttribute  = pd.id("dforce_attribute-yes"),
                     forceIndent     = pd.id("dforce_indent-yes"),
                     html            = pd.id("htmld-yes"),
                     inline          = pd.id("inline"),
@@ -5426,6 +5440,7 @@ var pd     = {},
                 api.braces       = (braces === null || braces.checked === false)
                     ? "knr"
                     : "allman";
+                api.compressedcss = (compressedcss !== null && compressedcss.checked === true);
                 api.conditional  = (conditional !== null && conditional.checked === true);
                 api.content      = (content !== null && content.checked !== false);
                 api.context      = (context !== null && context.value !== "" && isNaN(context.value) === false)
@@ -5444,6 +5459,7 @@ var pd     = {},
                     : "inline";
                 api.dustjs          = (dustjs !== null && dustjs.checked === true);
                 api.elseline        = (elseline !== null && elseline.checked !== false);
+                api.force_attribute = (forceAttribute !== null && forceAttribute.checked === true);
                 api.force_indent    = (forceIndent !== null && forceIndent.checked === true);
                 api.html            = (html !== null && html.checked === true);
                 api.insize          = (quantity === null || isNaN(quantity.value) === true)
@@ -6087,9 +6103,17 @@ var pd     = {},
                 }
             } else if (x === pd.data.node.modeBeau) {
                 restore();
+            } else {
+                pd
+                    .app
+                    .options(x);
             }
         } else if (x === pd.data.node.modeBeau) {
             restore();
+        } else {
+            pd
+                .app
+                .options(x);
         }
     };
 

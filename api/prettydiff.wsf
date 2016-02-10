@@ -1419,6 +1419,8 @@
                             error.push("");
                             error.push("* endcomma       - boolean - If there should be a trailing comma in JavaScript arrays and objects.");
                             error.push("");
+                            error.push("* force_attribute - boolean - If all markup attributes should be indented each onto their own line. Default is false.");
+                            error.push("");
                             error.push("* force_indent   - boolean - If lang is 'markup' this will force indentation upon all content and tags without regard for the creation of new text nodes. Default is false.");
                             error.push("");
                             error.push("* help           - string  - This list of argument definitions. The value is unnecessary and is required only to pass in use of the parameter.");
@@ -1668,6 +1670,7 @@
                     args.dustjs = (WScript.Arguments.Named("dustjs") === "true" || WScript.Arguments.Named("dustjs") === true);
                     args.elseline = (WScript.Arguments.Named("elseline") === "true" || WScript.Arguments.Named("elseline") === true);
                     args.endcomma = (WScript.Arguments.Named("endcomma") === "true" || WScript.Arguments.Named("endcomma") === true);
+                    args.force_attribute = (WScript.Arguments.Named("force_attribute") === "true" || WScript.Arguments.Named("force_attribute") === true);
                     args.force_indent = (WScript.Arguments.Named("force_indent") === "true" || WScript.Arguments.Named("force_indent") === true);
                     args.html = (WScript.Arguments.Named("html") === "true" || WScript.Arguments.Named("html") === true);
                     args.inchar = WScript.Arguments.Named("inchar") || " ";

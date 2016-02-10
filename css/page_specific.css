@@ -6,8 +6,9 @@
 #prettydiff #pdsamples li p a{display:block;margin:0 0 1em 2em}
 #prettydiff #pdsamples li ul{margin:0 0 0 2em;padding:0}
 
+#prettydiff #page h1{width:22.5em}
 #prettydiff #samples h2,
 #prettydiff #page h2{font-size:3em}
 #prettydiff #page > div{border-style:none}
-#prettydiff #page code,
 #prettydiff #page textarea{font-size:1.6em}
+#prettydiff #page code{font-size:1.2em}
