@@ -1,5 +1,8 @@
 # Pretty Diff change log
 
+## v1.16.16
+
+ * Fixed a critical EJS defect - https://github.com/Glavin001/atom-beautify/issues/806
 ## v1.16.15
 
  * Fixed #218 - support for TWIG template language
