@@ -1,0 +1,24 @@
+function() {
+        function link(nextEntry, prevEntry) {
+        if (nextEntry != prevEntry) {
+          if (nextEntry) nextEntry.p = prevEntry; //p stands for previous, 'prev' didn't minify
+          if (prevEntry) prevEntry.n = nextEntry; //n stands for next, 'next' didn't minify
+        }
+      }
+    if (q) a; //asdf
+        if (history !== window.history) history = window.history;
+
+    // setter
+    var a;
+
+    if (!hash) $window.scrollTo(0, 0);
+
+      // element with given id
+      else if ((elm = document.getElementById(hash))) elm.scrollIntoView();
+
+      // first anchor with given name :-D
+      else if ((elm = getFirstAnchor(document.getElementsByName(hash)))) elm.scrollIntoView();
+
+      // no element and hash == 'top', scroll to the top of the page
+      else if (hash === 'top') $window.scrollTo(0, 0);
+  }

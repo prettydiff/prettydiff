@@ -1,0 +1,43 @@
+{% extends "_layout/_layout" %}
+
+{% if entry is not defined %}
+{% exit 404 %}
+{% endif %}
+
+{% set var = "foo" %}
+
+{% macro input(name, value, type, size) %}
+<input name="{{ name }}" size="{{ size|default(20) }}" type="{{ type|default('text') }}" value="{{ value|e }}"/>
+{% endmacro %}
+
+{% block blockname %}
+{# comment #}
+<section>
+    <ul>
+        <li>{{ var }}</li>
+    </ul>
+</section>
+{% for foo in bar %}
+{% if condition %}
+{% macro wrapped_input(name, value, type, size) %}
+{% import _self as forms %}
+{# comment #}
+<div class="field">
+    {{ forms.input(name, value, type, size) }}
+</div>
+{% endmacro %}
+{% elseif kenny.dead %}
+to soon
+{% else %}
+<div class="test2">
+    TestText3
+</div>
+{% endif %}
+{% endfor %}
+{% endblock %}
+
+{% set fruits = ['apple', 'orange', 'citrus'] %}
+
+{% for i in 0..10 %}
+{{ cycle(fruits, i) }}
+{% endfor %}

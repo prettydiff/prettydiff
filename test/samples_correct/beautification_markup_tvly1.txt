@@ -236,8 +236,7 @@
                                     rel="nofollow"
                                     title="Feedback">Feedback</a>|</li>
                             <li class="last">
-                                <a href="http://www.travelocity.com/custsvc" title="Customer&nbsp;Support">Customer&nbsp;Support</a>or call
-                                <span>1.888.872.8356</span>
+                                <a href="http://www.travelocity.com/custsvc" title="Customer&nbsp;Support">Customer&nbsp;Support</a>or call<span>1.888.872.8356</span>
                             </li>
                         </ul>
                     </div>
@@ -5329,8 +5328,7 @@
                     <li>
                         <a href="http://www.travelocity.com/Activities" title="Activities">Activities</a>|</li>
                     <li>
-                        <a href="http://www.travelocity.com/experiencefinder/#section=Main">ExperienceFinder
-                            <sup>SM</sup>
+                        <a href="http://www.travelocity.com/experiencefinder/#section=Main">ExperienceFinder<sup>SM</sup>
                         </a>|</li>
                     <li>
                         <a href="http://www.roaminggnomestore.com/" rel="nofollow" title="Gnome Store">Gnome Store</a>|</li>
@@ -7442,7 +7440,7 @@
                                             p.splice(j--, 1);
                                         }
                                     }
-                                    continue
+                                    continue;
                                 }
                                 o = d.event.special[h] || {};
                                 for (j = f || 0; j < p.length; j += 1) {
@@ -8200,7 +8198,7 @@
                                         if (!g) {
                                             return [];
                                         }
-                                        break
+                                        break;
                                     }
                                 }
                             }
@@ -10516,7 +10514,7 @@
                             var c = d.timers;
                             a && this.queue([]),
                             this.each(function () {
-                                for (var a = c.length - 1; a >= 0; a += 1) {
+                                for (var a = c.length - 1; a >= 0; a -= 1) {
                                     c[a].elem === this && (b && c[a](!0), c.splice(a, 1));
                                 }
                             }),
@@ -11424,7 +11422,7 @@
                     _getCreateOptions: function () {
                         return b.metadata && b
                             .metadata
-                            .get(this.element[0])[this.widgetName]
+                            .get(this.element[0])[this.widgetName];
                     },
                     _init            : function () {},
                     _setOption       : function (a, c) {

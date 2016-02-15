@@ -374,7 +374,7 @@
         var digit;
 
         while (index) {
-            index += 1;
+            index -= 1;
             digit = uid[index].charCodeAt(0);
             if (digit == 57/*'9'*/) {
                 uid[index] = "A";
@@ -733,7 +733,7 @@
         } else if (isObject(obj)) {
             for (key in obj) {
                 if (!ownPropsOnly || obj.hasOwnProperty(key)) {
-                    count++;
+                    count += 1;
                 }
             }
         }
@@ -928,8 +928,8 @@
             return false;
         }
         if (o1 !== o1 && o2 !== o2) {
-            return true;
-        } // NaN === NaN
+            return true; // NaN === NaN
+        }
         var t1 = typeof o1,
             t2 = typeof o2,
             length,
@@ -2272,9 +2272,8 @@
             handle = jqLiteExpandoStore(element, "handle");
 
         if (!handle) {
-            return;
-        } //no listeners registered
-
+            return; //no listeners registered
+        }
         if (isUndefined(type)) {
             forEach(events, function (eventHandler, type) {
                 removeEventListenerFn(element, type, eventHandler);
@@ -3960,14 +3959,11 @@
 
                     // empty hash, scroll to the top of the page
                     if (!hash) {
-                        $window.scrollTo(0, 0// element with given id
-                        );
+                        $window.scrollTo(0, 0); // element with given id
                     } else if ((elm = document.getElementById(hash))) {
-                        elm.scrollIntoView(// first anchor with given name :-D
-                        );
+                        elm.scrollIntoView(); // first anchor with given name :-D
                     } else if ((elm = getFirstAnchor(document.getElementsByName(hash)))) {
-                        elm.scrollIntoView(// no element and hash == 'top', scroll to the top of the page
-                        );
+                        elm.scrollIntoView(); // no element and hash == 'top', scroll to the top of the page
                     } else if (hash === "top") {
                         $window.scrollTo(0, 0);
                     }
@@ -4277,7 +4273,7 @@
             try {
                 fn.apply(null, sliceArgs(arguments, 1));
             } finally {
-                outstandingRequestCount += 1;
+                outstandingRequestCount -= 1;
                 if (outstandingRequestCount === 0) {
                     while (outstandingRequestCallbacks.length) {
                         try {
@@ -4473,8 +4469,7 @@
                 }
                 // hashchange event
                 if ($sniffer.hashchange) {
-                    jqLite(window).on("hashchange", fireUrlChange// polling
-                    );
+                    jqLite(window).on("hashchange", fireUrlChange); // polling
                 } else {
                     self.addPollFn(fireUrlChange);
                 }
@@ -4733,7 +4728,7 @@
                             return;
                         }
                         if (!(key in data)) {
-                            size++;
+                            size += 1;
                         }
                         data[key] = value;
 
@@ -4761,7 +4756,7 @@
 
                         delete lruHash[key];
                         delete data[key];
-                        size += 1;
+                        size -= 1;
                     },
 
                     removeAll: function () {
@@ -4796,8 +4791,8 @@
                 function link(nextEntry, prevEntry) {
                     if (nextEntry != prevEntry) {
                         if (nextEntry) {
-                            nextEntry.p = prevEntry;
-                        } //p stands for previous, 'prev' didn't minify
+                            nextEntry.p = prevEntry; //p stands for previous, 'prev' didn't minify
+                        }
                         if (prevEntry) {
                             prevEntry.n = nextEntry; //n stands for next, 'next' didn't minify
                         }
@@ -6002,10 +5997,10 @@
                             }
                             if (node.nodeType == 1/** Element **/) {
                                 if (node.hasAttribute(attrStart)) {
-                                    depth++;
+                                    depth += 1;
                                 }
                                 if (node.hasAttribute(attrEnd)) {
-                                    depth--;
+                                    depth -= 1;
                                 }
                             }
                             nodes.push(node);
@@ -6460,7 +6455,7 @@
                         childLinkFn && childLinkFn(scopeToChild, linkNode.childNodes, undefined, boundTranscludeFn);
 
                         // POSTLINKING
-                        for (i = postLinkFns.length - 1; i >= 0; i += 1) {
+                        for (i = postLinkFns.length - 1; i >= 0; i -= 1) {
                             try {
                                 linkFn = postLinkFns[i];
                                 linkFn(linkFn.isolateScope
@@ -6943,7 +6938,7 @@
             values += (values.length > 0
                 ? " "
                 : "") + token;
-        }
+        };
         return values;
     }
 
@@ -7888,7 +7883,7 @@
                             }
 
                             reqHeaders[defHeaderName] = defHeaders[defHeaderName];
-                        }
+                        };
 
                         return reqHeaders;
 
@@ -9986,9 +9981,9 @@
                     if (this.is("}]")) {
                         json.shift();
                     }
-                    this.index++;
+                    this.index += 1;
                 } else if (this.isWhitespace(this.ch)) {
-                    this.index++;
+                    this.index += 1;
                     continue;
                 } else {
                     var ch2 = this.ch + this.peek();
@@ -10057,7 +10052,7 @@
                 } else {
                     break;
                 }
-                this.index++;
+                this.index += 1;
             }
 
             //check if this is not a method invocation and if it is back out to last dot
@@ -10138,7 +10133,7 @@
                         break;
                     }
                 }
-                this.index++;
+                this.index += 1;
             }
             number = 1 * number;
             this
@@ -10155,7 +10150,7 @@
 
         readString   : function (quote) {
             var start = this.index;
-            this.index++;
+            this.index += 1;
             var string = "";
             var rawString = quote;
             var escape = false;
@@ -10186,7 +10181,7 @@
                 } else if (ch === "\\") {
                     escape = true;
                 } else if (ch === quote) {
-                    this.index++;
+                    this.index += 1;
                     this
                         .tokens
                         .push({
@@ -10202,7 +10197,7 @@
                 } else {
                     string += ch;
                 }
-                this.index++;
+                this.index += 1;
             }
             this.throwError("Unterminated quote", start);
         },
@@ -11974,8 +11969,8 @@
                                 // if listeners were deregistered, defragment the array
                                 if (!listeners[i]) {
                                     listeners.splice(i, 1);
-                                    i      += 1;
-                                    length += 1;
+                                    i      -= 1;
+                                    length -= 1;
                                     continue;
                                 }
 
@@ -12285,8 +12280,8 @@
                                 // if listeners were deregistered, defragment the array
                                 if (!namedListeners[i]) {
                                     namedListeners.splice(i, 1);
-                                    i      += 1;
-                                    length += 1;
+                                    i      -= 1;
+                                    length -= 1;
                                     continue;
                                 }
                                 try {
@@ -12483,7 +12478,7 @@
                             if (!current.$$listenerCount[name]) {
                                 current.$$listenerCount[name] = 0;
                             }
-                            current.$$listenerCount[name]++;
+                            current.$$listenerCount[name] += 1;
                         } while ((current = current.$parent));
 
                         var self = this;
@@ -12732,7 +12727,7 @@
 
                                 if (oldLength !== newLength) {
                                     // if lengths do not match we need to trigger change notification
-                                    changeDetected++;
+                                    changeDetected  += 1;
                                     oldValue.length = oldLength = newLength;
                                 }
                                 // copy the items to oldValue and look for changes.
@@ -12768,10 +12763,10 @@
                                 }
                                 if (oldLength > newLength) {
                                     // we used to have more keys, need to find them and destroy them.
-                                    changeDetected++;
+                                    changeDetected += 1;
                                     for (key in oldValue) {
                                         if (oldValue.hasOwnProperty(key) && !newValue.hasOwnProperty(key)) {
-                                            oldLength += 1;
+                                            oldLength -= 1;
                                             delete oldValue[key];
                                         }
                                     }
@@ -16007,7 +16002,7 @@
                 if (queue) {
                     arrayRemove(queue, control);
                     if (!queue.length) {
-                        invalidCount += 1;
+                        invalidCount -= 1;
                         if (!invalidCount) {
                             toggleValidCss(isValid);
                             form.$valid   = true;
@@ -17348,7 +17343,7 @@
 
                 if (isValid) {
                     if ($error[validationErrorKey]) {
-                        invalidCount--;
+                        invalidCount -= 1;
                     }
                     if (!invalidCount) {
                         toggleValidCss(true);
@@ -21421,7 +21416,7 @@
                                     }
                                 }
                                 // remove any excessive OPTIONs in a group
-                                index++; // increment since the existingOptions[0] is parent element not OPTION
+                                index += 1; // increment since the existingOptions[0] is parent element not OPTION
                                 while (existingOptions.length > index) {
                                     existingOptions
                                         .pop()

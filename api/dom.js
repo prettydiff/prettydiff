@@ -1453,7 +1453,7 @@ var pd     = {},
                               "=0,b=0;for(a=0;a<listslen;a+=1){if(lists[a].getAttribute('class')==='count'&&lis" +
                               "ts[a].parentNode.getAttribute('class')==='beautify'){list=lists[a].getElementsBy" +
                               "TagName('li');listlen=list.length;for(b=0;b<listlen;b+=1){if(list[b].getAttribut" +
-                              "e('class')==='fold'){list[b].onmousedown=pd.beaufold;}}}}}());",
+                              "e('class')==='fold'){list[b].onclick=pd.beaufold;}}}}}());",
                 diff    : "var pd={};pd.colorchange=function(){'use strict';var options=this.getElementsByT" +
                               "agName('option');document.getElementsByTagName('body')[0].setAttribute('class',o" +
                               "ptions[this.selectedIndex].innerHTML.toLowerCase())};pd.colorscheme=document.get" +
@@ -2335,6 +2335,10 @@ var pd     = {},
                         data = ["braceline", "false"];
                     } else if (id === "bbraceline-yes" || id === "dbraceline-yes") {
                         data = ["braceline", "true"];
+                    } else if (id === "bbracepadding-no" || id === "dbracepadding-no") {
+                        data = ["bracepadding", "false"];
+                    } else if (id === "bbracepadding-yes" || id === "dbracepadding-yes") {
+                        data = ["bracepadding", "true"];
                     } else if (id === "bcommline-no") {
                         data = ["commline", "false"];
                     } else if (id === "bcommline-yes") {
@@ -4776,7 +4780,7 @@ var pd     = {},
                                         b    = list.length;
                                     for (a = 0; a < b; a += 1) {
                                         if (list[a].getAttribute("class") === "fold") {
-                                            list[a].onmousedown = pd.event.beaufold;
+                                            list[a].onclick = pd.event.beaufold;
                                         }
                                     }
                                 }());
@@ -4809,7 +4813,7 @@ var pd     = {},
                         pd.test.filled.code = true;
                     } else {
                         pd.test.filled.code = false;
-                    }console.log(output[0]);
+                    }
                     pd.data.node.report.code.body.innerHTML = output[1] + output[0];
                     if (autotest === true && pd.data.node.report.code.body.firstChild !== null) {
                         if (pd.data.node.report.code.body.firstChild.nodeType > 1) {
@@ -4838,7 +4842,7 @@ var pd     = {},
                                     a     = 0;
                                 for (a = 0; a < len; a += 1) {
                                     if (cells[a].getAttribute("class") === "fold") {
-                                        cells[a].onmousedown = pd.event.difffold;
+                                        cells[a].onclick = pd.event.difffold;
                                     }
                                 }
                             }());
@@ -5119,7 +5123,7 @@ var pd     = {},
         if (pd.data.mode === "beau") {
             (function dom__event_recycle_beautify() {
                 var braceline    = pd.id("bbraceline-no"),
-                    bracepadding = pd.id("bracepadding-no"),
+                    bracepadding = pd.id("bbracepadding-yes"),
                     braces       = pd.id("jsindent-all"),
                     chars        = pd.id("beau-space"),
                     comments     = pd.id("incomment-no"),
@@ -5186,7 +5190,7 @@ var pd     = {},
                     }
                 }
                 api.braceline    = (braceline === null || braceline.checked === false);
-                api.bracepadding = (bracepadding === null || bracepadding.checked === false);
+                api.bracepadding = (bracepadding !== null && bracepadding.checked === true);
                 api.braces       = (braces === null || braces.checked === false)
                     ? "knr"
                     : "allman";
@@ -9545,7 +9549,7 @@ var pd     = {},
                                 lilen = li.length;
                                 for (incb = 0; incb < lilen; incb += 1) {
                                     if (li[incb].getAttribute("class") === "fold") {
-                                        li[incb].onmousedown = pd.event.beaufold;
+                                        li[incb].onclick = pd.event.beaufold;
                                     }
                                 }
                             }

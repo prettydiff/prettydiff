@@ -1,21 +1,20 @@
-{
-    "lkp": {
-        "asd": thn, {
-            asdf: asdf
-        }
-    },
-    "xyz": [
-        ["iuo" : "sdf"]
-    ]
-}
-{
-    sd : [
-        {
-            sdf: df
+var a = {
+        "lkp": {
+            "asd": thn, {
+                asdf: asdf
+            }
         },
-        asd
-    ],
-    sdf: sdf, {
-        asd: thn
-    }
-}
+        "xyz": [
+            ["iuo" : "sdf"]
+        ]
+    }, {
+        sd : [
+            {
+                sdf: df
+            },
+            asd
+        ],
+        sdf: sdf, {
+            asd: thn
+        }
+    };

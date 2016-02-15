@@ -45,7 +45,7 @@ function v() {
                 });
         });
     }
-}
+};
 function $(a, b) {
     if (b.nodeType === 1) {
         if (c === "object") {

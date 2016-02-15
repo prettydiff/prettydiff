@@ -335,7 +335,7 @@ if (typeof jQuery == "undefined") {
             guid         : 1,
             holdReady    : function (hold) {
                 if (hold) {
-                    jQuery.readyWait++;
+                    jQuery.readyWait += 1;
                 } else {
                     jQuery.ready(true);
                 }
@@ -744,10 +744,10 @@ if (typeof jQuery == "undefined") {
                                         list.splice(index, 1);
                                         if (firing) {
                                             if (index <= firingLength) {
-                                                firingLength += 1;
+                                                firingLength -= 1;
                                             }
                                             if (index <= firingIndex) {
-                                                firingIndex += 1;
+                                                firingIndex -= 1;
                                             }
                                         }
                                     }
@@ -1324,7 +1324,7 @@ if (typeof jQuery == "undefined") {
                     };
                 if (fn === "inprogress") {
                     fn          = queue.shift();
-                    startLength += 1;
+                    startLength -= 1;
                 }
                 if (fn) {
                     if (type === "fx") {
@@ -1411,7 +1411,7 @@ if (typeof jQuery == "undefined") {
                     if (typeof type !== "string") {
                         data   = type;
                         type   = "fx";
-                        setter += 1;
+                        setter -= 1;
                     }
                     if (arguments.length < setter) {
                         return jQuery.queue(this[0], type);
@@ -2299,7 +2299,7 @@ if (typeof jQuery == "undefined") {
                         if ((mappedTypes || origType === handleObj.origType) && (!handler || handler.guid === handleObj.guid) && (!namespaces || namespaces.test(handleObj.namespace)) && (!selector || selector === handleObj.selector || selector === "**" && handleObj.selector)) {
                             eventType.splice(j--, 1);
                             if (handleObj.selector) {
-                                eventType.delegateCount--;
+                                eventType.delegateCount -= 1;
                             }
                             if (special.remove) {
                                 special
@@ -3921,7 +3921,7 @@ if (typeof jQuery == "undefined") {
                             }
                             if (bySet) {
                                 if ((elem = !matcher && elem)) {
-                                    matchedCount += 1;
+                                    matchedCount -= 1;
                                 }
                                 if (seed) {
                                     unmatched.push(elem);
@@ -4009,7 +4009,7 @@ if (typeof jQuery == "undefined") {
                         }
                         for (i = matchExpr["POS"].test(selector)
                             ? -1
-                            : tokens.length - 1; i >= 0; i += 1) {
+                            : tokens.length - 1; i >= 0; i -= 1) {
                             token = tokens[i];
                             if (Expr.relative[(type = token.type)]) {
                                 break;
@@ -6777,11 +6777,11 @@ if (typeof jQuery == "undefined") {
                         }
                     };
                 }
-                hooks.unqueued++;
+                hooks.unqueued += 1;
                 anim.always(function () {
                     anim
                         .always(function () {
-                            hooks.unqueued--;
+                            hooks.unqueued -= 1;
                             if (!jQuery.queue(elem, "fx").length) {
                                 hooks
                                     .empty
@@ -7011,7 +7011,7 @@ if (typeof jQuery == "undefined") {
                                 }
                             }
                         }
-                        for (index = timers.length; index += 1;) {
+                        for (index = timers.length; index -= 1;) {
                             if (timers[index].elem === this && (type == null || timers[index].queue === type)) {
                                 timers[index]
                                     .anim
@@ -9009,7 +9009,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         x2   = x1 + inst.helperProportions.width,
                         y1   = ui.offset.top,
                         y2   = y1 + inst.helperProportions.height;
-                    for (i = inst.snapElements.length - 1; i >= 0; i += 1) {
+                    for (i = inst.snapElements.length - 1; i >= 0; i -= 1) {
                         l = inst.snapElements[i].left;
                         r = l + inst.snapElements[i].width;
                         t = inst.snapElements[i].top;
@@ -9527,7 +9527,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         height: m[i].element[0].offsetHeight,
                         width : m[i].element[0].offsetWidth
                     };
-                }
+                };
             }
         };
     })(jQuery);
@@ -10991,7 +10991,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         }).call(this, this.currentContainer));
                     }
                 }
-                for (i = this.containers.length - 1; i >= 0; i += 1) {
+                for (i = this.containers.length - 1; i >= 0; i -= 1) {
                     if (!noPropagation) {
                         delayedTriggers.push((function (c) {
                             return function (event) {
@@ -11082,7 +11082,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     floating,
                     innermostContainer = null,
                     innermostIndex     = null;
-                for (i = this.containers.length - 1; i >= 0; i += 1) {
+                for (i = this.containers.length - 1; i >= 0; i -= 1) {
                     if ($.contains(this.currentItem[0], this.containers[i].element[0])) {
                         continue;
                     }
@@ -11122,7 +11122,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         ? "width"
                         : "height";
                     base                  = this.positionAbs[posProperty] + this.offset.click[posProperty];
-                    for (j = this.items.length - 1; j >= 0; j += 1) {
+                    for (j = this.items.length - 1; j >= 0; j -= 1) {
                         if (!$.contains(this.containers[innermostIndex].element[0], this.items[j].item[0])) {
                             continue;
                         }
@@ -11299,7 +11299,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     .element
                     .removeClass("ui-sortable ui-sortable-disabled");
                 this._mouseDestroy();
-                for (var i = this.items.length - 1; i >= 0; i += 1) {
+                for (var i = this.items.length - 1; i >= 0; i -= 1) {
                     this
                         .items[i]
                         .item
@@ -11388,9 +11388,9 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     queries     = [],
                     connectWith = this._connectWith();
                 if (connectWith && connected) {
-                    for (i = connectWith.length - 1; i >= 0; i += 1) {
+                    for (i = connectWith.length - 1; i >= 0; i -= 1) {
                         cur = $(connectWith[i]);
-                        for (j = cur.length - 1; j >= 0; j += 1) {
+                        for (j = cur.length - 1; j >= 0; j -= 1) {
                             inst = $.data(cur[j], this.widgetFullName);
                             if (inst && inst !== this && !inst.options.disabled) {
                                 queries.push([
@@ -11422,7 +11422,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             .not(".ui-sortable-placeholder"),
                     this
                 ]);
-                for (i = queries.length - 1; i >= 0; i += 1) {
+                for (i = queries.length - 1; i >= 0; i -= 1) {
                     queries[i][0]
                         .each(function () {
                             items.push(this);
@@ -11615,7 +11615,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 if (!this.options.axis || this.options.axis !== "x") {
                     this.helper[0].style.top = this.position.top + "px";
                 }
-                for (i = this.items.length - 1; i >= 0; i += 1) {
+                for (i = this.items.length - 1; i >= 0; i -= 1) {
                     item         = this.items[i];
                     itemElement  = item.item[0];
                     intersection = this._intersectsWithPointer(item);
@@ -11745,7 +11745,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     this._cacheHelperProportions();
                 }
                 if (!noActivation) {
-                    for (i = this.containers.length - 1; i >= 0; i += 1) {
+                    for (i = this.containers.length - 1; i >= 0; i -= 1) {
                         this
                             .containers[i]
                             ._trigger("activate", event, this._uiHash(this));
@@ -11847,9 +11847,9 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     ],
                     connectWith = this._connectWith();
                 if (connectWith && this.ready) {
-                    for (i = connectWith.length - 1; i >= 0; i += 1) {
+                    for (i = connectWith.length - 1; i >= 0; i -= 1) {
                         cur = $(connectWith[i]);
-                        for (j = cur.length - 1; j >= 0; j += 1) {
+                        for (j = cur.length - 1; j >= 0; j -= 1) {
                             inst = $.data(cur[j], this.widgetFullName);
                             if (inst && inst !== this && !inst.options.disabled) {
                                 queries.push([
@@ -11868,7 +11868,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         }
                     }
                 }
-                for (i = queries.length - 1; i >= 0; i += 1) {
+                for (i = queries.length - 1; i >= 0; i -= 1) {
                     targetData = queries[i][1];
                     _queries   = queries[i][0];
                     for (j = 0, queriesLength = _queries.length; j < queriesLength; j += 1) {
@@ -11980,7 +11980,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             .currentItem
                             .show();
                     }
-                    for (var i = this.containers.length - 1; i >= 0; i += 1) {
+                    for (var i = this.containers.length - 1; i >= 0; i -= 1) {
                         this
                             .containers[i]
                             ._trigger("deactivate", null, this._uiHash(this));
@@ -12068,7 +12068,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     item,
                     t,
                     p;
-                for (i = this.items.length - 1; i >= 0; i += 1) {
+                for (i = this.items.length - 1; i >= 0; i -= 1) {
                     item = this.items[i];
                     if (item.instance !== this.currentContainer && this.currentContainer && item.item[0] !== this.currentItem[0]) {
                         continue;
@@ -12091,7 +12091,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         .refreshContainers
                         .call(this);
                 } else {
-                    for (i = this.containers.length - 1; i >= 0; i += 1) {
+                    for (i = this.containers.length - 1; i >= 0; i -= 1) {
                         p                                        = this
                             .containers[i]
                             .element
@@ -14148,7 +14148,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     if (index === requestIndex) {
                         that.__response(content);
                     }
-                    that.pending--;
+                    that.pending -= 1;
                     if (!that.pending) {
                         that
                             .element
@@ -14157,7 +14157,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 };
             },
             _search        : function (value) {
-                this.pending++;
+                this.pending += 1;
                 this
                     .element
                     .addClass("ui-autocomplete-loading");
@@ -15676,7 +15676,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     drawYear               = inst.drawYear;
                 if (drawMonth < 0) {
                     drawMonth += 12;
-                    drawYear  += 1;
+                    drawYear  -= 1;
                 }
                 if (maxDate) {
                     maxDraw = this._daylightSavingAdjust(new Date(maxDate.getFullYear(), maxDate.getMonth() - (numMonths[0] * numMonths[1]) + 1, maxDate.getDate()));
@@ -15684,10 +15684,10 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         ? minDate
                         : maxDraw);
                     while (this._daylightSavingAdjust(new Date(drawYear, drawMonth, 1)) > maxDraw) {
-                        drawMonth += 1;
+                        drawMonth -= 1;
                         if (drawMonth < 0) {
                             drawMonth = 11;
-                            drawYear  += 1;
+                            drawYear  -= 1;
                         }
                     }
                 }
@@ -17177,7 +17177,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     .addClass("ui-widget-overlay ui-front")
                     .appendTo(this._appendTo());
                 this._on(this.overlay, {mousedown: "_keepFocus"});
-                $.ui.dialog.overlayInstances++;
+                $.ui.dialog.overlayInstances += 1;
             },
             _createTitlebar  : function () {
                 var uiDialogTitle;
@@ -17301,7 +17301,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     return;
                 }
                 if (this.overlay) {
-                    $.ui.dialog.overlayInstances--;
+                    $.ui.dialog.overlayInstances -= 1;
                     if (!$.ui.dialog.overlayInstances) {
                         this
                             .document
@@ -21111,7 +21111,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 value = this._adjustValue(value + step * this._increment(this.counter));
                 if (!this.spinning || this._trigger("spin", event, {value: value}) !== false) {
                     this._value(value);
-                    this.counter++;
+                    this.counter += 1;
                 }
             },
             _start           : function (event) {
@@ -21743,12 +21743,12 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 switch (event.keyCode) {
                     case $.ui.keyCode.RIGHT:
                     case $.ui.keyCode.DOWN:
-                        selectedIndex++;
+                        selectedIndex += 1;
                         break;
                     case $.ui.keyCode.UP:
                     case $.ui.keyCode.LEFT:
                         goingForward  = false;
-                        selectedIndex += 1;
+                        selectedIndex -= 1;
                         break;
                     case $.ui.keyCode.END:
                         selectedIndex = this.anchors.length - 1;
@@ -25650,7 +25650,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
     function gn_getVisibleItemsPrev(i, o, s) {
         var t = 0,
             x = 0;
-        for (var a = s; a >= 0; a += 1) {
+        for (var a = s; a >= 0; a -= 1) {
             var j = i.eq(a);
             t += (j.is(":visible"))
                 ? j[o.d["outerWidth"]](true)
@@ -25673,7 +25673,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
     function gn_getItemsPrevFilter(i, f, m, s) {
         var t = 0,
             x = 0;
-        for (var a = s, l = i.length; a >= 0; a += 1) {
+        for (var a = s, l = i.length; a >= 0; a -= 1) {
             x += 1;
             if (x == l) {
                 return x;
@@ -27735,7 +27735,7 @@ $(document).ready(function () {
                     case 38:
                         e.preventDefault();
                         $options.removeClass("selected");
-                        for (i = selectedIndex - 1; i >= 0; i += 1) {
+                        for (i = selectedIndex - 1; i >= 0; i -= 1) {
                             $targetOption = $optList.find("li:eq(" + (i) + ")");
                             if (!$targetOption.hasClass(settings.optionGroupName)) {
                                 selectedIndex = i;
@@ -28854,7 +28854,7 @@ if (jQuery) {
                                         testIndex,
                                         i,
                                         contiguous    = true;
-                                    for (i = startSelected; i >= 0; i += 1) {
+                                    for (i = startSelected; i >= 0; i -= 1) {
                                         testIndex = lis.index(selectedOptions.eq(i));
                                         if (Math.abs(testIndex - lastIndex) > 1) {
                                             contiguous = false;
@@ -31236,7 +31236,7 @@ if (jQuery) {
             var removeItem = function (key, reason) {
                 var itm = store.getCacheItem(key);
                 if (key !== null && key !== undefined && itm !== null) {
-                    cache.count--;
+                    cache.count -= 1;
                     var mappings = store.getDependencyMappings(key);
                     store.removeCacheItem(key);
                     onitemremoved(itm, reason);
@@ -31314,7 +31314,7 @@ if (jQuery) {
             cache.add         = function (key, value, slidingExpiration, absoluteExpiration, dependencies, onRemoved) {
                 if (value !== undefined) {
                     if (store.getCacheKeys().indexOf(key) == -1) {
-                        cache.count++;
+                        cache.count += 1;
                     }
                     var expires;
                     if (slidingExpiration || absoluteExpiration) {
@@ -35350,7 +35350,7 @@ if (jQuery) {
                         }
                     case 121:
                         {
-                            if(event.ctrlKey) {
+                            if (event.ctrlKey) {
                                 event.preventDefault();
                                 shWelcome_showPanel();
                                 if (this == shWelcome) {
@@ -35728,7 +35728,7 @@ if (jQuery) {
                                     } else {
                                         i = siteHeaderBarItems.length;
                                         while (i > 0) {
-                                            i    += 1;
+                                            i    -= 1;
                                             node = siteHeaderBarItems[i];
                                             if (node.nodeName.toLowerCase() == "a" && focusable(node)) {
                                                 node.focus();
@@ -35882,8 +35882,13 @@ if (jQuery) {
                         }
                     default:
                         {
-                            a,
-                            beforeLink = true;
+                            var start,
+                                j,
+                                a,
+                                label,
+                                candidate,
+                                found      = false,
+                                beforeLink = true;
                             if (!siteHeaderDropdownLink) {
                                 return;
                             }
@@ -35917,12 +35922,7 @@ if (jQuery) {
                                     }
                                 }
                             }
-                            break;,
-                            candidate,
-                            found = false,
-                            j,
-                            label,
-                            var start
+                            break;
                         }
                 }
             },
@@ -37452,7 +37452,7 @@ if (jQuery) {
                     e.preventDefault();
                     if (this.selectedIndex < resultLinks.length) {
                         if ($(resultLinks[this.selectedIndex]).has("img").length) {
-                            this.selectedIndex++;
+                            this.selectedIndex += 1;
                         }
                         var currentLink = $(resultLinks[this.selectedIndex]);
                         if (this.selectedIndex > 1) {
@@ -37463,7 +37463,7 @@ if (jQuery) {
                             $(lastLink).removeClass(_SearchBuddy.CSS.highlight);
                         }
                         currentLink.addClass(_SearchBuddy.CSS.highlight);
-                        this.selectedIndex++;
+                        this.selectedIndex += 1;
                         var linkString = (currentLink.attr("href"))
                             ? currentLink
                                 .attr("href")
@@ -37481,14 +37481,14 @@ if (jQuery) {
                 }
                 if (this.keyMap.UP) {
                     e.preventDefault();
-                    this.selectedIndex--;
+                    this.selectedIndex -= 1;
                     if (this.selectedIndex == 1) {
                         this.selectedIndex = 2;
                     }
                     if (this.selectedIndex > 1 && this.selectedIndex < resultLinks.length) {
                         if ($(resultLinks[this.selectedIndex - 1]).has("img").length) {
                             $(resultLinks[this.selectedIndex]).removeClass(_SearchBuddy.CSS.highlight);
-                            this.selectedIndex--;
+                            this.selectedIndex -= 1;
                             $(resultLinks[this.selectedIndex - 1]).addClass(_SearchBuddy.CSS.highlight);
                         } else {
                             $(resultLinks[this.selectedIndex]).removeClass(_SearchBuddy.CSS.highlight);

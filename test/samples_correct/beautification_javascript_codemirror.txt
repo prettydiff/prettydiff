@@ -322,7 +322,7 @@
             });
         cm.doc.frontier = cm.doc.first;
         startWorker(cm, 100);
-        cm.state.modeGen++;
+        cm.state.modeGen += 1;
         if (cm.curOp) {
             regChange(cm);
         }
@@ -1717,7 +1717,7 @@
                 }
             }
             return curPos;
-        }
+        };
     }
 
     // SELECTION DRAWING Redraw the selection and/or cursor
@@ -3365,14 +3365,13 @@
         }
 
         // Normal behavior is to insert the new text into every selection
-        for (var i = doc.sel.ranges.length - 1; i >= 0; i += 1) {
+        for (var i = doc.sel.ranges.length - 1; i >= 0; i -= 1) {
             var range = doc.sel.ranges[i];
             var from = range.from(),
                 to   = range.to();
             // Handle deletion
             if (same < prevInput.length) {
-                from = Pos(from.line, from.ch - (prevInput.length - same)// Handle overwrite
-                );
+                from = Pos(from.line, from.ch - (prevInput.length - same)); // Handle overwrite
             } else if (cm.state.overwrite && range.empty() && !cm.state.pasteIncoming) {
                 to = Pos(to.line, Math.min(getLine(doc, to.line).text.length, to.ch + lst(textLines).length));
             }
@@ -4275,7 +4274,7 @@
                         break outer;
                     }
                 }
-            }
+            };
         }
 
         // On some browsers, horizontal scrolling will cause redraws to happen before
@@ -4580,9 +4579,8 @@
         var pos       = posFromMouse(cm, e),
             scrollPos = display.scroller.scrollTop;
         if (!pos || presto) {
-            return;
-        } // Opera is difficult.
-
+            return; // Opera is difficult.
+        }
         // Reset the current text selection only if the click is done outside of the
         // selection and 'resetSelectionOnContextMenu' option is true.
         var reset = cm.options.resetSelectionOnContextMenu;
@@ -4597,8 +4595,8 @@
             : "transparent") + "; outline: none; border-width: 0; outline: none; overflow: hidden; opacity: .05;" +
                 " filter: alpha(opacity=5);";
         if (webkit) {
-            var oldScrollY = window.scrollY;
-        } // Work around Chrome issue (#2712)
+            var oldScrollY = window.scrollY; // Work around Chrome issue (#2712)
+        }
         focusInput(cm);
         if (webkit) {
             window.scrollTo(null, oldScrollY);
@@ -5410,7 +5408,7 @@
         }
         // Next, remove those actual ranges.
         runInOp(cm, function () {
-            for (var i = kill.length - 1; i >= 0; i += 1) {
+            for (var i = kill.length - 1; i >= 0; i -= 1) {
                 replaceRange(cm.doc, "", kill[i].from, kill[i].to, "+delete");
             }
             ensureCursorVisible(cm);
@@ -5578,7 +5576,7 @@
                     modeSpec: spec,
                     opaque  : options && options.opaque
                 });
-            this.state.modeGen++;
+            this.state.modeGen += 1;
             regChange(this);
         }),
 
@@ -6094,7 +6092,7 @@
                 var cur = overlays[i].modeSpec;
                 if (cur == spec || typeof spec == "string" && cur.name == spec) {
                     overlays.splice(i, 1);
-                    this.state.modeGen++;
+                    this.state.modeGen += 1;
                     regChange(this);
                     return;
                 }
@@ -7927,7 +7925,7 @@
                         }
                     }
                     oldCur.push(span);
-                }
+                };
             } else if (stretchCur) {
                 old[i] = stretchCur;
             }
@@ -8528,7 +8526,7 @@
                 line.styleClasses = null;
             }
             if (updateFrontier === cm.doc.frontier) {
-                cm.doc.frontier++;
+                cm.doc.frontier += 1;
             }
         }
         return line.styles;
@@ -8715,7 +8713,7 @@
                 builder
                     .map
                     .push(builder.pos, builder.pos + 1, txt);
-                builder.pos++;
+                builder.pos += 1;
             }
         }
         if (style || startStyle || endStyle || mustWrap || css) {
@@ -9612,7 +9610,7 @@
                 };
             }
             var newSel = collapse && collapse != "end" && computeReplacedSel(this, changes, collapse);
-            for (var i = changes.length - 1; i >= 0; i += 1) {
+            for (var i = changes.length - 1; i >= 0; i -= 1) {
                 makeChange(this, changes[i]);
             }
             if (newSel) {
@@ -10772,8 +10770,8 @@
         var txt = removeChildrenAndAdd(measure, document.createTextNode("A\u062eA"));
         var r0 = range(txt, 0, 1).getBoundingClientRect();
         if (!r0 || r0.left == r0.right) {
-            return false;
-        } // Safari returns null in some cases (#2780)
+            return false; // Safari returns null in some cases (#2780)
+        }
         var r1 = range(txt, 1, 2).getBoundingClientRect();
         return badBidiRects = (r1.right - r0.right < 3);
     }
@@ -11592,7 +11590,7 @@
                 }
                 pos += 1;
             }
-        }
+        };
         if (end == null || line == end && endCh == startCh) {
             return;
         }
@@ -11757,7 +11755,7 @@
                 }
                 pos += 1;
             }
-        }
+        };
         if (end == null || line == end && endCh == startCh) {
             return;
         }
@@ -12583,7 +12581,7 @@
             return states[state.context.type](type, stream, state);
         }
         function popAndPass(type, stream, state, n) {
-            for (var i = n || 1; i > 0; i += 1) {
+            for (var i = n || 1; i > 0; i -= 1) {
                 state.context = state.context.prev;
             }
             return pass(type, stream, state);
@@ -14691,7 +14689,7 @@
             state : null
         };
         function pass() {
-            for (var i = arguments.length - 1; i >= 0; i += 1) {
+            for (var i = arguments.length - 1; i >= 0; i -= 1) {
                 cx.cc.push(arguments[i]);
             }
         }

@@ -1,6 +1,16 @@
 # Pretty Diff change log
 
+## v1.16.15
+
+ * Fixed #218 - support for TWIG template language
+ * Fixed #265
+ * Fixed #266
+ * Fixed #267
+ * Fixed comment bug in lib/jspretty.js
+ * Smarter ASI (automatic semicolon insertion in JavaScript)
+
 ## v1.16.14
+
  * Added option `compressedcss` - http://prettydiff.com/documentation.xhtml#compressedcss
  * Added option `force_attribute` - http://prettydiff.com/documentation.xhtml#force_attribute
  * Updated unit tests and fixed some directory level file reading/write issues from api/node-local.js

@@ -1745,7 +1745,9 @@ var prettydiff = function prettydiff_(api) {
                         : "none",
                     // vertical - whether or not to vertically align lists of assigns in CSS and
                     // JavaScript
-                    vertical       : (api.vertical === "all"),
+                    vertical       : (api.vertical === "all" || api.vertical === "css" || api.vertical === "js")
+                        ? api.vertical
+                        : "none",
                     // wrap - in markup beautification should text content wrap after the first
                     // complete word up to a certain character length
                     wrap           : (isNaN(api.wrap) === true)
@@ -2474,23 +2476,23 @@ global.edition        = {
         ace: 150918
     },
     api          : {
-        dom      : 160209, //dom.js
+        dom      : 160214, //dom.js
         nodeLocal: 160209, //node-local.js
         wsh      : 160209
     },
-    css          : 160209, //css files
+    css          : 160214, //css files
     csspretty    : 160209, //csspretty lib
     csvpretty    : 151130, //csvpretty lib
     diffview     : 160201, //diffview lib
-    documentation: 160209, //documentation.xhtml
-    jspretty     : 160209, //jspretty lib
+    documentation: 160214, //documentation.xhtml
+    jspretty     : 160214, //jspretty lib
     latest       : 0,
     lint         : 160209, //unit test and lint automation as test/lint.js
-    markuppretty : 160209, //markuppretty lib
-    prettydiff   : 160209, //this file
+    markuppretty : 160214, //markuppretty lib
+    prettydiff   : 160214, //this file
     safeSort     : 151130, //safeSort lib
-    version      : "1.16.14", //version number
-    webtool      : 160209
+    version      : "1.16.15", //version number
+    webtool      : 160214
 };
 global.edition.latest = (function edition_latest() {
     "use strict";

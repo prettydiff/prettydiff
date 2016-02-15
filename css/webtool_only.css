@@ -254,7 +254,7 @@
 /*webtool - box, the system that provides a GUI for the report boxes*/
 #prettydiff #webtool .box{border-style:none;left:auto;margin:0;padding:0;position:absolute;z-index:10}
 #prettydiff .box .buttons button{border-radius:0;border-style:solid;border-width:0.1em;display:block;float:right;font-family:'Lucida Console','Trebuchet MS','Arial';height:1.75em;padding:0;position:absolute;right:0;text-align:center;top:0;width:1.75em;z-index:7}
-#prettydiff .box .buttons button.resize{border-width:0.05em;cursor:se-resize;font-size:1.667em;font-weight:normal;height:0.8em;line-height:0.5em;margin:-.85em 0 0;position:absolute;right:0.05em;top:100%;width:0.85em}
+#prettydiff .box .buttons button.resize{border-width:0.05em;cursor:se-resize;font-size:1.2em;font-weight:normal;height:1em;line-height:0.5em;margin:-1em 0 0;position:absolute;right:0.05em;top:100%;width:1.2em}
 #prettydiff .box .buttons button.minimize{margin:0.35em 4em 0 0}
 #prettydiff .box .buttons button.maximize{margin:0.35em 1.75em 0 0}
 #prettydiff .box .buttons button.save{margin:0.35em 6.25em 0 0}

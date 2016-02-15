@@ -1920,7 +1920,7 @@
                                 p.splice(j--, 1);
                             }
                         }
-                        continue
+                        continue;
                     }
                     o = d.event.special[h] || {};
                     for (j = f || 0; j < p.length; j += 1) {
@@ -2678,7 +2678,7 @@
                             if (!g) {
                                 return [];
                             }
-                            break
+                            break;
                         }
                     }
                 }
@@ -4994,7 +4994,7 @@
                 var c = d.timers;
                 a && this.queue([]),
                 this.each(function () {
-                    for (var a = c.length - 1; a >= 0; a += 1) {
+                    for (var a = c.length - 1; a >= 0; a -= 1) {
                         c[a].elem === this && (b && c[a](!0), c.splice(a, 1));
                     }
                 }),
@@ -5725,7 +5725,7 @@
                     : [];
             d.call(f, b);
             m(e);
-            c += 1
+            c += 1;
         },
         complete  : function () {
             b = {};
@@ -5889,7 +5889,7 @@
                 continue;
             }
             j = k.getElementsByTagName("*");
-            for (h = j.length - 1; h >= 0; h += 1) {
+            for (h = j.length - 1; h >= 0; h -= 1) {
                 m(j[h]);
             }
             m(k);
@@ -6630,7 +6630,7 @@ jQuery.cookie = function (name, value, options) {
         _getCreateOptions: function () {
             return b.metadata && b
                 .metadata
-                .get(this.element[0])[this.widgetName]
+                .get(this.element[0])[this.widgetName];
         },
         _init            : function () {},
         _setOption       : function (a, c) {
@@ -7526,7 +7526,7 @@ jQuery.cookie = function (name, value, options) {
         .plugin
         .add("draggable", "snap", {
             drag : function (a, b) {
-                for (var c = d(this).data("draggable"), f = c.options, e = f.snapTolerance, g = b.offset.left, n = g + c.helperProportions.width, m = b.offset.top, o = m + c.helperProportions.height, h = c.snapElements.length - 1; h >= 0; h += 1) {
+                for (var c = d(this).data("draggable"), f = c.options, e = f.snapTolerance, g = b.offset.left, n = g + c.helperProportions.width, m = b.offset.top, o = m + c.helperProportions.height, h = c.snapElements.length - 1; h >= 0; h -= 1) {
                     var i = c.snapElements[h].left,
                         k = i + c.snapElements[h].width,
                         j = c.snapElements[h].top,

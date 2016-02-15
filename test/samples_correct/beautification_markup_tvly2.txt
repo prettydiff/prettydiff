@@ -429,7 +429,7 @@
 
         <script>
             var header_feedBackUrl = "////www.travelocity.com/p/info-other/feedback.htm";
-            $LAB.queueScript("/minify/header-bundle-min-2176243423.js?v=release-2014-02-r1-2874-962065-1");;
+            $LAB.queueScript("/minify/header-bundle-min-2176243423.js?v=release-2014-02-r1-2874-962065-1");
             if (typeof $LAB !== "undefined" && typeof $LAB.queueWait == "function") {
                 $LAB
                     .queueWait(function () {
@@ -476,8 +476,7 @@
                                 data-tid="header-shop-menu"
                                 href="#shop-menu"
                                 id="header-shop-menu">
-                                Shop Travel
-                                <span class="icon icon-toggle180"></span>
+                                Shop Travel<span class="icon icon-toggle180"></span>
                             </a>
                             <div class="menu">
                                 <ul>
@@ -566,8 +565,7 @@
                                 data-tid="header-account-menu"
                                 href="#utility-menu"
                                 id="header-account-menu"
-                                rel="nofollow">Account
-                                <span class="icon icon-toggle180"></span>
+                                rel="nofollow">Account<span class="icon icon-toggle180"></span>
                             </a>
                             <div class="menu">
                                 <ul>
@@ -616,8 +614,7 @@
                                 id="header-support-menu"
                                 rel="nofollow"
                                 target="_top">
-                                Support
-                                <span class="icon icon-toggle180"></span>
+                                Support<span class="icon icon-toggle180"></span>
                             </a>
                             <div class="menu">
                                 <ul>

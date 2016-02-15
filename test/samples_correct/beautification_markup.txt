@@ -23,10 +23,8 @@
 </m>
 <r>
     <b>
-        a sdf<f y="<v>o</v>"/>x
-        <a>
-            d
-            <g p="<t>g</t>">
+        a sdf<f y="<v>o</v>"/>x<a>
+            d<g p="<t>g</t>">
                 w</g><c/></a>
         <s></s>
     </b>
