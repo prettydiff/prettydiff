@@ -11,7 +11,7 @@
         name="{{ name }}"
         size="{{ size|default(20) }}"
         type="{{ type|default('text') }}"
-        value="{{ value|e }}"/>
+        value="{{ value|e }}" />
 {% endmacro %}
 
 {% block blockname %}
