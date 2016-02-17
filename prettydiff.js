@@ -2488,10 +2488,10 @@ global.edition        = {
     jspretty     : 160215, //jspretty lib
     latest       : 0,
     lint         : 160209, //unit test and lint automation as test/lint.js
-    markuppretty : 160214, //markuppretty lib
+    markuppretty : 160216, //markuppretty lib
     prettydiff   : 160214, //this file
     safeSort     : 151130, //safeSort lib
-    version      : "1.16.16", //version number
+    version      : "1.16.17", //version number
     webtool      : 160214
 };
 global.edition.latest = (function edition_latest() {

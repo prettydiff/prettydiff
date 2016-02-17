@@ -4,8 +4,10 @@
 <m> <![if gt IE 6]><noscript><![endif]> <![if gt IE 6]></noscript><![endif]> </m>
 <r><b>    a   sdf<f y='<v>o</v>'/>x<a> d<g p='<t>g</t>'> w</g><c/></a> <s></s></b></r>
 <xs:start><xs:middle> <xs:singleton/></xs:middle></xs:start>
-<a><style><!-- a {color:red} --></style></a>
-<a><script><!-- var a = ""; --></script></a>
+<a><style><!--
+a {color:red} --></style></a>
+<a><script><!--
+var a = ""; --></script></a>
 <a><style><![CDATA[ a {color:red} ]]></style></a>
 <a><script><![CDATA[ var a = ""; ]]></script></a>
 <a><script>//<![CDATA[ var a = ""; //]]>
