@@ -1,5 +1,9 @@
 # Pretty Diff change log
 
+## v1.16.19
+
+ * Fixed #272
+
 ## v1.16.18
 
  * Improved folding in the HTML diff reports
