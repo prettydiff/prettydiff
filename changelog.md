@@ -1,5 +1,12 @@
 # Pretty Diff change log
 
+## v1.16.18
+
+ * Improved folding in the HTML diff reports
+ * Improved column sliding interaction on the HTML diff reports (sidebyside view)
+ * Fixed #271
+ * Fixed #218 (providing additional requirements to an incomplete implementation)
+
 ## v1.16.17
 
  * Fixed https://github.com/Glavin001/atom-beautify/issues/812

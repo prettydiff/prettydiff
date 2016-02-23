@@ -40,7 +40,7 @@
     {% endfor %}
 {% endblock %}
 
-{% set fruits = ['apple', 'orange', 'citrus'] %}
+{% set fruits = ["apple", "orange", "citrus"] %}
 
 {% for i in 0..10 %}
     {{ cycle(fruits, i) }}

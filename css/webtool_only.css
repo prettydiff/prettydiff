@@ -16,6 +16,7 @@
 #prettydiff.white .ace_marker-layer .ace_start{background:#f99}
 #prettydiff.white .box{box-shadow:0 0.25em 0.5em #999}
 #prettydiff.white .box .body{background:#eee;border-color:#999}
+#prettydiff.white .unchecked{background:#ddd}
 #prettydiff.white #headline,
 #prettydiff.white #functionGroup,
 #prettydiff.white #codeInput,
@@ -91,6 +92,7 @@
 #prettydiff.canvas .ace-tm .ace_marker-layer .ace_selection,
 #prettydiff.canvas .ace-canvas .ace_marker-layer .ace_selection,
 #prettydiff.canvas .ace_selection.ace_start{background:#ffe}
+#prettydiff.canvas .unchecked{background:#eeeee8}
 #prettydiff.canvas #announcement,
 #prettydiff.canvas #textareaTabKey em{color:#060}
 #prettydiff.canvas #textareaTabKey strong{color:#900}
@@ -148,6 +150,7 @@
 #prettydiff.shadow .ace_comment{color:#ce9}
 #prettydiff.shadow .ace_variable{color:#cef}
 #prettydiff.shadow .ace_active-line{background:#444}
+#prettydiff.shadow .unchecked{background:#666}
 #prettydiff.shadow #announcement,
 #prettydiff.shadow #textareaTabKey em{color:#cf3}
 #prettydiff.shadow .box .body{background:#222}

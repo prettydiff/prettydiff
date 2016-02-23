@@ -61,6 +61,7 @@
 #prettydiff .diff .skip{border-style:none none solid;border-width:0 0 0.1em}
 #prettydiff .diff .diff-left{border-style:none;display:table-cell}
 #prettydiff .diff .diff-right{border-style:none none none solid;border-width:0 0 0 0.1em;display:table-cell;margin-left:-.1em;min-width:16.5em;right:0;top:0}
+#prettydiff .diff-right .data{width:100%}
 #prettydiff .diff .data li,
 #prettydiff .beautify .data li{min-width:16.5em;padding:0.5em}
 #prettydiff .diff li,

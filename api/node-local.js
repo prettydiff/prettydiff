@@ -1342,43 +1342,51 @@ Examples:
                               "e('class')==='fold'){list[b].onmousedown=pd.beaufold;}}}}}());",
                 diff    : "var pd={};pd.colorchange=function(){'use strict';var options=this.getElementsByT" +
                               "agName('option');document.getElementsByTagName('body')[0].setAttribute('class',o" +
-                              "ptions[this.selectedIndex].innerHTML.toLowerCase())};pd.colorscheme=document.get" +
-                              "ElementById('colorScheme');pd.colorscheme.onchange=pd.colorchange;pd.d=document." +
-                              "getElementsByTagName('ol');pd.difffold=function dom__difffold(){'use strict';var" +
-                              " self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].s" +
-                              "ubstr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b=0,inner=self.innerHTM" +
-                              "L,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute('cla" +
-                              "ss'==='diff'))?parent.getElementsByTagName('ol'):parent.parentNode.getElementsBy" +
-                              "TagName('ol'),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listno" +
-                              "des[a].getElementsByTagName('li'))}if(lists.length>3){for(a=0;a<min;a+=1){if(lis" +
-                              "ts[0][a].getAttribute('class')==='empty'){min+=1;max+=1}}}max=(max>=lists[0].len" +
-                              "gth)?lists[0].length:max;if(inner.charAt(0)==='-'){self.innerHTML='+'+inner.subs" +
-                              "tr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='n" +
-                              "one'}}}else{self.innerHTML='-'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<l" +
-                              "istLen;b+=1){lists[b][a].style.display='block'}}}};pd.colSliderProperties=[pd.d[" +
-                              "0].clientWidth,pd.d[1].clientWidth,pd.d[2].parentNode.clientWidth,pd.d[2].parent" +
-                              "Node.parentNode.clientWidth,pd.d[2].parentNode.offsetLeft-pd.d[2].parentNode.par" +
-                              "entNode.offsetLeft];pd.colSliderGrab=function(e){'use strict';var x=this,a=x.par" +
-                              "entNode,b=a.parentNode,c=0,event=e||window.event,counter=pd.colSliderProperties[" +
-                              "0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSl" +
-                              "iderProperties[3],offset=(pd.colSliderProperties[4]),min=0,max=data-1,status='ew" +
-                              "',g=min+15,h=max-15,k=false,z=a.previousSibling,drop=function(g){x.style.cursor=" +
-                              "status+'-resize';g=null;document.onmousemove=null;document.onmouseup=null},boxmo" +
-                              "ve=function(f){f=f||window.event;c=offset-f.clientX;if(c>g&&c<h){k=true}if(k===t" +
-                              "rue&&c>h){a.style.width=((total-counter-2)/10)+'em';status='e'}else if(k===true&" +
-                              "&c<g){a.style.width=(width/10)+'em';status='w'}else if(c<max&&c>min){a.style.wid" +
-                              "th=((width+c)/10)+'em';status='ew'}document.onmouseup=drop};event.preventDefault" +
-                              "();if(typeof pd.o==='object'&&typeof pd.o.re==='object'){offset+=pd.o.re.offsetL" +
-                              "eft;offset-=pd.o.rf.scrollLeft}else{c=(document.body.parentNode.scrollLeft>docum" +
-                              "ent.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLef" +
-                              "t;offset-=c}offset+=x.clientWidth;x.style.cursor='ew-resize';b.style.width=(tota" +
-                              "l/10)+'em';b.style.display='inline-block';if(z.nodeType!==1){do{{z=z.previousSib" +
-                              "ling}}while(z.nodeType!==1)}z.style.display='block';a.style.width=(a.clientWidth" +
-                              "/10)+'em';a.style.position='absolute';document.onmousemove=boxmove;document.onmo" +
-                              "usedown=null;return false};(function(){'use strict';var cells=pd.d[0].getElement" +
-                              "sByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(cells[a].getAttribu" +
-                              "te('class')==='fold'){cells[a].onclick=pd.difffold}}if(pd.d.length>3){pd.d[2].on" +
-                              "mousedown=pd.colSliderGrab;pd.d[2].ontouchstart=pd.colSliderGrab}}());"
+                              "ptions[this.selectedIndex].innerHTML.toLowerCase())};pd.difffold=function dom__d" +
+                              "ifffold(){'use strict';var a=0,b=0,self=this,title=self.getAttribute('title').sp" +
+                              "lit('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(tit" +
+                              "le[2]),inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes" +
+                              "=(parent.getAttribute('class')==='diff')?parent.getElementsByTagName('ol'):paren" +
+                              "t.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listL" +
+                              "en;a+=1){lists.push(listnodes[a].getElementsByTagName('li'))}max=(max>=lists[0]." +
+                              "length)?lists[0].length:max;if(inner.charAt(0)==='-'){self.innerHTML='+'+inner.s" +
+                              "ubstr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display" +
+                              "='none'}}}else{self.innerHTML='-'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;" +
+                              "b<listLen;b+=1){lists[b][a].style.display='block'}}}};pd.colSliderGrab=function(" +
+                              "e){'use strict';var event=e||window.event,touch=(e!==null&&e.type==='touchstart'" +
+                              "),node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,list" +
+                              "s=diff.getElementsByTagName('ol'),counter=lists[0].clientWidth,data=lists[1].cli" +
+                              "entWidth,width=lists[2].parentNode.clientWidth,total=lists[2].parentNode.parentN" +
+                              "ode.clientWidth,offset=lists[2].parentNode.offsetLeft-lists[2].parentNode.parent" +
+                              "Node.offsetLeft,min=((total-counter-data-2)-width),max=(total-width-counter),sta" +
+                              "tus='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight." +
+                              "previousSibling,drop=function dom__event_colSliderGrab_drop(f){f=f||window.event" +
+                              ";f.preventDefault();node.style.cursor=status+'-resize';if(touch===true){document" +
+                              ".ontouchmove=null;document.ontouchend=null}else{document.onmousemove=null;docume" +
+                              "nt.onmouseup=null}},boxmove=function dom__event_colSliderGrab_boxmove(f){f=f||wi" +
+                              "ndow.event;f.preventDefault();if(touch===true){subOffset=offset-f.touches[0].cli" +
+                              "entX}else{subOffset=offset-f.clientX}if(subOffset>minAdjust&&subOffset<maxAdjust" +
+                              "){withinRange=true}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.w" +
+                              "idth=((total-counter-2)/10)+'em';status='e'}else if(withinRange===true&&subOffse" +
+                              "t<minAdjust){diffRight.style.width=((total-counter-data-2)/10)+'em';status='w'}e" +
+                              "lse if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10" +
+                              ")+'em';status='ew'}if(touch===true){document.ontouchend=drop}else{document.onmou" +
+                              "seup=drop}};event.preventDefault();if(typeof pd.data.node==='object'&&pd.data.no" +
+                              "de.report.code.box!==null){offset+=pd.data.node.report.code.box.offsetLeft;offse" +
+                              "t-=pd.data.node.report.code.body.scrollLeft}else{subOffset=(document.body.parent" +
+                              "Node.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:do" +
+                              "cument.body.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.cur" +
+                              "sor='ew-resize';diff.style.width=(total/10)+'em';diff.style.display='inline-bloc" +
+                              "k';if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(diffLeft" +
+                              ".nodeType!==1)}diffLeft.style.display='block';diffRight.style.width=(diffRight.c" +
+                              "lientWidth/10)+'em';diffRight.style.position='absolute';if(touch===true){documen" +
+                              "t.ontouchmove=boxmove;document.ontouchstart=false}else{document.onmousemove=boxm" +
+                              "ove;document.onmousedown=null}return false};(function(){'use strict';var cells=p" +
+                              "d.d[0].getElementsByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(ce" +
+                              "lls[a].getAttribute('class')==='fold'){cells[a].onclick=pd.difffold}}if(pd.d.len" +
+                              "gth>3){pd.d[2].onmousedown=pd.colSliderGrab;pd.d[2].ontouchstart=pd.colSliderGra" +
+                              "b}pd.colorscheme=document.getElementById('colorScheme');pd.colorscheme.onchange=" +
+                              "pd.colorchange}());"
             }
         },
         html           = [
@@ -1529,7 +1537,7 @@ Examples:
                 lineStart: "\x1B[32m"
             }
         },
-        enderflag = false,
+        enderflag      = false,
 
         //ending messaging with stats
         ender          = function pdNodeLocal__ender() {
@@ -1562,10 +1570,9 @@ Examples:
                 return;
             }
 
-            //indexes of diffCount array
-            //0 - total number of differences
-            //1 - the number of files containing those differences
-            //last - total file count (not counting (sub)directories)
+            // indexes of diffCount array 0 - total number of differences 1 - the number of
+            // files containing those differences last - total file count (not counting
+            // (sub)directories)
             if ((method !== "directory" && method !== "subdirectory") || sfiledump.length === 1) {
                 diffCount[1] = 1;
                 diffCount.push("1 file");
@@ -1649,8 +1656,7 @@ Examples:
             enderflag = true;
         },
 
-        //extract errorcount from diff
-        //report files for ender stats
+        //extract errorcount from diff report files for ender stats
         counter        = function pdNodeLocal__counter(x) {
             var num = Number(x.substring(x.indexOf("<em>") + 4, x.indexOf("</em>")));
             if (num > 0) {
@@ -1666,16 +1672,21 @@ Examples:
             if (options.mode !== "parse" && result[0].indexOf("Error: ") === 0) {
                 return [result[0], ""];
             }
-            html[7] = options.color;
+            html[7]  = options.color;
             html[10] = result[0];
             if (options.jsscope !== "none" && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
                 html[12] = builder.script.beautify;
                 return html.join("");
             }
             if (options.mode === "diff") {
-                return [html.join(""), ""];
+                return [
+                    html.join(""),
+                    ""
+                ];
             }
-            return [result[0], html.join("")];
+            return [
+                result[0], html.join("")
+            ];
         },
 
         //instructions
@@ -2012,18 +2023,17 @@ Examples:
                 .replace(/Accepted\ values:\\x1B\[39m(\s+\w+,?)+/g, vallist);
         }()),
 
-        //write output to a file
-        //executed from fileComplete
+        //write output to a file executed from fileComplete
         fileWrite      = function pdNodeLocal__fileWrite(data) {
-            var dirs      = data
+            var dirs     = data
                     .localpath
                     .split(path.sep),
-                suffix    = (options.mode === "diff")
+                suffix   = (options.mode === "diff")
                     ? "-diff.html"
                     : "-report.html",
-                filename  = dirs[dirs.length - 1],
-                count     = 1,
-                writing   = function pdNodeLocal__fileWrite_writing(ending, dataA) {
+                filename = dirs[dirs.length - 1],
+                count    = 1,
+                writing  = function pdNodeLocal__fileWrite_writing(ending, dataA) {
                     if (dataA.binary === true) {
                         fs
                             .writeFile(dataA.finalpath, dataA.file, function pdNodeLocal__fileWrite_writing_writeFileBinary(err) {
@@ -2083,7 +2093,7 @@ Examples:
                             });
                     }
                 },
-                files     = function pdNodeLocal__fileWrite_files(dataB) {
+                files    = function pdNodeLocal__fileWrite_files(dataB) {
                     if (dataB.binary === true) {
                         writing("", dataB);
                     } else if (options.mode === "diff" || (options.mode === "beautify" && options.jsscope !== "none")) {
@@ -2095,7 +2105,7 @@ Examples:
                         writing("", dataB);
                     }
                 },
-                newdir    = function pdNodeLocal__fileWrite_newdir(dataC) {
+                newdir   = function pdNodeLocal__fileWrite_newdir(dataC) {
                     fs
                         .mkdir(address.oabspath + dirs.slice(0, count).join(path.sep), function pdNodeLocal__fileWrite_newdir_callback() {
                             count += 1;
@@ -2109,7 +2119,7 @@ Examples:
             options.source = sfiledump[data.index];
             if (options.mode === "diff") {
                 data.finalpath = address.oabspath + dirs.join("__") + "__" + filename;
-                options.diff = dfiledump[data.index];
+                options.diff   = dfiledump[data.index];
             } else {
                 data.finalpath = address.oabspath + dirs.join(path.sep);
             }
@@ -2126,7 +2136,9 @@ Examples:
                 data.report[0] = JSON.stringify(data.report[0]);
             }
             if (options.mode === "diff") {
-                data.report[0].replace(/<strong>Number\ of\ differences:<\/strong>\ <em>\d+<\/em>\ difference/, counter);
+                data
+                    .report[0]
+                    .replace(/<strong>Number\ of\ differences:<\/strong>\ <em>\d+<\/em>\ difference/, counter);
             }
             if (data.report[0].indexOf("Error") === 0) {
                 if (data.last === true) {
@@ -2190,8 +2202,7 @@ Examples:
             }
         },
 
-        //write output to screen
-        //executed from fileComplete
+        //write output to screen executed from fileComplete
         screenWrite    = function pdNodeLocal__screenWrite() {
             var report = [];
             if (options.mode === "diff" && options.diffcli === true) {
@@ -2214,8 +2225,7 @@ Examples:
             }
         },
 
-        //generate the diff output
-        //for CLI from files
+        //generate the diff output for CLI from files
         cliFile        = function pdNodeLocal__cliFile(data) {
             options.source = sfiledump[data.index];
             options.diff   = dfiledump[data.index];
@@ -2235,9 +2245,8 @@ Examples:
             cliWrite(prettydiff.api(options), data.localpath, data.last);
         },
 
-        //is a file read operation complete?
-        //executed from readLocalFile
-        //executed from readHttpFile
+        // is a file read operation complete? executed from readLocalFile executed from
+        // readHttpFile
         fileComplete   = function pdNodeLocal__fileComplete(data) {
             var totalCalc = function pdNodeLocal__fileComplete_totalCalc() {
                 total[1] += 1;
@@ -2268,7 +2277,7 @@ Examples:
                     if (dfiledump[data.index] === "" || dfiledump[data.index] === "\n") {
                         diffCount[0] += 1;
                         diffCount[0] += 1;
-                        total[1] += 1;
+                        total[1]     += 1;
                         console.log("Diff file at " + data.localpath + " is \x1B[31mempty\x1B[39m but the source file is not.");
                         if (total[0] === total[1]) {
                             ender();
@@ -2276,7 +2285,7 @@ Examples:
                     } else if (sfiledump[data.index] === "" || sfiledump[data.index] === "\n") {
                         diffCount[0] += 1;
                         diffCount[0] += 1;
-                        total[1] += 1;
+                        total[1]     += 1;
                         console.log("Source file at " + data.localpath + " is \x1B[31mempty\x1B[39m but the diff file is not.");
                         if (total[0] === total[1]) {
                             ender();
@@ -2284,11 +2293,8 @@ Examples:
                     } else if (options.diffcli === true) {
                         cliFile(data);
                     } else if (method === "filescreen") {
-                        if (data.type === "diff") {
-                            options.diff = data.file;
-                        } else {
-                            options.source = data.file;
-                        }
+                        options.diff   = dfiledump[data.index];
+                        options.source = sfiledump[data.index];
                         screenWrite();
                     } else if (method === "file" || method === "directory" || method === "subdirectory") {
                         fileWrite(data);
@@ -2398,8 +2404,7 @@ Examples:
             }
         },
 
-        //resolve file contents from a web address
-        //executed from init
+        //resolve file contents from a web address executed from init
         readHttpFile   = function pdNodeLocal__readHttpFile(data) {
             var file = ["", 0];
             http.get(data.absolutepath, function pdNodeLocal__readHttpFile_get(res) {
@@ -2408,7 +2413,7 @@ Examples:
                 res.on("data", function pdNodeLocal__readHttpFile_get_response(chunk) {
                     file[0] += chunk;
                     if (file[0].length === file[1]) {
-                        data.file      = file[0];
+                        data.file = file[0];
                         if (data.type === "diff") {
                             dfiledump[data.index] = file[0];
                         } else {
@@ -2420,13 +2425,11 @@ Examples:
             });
         },
 
-        //gather files in directory and sub directories
-        //executed from init
+        //gather files in directory and sub directories executed from init
         directory      = function pdNodeLocal__directory() {
-            //the following four are necessary because you can
-            //walk a directory tree from a relative path but you
-            //cannot read file contents with a relative path in
-            //node at this time
+            // the following four are necessary because you can walk a directory tree from a
+            // relative path but you cannot read file contents with a relative path in node
+            // at this time
             var sfiles  = {
                     abspath    : [],
                     count      : 0,
@@ -2446,138 +2449,145 @@ Examples:
                         .stat(start, function pdNodeLocal__directory_readDir_stat(erra, stat) {
                             var item    = {},
                                 dirtest = function pdNodeLocal__directory_readDir_stat_dirtest(itempath, lastitem) {
-                                    var pusher = function pdNodeLocal__directory_readDir_stat_dirtest_pusher(itempath) {
-                                        if (listtype === "diff") {
-                                            dfiles
-                                                .filepath
-                                                .push([itempath.replace(address.dabspath + path.sep, ""), itempath]);
-                                        } else if (listtype === "source") {
+                                    var pusher     = function pdNodeLocal__directory_readDir_stat_dirtest_pusher(itempath) {
+                                            if (listtype === "diff") {
+                                                dfiles
+                                                    .filepath
+                                                    .push([
+                                                        itempath.replace(address.dabspath + path.sep, ""),
+                                                        itempath
+                                                    ]);
+                                            } else if (listtype === "source") {
+                                                sfiles
+                                                    .filepath
+                                                    .push([
+                                                        itempath.replace(address.sabspath + path.sep, ""),
+                                                        itempath
+                                                    ]);
+                                            }
+                                            item.count += 1;
+                                        },
+                                        preprocess = function pdNodeLocal__directory_readDir_stat_dirtest_stat_preprocess() {
+                                            var b      = 0,
+                                                length = (options.mode === "diff")
+                                                    ? Math.min(sfiles.filepath.length, dfiles.filepath.length)
+                                                    : sfiles.filepath.length,
+                                                end    = false,
+                                                sizer  = function pdNodeLocal__directory_readDir_stat_dirtest_stat_preprocess_sizer(index, type, filename, finalone) {
+                                                    fs
+                                                        .stat(filename[1], function pdNodeLocal__directory_readDir_stat_dirtest_stat_preprocess_sizer_stat(errc, statb) {
+                                                            var filesize = 0;
+                                                            if (errc === null) {
+                                                                filesize = statb.size;
+                                                            }
+                                                            readLocalFile({
+                                                                absolutepath: filename[1],
+                                                                index       : index,
+                                                                last        : finalone,
+                                                                localpath   : filename[0],
+                                                                size        : filesize,
+                                                                type        : type
+                                                            });
+                                                        });
+                                                },
+                                                sorter = function pdNodeLocal__directory_readDir_stat_dirtest_stat_preprocess_sorter(a, b) {
+                                                    if (a[0] < b[0]) {
+                                                        return -1;
+                                                    }
+                                                    return 1;
+                                                };
                                             sfiles
                                                 .filepath
-                                                .push([itempath.replace(address.sabspath + path.sep, ""), itempath]);
-                                        }
-                                        item.count += 1;
-                                    },
-                                    preprocess = function pdNodeLocal__directory_readDir_stat_dirtest_stat_preprocess() {
-                                        var b      = 0,
-                                            length = (options.mode === "diff")
-                                                ? Math.min(sfiles.filepath.length, dfiles.filepath.length)
-                                                : sfiles.filepath.length,
-                                            end    = false,
-                                            sizer  = function pdNodeLocal__directory_readDir_stat_dirtest_stat_preprocess_sizer(index, type, filename, finalone) {
-                                                fs
-                                                    .stat(filename[1], function pdNodeLocal__directory_readDir_stat_dirtest_stat_preprocess_sizer_stat(errc, statb) {
-                                                        var filesize = 0;
-                                                        if (errc === null) {
-                                                            filesize = statb.size;
-                                                        }
-                                                        readLocalFile({
-                                                            absolutepath: filename[1],
-                                                            index       : index,
-                                                            last        : finalone,
-                                                            localpath   : filename[0],
-                                                            size        : filesize,
-                                                            type        : type
-                                                        });
-                                                    });
-                                            },
-                                            sorter = function pdNodeLocal__directory_readDir_stat_dirtest_stat_preprocess_sorter(a, b) {
-                                                if (a[0] < b[0]) {
-                                                    return -1;
-                                                }
-                                                return 1;
-                                            };
-                                        sfiles
-                                            .filepath
-                                            .sort(sorter);
-                                        if (options.mode === "diff") {
-                                            dfiles
-                                                .filepath
                                                 .sort(sorter);
-                                            for (b = 0; b < length; b += 1) {
-                                                dState.push(false);
-                                                sState.push(false);
-                                                sfiledump.push("");
-                                                dfiledump.push("");
-                                                if (sfiles.filepath[b][0] === dfiles.filepath[b][0]) {
-                                                    if (b === length - 1) {
-                                                        end = true;
-                                                    }
-                                                    sizer(b, "diff", dfiles.filepath[b], end);
-                                                    sizer(b, "source", sfiles.filepath[b], end);
-                                                } else {
-                                                    if (sfiles.filepath[b][0] < dfiles.filepath[b][0]) {
-                                                        if (options.diffcli === true) {
-                                                            clidata[0].push(sfiles.filepath[b][0]);
-                                                        }
-                                                        if (length === dfiles.filepath.length) {
-                                                            length += 1;
-                                                        }
-                                                        dfiles
-                                                            .filepath
-                                                            .splice(b, 0, "");
-                                                    } else if (dfiles.filepath[b][0] < sfiles.filepath[b][0]) {
-                                                        if (options.diffcli === true) {
-                                                            clidata[1].push(dfiles.filepath[b][0]);
-                                                        }
-                                                        if (length === sfiles.filepath.length) {
-                                                            length += 1;
-                                                        }
-                                                        sfiles
-                                                            .filepath
-                                                            .splice(b, 0, "");
-                                                    }
-                                                    if (b === length - 1) {
-                                                        ender();
-                                                    }
-                                                }
-                                            }
-                                        } else {
-                                            if (options.output !== "") {
+                                            if (options.mode === "diff") {
+                                                dfiles
+                                                    .filepath
+                                                    .sort(sorter);
                                                 for (b = 0; b < length; b += 1) {
-                                                    if (b === length - 1) {
-                                                        end = true;
-                                                    }
-                                                    if (sfiles.filepath[b] !== undefined) {
+                                                    dState.push(false);
+                                                    sState.push(false);
+                                                    sfiledump.push("");
+                                                    dfiledump.push("");
+                                                    if (sfiles.filepath[b][0] === dfiles.filepath[b][0]) {
+                                                        if (b === length - 1) {
+                                                            end = true;
+                                                        }
+                                                        sizer(b, "diff", dfiles.filepath[b], end);
                                                         sizer(b, "source", sfiles.filepath[b], end);
+                                                    } else {
+                                                        if (sfiles.filepath[b][0] < dfiles.filepath[b][0]) {
+                                                            if (options.diffcli === true) {
+                                                                clidata[0].push(sfiles.filepath[b][0]);
+                                                            }
+                                                            if (length === dfiles.filepath.length) {
+                                                                length += 1;
+                                                            }
+                                                            dfiles
+                                                                .filepath
+                                                                .splice(b, 0, "");
+                                                        } else if (dfiles.filepath[b][0] < sfiles.filepath[b][0]) {
+                                                            if (options.diffcli === true) {
+                                                                clidata[1].push(dfiles.filepath[b][0]);
+                                                            }
+                                                            if (length === sfiles.filepath.length) {
+                                                                length += 1;
+                                                            }
+                                                            sfiles
+                                                                .filepath
+                                                                .splice(b, 0, "");
+                                                        }
+                                                        if (b === length - 1) {
+                                                            ender();
+                                                        }
                                                     }
                                                 }
                                             } else {
-                                                ender();
+                                                if (options.output !== "") {
+                                                    for (b = 0; b < length; b += 1) {
+                                                        if (b === length - 1) {
+                                                            end = true;
+                                                        }
+                                                        if (sfiles.filepath[b] !== undefined) {
+                                                            sizer(b, "source", sfiles.filepath[b], end);
+                                                        }
+                                                    }
+                                                } else {
+                                                    ender();
+                                                }
                                             }
-                                        }
-                                    };
+                                        };
                                     if (itempath === "" && lastitem === true) {
                                         preprocess();
                                     } else {
-                                        fs.stat(itempath, function pdNodeLocal__directory_readDir_stat_dirtest_stat(errb, stata) {
-                                            if (errb !== null) {
-                                                return console.log(errb);
-                                            }
-                                            if (stata.isDirectory() === true) {
-                                                if (method === "subdirectory") {
-                                                    item.directories += 1;
-                                                    pdNodeLocal__directory_readDir(itempath, listtype);
-                                                    item.count += 1;
+                                        fs
+                                            .stat(itempath, function pdNodeLocal__directory_readDir_stat_dirtest_stat(errb, stata) {
+                                                if (errb !== null) {
+                                                    return console.log(errb);
                                                 }
-                                                if (method === "directory") {
-                                                    item.total       -= 1;
-                                                    item.directories = 0;
-                                                }
-                                            } else if (stata.isFile() === true) {
-                                                pusher(itempath);
-                                            } else {
-                                                if (listtype === "diff") {
-                                                    dfiles.total -= 1;
+                                                if (stata.isDirectory() === true) {
+                                                    if (method === "subdirectory") {
+                                                        item.directories += 1;
+                                                        pdNodeLocal__directory_readDir(itempath, listtype);
+                                                        item.count += 1;
+                                                    }
+                                                    if (method === "directory") {
+                                                        item.total       -= 1;
+                                                        item.directories = 0;
+                                                    }
+                                                } else if (stata.isFile() === true) {
+                                                    pusher(itempath);
                                                 } else {
-                                                    sfiles.total -= 1;
+                                                    if (listtype === "diff") {
+                                                        dfiles.total -= 1;
+                                                    } else {
+                                                        sfiles.total -= 1;
+                                                    }
+                                                    console.log(itempath + lf + "is an unsupported type");
                                                 }
-                                                console.log(itempath + lf + "is an unsupported type");
-                                            }
-                                            if (lastitem === true && ((options.mode === "diff" && sfiles.count === sfiles.total && dfiles.count === dfiles.total && sfiles.directories === 0 && dfiles.directories === 0) || (options.mode !== "diff" && item.directories === 0 && item.count === item.total))) {
-                                                return preprocess();
-                                            }
-                                        });
+                                                if (lastitem === true && ((options.mode === "diff" && sfiles.count === sfiles.total && dfiles.count === dfiles.total && sfiles.directories === 0 && dfiles.directories === 0) || (options.mode !== "diff" && item.directories === 0 && item.count === item.total))) {
+                                                    return preprocess();
+                                                }
+                                            });
                                     }
                                 };
                             if (erra !== null) {
@@ -2648,7 +2658,7 @@ Examples:
                     z        = "",
                     itempath = "",
                     ind      = "",
-                    odirs   = [],
+                    odirs    = [],
                     olen     = 0,
                     basepath = "",
                     makeout  = function pdNodeLocal__start_pathslash_makeout() {
@@ -2674,7 +2684,9 @@ Examples:
                             ups   = [],
                             uplen = 0;
                         if (itempath.indexOf("..") === 0) {
-                            ups   = itempath.replace(/\.\.\//g, ".." + path.sep).split(".." + path.sep);
+                            ups   = itempath
+                                .replace(/\.\.\//g, ".." + path.sep)
+                                .split(".." + path.sep);
                             uplen = ups.length;
                             do {
                                 uplen -= 1;
@@ -2735,16 +2747,20 @@ Examples:
                     if (x === ".") {
                         address.oabspath = cwd;
                         address.oorgpath = cwd;
-                        outready = true;
+                        outready         = true;
                     } else {
-                        itempath = itempath.replace(/\//g, path.sep);
+                        itempath         = itempath.replace(/\//g, path.sep);
                         address.oabspath = abspath();
                         address.oorgpath = itempath;
                         if (address.oabspath.charAt(address.oabspath.length - 1) !== path.sep) {
                             address.oabspath = address.oabspath + path.sep;
                         }
-                        basepath         = address.oabspath.replace(path.sep + address.oorgpath, "");
-                        odirs            = address.oorgpath.split(path.sep);
+                        basepath = address
+                            .oabspath
+                            .replace(path.sep + address.oorgpath, "");
+                        odirs    = address
+                            .oorgpath
+                            .split(path.sep);
                         makeout();
                     }
                 }
@@ -2970,16 +2986,10 @@ Examples:
                         cliflag = false,
                         status  = function pdNodeLocal__start_stat_init_status() {
                             var tempaddy = "";
-                            //status codes
-                            //-1 is not file or directory
-                            //0 is status pending
-                            //1 is directory
-                            //2 is file
-                            //3 is file via http/s
+                            // status codes -1 is not file or directory 0 is status pending 1 is directory 2
+                            // is file 3 is file via http/s
                             //
-                            //dir[0] - diff
-                            //dir[1] - output
-                            //dir[2] - source
+                            //dir[0] - diff dir[1] - output dir[2] - source
                             if (dir[2] === 0) {
                                 return;
                             }
@@ -3069,13 +3079,17 @@ Examples:
                                     if (dir[0] === 3) {
                                         readHttpFile({absolutepath: options.diff, index: 0, last: true, localpath: options.diff, type: "diff"});
                                     } else {
-                                        tempaddy = options.diff.replace(/(\/|\\)/g, path.sep);
+                                        tempaddy = options
+                                            .diff
+                                            .replace(/(\/|\\)/g, path.sep);
                                         readLocalFile({absolutepath: tempaddy, index: 0, last: true, localpath: tempaddy, type: "diff"});
                                     }
                                     if (dir[2] === 3) {
                                         readHttpFile({absolutepath: options.source, index: 0, last: true, localpath: options.source, type: "source"});
                                     } else {
-                                        tempaddy = options.source.replace(/(\/|\\)/g, path.sep);
+                                        tempaddy = options
+                                            .source
+                                            .replace(/(\/|\\)/g, path.sep);
                                         readLocalFile({absolutepath: tempaddy, index: 0, last: true, localpath: tempaddy, type: "source"});
                                     }
                                     return;
@@ -3101,7 +3115,7 @@ Examples:
                                 }
                             }
                         },
-                        delay  = function pdNodeLocal__start_stat_init_delay() {
+                        delay   = function pdNodeLocal__start_stat_init_delay() {
                             if (state === true || outready === false) {
                                 status();
                                 setTimeout(function pdNodeLocal__start_stat_init_delay_setTimeout() {

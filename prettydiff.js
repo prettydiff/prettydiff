@@ -1420,43 +1420,51 @@ var prettydiff = function prettydiff_(api) {
                                       "e('class')==='fold'){list[b].onmousedown=pd.beaufold;}}}}}());",
                         diff    : "var pd={};pd.colorchange=function(){'use strict';var options=this.getElementsByT" +
                                       "agName('option');document.getElementsByTagName('body')[0].setAttribute('class',o" +
-                                      "ptions[this.selectedIndex].innerHTML.toLowerCase())};pd.colorscheme=document.get" +
-                                      "ElementById('colorScheme');pd.colorscheme.onchange=pd.colorchange;pd.d=document." +
-                                      "getElementsByTagName('ol');pd.difffold=function dom__difffold(){'use strict';var" +
-                                      " self=this,title=self.getAttribute('title').split('line '),min=Number(title[1].s" +
-                                      "ubstr(0,title[1].indexOf(' '))),max=Number(title[2]),a=0,b=0,inner=self.innerHTM" +
-                                      "L,lists=[],parent=self.parentNode.parentNode,listnodes=(parent.getAttribute('cla" +
-                                      "ss'==='diff'))?parent.getElementsByTagName('ol'):parent.parentNode.getElementsBy" +
-                                      "TagName('ol'),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listno" +
-                                      "des[a].getElementsByTagName('li'))}if(lists.length>3){for(a=0;a<min;a+=1){if(lis" +
-                                      "ts[0][a].getAttribute('class')==='empty'){min+=1;max+=1}}}max=(max>=lists[0].len" +
-                                      "gth)?lists[0].length:max;if(inner.charAt(0)==='-'){self.innerHTML='+'+inner.subs" +
-                                      "tr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display='n" +
-                                      "one'}}}else{self.innerHTML='-'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<l" +
-                                      "istLen;b+=1){lists[b][a].style.display='block'}}}};pd.colSliderProperties=[pd.d[" +
-                                      "0].clientWidth,pd.d[1].clientWidth,pd.d[2].parentNode.clientWidth,pd.d[2].parent" +
-                                      "Node.parentNode.clientWidth,pd.d[2].parentNode.offsetLeft-pd.d[2].parentNode.par" +
-                                      "entNode.offsetLeft];pd.colSliderGrab=function(e){'use strict';var x=this,a=x.par" +
-                                      "entNode,b=a.parentNode,c=0,event=e||window.event,counter=pd.colSliderProperties[" +
-                                      "0],data=pd.colSliderProperties[1],width=pd.colSliderProperties[2],total=pd.colSl" +
-                                      "iderProperties[3],offset=(pd.colSliderProperties[4]),min=0,max=data-1,status='ew" +
-                                      "',g=min+15,h=max-15,k=false,z=a.previousSibling,drop=function(g){x.style.cursor=" +
-                                      "status+'-resize';g=null;document.onmousemove=null;document.onmouseup=null},boxmo" +
-                                      "ve=function(f){f=f||window.event;c=offset-f.clientX;if(c>g&&c<h){k=true}if(k===t" +
-                                      "rue&&c>h){a.style.width=((total-counter-2)/10)+'em';status='e'}else if(k===true&" +
-                                      "&c<g){a.style.width=(width/10)+'em';status='w'}else if(c<max&&c>min){a.style.wid" +
-                                      "th=((width+c)/10)+'em';status='ew'}document.onmouseup=drop};event.preventDefault" +
-                                      "();if(typeof pd.o==='object'&&typeof pd.o.re==='object'){offset+=pd.o.re.offsetL" +
-                                      "eft;offset-=pd.o.rf.scrollLeft}else{c=(document.body.parentNode.scrollLeft>docum" +
-                                      "ent.body.scrollLeft)?document.body.parentNode.scrollLeft:document.body.scrollLef" +
-                                      "t;offset-=c}offset+=x.clientWidth;x.style.cursor='ew-resize';b.style.width=(tota" +
-                                      "l/10)+'em';b.style.display='inline-block';if(z.nodeType!==1){do{{z=z.previousSib" +
-                                      "ling}}while(z.nodeType!==1)}z.style.display='block';a.style.width=(a.clientWidth" +
-                                      "/10)+'em';a.style.position='absolute';document.onmousemove=boxmove;document.onmo" +
-                                      "usedown=null;return false};(function(){'use strict';var cells=pd.d[0].getElement" +
-                                      "sByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(cells[a].getAttribu" +
-                                      "te('class')==='fold'){cells[a].onclick=pd.difffold}}if(pd.d.length>3){pd.d[2].on" +
-                                      "mousedown=pd.colSliderGrab;pd.d[2].ontouchstart=pd.colSliderGrab}}());"
+                                      "ptions[this.selectedIndex].innerHTML.toLowerCase())};pd.difffold=function dom__d" +
+                                      "ifffold(){'use strict';var a=0,b=0,self=this,title=self.getAttribute('title').sp" +
+                                      "lit('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(tit" +
+                                      "le[2]),inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes" +
+                                      "=(parent.getAttribute('class')==='diff')?parent.getElementsByTagName('ol'):paren" +
+                                      "t.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listL" +
+                                      "en;a+=1){lists.push(listnodes[a].getElementsByTagName('li'))}max=(max>=lists[0]." +
+                                      "length)?lists[0].length:max;if(inner.charAt(0)==='-'){self.innerHTML='+'+inner.s" +
+                                      "ubstr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display" +
+                                      "='none'}}}else{self.innerHTML='-'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;" +
+                                      "b<listLen;b+=1){lists[b][a].style.display='block'}}}};pd.colSliderGrab=function(" +
+                                      "e){'use strict';var event=e||window.event,touch=(e!==null&&e.type==='touchstart'" +
+                                      "),node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,list" +
+                                      "s=diff.getElementsByTagName('ol'),counter=lists[0].clientWidth,data=lists[1].cli" +
+                                      "entWidth,width=lists[2].parentNode.clientWidth,total=lists[2].parentNode.parentN" +
+                                      "ode.clientWidth,offset=lists[2].parentNode.offsetLeft-lists[2].parentNode.parent" +
+                                      "Node.offsetLeft,min=((total-counter-data-2)-width),max=(total-width-counter),sta" +
+                                      "tus='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight." +
+                                      "previousSibling,drop=function dom__event_colSliderGrab_drop(f){f=f||window.event" +
+                                      ";f.preventDefault();node.style.cursor=status+'-resize';if(touch===true){document" +
+                                      ".ontouchmove=null;document.ontouchend=null}else{document.onmousemove=null;docume" +
+                                      "nt.onmouseup=null}},boxmove=function dom__event_colSliderGrab_boxmove(f){f=f||wi" +
+                                      "ndow.event;f.preventDefault();if(touch===true){subOffset=offset-f.touches[0].cli" +
+                                      "entX}else{subOffset=offset-f.clientX}if(subOffset>minAdjust&&subOffset<maxAdjust" +
+                                      "){withinRange=true}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.w" +
+                                      "idth=((total-counter-2)/10)+'em';status='e'}else if(withinRange===true&&subOffse" +
+                                      "t<minAdjust){diffRight.style.width=((total-counter-data-2)/10)+'em';status='w'}e" +
+                                      "lse if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10" +
+                                      ")+'em';status='ew'}if(touch===true){document.ontouchend=drop}else{document.onmou" +
+                                      "seup=drop}};event.preventDefault();if(typeof pd.data.node==='object'&&pd.data.no" +
+                                      "de.report.code.box!==null){offset+=pd.data.node.report.code.box.offsetLeft;offse" +
+                                      "t-=pd.data.node.report.code.body.scrollLeft}else{subOffset=(document.body.parent" +
+                                      "Node.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:do" +
+                                      "cument.body.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.cur" +
+                                      "sor='ew-resize';diff.style.width=(total/10)+'em';diff.style.display='inline-bloc" +
+                                      "k';if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(diffLeft" +
+                                      ".nodeType!==1)}diffLeft.style.display='block';diffRight.style.width=(diffRight.c" +
+                                      "lientWidth/10)+'em';diffRight.style.position='absolute';if(touch===true){documen" +
+                                      "t.ontouchmove=boxmove;document.ontouchstart=false}else{document.onmousemove=boxm" +
+                                      "ove;document.onmousedown=null}return false};(function(){'use strict';var cells=p" +
+                                      "d.d[0].getElementsByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(ce" +
+                                      "lls[a].getAttribute('class')==='fold'){cells[a].onclick=pd.difffold}}if(pd.d.len" +
+                                      "gth>3){pd.d[2].onmousedown=pd.colSliderGrab;pd.d[2].ontouchstart=pd.colSliderGra" +
+                                      "b}pd.colorscheme=document.getElementById('colorScheme');pd.colorscheme.onchange=" +
+                                      "pd.colorchange}());"
                     }
                 },
                 html        = [
@@ -2350,7 +2358,7 @@ var prettydiff = function prettydiff_(api) {
                     autostring = "<p>Code type is presumed to be <em>React JSX</em>.</p>";
                 }
                 if (options.api === "" && options.jsscope !== "none" && options.lang === "javascript") {
-                    html[7] = options.color;
+                    html[7]  = options.color;
                     html[10] = apidiffout;
                     html[12] = builder.script.beautify;
                     return [
@@ -2448,7 +2456,7 @@ var prettydiff = function prettydiff_(api) {
                         autostring = "<p>Code type is presumed to be <em>React JSX</em>.</p>";
                     }
                     if (options.api === "") {
-                        html[7] = options.color;
+                        html[7]  = options.color;
                         html[10] = a[0] + a[1][0];
                         return [
                             html.join(""),
@@ -2476,22 +2484,22 @@ global.edition        = {
         ace: 150918
     },
     api          : {
-        dom      : 160214, //dom.js
-        nodeLocal: 160209, //node-local.js
-        wsh      : 160209
+        dom      : 160223, //dom.js
+        nodeLocal: 160223, //node-local.js
+        wsh      : 160223
     },
-    css          : 160214, //css files
+    css          : 160223, //css files
     csspretty    : 160209, //csspretty lib
     csvpretty    : 151130, //csvpretty lib
-    diffview     : 160201, //diffview lib
+    diffview     : 160223, //diffview lib
     documentation: 160214, //documentation.xhtml
     jspretty     : 160215, //jspretty lib
     latest       : 0,
-    lint         : 160209, //unit test and lint automation as test/lint.js
-    markuppretty : 160216, //markuppretty lib
-    prettydiff   : 160214, //this file
+    lint         : 160223, //unit test and lint automation as test/lint.js
+    markuppretty : 160223, //markuppretty lib
+    prettydiff   : 160223, //this file
     safeSort     : 151130, //safeSort lib
-    version      : "1.16.17", //version number
+    version      : "1.16.18", //version number
     webtool      : 160214
 };
 global.edition.latest = (function edition_latest() {
