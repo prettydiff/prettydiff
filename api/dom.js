@@ -6141,7 +6141,6 @@ var pd     = {},
                     beauChar.value = "";
                 }
             } else {
-                console.log("asdf");
                 beauOther.checked = false;
                 beauChar.setAttribute("class", "unchecked");
                 if (beauChar.value === "") {

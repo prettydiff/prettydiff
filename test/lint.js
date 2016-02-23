@@ -645,20 +645,18 @@
                                             check : "node api/node-local.js source:\"<a><b> <c/>    </b></a>\" readmethod:\"screen\" " +
                                                         "mode:\"beautify\"",
                                             name  : "Beautify markup.",
-                                            verify: "<a>\n    <b>\n        <c/>\n    </b>\n</a>\n\nPretty Diff beautified 1 file. Exe" +
-                                                        "cuted in."
+                                            verify: "<a>\n    <b>\n        <c/>\n    </b>\n</a>"
                                         }, {
                                             check : "node api/node-local.js source:\"<a><b> <c/>    </b></a>\" readmethod:\"screen\" " +
                                                         "mode:\"minify\"",
                                             name  : "Minify markup.",
-                                            verify: "<a><b> <c/> </b></a>\n\nPretty Diff minified 1 file. Executed in."
+                                            verify: "<a><b> <c/> </b></a>"
                                         }, {
                                             check : "node api/node-local.js source:\"<a><b> <c/>    </b></a>\" readmethod:\"screen\" " +
                                                         "mode:\"parse\"",
                                             name  : "Parse markup.",
                                             verify: "{\"token\":[\"<a>\",\"<b>\",\" \",\"<c/>\",\" \",\"</b>\",\"</a>\"],\"types\":[" +
-                                                    "\"start\",\"start\",\"content\",\"singleton\",\"content\",\"end\",\"end\"]}\n\nP" +
-                                                    "retty Diff parsed 1 file. Executed in."
+                                                    "\"start\",\"start\",\"content\",\"singleton\",\"content\",\"end\",\"end\"]}"
                                         }, {
                                             check : "node api/node-local.js source:\"<a><b> <c/>    </b></a>\" readmethod:\"screen\" " +
                                                         "mode:\"diff\" diff:\"<a><b> <d/>    </b></a>\"",
@@ -1991,25 +1989,22 @@
                                             check : "node api/node-local.js source:\"test/simulation/testa1.txt\" readmethod:\"filesc" +
                                                         "reen\" mode:\"diff\" diff:\"test/simulation/testa.txt\"",
                                             name  : "Source file is empty",
-                                            verify: "Source file at - is \x1B[31mempty\x1B[39m but the diff file is not.\n\nPretty Di" +
-                                                        "ff found -10 differences. Executed in."
+                                            verify: "Source file at - is \x1B[31mempty\x1B[39m but the diff file is not."
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"filescr" +
                                                         "een\" mode:\"diff\" diff:\"test/simulation/testa1.txt\"",
                                             name  : "Diff file is empty",
-                                            verify: "Diff file at - is \x1B[31mempty\x1B[39m but the source file is not.\n\nPretty Di" +
-                                                        "ff found -10 differences. Executed in."
+                                            verify: "Diff file at - is \x1B[31mempty\x1B[39m but the source file is not."
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"filescr" +
                                                         "een\" mode:\"diff\" diff:\"test/simulation/testa1.txt\" diffcli:\"true\"",
                                             name  : "Diff file is empty with diffcli option",
-                                            verify: "Diff file at - is \x1B[31mempty\x1B[39m but the source file is not.\n\nPretty Di" +
-                                                        "ff found -10 differences. Executed in."
+                                            verify: "Diff file at - is \x1B[31mempty\x1B[39m but the source file is not."
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"filescr" +
                                                         "een\" mode:\"diff\" diff:\"test/simulation/testa.txt\"",
                                             name  : "Diff file and source file are same file, readmethod filescreen",
-                                            verify: "\nPretty Diff found 0 differences. Executed in."
+                                            verify: ""
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"file\" " +
                                                         "output:\"test/simulation\" mode:\"diff\" diff:\"test/simulation/testa.txt\"",
@@ -2024,38 +2019,34 @@
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"filescr" +
                                                         "een\" mode:\"beautify\"",
                                             name  : "Beautify markup.",
-                                            verify: "<a>\n    <b>\n        <c/>\n    </b>\n</a>\n\nPretty Diff beautified 1 file. Exe" +
-                                                        "cuted in."
+                                            verify: "<a>\n    <b>\n        <c/>\n    </b>\n</a>"
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"filescr" +
                                                         "een\" mode:\"minify\"",
                                             name  : "Minify markup.",
-                                            verify: "<a><b> <c/> </b></a>\n\nPretty Diff minified 1 file. Executed in."
+                                            verify: "<a><b> <c/> </b></a>"
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"filescr" +
                                                         "een\" mode:\"parse\"",
                                             name  : "Parse markup.",
                                             verify: "{\"token\":[\"<a>\",\"<b>\",\" \",\"<c/>\",\" \",\"</b>\",\"</a>\"],\"types\":[" +
-                                                    "\"start\",\"start\",\"content\",\"singleton\",\"content\",\"end\",\"end\"]}\n\nP" +
-                                                    "retty Diff parsed 1 file. Executed in."
+                                                    "\"start\",\"start\",\"content\",\"singleton\",\"content\",\"end\",\"end\"]}"
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"filescr" +
                                                         "een\" mode:\"beautify\"",
                                             name  : "Beautify markup.",
-                                            verify: "<a>\n    <b>\n        <c/>\n    </b>\n</a>\n\nPretty Diff beautified 1 file. Exe" +
-                                                        "cuted in."
+                                            verify: "<a>\n    <b>\n        <c/>\n    </b>\n</a>"
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"filescr" +
                                                         "een\" mode:\"minify\"",
                                             name  : "Minify markup.",
-                                            verify: "<a><b> <c/> </b></a>\n\nPretty Diff minified 1 file. Executed in."
+                                            verify: "<a><b> <c/> </b></a>"
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"filescr" +
                                                         "een\" mode:\"parse\"",
                                             name  : "Parse markup.",
                                             verify: "{\"token\":[\"<a>\",\"<b>\",\" \",\"<c/>\",\" \",\"</b>\",\"</a>\"],\"types\":[" +
-                                                    "\"start\",\"start\",\"content\",\"singleton\",\"content\",\"end\",\"end\"]}\n\nP" +
-                                                    "retty Diff parsed 1 file. Executed in."
+                                                    "\"start\",\"start\",\"content\",\"singleton\",\"content\",\"end\",\"end\"]}"
                                         }
                                     ]
                                 }, {

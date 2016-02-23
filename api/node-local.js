@@ -1477,6 +1477,7 @@ Examples:
             dustjs         : false,
             elseline       : false,
             endcomma       : false,
+            endquietly     : false,
             force_attribute: false,
             force_indent   : false,
             html           : false,
@@ -1566,7 +1567,7 @@ Examples:
                 }()),
                 log    = [],
                 time   = 0;
-            if (enderflag === true) {
+            if (enderflag === true || method === "filescreen" || method === "screen") {
                 return;
             }
 
@@ -1810,6 +1811,9 @@ Examples:
             a.push("");
             a.push("* endcomma     - boolean - If there should be a trailing comma in JavaScript");
             a.push("                           arrays and objects.");
+            a.push("");
+            a.push("* endquietly   - boolean - Suppress any terminal logging to the command line.");
+            a.push("                           Default is false.");
             a.push("");
             a.push("* force_attribute - boolean - If all markup attributes should be indented each");
             a.push("                           onto their own line.  Default is false.");
@@ -2833,6 +2837,8 @@ Examples:
                     options.elseline = true;
                 } else if (d[b][0] === "endcomma" && d[b][1] === "true") {
                     options.endcomma = true;
+                } else if (d[b][0] === "endquietly" && d[b][1] === "true") {
+                    enderflag = true;
                 } else if (d[b][0] === "force_attribute" && d[b][1] === "true") {
                     options.force_attribute = true;
                 } else if (d[b][0] === "force_indent" && d[b][1] === "true") {

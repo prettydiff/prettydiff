@@ -2492,14 +2492,14 @@ global.edition        = {
     csspretty    : 160209, //csspretty lib
     csvpretty    : 151130, //csvpretty lib
     diffview     : 160223, //diffview lib
-    documentation: 160214, //documentation.xhtml
+    documentation: 160223, //documentation.xhtml
     jspretty     : 160215, //jspretty lib
     latest       : 0,
     lint         : 160223, //unit test and lint automation as test/lint.js
     markuppretty : 160223, //markuppretty lib
     prettydiff   : 160223, //this file
     safeSort     : 151130, //safeSort lib
-    version      : "1.16.19", //version number
+    version      : "1.16.20", //version number
     webtool      : 160214
 };
 global.edition.latest = (function edition_latest() {

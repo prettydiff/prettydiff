@@ -18,3 +18,7 @@
 /*documentation - showing content normally hidden from visual users*/
 #prettydiff .content-show {height:auto;position:static;width:auto}
 #prettydiff #documentation code{font-size:1em}
+#prettydiff #documentation li#report{background:transparent;line-height:inherit}
+#prettydiff #documentation li#report li,
+#prettydiff #documentation li#report h4{font-family:inherit;font-size:1em}
+#prettydiff #documentation li li em {font-weight:bold}
