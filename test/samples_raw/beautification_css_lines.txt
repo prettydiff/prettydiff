@@ -40,3 +40,9 @@ form {
         height: 100%;
     }
 }
+.a {
+    .b {
+        display: inline-block;
+    }
+margin: 10px;
+}

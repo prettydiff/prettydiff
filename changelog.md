@@ -1,5 +1,14 @@
 # Pretty Diff change log
 
+## v1.16.21
+
+* Fixed https://github.com/Glavin001/atom-beautify/issues/403#issuecomment-188458019
+* Fixed a minor defect in associating the value "log" with the new option `endquietly`
+
+## v1.16.20
+
+ * Fixed #273
+
 ## v1.16.19
 
  * Fixed #272

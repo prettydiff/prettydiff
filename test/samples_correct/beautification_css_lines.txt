@@ -43,3 +43,11 @@ form {
         height: 100%;
     }
 }
+
+.a {
+    margin: 10px;
+
+    .b {
+        display: inline-block;
+    }
+}
