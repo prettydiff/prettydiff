@@ -2498,8 +2498,8 @@ global.edition        = {
     lint         : 160223, //unit test and lint automation as test/lint.js
     markuppretty : 160223, //markuppretty lib
     prettydiff   : 160223, //this file
-    safeSort     : 151130, //safeSort lib
-    version      : "1.16.21", //version number
+    safeSort     : 160224, //safeSort lib
+    version      : "1.16.22", //version number
     webtool      : 160214
 };
 global.edition.latest = (function edition_latest() {

@@ -51,3 +51,9 @@ form {
         display: inline-block;
     }
 }
+
+.a {
+    margin : 0;
+
+    padding: 10px;
+}

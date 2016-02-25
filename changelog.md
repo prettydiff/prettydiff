@@ -1,5 +1,10 @@
 # Pretty Diff change log
 
+## v1.16.22
+
+* Fixed #274
+* Adjusted safeSort library to fix a compatibility problem with recursive function references in V8 and legacy versions of Node
+
 ## v1.16.21
 
 * Fixed https://github.com/Glavin001/atom-beautify/issues/403#issuecomment-188458019

@@ -87,6 +87,7 @@
             // Workaround for GOF-704 IE9/IE10 mixed inline/external media query bug
             @ie7-offset-horizontal-top   : 5px;
             @vertical-padding            : (@input-height - (2 * @button-border-width) - @button-line-height) / 2;
+
             background-color             : @color-button;
             border                       : @button-border-width solid @color-button;
             border-radius                : @border-radius-md;
@@ -555,6 +556,7 @@
             min-height: 450px;
         }
     };
+
     @md : {
         .@{targetClass} {
             .itemResultsCard {
@@ -590,6 +592,7 @@
             }
         }
     };
+
     @sm : {
         .@{targetClass} {
             .itemcost .i-baggage-x {
@@ -742,6 +745,7 @@
             }
         }
     };
+
     @xxs: {
         .@{targetClass} {
             .itemResultsCard {

@@ -1,4 +1,5 @@
 /*Each line is one test unit, but multiple units (or all) can run at once*/
+
 $blue: #3bbfce;
 $margin: 16px;
 .content-navigation {
