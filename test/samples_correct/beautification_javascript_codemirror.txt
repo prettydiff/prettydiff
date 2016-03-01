@@ -4581,6 +4581,7 @@
         if (!pos || presto) {
             return; // Opera is difficult.
         }
+
         // Reset the current text selection only if the click is done outside of the
         // selection and 'resetSelectionOnContextMenu' option is true.
         var reset = cm.options.resetSelectionOnContextMenu;
@@ -6863,6 +6864,7 @@
             cm.undoSelection();
         }
     };
+
 
     // STANDARD KEYMAPS
 
@@ -9876,6 +9878,7 @@
         return n + i;
     }
 
+
     // Find the height above the given line.
     function heightAtLine(lineObj) {
         lineObj = visualLine(lineObj);
@@ -11338,6 +11341,7 @@
 
     return codeMirror;
 });
+
 
 //foldgutter.js
 (function (mod) {
@@ -14096,6 +14100,7 @@
                 return scriptingMode.token(stream, state.scriptState);
             }
         }
+
 
         return {
             copyState : function (state) {

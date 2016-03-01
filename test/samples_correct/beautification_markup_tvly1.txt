@@ -182,6 +182,7 @@
             rel="stylesheet"
             type="text/css" />
 
+
     </head>
 
     <body>
@@ -304,6 +305,7 @@
                     width: 128px;
                 }
             </style>
+
 
             <div id="nav">
                 <div class="nav-wrapper">
@@ -3177,6 +3179,7 @@
                                                     <div class="clear"></div>
                                                 </div>
 
+
                                             </li>
                                             <li class="cb-row">
                                                 <div class="span-3">
@@ -4545,6 +4548,7 @@
                                                 <div class="span-5 last prefix-3 cb-form-column">
                                                     <div class="clear">
 
+
                                                         <input
                                                             alt="Search for Hotel + Cars"
                                                             class="cb-span-5 cb-submit"
@@ -4870,6 +4874,7 @@
 
                                 </div>
 
+
                                 <div class="deal-alert-signup">
                                     <div class="error-msg" id="sm-div-existing-account" style="display:none">
                                         <div class="error-icon">
@@ -4933,6 +4938,7 @@
                                 <span class="clear"></span>
                             </div>
                         </div>
+
 
                     </div>
                     <!-- #leftColumn -->
@@ -5026,6 +5032,7 @@
                                             href="http://leisure.travelocity.com/Promotions/0,,TRAVELOCITY|2045|pkg_main,00.html?locLink=GLB_HOMEPAGE|DESSTORE"
                                             rel="nofollow">Save up to 65%</a>
                                     </li>
+
 
                                     <li>
                                         <a
@@ -5267,10 +5274,12 @@
             </div>
             <!-- end #pageID -->
 
+
             <!-- TRAVELOCITY_cobrand.lib FOOTER -->
             <div id="foofaUS">
                 <!-- homepage -->
             </div>
+
 
             <div class="pre-footer clearfix" id="pre-footer">
                 <div class="pre-footer-info">
@@ -5298,6 +5307,7 @@
 
         </div>
         <!--  end Content Area -->
+
 
         <div class="footer-bungee-v1" id="footer-bungee-v1">
             <div class="tvl-links">
@@ -5403,6 +5413,7 @@
                     <li class="sprite-uk_sm">
                         <a href="http://www.travelocity.co.uk/" title="United Kingdom">United Kingdom</a>
                     </li>
+
 
                 </ul>
             </div>
@@ -18274,6 +18285,7 @@
             jQuery(document)
                 .ready(function () {
 
+
                     jQuery("#tabs")
                         .css("display", "")
                         .tabs({
@@ -18286,6 +18298,7 @@
                             },
                             spinner: ""
                         });
+
 
                     (function () {
                         if (typeof(Subscriptions) !== "object") {
@@ -18447,6 +18460,7 @@
                 jQuery("#ho-to, #hcx-to").bind("autocompleteselect", false);
             });
         </script>
+
 
         <script id="dealsTemplate" type="text/x-jquery-tmpl">
             <tr>

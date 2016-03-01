@@ -1483,7 +1483,7 @@ var prettydiff = function prettydiff_(api) {
                     builder.script.diff, //12
                     builder.html.end //13
                 ],
-                setlangmode = function core__langkey_setlangmode(input) {
+                setlangmode = function core__setlangmode(input) {
                     if (input === "css" || input === "less" || input === "scss") {
                         return "css";
                     }
@@ -1507,7 +1507,7 @@ var prettydiff = function prettydiff_(api) {
                     }
                     return "javascript";
                 },
-                nameproper  = function core__langkey_nameproper(input) {
+                nameproper  = function core__nameproper(input) {
                     if (input === "javascript") {
                         return "JavaScript";
                     }
@@ -1665,8 +1665,6 @@ var prettydiff = function prettydiff_(api) {
                     langdefault    : (typeof api.langdefault === "string")
                         ? setlangmode(api.langdefault.toLowerCase())
                         : "text",
-                    //lineendcrlf - if the line terminator should be 'crlf' instead of 'lf'
-                    lineendcrlf    : (api.lineendcrlf === true || api.lineendcrlf === "true"),
                     // methodchain - if JavaScript method chains should be strung onto a single line
                     // instead of indented
                     methodchain    : (api.methodchain === "chain" || api.methodchain === "none")
@@ -1691,7 +1689,15 @@ var prettydiff = function prettydiff_(api) {
                         ? api.objsort
                         : "none",
                     //preserve - should empty lines be preserved in beautify operations of JSPretty?
-                    preserve       : (api.preserve === "all"),
+                    preserve       : (function core__optionPreserve() {
+                        if (api.preserve === 1 || api.preserve === undefined || api.preserve === true || api.preserve === "all" || api.preserve === "js" || api.preserve === "css") {
+                            return 1;
+                        }
+                        if (api.preserve === false || isNaN(api.preserve) === true || Number(api.preserve) < 1 || api.preserve === "none") {
+                            return 0;
+                        }
+                        return Number(api.preserve);
+                    }()),
                     // quote - should all single quote characters be converted to double quote
                     // characters during a diff operation to reduce the number of false positive
                     // comparisons
@@ -1771,7 +1777,7 @@ var prettydiff = function prettydiff_(api) {
                         join   = "",
                         flaga  = false,
                         flagb  = false,
-                        output = function core__langkey_auto_output(langname) {
+                        output = function core__auto_output(langname) {
                             if (langname === "unknown") {
                                 return [
                                     options.langdefault,
@@ -2170,9 +2176,6 @@ var prettydiff = function prettydiff_(api) {
                     }
                 };
             pdcomment();
-            if (api.preserve === true || api.preserve === "true") {
-                options.preserve = "all";
-            }
             if (api.alphasort === true || api.alphasort === "true" || api.objsort === true || api.objsort === "true") {
                 options.objsort = "all";
             }
@@ -2374,7 +2377,7 @@ var prettydiff = function prettydiff_(api) {
                 global.report    = "diff";
                 options.vertical = false;
                 options.jsscope  = false;
-                options.preserve = false;
+                options.preserve = 0;
                 if (options.diffcomments === false) {
                     options.comments = "nocomment";
                 }
@@ -2485,22 +2488,22 @@ global.edition        = {
     },
     api          : {
         dom      : 160223, //dom.js
-        nodeLocal: 160224, //node-local.js
-        wsh      : 160223
+        nodeLocal: 160229, //node-local.js
+        wsh      : 160229
     },
     css          : 160223, //css files
-    csspretty    : 160224, //csspretty lib
+    csspretty    : 160229, //csspretty lib
     csvpretty    : 151130, //csvpretty lib
     diffview     : 160223, //diffview lib
-    documentation: 160223, //documentation.xhtml
-    jspretty     : 160215, //jspretty lib
+    documentation: 160229, //documentation.xhtml
+    jspretty     : 160229, //jspretty lib
     latest       : 0,
-    lint         : 160223, //unit test and lint automation as test/lint.js
-    markuppretty : 160223, //markuppretty lib
-    prettydiff   : 160223, //this file
+    lint         : 160229, //unit test and lint automation as test/lint.js
+    markuppretty : 160229, //markuppretty lib
+    prettydiff   : 160229, //this file
     safeSort     : 160224, //safeSort lib
-    version      : "1.16.22", //version number
-    webtool      : 160214
+    version      : "1.16.23", //version number
+    webtool      : 160229
 };
 global.edition.latest = (function edition_latest() {
     "use strict";

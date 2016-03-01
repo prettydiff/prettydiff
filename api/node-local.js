@@ -1495,7 +1495,7 @@ Examples:
             noleadzero     : false,
             objsort        : "js",
             output         : "",
-            preserve       : "all",
+            preserve       : 1,
             quote          : false,
             quoteConvert   : "none",
             readmethod     : "auto",
@@ -1897,11 +1897,7 @@ Examples:
             a.push("                           the output.  If the directory path or file exists it");
             a.push("                           will be over written else it will be created.");
             a.push("");
-            a.push("* preserve     - string  - Should empty lines be removed during JavaScript or");
-            a.push("                           CSS beautification? Default value is 'js', which");
-            a.push("                           retains one empty line for any series of empty lines");
-            a.push("                           in the JavaScript code input.");
-            a.push("                 Accepted values: all, css, js, none");
+            a.push("* preserve     - number  - The maximum number of empty lines to retain.");
             a.push("");
             a.push("* quote        - boolean - If true and mode is 'diff' then all single quote");
             a.push("                           characters will be replaced by double quote");
@@ -2457,7 +2453,7 @@ Examples:
                     fs
                         .stat(start, function pdNodeLocal__directory_readDir_stat(erra, stat) {
                             var item    = {},
-                                dirtest = function pdNodeLocal__directory_readDir_stat_dirtest(itempath, lastitem) {
+                                dirtest = function pdNodeLocal__directory_readDir_stat_dirtest(itempath) {
                                     var pusher     = function pdNodeLocal__directory_readDir_stat_dirtest_pusher(itempath) {
                                             if (listtype === "diff") {
                                                 dfiles
@@ -2565,7 +2561,7 @@ Examples:
                                                 }
                                             }
                                         };
-                                    if (itempath === "" && lastitem === true) {
+                                    if (itempath === "") {
                                         preprocess();
                                     } else {
                                         fs
@@ -2593,7 +2589,10 @@ Examples:
                                                     }
                                                     console.log(itempath + lf + "is an unsupported type");
                                                 }
-                                                if (lastitem === true && ((options.mode === "diff" && sfiles.count === sfiles.total && dfiles.count === dfiles.total && sfiles.directories === 0 && dfiles.directories === 0) || (options.mode !== "diff" && item.directories === 0 && item.count === item.total))) {
+                                                if (options.mode === "diff" && sfiles.count === sfiles.total && dfiles.count === dfiles.total && sfiles.directories === 0 && dfiles.directories === 0)  {
+                                                    return preprocess();
+                                                }
+                                                if (options.mode !== "diff" && item.directories === 0 && item.count === item.total) {
                                                     return preprocess();
                                                 }
                                             });
@@ -2619,7 +2618,7 @@ Examples:
                                                 return console.log(errd);
                                             }
                                             if ((options.mode === "diff" && sfiles.count === sfiles.total && dfiles.count === dfiles.total && sfiles.directories === 0 && dfiles.directories === 0) || (options.mode !== "diff" && sfiles.directories === 0 && sfiles.count === sfiles.total)) {
-                                                dirtest("", true);
+                                                dirtest("");
                                             }
                                             return;
                                         }
@@ -2632,9 +2631,9 @@ Examples:
                                         for (x = 0; x < filetotal; x += 1) {
                                             if (x === filetotal - 1) {
                                                 item.directories -= 1;
-                                                dirtest(start + path.sep + files[x], true);
+                                                dirtest(start + path.sep + files[x]);
                                             } else {
-                                                dirtest(start + path.sep + files[x], false);
+                                                dirtest(start + path.sep + files[x]);
                                             }
                                         }
                                     });
@@ -2909,10 +2908,12 @@ Examples:
                 } else if (d[b][0] === "output" && d[b][1].length > 0) {
                     options.output = pathslash(d[b][0], d[b][1]);
                 } else if (d[b][0] === "preserve") {
-                    if (d[b][1] === "all" || d[b][1] === "none" || d[b][1] === "css" || d[b][1] === "js") {
-                        options.preserve = d[b][1];
-                    } else if (d[b][1] === "true") {
-                        options.preserve = "all";
+                    if (d[b][1] === 1 || d[b][1] === undefined || d[b][1] === "true" || d[b][1] === "all" || d[b][1] === "js" || d[b][1] === "css") {
+                        options.preserve = 1;
+                    } else if (d[b][1] === "false" || isNaN(d[b][1]) === true || Number(d[b][1]) < 1 || d[b][1] === "none") {
+                        options.preserve = 0;
+                    } else {
+                        options.preserve = Number(d[b][1]);
                     }
                 } else if (d[b][0] === "quote" && d[b][1] === "true") {
                     options.quote = true;

@@ -5130,7 +5130,6 @@ var pd     = {},
                     html           = pd.id("html-yes"),
                     jscorrect      = pd.id("jscorrect-yes"),
                     jshtml         = pd.id("jsscope-html"),
-                    jslinesa       = pd.id("bjslines-all"),
                     jsspace        = pd.id("jsspace-no"),
                     methodchainc   = pd.id("bmethodchain-chain"),
                     methodchaini   = pd.id("bmethodchain-indent"),
@@ -5143,6 +5142,7 @@ var pd     = {},
                     objsortj       = pd.id("bobjsort-jsonly"),
                     objsortm       = pd.id("bobjsort-markuponly"),
                     offset         = pd.id("inlevel"),
+                    preserve       = pd.id("bpreserve"),
                     quantity       = pd.id("beau-quan"),
                     quotecond      = pd.id("bquoteconvert-double"),
                     quotecons      = pd.id("bquoteconvert-single"),
@@ -5259,10 +5259,8 @@ var pd     = {},
                 } else {
                     api.objsort = "none";
                 }
-                if (jslinesa !== null && jslinesa.checked === true) {
-                    api.preserve = "all";
-                } else {
-                    api.preserve = "none";
+                if (preserve !== null) {
+                    api.preserve = preserve.value;
                 }
                 if (quotecond !== null && quotecond.checked === true) {
                     api.quoteConvert = "double";
@@ -5399,7 +5397,6 @@ var pd     = {},
                     forceIndent     = pd.id("dforce_indent-yes"),
                     html            = pd.id("htmld-yes"),
                     inline          = pd.id("inline"),
-                    jslinesa        = pd.id("djslines-all"),
                     methodchain     = pd.id("dmethodchain-yes"),
                     newLabel        = pd.id("newlabel"),
                     nocaseindent    = pd.id("dnocaseindent-yes"),
@@ -5407,6 +5404,7 @@ var pd     = {},
                     objsortc        = pd.id("dobjsort-cssonly"),
                     objsortj        = pd.id("dobjsort-jsonly"),
                     objsortm        = pd.id("dobjsort-markuponly"),
+                    preserve        = pd.id("dpreserve"),
                     quantity        = pd.id("diff-quan"),
                     quote           = pd.id("diffquoten"),
                     selectorlist    = pd.id("dselectorlist-yes"),
@@ -5474,10 +5472,8 @@ var pd     = {},
                 } else {
                     api.objsort = "none";
                 }
-                if (jslinesa !== null && jslinesa.checked === true) {
-                    api.preserve = "all";
-                } else {
-                    api.preserve = "none";
+                if (preserve !== null) {
+                    api.preserve = preserve.value;
                 }
                 api.quote        = (quote !== null && quote.checked !== false);
                 api.selectorlist = (selectorlist !== null && selectorlist.checked === true);
@@ -6097,7 +6093,7 @@ var pd     = {},
                         .app
                         .options(x);
                 }
-            } else if (x === pd.data.node.modeBeau) {
+            } else if (x === pd.data.node.modeBeau || x === pd.id("jsscope-no")) {
                 restore();
             } else {
                 pd

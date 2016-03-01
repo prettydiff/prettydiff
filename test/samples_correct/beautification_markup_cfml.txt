@@ -1,9 +1,11 @@
 <cfset tags=GetTagList() />
 
+
 <cfset bodies=structNew() />
 <cfset namespace="cf" />
 <cfset tags=tags[namespace] />
 <cfset maxLength=0 />
+
 
 <cfloop index="tagname" list="#StructKeyList(tags)#">
     <cfset tag=getTagData(namespace, tagname) />
@@ -14,7 +16,9 @@
 
     <cfset ArrayAppend(bodies[tag.bodyType], tagname) />
 
+
 </cfloop>
+
 
 <cfoutput>
     <table>
@@ -26,6 +30,7 @@
                 </cfif>
                 <cfset ArraySort(bodies[key], "text", "asc") />
             </cfloop>
+
 
             <cfloop from="1" index="i" to="#maxLength#">
                 <tr>
@@ -172,6 +177,7 @@
 
             <cfset var l=structNew() />
 
+
             <cfquery name="l.cinfo" datasource="#getDSN()#">
                 SELECT d.id as dataset_id, d.period, l.receiving_date FROM line_container l, dataset_container d
                 WHERE l.id = <cfqueryparam cfsqltype="cf_sql_integer" value="#arguments.line_id#" />
@@ -180,6 +186,7 @@
             <cfset l.true_period="1/#Month(l.cinfo.receiving_date)#/#Year(l.cinfo.receiving_date)#" />
             <cfreturn l />
         </CFFUNCTION>
+
 
         <cfquery name="q" datasource="#getDSN()#">
             SELECT *
@@ -198,6 +205,7 @@
                 </cfif>
             </cfif>
         </cfquery>
+
 
         <cfcomponent extends="BaseComponent">
 

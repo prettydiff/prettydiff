@@ -80,29 +80,6 @@ var HelloMessage = React.createClass({
 });
 React.render(<HelloMessage name="John"/>, mountNode);
 
-var Timer = React.createClass({
-    componentDidMount   : function () {
-        this.interval = setInterval(this.tick, 1000);
-    },
-    componentWillUnmount: function () {
-        clearInterval(this.interval);
-    },
-    getInitialState     : function () {
-        return {secondsElapsed: 0};
-    },
-    render              : function () {
-        return (
-            <div>Seconds Elapsed:
-                {this.state.secondsElapsed}</div>
-        );
-    },
-    tick                : function () {
-        this.setState({
-            secondsElapsed: this.state.secondsElapsed + 1
-        });
-    }
-});
-React.render(<Timer/>, mountNode);
 
 var Timer = React.createClass({
     componentDidMount   : function () {
@@ -127,6 +104,32 @@ var Timer = React.createClass({
     }
 });
 React.render(<Timer/>, mountNode);
+
+
+var Timer = React.createClass({
+    componentDidMount   : function () {
+        this.interval = setInterval(this.tick, 1000);
+    },
+    componentWillUnmount: function () {
+        clearInterval(this.interval);
+    },
+    getInitialState     : function () {
+        return {secondsElapsed: 0};
+    },
+    render              : function () {
+        return (
+            <div>Seconds Elapsed:
+                {this.state.secondsElapsed}</div>
+        );
+    },
+    tick                : function () {
+        this.setState({
+            secondsElapsed: this.state.secondsElapsed + 1
+        });
+    }
+});
+React.render(<Timer/>, mountNode);
+
 
 var TodoList = React.createClass({
     render: function () {
@@ -169,6 +172,7 @@ var TodoApp = React.createClass({
     }
 });
 React.render(<TodoApp/>, mountNode);
+
 
 var converter = new Showdown.converter();
 var MarkdownEditor = React.createClass({

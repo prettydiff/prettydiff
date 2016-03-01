@@ -223,14 +223,14 @@
                                     }
                                     if (lcount < 7) {
                                         lcount += 1;
-                                        if (report[4][aa] === "delete") {
+                                        if (report[4][aa] === "delete" && report[0][aa] !== report[0][aa + 1]) {
                                             if (report[1][aa] === "") {
                                                 report[1][aa] = "(empty line)";
                                             } else if (report[1][aa].replace(/\ +/g, "") === "") {
                                                 report[1][aa] = "(indentation)";
                                             }
                                             console.log(colors.del.lineStart + report[1][aa].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
-                                        } else if (report[4][aa] === "insert") {
+                                        } else if (report[4][aa] === "insert" && report[2][aa] !== report[2][aa + 1]) {
                                             if (report[3][aa] === "") {
                                                 report[3][aa] = "(empty line)";
                                             } else if (report[3][aa].replace(/\ +/g, "") === "") {
@@ -262,7 +262,7 @@
                             mode        : "beautify",
                             nocaseindent: false,
                             objsort     : "all",
-                            preserve    : true,
+                            preserve    : 2,
                             quoteConvert: "double",
                             spaceclose  : true,
                             varword     : "none",
@@ -600,7 +600,7 @@
                         console.log("\x1B[36mTesting package.json beautification...\x1B[39m");
                         options.source = data;
                         prettydata     = prettydiff(options)[0];
-                        if (data !== prettydata) {
+                        if (data.replace(/(\s+)$/, "") !== prettydata) {
                             console.log("");
                             console.log(prettydata);
                             errout("\x1B[31mPretty Diff corrupted package.json\x1B[36m");

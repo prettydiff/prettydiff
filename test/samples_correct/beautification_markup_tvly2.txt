@@ -2,6 +2,7 @@
 <html class="no-js" xmlns:fb="http://ogp.me/ns/fb#">
     <head>
 
+
         <!--<COMMENT TITLE="MONITOR"></COMMENT>-->
         <meta content="GENERAL" name="rating" />
         <meta content="noodp" name="robots" />
@@ -40,6 +41,7 @@
         <script
             src="/minify/external.yui.bundle.min-min-3495740330.js?v=release-2014-02-r1-2874-962065-2"></script>
         <!-- 0 ms -->
+
 
         <script type="text/javascript">
             var calConfig = exp.core.date.CalendarControl.config = exp.core.date.CalendarControl.Config;
@@ -348,6 +350,7 @@
             }
             /* End SEO widget */
 
+
             /* begin Travel Tools Widget */
             .toolTitles {
                 color          : #004E93;
@@ -427,6 +430,7 @@
         </script>
         <!--ActivityId:ff43ffe3-f243-472d-a963-477dec20da08;-->
 
+
         <script>
             var header_feedBackUrl = "////www.travelocity.com/p/info-other/feedback.htm";
             $LAB.queueScript("/minify/header-bundle-min-2176243423.js?v=release-2014-02-r1-2874-962065-1");
@@ -437,6 +441,7 @@
                     });
             }
         </script>
+
 
         <div class="site-header site-header-primary tv-header ">
 
@@ -659,6 +664,7 @@
                     <ul class="utility-nav nav-group cf">
                         <!-- jdbk-test: model.domain: www.travelocity.com - request.serverName: www.travelocity.com -->
 
+
                         <li class="selected-tab " id="all-in-home-header-link">
                             <a
                                 data-onclick="xp.nav.trackAnalytics(this,'a','Header.Home')"
@@ -785,15 +791,18 @@
             </div>
         </div>
 
+
         <div class="xp-grd-ctn xp-grd-widget xp-b-clearfix" id="xp_hp_contentContainer">
             <div class="xp-grd-col-10 module" id="xp_hp_aCol">
                 <input id="PostToSearch" type="hidden" value="/Search" />
+
 
                 <script
                     src="/minify/exp.search.common.v2-min-109799387.js?v=release-2014-02-r1-2874-962065-1"></script>
                 <!-- 0 ms -->
 
                 <!--[if IE 7]> <style> .xp-w-bx-cnt-lob label {padding-top:0px;} .xp-w-bx-cnt-flightType label {padding-top:0px; } .xp-w-cell-dateField select {margin-top: 1px;} .homepage .xp-w-bx-cnt-inn-bot {padding: 10px 12px 22px; position: relative;} .homepage .xp_uw_lowerMerchContainer{margin-top: -28px; position: relative;} .pbestPriceGuaranteeImage{margin-bottom: 0px;} #flightHotelButton{margin-top: 1px;} #flightHotelCarButton{margin-top: 1px;} </style> <![endif]-->
+
 
                 <script
                     src="/minify/external.zparse-min-2667184730.js?v=release-2014-02-r1-2874-962065-1"></script>
@@ -983,6 +992,7 @@
                                 </div>
                             </div>
 
+
                             <div
                                 class="xp-w-bx-cnt-inn-bot xp-b-clearfix"
                                 id="xp_uw_bottomContainer"
@@ -992,6 +1002,7 @@
                                 </script>
 
                                 <div class="xp-b-clearfix" id="xp_uw_form">
+
 
                                     <script type="text/javascript">
                                         if (typeof(cx.exp.search.common.setABValue) != "undefined") {
@@ -1007,6 +1018,7 @@
                                                 .setABValue("808", "0");
                                         }
                                     </script>
+
 
                                     <div id="uw_flight_wiz">
 
@@ -1097,6 +1109,7 @@
                                                         </li>
                                                     </ul>
                                                 </fieldset>
+
 
                                                 <fieldset id="uw_flight_pnl">
                                                     <div class="xp-w-rnd-inn-cnt">
@@ -1441,6 +1454,7 @@
 
                                                                 </select>
                                                             </div>
+
 
                                                         </div>
                                                     </div>
@@ -2080,6 +2094,7 @@
 
                                             <!-- end of additional options panel -->
 
+
                                             <!-- search button  -->
                                             <p class="xp-b-clearfix uw-submit-button" id="uw-flight-submit">
                                                 <span class="xp-b-right">
@@ -2256,6 +2271,7 @@
                                         id="flChildAgeEntryTemplate"></div>
 
                                     <!-- end of traveller selection panel -->
+
 
                                     <script id="flightOnlyJs" type="text/javascript">
                                         flightOnlyFn = function (model) {
@@ -2504,6 +2520,7 @@
                                         width="150" /></a>
                                 </div>
 
+
                             </div>
                         </div>
                         <div class="xp-w-rnd-inn-wht-bot">
@@ -2557,6 +2574,7 @@
                         .Dom
                         .getElementsByClassName("wizardRadio", "input", "xp_uw_lobContainer");
                     cx.exp.widgetlibrary.search.common.container.selectedRadioButton = null; //will be init in the .subscribeAllEvents function
+
 
                     // for drop down - AJAX call
                     expNamespace("cx.exp.widgetlibrary.search.common.dropdown");
@@ -2699,6 +2717,7 @@
                         success : cx.exp.widgetlibrary.search.common.dropdown.AjaxObject.handleSuccess,
                         timeout : cx.exp.widgetlibrary.search.common.container.ajaxTimeout
                     };
+
 
                     //enable/disable state of LOB selector radio buttons
                     cx.exp.widgetlibrary.search.common.container.disableRadioButtons      = function (state) {
@@ -2876,6 +2895,7 @@
                             }
                         }
                     };
+
 
                     cx.exp.widgetlibrary.search.common.dropdown.hideOrShowBPG             = function (wizardType) {
                         if ($("#lowerMerchContainer").length) {
@@ -3131,6 +3151,7 @@
                         .onDOMReady(cx.exp.widgetlibrary.search.common.container.subscribeAllEvents);
                 </script>
 
+
                 <script type="text/javascript">
                     try {
                         if (window.jQuery) {
@@ -3158,6 +3179,7 @@
                         }, delay);
                     }
                 </script>
+
 
                 <div class="box " id="travelocity_gastr">
                     <br />
@@ -3193,6 +3215,7 @@
                     }
 
                 </style>
+
 
                 <iframe
                     allowtransparency="true"
@@ -3232,7 +3255,9 @@
                 </script>
                 <div style="height:18px;"></div>
 
+
                 <div style="font-family:Arial;font-size:12px;width:416px;">
+
 
                     <link
                         href="/static/publish/region_us/css/slider.css"
@@ -3327,10 +3352,12 @@
                     <div style="clear:both;"></div>
                 </div>
 
+
             </div>
             <div id="belowColWide">
                 <!--[if lt IE 8]> <style type="text/css"> .dividerLine { margin: 25px 0px 12px 0px;} span.offerline2 { content: "."; display: inline-block; height: 12px; clear: both; } </style> <![endif]-->
                 <script src="/static/publish/travelocity/js/adslider.js"></script>
+
 
                 <style>
                     .HPSectionInfo a:link,
@@ -3512,6 +3539,7 @@
                     <div class="adcontainer" id="now_adcontainer">
                         <div class="inner_adcontainer" id="now_ads">
 
+
                             <div class="adBox" style="left: 0px;">
                                 <div class="adcontent">
                                     <a
@@ -3529,6 +3557,7 @@
 
                                 </div>
                             </div>
+
 
                             <div class="adBox" style="left: 162px;">
                                 <div class="adcontent">
@@ -3548,6 +3577,7 @@
                                 </div>
                             </div>
 
+
                             <div class="adBox" style="left: 324px;">
                                 <div class="adcontent">
                                     <a href="http://www.travelocity.com/vc/flights-sem/ski/?mcicid=249426350"><img
@@ -3562,6 +3592,7 @@
 
                                 </div>
                             </div>
+
 
                             <div class="adBox" style="left: 486px;">
                                 <div class="adcontent">
@@ -3581,6 +3612,7 @@
                                 </div>
                             </div>
 
+
                             <div class="adBox" style="left: 648px;">
                                 <div class="adcontent">
                                     <a
@@ -3599,6 +3631,7 @@
                                 </div>
                             </div>
 
+
                             <div class="adBox" style="left: 810px;">
                                 <div class="adcontent">
                                     <a
@@ -3616,6 +3649,7 @@
 
                                 </div>
                             </div>
+
 
                             <div class="adBox" style="left: 972px;">
                                 <div class="adcontent">
@@ -3666,6 +3700,7 @@
                     <div class="adcontainer" id="everyday_adcontainer">
                         <div class="inner_adcontainer" id="everyday_ads">
 
+
                             <div class="adBox" style="left: 0px;">
                                 <div class="adcontent">
                                     <a
@@ -3683,6 +3718,7 @@
 
                                 </div>
                             </div>
+
 
                             <div class="adBox" style="left: 162px;">
                                 <div class="adcontent">
@@ -3702,6 +3738,7 @@
                                 </div>
                             </div>
 
+
                             <div class="adBox" style="left: 324px;">
                                 <div class="adcontent">
                                     <a
@@ -3719,6 +3756,7 @@
 
                                 </div>
                             </div>
+
 
                             <div class="adBox" style="left: 486px;">
                                 <div class="adcontent">
@@ -3755,6 +3793,7 @@
                     </script>
                 </div>
                 <div class="dividerLine clear"></div>
+
 
                 <div class="column HPWhyCol">
                     <h2 class="ExpediaHeadings">
@@ -3804,6 +3843,7 @@
 
                 <div class="dividerLine clear top16"></div>
                 <!-- need to use newsletter_wide -->
+
 
                 <div class="HPETravel">
                     <div class="column HPETravelCol1">
@@ -3855,6 +3895,7 @@
 
                 <div class="dividerLine clear"></div>
 
+
                 <p class="legaltext">
                     <span class="belowClmnLegalText">*Savings based on vacation package bookings in
                         2011 as compared to the price of the same components booked separately. Savings
@@ -3863,6 +3904,7 @@
                 </p>
             </div>
         </div>
+
 
         <script>
             (function (w) {
@@ -3912,6 +3954,7 @@
         <!--[if IE 7 ]> <div class="no-uitk ie7"> <![endif]-->
         <div class="no-uitk">
 
+
             <div class="site-footer-background tv-footer" id="site-footer-background">
                 <div class="site-footer-wrap cols-nested" id="site-footer-wrap">
 
@@ -3922,6 +3965,7 @@
                         <span class="logo" id="footer-logo">Travelocity</span>
                     </div>
                     <div class="site-footer cf sub-footer" role="contentinfo">
+
 
                         <ul class="expedia-links" id="expedia-links">
                             <li>
@@ -4164,6 +4208,7 @@
                             </li>
                         </ul>
 
+
                         <p class="legal" id="legal">
                             &copy; 1996-2014 Travelocity.com LP. All rights reserved. Travelocity, the Stars
                             Design, and The Roaming Gnome Design are trademarks of Travelocity.com LP. Use
@@ -4178,7 +4223,9 @@
                 </div>
             </div>
 
+
         </div>
+
 
         <div style="display:none;">
             <input id="pageId" type="hidden" value="Homepage" />
@@ -4257,6 +4304,7 @@
             s_exp.prop11 = "-1";
             s_exp.prop12 = "94f178d3d3a34bac90dcb123db6b1d58";
 
+
             if (typeof(s_prop34) != "undefined") {
                 s_exp.prop34 = s_prop34;
                 s_exp.eVar34 = s_prop34;
@@ -4271,6 +4319,7 @@
                     PLSetABTestIDAndValue(OmnitureABIds[i]);
                 }
             }
+
 
             s_exp.eVar2  = s_exp.prop2;
             s_exp.eVar3  = s_exp.prop3;
@@ -4295,6 +4344,7 @@
             s_exp.eVar37 = "";
             s_exp.prop37 = s_exp.eVar37;
             s_exp.prop10 = "";
+
 
             if (typeof s_exp_products != "undefined") {
                 s_exp.products = s_exp_products;
@@ -4324,6 +4374,7 @@
                 }
             }
             //Homepage
+
 
             if ("undefined" != typeof(s_analyticsLoggingCallback)) {
                 s_analyticsLoggingCallback(s_exp);
@@ -4355,6 +4406,7 @@
             src="/static/default/default/scripts/forceNewWizardBucket.js?v=release-2014-02-r1.2874.962065"
             type="text/javascript"></script>
 
+
         <iframe
             frameborder="0"
             height="1"
@@ -4364,11 +4416,13 @@
             src="http://pixel.fetchback.com/serve/fb/pdj?cat=&name=landing&sid=6055"
             width="1"></iframe>
 
+
         <img
             border="0"
             height="1"
             src="http://www.wtp101.com/pixel?id=18922"
             width="1" />
+
 
         <script type="text/javascript">
             $LAB
@@ -4390,6 +4444,7 @@
                 .runQueue();
         </script>
 
+
         <!-- PART 1: This is the code that will collect the dynamic values; must be placed above PART 2 -->
         <!--
 PLEASE INCLUDE THIS COMMENT ON THE WEB PAGE WITH THE TAG
@@ -4397,6 +4452,7 @@ Remarketing tags may not be associated with personally identifiable information
 or placed on pages related to sensitive categories.  For more information on
 this, see http://google.com/ads/remarketingsetup
 -->
+
 
         <script type="text/javascript">
             var google_tag_params = {
@@ -4425,6 +4481,7 @@ this, see http://google.com/ads/remarketingsetup
             </div>
         </noscript>
 
+
         <script type="text/javascript">
 
             $LAB.queueScript("http://img.pulsemgr.com/script/pm/100/");
@@ -4441,7 +4498,9 @@ this, see http://google.com/ads/remarketingsetup
             $LAB.runQueue();
         </script>
 
+
         <!--2262 == 0 -->
+
 
         <!-- Begin omniture click tracking for homepage wizard radio buttons -->
         <script>

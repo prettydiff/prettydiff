@@ -1,5 +1,11 @@
 # Pretty Diff change log
 
+## v1.16.23
+
+* Changed option `preserve` to a numeric type.  This change allows preservation of a series of empty lines up to the indicated maximum.
+* Fixed a markup defect related to files terminating in a closing script or style tag.
+* Removed a rare instability in command line operations.
+
 ## v1.16.22
 
 * Fixed #274

@@ -191,6 +191,7 @@
             : string;
     };
 
+
     /**
  * @ngdoc function
  * @name angular.uppercase
@@ -205,6 +206,7 @@
             ? string.toUpperCase()
             : string;
     };
+
 
     var manualLowercase = function (s) {
         /* jshint bitwise: false */
@@ -223,6 +225,7 @@
             : s;
     };
 
+
     // String#toLowerCase and String#toUpperCase don't produce correct results in
     // browsers with Turkish locale, for this reason we need to detect this case and
     // redefine lowercase/uppercase methods with correct but slower alternatives.
@@ -230,6 +233,7 @@
         lowercase = manualLowercase;
         uppercase = manualUppercase;
     }
+
 
     var/** holds major version number for IE or NaN for real browsers */
         msie,
@@ -239,6 +243,7 @@
         push     = [].push,
         toString = Object.prototype.toString,
         ngMinErr = minErr("ng"),
+
 
         _angular = window.angular,
         /** @name angular */
@@ -255,6 +260,7 @@
     if (isNaN(msie)) {
         msie = int((/trident\/.*; rv:(\d+)/.exec(lowercase(navigator.userAgent)) || [])[1]);
     }
+
 
     /**
  * @private
@@ -350,6 +356,7 @@
         return keys;
     }
 
+
     /**
  * when using forEach the params are value, key, but it is often useful to have key, value.
  * @param {function(string, *)} iteratorFn
@@ -390,6 +397,7 @@
         uid.unshift("0");
         return uid.join("");
     }
+
 
     /**
  * Set or clear the hashkey for an object.
@@ -435,6 +443,7 @@
         return parseInt(str, 10);
     }
 
+
     function inherit(parent, extra) {
         return extend(new(extend(function () {}, {prototype: parent}))(), extra);
     }
@@ -457,6 +466,7 @@
     function noop() {}
     noop.$inject = [];
 
+
     /**
  * @ngdoc function
  * @name angular.identity
@@ -476,6 +486,7 @@
         return $;
     }
     identity.$inject = [];
+
 
     function valueFn(value) {
         return function () {
@@ -498,6 +509,7 @@
         return typeof value === "undefined";
     }
 
+
     /**
  * @ngdoc function
  * @name angular.isDefined
@@ -512,6 +524,7 @@
     function isDefined(value) {
         return typeof value !== "undefined";
     }
+
 
     /**
  * @ngdoc function
@@ -529,6 +542,7 @@
         return value != null && typeof value === "object";
     }
 
+
     /**
  * @ngdoc function
  * @name angular.isString
@@ -543,6 +557,7 @@
     function isString(value) {
         return typeof value === "string";
     }
+
 
     /**
  * @ngdoc function
@@ -559,6 +574,7 @@
         return typeof value === "number";
     }
 
+
     /**
  * @ngdoc function
  * @name angular.isDate
@@ -573,6 +589,7 @@
     function isDate(value) {
         return toString.call(value) === "[object Date]";
     }
+
 
     /**
  * @ngdoc function
@@ -589,6 +606,7 @@
         return toString.call(value) === "[object Array]";
     }
 
+
     /**
  * @ngdoc function
  * @name angular.isFunction
@@ -604,6 +622,7 @@
         return typeof value === "function";
     }
 
+
     /**
  * Determines if a value is a regular expression object.
  *
@@ -614,6 +633,7 @@
     function isRegExp(value) {
         return toString.call(value) === "[object RegExp]";
     }
+
 
     /**
  * Checks if `obj` is a window object.
@@ -626,17 +646,21 @@
         return obj && obj.document && obj.location && obj.alert && obj.setInterval;
     }
 
+
     function isScope(obj) {
         return obj && obj.$evalAsync && obj.$watch;
     }
+
 
     function isFile(obj) {
         return toString.call(obj) === "[object File]";
     }
 
+
     function isBoolean(value) {
         return typeof value === "boolean";
     }
+
 
     var trim = (function () {
         // native trim is way faster: http://jsperf.com/angular-trim-test but IE doesn't
@@ -657,6 +681,7 @@
                 : value;
         };
     })();
+
 
     /**
  * @ngdoc function
@@ -687,6 +712,7 @@
         return obj;
     }
 
+
     if (msie < 9) {
         nodeName_ = function (element) {
             element = element.nodeName
@@ -704,6 +730,7 @@
         };
     }
 
+
     function map(obj, iterator, context) {
         var results = [];
         forEach(obj, function (value, index, list) {
@@ -711,6 +738,7 @@
         });
         return results;
     }
+
 
     /**
  * @description
@@ -740,6 +768,7 @@
 
         return count;
     }
+
 
     function includes(array, obj) {
         return indexOf(array, obj) != -1;
@@ -892,6 +921,7 @@
         return dst;
     }
 
+
     /**
  * @ngdoc function
  * @name angular.equals
@@ -979,9 +1009,11 @@
         return false;
     }
 
+
     function csp() {
         return (document.securityPolicy && document.securityPolicy.isActive) || (document.querySelector && !!(document.querySelector("[ng-csp]") || document.querySelector("[data-ng-csp]")));
     }
+
 
     function concat(array1, array2, index) {
         return array1.concat(slice.call(array2, index));
@@ -990,6 +1022,7 @@
     function sliceArgs(args, startIndex) {
         return slice.call(args, startIndex || 0);
     }
+
 
     /* jshint -W101 */
     /**
@@ -1032,6 +1065,7 @@
         }
     }
 
+
     function toJsonReplacer(key, value) {
         var val = value;
 
@@ -1047,6 +1081,7 @@
 
         return val;
     }
+
 
     /**
  * @ngdoc function
@@ -1070,6 +1105,7 @@
             : null);
     }
 
+
     /**
  * @ngdoc function
  * @name angular.fromJson
@@ -1086,6 +1122,7 @@
             ? JSON.parse(json)
             : json;
     }
+
 
     function toBoolean(value) {
         if (typeof value === "function") {
@@ -1128,6 +1165,7 @@
 
     }
 
+
     /////////////////////////////////////////////////
 
     /**
@@ -1145,6 +1183,7 @@
             // Ignore any invalid uri component
         }
     }
+
 
     /**
  * Parses an escaped url query string into key-value pairs.
@@ -1196,6 +1235,7 @@
             : "";
     }
 
+
     /**
  * We need our custom method because encodeURIComponent is too aggressive and doesn't follow
  * http://www.ietf.org/rfc/rfc3986.txt with regards to the character set (pchar) allowed in path
@@ -1213,6 +1253,7 @@
             .replace(/%3D/gi, "=")
             .replace(/%2B/gi, "+");
     }
+
 
     /**
  * This method is intended for encoding *key* or *value* parts of query component. We need a custom
@@ -1235,6 +1276,7 @@
                 ? "%20"
                 : "+"));
     }
+
 
     /**
  * @ngdoc directive
@@ -1744,6 +1786,7 @@
            */
                         name        : name,
 
+
                         /**
            * @ngdoc method
            * @name angular.Module#provider
@@ -1904,6 +1947,7 @@
     $WindowProvider
 */
 
+
     /**
  * @ngdoc property
  * @name angular.version
@@ -1924,6 +1968,7 @@
         major   : 1, // package task
         minor   : 2
     };
+
 
     function publishExternalAPI(angular) {
         extend(angular, {
@@ -2161,6 +2206,7 @@
         return jqId += 1;
     }
 
+
     var SPECIAL_CHARS_REGEXP = /([\:\-\_]+(.))/g;
     var MOZ_HACK_REGEXP = /^moz([A-Z])/;
     var jqLiteMinErr = minErr("jqLite");
@@ -2274,6 +2320,7 @@
         if (!handle) {
             return; //no listeners registered
         }
+
         if (isUndefined(type)) {
             forEach(events, function (eventHandler, type) {
                 removeEventListenerFn(element, type, eventHandler);
@@ -3113,6 +3160,7 @@
  * </pre>
  */
 
+
     /**
  * @ngdoc overview
  * @name AUTO
@@ -3349,6 +3397,7 @@
  * @returns {Array.<string>} The names of the services which the function requires.
  */
 
+
     /**
  * @ngdoc object
  * @name AUTO.$provide
@@ -3520,6 +3569,7 @@
  * </pre>
  */
 
+
     /**
  * @ngdoc method
  * @name AUTO.$provide#service
@@ -3562,6 +3612,7 @@
  * </pre>
  */
 
+
     /**
  * @ngdoc method
  * @name AUTO.$provide#value
@@ -3595,6 +3646,7 @@
  * </pre>
  */
 
+
     /**
  * @ngdoc method
  * @name AUTO.$provide#constant
@@ -3622,6 +3674,7 @@
  *   });
  * </pre>
  */
+
 
     /**
  * @ngdoc method
@@ -3654,6 +3707,7 @@
  * </pre>
  */
 
+
     function createInjector(modulesToLoad) {
         var INSTANTIATING    = {},
             providerSuffix   = "Provider",
@@ -3677,6 +3731,7 @@
                 var provider = providerInjector.get(servicename + providerSuffix);
                 return instanceInjector.invoke(provider.$get, provider);
             }));
+
 
         forEach(loadModules(modulesToLoad), function (fn) {
             instanceInjector.invoke(fn || noop);
@@ -4004,7 +4059,9 @@
         "$provide",
         function ($provide) {
 
+
             this.$$selectors = {};
+
 
             /**
    * @ngdoc function
@@ -4575,6 +4632,7 @@
             }
         };
 
+
         /**
    * @name ng.$browser#defer
    * @methodOf ng.$browser
@@ -4600,6 +4658,7 @@
             pendingDeferIds[timeoutId] = true;
             return timeoutId;
         };
+
 
         /**
    * @name ng.$browser#defer.cancel
@@ -4701,6 +4760,7 @@
                         delete caches[cacheId];
                     },
 
+
                     get      : function (key) {
                         var lruEntry = lruHash[key];
 
@@ -4712,6 +4772,7 @@
 
                         return data[key];
                     },
+
 
                     info     : function () {
                         return extend({}, stats, {size: size});
@@ -4739,6 +4800,7 @@
                         return value;
                     },
 
+
                     remove   : function (key) {
                         var lruEntry = lruHash[key];
 
@@ -4759,6 +4821,7 @@
                         size -= 1;
                     },
 
+
                     removeAll: function () {
                         data     = {};
                         size     = 0;
@@ -4766,6 +4829,7 @@
                         freshEnd = staleEnd = null;
                     }
                 };
+
 
                 /**
        * makes the `entry` the freshEnd of the LRU linked list
@@ -4785,6 +4849,7 @@
                     }
                 }
 
+
                 /**
        * bidirectionally links two entries of the LRU linked list
        */
@@ -4799,6 +4864,7 @@
                     }
                 }
             }
+
 
             /**
    * @ngdoc method
@@ -4818,6 +4884,7 @@
                 return info;
             };
 
+
             /**
    * @ngdoc method
    * @name ng.$cacheFactory#get
@@ -4832,6 +4899,7 @@
             cacheFactory.get  = function (cacheId) {
                 return caches[cacheId];
             };
+
 
             return cacheFactory;
         };
@@ -4908,6 +4976,7 @@
  * - "childLinkFn" -  function that aggregates all linking fns for child nodes of a particular node
  * - "compositeLinkFn" - function that aggregates all linking fns for a compilation root (nodeList)
  */
+
 
     /**
  * @ngdoc function
@@ -5455,6 +5524,7 @@
             return this;
         };
 
+
         /**
    * @ngdoc function
    * @name ng.$compileProvider#aHrefSanitizationWhitelist
@@ -5484,6 +5554,7 @@
                 return $$sanitizeUriProvider.aHrefSanitizationWhitelist();
             }
         };
+
 
         /**
    * @ngdoc function
@@ -5554,6 +5625,7 @@
                         }
                     },
                     $normalize  : directiveNormalize,
+
 
                     /**
        * @ngdoc function
@@ -5702,6 +5774,7 @@
                                 .replace(/}}/g, endSymbol);
                         },
                     NG_ATTR_BINDING     = /^ngAttr[A-Z]/;
+
 
                 return compile;
 
@@ -6260,6 +6333,7 @@
                         }
                     }
 
+
                     function getControllers(require, $element, elementControllers) {
                         var value,
                             retrievalMethod = "data",
@@ -6292,6 +6366,7 @@
                         return value;
                     }
 
+
                     function nodeLinkFn(childLinkFn, scope, linkNode, $rootElement, boundTranscludeFn) {
                         var attrs,
                             $element,
@@ -6321,6 +6396,7 @@
                             } else {
                                 $linkNode.data("$isolateScopeNoTemplate", isolateScope);
                             }
+
 
                             safeAddClass($linkNode, "ng-isolate-scope");
 
@@ -6533,6 +6609,7 @@
                     return match;
                 }
 
+
                 /**
      * When the element is replaced with HTML template then the new attributes
      * on the template need to be merged with the existing attributes in the DOM.
@@ -6579,6 +6656,7 @@
                         }
                     });
                 }
+
 
                 function compileTemplateUrl(directives, $compileNode, tAttrs, $rootElement, childTranscludeFn, preLinkFns, postLinkFns, previousCompileContext) {
                     var linkQueue                 = [],
@@ -6642,6 +6720,7 @@
                             });
                             afterTemplateChildLinkFn = compileNodes($compileNode[0].childNodes, childTranscludeFn);
 
+
                             while (linkQueue.length) {
                                 var scope                  = linkQueue.shift(),
                                     beforeTemplateLinkNode = linkQueue.shift(),
@@ -6679,6 +6758,7 @@
                     };
                 }
 
+
                 /**
      * Sorting function for bound directives.
      */
@@ -6695,11 +6775,13 @@
                     return a.index - b.index;
                 }
 
+
                 function assertNoDuplicate(what, previousDirective, directive, element) {
                     if (previousDirective) {
                         throw $compileMinErr("multidir", "Multiple directives [{0}, {1}] asking for {2} on: {3}", previousDirective.name, directive.name, what, startingTag(element));
                     }
                 }
+
 
                 function addTextInterpolateDirective(directives, text) {
                     var interpolateFn = $interpolate(text, true);
@@ -6719,6 +6801,7 @@
                     }
                 }
 
+
                 function getTrustedContext(node, attrNormalizedName) {
                     if (attrNormalizedName == "srcdoc") {
                         return $sce.HTML;
@@ -6730,6 +6813,7 @@
                     }
                 }
 
+
                 function addAttrInterpolateDirective(node, directives, value, name) {
                     var interpolateFn = $interpolate(value, true);
 
@@ -6737,6 +6821,7 @@
                     if (!interpolateFn) {
                         return;
                     }
+
 
                     if (name === "multiple" && nodeName_(node) === "SELECT") {
                         throw $compileMinErr("selmulti", "Binding to the 'multiple' attribute is not supported. Element: {0}", startingTag(node));
@@ -6784,6 +6869,7 @@
                         priority: 100
                     });
                 }
+
 
                 /**
      * This is a special jqLite.replaceWith, which can replace items which
@@ -6836,6 +6922,7 @@
                     elementsToRemove.length = 1;
                 }
 
+
                 function cloneAndAnnotateFn(fn, annotation) {
                     return extend(function () {
                         return fn.apply(null, arguments);
@@ -6881,6 +6968,7 @@
  *                   needed to do reverse lookup from normalized name back to actual name.
  */
 
+
     /**
  * @ngdoc function
  * @name ng.$compile.directive.Attributes#$set
@@ -6896,6 +6984,7 @@
  *          property to the original name.
  * @param {string} value Value to set the attribute to. The value can be an interpolated string.
  */
+
 
     /**
  * Closure compiler type information
@@ -6956,6 +7045,7 @@
         var controllers = {},
             CNTRL_REG   = /^(\S+)(\s+as\s+(\w+))?$/;
 
+
         /**
    * @ngdoc function
    * @name ng.$controllerProvider#register
@@ -6973,6 +7063,7 @@
                 controllers[name] = constructor;
             }
         };
+
 
         this.$get     = [
             "$injector",
@@ -7130,6 +7221,7 @@
         return parsed;
     }
 
+
     /**
  * Returns a function that provides access to parsed headers.
  *
@@ -7160,6 +7252,7 @@
         };
     }
 
+
     /**
  * Chain all given functions
  *
@@ -7182,9 +7275,11 @@
         return data;
     }
 
+
     function isSuccess(status) {
         return 200 <= status && status < 300;
     }
+
 
     function $HttpProvider() {
         var JSON_START                    = /^\s*(\[|\{[^\{])/,
@@ -7284,6 +7379,7 @@
                         }
                     });
                 });
+
 
                 /**
      * @ngdoc function
@@ -7789,6 +7885,7 @@
                         headers[(config.xsrfHeaderName || defaults.xsrfHeaderName)] = xsrfValue;
                     }
 
+
                     var serverRequest = function (config) {
                         headers = config.headers;
                         var reqData = transformData(config.data, headersGetter(headers), config.transformRequest);
@@ -8002,7 +8099,9 @@
          */
                 $http.defaults = defaults;
 
+
                 return $http;
+
 
                 function createShortMethods(names) {
                     forEach(arguments, function (name) {
@@ -8015,6 +8114,7 @@
                     });
                 }
 
+
                 function createShortMethodsWithData(name) {
                     forEach(arguments, function (name) {
                         $http[name] = function (url, data, config) {
@@ -8026,6 +8126,7 @@
                         };
                     });
                 }
+
 
                 /**
      * Makes the request.
@@ -8044,6 +8145,7 @@
                         .pendingRequests
                         .push(config);
                     promise.then(removePendingReq, removePendingReq);
+
 
                     if ((config.cache || defaults.cache) && config.cache !== false && config.method == "GET") {
                         cache = isObject(config.cache)
@@ -8081,6 +8183,7 @@
 
                     return promise;
 
+
                     /**
        * Callback registered to $httpBackend():
        *  - caches the response if desired
@@ -8103,6 +8206,7 @@
                         }
                     }
 
+
                     /**
        * Resolves the raw $http promise.
        */
@@ -8115,6 +8219,7 @@
                             : deferred.reject)({config: config, data: response, headers: headersGetter(headers), status: status});
                     }
 
+
                     function removePendingReq() {
                         var idx = indexOf($http.pendingRequests, config);
                         if (idx !== -1) {
@@ -8122,6 +8227,7 @@
                         }
                     }
                 }
+
 
                 function buildUrl(url, params) {
                     if (!params) {
@@ -8148,6 +8254,7 @@
                         : "&") + parts.join("&");
                 }
 
+
             }
         ];
     }
@@ -8159,6 +8266,7 @@
             ? new ActiveXObject("Microsoft.XMLHTTP")
             : new window.XMLHttpRequest();
     }
+
 
     /**
  * @ngdoc object
@@ -8268,6 +8376,7 @@
             } else if (timeout && timeout.then) {
                 timeout.then(timeoutRequest);
             }
+
 
             function timeoutRequest() {
                 status = ABORTED;
@@ -8417,6 +8526,7 @@
             }
         };
 
+
         this.$get = [
             "$parse",
             "$exceptionHandler",
@@ -8540,6 +8650,7 @@
                     }
                 }
 
+
                 /**
      * @ngdoc method
      * @name ng.$interpolate#startSymbol
@@ -8555,6 +8666,7 @@
                 $interpolate.startSymbol = function () {
                     return startSymbol;
                 };
+
 
                 /**
      * @ngdoc method
@@ -8584,6 +8696,7 @@
             "$q",
             function ($rootScope, $window, $q) {
                 var intervals = {};
+
 
                 /**
       * @ngdoc function
@@ -8742,6 +8855,7 @@
                     return promise;
                 }
 
+
                 /**
       * @ngdoc function
       * @name ng.$interval#cancel
@@ -8848,6 +8962,7 @@
         };
     var $locationMinErr = minErr("$location");
 
+
     /**
  * Encode path using encodeUriSegment, ignoring forward slashes
  *
@@ -8873,6 +8988,7 @@
         locationObj.$$port     = int(parsedUrl.port) || DEFAULT_PORTS[parsedUrl.protocol] || null;
     }
 
+
     function parseAppUrl(relativeUrl, locationObj, appBase) {
         var prefixed = (relativeUrl.charAt(0) !== "/");
         if (prefixed) {
@@ -8891,6 +9007,7 @@
         }
     }
 
+
     /**
  *
  * @param {string} begin
@@ -8904,12 +9021,14 @@
         }
     }
 
+
     function stripHash(url) {
         var index = url.indexOf("#");
         return index == -1
             ? url
             : url.substr(0, index);
     }
+
 
     function stripFile(url) {
         return url.substr(0, stripHash(url).lastIndexOf("/") + 1);
@@ -8919,6 +9038,7 @@
     function serverBase(url) {
         return url.substring(0, url.indexOf("/", url.indexOf("//") + 2));
     }
+
 
     /**
  * LocationHtml5Url represents an url
@@ -8933,6 +9053,7 @@
         basePrefix   = basePrefix || "";
         var appBaseNoFile = stripFile(appBase);
         parseAbsoluteUrl(appBase, this, appBase);
+
 
         /**
    * Parse given html5 (regular) url string into properties
@@ -8991,6 +9112,7 @@
         };
     }
 
+
     /**
  * LocationHashbangUrl represents url
  * This object is exposed as $location service when developer doesn't opt into html5 mode.
@@ -9004,6 +9126,7 @@
         var appBaseNoFile = stripFile(appBase);
 
         parseAbsoluteUrl(appBase, this, appBase);
+
 
         /**
    * Parse given hashbang url into properties
@@ -9092,6 +9215,7 @@
         };
     }
 
+
     /**
  * LocationHashbangUrl represents url
  * This object is exposed as $location service when html5 history api is enabled but the browser
@@ -9119,6 +9243,7 @@
             }
         };
     }
+
 
     LocationHashbangInHtml5Url.prototype = LocationHashbangUrl.prototype = LocationHtml5Url.prototype = {
 
@@ -9334,6 +9459,7 @@
         };
     }
 
+
     function locationGetterSetter(property, preprocess) {
         return function (value) {
             if (isUndefined(value)) {
@@ -9346,6 +9472,7 @@
             return this;
         };
     }
+
 
     /**
  * @ngdoc object
@@ -9513,6 +9640,7 @@
                         }
                     }
                 });
+
 
                 // rewrite hashbang url <> html5 url
                 if ($location.absUrl() != initialUrl) {
@@ -9906,7 +10034,9 @@
         "v": "\v"
     };
 
+
     /////////////////////////////////////////
+
 
     /**
  * @constructor
@@ -10076,6 +10206,7 @@
                 }
             }
 
+
             var token = {
                 index: start,
                 text : ident
@@ -10214,6 +10345,7 @@
             return chars.indexOf(this.lastCh) !== -1;
         }
     };
+
 
     /**
  * @constructor
@@ -10686,6 +10818,7 @@
         }
     };
 
+
     // //////////////////////////////////////////////// Parser helper functions
     // ////////////////////////////////////////////////
 
@@ -11025,6 +11158,7 @@
  *
  */
 
+
     /**
  * @ngdoc object
  * @name ng.$parseProvider
@@ -11042,6 +11176,7 @@
             logPromiseWarnings: true,
             unwrapPromises    : false
         };
+
 
         /**
    * @deprecated Promise unwrapping via $parse is deprecated and will be removed in the future.
@@ -11097,6 +11232,7 @@
             }
         };
 
+
         /**
    * @deprecated Promise unwrapping via $parse is deprecated and will be removed in the future.
    *
@@ -11123,6 +11259,7 @@
                 return $parseOptions.logPromiseWarnings;
             }
         };
+
 
         this.$get = [
             "$filter",
@@ -11353,6 +11490,7 @@
         ];
     }
 
+
     /**
  * Constructs a promise manager.
  *
@@ -11394,6 +11532,7 @@
                         }
                     }
                 },
+
 
                 promise: {
                     "catch"  : function (callback) {
@@ -11481,6 +11620,7 @@
                     }
                 },
 
+
                 reject : function (reason) {
                     deferred.resolve(reject(reason));
                 },
@@ -11507,6 +11647,7 @@
             return deferred;
         };
 
+
         var ref = function (value) {
             if (value && isFunction(value.then)) {
                 return value;
@@ -11521,6 +11662,7 @@
                 }
             };
         };
+
 
         /**
    * @ngdoc
@@ -11575,6 +11717,7 @@
                 }
             };
         };
+
 
         /**
    * @ngdoc
@@ -11649,13 +11792,16 @@
             return result.promise;
         };
 
+
         function defaultCallback(value) {
             return value;
         }
 
+
         function defaultErrback(reason) {
             return reject(reason);
         }
+
 
         /**
    * @ngdoc
@@ -11731,6 +11877,7 @@
  * are expensive to construct.
  */
 
+
     /**
  * @ngdoc object
  * @name ng.$rootScopeProvider
@@ -11760,6 +11907,7 @@
  *
  * @param {number} limit The number of digest iterations.
  */
+
 
     /**
  * @ngdoc object
@@ -11851,6 +11999,7 @@
      *   debugging.
      */
 
+
                 Scope.prototype = {
                     $$postDigest    : function (fn) {
                         this
@@ -11920,6 +12069,7 @@
                             }
                         }
                     },
+
 
                     /**
        * @ngdoc function
@@ -11994,6 +12144,7 @@
 
                         return event;
                     },
+
 
                     /**
        * @ngdoc event
@@ -12228,6 +12379,7 @@
                             }
                         }
                     },
+
 
                     /**
        * @ngdoc function
@@ -12641,6 +12793,7 @@
                         };
                     },
 
+
                     /**
        * @ngdoc function
        * @name ng.$rootScope.Scope#$watchCollection
@@ -12788,6 +12941,7 @@
 
                 return $rootScope;
 
+
                 function beginPhase(phase) {
                     if ($rootScope.$$phase) {
                         throw $rootScopeMinErr("inprog", "{0} already in progress", $rootScope.$$phase);
@@ -12857,6 +13011,7 @@
             return aHrefSanitizationWhitelist;
         };
 
+
         /**
    * @description
    * Retrieves or overrides the default regular expression that is used for whitelisting of safe
@@ -12920,6 +13075,7 @@
             .replace(/\x08/g, "\\x08");
     }
 
+
     function adjustMatcher(matcher) {
         if (matcher === "self") {
             return matcher;
@@ -12944,6 +13100,7 @@
         }
     }
 
+
     function adjustMatchers(matchers) {
         var adjustedMatchers = [];
         if (isDefined(matchers)) {
@@ -12953,6 +13110,7 @@
         }
         return adjustedMatchers;
     }
+
 
     /**
  * @ngdoc service
@@ -13102,6 +13260,7 @@
                 if ($injector.has("$sanitize")) {
                     htmlSanitizer = $injector.get("$sanitize");
                 }
+
 
                 function matchUrl(matcher, parsedUrl) {
                     if (matcher === "self") {
@@ -13276,6 +13435,7 @@
             }
         ];
     }
+
 
     /**
  * @ngdoc object
@@ -13578,6 +13738,7 @@
             }
             return enabled;
         };
+
 
         /* Design notes on the default implementation for SCE.
    *
@@ -14035,6 +14196,7 @@
                     }
                 }
 
+
                 return {
                     android         : android,
                     animations      : animations,
@@ -14083,6 +14245,7 @@
             "$exceptionHandler",
             function ($rootScope, $browser, $q, $exceptionHandler) {
                 var deferreds = {};
+
 
                 /**
       * @ngdoc function
@@ -14137,6 +14300,7 @@
                     return promise;
                 }
 
+
                 /**
       * @ngdoc function
       * @name ng.$timeout#cancel
@@ -14175,6 +14339,7 @@
     // here.  There is little value is mocking these out for this service.
     var urlParsingNode = document.createElement("a");
     var originUrl = urlResolve(window.location.href, true);
+
 
     /**
  *
@@ -14385,6 +14550,7 @@
  * @param {String} name Name of the filter.
  * @param {function} fn The filter factory function which is injectable.
  */
+
 
     /**
  * @ngdoc function
@@ -14769,6 +14935,7 @@
    </doc:example>
  */
 
+
     numberFilter.$inject = ["$locale"];
     function numberFilter($locale) {
         var formats = $locale.NUMBER_FORMATS;
@@ -14876,6 +15043,7 @@
         }
         return neg + num;
     }
+
 
     function dateGetter(name, size, offset, trim) {
         offset = offset || 0;
@@ -15036,6 +15204,7 @@
     dateFilter.$inject = ["$locale"];
     function dateFilter($locale) {
 
+
         var R_ISO8601_STR = /^(\d{4})-?(\d\d)-?(\d\d)(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:\.(\d+))?)?)?(Z|([+-])(\d\d):?(\d\d))?)?$/;
         // 1        2       3         4          5          6          7          8  9
         //   10      11
@@ -15066,6 +15235,7 @@
             }
             return string;
         }
+
 
         return function (date, format) {
             var text  = "",
@@ -15115,6 +15285,7 @@
         };
     }
 
+
     /**
  * @ngdoc filter
  * @name ng.filter:json
@@ -15149,6 +15320,7 @@
         };
     }
 
+
     /**
  * @ngdoc filter
  * @name ng.filter:lowercase
@@ -15158,6 +15330,7 @@
  * @see angular.lowercase
  */
     var lowercaseFilter = valueFn(lowercase);
+
 
     /**
  * @ngdoc filter
@@ -15667,6 +15840,7 @@
  *     then special attribute "disabled" will be set on the element
  */
 
+
     /**
  * @ngdoc directive
  * @name ng.directive:ngChecked
@@ -15701,6 +15875,7 @@
  *     then special attribute "checked" will be set on the element
  */
 
+
     /**
  * @ngdoc directive
  * @name ng.directive:ngReadonly
@@ -15734,6 +15909,7 @@
  * @param {expression} ngReadonly If the {@link guide/expression expression} is truthy,
  *     then special attribute "readonly" will be set on the element
  */
+
 
     /**
  * @ngdoc directive
@@ -15811,6 +15987,7 @@
 
     var ngAttributeAliasDirectives = {};
 
+
     // boolean attrs are evaluated
     forEach(BOOLEAN_ATTR, function (propName, attrName) {
         // binding to multiple is not supported
@@ -15831,6 +16008,7 @@
             };
         };
     });
+
 
     // ng-src, ng-srcset, ng-href are interpolated
     forEach([
@@ -16082,6 +16260,7 @@
         };
     }
 
+
     /**
  * @ngdoc directive
  * @name ng.directive:ngForm
@@ -16276,6 +16455,7 @@
 
         "button"  : noop,
 
+
         /**
    * @ngdoc inputType
    * @name ng.directive:input.checkbox
@@ -16321,6 +16501,7 @@
       </doc:example>
    */
         "checkbox": checkboxInputType,
+
 
         /**
    * @ngdoc inputType
@@ -16391,6 +16572,7 @@
 
         "hidden"  : noop,
 
+
         /**
    * @ngdoc inputType
    * @name ng.directive:input.number
@@ -16460,6 +16642,7 @@
       </doc:example>
    */
         "number"  : numberInputType,
+
 
         /**
    * @ngdoc inputType
@@ -16584,6 +16767,7 @@
       </doc:example>
    */
         "text"    : textInputType,
+
 
         /**
    * @ngdoc inputType
@@ -16972,6 +17156,7 @@
             });
     }
 
+
     /**
  * @ngdoc directive
  * @name ng.directive:textarea
@@ -16998,6 +17183,7 @@
  * @param {string=} ngChange Angular expression to be executed when input changes due to user
  *    interaction with the input element.
  */
+
 
     /**
  * @ngdoc directive
@@ -17299,6 +17485,7 @@
                 invalidCount = 0, // used to easily determine if we are valid
                 $error       = this.$error = {}; // keep invalid keys here
 
+
             // Setup initial state of the control
             $element.addClass(PRISTINE_CLASS);
             toggleValidCss(true);
@@ -17462,6 +17649,7 @@
         }
     ];
 
+
     /**
  * @ngdoc directive
  * @name ng.directive:ngModel
@@ -17521,6 +17709,7 @@
             require   : ["ngModel", "^?form"]
         };
     };
+
 
     /**
  * @ngdoc directive
@@ -17585,6 +17774,7 @@
         require: "ngModel"
     });
 
+
     var requiredDirective = function () {
         return {
             link   : function (scope, elm, attr, ctrl) {
@@ -17617,6 +17807,7 @@
             require: "?ngModel"
         };
     };
+
 
     /**
  * @ngdoc directive
@@ -17713,6 +17904,7 @@
             require: "ngModel"
         };
     };
+
 
     var CONSTANT_VALUE_REGEXP = /^(true|false|\d+)$/;
     /**
@@ -17844,6 +18036,7 @@
         });
     });
 
+
     /**
  * @ngdoc directive
  * @name ng.directive:ngBindTemplate
@@ -17907,6 +18100,7 @@
             };
         }
     ];
+
 
     /**
  * @ngdoc directive
@@ -17991,6 +18185,7 @@
                         ngClassWatchAction(scope.$eval(attr[name]));
                     });
 
+
                     if (name !== "ngClass") {
                         scope
                             .$watch("$index", function ($index, old$index) {
@@ -18005,6 +18200,7 @@
                             });
                     }
 
+
                     function ngClassWatchAction(newVal) {
                         if (selector === true || scope.$index % 2 === selector) {
                             var newClasses = flattenClasses(newVal || "");
@@ -18016,6 +18212,7 @@
                         }
                         oldVal = copy(newVal);
                     }
+
 
                     function flattenClasses(classVal) {
                         if (isArray(classVal)) {
@@ -18625,6 +18822,7 @@
    </doc:example>
  */
 
+
     /**
  * @ngdoc directive
  * @name ng.directive:ngMousedown
@@ -18647,6 +18845,7 @@
      </doc:source>
    </doc:example>
  */
+
 
     /**
  * @ngdoc directive
@@ -18694,6 +18893,7 @@
    </doc:example>
  */
 
+
     /**
  * @ngdoc directive
  * @name ng.directive:ngMouseenter
@@ -18716,6 +18916,7 @@
      </doc:source>
    </doc:example>
  */
+
 
     /**
  * @ngdoc directive
@@ -18740,6 +18941,7 @@
    </doc:example>
  */
 
+
     /**
  * @ngdoc directive
  * @name ng.directive:ngMousemove
@@ -18763,6 +18965,7 @@
    </doc:example>
  */
 
+
     /**
  * @ngdoc directive
  * @name ng.directive:ngKeydown
@@ -18783,6 +18986,7 @@
      </doc:source>
    </doc:example>
  */
+
 
     /**
  * @ngdoc directive
@@ -18805,6 +19009,7 @@
    </doc:example>
  */
 
+
     /**
  * @ngdoc directive
  * @name ng.directive:ngKeypress
@@ -18824,6 +19029,7 @@
      </doc:source>
    </doc:example>
  */
+
 
     /**
  * @ngdoc directive
@@ -19224,6 +19430,7 @@
   </example>
  */
 
+
     /**
  * @ngdoc event
  * @name ng.directive:ngInclude#$includeContentRequested
@@ -19232,6 +19439,7 @@
  * @description
  * Emitted every time the ngInclude content is requested.
  */
+
 
     /**
  * @ngdoc event
@@ -19950,6 +20158,7 @@
                             nextBlockOrder = [],
                             elementsToRemove;
 
+
                         if (isArrayLike(collection)) {
                             collectionKeys = collection;
                             trackByIdFn    = trackByIdExpFn || trackByIdArrayFn;
@@ -20252,6 +20461,7 @@
             };
         }
     ];
+
 
     /**
  * @ngdoc directive
@@ -20948,13 +21158,16 @@
                             nullOption,
                             unknownOption;
 
+
                         self.databound           = $attrs.ngModel;
+
 
                         self.init                = function (ngModelCtrl_, nullOption_, unknownOption_) {
                             ngModelCtrl   = ngModelCtrl_;
                             nullOption    = nullOption_;
                             unknownOption = unknownOption_;
                         };
+
 
                         self.addOption           = function (value) {
                             assertNotHasOwnProperty(value, "'option value'");
@@ -20968,6 +21181,7 @@
                             }
                         };
 
+
                         self.removeOption        = function (value) {
                             if (this.hasOption(value)) {
                                 delete optionsMap[value];
@@ -20977,6 +21191,7 @@
                             }
                         };
 
+
                         self.renderUnknownOption = function (val) {
                             var unknownVal = "? " + hashKey(val) + " ?";
                             unknownOption.val(unknownVal);
@@ -20984,6 +21199,7 @@
                             $element.val(unknownVal);
                             unknownOption.prop("selected", true); // needed for IE
                         };
+
 
                         self.hasOption           = function (value) {
                             return optionsMap.hasOwnProperty(value);
@@ -21040,7 +21256,9 @@
                         setupAsSingle(scope, element, ngModelCtrl, selectCtrl);
                     }
 
+
                     ////////////////////////////
+
 
                     function setupAsSingle(scope, selectElement, ngModelCtrl, selectCtrl) {
                         ngModelCtrl.$render = function () {

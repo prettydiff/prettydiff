@@ -1523,9 +1523,7 @@
                                 "ot exist it will be created. If this argument is missing output will print to sc" +
                                 "reen.");
                         error.push("");
-                        error.push("* preserve       - string  - Runs of empty lines are condensed into a single emp" +
-                                "ty line of beautified JavaScript or CSS. Default is 'all'.");
-                        error.push("                   Accepted values: all, css, js, none");
+                        error.push("* preserve       - number  - The number of acceptable empty lines.");
                         error.push("");
                         error.push("* quote          - boolean - If true and mode is 'diff' then all single quote ch" +
                                 "aracters will be replaced by double quote characters in both the source and diff" +
@@ -1850,11 +1848,16 @@
                         .Arguments
                         .Named("quoteConvert")
                     : "none";
-                args.preserve     = (WScript.Arguments.Named("preserve") === "none" || WScript.Arguments.Named("preserve") === "css" || WScript.Arguments.Named("preserve") === "js")
-                    ? WScript
-                        .Arguments
-                        .Named("preserve")
-                    : "all";
+                args.preserve     = (function () {
+                    var pres = WScript.Arguments.Named("preserve");
+                    if (pres === 1 || pres === undefined || pres === true || pres === "true" || pres === "all" || pres === "js" || pres === "css") {
+                        args.preserve = 1;
+                    } else if (pres === "false" || isNaN(pres) === true || Number(pres) < 1 || pres === "none") {
+                        args.preserve = 0;
+                    } else {
+                        args.preserve = Number(pres)
+                    }
+                }());
                 args.selectorlist = (WScript.Arguments.Named("selectorlist") === "true" || WScript.Arguments.Named("selectorlist") === true);
                 args.semicolon    = (WScript.Arguments.Named("semicolon") === "true" || WScript.Arguments.Named("semicolon") === true);
                 args.sourcelabel  = WScript
