@@ -1,5 +1,9 @@
 # Pretty Diff change log
 
+## v1.16.24
+
+* Fixed #281
+
 ## v1.16.23
 
 * Changed option `preserve` to a numeric type.  This change allows preservation of a series of empty lines up to the indicated maximum.
