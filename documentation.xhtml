@@ -1917,14 +1917,23 @@
                             <h3>Known Unit Test Problems</h3>
                             <ol>
                                 <li>
-                                    <code>ReferenceError: safeSort__ascend_recurse is not defined</code>
-                                    <p>This is a Google V8 error that is being tracked at
-                                        <a href="https://bugs.chromium.org/p/v8/issues/detail?id=4635">https://bugs.chromium.org/p/v8/issues/detail?id=4635</a>.
-                                        If this error is encountered ignore it and simply run the unit tests again. The
-                                        Pretty Diff project is taking no corrective action on this issue.</p>
-                                    <p>This defect appears to be resolved and unreproducible in Node v5.4.1. If the
-                                        defect is encountered please update your local installation of Node.js.</p>
+                                    <code>npm ERR! Cannot read property 'target' of null</code>
+                                    <p>This is an unresolved NPM error
+                                        <a href="https://github.com/npm/npm/issues/10686#issuecomment-187254105">https://github.com/npm/npm/issues/10686#issuecomment-187254105</a>
+                                    </p>
                                 </li>
+                            </ol>
+                        </div>
+                        <div class="segment">
+                            <h3>Contribution Guide</h3>
+                            <p>For questions, features, or bug reports please open an issue on <a href="https://github.com/prettydiff/prettydiff/issues">Github</a>.</p>
+                            <p>If you wish to propose code changes then follow these steps:</p>
+                            <ol>
+                                <li>Fork the repository on Github.</li>
+                                <li>Clone your forked repository to your local machine: <code>git clone https://github.com/username/prettydiff.git</code></li>
+                                <li>Create a new branch for your changes: <code>git checkout -b branchName</code></li>
+                                <li>Run the unit tests to verify if your changes are breaking things: <code>npm install</code></li>
+                                <li>Open a pull request on Github.  Ensure there are comments in the pull request explaining the what the change does and why it is needed.  Including additional unit tests with the pull request earns extra love.</li>
                             </ol>
                         </div>
                     </div>

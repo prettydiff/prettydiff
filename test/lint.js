@@ -2053,14 +2053,6 @@
                                     group: "write to new locations",
                                     units: [
                                         {
-                                            check : "node api/node-local.js source:\"../prettydiff\" mode:\"beautify\" readmethod:\"d" +
-                                                        "irectory\" output:\"test/simulation/prettydiff\" correct:\"true\" crlf:\"false\"" +
-                                                        " html:\"true\" inchar:\" \" insize:4 lang:\"auto\" methodchain:\"false\" nocasei" +
-                                                        "ndent:\"false\" objsort:\"all\" preserve:\"true\" quoteConvert:\"double\" spacec" +
-                                                        "lose:\"true\" varword:\"none\" vertical:\"all\" wrap:80",
-                                            name  : "beautify Pretty Diff directory",
-                                            verify: "\nPretty Diff beautified -10 files. Executed in."
-                                        }, {
                                             check : "node api/node-local.js source:\"inch.json\" readmethod:\"file\" mode:\"beautify" +
                                                     "\" output:\"test/simulation/inch\"",
                                             name  : "Beautify inch.json",

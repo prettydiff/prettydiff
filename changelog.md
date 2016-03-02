@@ -1,5 +1,11 @@
 # Pretty Diff change log
 
+## v1.16.25
+
+* Fixed a minor markup defect regarding improperly inserting `</li>` tags if code samples start with `<ul>` or `<ol>`
+* Minor improvements to the documentation
+* A minor adjustment to the resolution for #281.
+
 ## v1.16.24
 
 * Fixed #281

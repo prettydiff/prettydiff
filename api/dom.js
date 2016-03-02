@@ -4346,15 +4346,6 @@ var pd     = {},
                             .audio
                             .play();
                     }
-                    // (function dom__event_sequence_blinky() {    var color = pd.id("colorScheme"),
-                    //        ind = color.selectedIndex,        y = 0,        z = ind, change =
-                    // function dom__event_sequence_blinky_change() {            z -= 1;  y += 1;
-                    //         if (z < 0) {                z =
-                    // color.getElementsByTagName("option").length - 1;            }
-                    // color.selectedIndex = z;            pd.event.colorScheme(color); if (y < 20)
-                    // {                setTimeout(change, 50);            } else {
-                    // color.selectedIndex = ind; pd.event.colorScheme(color);            } };
-                    // setTimeout(change, 50); }());
 
                     (function dom__event_sequence_colorChange() {
                         var active = document.activeElement,
