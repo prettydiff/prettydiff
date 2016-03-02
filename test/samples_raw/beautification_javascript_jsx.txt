@@ -183,3 +183,8 @@ class MyComponent extends React.Component {
     );
   }
 }
+export const Welcome = ({name}) => (
+    <div>
+       Hello, {name}.
+    </div>
+);
