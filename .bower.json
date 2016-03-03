@@ -1,6 +1,6 @@
 {
     "name"        : "prettydiff",
-    "version"     : "1.16.26",
+    "version"     : "1.16.27",
     "description" : "Pretty Diff can minify, beautify (pretty print), or diff code to normalize white space and comments so that only code is being compared.",
     "keywords"    : [
         "pretty diff", "minify", "beautify", "pretty print", "white space", "whitespace", "diff", "compare", "html", "javascript", "xml", "json", "css", "less", "scss", "scope", "analysis", "node", "nodejs", "wsh"
