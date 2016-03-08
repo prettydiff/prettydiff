@@ -2484,7 +2484,7 @@ var prettydiff = function prettydiff_(api) {
 global.report         = "";
 global.edition        = {
     addon        : {
-        ace: 150918
+        ace: 160307
     },
     api          : {
         dom      : 160301, //dom.js
@@ -2492,17 +2492,17 @@ global.edition        = {
         wsh      : 160229
     },
     css          : 160223, //css files
-    csspretty    : 160302, //csspretty lib
-    csvpretty    : 151130, //csvpretty lib
-    diffview     : 160223, //diffview lib
-    documentation: 160301, //documentation.xhtml
-    jspretty     : 160301, //jspretty lib
+    csspretty    : 160307, //csspretty lib
+    csvpretty    : 160307, //csvpretty lib
+    diffview     : 160307, //diffview lib
+    documentation: 160307, //documentation.xhtml
+    jspretty     : 160307, //jspretty lib
     latest       : 0,
     lint         : 160229, //unit test and lint automation as test/lint.js
-    markuppretty : 160302, //markuppretty lib
-    prettydiff   : 160229, //this file
-    safeSort     : 160224, //safeSort lib
-    version      : "1.16.27", //version number
+    markuppretty : 160307, //markuppretty lib
+    prettydiff   : 160307, //this file
+    safeSort     : 160307, //safeSort lib
+    version      : "1.16.28", //version number
     webtool      : 160229
 };
 global.edition.latest = (function edition_latest() {
@@ -2517,7 +2517,7 @@ if (typeof exports === "object" || typeof exports === "function") {
         "use strict";
         return prettydiff(x);
     };
-} else if ((typeof define === "object" || typeof define === "function") && (ace === undefined || ace.createEditSession === undefined)) {
+} else if ((typeof define === "object" || typeof define === "function") && (ace === undefined || ace.prettydiffid === undefined)) {
     //requirejs support
     define(function requirejs(require, exports) {
         "use strict";

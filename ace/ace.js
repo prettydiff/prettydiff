@@ -4,8 +4,8 @@
                     a && a.config.init(true);
                     if (!window.ace)
                         window.ace = a;
+                    ace.prettydiffid = "prettydiff";
                     for (var key in a) if (a.hasOwnProperty(key))
                         window.ace[key] = a[key];
                 });
             })();
-        

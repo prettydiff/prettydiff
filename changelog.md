@@ -1,5 +1,18 @@
 # Pretty Diff change log
 
+## v1.16.28
+
+* Adding support for Liquid templates
+* Adding extend general templating support to CSS and JS
+* Provided contribution guidance to the documentation
+* Fixed https://github.com/Glavin001/atom-beautify/issues/848#issuecomment-192880016
+* Fixed a collision between Ace editor, Pretty Diff library support, and require.js
+
+## v1.16.26
+
+* Fixed a minor CSS defect related as exposed by https://github.com/Glavin001/atom-beautify/issues/840
+* Fixed a JSX spacing error as exposed by https://github.com/Glavin001/atom-beautify/issues/838
+
 ## v1.16.25
 
 * Fixed a minor markup defect regarding improperly inserting `</li>` tags if code samples start with `<ul>` or `<ol>`

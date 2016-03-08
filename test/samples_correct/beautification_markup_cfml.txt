@@ -216,9 +216,7 @@
                 returntype="numeric">
                 <cfargument name="foobarcode" required="true" type="numeric" />
 
-                <cfreturn getImportLeasor().CodeAndErrorCheck(argumentCollection = {,
-                    foobarCode = arguments.foobarCode
-                }) />
+                <cfreturn getImportLeasor().CodeAndErrorCheck(argumentCollection = {, foobarCode = arguments.foobarCode }) />
 
             </cffunction>
 
