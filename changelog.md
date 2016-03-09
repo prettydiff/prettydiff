@@ -1,5 +1,10 @@
 # Pretty Diff change log
 
+## v1.16.30
+
+* Adding support for Volt templates
+* Fixed a URI resolution defect in the web tool.
+
 ## v1.16.29
 
 * Fixed #287

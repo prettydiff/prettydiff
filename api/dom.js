@@ -1851,7 +1851,7 @@ var pd     = {},
                     if (input === "css" || input === "less" || input === "scss") {
                         return "css";
                     }
-                    if (input.indexOf("html") > -1 || input === "html" || input === "ejs" || input === "html_ruby" || input === "handlebars" || input === "liquid" || input === "swig" || input === "twig" || input === "php" || input === "dustjs") {
+                    if (input.indexOf("html") > -1 || input === "html" || input === "dustjs" || input === "ejs" || input === "elm" || input === "html_ruby" || input === "handlebars" || input === "liquid" || input === "php" || input === "swig" || input === "twig" || input === "volt") {
                         return "html";
                     }
                     if (input === "markup" || input === "jsp" || input === "xml" || input === "xhtml" || input === "coldfusion") {
@@ -1872,17 +1872,23 @@ var pd     = {},
                     if (input === "javascript") {
                         return "JavaScript";
                     }
+                    if (input === "markup") {
+                        return "markup";
+                    }
                     if (input === "text") {
                         return "Plain Text";
                     }
-                    if (input === "jsx") {
-                        return "React JSX";
+                    if (input === "coldfusion") {
+                        return "ColdFusion";
                     }
-                    if (input === "scss") {
-                        return "SCSS (Sass)";
+                    if (input === "dustjs") {
+                        return "Dust.js";
                     }
                     if (input === "ejs") {
                         return "EJS Template";
+                    }
+                    if (input === "elm") {
+                        return "Elm Template";
                     }
                     if (input === "handlebars") {
                         return "Handlebars Template";
@@ -1890,29 +1896,32 @@ var pd     = {},
                     if (input === "html_ruby") {
                         return "ERB (Ruby) Template";
                     }
-                    if (input === "tss" || input === "titanium") {
-                        return "Titanium Stylesheets";
-                    }
-                    if (input === "typescript") {
-                        return "TypeScript (not supported yet)";
-                    }
-                    if (input === "twig") {
-                        return "HTML TWIG Template";
+                    if (input === "java") {
+                        return "Java (not supported yet)";
                     }
                     if (input === "jsp") {
                         return "JSTL (JSP)";
                     }
-                    if (input === "java") {
-                        return "Java (not supported yet)";
-                    }
-                    if (input === "dustjs") {
-                        return "Dust.js";
-                    }
-                    if (input === "coldfusion") {
-                        return "ColdFusion";
+                    if (input === "jsx") {
+                        return "React JSX";
                     }
                     if (input === "liquid") {
                         return "Liquid Template";
+                    }
+                    if (input === "scss") {
+                        return "SCSS (Sass)";
+                    }
+                    if (input === "tss" || input === "titanium") {
+                        return "Titanium Stylesheets";
+                    }
+                    if (input === "twig") {
+                        return "HTML TWIG Template";
+                    }
+                    if (input === "typescript") {
+                        return "TypeScript (not supported yet)";
+                    }
+                    if (input === "volt") {
+                        return "Volt Template";
                     }
                     return input.toUpperCase();
                 },
@@ -2093,6 +2102,13 @@ var pd     = {},
             if (obj !== undefined && obj !== null) {
                 if (pd.test.ace === true && obj.getValue !== undefined) {
                     sample = obj.getValue();
+                    if (sample.indexOf("http") === 0 || sample.indexOf("file:///") === 0) {
+                        if (obj === pd.ace.diffNew) {
+                            sample = pd.data.diff;
+                        } else {
+                            sample = pd.data.source;
+                        }
+                    }
                 } else if (typeof obj.value === "string") {
                     sample = obj.value;
                 }
@@ -5605,7 +5621,7 @@ var pd     = {},
                                         api.diff = xhr
                                             .responseText
                                             .replace(/\r\n/g, "\n");
-                                        if (completes === true) {
+                                        if (requests === false || completes === true) {
                                             pd.data.source = api.source;
                                             if (pd.data.langvalue[1] === "text") {
                                                 api.lang = "text";
@@ -5785,7 +5801,7 @@ var pd     = {},
                                 api.source = xhr
                                     .responseText
                                     .replace(/\r\n/g, "\n");
-                                if (pd.data.mode !== "diff" || (requestd === true && completed === true)) {
+                                if (pd.data.mode !== "diff" || requestd === false || (requestd === true && completed === true)) {
                                     pd.data.source = api.source;
                                     if (pd.test.ace === true) {
                                         if (pd.data.mode !== "diff") {
