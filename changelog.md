@@ -1,5 +1,12 @@
 # Pretty Diff change log
 
+## v1.16.29
+
+* Fixed #287
+* Added new option `nochainindent`
+* Adding support for Elm templates
+* Fixing a minor bug in the web tool between changing languages and use the Ace editor
+
 ## v1.16.28
 
 * Adding support for Liquid templates

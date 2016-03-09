@@ -32,6 +32,12 @@
 {%     endif     %}
 {%     if exists     %}
     <style>
+    a {color:red;
+
+    {{if x}}
+    background:green;
+    {{end}}
+}
         a {
             background: {{ settings.x  }};
             color     : {{ settings.y | json }};

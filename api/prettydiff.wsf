@@ -1512,6 +1512,8 @@
                         error.push("* nocaseindent   - boolean - If a case statement should receive the same indenta" +
                                 "tion as the containing switch block.");
                         error.push("");
+                        error.push("* nochainindent  - boolean - If indentation should be prevented for JavaScript methods broken onto multiple lines.");
+                        error.push("");
                         error.push("* noleadzero     - boolean - If in CSS values leading 0s immediately preceeding " +
                                 "a decimal should be removed or prevented.");
                         error.push("");
@@ -1836,6 +1838,7 @@
                 args.mode         = (WScript.Arguments.Named("mode") || "diff");
                 args.neverflatten = (WScript.Arguments.Named("neverflatten") === "true" || WScript.Arguments.Named("neverflatten") === true);
                 args.nocaseindent = (WScript.Arguments.Named("nocaseindent") === "true" || WScript.Arguments.Named("nocaseindent") === true);
+                args.nochainindent = (WScript.Arguments.Named("nochainindent") === "true" || WScript.Arguments.Named("nochainindent") === true);
                 args.noleadzero   = (WScript.Arguments.Named("noleadzero") === "true" || WScript.Arguments.Named("noleadzero") === true);
                 args.objsort      = (WScript.Arguments.Named("objsort") === "all" || WScript.Arguments.Named("objsort") === "css" || WScript.Arguments.Named("objsort") === "markup" || WScript.Arguments.Named("objsort") === "none")
                     ? WScript

@@ -1492,6 +1492,7 @@ Examples:
             mode           : "diff",
             neverflatten   : false,
             nocaseindent   : false,
+            nochainindent  : false,
             noleadzero     : false,
             objsort        : "js",
             output         : "",
@@ -1884,6 +1885,9 @@ Examples:
             a.push("");
             a.push("* nocaseindent - boolean - If a case statement should receive the same");
             a.push("                           indentation as the containing switch block.");
+            a.push("");
+            a.push("* nochainindent - boolean - If indentation should be prevent of JavaScript method");
+            a.push("                           chains broken onto multiple lines. Default is false.");
             a.push("");
             a.push("* noleadzero   - boolean - If in CSS values leading 0s immediately preceeding a");
             a.push("                           decimal should be removed or prevented.");
@@ -2897,6 +2901,8 @@ Examples:
                     options.neverflatten = true;
                 } else if (d[b][0] === "nocaseindent" && d[b][1] === "true") {
                     options.nocaseindent = true;
+                } else if (d[b][0] === "nochainindent" && d[b][1] === "true") {
+                    options.nochainindent = true;
                 } else if (d[b][0] === "noleadzero" && d[b][1] === "true") {
                     options.noleadzero = true;
                 } else if (d[b][0] === "objsort") {

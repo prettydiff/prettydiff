@@ -1851,7 +1851,7 @@ var pd     = {},
                     if (input === "css" || input === "less" || input === "scss") {
                         return "css";
                     }
-                    if (input.indexOf("html") > -1 || input === "html" || input === "ejs" || input === "html_ruby" || input === "handlebars" || input === "swig" || input === "twig" || input === "php" || input === "dustjs") {
+                    if (input.indexOf("html") > -1 || input === "html" || input === "ejs" || input === "html_ruby" || input === "handlebars" || input === "liquid" || input === "swig" || input === "twig" || input === "php" || input === "dustjs") {
                         return "html";
                     }
                     if (input === "markup" || input === "jsp" || input === "xml" || input === "xhtml" || input === "coldfusion") {
@@ -1911,15 +1911,18 @@ var pd     = {},
                     if (input === "coldfusion") {
                         return "ColdFusion";
                     }
+                    if (input === "liquid") {
+                        return "Liquid Template";
+                    }
                     return input.toUpperCase();
                 },
                 defaultt    = (pd.data.node.langdefault === null || pd.data.node.langdefault.nodeName.toLowerCase() !== "select")
                     ? "javascript"
                     : setlangmode(pd.data.node.langdefault[pd.data.node.langdefault.selectedIndex].value),
-                // defaultt      = actual default lang value from the select list [0] = language
-                // value for ace mode [1]           = prettydiff language category from [0] [2]
-                //          = pretty formatting for text output to user
-
+                // defaultt      = actual default lang value from the select list
+                // [0] = language value for ace mode
+                // [1] = prettydiff language category from [0]
+                // [2] = pretty formatting for text output to user
                 auto = function dom__app_langkey_auto(a) {
                     var b      = [],
                         c      = 0,
@@ -2019,7 +2022,7 @@ var pd     = {},
                         if ((/"\s*:\s*\{/).test(a) === true) {
                             return output("tss");
                         }
-                        if (a.indexOf("{%") > -1) {
+                        if (a.indexOf("{\%") > -1) {
                             return output("twig");
                         }
                         return output("unknown");
@@ -2100,32 +2103,28 @@ var pd     = {},
             }
             if (lang === "csv") {
                 pd.data.langvalue = ["plain_text", "csv", "CSV"];
-                value             = pd.data.langvalue;
             } else if (lang === "text") {
                 pd.data.langvalue = ["plain_text", "text", "Plain Text"];
-                value             = pd.data.langvalue;
             } else if (lang !== "") {
                 pd.data.langvalue = [lang, setlangmode(lang), nameproper(lang)];
-                value             = pd.data.langvalue;
             } else if (sample !== "" || pd.test.ace === false) {
                 pd.data.langvalue = auto(sample);
-                value             = pd.data.langvalue;
             } else {
                 pd.data.langvalue = [defaultt, setlangmode(defaultt), nameproper(defaultt)];
-                value             = pd.data.langvalue;
             }
+            value = pd.data.langvalue;
             if (pd.test.ace === true) {
-                if (value[0] === "tss") {
-                    value[0] = "javascript";
-                } else if (value[0] === "dustjs") {
-                    value[0] = "html";
-                } else if (value[0] === "markup") {
-                    value[0] = "xml";
-                }
                 if (all === true || pd.data.mode === "beau") {
                     if (all === true && lang === "") {
                         value             = auto(pd.ace.beauIn.getValue());
                         pd.data.langvalue = value;
+                    }
+                    if (value[0] === "tss") {
+                        value[0] = "javascript";
+                    } else if (value[0] === "dustjs") {
+                        value[0] = "html";
+                    } else if (value[0] === "markup") {
+                        value[0] = "xml";
                     }
                     if (pd.data.node.codeBeauIn !== null) {
                         pd
@@ -2147,6 +2146,13 @@ var pd     = {},
                         value             = auto(pd.ace.minnIn.getValue());
                         pd.data.langvalue = value;
                     }
+                    if (value[0] === "tss") {
+                        value[0] = "javascript";
+                    } else if (value[0] === "dustjs") {
+                        value[0] = "html";
+                    } else if (value[0] === "markup") {
+                        value[0] = "xml";
+                    }
                     if (pd.data.node.codeMinnIn !== null) {
                         pd
                             .ace
@@ -2166,6 +2172,13 @@ var pd     = {},
                     if (all === true && lang === "") {
                         value             = auto(pd.ace.parsIn.getValue());
                         pd.data.langvalue = value;
+                    }
+                    if (value[0] === "tss") {
+                        value[0] = "javascript";
+                    } else if (value[0] === "dustjs") {
+                        value[0] = "html";
+                    } else if (value[0] === "markup") {
+                        value[0] = "xml";
                     }
                     if (pd.data.node.codeParsIn !== null) {
                         pd
@@ -2187,6 +2200,13 @@ var pd     = {},
                         value             = auto(pd.ace.diffBase.getValue());
                         pd.data.langvalue = value;
                     }
+                    if (value[0] === "tss") {
+                        value[0] = "javascript";
+                    } else if (value[0] === "dustjs") {
+                        value[0] = "html";
+                    } else if (value[0] === "markup") {
+                        value[0] = "xml";
+                    }
                     if (pd.data.node.codeDiffBase !== null) {
                         pd
                             .ace
@@ -2204,7 +2224,7 @@ var pd     = {},
                 }
             }
             if (all === true && lang !== "") {
-                return lang;
+                return value[1];
             }
             if (value.length < 1 && lang === "") {
                 if (pd.data.mode === "beau" && pd.data.node.codeBeauIn !== null) {
@@ -2390,6 +2410,10 @@ var pd     = {},
                         data = ["nocaseindent", "false"];
                     } else if (id === "bnocaseindent-yes" || id === "dnocaseindent-yes") {
                         data = ["nocaseindent", "true"];
+                    } else if (id === "bnochainindent-no" || id === "dnochainindent-no") {
+                        data = ["nochainindent", "false"];
+                    } else if (id === "bnochainindent-yes" || id === "dnochainindent-yes") {
+                        data = ["nochainindent", "true"];
                     } else if (id === "bnoleadzero-no") {
                         data = ["noleadzero", "false"];
                     } else if (id === "bnoleadzero-yes") {
@@ -5127,6 +5151,7 @@ var pd     = {},
                     methodchainn   = pd.id("bmethodchain-none"),
                     neverflatten   = pd.id("bneverflatten-yes"),
                     nocaseindent   = pd.id("bnocaseindent-yes"),
+                    nochainindent  = pd.id("bnochainindent-yes"),
                     noleadzero     = pd.id("bnoleadzero-yes"),
                     objsorta       = pd.id("bobjsort-all"),
                     objsortc       = pd.id("bobjsort-cssonly"),
@@ -5238,6 +5263,7 @@ var pd     = {},
                 }
                 api.neverflatten = (neverflatten !== null && neverflatten.checked === true);
                 api.nocaseindent = (nocaseindent !== null && nocaseindent.checked === true);
+                api.nochainindent = (nochainindent !== null && nochainindent.checked === true);
                 api.noleadzero   = (noleadzero !== null && noleadzero.checked === true);
                 if (objsorta !== null && objsorta.checked === true) {
                     api.objsort = "all";
@@ -5391,6 +5417,7 @@ var pd     = {},
                     methodchain     = pd.id("dmethodchain-yes"),
                     newLabel        = pd.id("newlabel"),
                     nocaseindent    = pd.id("dnocaseindent-yes"),
+                    nochainindent   = pd.id("dnochainindent-yes"),
                     objsorta        = pd.id("dobjsort-all"),
                     objsortc        = pd.id("dobjsort-cssonly"),
                     objsortj        = pd.id("dobjsort-jsonly"),
@@ -5452,6 +5479,7 @@ var pd     = {},
                     : Number(quantity.value);
                 api.methodchain     = (methodchain !== null && methodchain.checked === true);
                 api.nocaseindent    = (nocaseindent !== null && nocaseindent.checked === true);
+                api.nochainindent   = (nochainindent !== null && nochainindent.checked === true);
                 if (objsorta !== null && objsorta.checked === true) {
                     api.objsort = "all";
                 } else if (objsortc !== null && objsortc.checked === true) {
