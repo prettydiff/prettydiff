@@ -2494,17 +2494,17 @@ global.edition        = {
         wsh      : 160308
     },
     css          : 160223, //css files
-    csspretty    : 160309, //csspretty lib
+    csspretty    : 160310, //csspretty lib
     csvpretty    : 160307, //csvpretty lib
     diffview     : 160307, //diffview lib
     documentation: 160308, //documentation.xhtml
-    jspretty     : 160309, //jspretty lib
+    jspretty     : 160310, //jspretty lib
     latest       : 0,
     lint         : 160229, //unit test and lint automation as test/lint.js
-    markuppretty : 160309, //markuppretty lib
+    markuppretty : 160310, //markuppretty lib
     prettydiff   : 160308, //this file
     safeSort     : 160307, //safeSort lib
-    version      : "1.16.30", //version number
+    version      : "1.16.34", //version number
     webtool      : 160309
 };
 global.edition.latest = (function edition_latest() {
