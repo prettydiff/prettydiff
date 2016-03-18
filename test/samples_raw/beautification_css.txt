@@ -3,7 +3,7 @@
 $blue:#3bbfce;$margin:16px;.content-navigation{border-color:$blue;color:darken($blue,9%)}.border{border-color:$blue;margin:$margin/2;padding:$margin/2}
 .styleguide-format{border:1px 2px 1px 2px solid #00FF00;color:#000;background:rgba(0,0,0,0.5);}
 ul.category-list{&>li{list-style-type:disc}a{color:#f00}}
-@mixin table-scaffolding{th{font-weight:bold;text-align:center}td,th{padding:2px}}@mixin left($dist) {float:left;margin-left:$dist}#data{@include table-scaffolding;@include left(10px)}
+@mixin table-scaffolding{th{font-weight:bold;text-align:center}th,td{padding:2px}}@mixin left($dist) {float:left;margin-left:$dist}#data{@include table-scaffolding;@include left(10px)}
 a{-moz-transition:all .25s ease-in-out;-ms-transition:all .25s ease-in-out;-o-transition:all .25s ease-in-out;-webkit-transition:all .25s ease-in-out;color:#80c040;transition:all .25s ease-in-out}a:hover{color:#000}.button{-moz-transition:all .25s ease-in-out;-ms-transition:all .25s ease-in-out;-o-transition:all .25s ease-in-out;-webkit-transition:all .25s ease-in-out;background:#80c040;color:#fff;transition:all .25s ease-in-out}.button:hover{background:#000}
 $defaultFont:Helvetica,Arial,sans-serif,"Courier New";$primaryColor:#80c040;#header h2,p,li,.favorite li{color:$primaryColor;font-family:$defaultFont;font-size:24px}
 a{@include transition;text-decoration:none;color:$primaryColor;font:{family:Helvetica,Arial,sans-serif;size:14px}&:hover{text-decoration:underline}}

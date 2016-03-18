@@ -3206,11 +3206,11 @@
                     span.offerline2 a {
                         color: #fff;
                     }
-                    .rvTabs,
                     .rvRecTitle,
-                    .rvTabH,
                     .rvTabF,
-                    .rvTabP {
+                    .rvTabH,
+                    .rvTabP,
+                    .rvTabs {
                         background-color: #cecece !important;
                     }
 
@@ -3360,10 +3360,10 @@
 
 
                 <style>
-                    .HPSectionInfo a:link,
-                    .HPSectionInfo a:visited,
+                    .HPSectionInfo a:active,
                     .HPSectionInfo a:hover,
-                    .HPSectionInfo a:active {
+                    .HPSectionInfo a:link,
+                    .HPSectionInfo a:visited {
                         color          : #00355f;
                         text-decoration: none;
                     }

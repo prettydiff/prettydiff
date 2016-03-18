@@ -13,11 +13,38 @@
             width  : 240px;
         }
     }
+    .firstLeg .timeline-group:first-child .timeline-marker:before,
+    .soloLeg .timeline-group:first-child .timeline-marker:before {
+        border-top: 5px solid @color-white-space;
+        content   : "";
+        height    : 0;
+        left      : 0;
+        position  : absolute;
+        top       : -7px;
+        width     : 100%;
+    }
+    .firstLeg .timeline-group:first-child,
+    .lastLeg .timeline-group.last-child,
+    .soloLeg .timeline-group.last-child,
+    .soloLeg .timeline-group:first-child {
+        .timeline-label {
+            color: @color-black;
+        }
+        .timeline-marker {
+            background: @color-brand-2;
+        }
+    }
 
     .itemResultsCard {
         border: 1px solid @color-neutral-md-light;
         color : @color-black;
         .clearfix();
+        // Card Utility Classes
+        .alert span,
+        .itemportCodeDiffer {
+            background-color: lighten(@color-error, 20%);
+            color           : @color-black;
+        }
         .buyFromitemline {
             font-size: @font-size-xs;
         }
@@ -78,15 +105,6 @@
             color: @color-attention;
         }
         .itemCard-button .button-primary {
-            @button-line-height          : (@font-size-xl + 3); // make everything work like firefox
-            @ie-height                   : @input-height - (2 * @vertical-padding) - (2 * @button-border-width);
-            @ie7-height                  : @input-height - @ie7-offset-horizontal-top - @ie7-offset-horizontal-bottom - @button-border-width;
-            @ie7-offset-horizontal-bottom: 2px;
-
-            // Copied from buttons.less to inline here
-            // Workaround for GOF-704 IE9/IE10 mixed inline/external media query bug
-            @ie7-offset-horizontal-top   : 5px;
-            @vertical-padding            : (@input-height - (2 * @button-border-width) - @button-line-height) / 2;
 
             background-color             : @color-button;
             border                       : @button-border-width solid @color-button;
@@ -106,6 +124,15 @@
             .box-shadow(1px 1px 0 rgba(255, 255, 255, .2) inset);
             .box-sizing(border-box);
             .display-inline-block(bottom);
+            @button-line-height          : (@font-size-xl + 3); // make everything work like firefox
+            @ie-height                   : @input-height - (2 * @vertical-padding) - (2 * @button-border-width);
+            @ie7-height                  : @input-height - @ie7-offset-horizontal-top - @ie7-offset-horizontal-bottom - @button-border-width;
+            @ie7-offset-horizontal-bottom: 2px;
+
+            // Copied from buttons.less to inline here
+            // Workaround for GOF-704 IE9/IE10 mixed inline/external media query bug
+            @ie7-offset-horizontal-top   : 5px;
+            @vertical-padding            : (@input-height - (2 * @button-border-width) - @button-line-height) / 2;
             &:active {
                 background-color: lighten(@color-button, 10%);
                 .background-image(linear-gradient(to top, lighten(@color-button, 10%) 0%,@color-button 100%));
@@ -123,15 +150,15 @@
             }
 
             .lt-ie8 & {
+                height     : @ie7-height;
+                line-height: @ie7-height;
+            }
+
+            .lt-ie8 & {
                 outline       : 0;
                 /* adjust padding to account for difference in presentation in IE7 */
                 padding-bottom: @ie7-offset-horizontal-bottom;
                 padding-top   : @ie7-offset-horizontal-top;
-            }
-
-            .lt-ie8 & {
-                height     : @ie7-height;
-                line-height: @ie7-height;
             }
 
             .lt-ie9 & {
@@ -162,12 +189,6 @@
                 color: @color-promo;
             }
         }
-        // Card Utility Classes
-        .itemportCodeDiffer,
-        .alert span {
-            background-color: lighten(@color-error, 20%);
-            color           : @color-black;
-        }
         .itemResultDetailsToggle {
             font-size: @font-size-xs;
 
@@ -175,6 +196,13 @@
                 margin-left: @offset-horizontal-sm;
                 .display-inline-block();
             }
+        }
+        .itemResultDetailsToggle,
+        .sliceSummaryMessages,
+        .sliceSummaryOperatedBy {
+            clear       : both;
+            padding-left: @carrier-logo-width + @offset-horizontal-md; // match width of logo column to align with thing times
+            padding-top : @offset-vertical-xs;
         }
 
         // Card Layout Sections
@@ -211,8 +239,8 @@
                 span.i {
                     font-size  : @font-size-md;
                     text-indent: 0;
-                    span,
-                    em {
+                    em,
+                    span {
                         display    : inline-block;
                         text-indent: -2000em;
                         visibility : hidden;
@@ -289,27 +317,20 @@
         .sliceGroup-time {
             width: 40%;
         }
-        .sliceSummaryOperatedBy {
-            font-size  : @font-size-xxs;
-            line-height: @line-height-xxs;
-        }
-        .sliceSummaryOperatedBy,
         .sliceSummaryMessages,
-        .itemResultDetailsToggle {
-            clear       : both;
-            padding-left: @carrier-logo-width + @offset-horizontal-md; // match width of logo column to align with thing times
-            padding-top : @offset-vertical-xs;
-        }
+        .sliceSummaryOperatedBy,
         .thingCarrier,
         .thingLabelMultiCity,
         .thingOnd,
         .thingStopsDuration,
-        .thingTier,
-        .sliceSummaryOperatedBy,
-        .sliceSummaryMessages {
+        .thingTier {
             color      : @color-neutral-md;
             font-size  : @font-size-xs;
             line-height: @line-height-sm;
+        }
+        .sliceSummaryOperatedBy {
+            font-size  : @font-size-xxs;
+            line-height: @line-height-xxs;
         }
         .thingTimes {
             background    : url("/image/global/icon-thing-legs.png") repeat-x 0 -14px;
@@ -407,9 +428,23 @@
     .itemSliceDetails:last-child .timeline-group.last-child .timeline-item {
         padding-bottom: 0;
     }
+    .lastLeg .timeline-group.last-child .timeline-marker:before,
+    .soloLeg .timeline-group.last-child .timeline-marker:before {
+        background: url("/image/global/vertical-dash.png") repeat-y 50% 0;
+        content   : "";
+        height    : 5px;
+        left      : 0;
+        position  : absolute;
+        top       : -7px;
+        width     : 100%;
+    }
+    .lastLeg .timeline-group.last-child .timeline-time,
+    .soloLeg .timeline-group.last-child .timeline-time {
+        background: none;
+    }
     .lt-ie8 & {
-        .soloLeg .timeline-group.last-child .timeline-item,
-        .lastLeg .timeline-group.last-child .timeline-item {
+        .lastLeg .timeline-group.last-child .timeline-item,
+        .soloLeg .timeline-group.last-child .timeline-item {
             background: none;
         }
         // Let's not make IE7 work too hard, give it stacked details secions
@@ -448,41 +483,6 @@
                 left       : 0;
                 margin-left: 0;
             }
-        }
-    }
-    .soloLeg .timeline-group.last-child .timeline-marker:before,
-    .lastLeg .timeline-group.last-child .timeline-marker:before {
-        background: url("/image/global/vertical-dash.png") repeat-y 50% 0;
-        content   : "";
-        height    : 5px;
-        left      : 0;
-        position  : absolute;
-        top       : -7px;
-        width     : 100%;
-    }
-    .soloLeg .timeline-group.last-child .timeline-time,
-    .lastLeg .timeline-group.last-child .timeline-time {
-        background: none;
-    }
-    .soloLeg .timeline-group:first-child .timeline-marker:before,
-    .firstLeg .timeline-group:first-child .timeline-marker:before {
-        border-top: 5px solid @color-white-space;
-        content   : "";
-        height    : 0;
-        left      : 0;
-        position  : absolute;
-        top       : -7px;
-        width     : 100%;
-    }
-    .soloLeg .timeline-group:first-child,
-    .firstLeg .timeline-group:first-child,
-    .soloLeg .timeline-group.last-child,
-    .lastLeg .timeline-group.last-child {
-        .timeline-label {
-            color: @color-black;
-        }
-        .timeline-marker {
-            background: @color-brand-2;
         }
     }
     .timeline-container {
@@ -543,6 +543,7 @@
 // item-responsify mixin
 //   targetClass - the class of the module container
 .item-responsify(@targetClass) {
+    .responsify(@lg, @md, @sm, {}, @xxs);
     @lg : {
         .@{targetClass} {
             .itemResultsCard {
@@ -556,7 +557,6 @@
             min-height: 450px;
         }
     };
-
     @md : {
         .@{targetClass} {
             .itemResultsCard {
@@ -592,7 +592,6 @@
             }
         }
     };
-
     @sm : {
         .@{targetClass} {
             .itemcost .i-baggage-x {
@@ -610,10 +609,10 @@
                 }
                 .itemCard-button .button-primary {
                     &,
-                    &:visited,
+                    &:active,
                     &:focus,
                     &:hover,
-                    &:active {
+                    &:visited {
                         // convert to an invisible button that covers the entire card at smallest breakpoints
                         background-color: transparent;
                         background-image: none;
@@ -680,16 +679,16 @@
                 .sliceGroup-time {
                     width: 49%;
                 }
-                .sliceSummaryOperatedBy,
-                .sliceSummaryMessages {
+                .sliceSummaryMessages,
+                .sliceSummaryOperatedBy {
                     padding-left: 0;
                 }
                 .thingTier .microTrigger {
                     color      : @color-neutral-md;
                     font-weight: normal;
                 }
-                [data-tooltip]:hover:before,
-                [data-tooltip]:hover:after {
+                [data-tooltip]:hover:after,
+                [data-tooltip]:hover:before {
                     content: " ";
                     display: none;
                 }
@@ -733,8 +732,8 @@
                     }
                 }
             }
-            .soloLeg .timeline-group.last-child .timeline-item,
-            .lastLeg .timeline-group.last-child .timeline-item {
+            .lastLeg .timeline-group.last-child .timeline-item,
+            .soloLeg .timeline-group.last-child .timeline-item {
                 background: none;
             }
         }
@@ -745,7 +744,6 @@
             }
         }
     };
-
     @xxs: {
         .@{targetClass} {
             .itemResultsCard {
@@ -792,6 +790,10 @@
                         font-size: @font-size-xs + 1px; // 13px
                     }
                 }
+                .lastLeg .timeline-group.last-child .timeline-item,
+                .soloLeg .timeline-group.last-child .timeline-item {
+                    background: none;
+                }
 
                 .sliceGroup {
                     padding-right: 1px;
@@ -801,10 +803,6 @@
                 }
                 .sliceGroup-stopover {
                     text-align: right;
-                }
-                .soloLeg .timeline-group.last-child .timeline-item,
-                .lastLeg .timeline-group.last-child .timeline-item {
-                    background: none;
                 }
                 .thingTimes {
                     .arrivalTime {
@@ -818,5 +816,4 @@
             }
         }
     };
-    .responsify(@lg, @md, @sm, {}, @xxs);
 }

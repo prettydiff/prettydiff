@@ -1,0 +1,89 @@
+//Pretty Diff does not correct for the space between property name and colon
+@page :left {
+    background: black
+}
+
+//Parsed as a variable property instead of a variable property and a value separated by a space
+@charset "UTF-8";
+
+//Parsed as a single token instead of a variable property and a value
+@import"test.css"
+
+//Parsed as a single selector.  Should be three comments and a selector
+@-moz-document/* near */ /* filter */ url("example.com/{") /* a */ {}
+
+//comment "end" gets dropped
+/* a { color: black } */
+/**/
+/* */
+div {
+    /* inside */
+    color: black;
+    /* between */
+    border-radius: 3px / 7px
+    /* end */
+}
+/* b */
+a {
+    color: black;
+    /* c */
+}
+
+//Extra quotes if url is padded with spaces
+a {
+    background-image: url( "./image (1).jpg" );
+    background-image: url( './image (1).jpg' );
+}
+
+//Butchering IE filter
+a {
+filter: progid:DXImageTransform.Microsoft.Blur(pixelradius=2) progid:DXImageTransform.Microsoft.Wheel(duration=3);
+}
+
+//Problems with !important when separated by a space
+p {
+    prop: important;
+    color: red important;
+    margin: 10px      !      important;
+    z-index: 1 ""! important;
+}
+
+//investigate comment token at parse time
+a {
+    *color : black;
+    _background: white;
+    font-size/**/: big;
+    $(var)-size: 100%;
+}
+
+//trouble with the quotes
+a::before {
+    content: ";'@ /**/\"";
+    content: '\'"\\';
+}
+
+//remove excess semicolons
+a {;;
+    color: black;
+    ; ;
+}
+a {
+    background: url("a).png");
+    background: url(a;a);
+    background: url(a/*);
+    background: \;a;
+}
+
+:not([foo=")"]) { }
+:not(div/*)*/) { }
+:not(:nth-child(2n of [foo=")"])) { }
+[foo=\"] { }
+[foo=\{] { }
+[foo=\(] { }
+[foo=yes\:\(it\'s\ work\)] { }
+
+\@noat { }
+
+h1\\{
+    color: \\;
+}

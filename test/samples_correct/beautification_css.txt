@@ -17,7 +17,7 @@ $margin: 16px;
     color     : #000;
 }
 ul.category-list {
-    &>li {
+    & > li {
         list-style-type: disc;
     }
     a {
@@ -39,8 +39,8 @@ ul.category-list {
     margin-left: $dist;
 }
 #data {
-    @include table-scaffolding;
     @include left(10px);
+    @include table-scaffolding;
 }
 a {
     -moz-transition   : all 0.25s ease-in-out;
@@ -68,9 +68,9 @@ a:hover {
 $defaultFont: Helvetica,Arial,sans-serif,"Courier New";
 $primaryColor: #80c040;
 #header h2,
-p,
+.favorite li,
 li,
-.favorite li {
+p {
     color      : $primaryColor;
     font-family: $defaultFont;
     font-size  : 24px;

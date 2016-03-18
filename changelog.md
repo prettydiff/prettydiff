@@ -1,5 +1,10 @@
 # Pretty Diff change log
 
+## v1.16.37
+
+* Stronger CSS edge case parsing support
+* Including NPM package 5028 as a devDependency
+
 ## v1.16.30
 
 * Adding support for Volt templates
