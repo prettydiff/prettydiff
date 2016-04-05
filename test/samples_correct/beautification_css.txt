@@ -110,3 +110,8 @@ a {
 a {
     margin: 4px 3px 2px 2px;
 }
+a {
+    margin-left : 0 !important;
+    margin-right: 20px;
+    margin-top  : 0.5em;
+}
