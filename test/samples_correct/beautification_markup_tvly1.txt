@@ -8028,10 +8028,8 @@
                             x = [],
                             y = b;
                         do {
-                            {
-                                a.exec(""),
-                                i = a.exec(y);
-                            }
+                            a.exec(""),
+                            i = a.exec(y);
                             if (i) {
                                 y = i[3],
                                 x.push(i[1]);
@@ -8980,7 +8978,7 @@
                                                 : d(g).is(h)) && c.push({elem: g, level: k, selector: i});
                                         }
                                         g = g.parentNode,
-                                        k++
+                                        k += 1;
                                     }
                                 }
                                 return c;
@@ -10089,7 +10087,7 @@
                             .type
                             .toUpperCase(),
                         e.hasContent = !bw.test(e.type),
-                        s && d.active     ++=== 0 && d
+                        s && d.active++ === 0 && d
                             .event
                             .trigger("ajaxStart");
                         if (!e.hasContent) {
@@ -10228,7 +10226,7 @@
                 d.ajaxSetup({
                     jsonp        : "callback",
                     jsonpCallback: function () {
-                        return d.expando + "_" + bR++
+                        return d.expando + "_" + bR++;
                     }
                 }),
                 d.ajaxPrefilter("json jsonp", function (b, c, e) {
@@ -11532,10 +11530,10 @@
  */
             (function (d, p) {
                 function u() {
-                    return++ v;
+                    return v += 1;
                 }
                 function w() {
-                    return++ x;
+                    return x += 1;
                 }
                 var v = 0,
                     x = 0;
@@ -17667,11 +17665,11 @@
                                         });
                                 c.length || (c = this.element.children(".ui-menu-item:last"));
                                 this.activate(a, c);
-                            } else {
-                                this.activate(a, this.element.children(".ui-menu-item").filter(!this.active || this.last()
-                                    ? ":first"
-                                    : ":last"));
                             }
+                        } else {
+                            this.activate(a, this.element.children(".ui-menu-item").filter(!this.active || this.last()
+                                ? ":first"
+                                : ":last"));
                         }
                     },
                     previous    : function (a) {
@@ -17700,11 +17698,11 @@
                                     });
                                 result.length || (result = this.element.children(".ui-menu-item:first"));
                                 this.activate(a, result);
-                            } else {
-                                this.activate(a, this.element.children(".ui-menu-item").filter(!this.active || this.first()
-                                    ? ":last"
-                                    : ":first"));
                             }
+                        } else {
+                            this.activate(a, this.element.children(".ui-menu-item").filter(!this.active || this.first()
+                                ? ":last"
+                                : ":first"));
                         }
                     },
                     refresh     : function () {

@@ -13,7 +13,15 @@
  ***********************************************************************/
 var pd     = {},
     global = {};
-
+global.meta = {
+    error: "",
+    lang: ["", "", ""],
+    time: "",
+    insize: 0,
+    outsize: 0,
+    difftotal: 0,
+    difflines: 0
+};
 (function dom__init() {
     "use strict";
     var load     = function dom__load_init() {
@@ -154,6 +162,7 @@ var pd     = {},
         // Ace will only render correctly if the parent container is visible, this test
         // solves for this problem
         render        : {
+            anal: false,
             beau: false,
             diff: false,
             minn: false,
@@ -931,7 +940,7 @@ var pd     = {},
                                 "c00}#prettydiff.shadow .data .delete{background:#300}#prettydiff.shadow .data .d" +
                                 "elete em{background:#200;border-color:#c63;color:#c66}#prettydiff.shadow .data ." +
                                 "insert{background:#030}#prettydiff.shadow .data .insert em{background:#010;borde" +
-                                "r-color:#090;color:#6c0}#prettydiff.shadow .data .replace{background:#234}#prett" +
+                                "r-color:#090;color:#6c0}#prettydiff.shadow .data .replace{background:#345}#prett" +
                                 "ydiff.shadow .data .replace em{background:#023;border-color:#09c;color:#7cf}#pre" +
                                 "ttydiff.shadow .data .empty{background:#111}#prettydiff.shadow .diff .author{bor" +
                                 "der-color:#666}#prettydiff.shadow .data em.s0{color:#fff}#prettydiff.shadow .dat" +
@@ -1382,20 +1391,20 @@ var pd     = {},
                              "pointer;font-weight:bold;padding-left:0.5em}#prettydiff .data{text-align:left;wh" +
                              "ite-space:pre}#prettydiff .beautify .data em{display:inline-block;font-style:nor" +
                              "mal;font-weight:bold}#prettydiff .beautify li,#prettydiff .diff li{border-style:" +
-                             "none none solid;border-width:0 0 0.1em;display:block;line-height:1.2;list-style-" +
-                             "type:none;margin:0;white-space:pre}#prettydiff .beautify ol,#prettydiff .diff ol" +
-                             "{display:table-cell;margin:0;padding:0}#prettydiff .beautify em.l0,#prettydiff ." +
-                             "beautify em.l1,#prettydiff .beautify em.l2,#prettydiff .beautify em.l3,#prettydi" +
-                             "ff .beautify em.l4,#prettydiff .beautify em.l5,#prettydiff .beautify em.l6,#pret" +
-                             "tydiff .beautify em.l7,#prettydiff .beautify em.l8,#prettydiff .beautify em.l9,#" +
-                             "prettydiff .beautify em.l10,#prettydiff .beautify em.l11,#prettydiff .beautify e" +
-                             "m.l12,#prettydiff .beautify em.l13,#prettydiff .beautify em.l14,#prettydiff .bea" +
-                             "utify em.l15,#prettydiff .beautify em.l16{height:2.2em;margin:0 0 -1em;position:" +
-                             "relative;top:-0.5em}#prettydiff .beautify em.l0{margin-left:-0.5em;padding-left:" +
-                             "0.5em}#prettydiff #report .beautify,#prettydiff #report .beautify li,#prettydiff" +
-                             " #report .diff,#prettydiff #report .diff li{font-family:'Courier New',Courier,'L" +
-                             "ucida Console',monospace}#prettydiff #report .beautify{border-style:solid}#prett" +
-                             "ydiff #report .diff h3,#prettydiff #report .beautify h3{margin:0}"
+                             "none none solid;border-width:0 0 0.1em;display:block;height:1em;line-height:1.2;" +
+                             "list-style-type:none;margin:0;white-space:pre}#prettydiff .beautify ol,#prettydi" +
+                             "ff .diff ol{display:table-cell;margin:0;padding:0}#prettydiff .beautify em.l0,#p" +
+                             "rettydiff .beautify em.l1,#prettydiff .beautify em.l2,#prettydiff .beautify em.l" +
+                             "3,#prettydiff .beautify em.l4,#prettydiff .beautify em.l5,#prettydiff .beautify " +
+                             "em.l6,#prettydiff .beautify em.l7,#prettydiff .beautify em.l8,#prettydiff .beaut" +
+                             "ify em.l9,#prettydiff .beautify em.l10,#prettydiff .beautify em.l11,#prettydiff " +
+                             ".beautify em.l12,#prettydiff .beautify em.l13,#prettydiff .beautify em.l14,#pret" +
+                             "tydiff .beautify em.l15,#prettydiff .beautify em.l16{height:2.2em;margin:0 0 -1e" +
+                             "m;position:relative;top:-0.5em}#prettydiff .beautify em.l0{margin-left:-0.5em;pa" +
+                             "dding-left:0.5em}#prettydiff #report .beautify,#prettydiff #report .beautify li," +
+                             "#prettydiff #report .diff,#prettydiff #report .diff li{font-family:'Courier New'" +
+                             ",Courier,'Lucida Console',monospace}#prettydiff #report .beautify{border-style:s" +
+                             "olid}#prettydiff #report .diff h3,#prettydiff #report .beautify h3{margin:0}"
             },
             html  : {
                 body  : "/*]]>*/</style></head><body id='prettydiff' class='",
@@ -1455,52 +1464,53 @@ var pd     = {},
                               "TagName('li');listlen=list.length;for(b=0;b<listlen;b+=1){if(list[b].getAttribut" +
                               "e('class')==='fold'){list[b].onclick=pd.beaufold;}}}}}());",
                 diff    : "var pd={};pd.colorchange=function(){'use strict';var options=this.getElementsByT" +
-                              "agName('option');document.getElementsByTagName('body')[0].setAttribute('class',o" +
-                              "ptions[this.selectedIndex].innerHTML.toLowerCase())};pd.difffold=function dom__d" +
-                              "ifffold(){'use strict';var a=0,b=0,self=this,title=self.getAttribute('title').sp" +
-                              "lit('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(tit" +
-                              "le[2]),inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes" +
-                              "=(parent.getAttribute('class')==='diff')?parent.getElementsByTagName('ol'):paren" +
-                              "t.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listL" +
-                              "en;a+=1){lists.push(listnodes[a].getElementsByTagName('li'))}max=(max>=lists[0]." +
-                              "length)?lists[0].length:max;if(inner.charAt(0)==='-'){self.innerHTML='+'+inner.s" +
-                              "ubstr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display" +
-                              "='none'}}}else{self.innerHTML='-'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;" +
-                              "b<listLen;b+=1){lists[b][a].style.display='block'}}}};pd.colSliderGrab=function(" +
-                              "e){'use strict';var event=e||window.event,touch=(e!==null&&e.type==='touchstart'" +
-                              "),node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,list" +
-                              "s=diff.getElementsByTagName('ol'),counter=lists[0].clientWidth,data=lists[1].cli" +
-                              "entWidth,width=lists[2].parentNode.clientWidth,total=lists[2].parentNode.parentN" +
-                              "ode.clientWidth,offset=lists[2].parentNode.offsetLeft-lists[2].parentNode.parent" +
-                              "Node.offsetLeft,min=((total-counter-data-2)-width),max=(total-width-counter),sta" +
-                              "tus='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight." +
-                              "previousSibling,drop=function dom__event_colSliderGrab_drop(f){f=f||window.event" +
-                              ";f.preventDefault();node.style.cursor=status+'-resize';if(touch===true){document" +
-                              ".ontouchmove=null;document.ontouchend=null}else{document.onmousemove=null;docume" +
-                              "nt.onmouseup=null}},boxmove=function dom__event_colSliderGrab_boxmove(f){f=f||wi" +
-                              "ndow.event;f.preventDefault();if(touch===true){subOffset=offset-f.touches[0].cli" +
-                              "entX}else{subOffset=offset-f.clientX}if(subOffset>minAdjust&&subOffset<maxAdjust" +
-                              "){withinRange=true}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.w" +
-                              "idth=((total-counter-2)/10)+'em';status='e'}else if(withinRange===true&&subOffse" +
-                              "t<minAdjust){diffRight.style.width=((total-counter-data-2)/10)+'em';status='w'}e" +
-                              "lse if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10" +
-                              ")+'em';status='ew'}if(touch===true){document.ontouchend=drop}else{document.onmou" +
-                              "seup=drop}};event.preventDefault();if(typeof pd.data.node==='object'&&pd.data.no" +
-                              "de.report.code.box!==null){offset+=pd.data.node.report.code.box.offsetLeft;offse" +
-                              "t-=pd.data.node.report.code.body.scrollLeft}else{subOffset=(document.body.parent" +
-                              "Node.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:do" +
-                              "cument.body.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.cur" +
-                              "sor='ew-resize';diff.style.width=(total/10)+'em';diff.style.display='inline-bloc" +
-                              "k';if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(diffLeft" +
-                              ".nodeType!==1)}diffLeft.style.display='block';diffRight.style.width=(diffRight.c" +
-                              "lientWidth/10)+'em';diffRight.style.position='absolute';if(touch===true){documen" +
-                              "t.ontouchmove=boxmove;document.ontouchstart=false}else{document.onmousemove=boxm" +
-                              "ove;document.onmousedown=null}return false};(function(){'use strict';var cells=p" +
-                              "d.d[0].getElementsByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(ce" +
-                              "lls[a].getAttribute('class')==='fold'){cells[a].onclick=pd.difffold}}if(pd.d.len" +
-                              "gth>3){pd.d[2].onmousedown=pd.colSliderGrab;pd.d[2].ontouchstart=pd.colSliderGra" +
-                              "b}pd.colorscheme=document.getElementById('colorScheme');pd.colorscheme.onchange=" +
-                              "pd.colorchange}());"
+        "agName('option');document.getElementsByTagName('body')[0].setAttribute('class',o" +
+        "ptions[this.selectedIndex].innerHTML.toLowerCase())};pd.difffold=function dom__d" +
+        "ifffold(){'use strict';var a=0,b=0,self=this,title=self.getAttribute('title').sp" +
+        "lit('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(tit" +
+        "le[2]),inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes" +
+        "=(parent.getAttribute('class')==='diff')?parent.getElementsByTagName('ol'):paren" +
+        "t.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listL" +
+        "en;a+=1){lists.push(listnodes[a].getElementsByTagName('li'))}max=(max>=lists[0]." +
+        "length)?lists[0].length:max;if(inner.charAt(0)==='-'){self.innerHTML='+'+inner.s" +
+        "ubstr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display" +
+        "='none'}}}else{self.innerHTML='-'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;" +
+        "b<listLen;b+=1){lists[b][a].style.display='block'}}}};pd.colSliderGrab=function(" +
+        "e){'use strict';var event=e||window.event,touch=(e!==null&&e.type==='touchstart'" +
+        "),node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,list" +
+        "s=diff.getElementsByTagName('ol'),counter=lists[0].clientWidth,data=lists[1].cli" +
+        "entWidth,width=lists[2].parentNode.clientWidth,total=lists[2].parentNode.parentN" +
+        "ode.clientWidth,offset=lists[2].parentNode.offsetLeft-lists[2].parentNode.parent" +
+        "Node.offsetLeft,min=((total-counter-data-2)-width),max=(total-width-counter),sta" +
+        "tus='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight." +
+        "previousSibling,drop=function dom__event_colSliderGrab_drop(f){f=f||window.event" +
+        ";f.preventDefault();node.style.cursor=status+'-resize';if(touch===true){document" +
+        ".ontouchmove=null;document.ontouchend=null}else{document.onmousemove=null;docume" +
+        "nt.onmouseup=null}},boxmove=function dom__event_colSliderGrab_boxmove(f){f=f||wi" +
+        "ndow.event;f.preventDefault();if(touch===true){subOffset=offset-f.touches[0].cli" +
+        "entX}else{subOffset=offset-f.clientX}if(subOffset>minAdjust&&subOffset<maxAdjust" +
+        "){withinRange=true}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.w" +
+        "idth=((total-counter-2)/10)+'em';status='e'}else if(withinRange===true&&subOffse" +
+        "t<minAdjust){diffRight.style.width=((total-counter-data-2)/10)+'em';status='w'}e" +
+        "lse if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10" +
+        ")+'em';status='ew'}if(touch===true){document.ontouchend=drop}else{document.onmou" +
+        "seup=drop}};event.preventDefault();if(typeof pd.data==='object'&&pd.data.node.re" +
+        "port.code.box!==null){offset+=pd.data.node.report.code.box.offsetLeft;offset-=pd" +
+        ".data.node.report.code.body.scrollLeft}else{subOffset=(document.body.parentNode." +
+        "scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:documen" +
+        "t.body.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.cursor='" +
+        "ew-resize';diff.style.width=(total/10)+'em';diff.style.display='inline-block';if" +
+        "(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(diffLeft.node" +
+        "Type!==1)}diffLeft.style.display='block';diffRight.style.width=(diffRight.client" +
+        "Width/10)+'em';diffRight.style.position='absolute';if(touch===true){document.ont" +
+        "ouchmove=boxmove;document.ontouchstart=false}else{document.onmousemove=boxmove;d" +
+        "ocument.onmousedown=null}return false};(function(){'use strict';var lists=docume" +
+        "nt.getElementById('prettydiff').getElementsByTagName('ol'),cells=lists[0].getEle" +
+        "mentsByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(cells[a].getAtt" +
+        "ribute('class')==='fold'){cells[a].onclick=pd.difffold}}if(lists.length>3){lists" +
+        "[2].onmousedown=pd.colSliderGrab;lists[2].ontouchstart=pd.colSliderGrab}pd.color" +
+        "scheme=document.getElementById('colorScheme');pd.colorscheme.onchange=pd.colorch" +
+        "ange}());"
             }
         },
         color        : "white", //for use with HTML themes
@@ -1510,9 +1520,13 @@ var pd     = {},
         langvalue    : [],
         mode         : "diff",
         node         : {
+            anal        : pd.id("Analysis"),
+            analOps     : pd.id("analysisops"),
             announce    : pd.id("announcement"),
             beau        : pd.id("Beautify"),
             beauOps     : pd.id("beauops"),
+            codeAnalIn  : pd.id("analysisinput"),
+            codeAnalOut : pd.id("analysisoutput"),
             codeBeauIn  : pd.id("beautyinput"),
             codeBeauOut : pd.id("beautyoutput"),
             codeDiffBase: pd.id("baseText"),
@@ -1536,6 +1550,7 @@ var pd     = {},
             modeDiff    : pd.id("modediff"),
             modeMinn    : pd.id("modeminify"),
             modePars    : pd.id("modeparse"),
+            modeAnal    : pd.id("modeanalysis"),
             page        : (function dom__dataPage() {
                 var divs = document.getElementsByTagName("div");
                 if (divs.length === 0) {
@@ -1561,6 +1576,7 @@ var pd     = {},
         settings     : {},
         source       : "",
         sourceLength : {
+            anal    : 0,
             beau    : 0,
             diffBase: 0,
             diffNew : 0,
@@ -1569,6 +1585,7 @@ var pd     = {},
         },
         stat         : {
             avday : 1,
+            anal  : 0,
             beau  : 0,
             css   : 0,
             csv   : 0,
@@ -1652,6 +1669,8 @@ var pd     = {},
                 minnOut  = pd.id("minifyoutput"),
                 parsIn   = pd.id("parseinput"),
                 parsOut  = pd.id("parseoutput"),
+                analIn   = pd.id("analysisinput"),
+                analOut  = pd.id("analysisoutput"),
                 math     = 0,
                 height   = window.innerHeight || document.getElementsByTagName("body")[0].clientHeight,
                 headline = 0;
@@ -1714,6 +1733,17 @@ var pd     = {},
                         .parsIn
                         .resize();
                 }
+                if (pd.data.node.codeAnalIn !== null) {
+                    analIn.style.height = math + "em";
+                    pd
+                        .ace
+                        .analIn
+                        .setStyle("height:" + math + "em");
+                    pd
+                        .ace
+                        .analIn
+                        .resize();
+                }
                 if (pd.data.node.codeBeauOut !== null) {
                     beauOut.style.height = math + "em";
                     pd
@@ -1747,6 +1777,17 @@ var pd     = {},
                         .parsOut
                         .resize();
                 }
+                if (pd.data.node.codeAnalOut !== null) {
+                    analOut.style.height = math + "em";
+                    pd
+                        .ace
+                        .analOut
+                        .setStyle("height:" + math + "em");
+                    pd
+                        .ace
+                        .analOut
+                        .resize();
+                }
             } else {
                 if (baseText !== null && newText !== null) {
                     math                  = (height / 14.4) - (16.25 + headline);
@@ -1763,6 +1804,9 @@ var pd     = {},
                 if (pd.data.node.codeParsIn !== null) {
                     pd.data.node.codeParsIn.style.height = math + "em";
                 }
+                if (pd.data.node.codeAnalIn !== null) {
+                    pd.data.node.codeAnalIn.style.height = math + "em";
+                }
                 if (pd.data.node.codeBeauOut !== null) {
                     pd.data.node.codeBeauOut.style.height = math + "em";
                 }
@@ -1771,6 +1815,9 @@ var pd     = {},
                 }
                 if (pd.data.node.codeParsOut !== null) {
                     pd.data.node.codeParsOut.style.height = math + "em";
+                }
+                if (pd.data.node.codeAnalOut !== null) {
+                    pd.data.node.codeAnalOut.style.height = math + "em";
                 }
             }
         },
@@ -2599,6 +2646,16 @@ var pd     = {},
                         data = ["mode", "minify"];
                     } else if (id === "modeparse") {
                         data = ["mode", "parse"];
+                    } else if (id === "parseFormat-htmltable") {
+                        data = ["parseFormat", "htmltable"];
+                    } else if (id === "parseFormat-parallel") {
+                        data = ["parseFormat", "parallel"];
+                    } else if (id === "parseFormat-sequential") {
+                        data = ["parseFormat", "sequential"];
+                    } else if (id === "parsespace-no") {
+                        data = ["parseSpace", "false"];
+                    } else if (id === "parsespace-yes") {
+                        data = ["parseSpace", "true"];
                     } else if (id === "sidebyside") {
                         data = ["diffview", "sidebyside"];
                     } else if (id === "topcoms-yes") {
@@ -3717,6 +3774,9 @@ var pd     = {},
                 if (pd.data.node.pars !== null) {
                     pd.data.node.pars.style.display = "none";
                 }
+                if (pd.data.node.anal !== null) {
+                    pd.data.node.anal.style.display = "none";
+                }
                 if (pd.data.node.diffBase !== null) {
                     pd.data.node.diffBase.style.display = "none";
                 }
@@ -3731,6 +3791,9 @@ var pd     = {},
                 }
                 if (pd.data.node.parsOps !== null) {
                     pd.data.node.parsOps.style.display = "none";
+                }
+                if (pd.data.node.analOps !== null) {
+                    pd.data.node.analOps.style.display = "none";
                 }
                 if (lang === "csv" && pd.data.node.beauOps !== null) {
                     pd.data.node.beauOps.style.display = "none";
@@ -3808,6 +3871,9 @@ var pd     = {},
                 if (pd.data.node.pars !== null) {
                     pd.data.node.pars.style.display = "none";
                 }
+                if (pd.data.node.anal !== null) {
+                    pd.data.node.anal.style.display = "none";
+                }
                 if (pd.data.node.diffBase !== null) {
                     pd.data.node.diffBase.style.display = "none";
                 }
@@ -3822,6 +3888,9 @@ var pd     = {},
                 }
                 if (pd.data.node.parsOps !== null) {
                     pd.data.node.parsOps.style.display = "none";
+                }
+                if (pd.data.node.analOps !== null) {
+                    pd.data.node.analOps.style.display = "none";
                 }
                 if (pd.test.render.minn === false) {
                     if (pd.data.node.codeMinnIn !== null) {
@@ -3895,6 +3964,9 @@ var pd     = {},
                 if (pd.data.node.pars !== null) {
                     pd.data.node.pars.style.display = "none";
                 }
+                if (pd.data.node.anal !== null) {
+                    pd.data.node.anal.style.display = "none";
+                }
                 if (pd.data.node.diffOps !== null) {
                     pd.data.node.diffOps.style.display = "block";
                 }
@@ -3906,6 +3978,9 @@ var pd     = {},
                 }
                 if (pd.data.node.parsOps !== null) {
                     pd.data.node.parsOps.style.display = "none";
+                }
+                if (pd.data.node.analOps !== null) {
+                    pd.data.node.analOps.style.display = "none";
                 }
                 if (lang === "csv" || lang === "text") {
                     node = pd.id("diffquanp");
@@ -4023,6 +4098,9 @@ var pd     = {},
                 if (pd.data.node.beau !== null) {
                     pd.data.node.beau.style.display = "none";
                 }
+                if (pd.data.node.anal !== null) {
+                    pd.data.node.anal.style.display = "none";
+                }
                 if (pd.data.node.pars !== null) {
                     pd.data.node.pars.style.display = "block";
                 }
@@ -4040,6 +4118,9 @@ var pd     = {},
                 }
                 if (pd.data.node.minnOps !== null) {
                     pd.data.node.minnOps.style.display = "none";
+                }
+                if (pd.data.node.analOps !== null) {
+                    pd.data.node.analOps.style.display = "none";
                 }
                 if (pd.test.render.pars === false) {
                     if (pd.data.node.codeParsIn !== null) {
@@ -4078,6 +4159,93 @@ var pd     = {},
                     }
                 }
                 pd.test.render.pars = true;
+            }
+            if (a === pd.data.node.modeAnal) {
+                pd.data.mode = "anal";
+                if (langtest === true) {
+                    optioncheck();
+                }
+                if (pd.data.node.codeAnalIn !== null) {
+                    if (pd.data.node.codeAnalIn.value === "" && pd.data.node.codeBeauIn !== null && pd.data.node.codeBeauIn.value !== "") {
+                        pd.data.node.codeAnalIn.value = pd.data.node.codeAnalIn.value;
+                    } else if (pd.data.node.codeAnalIn.value === "" && pd.data.node.codeBeauOut !== null && pd.data.node.codeBeauOut.value !== "") {
+                        pd.data.node.codeAnalIn.value = pd.data.node.codeBeauOut.value;
+                    }
+                }
+                if (pd.data.node.analOps !== null) {
+                    if (lang === "text" || lang === "csv") {
+                        pd.data.node.analOps.style.display = "none";
+                    } else {
+                        pd.data.node.analOps.style.display = "block";
+                    }
+                }
+                if (pd.data.node.minn !== null) {
+                    pd.data.node.minn.style.display = "none";
+                }
+                if (pd.data.node.beau !== null) {
+                    pd.data.node.beau.style.display = "none";
+                }
+                if (pd.data.node.pars !== null) {
+                    pd.data.node.pars.style.display = "none";
+                }
+                if (pd.data.node.anal !== null) {
+                    pd.data.node.anal.style.display = "block";
+                }
+                if (pd.data.node.diffBase !== null) {
+                    pd.data.node.diffBase.style.display = "none";
+                }
+                if (pd.data.node.diffNew !== null) {
+                    pd.data.node.diffNew.style.display = "none";
+                }
+                if (pd.data.node.diffOps !== null) {
+                    pd.data.node.diffOps.style.display = "none";
+                }
+                if (pd.data.node.beauOps !== null) {
+                    pd.data.node.beauOps.style.display = "none";
+                }
+                if (pd.data.node.minnOps !== null) {
+                    pd.data.node.minnOps.style.display = "none";
+                }
+                if (pd.data.node.parsOps !== null) {
+                    pd.data.node.parsOps.style.display = "none";
+                }
+                if (pd.test.render.anal === false) {
+                    if (pd.data.node.codeAnalIn !== null) {
+                        if (pd.test.ls === true && localStorage.codeAnalysis !== undefined) {
+                            storage = localStorage.codeAnalysis;
+                            if ((/^(\s+)$/).test(storage) === true) {
+                                storage = "";
+                            }
+                            if (pd.test.ace === true) {
+                                pd
+                                    .ace
+                                    .analIn
+                                    .setValue(storage);
+                                pd
+                                    .ace
+                                    .analIn
+                                    .clearSelection();
+                                pd
+                                    .app
+                                    .langkey(false, pd.ace.analIn, "");
+                            } else {
+                                pd.data.node.codeAnalIn.value = storage;
+                            }
+                        } else if (pd.test.ace === true) {
+                            pd
+                                .ace
+                                .analIn
+                                .setValue(" ");
+                        }
+                    }
+                    if (pd.test.ace === true && pd.data.node.codeAnalOut !== null) {
+                        pd
+                            .ace
+                            .analOut
+                            .setValue(" ");
+                    }
+                }
+                pd.test.render.anal = true;
             }
             if (pd.data.node.announce !== null && (a === pd.data.node.modeBeau || a === pd.data.node.modeMinn || a === pd.data.node.modeDiff)) {
                 pd.data.node.announce.innerHTML = "";
@@ -4123,6 +4291,7 @@ var pd     = {},
             localStorage.codeDiffNew   = "";
             localStorage.codeMinify    = "";
             localStorage.codeParse     = "";
+            localStorage.codeAnalysis  = "";
             localStorage.commentString = "[]";
             if (pd.data.settings === undefined || pd.data.settings.knownname === undefined) {
                 if (pd.data.settings === undefined) {
@@ -4486,47 +4655,27 @@ var pd     = {},
                     button     = {},
                     buttons    = {},
                     pdlang     = "",
-                    chromeSave = false;
-                node           = pd.id("showOptionsCallOut");
+                    chromeSave = false,
+                    commanumb  = function dom__event_recycle_execOutput_commanumb(numb) {
+                        var str = "",
+                            len = 0,
+                            arr = [];
+                        if (typeof numb !== "number" || isNaN(numb) === true) {
+                            return numb;
+                        }
+                        str = String(numb);
+                        if (str.length < 4) {
+                            return str;
+                        }
+                        arr = str.split("");
+                        for (len = str.length - 4; len > -1; len -= 3) {
+                            arr[len] = arr[len] + ",";
+                        }
+                        return arr.join("");
+                    };
+                node = pd.id("showOptionsCallOut");
                 pd.data.zIndex += 1;
                 if (autotest === true) {
-                    if (pd.data.langvalue[1] === "javascript") {
-                        if (output[1] !== undefined && output[1].indexOf("React JSX") > 0 && ((api.jsscope === "report" && (/Code\ type\ is\ presumed\ to\ be\ React\ JSX/).test(output[1]) === false && (/Presumed\ language\ is\ &lt;em&gt;React\ JSX/).test(output[1]) === false) || api.jsscope !== "report")) {
-                            if (pd.test.ace === true) {
-                                if (pd.data.mode === "beau") {
-                                    pd
-                                        .app
-                                        .langkey(false, pd.ace.beauIn, "jsx");
-                                    pd
-                                        .app
-                                        .langkey(false, pd.ace.beauOut, "jsx");
-                                } else if (pd.data.mode === "minn") {
-                                    pd
-                                        .app
-                                        .langkey(false, pd.ace.minnIn, "jsx");
-                                    pd
-                                        .app
-                                        .langkey(false, pd.ace.minnOut, "jsx");
-                                } else if (pd.data.mode === "pars") {
-                                    pd
-                                        .app
-                                        .langkey(false, pd.ace.parsIn, "jsx");
-                                    pd
-                                        .app
-                                        .langkey(false, pd.ace.parsOut, "jsx");
-                                } else if (pd.data.mode === "minn") {
-                                    pd
-                                        .app
-                                        .langkey(false, pd.ace.diffBase, "jsx");
-                                    pd
-                                        .app
-                                        .langkey(false, pd.ace.diffNew, "jsx");
-                                }
-                            } else {
-                                pd.data.langvalue = ["jsx", "javascript", "React JSX"];
-                            }
-                        }
-                    }
                     api.lang = "auto";
                 }
                 button           = pd
@@ -4537,37 +4686,22 @@ var pd     = {},
                     .box
                     .getElementsByTagName("p")[0]
                     .getElementsByTagName("button")[0];
-                pd.data.html[10] = output[0];
                 if (button.getAttribute("class") === "save" && button.innerHTML === "H") {
                     chromeSave       = true;
                     button.innerHTML = "S";
                 }
                 if (api.mode === "parse" || (api.lang === "csv" && pd.data.mode !== "diff")) {
-                    pdlang = JSON.stringify(output[0]);
+                    pdlang = JSON.stringify(output);
                     if (pdlang.length > 125000) {
                         pd.test.filled.code = true;
                     } else {
                         pd.test.filled.code = false;
                     }
-                    if (pd.data.node.codeParsOut !== null && api.lang !== "csv") {
-                        if (pd.test.ace === true) {
-                            pd
-                                .ace
-                                .parsOut
-                                .setValue(pdlang);
-                            pd
-                                .ace
-                                .parsOut
-                                .clearSelection();
-                        } else {
-                            pd.data.node.codeParsOut.value = pdlang;
-                        }
-                    }
                     if (pd.data.node.report.code.box !== null) {
                         if (api.lang === "csv") {
                             (function dom__event_recycle_execOutput_csvTable() {
                                 var a       = 0,
-                                    b       = output[0].length,
+                                    b       = output.length,
                                     c       = 0,
                                     d       = 0,
                                     cells   = 0,
@@ -4578,26 +4712,26 @@ var pd     = {},
                                     body    = {},
                                     div     = {};
                                 for (a = 0; a < b; a += 1) {
-                                    if (output[0][a].length > cells) {
-                                        cells = output[0][a].length;
+                                    if (output[a].length > cells) {
+                                        cells = output[a].length;
                                     }
                                 }
                                 if (b > 5) {
-                                    c = output[0][0].length;
+                                    c = output[0].length;
                                     for (a = 0; a < c; a += 1) {
-                                        if (isNaN(output[0][0][a]) === false || (output[0][0][a].length < 4 && output[0][0][a].length < output[0][1][a].length && output[0][0][a].length < output[0][2][a].length)) {
+                                        if (isNaN(output[0][a]) === false || (output[0][a].length < 4 && output[0][a].length < output[1][a].length && output[0][a].length < output[2][a].length)) {
                                             break;
                                         }
                                     }
                                     if (a === c) {
                                         for (a = 0; a < c; a += 1) {
-                                            if (output[0][1][a] !== undefined && (isNaN(output[0][1][a].charAt(0)) === false || output[0][1][a].length < 4)) {
+                                            if (output[1][a] !== undefined && (isNaN(output[1][a].charAt(0)) === false || output[1][a].length < 4)) {
                                                 break;
                                             }
                                         }
                                         if (a < c) {
                                             for (d = 0; d < c; d += 1) {
-                                                if (output[0][2][d] !== undefined && (isNaN(output[0][2][d].charAt(0)) === false || output[0][2][d].length < 4)) {
+                                                if (output[2][d] !== undefined && (isNaN(output[2][d].charAt(0)) === false || output[2][d].length < 4)) {
                                                     if (d === a) {
                                                         heading = true;
                                                     }
@@ -4622,8 +4756,8 @@ var pd     = {},
                                     tr.appendChild(td);
                                     for (c = 0; c < cells; c += 1) {
                                         td = document.createElement("th");
-                                        if (output[0][0][c] !== undefined) {
-                                            td.innerHTML = output[0][0][c];
+                                        if (output[0][c] !== undefined) {
+                                            td.innerHTML = output[0][c];
                                         }
                                         tr.appendChild(td);
                                     }
@@ -4642,8 +4776,8 @@ var pd     = {},
                                     tr.appendChild(td);
                                     for (c = 0; c < cells; c += 1) {
                                         td = document.createElement("td");
-                                        if (output[0][a][c] !== undefined) {
-                                            td.innerHTML = output[0][a][c];
+                                        if (output[a][c] !== undefined) {
+                                            td.innerHTML = output[a][c];
                                         }
                                         tr.appendChild(td);
                                     }
@@ -4651,7 +4785,6 @@ var pd     = {},
                                 }
                                 table.appendChild(body);
                                 div.appendChild(table);
-                                pd.data.node.report.code.body.innerHTML = output[1];
                                 pd
                                     .data
                                     .node
@@ -4681,52 +4814,65 @@ var pd     = {},
                                     }
                                 }
                             }());
-                        } else {
+                        } else if (api.mode === "parse") {
                             (function dom__event_recycle_execOutput_parseTable() {
                                 var table = [],
-                                    token = output[0].token,
-                                    types = output[0].types,
+                                    keys  = [],
+                                    klen  = 0,
                                     a     = 0,
-                                    len   = 0,
-                                    build = "";
-                                if (token === undefined) {
-                                    pd.data.node.report.code.body.innerHTML = output[1];
+                                    build = "",
+                                    render = pd.id("parsehtml-yes");
+                                if (api.parseFormat !== "htmltable" || render === null || (api.parseFormat === "htmltable" && render.checked === false)) {
+                                    if (pd.data.node.codeParsOut !== null && api.lang !== "csv") {
+                                        if (pd.test.ace === true) {
+                                            pd
+                                                .ace
+                                                .parsOut
+                                                .setValue(JSON.stringify(output.data).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                            pd
+                                                .ace
+                                                .parsOut
+                                                .clearSelection();
+                                        } else {
+                                            pd.data.node.codeParsOut.value = JSON.stringify(output.data).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                                        }
+                                    }
                                     return;
                                 }
-                                len = token.length;
-                                if (types !== undefined) {
-                                    table.push("<div class='report'><table class='analysis' summary='Parsed Arrays'><thead><tr> " +
-                                            "<th>Index</th><th>types</th><th>token</th> </tr></thead><tbody class='parseData'" +
-                                            ">");
-                                    for (a = 0; a < len; a += 1) {
-                                        table.push("<tr> <td>");
-                                        table.push(a);
-                                        table.push("</td><td>");
-                                        table.push(types[a]);
-                                        table.push("</td><td>");
-                                        table.push(token[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
-                                        table.push("</td> </tr>");
+                                if (pd.data.node.report.code.box !== null) {
+                                    table.push("<div class='report'><h4>Definition of data fields</h4><ul>");
+                                    keys = Object.keys(output.definition);
+                                    klen = keys.length;
+                                    for (a = 0; a < klen; a += 1) {
+                                        table.push("<li><em>");
+                                        table.push(keys[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                        table.push("</em> - ");
+                                        table.push(output.definition[keys[a]].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                        table.push("</li>");
                                     }
-                                    table.push("</tbody></table></div>");
-                                }
-                                build = table.join("");
-                                if (output[1].length + build.length > 75000) {
-                                    pd.test.filled.code = true;
-                                } else {
-                                    pd.test.filled.code = false;
-                                }
-                                pd.data.node.report.code.body.innerHTML = output[1] + build;
-                                if (autotest === true && pd.data.node.report.code.body.firstChild !== null) {
-                                    if (pd.data.node.report.code.body.firstChild.nodeType > 1) {
+                                    table.push("</ul> <h4>Parsed Output</h4>");
+                                    table.push(output.data);
+                                    table.push("</div>");
+                                    build = table.join("");
+                                    if (build.length > 75000) {
+                                        pd.test.filled.code = true;
+                                    } else {
+                                        pd.test.filled.code = false;
+                                    }
+                                    if (autotest === true) {
+                                        pd.data.node.report.code.body.innerHTML = "<p>Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</span></p>" + build;
+                                    } else {
+                                        pd.data.node.report.code.body.innerHTML = build;
+                                    }
+                                    if (pd.data.node.report.code.body.style.display === "none") {
                                         pd
-                                            .data
-                                            .node
-                                            .report
-                                            .code
-                                            .body
-                                            .removeChild(pd.data.node.report.code.body.firstChild);
+                                            .event
+                                            .grab({
+                                                type: "onmousedown"
+                                            }, pd.data.node.report.code.box.getElementsByTagName("h3")[0]);
                                     }
-                                    pd.data.node.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</span>";
+                                    pd.data.node.report.code.box.style.top   = (pd.data.settings.codereport.top / 10) + "em";
+                                    pd.data.node.report.code.box.style.right = "auto";
                                 }
                                 if (pd.test.ls === true) {
                                     pd.data.stat.pars += 1;
@@ -4737,15 +4883,19 @@ var pd     = {},
                                 }
                             }());
                         }
-                        if (pd.data.node.report.code.body.style.display === "none") {
+                    } else if (pd.data.node.codeParsOut !== null && api.lang !== "csv") {
+                        if (pd.test.ace === true) {
                             pd
-                                .event
-                                .grab({
-                                    type: "onmousedown"
-                                }, pd.data.node.report.code.box.getElementsByTagName("h3")[0]);
+                                .ace
+                                .parsOut
+                                .setValue(pdlang);
+                            pd
+                                .ace
+                                .parsOut
+                                .clearSelection();
+                        } else {
+                            pd.data.node.codeParsOut.value = pdlang;
                         }
-                        pd.data.node.report.code.box.style.top   = (pd.data.settings.codereport.top / 10) + "em";
-                        pd.data.node.report.code.box.style.right = "auto";
                     }
                 } else if (api.mode === "beautify") {
                     pd.data.html[11] = pd.data.builder.script.beautify;
@@ -4754,39 +4904,18 @@ var pd     = {},
                             pd
                                 .ace
                                 .beauOut
-                                .setValue(output[0]);
+                                .setValue(output);
                             pd
                                 .ace
                                 .beauOut
                                 .clearSelection();
                         } else {
-                            pd.data.node.codeBeauOut.value = output[0];
+                            pd.data.node.codeBeauOut.value = output;
                         }
                     }
                     if (pd.data.node.report.code.box !== null) {
-                        if (output[1] !== "") {
-                            pd.data.node.report.code.body.innerHTML = output[1];
-                            if (autotest === true) {
-                                if (pd.data.node.report.code.body.firstChild.nodeType > 1) {
-                                    pd
-                                        .data
-                                        .node
-                                        .report
-                                        .code
-                                        .body
-                                        .removeChild(pd.data.node.report.code.body.firstChild);
-                                }
-                                pd.data.node.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</span>";
-                            }
-                            pd.data.node.report.code.box.style.zIndex  = pd.data.zIndex;
-                            pd.data.node.report.code.box.style.display = "block";
-                        }
-                        if (api.jsscope === "report" && pd.data.langvalue[1] === "javascript" && output[0].indexOf("Error:") !== 0) {
-                            pd.data.node.report.code.body.innerHTML = pd.data.node.report.code.body.innerHTML + output[0];
-                            if (api.lang === "auto" && pdlang === "" && output[1].indexOf("Presumed language is <em>") > 0) {
-                                pdlang = output[1].split("Presumed language is <em>")[1];
-                                pdlang = pdlang.substring(0, pdlang.indexOf("</em>"));
-                            }
+                        if (api.jsscope === "report" && pd.data.langvalue[1] === "javascript" && output.indexOf("Error:") !== 0) {
+                            pd.data.node.report.code.body.innerHTML = pd.data.node.report.code.body.innerHTML + output;
                             if (pd.data.node.report.code.body.style.display === "none") {
                                 pd
                                     .event
@@ -4816,11 +4945,6 @@ var pd     = {},
                                 }());
                             }
                         }
-                        if (output[1] !== undefined && output[1].length > 125000) {
-                            pd.test.filled.code = true;
-                        } else {
-                            pd.test.filled.code = false;
-                        }
                     }
                     if (pd.test.ls === true) {
                         pd.data.stat.beau += 1;
@@ -4839,12 +4963,12 @@ var pd     = {},
                         .getElementsByTagName("p")[0]
                         .getElementsByTagName("button");
                     pd.data.html[11] = pd.data.builder.script.diff;
-                    if (output.length > 0 && output[0].length > 125000) {
+                    if (output.length > 0 && output.length > 125000) {
                         pd.test.filled.code = true;
                     } else {
                         pd.test.filled.code = false;
                     }
-                    pd.data.node.report.code.body.innerHTML = output[1] + output[0];
+                    pd.data.node.report.code.body.innerHTML = "<p>Code type is set to <strong>auto</strong>. Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</p><p>" + global.meta.time + "</p>" + output;
                     if (autotest === true && pd.data.node.report.code.body.firstChild !== null) {
                         if (pd.data.node.report.code.body.firstChild.nodeType > 1) {
                             pd
@@ -4855,7 +4979,6 @@ var pd     = {},
                                 .body
                                 .removeChild(pd.data.node.report.code.body.firstChild);
                         }
-                        pd.data.node.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</span>";
                     }
                     if (pd.data.node.report.code.body.innerHTML.toLowerCase().indexOf("<textarea") === -1) {
                         diffList = pd
@@ -4890,7 +5013,7 @@ var pd     = {},
                         }
                     }
                 } else if (api.mode === "minify") {
-                    if (output[0].length > 125000) {
+                    if (output.length > 125000) {
                         pd.test.filled.code = true;
                     } else {
                         pd.test.filled.code = false;
@@ -4900,36 +5023,14 @@ var pd     = {},
                             pd
                                 .ace
                                 .minnOut
-                                .setValue(output[0]);
+                                .setValue(output);
                             pd
                                 .ace
                                 .minnOut
                                 .clearSelection();
                         } else {
-                            pd.data.node.codeMinnOut.value = output[0];
+                            pd.data.node.codeMinnOut.value = output;
                         }
-                    }
-                    if (pd.data.node.report.code.box !== null) {
-                        if (autotest === true) {
-                            output[1] = output[1].replace("seconds </em></p>", "seconds </em></p> <p>Language is set to <strong>auto</strong>. Presumed language" +
-                                    " is <em>" + pd.data.langvalue[2] + "</em>.</p>");
-                            api.lang  = "auto";
-                        }
-                        pd.data.node.report.code.body.innerHTML = output[1];
-                        if (autotest === true && pd.data.node.report.code.body.firstChild !== null) {
-                            if (pd.data.node.report.code.body.firstChild.nodeType > 1) {
-                                pd
-                                    .data
-                                    .node
-                                    .report
-                                    .code
-                                    .body
-                                    .removeChild(pd.data.node.report.code.body.firstChild);
-                            }
-                            pd.data.node.report.code.body.firstChild.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</span>";
-                        }
-                        pd.data.node.report.code.box.style.zIndex  = pd.data.zIndex;
-                        pd.data.node.report.code.box.style.display = "block";
                     }
                     if (pd.test.ls === true) {
                         pd.data.stat.minn += 1;
@@ -4938,27 +5039,50 @@ var pd     = {},
                             node.innerHTML = pd.data.stat.minn;
                         }
                     }
+                } else if (api.mode === "analysis") {
+                    if (output.length > 125000) {
+                        pd.test.filled.code = true;
+                    } else {
+                        pd.test.filled.code = false;
+                    }
+                    if (pd.id("analysishtml-yes") !== null && pd.id("analysishtml-yes").checked === true && pd.data.node.report.code.box !== null) {
+                        if (autotest === true) {
+                            pd.data.node.report.code.body.innerHTML = "<p>Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</span></p>" + output;
+                        } else {
+                            pd.data.node.report.code.body.innerHTML = output;
+                        }
+                        if (pd.data.node.report.code.body.style.display === "none") {
+                            pd
+                                .event
+                                .grab({
+                                    type: "onmousedown"
+                                }, pd.data.node.report.code.box.getElementsByTagName("h3")[0]);
+                        }
+                        pd.data.node.report.code.box.style.top   = (pd.data.settings.codereport.top / 10) + "em";
+                        pd.data.node.report.code.box.style.right = "auto";
+                    } else if (pd.data.node.codeAnalOut !== null) {
+                        if (pd.test.ace === true) {
+                            pd
+                                .ace
+                                .analOut
+                                .setValue(output);
+                            pd
+                                .ace
+                                .analOut
+                                .clearSelection();
+                        } else {
+                            pd.data.node.codeAnalOut.value = output.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                        }
+                    }
+                    if (pd.test.ls === true) {
+                        pd.data.stat.anal += 1;
+                        node              = pd.id("stanal");
+                        if (node !== null) {
+                            node.innerHTML = pd.data.stat.anal;
+                        }
+                    }
                 }
                 if (pd.data.node.announce !== null) {
-                    if (pd.data.langvalue[1] === "markup" || pd.data.langvalue[1] === "html") {
-                        errortext = (function dom__event_recycle_execOutput_errortext() {
-                            var a      = 0,
-                                p      = output[1].split("<p><strong"),
-                                length = p.length;
-                            for (a = 0; a < length; a += 1) {
-                                if (p[a].indexOf(" more ") > -1 && p[a].indexOf("start tag") > -1 && p[a].indexOf("end tag") > -1) {
-                                    return "Notice: " + p[a].substring(1, p[a].indexOf("<"));
-                                }
-                                if (p[a].indexOf("Duplicate id") > -1) {
-                                    if (p[a].indexOf("Execution time") > -1) {
-                                        return p[a].slice(p[a].indexOf("<strong class='duplicate"), p[a].length - 4);
-                                    }
-                                    return "<strong>" + p[a].slice(p[a].indexOf(">") + 1, p[a].indexOf("</p"));
-                                }
-                            }
-                            return "";
-                        }());
-                    }
                     if (errortext.indexOf("end tag") > 0 || errortext.indexOf("Duplicate id") > 0) {
                         pd
                             .data
@@ -4977,15 +5101,22 @@ var pd     = {},
                             .getElementsByTagName("strong")[0]
                             .innerHTML + "</strong> <span>See 'Code Report' for details</span>";
                     } else {
-                        if (autotest === true) {
-                            pd
-                                .data
-                                .node
-                                .announce
-                                .setAttribute("class", "alert");
-                            pd.data.node.announce.innerHTML = "Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</span>";
+                        if (global.meta.lang[0] === "jsx") {
+                            pd.data.node.announce.innerHTML = "Presumed language is <strong>React JSX</strong>.";
+                        } else if (autotest === true) {
+                            pd.data.node.announce.innerHTML = "Code type is set to <em>auto</em>. Presumed language is <strong>" + pd.data.langvalue[2] + "</strong>.";
                         } else {
-                            pd.data.node.announce.innerHTML = "Language set to <em>" + pd.data.langvalue[2] + "</em>.";
+                            pd.data.node.announce.innerHTML = "Language set to <strong>" + pd.data.langvalue[2] + "</strong>.";
+                        }
+                        if (api.mode === "parse" && api.parseFormat !== "htmltable") {
+                            pdlang = "tokens";
+                        } else {
+                            pdlang = "characters";
+                        }
+                        if (global.meta.error === "" || global.meta.error === undefined) {
+                            pd.data.node.announce.innerHTML = pd.data.node.announce.innerHTML + "<span><em>Execution time:</em> <strong>" + global.meta.time + "</strong>. <em>Output size:</em> <strong>" + commanumb(global.meta.outsize) + " " + pdlang + "</strong></span>";
+                        } else {
+                            pd.data.node.announce.innerHTML = pd.data.node.announce.innerHTML + "<span><strong>" + global.meta.error + "</strong></span>";
                         }
                     }
                 }
@@ -5071,6 +5202,7 @@ var pd     = {},
                 }
             };
 
+        global.meta.error = "";
         node = pd.id("showOptionsCallOut");
         if (node !== null) {
             node
@@ -5689,9 +5821,9 @@ var pd     = {},
                         pd
                             .ace
                             .parsIn
-                            .setValue("CSV is not supported in 'Parse Only' mode.");
+                            .setValue("CSV is not supported in 'Parse Tree' mode.");
                     } else {
-                        pd.data.node.codeParsIn.value = "CSV is not supported in 'Parse Only' mode.";
+                        pd.data.node.codeParsIn.value = "CSV is not supported in 'Parse Tree' mode.";
                     }
                     return;
                 }
@@ -5707,6 +5839,9 @@ var pd     = {},
                     objsortc     = pd.id("pobjsort-cssonly"),
                     objsortj     = pd.id("pobjsort-jsonly"),
                     objsortm     = pd.id("pobjsort-markuponly"),
+                    parseFh      = pd.id("parseFormat-htmltable"),
+                    parseFs      = pd.id("parseFormat-sequential"),
+                    parseSpace   = pd.id("parsespace-yes"),
                     quotecond    = pd.id("pquoteconvert-double"),
                     quotecons    = pd.id("pquoteconvert-single"),
                     tagmerge     = pd.id("ptagmerge-yes"),
@@ -5748,6 +5883,12 @@ var pd     = {},
                 } else {
                     api.objsort = "none";
                 }
+                if (parseFh !== null && parseFh.checked === true) {
+                    api.parseFormat = "htmltable";
+                } else if (parseFs !== null && parseFs.checked === true) {
+                    api.parseFormat = "sequential";
+                }
+                api.parseSpace = (parseSpace !== null && parseSpace.checked === true);
                 if (quotecond !== null && quotecond.checked === true) {
                     api.quoteConvert = "double";
                 } else if (quotecons !== null && quotecons.checked === true) {
@@ -5764,6 +5905,40 @@ var pd     = {},
                 }
             }());
             api.mode = "parse";
+        }
+        if (pd.data.mode === "anal") {
+            if (pd.data.node.codeAnalIn !== null) {
+                if (api.lang === "auto" && pd.data.langvalue.length === 0) {
+                    if (pd.test.ace === true) {
+                        pd
+                            .app
+                            .langkey(false, pd.ace.analIn, "");
+                    } else {
+                        pd
+                            .app
+                            .langkey(false, pd.data.node.codeAnalIn, "");
+                    }
+                } else if (api.lang === "csv") {
+                    if (pd.test.ace === true) {
+                        pd
+                            .ace
+                            .analIn
+                            .setValue("CSV is not supported in 'Analysis' mode.");
+                    } else {
+                        pd.data.node.codeAnalIn.value = "CSV is not supported in 'Analysis' mode.";
+                    }
+                    return;
+                }
+            }
+            if (pd.test.ace === true) {
+                api.source = pd
+                    .ace
+                    .analIn
+                    .getValue();
+            } else {
+                api.source = pd.data.node.codeAnalIn.value;
+            }
+            api.mode = "analysis";
         }
         if (domain.test(api.source) === true && pd.test.xhr === true) {
             (function dom__event_recycle_xhrSource() {
@@ -5878,7 +6053,7 @@ var pd     = {},
                 // exceed 5mb of storage
 
                 if (api.mode === "beautify") {
-                    codesize = api.source.length + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.pars;
+                    codesize = api.source.length + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.pars + pd.data.sourceLength.anal;
                     if (api.source.length < 2096000 && codesize < 4800000) {
                         localStorage.codeBeautify = api.source;
                         pd.data.sourceLength.beau = api.source.length;
@@ -5887,7 +6062,7 @@ var pd     = {},
                         pd.data.sourceLength.beau = 0;
                     }
                 } else if (api.mode === "minify") {
-                    codesize = api.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.pars;
+                    codesize = api.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.pars + pd.data.sourceLength.anal;
                     if (api.source.length < 2096000 && codesize < 4800000) {
                         localStorage.codeMinify   = api.source;
                         pd.data.sourceLength.minn = api.source.length;
@@ -5896,7 +6071,7 @@ var pd     = {},
                         pd.data.sourceLength.minn = 0;
                     }
                 } else if (api.mode === "parse") {
-                    codesize = api.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn;
+                    codesize = api.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.anal;
                     if (api.source.length < 2096000 && codesize < 4800000) {
                         localStorage.codeParse    = api.source;
                         pd.data.sourceLength.pars = api.source.length;
@@ -5904,8 +6079,17 @@ var pd     = {},
                         localStorage.codeParse    = "";
                         pd.data.sourceLength.pars = 0;
                     }
+                } else if (api.mode === "analysis") {
+                    codesize = api.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.pars;
+                    if (api.source.length < 2096000 && codesize < 4800000) {
+                        localStorage.codeAnalysis = api.source;
+                        pd.data.sourceLength.anal = api.source.length;
+                    } else {
+                        localStorage.codeAnalysis = "";
+                        pd.data.sourceLength.anal = 0;
+                    }
                 } else if (api.mode === "diff") {
-                    codesize = pd.data.sourceLength.beau + pd.data.sourceLength.minn + api.source.length + api.diff.length;
+                    codesize = pd.data.sourceLength.beau + pd.data.sourceLength.minn + pd.data.sourceLength.pars + pd.data.sourceLength.anal + api.source.length + api.diff.length;
                     if (api.source.length < 2096000 && api.diff.length < 2096000 && codesize < 4800000) {
                         localStorage.codeDiffBase     = api.source;
                         localStorage.codeDiffNew      = api.diff;
@@ -5975,6 +6159,26 @@ var pd     = {},
                             ? pd
                                 .app
                                 .langkey(false, pd.ace.parsIn, "")
+                            : api.lang;
+                        pd.data.source = api.source;
+                        pd.data.diff   = "";
+                        app            = application(api.lang);
+                        if (app !== undefined) {
+                            output = app(api);
+                        }
+                        execOutput();
+                    }, 50);
+                }
+                if (api.mode === "analysis") {
+                    setTimeout(function dom__event_recycle_analysisPromise() {
+                        api.source     = pd
+                            .ace
+                            .analIn
+                            .getValue();
+                        api.lang       = (pd.data.langvalue[0] !== "plain_text")
+                            ? pd
+                                .app
+                                .langkey(false, pd.ace.analIn, "")
                             : api.lang;
                         pd.data.source = api.source;
                         pd.data.diff   = "";
@@ -6074,6 +6278,10 @@ var pd     = {},
             targetOut = pd.data.node.codeParsOut;
             targetIn  = pd.data.node.codeParsIn;
             inprop    = "parsIn";
+        } else if (pd.data.mode === "anal") {
+            targetOut = pd.data.node.codeAnalOut;
+            targetIn  = pd.data.node.codeAnalIn;
+            inprop    = "analIn";
         } else {
             targetOut = pd.data.node.codeBeauOut;
             targetIn  = pd.data.node.codeBeauIn;
@@ -6860,6 +7068,18 @@ var pd     = {},
                         .sequence(aa);
                 }
             },
+            parsehtml       = function dom__load_parsehtml() {
+                var para = pd.id("parsehtml-para");
+                if (para === null) {
+                    return pd.app.options(this);
+                }
+                if (this.getAttribute("id") === "parseFormat-htmltable") {
+                    para.style.display = "block";
+                } else {
+                    para.style.display = "none";
+                }
+                pd.app.options(this);
+            },
             acedisable      = function dom__load_acedisable(x) {
                 var el     = (typeof x === "object" && x.nodeType === 1)
                         ? x
@@ -7257,6 +7477,20 @@ var pd     = {},
                         .parsOut
                         .setReadOnly(true);
                 }
+                if (pd.data.node.codeAnalIn !== null) {
+                    pd.ace.analIn = pd
+                        .app
+                        .aceApply("codeAnalIn", "input", false);
+                }
+                if (pd.data.node.codeAnalOut !== null) {
+                    pd.ace.analOut = pd
+                        .app
+                        .aceApply("codeAnalOut", "output", false);
+                    pd
+                        .ace
+                        .analOut
+                        .setReadOnly(true);
+                }
             }
 
             pd
@@ -7304,6 +7538,14 @@ var pd     = {},
                     node.disabled = true;
                 }
                 node = pd.id("minifyfile");
+                if (node !== null) {
+                    node.disabled = true;
+                }
+                node = pd.id("parsefile");
+                if (node !== null) {
+                    node.disabled = true;
+                }
+                node = pd.id("analysisfile");
                 if (node !== null) {
                     node.disabled = true;
                 }
@@ -7439,6 +7681,10 @@ var pd     = {},
                         node = pd.id("stpars");
                         if (node !== null) {
                             node.innerHTML = pd.data.stat.pars;
+                        }
+                        node = pd.id("stanal");
+                        if (node !== null) {
+                            node.innerHTML = pd.data.stat.anal;
                         }
                         node = pd.id("stmarkup");
                         if (node !== null) {
@@ -7748,6 +7994,11 @@ var pd     = {},
                                 .checked = true;
                         }
                         inputs[a].onclick = acedisable;
+                    } else if (name === "parseFormat") {
+                        inputs[a].onclick = parsehtml;
+                        if (id === "parseFormat-htmltable" && inputs[a].checked === true) {
+                            inputs[a].click();
+                        }
                     } else {
                         inputs[a].onclick = pd.app.options;
                     }
@@ -7812,6 +8063,21 @@ var pd     = {},
                                     pd
                                         .ace
                                         .parsOut
+                                        .getSession()
+                                        .setTabSize(Number(pd.data.settings[id]));
+                                }
+                            } else if (id === "anal-quan") {
+                                if (pd.data.node.codeAnalIn !== null) {
+                                    pd
+                                        .ace
+                                        .analIn
+                                        .getSession()
+                                        .setTabSize(Number(pd.data.settings[id]));
+                                }
+                                if (pd.data.node.codeAnalOut !== null) {
+                                    pd
+                                        .ace
+                                        .analOut
                                         .getSession()
                                         .setTabSize(Number(pd.data.settings[id]));
                                 }
@@ -8000,6 +8266,11 @@ var pd     = {},
                                     .event
                                     .modeToggle(pd.data.node.modePars);
                                 pd.data.node.modePars.checked = true;
+                            } else if (value === "analysis" && pd.data.node.modeAnal !== null) {
+                                pd
+                                    .event
+                                    .modeToggle(pd.data.node.modeAnal);
+                                pd.data.node.modeAnal.checked = true;
                             }
                         } else if (params[b].indexOf("s=") === 0) {
                             source = params[b].substr(2);
@@ -8084,6 +8355,16 @@ var pd     = {},
                                 pd
                                     .ace
                                     .parsOut
+                                    .getSession()
+                                    .setMode("ace/mode/" + value);
+                                pd
+                                    .ace
+                                    .analIn
+                                    .getSession()
+                                    .setMode("ace/mode/" + value);
+                                pd
+                                    .ace
+                                    .analOut
                                     .getSession()
                                     .setMode("ace/mode/" + value);
                             }
@@ -8231,6 +8512,23 @@ var pd     = {},
                                     .clearSelection();
                             } else {
                                 pd.data.node.codeParsIn.value = source;
+                            }
+                            pd
+                                .event
+                                .recycle();
+                            pd.test.delayExecution = true;
+                        } else if (pd.data.node.codeAnalIn !== null && pd.data.mode === "anal") {
+                            if (pd.test.ace === true) {
+                                pd
+                                    .ace
+                                    .analIn
+                                    .setValue(source);
+                                pd
+                                    .ace
+                                    .analIn
+                                    .clearSelection();
+                            } else {
+                                pd.data.node.codeAnalIn.value = source;
                             }
                             pd
                                 .event
@@ -9347,6 +9645,47 @@ var pd     = {},
                 pd.data.node.codeParsOut.onfocus   = textareafocus;
                 pd.data.node.codeParsOut.onblur    = textareablur;
                 pd.data.node.codeParsOut.onkeydown = pd.event.areaTabOut;
+            }
+            if (pd.data.node.codeAnalIn !== null) {
+                pd.data.node.codeAnalIn.onkeyup = function dom__load_bindAnalInUp(e) {
+                    var event = e || window.event;
+                    pd
+                        .event
+                        .recycle(event);
+                };
+                if (pd.test.ace === true) {
+                    pd.data.node.codeAnalIn.onfocus   = textareafocus;
+                    pd.data.node.codeAnalIn.onblur    = textareablur;
+                    pd.data.node.codeAnalIn.onkeydown = function dom__load_bindAnalInDownCM(e) {
+                        var event = e || window.event;
+                        pd
+                            .event
+                            .areaTabOut(event, this);
+                        pd
+                            .event
+                            .keydown(event);
+                    };
+                } else {
+                    pd.data.node.codeAnalIn.onfocus   = textareafocus;
+                    pd.data.node.codeAnalIn.onblur    = textareablur;
+                    pd.data.node.codeAnalIn.onkeydown = function dom__load_bindAnalInDown(e) {
+                        var event = e || window.event;
+                        pd
+                            .event
+                            .fixtabs(event, pd.data.node.codeAnalIn);
+                        pd
+                            .event
+                            .areaTabOut(event, this);
+                        pd
+                            .event
+                            .keydown(event);
+                    };
+                }
+            }
+            if (pd.data.node.codeAnalOut !== null && pd.test.ace === true) {
+                pd.data.node.codeAnalOut.onfocus   = textareafocus;
+                pd.data.node.codeAnalOut.onblur    = textareablur;
+                pd.data.node.codeAnalOut.onkeydown = pd.event.areaTabOut;
             }
             if (pd.data.node.codeDiffBase !== null) {
                 if (pd.test.ace === true) {

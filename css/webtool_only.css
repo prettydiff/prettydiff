@@ -25,8 +25,8 @@
 #prettydiff.white #footer{box-shadow:0 0.5em 1em #999}
 #prettydiff.white #beautyoutput,
 #prettydiff.white #minifyoutput,
-#prettydiff.white #parseoutput{background:#f2f2f2;border-color:#999}
-#prettydiff.white #announcement{color:#00f}
+#prettydiff.white #parseoutput,
+#prettydiff.white #analysisoutput{background:#f2f2f2;border-color:#999}
 #prettydiff.white .ace_gutter{background:#ddd;border-color:#999}
 #prettydiff.white #update{background:#ddd;border-color:#999}
 #prettydiff.white #reports h3 button{background:#ddd;border-color:#999;color:#555}
@@ -44,7 +44,9 @@
 #prettydiff.white #webtool th.heading{background:#eee}
 #prettydiff.white #webtool thead th{background:#eef}
 #prettydiff.white #textareaTabKey em{color:#00f}
+#prettydiff.white #announcement strong,
 #prettydiff.white #textareaTabKey strong{color:#b00}
+#prettydiff.white #announcement em,
 #prettydiff.white .box .body p em{color:#080}
 #prettydiff.white .box .body p strong{color:#009}
 #prettydiff.white #webtool textarea{background:#eee;border-color:#999;color:#009}
@@ -72,11 +74,13 @@
 #prettydiff.canvas #beautyinput,
 #prettydiff.canvas #minifyinput,
 #prettydiff.canvas #parseoinput,
+#prettydiff.canvas #analysisinput,
 #prettydiff.canvas #baseText,
 #prettydiff.canvas #newText{background:#f2f2f2;border-color:#999}
 #prettydiff.canvas #beautyoutput,
 #prettydiff.canvas #minifyoutput,
-#prettydiff.canvas #parseoutput{background:#ccccc8;border-color:#999}
+#prettydiff.canvas #parseoutput,
+#prettydiff.canvas #analysisoutput{background:#ccccc8;border-color:#999}
 #prettydiff.canvas #update{background:#ddd;border-color:#999}
 #prettydiff.canvas #webtool .output textarea{background:#ccccc8}
 #prettydiff.canvas .save{background:#fc0;border-color:#a30;color:#a30}
@@ -93,8 +97,9 @@
 #prettydiff.canvas .ace-canvas .ace_marker-layer .ace_selection,
 #prettydiff.canvas .ace_selection.ace_start{background:#ffe}
 #prettydiff.canvas .unchecked{background:#eeeee8}
-#prettydiff.canvas #announcement,
+#prettydiff.canvas #announcement em,
 #prettydiff.canvas #textareaTabKey em{color:#060}
+#prettydiff.canvas #announcement strong,
 #prettydiff.canvas #textareaTabKey strong{color:#900}
 #prettydiff.canvas .box .body{background:#ddddd8}
 #prettydiff.canvas .box .body p em{color:#060}
@@ -126,11 +131,13 @@
 #prettydiff.shadow #beautyinput,
 #prettydiff.shadow #minifyinput,
 #prettydiff.shadow #parseoinput,
+#prettydiff.shadow #analysisinput,
 #prettydiff.shadow #baseText,
 #prettydiff.shadow #newText{background:#111;border-color:#666}
 #prettydiff.shadow #beautyoutput,
 #prettydiff.shadow #minifyoutput,
-#prettydiff.shadow #parseoutput{background:#333;border-color:#666}
+#prettydiff.shadow #parseoutput,
+#prettydiff.shadow #analysisoutput{background:#333;border-color:#666}
 #prettydiff.shadow #textareaTabKey,
 #prettydiff.shadow #update{background:#666;border-color:#999}
 #prettydiff.shadow #webtool .output textarea{background:#333}
@@ -151,10 +158,11 @@
 #prettydiff.shadow .ace_variable{color:#cef}
 #prettydiff.shadow .ace_active-line{background:#444}
 #prettydiff.shadow .unchecked{background:#666}
-#prettydiff.shadow #announcement,
 #prettydiff.shadow #textareaTabKey em{color:#cf3}
 #prettydiff.shadow .box .body{background:#222}
+#prettydiff.shadow #announcement em,
 #prettydiff.shadow .box .body p em{color:#cf3}
+#prettydiff.shadow #announcement strong,
 #prettydiff.shadow .box .body p strong{color:#9cf}
 #prettydiff.shadow #webtool textarea{background:#222;border-color:#999;color:#ddd}
 #prettydiff.shadow .box h3 button{background:#333;border-color:#666;color:#ccc}
@@ -205,6 +213,7 @@
 #prettydiff #Beautify,
 #prettydiff #Minify,
 #prettydiff #Parse,
+#prettydiff #Analysis,
 #prettydiff #option_comment,
 #prettydiff #functionGroup,
 #prettydiff #headline,
@@ -231,8 +240,9 @@
 #prettydiff #infolinks li{display:inline-block;font-size:1.4em;list-style:none;margin:0.5em 1em 0}
 
 /*webtool - minor notifications that appear after a code operation directly next to "[mode] Code" heading*/
-#prettydiff #announcement{font-weight:bold;height:auto;left:14em;margin:0;overflow:hidden;position:absolute;text-overflow:ellipsis;top:0.5em;white-space:nowrap;width:40%;z-index:5}
+#prettydiff #announcement{height:auto;left:14em;margin:0;overflow:hidden;position:absolute;text-overflow:ellipsis;white-space:nowrap;width:40%;z-index:5}
 #prettydiff #announcement strong.duplicate{display:block}
+#prettydiff #announcement span{display:block}
 
 /*webtool - hidden input field manual indentation definitions*/
 #prettydiff #beau-other-span,
@@ -244,11 +254,13 @@
 #prettydiff #diffops p strong,
 #prettydiff #miniops p strong,
 #prettydiff #parseops p strong,
+#prettydiff #analysisops p strong,
 #prettydiff #options .label,
 #prettydiff #diffops .label,
 #prettydiff #miniops .label,
 #prettydiff #beauops .label,
-#prettydiff #parseops .label{display:block;float:none;font-size:1em;font-weight:bold;margin-bottom:0.5em}
+#prettydiff #parseops .label,
+#prettydiff #analysisops .label{display:block;float:none;font-size:1em;font-weight:bold;margin-bottom:0.5em}
 
 /*webtool - minimized report boxes*/
 #prettydiff #reports{height:4em}
@@ -310,7 +322,8 @@
 /*webtool - file input*/
 #prettydiff #Beautify p.file,
 #prettydiff #Minify p.file,
-#prettydiff #Parse p.file{clear:none;float:none;margin:0.5em 0 1em}
+#prettydiff #Parse p.file,
+#prettydiff #Analysis p.file{clear:none;float:none;margin:0.5em 0 1em}
 #prettydiff .file input{padding:0 0.1em}
 #prettydiff .file input,
 #prettydiff .labeltext input{display:inline-block;margin:0 0.7em 0 0;width:16em}

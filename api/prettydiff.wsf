@@ -11,10 +11,24 @@
         <script type="text/javascript" src="../lib/markuppretty.js"></script>
         <script type="text/javascript" src="../prettydiff.js">
         /*global WScript, prettydiff, Enumerator*/
+        if (typeof global !== "object") {
+            global = {};
+        }
+        if (typeof global.meta !== "object") {
+            global.meta      = {
+                error: "",
+                lang: ["", "", ""],
+                time: "",
+                insize: 0,
+                outsize: 0,
+                difftotal: 0,
+                difflines: 0
+            };
+        }
         (function () {
             "use strict";
             var args       = {},
-                pd         = [],
+                pd         = "",
                 read       = "file",
                 fail       = false,
                 filestring = {},
@@ -786,7 +800,7 @@
                                         "c00}#prettydiff.shadow .data .delete{background:#300}#prettydiff.shadow .data .d" +
                                         "elete em{background:#200;border-color:#c63;color:#c66}#prettydiff.shadow .data ." +
                                         "insert{background:#030}#prettydiff.shadow .data .insert em{background:#010;borde" +
-                                        "r-color:#090;color:#6c0}#prettydiff.shadow .data .replace{background:#234}#prett" +
+                                        "r-color:#090;color:#6c0}#prettydiff.shadow .data .replace{background:#345}#prett" +
                                         "ydiff.shadow .data .replace em{background:#023;border-color:#09c;color:#7cf}#pre" +
                                         "ttydiff.shadow .data .empty{background:#111}#prettydiff.shadow .diff .author{bor" +
                                         "der-color:#666}#prettydiff.shadow .data em.s0{color:#fff}#prettydiff.shadow .dat" +
@@ -1237,20 +1251,20 @@
                                      "pointer;font-weight:bold;padding-left:0.5em}#prettydiff .data{text-align:left;wh" +
                                      "ite-space:pre}#prettydiff .beautify .data em{display:inline-block;font-style:nor" +
                                      "mal;font-weight:bold}#prettydiff .beautify li,#prettydiff .diff li{border-style:" +
-                                     "none none solid;border-width:0 0 0.1em;display:block;line-height:1.2;list-style-" +
-                                     "type:none;margin:0;white-space:pre}#prettydiff .beautify ol,#prettydiff .diff ol" +
-                                     "{display:table-cell;margin:0;padding:0}#prettydiff .beautify em.l0,#prettydiff ." +
-                                     "beautify em.l1,#prettydiff .beautify em.l2,#prettydiff .beautify em.l3,#prettydi" +
-                                     "ff .beautify em.l4,#prettydiff .beautify em.l5,#prettydiff .beautify em.l6,#pret" +
-                                     "tydiff .beautify em.l7,#prettydiff .beautify em.l8,#prettydiff .beautify em.l9,#" +
-                                     "prettydiff .beautify em.l10,#prettydiff .beautify em.l11,#prettydiff .beautify e" +
-                                     "m.l12,#prettydiff .beautify em.l13,#prettydiff .beautify em.l14,#prettydiff .bea" +
-                                     "utify em.l15,#prettydiff .beautify em.l16{height:2.2em;margin:0 0 -1em;position:" +
-                                     "relative;top:-0.5em}#prettydiff .beautify em.l0{margin-left:-0.5em;padding-left:" +
-                                     "0.5em}#prettydiff #report .beautify,#prettydiff #report .beautify li,#prettydiff" +
-                                     " #report .diff,#prettydiff #report .diff li{font-family:'Courier New',Courier,'L" +
-                                     "ucida Console',monospace}#prettydiff #report .beautify{border-style:solid}#prett" +
-                                     "ydiff #report .diff h3,#prettydiff #report .beautify h3{margin:0}"
+                                     "none none solid;border-width:0 0 0.1em;display:block;height:1em;line-height:1.2;" +
+                                     "list-style-type:none;margin:0;white-space:pre}#prettydiff .beautify ol,#prettydi" +
+                                     "ff .diff ol{display:table-cell;margin:0;padding:0}#prettydiff .beautify em.l0,#p" +
+                                     "rettydiff .beautify em.l1,#prettydiff .beautify em.l2,#prettydiff .beautify em.l" +
+                                     "3,#prettydiff .beautify em.l4,#prettydiff .beautify em.l5,#prettydiff .beautify " +
+                                     "em.l6,#prettydiff .beautify em.l7,#prettydiff .beautify em.l8,#prettydiff .beaut" +
+                                     "ify em.l9,#prettydiff .beautify em.l10,#prettydiff .beautify em.l11,#prettydiff " +
+                                     ".beautify em.l12,#prettydiff .beautify em.l13,#prettydiff .beautify em.l14,#pret" +
+                                     "tydiff .beautify em.l15,#prettydiff .beautify em.l16{height:2.2em;margin:0 0 -1e" +
+                                     "m;position:relative;top:-0.5em}#prettydiff .beautify em.l0{margin-left:-0.5em;pa" +
+                                     "dding-left:0.5em}#prettydiff #report .beautify,#prettydiff #report .beautify li," +
+                                     "#prettydiff #report .diff,#prettydiff #report .diff li{font-family:'Courier New'" +
+                                     ",Courier,'Lucida Console',monospace}#prettydiff #report .beautify{border-style:s" +
+                                     "olid}#prettydiff #report .diff h3,#prettydiff #report .beautify h3{margin:0}"
                     },
                     html  : {
                         body  : "/*]]>*/</style></head><body id='prettydiff' class='",
@@ -1310,52 +1324,53 @@
                                       "TagName('li');listlen=list.length;for(b=0;b<listlen;b+=1){if(list[b].getAttribut" +
                                       "e('class')==='fold'){list[b].onmousedown=pd.beaufold;}}}}}());",
                         diff    : "var pd={};pd.colorchange=function(){'use strict';var options=this.getElementsByT" +
-                                      "agName('option');document.getElementsByTagName('body')[0].setAttribute('class',o" +
-                                      "ptions[this.selectedIndex].innerHTML.toLowerCase())};pd.difffold=function dom__d" +
-                                      "ifffold(){'use strict';var a=0,b=0,self=this,title=self.getAttribute('title').sp" +
-                                      "lit('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(tit" +
-                                      "le[2]),inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes" +
-                                      "=(parent.getAttribute('class')==='diff')?parent.getElementsByTagName('ol'):paren" +
-                                      "t.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listL" +
-                                      "en;a+=1){lists.push(listnodes[a].getElementsByTagName('li'))}max=(max>=lists[0]." +
-                                      "length)?lists[0].length:max;if(inner.charAt(0)==='-'){self.innerHTML='+'+inner.s" +
-                                      "ubstr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display" +
-                                      "='none'}}}else{self.innerHTML='-'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;" +
-                                      "b<listLen;b+=1){lists[b][a].style.display='block'}}}};pd.colSliderGrab=function(" +
-                                      "e){'use strict';var event=e||window.event,touch=(e!==null&&e.type==='touchstart'" +
-                                      "),node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,list" +
-                                      "s=diff.getElementsByTagName('ol'),counter=lists[0].clientWidth,data=lists[1].cli" +
-                                      "entWidth,width=lists[2].parentNode.clientWidth,total=lists[2].parentNode.parentN" +
-                                      "ode.clientWidth,offset=lists[2].parentNode.offsetLeft-lists[2].parentNode.parent" +
-                                      "Node.offsetLeft,min=((total-counter-data-2)-width),max=(total-width-counter),sta" +
-                                      "tus='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight." +
-                                      "previousSibling,drop=function dom__event_colSliderGrab_drop(f){f=f||window.event" +
-                                      ";f.preventDefault();node.style.cursor=status+'-resize';if(touch===true){document" +
-                                      ".ontouchmove=null;document.ontouchend=null}else{document.onmousemove=null;docume" +
-                                      "nt.onmouseup=null}},boxmove=function dom__event_colSliderGrab_boxmove(f){f=f||wi" +
-                                      "ndow.event;f.preventDefault();if(touch===true){subOffset=offset-f.touches[0].cli" +
-                                      "entX}else{subOffset=offset-f.clientX}if(subOffset>minAdjust&&subOffset<maxAdjust" +
-                                      "){withinRange=true}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.w" +
-                                      "idth=((total-counter-2)/10)+'em';status='e'}else if(withinRange===true&&subOffse" +
-                                      "t<minAdjust){diffRight.style.width=((total-counter-data-2)/10)+'em';status='w'}e" +
-                                      "lse if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10" +
-                                      ")+'em';status='ew'}if(touch===true){document.ontouchend=drop}else{document.onmou" +
-                                      "seup=drop}};event.preventDefault();if(typeof pd.data.node==='object'&&pd.data.no" +
-                                      "de.report.code.box!==null){offset+=pd.data.node.report.code.box.offsetLeft;offse" +
-                                      "t-=pd.data.node.report.code.body.scrollLeft}else{subOffset=(document.body.parent" +
-                                      "Node.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:do" +
-                                      "cument.body.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.cur" +
-                                      "sor='ew-resize';diff.style.width=(total/10)+'em';diff.style.display='inline-bloc" +
-                                      "k';if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(diffLeft" +
-                                      ".nodeType!==1)}diffLeft.style.display='block';diffRight.style.width=(diffRight.c" +
-                                      "lientWidth/10)+'em';diffRight.style.position='absolute';if(touch===true){documen" +
-                                      "t.ontouchmove=boxmove;document.ontouchstart=false}else{document.onmousemove=boxm" +
-                                      "ove;document.onmousedown=null}return false};(function(){'use strict';var cells=p" +
-                                      "d.d[0].getElementsByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(ce" +
-                                      "lls[a].getAttribute('class')==='fold'){cells[a].onclick=pd.difffold}}if(pd.d.len" +
-                                      "gth>3){pd.d[2].onmousedown=pd.colSliderGrab;pd.d[2].ontouchstart=pd.colSliderGra" +
-                                      "b}pd.colorscheme=document.getElementById('colorScheme');pd.colorscheme.onchange=" +
-                                      "pd.colorchange}());"
+        "agName('option');document.getElementsByTagName('body')[0].setAttribute('class',o" +
+        "ptions[this.selectedIndex].innerHTML.toLowerCase())};pd.difffold=function dom__d" +
+        "ifffold(){'use strict';var a=0,b=0,self=this,title=self.getAttribute('title').sp" +
+        "lit('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(tit" +
+        "le[2]),inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes" +
+        "=(parent.getAttribute('class')==='diff')?parent.getElementsByTagName('ol'):paren" +
+        "t.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listL" +
+        "en;a+=1){lists.push(listnodes[a].getElementsByTagName('li'))}max=(max>=lists[0]." +
+        "length)?lists[0].length:max;if(inner.charAt(0)==='-'){self.innerHTML='+'+inner.s" +
+        "ubstr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display" +
+        "='none'}}}else{self.innerHTML='-'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;" +
+        "b<listLen;b+=1){lists[b][a].style.display='block'}}}};pd.colSliderGrab=function(" +
+        "e){'use strict';var event=e||window.event,touch=(e!==null&&e.type==='touchstart'" +
+        "),node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,list" +
+        "s=diff.getElementsByTagName('ol'),counter=lists[0].clientWidth,data=lists[1].cli" +
+        "entWidth,width=lists[2].parentNode.clientWidth,total=lists[2].parentNode.parentN" +
+        "ode.clientWidth,offset=lists[2].parentNode.offsetLeft-lists[2].parentNode.parent" +
+        "Node.offsetLeft,min=((total-counter-data-2)-width),max=(total-width-counter),sta" +
+        "tus='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight." +
+        "previousSibling,drop=function dom__event_colSliderGrab_drop(f){f=f||window.event" +
+        ";f.preventDefault();node.style.cursor=status+'-resize';if(touch===true){document" +
+        ".ontouchmove=null;document.ontouchend=null}else{document.onmousemove=null;docume" +
+        "nt.onmouseup=null}},boxmove=function dom__event_colSliderGrab_boxmove(f){f=f||wi" +
+        "ndow.event;f.preventDefault();if(touch===true){subOffset=offset-f.touches[0].cli" +
+        "entX}else{subOffset=offset-f.clientX}if(subOffset>minAdjust&&subOffset<maxAdjust" +
+        "){withinRange=true}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.w" +
+        "idth=((total-counter-2)/10)+'em';status='e'}else if(withinRange===true&&subOffse" +
+        "t<minAdjust){diffRight.style.width=((total-counter-data-2)/10)+'em';status='w'}e" +
+        "lse if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10" +
+        ")+'em';status='ew'}if(touch===true){document.ontouchend=drop}else{document.onmou" +
+        "seup=drop}};event.preventDefault();if(typeof pd.data==='object'&&pd.data.node.re" +
+        "port.code.box!==null){offset+=pd.data.node.report.code.box.offsetLeft;offset-=pd" +
+        ".data.node.report.code.body.scrollLeft}else{subOffset=(document.body.parentNode." +
+        "scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:documen" +
+        "t.body.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.cursor='" +
+        "ew-resize';diff.style.width=(total/10)+'em';diff.style.display='inline-block';if" +
+        "(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(diffLeft.node" +
+        "Type!==1)}diffLeft.style.display='block';diffRight.style.width=(diffRight.client" +
+        "Width/10)+'em';diffRight.style.position='absolute';if(touch===true){document.ont" +
+        "ouchmove=boxmove;document.ontouchstart=false}else{document.onmousemove=boxmove;d" +
+        "ocument.onmousedown=null}return false};(function(){'use strict';var lists=docume" +
+        "nt.getElementById('prettydiff').getElementsByTagName('ol'),cells=lists[0].getEle" +
+        "mentsByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(cells[a].getAtt" +
+        "ribute('class')==='fold'){cells[a].onclick=pd.difffold}}if(lists.length>3){lists" +
+        "[2].onmousedown=pd.colSliderGrab;lists[2].ontouchstart=pd.colSliderGrab}pd.color" +
+        "scheme=document.getElementById('colorScheme');pd.colorscheme.onchange=pd.colorch" +
+        "ange}());"
                     }
                 },
                 html       = [
@@ -1505,7 +1520,7 @@
                                 "cified character width. This option requires a value from option 'wrap'.");
                         error.push("");
                         error.push("* mode           - string  - The operation to be performed. Defaults to 'diff'.");
-                        error.push("                   Accepted values: diff, beautify, minify, parse");
+                        error.push("                   Accepted values: analysis, diff, beautify, minify, parse");
                         error.push("");
                         error.push("* neverflatten   - boolean - If destructured lists in JavaScript should never be" +
                                 " flattened.");
@@ -1524,6 +1539,12 @@
                         error.push("* output         - string  - The location of the output file. If the file does n" +
                                 "ot exist it will be created. If this argument is missing output will print to sc" +
                                 "reen.");
+                        error.push("");
+                        error.push("* parseFormat    - boolean - When in parse mode if the output should be arrays of" +
+                                " records (sequential), arrays of data types (parallel), or an HTML table.  Defau" +
+                                "lt is parallel.");
+                        error.push("");
+                        error.push("* parseSpace     - boolean - Whether whitespace tokens should be in the generated parse tree. Default is false.");
                         error.push("");
                         error.push("* preserve       - number  - The number of acceptable empty lines.");
                         error.push("");
@@ -1835,7 +1856,9 @@
                     args.methodchain = "indent";
                 }
                 args.miniwrap     = (WScript.Arguments.Named("miniwrap") === "true" || WScript.Arguments.Named("miniwrap") === true);
-                args.mode         = (WScript.Arguments.Named("mode") || "diff");
+                args.mode         = (WScript.Arguments.Named("mode") === "beautify" || WScript.Arguments.Named("mode") === "minify" || WScript.Arguments.Named("mode") === "parse" || WScript.Arguments.Named("mode") === "analysis")
+                    ? WScript.Arguments.Named("mode")
+                    : "diff";
                 args.neverflatten = (WScript.Arguments.Named("neverflatten") === "true" || WScript.Arguments.Named("neverflatten") === true);
                 args.nocaseindent = (WScript.Arguments.Named("nocaseindent") === "true" || WScript.Arguments.Named("nocaseindent") === true);
                 args.nochainindent = (WScript.Arguments.Named("nochainindent") === "true" || WScript.Arguments.Named("nochainindent") === true);
@@ -1845,12 +1868,10 @@
                         .Arguments
                         .Named("objsort")
                     : "js";
-                args.quote        = (WScript.Arguments.Named("quote") === "true" || WScript.Arguments.Named("quote") === true);
-                args.quoteConvert = (WScript.Arguments.Named("quoteConvert") === "double" || WScript.Arguments.Named("quoteConvert") === "single")
-                    ? WScript
-                        .Arguments
-                        .Named("quoteConvert")
-                    : "none";
+                args.parseFormat  = (WScript.Arguments.Named("parseFormat") === "sequential" || WScript.Arguments.Named("parseFormat") === "htmltable")
+                    ? WScript.Arguments.Named("parseFormat")
+                    : "parallel";
+                args.parseSpace   = (WScript.Arguments.Named("parseSpace") === "true" || WScript.Arguments.Named("parseSpace") === true);
                 args.preserve     = (function () {
                     var pres = WScript.Arguments.Named("preserve");
                     if (pres === 1 || pres === undefined || pres === true || pres === "true" || pres === "all" || pres === "js" || pres === "css") {
@@ -1861,6 +1882,12 @@
                         args.preserve = Number(pres)
                     }
                 }());
+                args.quote        = (WScript.Arguments.Named("quote") === "true" || WScript.Arguments.Named("quote") === true);
+                args.quoteConvert = (WScript.Arguments.Named("quoteConvert") === "double" || WScript.Arguments.Named("quoteConvert") === "single")
+                    ? WScript
+                        .Arguments
+                        .Named("quoteConvert")
+                    : "none";
                 args.selectorlist = (WScript.Arguments.Named("selectorlist") === "true" || WScript.Arguments.Named("selectorlist") === true);
                 args.semicolon    = (WScript.Arguments.Named("semicolon") === "true" || WScript.Arguments.Named("semicolon") === true);
                 args.sourcelabel  = WScript
@@ -1958,21 +1985,21 @@
                 if (args.mode === "parse" && typeof JSON === "object") {
                     args[0] = JSON.stringify(args[0]);
                 }
-                if (pd[0].indexOf("Error: ") === 0) {
-                    report = [""];
+                if (WScript.Fullname.indexOf("cscript.exe") > -1 && args.mode !== "diff") {
+                    html[0] = lf + lf + lf + lf + html[0];
+                }
+                html[7]  = options.color;
+                if (global.meta.error === "" || global.meta.error === undefined) {
+                    html[10] = pd;
                 } else {
-                    if (WScript.Fullname.indexOf("cscript.exe") > -1 && args.mode !== "diff") {
-                        html[0] = lf + lf + lf + lf + html[0];
-                    }
-                    html[7]  = options.color;
-                    html[10] = pd[0];
-                    if (args.jsscope !== "none" && args.mode === "beautify" && (args.lang === "javascript" || args.lang === "auto")) {
-                        html[12] = builder.script.beautify;
-                        report   = html.join("");
-                    }
-                    if (args.mode === "diff") {
-                        report = html.join("");
-                    }
+                    html[10] = global.meta.error;
+                }
+                if (args.jsscope !== "none" && args.mode === "beautify" && (args.lang === "javascript" || args.lang === "auto")) {
+                    html[12] = builder.script.beautify;
+                    report   = html.join("");
+                }
+                if (args.mode === "diff") {
+                    report = html.join("");
                 }
                 output = WScript
                     .Arguments
@@ -1989,7 +2016,7 @@
                         file[0].WriteLine(report);
                         file[0].Close();
                     } else {
-                        file[0].WriteLine(pd[0]);
+                        file[0].WriteLine(pd);
                         file[0].Close();
                         file[1] = fso.CreateTextFile(output + "-report.html");
                         file[1].WriteLine(report);
@@ -2004,13 +2031,13 @@
                         } else {
                             WScript
                                 .StdOut
-                                .WriteLine(pd[0]);
+                                .WriteLine(pd);
                         }
                     } else {
                         if (args.mode !== "diff" || (args.jsscope !== "none" && args.mode === "beautify")) {
                             WScript.Echo(report);
                         } else {
-                            WScript.Echo(pd[0]);
+                            WScript.Echo(pd);
                         }
                     }
                 }

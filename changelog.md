@@ -1,5 +1,23 @@
 # Pretty Diff change log
 
+## v2.0.0
+
+* Fixed some missing semicolon insertion during JavaScript parsing.
+* Fixed a curly brace insertion bug in JavaScript do/while loops.
+* Fixes a javascript defect in generated diff report HTML files.
+* Expands JavaScript conversion of operators `++` and `--` under the *correct* option.
+* Fixes #294
+* Fixes #293
+* Modified markup `</li>` insertion logic
+* Updated test runner file system simulation to work correctly on Windows.
+* Added option "parseRecord".  If false the output of mode "parse" is a collection of *parallel* data types. If the option is true the output is a *sequential* array where each index is a child array of data respective to a given parsed token.
+* Added option "parseSpace". Determines whether white space content tokens should exist in the parse tree output of the parse mode.
+* Enabling accessibility analysis and reporting in the new "analysis" mode.
+* **Breaking change** - Updated mode "parse" to output an object with two keys: *definition* and *data*.  The definition property stores a text description of each data type supplied in the data property.  The data property stores the parsed data.
+* **Breaking change** - Added mode "analysis" to generate reports of code evaluation.  The program now outputs only the desired data instead of an array of desired data plus a report.
+* **Breaking change** - Due to the other changes the Node.js only option *report* is removed.
+* **Breaking change** - Pretty Diff will no longer publish to NPM.
+
 ## v1.16.37
 
 * Stronger CSS edge case parsing support

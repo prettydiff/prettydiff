@@ -5,7 +5,6 @@
  this code without permission so long as this comment exists verbatim in
  each instance of its use.
 
- http://www.travelocity.com/
  http://mailmarkup.org/
  http://prettydiff.com/
  **********************************************************************/
@@ -29,7 +28,24 @@ Examples:
 > node node-local.js source:"../package.json" mode:"beautify"
  readmethod:"filescreen"
 */
-
+//schema for global.meta
+//lang - array, language detection
+//time - string, proctime (total execution time minus visual rendering)
+//insize - number, input size
+//outsize - number, output size
+//difftotal - number, difference count
+//difflines - number, difference lines
+if (typeof global.meta !== "object") {
+    global.meta = {
+        error: "",
+        lang: ["", "", ""],
+        time: "",
+        insize: 0,
+        outsize: 0,
+        difftotal: 0,
+        difflines: 0
+    };
+}
 (function pdNodeLocal() {
     "use strict";
     var localPath      = (process.cwd() === "/" || (/^([a-z]:\\)$/).test(process.cwd()) === true)
@@ -817,7 +833,7 @@ Examples:
                                 "c00}#prettydiff.shadow .data .delete{background:#300}#prettydiff.shadow .data .d" +
                                 "elete em{background:#200;border-color:#c63;color:#c66}#prettydiff.shadow .data ." +
                                 "insert{background:#030}#prettydiff.shadow .data .insert em{background:#010;borde" +
-                                "r-color:#090;color:#6c0}#prettydiff.shadow .data .replace{background:#234}#prett" +
+                                "r-color:#090;color:#6c0}#prettydiff.shadow .data .replace{background:#345}#prett" +
                                 "ydiff.shadow .data .replace em{background:#023;border-color:#09c;color:#7cf}#pre" +
                                 "ttydiff.shadow .data .empty{background:#111}#prettydiff.shadow .diff .author{bor" +
                                 "der-color:#666}#prettydiff.shadow .data em.s0{color:#fff}#prettydiff.shadow .dat" +
@@ -1268,20 +1284,20 @@ Examples:
                              "pointer;font-weight:bold;padding-left:0.5em}#prettydiff .data{text-align:left;wh" +
                              "ite-space:pre}#prettydiff .beautify .data em{display:inline-block;font-style:nor" +
                              "mal;font-weight:bold}#prettydiff .beautify li,#prettydiff .diff li{border-style:" +
-                             "none none solid;border-width:0 0 0.1em;display:block;line-height:1.2;list-style-" +
-                             "type:none;margin:0;white-space:pre}#prettydiff .beautify ol,#prettydiff .diff ol" +
-                             "{display:table-cell;margin:0;padding:0}#prettydiff .beautify em.l0,#prettydiff ." +
-                             "beautify em.l1,#prettydiff .beautify em.l2,#prettydiff .beautify em.l3,#prettydi" +
-                             "ff .beautify em.l4,#prettydiff .beautify em.l5,#prettydiff .beautify em.l6,#pret" +
-                             "tydiff .beautify em.l7,#prettydiff .beautify em.l8,#prettydiff .beautify em.l9,#" +
-                             "prettydiff .beautify em.l10,#prettydiff .beautify em.l11,#prettydiff .beautify e" +
-                             "m.l12,#prettydiff .beautify em.l13,#prettydiff .beautify em.l14,#prettydiff .bea" +
-                             "utify em.l15,#prettydiff .beautify em.l16{height:2.2em;margin:0 0 -1em;position:" +
-                             "relative;top:-0.5em}#prettydiff .beautify em.l0{margin-left:-0.5em;padding-left:" +
-                             "0.5em}#prettydiff #report .beautify,#prettydiff #report .beautify li,#prettydiff" +
-                             " #report .diff,#prettydiff #report .diff li{font-family:'Courier New',Courier,'L" +
-                             "ucida Console',monospace}#prettydiff #report .beautify{border-style:solid}#prett" +
-                             "ydiff #report .diff h3,#prettydiff #report .beautify h3{margin:0}"
+                             "none none solid;border-width:0 0 0.1em;display:block;height:1em;line-height:1.2;" +
+                             "list-style-type:none;margin:0;white-space:pre}#prettydiff .beautify ol,#prettydi" +
+                             "ff .diff ol{display:table-cell;margin:0;padding:0}#prettydiff .beautify em.l0,#p" +
+                             "rettydiff .beautify em.l1,#prettydiff .beautify em.l2,#prettydiff .beautify em.l" +
+                             "3,#prettydiff .beautify em.l4,#prettydiff .beautify em.l5,#prettydiff .beautify " +
+                             "em.l6,#prettydiff .beautify em.l7,#prettydiff .beautify em.l8,#prettydiff .beaut" +
+                             "ify em.l9,#prettydiff .beautify em.l10,#prettydiff .beautify em.l11,#prettydiff " +
+                             ".beautify em.l12,#prettydiff .beautify em.l13,#prettydiff .beautify em.l14,#pret" +
+                             "tydiff .beautify em.l15,#prettydiff .beautify em.l16{height:2.2em;margin:0 0 -1e" +
+                             "m;position:relative;top:-0.5em}#prettydiff .beautify em.l0{margin-left:-0.5em;pa" +
+                             "dding-left:0.5em}#prettydiff #report .beautify,#prettydiff #report .beautify li," +
+                             "#prettydiff #report .diff,#prettydiff #report .diff li{font-family:'Courier New'" +
+                             ",Courier,'Lucida Console',monospace}#prettydiff #report .beautify{border-style:s" +
+                             "olid}#prettydiff #report .diff h3,#prettydiff #report .beautify h3{margin:0}"
             },
             html  : {
                 body  : "/*]]>*/</style></head><body id='prettydiff' class='",
@@ -1341,52 +1357,53 @@ Examples:
                               "TagName('li');listlen=list.length;for(b=0;b<listlen;b+=1){if(list[b].getAttribut" +
                               "e('class')==='fold'){list[b].onmousedown=pd.beaufold;}}}}}());",
                 diff    : "var pd={};pd.colorchange=function(){'use strict';var options=this.getElementsByT" +
-                              "agName('option');document.getElementsByTagName('body')[0].setAttribute('class',o" +
-                              "ptions[this.selectedIndex].innerHTML.toLowerCase())};pd.difffold=function dom__d" +
-                              "ifffold(){'use strict';var a=0,b=0,self=this,title=self.getAttribute('title').sp" +
-                              "lit('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(tit" +
-                              "le[2]),inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes" +
-                              "=(parent.getAttribute('class')==='diff')?parent.getElementsByTagName('ol'):paren" +
-                              "t.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listL" +
-                              "en;a+=1){lists.push(listnodes[a].getElementsByTagName('li'))}max=(max>=lists[0]." +
-                              "length)?lists[0].length:max;if(inner.charAt(0)==='-'){self.innerHTML='+'+inner.s" +
-                              "ubstr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display" +
-                              "='none'}}}else{self.innerHTML='-'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;" +
-                              "b<listLen;b+=1){lists[b][a].style.display='block'}}}};pd.colSliderGrab=function(" +
-                              "e){'use strict';var event=e||window.event,touch=(e!==null&&e.type==='touchstart'" +
-                              "),node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,list" +
-                              "s=diff.getElementsByTagName('ol'),counter=lists[0].clientWidth,data=lists[1].cli" +
-                              "entWidth,width=lists[2].parentNode.clientWidth,total=lists[2].parentNode.parentN" +
-                              "ode.clientWidth,offset=lists[2].parentNode.offsetLeft-lists[2].parentNode.parent" +
-                              "Node.offsetLeft,min=((total-counter-data-2)-width),max=(total-width-counter),sta" +
-                              "tus='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight." +
-                              "previousSibling,drop=function dom__event_colSliderGrab_drop(f){f=f||window.event" +
-                              ";f.preventDefault();node.style.cursor=status+'-resize';if(touch===true){document" +
-                              ".ontouchmove=null;document.ontouchend=null}else{document.onmousemove=null;docume" +
-                              "nt.onmouseup=null}},boxmove=function dom__event_colSliderGrab_boxmove(f){f=f||wi" +
-                              "ndow.event;f.preventDefault();if(touch===true){subOffset=offset-f.touches[0].cli" +
-                              "entX}else{subOffset=offset-f.clientX}if(subOffset>minAdjust&&subOffset<maxAdjust" +
-                              "){withinRange=true}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.w" +
-                              "idth=((total-counter-2)/10)+'em';status='e'}else if(withinRange===true&&subOffse" +
-                              "t<minAdjust){diffRight.style.width=((total-counter-data-2)/10)+'em';status='w'}e" +
-                              "lse if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10" +
-                              ")+'em';status='ew'}if(touch===true){document.ontouchend=drop}else{document.onmou" +
-                              "seup=drop}};event.preventDefault();if(typeof pd.data.node==='object'&&pd.data.no" +
-                              "de.report.code.box!==null){offset+=pd.data.node.report.code.box.offsetLeft;offse" +
-                              "t-=pd.data.node.report.code.body.scrollLeft}else{subOffset=(document.body.parent" +
-                              "Node.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:do" +
-                              "cument.body.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.cur" +
-                              "sor='ew-resize';diff.style.width=(total/10)+'em';diff.style.display='inline-bloc" +
-                              "k';if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(diffLeft" +
-                              ".nodeType!==1)}diffLeft.style.display='block';diffRight.style.width=(diffRight.c" +
-                              "lientWidth/10)+'em';diffRight.style.position='absolute';if(touch===true){documen" +
-                              "t.ontouchmove=boxmove;document.ontouchstart=false}else{document.onmousemove=boxm" +
-                              "ove;document.onmousedown=null}return false};(function(){'use strict';var cells=p" +
-                              "d.d[0].getElementsByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(ce" +
-                              "lls[a].getAttribute('class')==='fold'){cells[a].onclick=pd.difffold}}if(pd.d.len" +
-                              "gth>3){pd.d[2].onmousedown=pd.colSliderGrab;pd.d[2].ontouchstart=pd.colSliderGra" +
-                              "b}pd.colorscheme=document.getElementById('colorScheme');pd.colorscheme.onchange=" +
-                              "pd.colorchange}());"
+        "agName('option');document.getElementsByTagName('body')[0].setAttribute('class',o" +
+        "ptions[this.selectedIndex].innerHTML.toLowerCase())};pd.difffold=function dom__d" +
+        "ifffold(){'use strict';var a=0,b=0,self=this,title=self.getAttribute('title').sp" +
+        "lit('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(tit" +
+        "le[2]),inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes" +
+        "=(parent.getAttribute('class')==='diff')?parent.getElementsByTagName('ol'):paren" +
+        "t.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listL" +
+        "en;a+=1){lists.push(listnodes[a].getElementsByTagName('li'))}max=(max>=lists[0]." +
+        "length)?lists[0].length:max;if(inner.charAt(0)==='-'){self.innerHTML='+'+inner.s" +
+        "ubstr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display" +
+        "='none'}}}else{self.innerHTML='-'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;" +
+        "b<listLen;b+=1){lists[b][a].style.display='block'}}}};pd.colSliderGrab=function(" +
+        "e){'use strict';var event=e||window.event,touch=(e!==null&&e.type==='touchstart'" +
+        "),node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,list" +
+        "s=diff.getElementsByTagName('ol'),counter=lists[0].clientWidth,data=lists[1].cli" +
+        "entWidth,width=lists[2].parentNode.clientWidth,total=lists[2].parentNode.parentN" +
+        "ode.clientWidth,offset=lists[2].parentNode.offsetLeft-lists[2].parentNode.parent" +
+        "Node.offsetLeft,min=((total-counter-data-2)-width),max=(total-width-counter),sta" +
+        "tus='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight." +
+        "previousSibling,drop=function dom__event_colSliderGrab_drop(f){f=f||window.event" +
+        ";f.preventDefault();node.style.cursor=status+'-resize';if(touch===true){document" +
+        ".ontouchmove=null;document.ontouchend=null}else{document.onmousemove=null;docume" +
+        "nt.onmouseup=null}},boxmove=function dom__event_colSliderGrab_boxmove(f){f=f||wi" +
+        "ndow.event;f.preventDefault();if(touch===true){subOffset=offset-f.touches[0].cli" +
+        "entX}else{subOffset=offset-f.clientX}if(subOffset>minAdjust&&subOffset<maxAdjust" +
+        "){withinRange=true}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.w" +
+        "idth=((total-counter-2)/10)+'em';status='e'}else if(withinRange===true&&subOffse" +
+        "t<minAdjust){diffRight.style.width=((total-counter-data-2)/10)+'em';status='w'}e" +
+        "lse if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10" +
+        ")+'em';status='ew'}if(touch===true){document.ontouchend=drop}else{document.onmou" +
+        "seup=drop}};event.preventDefault();if(typeof pd.data==='object'&&pd.data.node.re" +
+        "port.code.box!==null){offset+=pd.data.node.report.code.box.offsetLeft;offset-=pd" +
+        ".data.node.report.code.body.scrollLeft}else{subOffset=(document.body.parentNode." +
+        "scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:documen" +
+        "t.body.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.cursor='" +
+        "ew-resize';diff.style.width=(total/10)+'em';diff.style.display='inline-block';if" +
+        "(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(diffLeft.node" +
+        "Type!==1)}diffLeft.style.display='block';diffRight.style.width=(diffRight.client" +
+        "Width/10)+'em';diffRight.style.position='absolute';if(touch===true){document.ont" +
+        "ouchmove=boxmove;document.ontouchstart=false}else{document.onmousemove=boxmove;d" +
+        "ocument.onmousedown=null}return false};(function(){'use strict';var lists=docume" +
+        "nt.getElementById('prettydiff').getElementsByTagName('ol'),cells=lists[0].getEle" +
+        "mentsByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(cells[a].getAtt" +
+        "ribute('class')==='fold'){cells[a].onclick=pd.difffold}}if(lists.length>3){lists" +
+        "[2].onmousedown=pd.colSliderGrab;lists[2].ontouchstart=pd.colSliderGrab}pd.color" +
+        "scheme=document.getElementById('colorScheme');pd.colorscheme.onchange=pd.colorch" +
+        "ange}());"
             }
         },
         html           = [
@@ -1426,7 +1443,6 @@ Examples:
                     "December"
                 ];
             global.edition = prettydiff.edition;
-            global.report  = prettydiff.report;
             dstring        = global
                 .edition
                 .latest
@@ -1496,11 +1512,12 @@ Examples:
             noleadzero     : false,
             objsort        : "js",
             output         : "",
+            parseFormat    : "parallel",
+            parseSpace     : false,
             preserve       : 1,
             quote          : false,
             quoteConvert   : "none",
             readmethod     : "auto",
-            report         : true,
             selectorlist   : false,
             semicolon      : false,
             source         : "",
@@ -1661,37 +1678,19 @@ Examples:
             enderflag = true;
         },
 
-        //extract errorcount from diff report files for ender stats
-        counter        = function pdNodeLocal__counter(x) {
-            var num = Number(x.substring(x.indexOf("<em>") + 4, x.indexOf("</em>")));
-            if (num > 0) {
-                diffCount[0] += num;
-                diffCount[1] += 1;
-            }
-            return x;
-        },
-
         //html report template
         reports        = function pdNodeLocal__reports() {
             var result = prettydiff.api(options);
-            if (options.mode !== "parse" && result[0].indexOf("Error: ") === 0) {
-                return [result[0], ""];
+            if (global.meta.error !== "") {
+                result = global.meta.error;
             }
             html[7]  = options.color;
-            html[10] = result[0];
+            html[10] = result;
             if (options.jsscope !== "none" && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
                 html[12] = builder.script.beautify;
                 return html.join("");
             }
-            if (options.mode === "diff") {
-                return [
-                    html.join(""),
-                    ""
-                ];
-            }
-            return [
-                result[0], html.join("")
-            ];
+            return html.join("");
         },
 
         //instructions
@@ -1873,6 +1872,7 @@ Examples:
             a.push("                           value from option 'wrap'.");
             a.push("");
             a.push("* mode         - string  - The operation to be performed. Defaults to 'diff'.");
+            a.push("                           * analysis - returns an evaluation report.");
             a.push("                           * diff     - returns either command line list of");
             a.push("                                        differences or an HTML report");
             a.push("                           * beautify - beautifies code and returns a string");
@@ -1900,6 +1900,14 @@ Examples:
             a.push("                           'directory', or path and name of the file to write");
             a.push("                           the output.  If the directory path or file exists it");
             a.push("                           will be over written else it will be created.");
+            a.push("");
+            a.push("* parseFormat  - string  - When in parse mode if the output should be an array of");
+            a.push("                           records (sequential), arrays of data types (parallel),");
+            a.push("                           or an HTML table.  Default is parallel.");
+            a.push("                 Accepted values: parallel, sequential, htmltable");
+            a.push("");
+            a.push("* parseSpace   - boolean - Whether whitespace tokens should be included. Default");
+            a.push("                           is false.");
             a.push("");
             a.push("* preserve     - number  - The maximum number of empty lines to retain.");
             a.push("");
@@ -1932,11 +1940,6 @@ Examples:
             a.push("                                            and its subdirectories");
             a.push("                 Accepted values: auto, screen, file, filescreen, directory,");
             a.push("                                  subdirectory");
-            a.push("");
-            a.push("* report       - boolean - Determines whether a report file should be created.");
-            a.push("                           The default value is true.  If false reports will be");
-            a.push("                           suppressed for 'beautify' and 'minify' modes if");
-            a.push("                           readmethod is 'file' or 'directory'.");
             a.push("");
             a.push("* selectorlist - boolean - If comma separated CSS selectors should be retained");
             a.push("                           on a single line of code.");
@@ -2051,9 +2054,6 @@ Examples:
                                     console.log(err);
                                 }
                                 total[1] += 1;
-                                if (options.report === true) {
-                                    total[0] -= 1;
-                                }
                                 if (total[1] === total[0]) {
                                     ender();
                                 }
@@ -2108,9 +2108,6 @@ Examples:
                     } else if (options.mode === "diff" || (options.mode === "beautify" && options.jsscope !== "none")) {
                         writing(suffix, dataB);
                     } else {
-                        if (options.report === true) {
-                            writing(suffix, dataB);
-                        }
                         writing("", dataB);
                     }
                 },
@@ -2142,18 +2139,17 @@ Examples:
             }
             data.report = reports();
             if (options.mode === "parse") {
-                data.report[0] = JSON.stringify(data.report[0]);
+                data.report = JSON.stringify(data.report[0]);
             }
-            if (options.mode === "diff") {
-                data
-                    .report[0]
-                    .replace(/<strong>Number\ of\ differences:<\/strong>\ <em>\d+<\/em>\ difference/, counter);
-            }
-            if (data.report[0].indexOf("Error") === 0) {
+            diffCount[0] += global.meta.difftotal;
+            diffCount[1] += 1;
+            if (global.meta.error !== "") {
                 if (data.last === true) {
                     ender();
                 }
-                return console.log(data.report[0]);
+                console.log("Error with file: " + data.localpath);
+                console.log(global.meta.error);
+                console.log("");
             }
             if (dirs.length > 1 && options.mode !== "diff") {
                 newdir(data);
@@ -2167,7 +2163,7 @@ Examples:
             var a      = 0,
                 plural = "",
                 pdlen  = output[0].length;
-            diffCount[0] += output[output.length - 1];
+            diffCount[0] += global.meta.difftotal;
             diffCount[1] += 1;
             if (options.summaryonly === true) {
                 clidata[2].push(itempath);
@@ -2218,17 +2214,17 @@ Examples:
                 return cliWrite(prettydiff.api(options), "", false);
             }
             if (options.mode === "diff") {
-                return console.log(reports()[0]);
+                return console.log(reports());
             }
             if (options.jsscope !== "none" && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
-                return console.log(reports()[0]);
+                return console.log(reports());
             }
             report = prettydiff.api(options);
             if (options.mode === "parse") {
-                report[0] = JSON.stringify(report[0]);
+                report = JSON.stringify(report);
             }
             total[1] += 1;
-            console.log(report[0]);
+            console.log(report);
             if (total[0] === total[1] || options.readmethod === "screen" || options.readmethod === "auto") {
                 ender();
             }
@@ -2266,9 +2262,7 @@ Examples:
             if (data.binary === true) {
                 total[0] -= 1;
             }
-            if (options.report === true && options.mode !== "diff" && method !== "screen" && method !== "filescreen" && (options.mode !== "beautify" || options.jsscope === "none")) {
-                total[0] += 2;
-            } else if (options.mode !== "diff" || (options.mode === "diff" && data.type === "diff")) {
+            if (options.mode !== "diff" || (options.mode === "diff" && data.type === "diff")) {
                 total[0] += 1;
             }
             if (data.type === "diff") {
@@ -2895,7 +2889,7 @@ Examples:
                     }
                 } else if (d[b][0] === "miniwrap" && d[b][1] === "true") {
                     options.miniwrap = true;
-                } else if (d[b][0] === "mode" && (d[b][1] === "minify" || d[b][1] === "beautify" || d[b][1] === "parse")) {
+                } else if (d[b][0] === "mode" && (d[b][1] === "minify" || d[b][1] === "beautify" || d[b][1] === "parse" || d[b][1] === "analysis")) {
                     options.mode = d[b][1];
                 } else if (d[b][0] === "neverflatten" && d[b][1] === "true") {
                     options.neverflatten = true;
@@ -2913,6 +2907,10 @@ Examples:
                     }
                 } else if (d[b][0] === "output" && d[b][1].length > 0) {
                     options.output = pathslash(d[b][0], d[b][1]);
+                } else if (d[b][0] === "parseFormat" && (d[b][1] === "sequential" || d[b][1] === "htmltable")) {
+                    options.parseFormat = d[b][1];
+                } else if (d[b][0] === "parseSpace" && d[b][1] === "true") {
+                    options.parseSpace = true;
                 } else if (d[b][0] === "preserve") {
                     if (d[b][1] === 1 || d[b][1] === undefined || d[b][1] === "true" || d[b][1] === "all" || d[b][1] === "js" || d[b][1] === "css") {
                         options.preserve = 1;
@@ -2942,8 +2940,6 @@ Examples:
                         options.readmethod = "subdirectory";
                     }
                     method = options.readmethod;
-                } else if (d[b][0] === "report") {
-                    options.output = d[b][1];
                 } else if (d[b][0] === "selectorlist" && d[b][1] === "true") {
                     options.selectorlist = true;
                 } else if (d[b][0] === "semicolon" && d[b][1] === "true") {
@@ -3173,9 +3169,6 @@ Examples:
                     if (options.mode === "diff" && options.diff === "") {
                         return console.log("Error: 'diff' argument is empty");
                     }
-                    if ((options.mode === "diff" && options.summaryonly === false) || (options.jsscope !== "none" && options.mode === "beautify")) {
-                        options.report = true;
-                    }
                     if ((options.output === "" || options.summaryonly === true) && options.mode === "diff") {
                         if (options.readmethod !== "screen") {
                             if (options.readmethod === "auto") {
@@ -3190,9 +3183,6 @@ Examples:
                     }
                     if (method === "file" && options.output === "" && options.summaryonly === false && options.diffcli === false) {
                         return console.log("Error: 'readmethod' is value 'file' and argument 'output' is empty");
-                    }
-                    if (options.summaryonly === true) {
-                        options.report = false;
                     }
                     if (dir[2] === 0 || outready === false || (options.mode === "diff" && dir[0] === 0)) {
                         delay();

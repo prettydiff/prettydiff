@@ -1,3 +1,4 @@
+
 /*prettydiff.com topcoms: true, insize: 4, inchar: " ", vertical: true */
 /*jshint laxbreak: true*/
 /*global __dirname, ace, csspretty, csvpretty, define, diffview, exports, global, jspretty, markuppretty, process, require, safeSort */
@@ -92,6 +93,24 @@
  https://plus.google.com/105958105635636993368/posts
 
  */
+if (typeof global.meta !== "object") {
+    //schema for global.meta
+    //lang - array, language detection
+    //time - string, proctime (total execution time minus visual rendering)
+    //insize - number, input size
+    //outsize - number, output size
+    //difftotal - number, difference count
+    //difflines - number, difference lines
+    global.meta      = {
+        error: "",
+        lang: ["", "", ""],
+        time: "",
+        insize: 0,
+        outsize: 0,
+        difftotal: 0,
+        difflines: 0
+    };
+}
 if (typeof require === "function" && typeof ace !== "object") {
     (function glib_prettydiff() {
         "use strict";
@@ -125,6 +144,7 @@ if (typeof require === "function" && typeof ace !== "object") {
     global.markuppretty = markuppretty;
     global.safeSort     = safeSort;
 }
+global.jsxstatus = false;
 var prettydiff = function prettydiff_(api) {
     "use strict";
     var startTime = (typeof Date.now === "function")
@@ -895,7 +915,7 @@ var prettydiff = function prettydiff_(api) {
                                         "c00}#prettydiff.shadow .data .delete{background:#300}#prettydiff.shadow .data .d" +
                                         "elete em{background:#200;border-color:#c63;color:#c66}#prettydiff.shadow .data ." +
                                         "insert{background:#030}#prettydiff.shadow .data .insert em{background:#010;borde" +
-                                        "r-color:#090;color:#6c0}#prettydiff.shadow .data .replace{background:#234}#prett" +
+                                        "r-color:#090;color:#6c0}#prettydiff.shadow .data .replace{background:#345}#prett" +
                                         "ydiff.shadow .data .replace em{background:#023;border-color:#09c;color:#7cf}#pre" +
                                         "ttydiff.shadow .data .empty{background:#111}#prettydiff.shadow .diff .author{bor" +
                                         "der-color:#666}#prettydiff.shadow .data em.s0{color:#fff}#prettydiff.shadow .dat" +
@@ -1346,20 +1366,20 @@ var prettydiff = function prettydiff_(api) {
                                      "pointer;font-weight:bold;padding-left:0.5em}#prettydiff .data{text-align:left;wh" +
                                      "ite-space:pre}#prettydiff .beautify .data em{display:inline-block;font-style:nor" +
                                      "mal;font-weight:bold}#prettydiff .beautify li,#prettydiff .diff li{border-style:" +
-                                     "none none solid;border-width:0 0 0.1em;display:block;line-height:1.2;list-style-" +
-                                     "type:none;margin:0;white-space:pre}#prettydiff .beautify ol,#prettydiff .diff ol" +
-                                     "{display:table-cell;margin:0;padding:0}#prettydiff .beautify em.l0,#prettydiff ." +
-                                     "beautify em.l1,#prettydiff .beautify em.l2,#prettydiff .beautify em.l3,#prettydi" +
-                                     "ff .beautify em.l4,#prettydiff .beautify em.l5,#prettydiff .beautify em.l6,#pret" +
-                                     "tydiff .beautify em.l7,#prettydiff .beautify em.l8,#prettydiff .beautify em.l9,#" +
-                                     "prettydiff .beautify em.l10,#prettydiff .beautify em.l11,#prettydiff .beautify e" +
-                                     "m.l12,#prettydiff .beautify em.l13,#prettydiff .beautify em.l14,#prettydiff .bea" +
-                                     "utify em.l15,#prettydiff .beautify em.l16{height:2.2em;margin:0 0 -1em;position:" +
-                                     "relative;top:-0.5em}#prettydiff .beautify em.l0{margin-left:-0.5em;padding-left:" +
-                                     "0.5em}#prettydiff #report .beautify,#prettydiff #report .beautify li,#prettydiff" +
-                                     " #report .diff,#prettydiff #report .diff li{font-family:'Courier New',Courier,'L" +
-                                     "ucida Console',monospace}#prettydiff #report .beautify{border-style:solid}#prett" +
-                                     "ydiff #report .diff h3,#prettydiff #report .beautify h3{margin:0}"
+                                     "none none solid;border-width:0 0 0.1em;display:block;height:1em;line-height:1.2;" +
+                                     "list-style-type:none;margin:0;white-space:pre}#prettydiff .beautify ol,#prettydi" +
+                                     "ff .diff ol{display:table-cell;margin:0;padding:0}#prettydiff .beautify em.l0,#p" +
+                                     "rettydiff .beautify em.l1,#prettydiff .beautify em.l2,#prettydiff .beautify em.l" +
+                                     "3,#prettydiff .beautify em.l4,#prettydiff .beautify em.l5,#prettydiff .beautify " +
+                                     "em.l6,#prettydiff .beautify em.l7,#prettydiff .beautify em.l8,#prettydiff .beaut" +
+                                     "ify em.l9,#prettydiff .beautify em.l10,#prettydiff .beautify em.l11,#prettydiff " +
+                                     ".beautify em.l12,#prettydiff .beautify em.l13,#prettydiff .beautify em.l14,#pret" +
+                                     "tydiff .beautify em.l15,#prettydiff .beautify em.l16{height:2.2em;margin:0 0 -1e" +
+                                     "m;position:relative;top:-0.5em}#prettydiff .beautify em.l0{margin-left:-0.5em;pa" +
+                                     "dding-left:0.5em}#prettydiff #report .beautify,#prettydiff #report .beautify li," +
+                                     "#prettydiff #report .diff,#prettydiff #report .diff li{font-family:'Courier New'" +
+                                     ",Courier,'Lucida Console',monospace}#prettydiff #report .beautify{border-style:s" +
+                                     "olid}#prettydiff #report .diff h3,#prettydiff #report .beautify h3{margin:0}"
                     },
                     html  : {
                         body  : "/*]]>*/</style></head><body id='prettydiff' class='",
@@ -1419,52 +1439,53 @@ var prettydiff = function prettydiff_(api) {
                                       "TagName('li');listlen=list.length;for(b=0;b<listlen;b+=1){if(list[b].getAttribut" +
                                       "e('class')==='fold'){list[b].onmousedown=pd.beaufold;}}}}}());",
                         diff    : "var pd={};pd.colorchange=function(){'use strict';var options=this.getElementsByT" +
-                                      "agName('option');document.getElementsByTagName('body')[0].setAttribute('class',o" +
-                                      "ptions[this.selectedIndex].innerHTML.toLowerCase())};pd.difffold=function dom__d" +
-                                      "ifffold(){'use strict';var a=0,b=0,self=this,title=self.getAttribute('title').sp" +
-                                      "lit('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(tit" +
-                                      "le[2]),inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes" +
-                                      "=(parent.getAttribute('class')==='diff')?parent.getElementsByTagName('ol'):paren" +
-                                      "t.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listL" +
-                                      "en;a+=1){lists.push(listnodes[a].getElementsByTagName('li'))}max=(max>=lists[0]." +
-                                      "length)?lists[0].length:max;if(inner.charAt(0)==='-'){self.innerHTML='+'+inner.s" +
-                                      "ubstr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display" +
-                                      "='none'}}}else{self.innerHTML='-'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;" +
-                                      "b<listLen;b+=1){lists[b][a].style.display='block'}}}};pd.colSliderGrab=function(" +
-                                      "e){'use strict';var event=e||window.event,touch=(e!==null&&e.type==='touchstart'" +
-                                      "),node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,list" +
-                                      "s=diff.getElementsByTagName('ol'),counter=lists[0].clientWidth,data=lists[1].cli" +
-                                      "entWidth,width=lists[2].parentNode.clientWidth,total=lists[2].parentNode.parentN" +
-                                      "ode.clientWidth,offset=lists[2].parentNode.offsetLeft-lists[2].parentNode.parent" +
-                                      "Node.offsetLeft,min=((total-counter-data-2)-width),max=(total-width-counter),sta" +
-                                      "tus='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight." +
-                                      "previousSibling,drop=function dom__event_colSliderGrab_drop(f){f=f||window.event" +
-                                      ";f.preventDefault();node.style.cursor=status+'-resize';if(touch===true){document" +
-                                      ".ontouchmove=null;document.ontouchend=null}else{document.onmousemove=null;docume" +
-                                      "nt.onmouseup=null}},boxmove=function dom__event_colSliderGrab_boxmove(f){f=f||wi" +
-                                      "ndow.event;f.preventDefault();if(touch===true){subOffset=offset-f.touches[0].cli" +
-                                      "entX}else{subOffset=offset-f.clientX}if(subOffset>minAdjust&&subOffset<maxAdjust" +
-                                      "){withinRange=true}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.w" +
-                                      "idth=((total-counter-2)/10)+'em';status='e'}else if(withinRange===true&&subOffse" +
-                                      "t<minAdjust){diffRight.style.width=((total-counter-data-2)/10)+'em';status='w'}e" +
-                                      "lse if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10" +
-                                      ")+'em';status='ew'}if(touch===true){document.ontouchend=drop}else{document.onmou" +
-                                      "seup=drop}};event.preventDefault();if(typeof pd.data.node==='object'&&pd.data.no" +
-                                      "de.report.code.box!==null){offset+=pd.data.node.report.code.box.offsetLeft;offse" +
-                                      "t-=pd.data.node.report.code.body.scrollLeft}else{subOffset=(document.body.parent" +
-                                      "Node.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:do" +
-                                      "cument.body.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.cur" +
-                                      "sor='ew-resize';diff.style.width=(total/10)+'em';diff.style.display='inline-bloc" +
-                                      "k';if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(diffLeft" +
-                                      ".nodeType!==1)}diffLeft.style.display='block';diffRight.style.width=(diffRight.c" +
-                                      "lientWidth/10)+'em';diffRight.style.position='absolute';if(touch===true){documen" +
-                                      "t.ontouchmove=boxmove;document.ontouchstart=false}else{document.onmousemove=boxm" +
-                                      "ove;document.onmousedown=null}return false};(function(){'use strict';var cells=p" +
-                                      "d.d[0].getElementsByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(ce" +
-                                      "lls[a].getAttribute('class')==='fold'){cells[a].onclick=pd.difffold}}if(pd.d.len" +
-                                      "gth>3){pd.d[2].onmousedown=pd.colSliderGrab;pd.d[2].ontouchstart=pd.colSliderGra" +
-                                      "b}pd.colorscheme=document.getElementById('colorScheme');pd.colorscheme.onchange=" +
-                                      "pd.colorchange}());"
+                                    "agName('option');document.getElementsByTagName('body')[0].setAttribute('class',o" +
+                                    "ptions[this.selectedIndex].innerHTML.toLowerCase())};pd.difffold=function dom__d" +
+                                    "ifffold(){'use strict';var a=0,b=0,self=this,title=self.getAttribute('title').sp" +
+                                    "lit('line '),min=Number(title[1].substr(0,title[1].indexOf(' '))),max=Number(tit" +
+                                    "le[2]),inner=self.innerHTML,lists=[],parent=self.parentNode.parentNode,listnodes" +
+                                    "=(parent.getAttribute('class')==='diff')?parent.getElementsByTagName('ol'):paren" +
+                                    "t.parentNode.getElementsByTagName('ol'),listLen=listnodes.length;for(a=0;a<listL" +
+                                    "en;a+=1){lists.push(listnodes[a].getElementsByTagName('li'))}max=(max>=lists[0]." +
+                                    "length)?lists[0].length:max;if(inner.charAt(0)==='-'){self.innerHTML='+'+inner.s" +
+                                    "ubstr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display" +
+                                    "='none'}}}else{self.innerHTML='-'+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;" +
+                                    "b<listLen;b+=1){lists[b][a].style.display='block'}}}};pd.colSliderGrab=function(" +
+                                    "e){'use strict';var event=e||window.event,touch=(e!==null&&e.type==='touchstart'" +
+                                    "),node=this,diffRight=node.parentNode,diff=diffRight.parentNode,subOffset=0,list" +
+                                    "s=diff.getElementsByTagName('ol'),counter=lists[0].clientWidth,data=lists[1].cli" +
+                                    "entWidth,width=lists[2].parentNode.clientWidth,total=lists[2].parentNode.parentN" +
+                                    "ode.clientWidth,offset=lists[2].parentNode.offsetLeft-lists[2].parentNode.parent" +
+                                    "Node.offsetLeft,min=((total-counter-data-2)-width),max=(total-width-counter),sta" +
+                                    "tus='ew',minAdjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight." +
+                                    "previousSibling,drop=function dom__event_colSliderGrab_drop(f){f=f||window.event" +
+                                    ";f.preventDefault();node.style.cursor=status+'-resize';if(touch===true){document" +
+                                    ".ontouchmove=null;document.ontouchend=null}else{document.onmousemove=null;docume" +
+                                    "nt.onmouseup=null}},boxmove=function dom__event_colSliderGrab_boxmove(f){f=f||wi" +
+                                    "ndow.event;f.preventDefault();if(touch===true){subOffset=offset-f.touches[0].cli" +
+                                    "entX}else{subOffset=offset-f.clientX}if(subOffset>minAdjust&&subOffset<maxAdjust" +
+                                    "){withinRange=true}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.w" +
+                                    "idth=((total-counter-2)/10)+'em';status='e'}else if(withinRange===true&&subOffse" +
+                                    "t<minAdjust){diffRight.style.width=((total-counter-data-2)/10)+'em';status='w'}e" +
+                                    "lse if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10" +
+                                    ")+'em';status='ew'}if(touch===true){document.ontouchend=drop}else{document.onmou" +
+                                    "seup=drop}};event.preventDefault();if(typeof pd.data==='object'&&pd.data.node.re" +
+                                    "port.code.box!==null){offset+=pd.data.node.report.code.box.offsetLeft;offset-=pd" +
+                                    ".data.node.report.code.body.scrollLeft}else{subOffset=(document.body.parentNode." +
+                                    "scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:documen" +
+                                    "t.body.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.cursor='" +
+                                    "ew-resize';diff.style.width=(total/10)+'em';diff.style.display='inline-block';if" +
+                                    "(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(diffLeft.node" +
+                                    "Type!==1)}diffLeft.style.display='block';diffRight.style.width=(diffRight.client" +
+                                    "Width/10)+'em';diffRight.style.position='absolute';if(touch===true){document.ont" +
+                                    "ouchmove=boxmove;document.ontouchstart=false}else{document.onmousemove=boxmove;d" +
+                                    "ocument.onmousedown=null}return false};(function(){'use strict';var lists=docume" +
+                                    "nt.getElementById('prettydiff').getElementsByTagName('ol'),cells=lists[0].getEle" +
+                                    "mentsByTagName('li'),len=cells.length,a=0;for(a=0;a<len;a+=1){if(cells[a].getAtt" +
+                                    "ribute('class')==='fold'){cells[a].onclick=pd.difffold}}if(lists.length>3){lists" +
+                                    "[2].onmousedown=pd.colSliderGrab;lists[2].ontouchstart=pd.colSliderGrab}pd.color" +
+                                    "scheme=document.getElementById('colorScheme');pd.colorscheme.onchange=pd.colorch" +
+                                    "ange}());"
                     }
                 },
                 html        = [
@@ -1549,7 +1570,6 @@ var prettydiff = function prettydiff_(api) {
                 options     = {
                     // determines api source as necessary to make a decision about whether to supply
                     // externally needed JS functions to reports
-                    accessibility  : (api.accessibility === true || api.accessibility === "true"),
                     api            : (api.api === undefined || api.api.length === 0)
                         ? ""
                         : api.api,
@@ -1674,14 +1694,15 @@ var prettydiff = function prettydiff_(api) {
                     // should be applied to all code
                     miniwrap       : (api.miniwrap === true || api.miniwrap === "true"),
                     //mode - is this a minify, beautify, or diff operation
-                    mode           : (typeof api.mode === "string" && (api.mode === "minify" || api.mode === "beautify" || api.mode === "parse"))
+                    mode           : (api.mode === "minify" || api.mode === "beautify" || api.mode === "parse" || api.mode === "analysis")
                         ? api.mode
                         : "diff",
                     //neverflatten - prevent flattening of destructured lists in JavaScript
                     neverflatten   : (api.neverflatten === true || api.neverflatten === "true"),
                     //nocaseindent - if a 'case' should be indented to its parent 'switch'
                     nocaseindent   : (api.nocaseindent === true || api.nocaseindent === "true"),
-                    // nochainindent - prevent indentation when JavaScript chains of methods are broken onto multiple lines
+                    // nochainindent - prevent indentation when JavaScript chains of methods are
+                    // broken onto multiple lines
                     nochainindent  : (api.nochainindent === true || api.nochainindent === "true"),
                     // noleadzero - in CSS removes and prevents a run of 0s from appearing
                     // immediately before a value's decimal.
@@ -1690,6 +1711,12 @@ var prettydiff = function prettydiff_(api) {
                     objsort        : (api.objsort === "all" || api.objsort === "js" || api.objsort === "css" || api.objsort === "css" || api.objsort === true || api.objsort === "true")
                         ? api.objsort
                         : "none",
+                    //parseFormat - determine how the parse tree should be organized and formatted
+                    parseFormat    : (api.parseFormat === "sequential" || api.parseFormat === "htmltable")
+                        ? api.parseFormat
+                        : "parallel",
+                    //parseSpace - whether whitespace tokens between tags should be included in the parse tree output
+                    parseSpace     : (api.parseSpace === true || api.parseSpace === "true"),
                     //preserve - should empty lines be preserved in beautify operations of JSPretty?
                     preserve       : (function core__optionPreserve() {
                         if (api.preserve === 1 || api.preserve === undefined || api.preserve === true || api.preserve === "all" || api.preserve === "js" || api.preserve === "css") {
@@ -1770,8 +1797,7 @@ var prettydiff = function prettydiff_(api) {
                         ? 80
                         : Number(api.wrap)
                 },
-                autoval     = [],
-                autostring  = "",
+                autoval     = ["", "", ""],
                 auto        = function core__auto(a) {
                     var b      = [],
                         c      = 0,
@@ -1954,11 +1980,9 @@ var prettydiff = function prettydiff_(api) {
                             }()),
                         secondString = elapsed.toFixed(3),
                         plural       = function core__proctime_plural(x, y) {
-                            var a = "";
+                            var a = x + y;
                             if (x !== 1) {
-                                a = x + y + "s ";
-                            } else {
-                                a = x + y + " ";
+                                a = a + "s";
                             }
                             return a;
                         },
@@ -1981,7 +2005,7 @@ var prettydiff = function prettydiff_(api) {
                     } else {
                         secondString = plural(secondString, " second");
                     }
-                    return "<p><strong>Execution time:</strong> <em>" + hourString + minuteString + secondString + "</em></p>";
+                    return hourString + minuteString + secondString;
                 },
                 pdcomment   = function core__pdcomment() {
                     var comment    = options.source,
@@ -2193,11 +2217,11 @@ var prettydiff = function prettydiff_(api) {
                 options.vertical = "all";
             }
             if (options.source === "") {
-                return ["Error: Source sample is missing.", ""];
+                return "Error: Source sample is missing.";
             }
             if (options.mode === "diff") {
                 if (options.diff === "Diff sample is missing.") {
-                    return ["Error: Diff sample is missing.", ""];
+                    return "Error: Diff sample is missing.";
                 }
                 if (options.lang === "csv") {
                     options.lang = "text";
@@ -2206,18 +2230,10 @@ var prettydiff = function prettydiff_(api) {
             if (options.lang === "auto") {
                 autoval      = auto(options.source);
                 options.lang = autoval[1];
-                if (autoval[2] === "unknown") {
-                    autostring = "<p>Code type set to <strong>auto</strong>, but language could not be determined." +
-                            " Language defaulted to <em>" + autoval[0] + "</em>.</p>";
-                } else {
-                    autostring = "<p>Code type set to <strong>auto</strong>. Presumed language is <em>" + autoval[2] + "</em>.</p>";
-                }
             } else if (options.api === "dom") {
                 autoval    = [options.lang, options.lang, options.lang];
-                autostring = "<p>Code type is set to <strong>" + options.lang + "</strong>.</p>";
             } else {
                 options.lang = setlangmode(options.lang);
-                autostring   = "<p>Code type is set to <strong>" + options.lang + "</strong>.</p>";
             }
             if (autoval[0] === "dustjs") {
                 options.dustjs = true;
@@ -2229,7 +2245,22 @@ var prettydiff = function prettydiff_(api) {
                 options.titanium = true;
                 options.lang     = "javscript";
             }
-            if (options.mode === "minify") {
+            global.jsxstatus = false;
+            if (autoval[0] === "text" && options.mode !== "diff") {
+                global.meta.lang = autoval;
+                global.meta.time = proctime();
+                global.meta.insize = api.source.length;
+                if (autoval[2] === "unknown") {
+                    global.meta.error = "Language is set to auto, but could not be detected. File not parsed.";
+                } else {
+                    global.meta.error = "Language is set to text, but plain text is only supported in diff mode. File not parsed.";
+                }
+                return options.source;
+            }
+            if (options.mode === "minify" || options.mode === "parse" || options.mode === "analysis") {
+                if (options.mode === "analysis") {
+                    options.accessibility = true;
+                }
                 if (options.lang === "css") {
                     apioutput = global.csspretty(options);
                 } else if (options.lang === "csv") {
@@ -2242,107 +2273,31 @@ var prettydiff = function prettydiff_(api) {
                 } else {
                     apioutput = global.jspretty(options);
                 }
-                return (function core__minifyReport() {
-                    var sizediff = function core__minifyReport_score() {
-                        var a                 = 0,
-                            lines             = 0,
-                            source            = options.source,
-                            sizeOld           = source.length,
-                            windowsSize       = 0,
-                            sizeNew           = apioutput.length,
-                            sizeDifference    = sizeOld - sizeNew,
-                            windowsDifference = 0,
-                            percent           = ((sizeDifference / sizeOld) * 100),
-                            percentUnix       = percent.toFixed(2) + "%",
-                            percentWindows    = "",
-                            output            = [];
-                        for (a = 0; a < sizeOld; a += 1) {
-                            if (source.charAt(a) === "\n" && (options.crlf === false || source.charAt(a - 1) === "\r")) {
-                                lines += 1;
-                            }
-                        }
-                        windowsSize       = sizeOld + lines;
-                        windowsDifference = windowsSize - sizeNew;
-                        percent           = ((windowsDifference / windowsSize) * 100);
-                        percentWindows    = percent.toFixed(2) + "%";
-                        if (global.report.indexOf("<p id='jserror'>") === 0) {
-                            output.push(global.report);
-                        } else if (global.report !== "") {
-                            output.push("<p><strong class='duplicate'>Duplicate id attribute values detected:</strong> " + global.report + "</p>");
-                        }
-                        output.push("<div class='report'><table class='analysis' summary='Minification efficiency rep" +
-                                "ort'><caption>Minification efficiency report</caption><thead><tr><th colspan='2'" +
-                                ">Output Size</th><th colspan='2'>Number of Lines From Input</th></tr></thead><tb" +
-                                "ody><tr><td colspan='2'>");
-                        output.push(sizeNew);
-                        output.push("</td><td colspan='2'>");
-                        output.push(lines + 1);
-                        output.push("</td></tr><tr><th>Operating System</th><th>Input Size</th><th>Size Difference</t" +
-                                "h><th>Percentage of Decrease</th></tr><tr><th>Unix/Linux</th><td>");
-                        output.push(sizeOld);
-                        output.push("</td><td>");
-                        output.push(sizeDifference);
-                        output.push("</td><td>");
-                        output.push(percentUnix);
-                        output.push("</td></tr><tr><th>Windows</th><td>");
-                        output.push(windowsSize);
-                        output.push("</td><td>");
-                        output.push(windowsDifference);
-                        output.push("</td><td>");
-                        output.push(percentWindows);
-                        output.push("</td></tr></tbody></table></div>");
-                        return output.join("");
-                    };
-                    if (global.jsxstatus === true) {
-                        autoval    = ["jsx", "javascript", "React JSX"];
-                        autostring = "<p>Code type set to <strong>auto</strong>. Presumed language is <em>React JSX</e" +
-                                         "m>.</p>";
-                    }
-                    return [
-                        apioutput, autostring + proctime() + sizediff()
-                    ];
-                }());
-            }
-            if (options.mode === "parse") {
-                if (options.lang === "css") {
-                    apioutput = global.csspretty(options);
-                } else if (options.lang === "csv") {
-                    apioutput = global.csvpretty(options);
-                } else if (options.lang === "markup") {
-                    apioutput  = global.markuppretty(options);
-                    autostring = autostring + global.report;
-                } else if (options.lang === "text") {
-                    apioutput  = options.source;
-                    apidiffout = "";
-                } else {
-                    apioutput = global.jspretty(options);
-                }
-                if (apidiffout === false) {
-                    apidiffout = "";
-                }
                 if (global.jsxstatus === true) {
-                    autostring = "<p>Code type is presumed to be <em>React JSX</em>.</p>";
+                    autoval    = ["jsx", "javascript", "React JSX"];
                 }
-                if (apioutput.token !== undefined) {
-                    autostring = autostring + "<p>Total tokens: <strong>" + apioutput.token.length + "</strong></p>";
+                global.meta.lang = autoval;
+                global.meta.time = proctime();
+                global.meta.insize = api.source.length;
+                if (options.mode === "minify" || options.mode === "analysis") {
+                    global.meta.outsize = apioutput.length;
+                } else if (options.parseFormat === "sequential" || options.parseFormat === "htmltable") {
+                    global.meta.outsize = apioutput.data.length;
+                } else {
+                    global.meta.outsize = apioutput.data.token.length;
                 }
-                return [
-                    apioutput, autostring + proctime()
-                ];
+                return apioutput;
             }
             if (options.mode === "beautify") {
                 if (options.lang === "css") {
                     apioutput  = global.csspretty(options);
-                    apidiffout = global.report;
                 } else if (options.lang === "csv") {
                     apioutput  = global.csvpretty(options);
-                    apidiffout = global.report;
                 } else if (options.lang === "markup") {
                     if (api.vertical === "jsonly") {
                         options.vertical = "jsonly";
                     }
                     apioutput  = global.markuppretty(options);
-                    apidiffout = global.report;
                     if (options.inchar !== "\t") {
                         apioutput = apioutput.replace(/\r?\n[\t]*\u0020\/>/g, "");
                     }
@@ -2354,29 +2309,26 @@ var prettydiff = function prettydiff_(api) {
                         options.vertical = "jsonly";
                     }
                     apioutput  = global.jspretty(options);
-                    apidiffout = global.report;
                 }
                 if (apidiffout === false) {
                     apidiffout = "";
-                }
-                if (global.jsxstatus === true) {
-                    autostring = "<p>Code type is presumed to be <em>React JSX</em>.</p>";
                 }
                 if (options.api === "" && options.jsscope !== "none" && options.lang === "javascript") {
                     html[7]  = options.color;
                     html[10] = apidiffout;
                     html[12] = builder.script.beautify;
-                    return [
-                        html.join(""),
-                        ""
-                    ];
+                    apioutput = html.join("");
                 }
-                return [
-                    apioutput, autostring + proctime() + apidiffout
-                ];
+                if (global.jsxstatus === true) {
+                    autoval    = ["jsx", "javascript", "React JSX"];
+                }
+                global.meta.lang = autoval;
+                global.meta.time = proctime();
+                global.meta.insize = api.source.length;
+                global.meta.outsize = apioutput.length;
+                return apioutput;
             }
             if (options.mode === "diff") {
-                global.report    = "diff";
                 options.vertical = false;
                 options.jsscope  = false;
                 options.preserve = 0;
@@ -2384,7 +2336,7 @@ var prettydiff = function prettydiff_(api) {
                     options.comments = "nocomment";
                 }
                 if (options.source === "" || options.diff === "") {
-                    return ["", ""];
+                    return "";
                 }
                 if (options.lang === "css") {
                     apioutput      = global.csspretty(options);
@@ -2427,85 +2379,65 @@ var prettydiff = function prettydiff_(api) {
                 if (options.difflabel === "" || spacetest.test(options.difflabel)) {
                     options.difflabel = "New Text";
                 }
+                if (global.jsxstatus === true) {
+                    autoval    = ["jsx", "javascript", "React JSX"];
+                }
+                global.meta.lang = autoval;
+                global.meta.time = proctime();
+                global.meta.insize = api.source.length + api.diff.length;
+                global.meta.outsize = apioutput.length;
                 return (function core__diff() {
-                    var a = [],
-                        s = "s",
-                        t = "s";
+                    var a = "";
                     options.diff   = apidiffout;
                     options.source = apioutput;
                     if (options.diffcli === true) {
                         return global.diffview(options);
                     }
                     if (apioutput === "Error: This does not appear to be JavaScript." || apidiffout === "Error: This does not appear to be JavaScript.") {
-                        a[1] = [
-                            "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (d" +
+                        return "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (d" +
                                     "iff only)</em>. <span style='display:block'>The input does not appear to be mark" +
-                                    "up, CSS, or JavaScript.</span></p>",
-                            0,
-                            0
-                        ];
-                    } else {
-                        if (options.lang === "text") {
-                            options.inchar = "";
-                        }
-                        a[1] = global.diffview(options);
-                        if (a[1][2] === 1) {
-                            t = "";
-                            if (a[1][1] === 0) {
-                                s = "";
-                            }
-                        }
+                                    "up, CSS, or JavaScript.</span></p>";
                     }
-                    a[0] = "<p><strong>Number of differences:</strong> <em>" + (a[1][1] + a[1][2]) + "</em> difference" + s + " from <em>" + a[1][2] + "</em> line" + t + " of code.</p>";
+                    if (options.lang === "text") {
+                        options.inchar = "";
+                    }
+                    a = global.diffview(options);
                     if (global.jsxstatus === true) {
-                        autostring = "<p>Code type is presumed to be <em>React JSX</em>.</p>";
+                        autoval    = ["jsx", "javascript", "React JSX"];
                     }
                     if (options.api === "") {
                         html[7]  = options.color;
-                        html[10] = a[0] + a[1][0];
-                        return [
-                            html.join(""),
-                            ""
-                        ];
+                        html[10] = a;
+                        return html.join("");
                     }
-                    if (options.mode === "diff") {
-                        return [
-                            a[1][0], autostring + proctime() + a[0] + " <p>Accessibility note. &lt;em&gt; tags in the output represent character differ" +
-                                    "ences per lines compared.</p>"
-                        ];
-                    }
-                    return [
-                        a[1][0], autostring + proctime() + a[0] + " <p>Accessibility note. &lt;em&gt; tags in the output represent presentation for" +
-                                " variable coloring and scope.</p>"
-                    ];
+                    return a;
                 }());
             }
         };
     return core(api);
 };
-global.report         = "";
 global.edition        = {
     addon        : {
         ace: 160307
     },
     api          : {
-        dom      : 160309, //dom.js
-        nodeLocal: 160308, //node-local.js
-        wsh      : 160308
+        dom      : 160407, //dom.js
+        nodeLocal: 160407, //node-local.js
+        wsh      : 160407
     },
-    css          : 160223, //css files
-    csspretty    : 160317, //csspretty lib
+    css          : 160407, //css files
+    csspretty    : 160407, //csspretty lib
     csvpretty    : 160307, //csvpretty lib
     diffview     : 160307, //diffview lib
-    documentation: 160308, //documentation.xhtml
-    jspretty     : 160310, //jspretty lib
+    documentation: 160407, //documentation.xhtml
+    jspretty     : 160407, //jspretty lib
     latest       : 0,
     lint         : 160229, //unit test and lint automation as test/lint.js
-    markuppretty : 160310, //markuppretty lib
-    prettydiff   : 160308, //this file
+    markuppretty : 160407, //markuppretty lib
+    prettydiff   : 160407, //this file
     safeSort     : 160307, //safeSort lib
-    version      : "1.16.37", //version number
-    webtool      : 160309
+    version      : "2.0.0 alpha", //version number
+    webtool      : 160407
 };
 global.edition.latest = (function edition_latest() {
     "use strict";
@@ -2513,8 +2445,8 @@ global.edition.latest = (function edition_latest() {
 }());
 if (typeof exports === "object" || typeof exports === "function") {
     //commonjs and nodejs support
-    exports.report  = global.report;
     exports.edition = global.edition;
+    exports.meta    = global.meta;
     exports.api     = function commonjs(x) {
         "use strict";
         return prettydiff(x);
@@ -2523,8 +2455,8 @@ if (typeof exports === "object" || typeof exports === "function") {
     //requirejs support
     define(function requirejs(require, exports) {
         "use strict";
-        exports.report  = global.report;
         exports.edition = global.edition;
+        exports.meta    = global.meta;
         exports.api     = function requirejs_export(x) {
             return prettydiff(x);
         };

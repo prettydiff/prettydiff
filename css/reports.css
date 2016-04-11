@@ -80,7 +80,7 @@
 #prettydiff .data{text-align:left;white-space:pre}
 #prettydiff .beautify .data em{display:inline-block;font-style:normal;font-weight:bold}
 #prettydiff .beautify li,
-#prettydiff .diff li{border-style:none none solid;border-width:0 0 0.1em;display:block;line-height:1.2;list-style-type:none;margin:0;white-space:pre}
+#prettydiff .diff li{border-style:none none solid;border-width:0 0 0.1em;display:block;height:1em;line-height:1.2;list-style-type:none;margin:0;white-space:pre}
 #prettydiff .beautify ol,
 #prettydiff .diff ol{display:table-cell;margin:0;padding:0}
 #prettydiff .beautify em.l0,
@@ -110,3 +110,7 @@
 #prettydiff #report .beautify{border-style:solid}
 #prettydiff #report .diff h3,
 #prettydiff #report .beautify h3{border-top-style:solid;border-top-width:0.1em;margin:0}
+#prettydiff #webtool #a11y,
+#prettydiff #webtool #a11y div,
+#prettydiff #webtool #a11y ol,
+#prettydiff #webtool #a11y ul{border-style:none}

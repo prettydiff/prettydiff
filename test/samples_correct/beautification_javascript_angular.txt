@@ -6892,7 +6892,7 @@
                         for (i = 0, ii = $rootElement.length; i < ii; i += 1) {
                             if ($rootElement[i] == firstElementToRemove) {
                                 $rootElement[i++] = newNode;
-                                for (var j = i, j2 = j + removeCount - 1, jj = $rootElement.length; j < jj; j++, j2++) {
+                                for (var j = i, j2 = j + removeCount - 1, jj = $rootElement.length; j < jj; j += 1, j2 += 1) {
                                     if (j2 < jj) {
                                         $rootElement[j] = $rootElement[j2];
                                     } else {

@@ -64,7 +64,7 @@
 #prettydiff.shadow .data .delete em{background:#200;border-color:#c63;color:#c66}
 #prettydiff.shadow .data .insert{background:#030}
 #prettydiff.shadow .data .insert em{background:#010;border-color:#090;color:#6c0}
-#prettydiff.shadow .data .replace{background:#234}
+#prettydiff.shadow .data .replace{background:#345}
 #prettydiff.shadow .data .replace em{background:#023;border-color:#09c;color:#7cf}
 #prettydiff.shadow .data .empty{background:#111}
 #prettydiff.shadow .diff .author{border-color:#666}

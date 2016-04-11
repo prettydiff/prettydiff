@@ -177,8 +177,7 @@
                                 <ul>
                                     <li>
                                         <h5>Description</h5>
-                                        Used internally to decide if some small JavaScript functions need to be included
-                                        with report output based upon the operating environment.</li>
+                                        Used internally to decide how to format documents and reports.</li>
                                 </ul>
                             </li>
                             <li id="braceline">
@@ -971,7 +970,8 @@
                                 <ul>
                                     <li>
                                         <h5>Description</h5>
-                                        If indentation should be ignored for chains of JavaScript methods that are broken onto multiple lines.</li>
+                                        If indentation should be ignored for chains of JavaScript methods that are
+                                        broken onto multiple lines.</li>
                                     <li>
                                         <h5>Type</h5>
                                         boolean</li>
@@ -1033,6 +1033,49 @@
                                     <li>
                                         <h5>Type</h5>
                                         string</li>
+                                </ul>
+                            </li>
+                            <li id="parseFormat">
+                                <h4>parseFormat</h4>
+                                <ul>
+                                    <li>
+                                        <h5>Description</h5>
+                                        When in parse mode if the output should be arrays of data types (parallel),
+                                        arrays of token records (sequential), or an HTML table.</li>
+                                    <li>
+                                        <h5>Type</h5>
+                                        string</li>
+                                    <li>
+                                        <h5>Default</h5>
+                                        parallel</li>
+                                    <li>
+                                        <h5>Accepted values</h5>
+                                        parallel, sequential, htmltable</li>
+                                    <li>
+                                        <h5>As labeled in the HTML tool</h5>
+                                        Parsed Output Format</li>
+                                </ul>
+                            </li>
+                            <li id="parseSpace">
+                                <h4>parseSpace</h4>
+                                <ul>
+                                    <li>
+                                        <h5>Description</h5>
+                                        If whitespace tokens should be included in the output parse tree. Including
+                                        whitespace tokens in the parse tree is the more standards conformant approach.
+                                        Whitespace tokens can be inferred through examination of the
+                                        <em>lines</em>
+                                        data facet for a given token and tends to make reading the parse tree more
+                                        challenging.</li>
+                                    <li>
+                                        <h5>Type</h5>
+                                        boolean</li>
+                                    <li>
+                                        <h5>Default</h5>
+                                        false</li>
+                                    <li>
+                                        <h5>As labeled in the HTML tool</h5>
+                                        Include Whitespace Tokens</li>
                                 </ul>
                             </li>
                             <li id="preserve">
@@ -1120,22 +1163,6 @@
                                     <li>
                                         <h5>Accepted values</h5>
                                         auto, directory, file, filescreen, screen, subdirectory</li>
-                                </ul>
-                            </li>
-                            <li id="report">
-                                <h4>report
-                                    <strong>(node-local.js only)</strong>
-                                </h4>
-                                <ul>
-                                    <li>
-                                        <h5>Description</h5>
-                                        Determines if a meta data report should be generated.</li>
-                                    <li>
-                                        <h5>Type</h5>
-                                        boolean</li>
-                                    <li>
-                                        <h5>Default</h5>
-                                        true</li>
                                 </ul>
                             </li>
                             <li id="selectorlist">
@@ -1914,14 +1941,23 @@
                     <div class="content-hide">
                         <div class="segment">
                             <h3>Contribution Guide</h3>
-                            <p>For questions, features, or bug reports please open an issue on <a href="https://github.com/prettydiff/prettydiff/issues">Github</a>.</p>
+                            <p>For questions, features, or bug reports please open an issue on
+                                <a href="https://github.com/prettydiff/prettydiff/issues">Github</a>.</p>
                             <p>If you wish to propose code changes then follow these steps:</p>
                             <ol>
                                 <li>Fork the repository on Github.</li>
-                                <li>Clone your forked repository to your local machine: <code>git clone https://github.com/username/prettydiff.git</code></li>
-                                <li>Create a new branch for your changes: <code>git checkout -b branchName</code></li>
-                                <li>Run the unit tests to verify if your changes are breaking things: <code>npm install</code></li>
-                                <li>Open a pull request on Github.  Ensure there are comments in the pull request explaining the what the change does and why it is needed.  Including additional unit tests with the pull request earns extra love.</li>
+                                <li>Clone your forked repository to your local machine:
+                                    <code>git clone https://github.com/username/prettydiff.git</code>
+                                </li>
+                                <li>Create a new branch for your changes:
+                                    <code>git checkout -b branchName</code>
+                                </li>
+                                <li>Run the unit tests to verify if your changes are breaking things:
+                                    <code>npm install</code>
+                                </li>
+                                <li>Open a pull request on Github. Ensure there are comments in the pull request
+                                    explaining the what the change does and why it is needed. Including additional
+                                    unit tests with the pull request earns extra love.</li>
                             </ol>
                         </div>
                         <div class="segment">
@@ -1957,36 +1993,73 @@
                         <div class="segment">
                             <h3>New Option Guidance</h3>
                             <h4>Rapid Experimentation</h4>
-                            <p>The easiest way to experiment with adding new options is to arbitrarily add an option assign and value to the top of the given library.  For example, if you wish to add a new JavaScript option then just before the <em>tokenizer</em> include a line of code like: <code>option.myNewOptionName = true</code>  A new option reference exists that is avilable through out the library that can allow or suppress new logic with minimal regression.  This line of code will have to be removed later, but it allows for rapid experimentation.</p>
+                            <p>The easiest way to experiment with adding new options is to arbitrarily add
+                                an option assign and value to the top of the given library. For example, if you
+                                wish to add a new JavaScript option then just before the
+                                <em>tokenizer</em>
+                                include a line of code like:
+                                <code>option.myNewOptionName = true</code>
+                                A new option reference exists that is avilable through out the library that can
+                                allow or suppress new logic with minimal regression. This line of code will have
+                                to be removed later, but it allows for rapid experimentation.</p>
                             <h4>Checklist</h4>
-                            <p>The following checklist explains how to expand the documentation and supported APIs of Pretty Diff for new options.</p>
+                            <p>The following checklist explains how to expand the documentation and
+                                supported APIs of Pretty Diff for new options.</p>
                             <ul>
-                                <li>prettydiff.js - Add new option and default values/type to the <em>options</em> object.</li>
-                                <li>documentation.xhtml - Define the new option in the documentation <a href="#options">options</a> section.</li>
+                                <li>prettydiff.js - Add new option and default values/type to the
+                                    <em>options</em>
+                                    object.</li>
+                                <li>documentation.xhtml - Define the new option in the documentation
+                                    <a href="#options">options</a>
+                                    section.</li>
                                 <li>Web tool (if not a Node.js only option)
                                     <ul>
-                                        <li>index.xhtml - Some options are mode specific while others aren't.  Options should be added to the appropriate language section of each supported mode.</li>
-                                        <li>api/dom.js - Add option support to the supported language modes of <em>pd.event.recycle</em>.  The supported language modes are defined as functions: <em>dom__event_recycle_beautify</em>, <em>dom__event_recycle_diff</em>, <em>dom__event_recycle_minify</em>, <em>dom__event_recycle_parse</em>.</li>
-                                        <li>api/dom.js - Add state support by including the option ids to <em>pd.app.options</em>.</li>
+                                        <li>index.xhtml - Some options are mode specific while others aren't. Options
+                                            should be added to the appropriate language section of each supported mode.</li>
+                                        <li>api/dom.js - Add option support to the supported language modes of
+                                            <em>pd.event.recycle</em>. The supported language modes are defined as functions:
+                                            <em>dom__event_recycle_beautify</em>,
+                                            <em>dom__event_recycle_diff</em>,
+                                            <em>dom__event_recycle_minify</em>,
+                                            <em>dom__event_recycle_parse</em>.</li>
+                                        <li>api/dom.js - Add state support by including the option ids to
+                                            <em>pd.app.options</em>.</li>
                                     </ul>
                                 </li>
                                 <li>api/prettydiff.js - WSH support (if not a Node.js only option)
                                     <ul>
-                                        <li>Add a description of the new option to the documentation in <em>outerror</em> function.</li>
-                                        <li>Add functional support to the list of options (near the bottom of the file) usings the convention <em>WScript.Arguments.Named</em>.</li>
+                                        <li>Add a description of the new option to the documentation in
+                                            <em>outerror</em>
+                                            function.</li>
+                                        <li>Add functional support to the list of options (near the bottom of the file)
+                                            usings the convention
+                                            <em>WScript.Arguments.Named</em>.</li>
                                     </ul>
                                 </li>
                                 <li>api/node-local.js - Node.js support
                                     <ul>
-                                        <li>Add option name and a default value/type to the declared <em>options</em> object.</li>
-                                        <li>Add the option to the internal documentation in the <em>pdNodeLocal__error</em> function.</li>
-                                        <li>Add functional support for the new option to the loop near the top of function <em>pdNodeLocal__start</em>.</li>
+                                        <li>Add option name and a default value/type to the declared
+                                            <em>options</em>
+                                            object.</li>
+                                        <li>Add the option to the internal documentation in the
+                                            <em>pdNodeLocal__error</em>
+                                            function.</li>
+                                        <li>Add functional support for the new option to the loop near the top of function
+                                            <em>pdNodeLocal__start</em>.</li>
                                     </ul>
                                 </li>
-                                <li>The various libraries are written for independent execution, so each gets their own default definition for supported options, such as: <em>jspretty__options</em>. in the lib/jspretty.js file.  New options need to be added in these locations where appropriate.</li>
+                                <li>The various libraries are written for independent execution, so each gets
+                                    their own default definition for supported options, such as:
+                                    <em>jspretty__options</em>. in the lib/jspretty.js file. New options need to be
+                                    added in these locations where appropriate.</li>
                             </ul>
                             <h4>Additional Guidance</h4>
-                            <p>Keep things alphabetized where possible.  Ideal option names are a balance of uniquely and specifically descriptive but also as short as possible.  Options should ideally support a single data type, though exceptions can be made.  Frequently run the unit tests to determine if the new option causses regression or understand if regression is necessary.  Never be afraid to open a Github issue or send an email when further guidance is demanded or questions arise.</p>
+                            <p>Keep things alphabetized where possible. Ideal option names are a balance of
+                                uniquely and specifically descriptive but also as short as possible. Options
+                                should ideally support a single data type, though exceptions can be made.
+                                Frequently run the unit tests to determine if the new option causses regression
+                                or understand if regression is necessary. Never be afraid to open a Github issue
+                                or send an email when further guidance is demanded or questions arise.</p>
                         </div>
                     </div>
                 </div>
