@@ -4,10 +4,6 @@ Try it online at [http://prettydiff.com/](http://prettydiff.com/).
 
 [![Travis CI Build](https://travis-ci.org/prettydiff/prettydiff.svg)](https://travis-ci.org/prettydiff/prettydiff)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/prettydiff/prettydiff?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![npm version](https://badge.fury.io/js/prettydiff.svg)](https://www.npmjs.com/package/prettydiff)
-[![Dependency Status](https://david-dm.org/prettydiff/prettydiff.svg)](https://david-dm.org/prettydiff/prettydiff)
-[![Dev Dependency Status](https://david-dm.org/prettydiff/prettydiff/dev-status.svg)](https://david-dm.org/prettydiff/prettydiff/dev-status.svg)
-[![npm downloads](https://img.shields.io/npm/dm/prettydiff.svg)](https://www.npmjs.com/package/prettydiff)
 [![Twitter Tweets](https://img.shields.io/twitter/url/http/prettydiff.com.svg?style=social)](https://twitter.com/intent/tweet?text=Handy%20web%20development%20tool:%20%20url=http%3A%2F%2Fprettydiff.com)
 
 ## Summary
@@ -43,10 +39,6 @@ A Node.js command line utility is provided by api/node-local.js.  This file can 
 
 #### Execute in the context of a NodeJS application
 
-First install the prettydiff package locally
-
-    npm install prettydiff
-
 Add this code to your application
 
     var prettydiff = require("prettydiff"),
@@ -58,10 +50,6 @@ Add this code to your application
         output     = prettydiff.api(args);
 
 #### Execute from the command line
-
-First install the prettydiff package globally
-
-    npm install prettydiff -g
 
 Run in windows
 
@@ -128,10 +116,10 @@ Pretty Diff would be executed using the following on CLI:
 
 ### Run Pretty Diff in [Atom](https://atom.io/) code editor with the [atom-beautify](https://atom.io/packages/atom-beautify) package.
 
-### Run the unit tests with NPM test Script
+### Run the unit tests
 
     cd node_modules/prettydiff
-    npm test
+    node test/lint.js
 
 ## License:
 

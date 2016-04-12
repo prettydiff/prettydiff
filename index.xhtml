@@ -48,7 +48,7 @@
             <div id="headline" style="display:block">
                 <h2>Announcement &mdash;</h2>
                 <p>
-                    <a href="https://github.com/prettydiff/prettydiff/issues/71">Submit any wish list items for Pretty Diff version 2!</a>
+                    <a href="https://github.com/prettydiff/prettydiff/issues/292">Version 2 pre-release available for testing!</a>
                 </p>
                 <span class="clear"></span>
             </div>
@@ -83,7 +83,11 @@
                 </span>
                 <span>
                     <input id="modeparse" name="mode" type="radio"/>
-                    <label for="modeparse">Parsed Only</label>
+                    <label for="modeparse">Parse Tree</label>
+                </span>
+                <span>
+                    <input id="modeanalysis" name="mode" type="radio"/>
+                    <label for="modeanalysis">Analysis</label>
                 </span>
             </p>
             <div class="metainfo">
@@ -138,8 +142,7 @@
                     </p>
                     <p class="output">
                         <label class="outputlabel" for="beautyoutput">Beautification output (read only)</label>
-                        <textarea cols="40" id="beautyoutput" name="paste_code" readonly="readonly"
-                            rows="10" wrap="off"></textarea>
+                        <textarea cols="40" id="beautyoutput" readonly="readonly" rows="10" wrap="off"></textarea>
                     </p>
                     <span class="clear"></span>
                 </div>
@@ -169,8 +172,22 @@
                     </p>
                     <p class="output">
                         <label class="outputlabel" for="parseoutput">Parse output (read only)</label>
-                        <textarea cols="40" id="parseoutput" name="paste_code" readonly="readonly"
-                            rows="10" wrap="off"></textarea>
+                        <textarea cols="40" id="parseoutput" readonly="readonly" rows="10" wrap="off"></textarea>
+                    </p>
+                    <span class="clear"></span>
+                </div>
+                <div id="Analysis" style="display:none;">
+                    <h2>Analyze Code</h2>
+                    <p class="file"><input id="analysisfile" multiple="multiple" type="file"/>
+                        <label for="analysisfile">Parse local file</label>
+                    </p>
+                    <p class="input">
+                        <label for="analysisinput">Parse input</label>
+                        <textarea cols="80" id="analysisinput" rows="10" wrap="off"></textarea>
+                    </p>
+                    <p class="output">
+                        <label class="outputlabel" for="analysisoutput">Parse output (read only)</label>
+                        <textarea cols="40" id="analysisoutput" readonly="readonly" rows="10" wrap="off"></textarea>
                     </p>
                     <span class="clear"></span>
                 </div>
@@ -309,8 +326,12 @@
                                     <td id="stminn">0</td>
                                 </tr>
                                 <tr>
-                                    <th>Parse Only</th>
+                                    <th>Parse Tree</th>
                                     <td id="stpars">0</td>
+                                </tr>
+                                <tr>
+                                    <th>Analysis</th>
+                                    <td id="stanal">0</td>
                                 </tr>
                                 <tr>
                                     <th colspan="2" class="heading">Language statistics</th>
@@ -646,7 +667,7 @@
                                 </span>
                                 <span>
                                     <input id="dobjsort-all" name="dobjsort" type="radio"/>
-                                    <label for="dobjsort-all">Sort by key/property</label>
+                                    <label for="dobjsort-all">Sort by key/property/attribute</label>
                                 </span>
                                 <span>
                                     <input id="dobjsort-none" name="dobjsort" type="radio"/>
@@ -1063,7 +1084,7 @@
                                 </span>
                                 <span>
                                     <input id="bobjsort-all" name="bobjsort" type="radio"/>
-                                    <label for="bobjsort-all">Sort by key/property</label>
+                                    <label for="bobjsort-all">Sort by key/property/attribute</label>
                                 </span>
                                 <span>
                                     <input id="bobjsort-none" name="bobjsort" type="radio"/>
@@ -1509,7 +1530,7 @@
                             </span>
                             <span>
                                 <input id="mobjsort-all" name="mobjsort" type="radio"/>
-                                <label for="mobjsort-all">Sort by key/property</label>
+                                <label for="mobjsort-all">Sort by key/property/attribute</label>
                             </span>
                             <span>
                                 <input id="mobjsort-none" name="mobjsort" type="radio"/>
@@ -1635,6 +1656,34 @@
                     <fieldset>
                         <legend>Multifunction Options</legend>
                         <p>
+                            <strong>Parsed Output Format
+                                <a class="apiname" href="documentation.xhtml#parseFormat">(parseFormat)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="parseFormat-parallel" name="parseFormat" type="radio"/>
+                                <label for="parseFormat-parallel">By type (parallel)</label>
+                            </span>
+                            <span>
+                                <input id="parseFormat-sequential" name="parseFormat" type="radio"/>
+                                <label for="parseFormat-sequential">By record (sequential)</label>
+                            </span>
+                            <span>
+                                <input id="parseFormat-htmltable" name="parseFormat" type="radio"/>
+                                <label for="parseFormat-htmltable">Formatted as an HTML table</label>
+                            </span>
+                        </p>
+                        <p id="parsehtml-para" style="display:none">
+                            <strong>HTML Table Rendering</strong>
+                            <span>
+                                <input id="parsehtml-no" name="parsehtml" type="radio"/>
+                                <label for="parsehtml-no">Raw text (for use elsewhere)</label>
+                            </span>
+                            <span>
+                                <input checked="checked" id="parsehtml-yes" name="parsehtml" type="radio"/>
+                                <label for="parsehtml-yes">Render HTML (to read now in this tool)</label>
+                            </span>
+                        </p>
+                        <p>
                             <strong>Property Sorting, CSS / JavaScript
                                 <a class="apiname" href="documentation.xhtml#objsort">(objsort)</a>
                             </strong>
@@ -1652,7 +1701,7 @@
                             </span>
                             <span>
                                 <input id="pobjsort-all" name="pobjsort" type="radio"/>
-                                <label for="pobjsort-all">Sort by key/property</label>
+                                <label for="pobjsort-all">Sort by key/property/attribute</label>
                             </span>
                             <span>
                                 <input id="pobjsort-none" name="pobjsort" type="radio"/>
@@ -1660,7 +1709,7 @@
                             </span>
                         </p>
                         <p>
-                            <strong>Quotes, Markup / JavaScript
+                            <strong>Quotes
                                 <a class="apiname" href="documentation.xhtml#quoteconvert">(quoteconvert)</a>
                             </strong>
                             <span>
@@ -1703,6 +1752,19 @@
                             <span>
                                 <input id="phtml-no" name="ppresumehtml" type="radio"/>
                                 <label for="phtml-no">Strict XML syntax</label>
+                            </span>
+                        </p>
+                        <p>
+                            <strong>Include Whitespace Tokens
+                                <a class="apiname" href="documentation.xhtml#parseSpace">(parseSpace)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="parsespace-no" name="parsespace" type="radio"/>
+                                <label for="parsespace-no">Ignore whitespace tokens</label>
+                            </span>
+                            <span>
+                                <input id="parsespace-yes" name="parsespace" type="radio"/>
+                                <label for="parsespace-yes">Include whitespace tokens (inferred from the "lines" data facet)</label>
                             </span>
                         </p>
                         <p>
@@ -1781,6 +1843,24 @@
                         </p>
                     </fieldset>
                 </div>
+                <div class="options" id="analysisops" style="display:none;">
+                    <h2>Parse Options</h2>
+                    <!--p class="apiname">(API name in parenthesis)</p>
+                    <fieldset>
+                        <legend>Multifunction Options</legend>
+                    </fieldset-->
+                    <p>
+                        <strong>HTML Table Rendering</strong>
+                        <span>
+                            <input checked="checked" id="analysishtml-no" name="analysishtml" type="radio"/>
+                            <label for="analysishtml-no">Raw text (for use elsewhere)</label>
+                        </span>
+                        <span>
+                            <input id="analysishtml-yes" name="analysishtml" type="radio"/>
+                            <label for="analysishtml-yes">Render HTML (to read now in this tool)</label>
+                        </span>
+                    </p>
+                </div>
                 <p class="button">
                     <button type="button" value="Execute">Execute</button>
                 </p>
@@ -1795,9 +1875,10 @@
                     <a href="https://plus.google.com/105958105635636993368/posts">Andreas Greuel</a>, and countless others.</p>
             </div>
         </div>
+        <script src="lib/finalFile.js" type="application/javascript"></script>
+        <script src="lib/safeSort.js" type="application/javascript"></script>
         <script src="ace/ace.js" type="application/javascript"></script>
         <script src="api/dom.js" type="application/javascript"></script>
-        <script src="lib/safeSort.js" type="application/javascript"></script>
         <script src="lib/csspretty.js" type="application/javascript"></script>
         <script src="lib/csvpretty.js" type="application/javascript"></script>
         <script src="lib/diffview.js" type="application/javascript"></script>
