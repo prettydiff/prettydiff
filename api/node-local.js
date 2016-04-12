@@ -35,17 +35,6 @@ Examples:
 //outsize - number, output size
 //difftotal - number, difference count
 //difflines - number, difference lines
-if (typeof global.meta !== "object") {
-    global.meta = {
-        error: "",
-        lang: ["", "", ""],
-        time: "",
-        insize: 0,
-        outsize: 0,
-        difftotal: 0,
-        difflines: 0
-    };
-}
 (function pdNodeLocal() {
     "use strict";
     var localPath      = (process.cwd() === "/" || (/^([a-z]:\\)$/).test(process.cwd()) === true)

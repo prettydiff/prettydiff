@@ -16,6 +16,7 @@
 * **Breaking change** - Updated mode "parse" to output an object with two keys: *definition* and *data*.  The definition property stores a text description of each data type supplied in the data property.  The data property stores the parsed data.
 * **Breaking change** - Added mode "analysis" to generate reports of code evaluation.  The program now outputs only the desired data instead of an array of desired data plus a report.
 * **Breaking change** - Due to the other changes the Node.js only option *report* is removed.
+* **Breaking change** - There is no longer a `global.report` property to store extra information. This is replaced with `global.meta` which stores parse errors, execution duration, number of differences, input size, output size, and can be extended to store additional metadata into the future.
 * **Breaking change** - Pretty Diff will no longer publish to NPM.
 
 ## v1.16.37
