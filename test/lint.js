@@ -5,9 +5,9 @@
 (function taskrunner() {
     "use strict";
     var order      = [
-            //"lint", //        - run jslint on all unexcluded files in the repo
-            //"packagejson", // - beautify the package.json file and compare it to itself
-            //"coreunits", //   - run a variety of files through the application and compare the result to a known good file
+            "lint", //        - run jslint on all unexcluded files in the repo
+            "packagejson", // - beautify the package.json file and compare it to itself
+            "coreunits", //   - run a variety of files through the application and compare the result to a known good file
             //"diffunits", //   - unit tests for the diff process
             "simulations" //  - simulate a variety of execution steps and options from the command line
         ],
@@ -224,7 +224,9 @@
             }
             console.log("");
             console.log(diffs + colors.filepath.start + " differences counted." + colors.filepath.end);
-            errout("Pretty Diff " + colors.del.lineStart + "failed" + colors.del.lineEnd + " on file: " + colors.filepath.start + sampleName + colors.filepath.end);
+            if (sampleName !== "phases.simulations") {
+                errout("Pretty Diff " + colors.del.lineStart + "failed" + colors.del.lineEnd + " on file: " + colors.filepath.start + sampleName + colors.filepath.end);
+            }
         },
         phases     = {
             coreunits  : function taskrunner_coreunits() {
@@ -770,16 +772,11 @@
                                         }, {
                                             check : "cat test/simulation/all/big/today.js",
                                             name  : "check for a file in a subdirectory operation",
-                                            verify: "{\"token\":[\"var\",\"today\",\"=\",\"20999999\",\";\",\"exports\",\".\",\"date" +
-                                                    "\",\"=\",\"today\",\";\"],\"types\":[\"word\",\"word\",\"operator\",\"literal\"," +
-                                                    "\"separator\",\"word\",\"separator\",\"word\",\"operator\",\"word\",\"separator" +
-                                                    "\"]}"
+                                            verify: "{\"data\":{\"begin\":[0,0,0,0,0,0,0,0,0,0,0],\"depth\":[\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"global\"],\"lines\":[0,0,0,0,0,0,0,0,0,0,0],\"token\":[\"var\",\"today\",\"=\",\"20999999\",\";\",\"exports\",\".\",\"date\",\"=\",\"today\",\";\"],\"types\":[\"word\",\"word\",\"operator\",\"literal\",\"separator\",\"word\",\"separator\",\"word\",\"operator\",\"word\",\"separator\"]},\"definition\":{\"begin\":\"number - The index where the current container starts\",\"depth\":\"string - The name of the current container\",\"lines\":\"number - Whether the token is preceeded any space and/or line breaks in the original code source\",\"token\":\"string - The parsed code tokens\",\"types\":\"string - Data types of the tokens: comment, comment-inline, end, literal, markup, operator, regex, separator, start, template, template_else, template_end, template_start, word\"}}"
                                         }, {
                                             check : "cat test/simulation/all/big/samples_correct/beautification_markup_comment.txt",
                                             name  : "check for a deeper file in a subdirectory operation",
-                                            verify: "{\"token\":[\"<person>\",\"<!-- comment -->\",\"<name>\",\"bob\",\"</name>\",\"<" +
-                                                        "/person>\"],\"types\":[\"start\",\"comment\",\"start\",\"content\",\"end\",\"end" +
-                                                        "\"]}"
+                                            verify: "{\"data\":{\"attrs\":[[],[],[],[],[],[]],\"jscom\":[false,false,false,false,false,false],\"linen\":[1,2,3,3,3,4],\"lines\":[0,1,1,0,0,1],\"presv\":[false,true,false,false,false,false],\"token\":[\"<person>\",\"<!-- comment -->\",\"<name>\",\"bob\",\"</name>\",\"</person>\"],\"types\":[\"start\",\"comment\",\"start\",\"content\",\"end\",\"end\"]},\"definition\":{\"attrs\":\"array - List of attributes (if any) for the given token\",\"jscom\":\"boolean - Whether the token is a JavaScript comment if in JSX format\",\"linen\":\"number - The line number in the original source where the token started, which is used for reporting and analysis\",\"lines\":\"number - Whether the token is preceeded any space and/or line breaks in the original code source\",\"presv\":\"boolean - Whether the token is preserved verbatim as found.  Useful for comments and HTML 'pre' tags.\",\"token\":\"string - The parsed code tokens\",\"types\":\"string - Data types of the tokens: cdata, comment, conditional, content, end, ignore, linepreserve, script, sgml, singleton, start, template, template_else, template_end, template_start, xml\"}}"
                                         }
                                     ]
                                 }
@@ -854,7 +851,8 @@
                                                 }
                                             } while (aa < len);
                                             data.push("fail");
-                                            data.push("Unexpected output:  " + stdout);
+                                            data.push("Unexpected output:");
+                                            diffFiles("phases.simulations", output, list);
                                         },
                                         //what to do when a group concludes
                                         writeLine = function taskrunner_simulations_shell_child_childExec_writeLine(item) {
@@ -1054,7 +1052,8 @@
                                     } else if (stdout !== param.verify) {
                                         if (typeof param.verify === "string" || param.verify.length === 0) {
                                             data.push("fail");
-                                            data.push("Unexpected output:  " + stdout);
+                                            data.push("Unexpected output:");
+                                            diffFiles("phases.simulations", stdout, param.verify);
                                         } else {
                                             verifies(stdout, param.verify);
                                         }

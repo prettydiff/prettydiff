@@ -129,6 +129,7 @@ Examples:
         diffCount      = [
             0, 0, 0, 0, 0
         ],
+        method         = "auto",
         pdapp          = require(libs + "prettydiff.js"),
         html           = [
             global.finalFile.html.head, //0
@@ -149,8 +150,12 @@ Examples:
         prettydiff     = function pdNodeLocal__prettydiff() {
             var pdresponse = pdapp.api(options),
                 data       = (options.nodeasync === true)
-                    ? pdresponse[0]
-                    : pdresponse,
+                    ? (options.mode === "parse" && method !== "screen" && method !== "filescreen" && options.parseFormat !== "htmltable")
+                        ? JSON.stringify(pdresponse[0])
+                        : pdresponse[0]
+                    : (options.mode === "parse" && method !== "screen" && method !== "filescreen" && options.parseFormat !== "htmltable")
+                        ? JSON.stringify(pdresponse)
+                        : pdresponse,
                 meta       = (options.nodeasync === true)
                     ? pdresponse[1]
                     : global.meta;
@@ -174,6 +179,15 @@ Examples:
             if (meta.error !== "") {
                 html[9] = "<p><strong>Error:</strong> " + meta.error + "</p>";
             }
+            if (options.mode === "diff" || options.mode === "analysis" || (options.mode === "parse" && options.parseFormat === "htmltable")) {
+                html[7]  = options.color;
+                html[10] = data;
+                if (options.jsscope !== "none" && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
+                    html[12] = global.finalFile.script.beautify;
+                    return html.join("");
+                }
+                return html.join("");
+            }
             return data;
         },
         fs             = require("fs"),
@@ -187,7 +201,6 @@ Examples:
             [], [], []
         ],
         lf             = "\n",
-        method         = "auto",
         startTime      = Date.now(),
         versionString  = (function pdNodeLocal__versionString() {
             var dstring = "",
@@ -368,18 +381,6 @@ Examples:
             log.push("." + lf);
             console.log(log.join(""));
             enderflag = true;
-        },
-
-        //html report template
-        reports        = function pdNodeLocal__reports() {
-            var result = prettydiff();
-            html[7]  = options.color;
-            html[10] = result;
-            if (options.jsscope !== "none" && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
-                html[12] = global.finalFile.script.beautify;
-                return html.join("");
-            }
-            return html.join("");
         },
 
         //instructions
@@ -761,28 +762,18 @@ Examples:
                                     ender();
                                 }
                             });
-                    } else if (ending.indexOf("-report") === 0) {
-                        fs
-                            .writeFile(dataA.finalpath + ending, dataA.report[1], function pdNodeLocal__fileWrite_writing_writeFileReport(err) {
-                                if (err !== null) {
-                                    console.log(lf + "Error writing report output." + lf);
-                                    console.log(err);
-                                } else if (method === "file") {
-                                    console.log(lf + "Report successfully written to file.");
-                                }
-                                total[1] += 1;
-                                if (total[1] === total[0]) {
-                                    ender();
-                                }
-                            });
                     } else {
                         fs
-                            .writeFile(dataA.finalpath + ending, dataA.report[0], function pdNodeLocal__fileWrite_writing_writeFileText(err) {
+                            .writeFile(dataA.finalpath + ending, dataA.file, function pdNodeLocal__fileWrite_writing_writeFileText(err) {
                                 if (err !== null) {
                                     console.log(lf + "Error writing file output." + lf);
                                     console.log(err);
                                 } else if (method === "file") {
-                                    console.log(lf + "File successfully written.");
+                                    if (ending.indexOf("-report") === 0) {
+                                        console.log(lf + "Report successfully written to file.");
+                                    } else {
+                                        console.log(lf + "File successfully written.");
+                                    }
                                 }
                                 total[1] += 1;
                                 if (total[1] === total[0]) {
@@ -794,7 +785,7 @@ Examples:
                 files    = function pdNodeLocal__fileWrite_files(dataB) {
                     if (dataB.binary === true) {
                         writing("", dataB);
-                    } else if (options.mode === "diff" || (options.mode === "beautify" && options.jsscope !== "none")) {
+                    } else if (options.mode === "diff" || options.mode === "analysis" || (options.mode === "beautify" && options.jsscope !== "none")) {
                         writing(suffix, dataB);
                     } else {
                         writing("", dataB);
@@ -826,10 +817,7 @@ Examples:
                 }
                 return;
             }
-            data.report = reports();
-            if (options.mode === "parse") {
-                data.report = JSON.stringify(data.report[0]);
-            }
+            data.file = prettydiff();
             if (global.meta.error !== "") {
                 if (data.last === true) {
                     ender();
@@ -899,13 +887,13 @@ Examples:
                 return cliWrite(prettydiff(), "", false);
             }
             if (options.mode === "diff") {
-                return console.log(reports());
+                return console.log(prettydiff());
             }
             if (options.jsscope !== "none" && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
-                return console.log(reports());
+                return console.log(prettydiff());
             }
             report = prettydiff();
-            if (options.mode === "parse") {
+            if (options.mode === "parse" && options.parseFormat !== "htmltable") {
                 report = JSON.stringify(report);
             }
             total[1] += 1;
