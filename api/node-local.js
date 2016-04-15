@@ -48,86 +48,12 @@ Examples:
             global.csspretty    = require(localPath + "lib/csspretty.js").api;
             global.csvpretty    = require(localPath + "lib/csvpretty.js").api;
             global.diffview     = require(localPath + "lib/diffview.js").api;
-            global.finalFile    = require(localPath + "lib/finalFile.js").api();
+            global.finalFile    = require(localPath + "lib/finalFile.js").api;
             global.jspretty     = require(localPath + "lib/jspretty.js").api;
             global.markuppretty = require(localPath + "lib/markuppretty.js").api;
             global.jsxstatus    = global.jspretty.jsxstatus;
             return localPath;
         }()),
-        prettydiff     = require(libs + "prettydiff.js"),
-        fs             = require("fs"),
-        http           = require("http"),
-        path           = require("path"),
-        sfiledump      = [],
-        dfiledump      = [],
-        sState         = [],
-        dState         = [],
-        clidata        = [
-            [], [], []
-        ],
-        builder        = finalFile,
-        html           = [
-            builder.html.head, //0
-            builder.css.color.canvas, //1
-            builder.css.color.shadow, //2
-            builder.css.color.white, //3
-            builder.css.reports, //4
-            builder.css.global, //5
-            builder.html.body, //6
-            builder.html.color, //7
-            builder.html.intro, //8
-            "", //9 - for meta analysis, like stats and accessibility
-            "", //10 - for generated report
-            builder.html.script, //11
-            builder.script.diff, //12
-            builder.html.end //13
-        ],
-        lf             = "\n",
-        method         = "auto",
-        startTime      = Date.now(),
-        versionString  = (function pdNodeLocal__versionString() {
-            var dstring = "",
-                mstring = 0,
-                month   = [
-                    "January",
-                    "February",
-                    "March",
-                    "April",
-                    "May",
-                    "June",
-                    "July",
-                    "August",
-                    "September",
-                    "October",
-                    "November",
-                    "December"
-                ];
-            global.edition = prettydiff.edition;
-            dstring        = global
-                .edition
-                .latest
-                .toString();
-            mstring        = Number(dstring.slice(2, 4)) - 1;
-            return "\x1B[36mVersion\x1B[39m: " + global.edition.version + " \x1B[36mDated\x1B[39m: " + dstring.slice(4, 6) + " " + month[mstring] + " 20" + dstring.slice(0, 2);
-        }()),
-        dir            = [
-            0, 0, 0
-        ],
-        address        = {
-            dabspath: "",
-            dorgpath: "",
-            oabspath: "",
-            oorgpath: "",
-            sabspath: "",
-            sorgpath: ""
-        },
-        help           = false,
-        diffCount      = [
-            0, 0
-        ],
-        total          = [
-            0, 0
-        ],
         options        = {
             api            : "node",
             braceline      : false,
@@ -169,6 +95,8 @@ Examples:
             neverflatten   : false,
             nocaseindent   : false,
             nochainindent  : false,
+            nodeasync      : false,
+            nodeerror      : false,
             noleadzero     : false,
             objsort        : "js",
             output         : "",
@@ -198,6 +126,109 @@ Examples:
             vertical       : "js",
             wrap           : 80
         },
+        diffCount      = [
+            0, 0, 0, 0, 0
+        ],
+        pdapp          = require(libs + "prettydiff.js"),
+        html           = [
+            global.finalFile.html.head, //0
+            global.finalFile.css.color.canvas, //1
+            global.finalFile.css.color.shadow, //2
+            global.finalFile.css.color.white, //3
+            global.finalFile.css.reports, //4
+            global.finalFile.css.global, //5
+            global.finalFile.html.body, //6
+            global.finalFile.html.color, //7
+            global.finalFile.html.intro, //8
+            "", //9 - for meta analysis, like stats and accessibility
+            "", //10 - for generated report
+            global.finalFile.html.script, //11
+            global.finalFile.script.diff, //12
+            global.finalFile.html.end //13
+        ],
+        prettydiff     = function pdNodeLocal__prettydiff() {
+            var pdresponse = pdapp.api(options),
+                data       = (options.nodeasync === true)
+                    ? pdresponse[0]
+                    : pdresponse,
+                meta       = (options.nodeasync === true)
+                    ? pdresponse[1]
+                    : global.meta;
+            if (options.nodeerror === true) {
+                console.log(meta.error);
+            }
+            if (options.diffcli === true) {
+                diffCount[0] += pdresponse[1];
+                if (pdresponse[1] > 0) {
+                    diffCount[1] += 1;
+                }
+                return pdresponse[0];
+            }
+            diffCount[0] += meta.difftotal;
+            if (meta.difftotal > 0) {
+                diffCount[1] += 1;
+            }
+            diffCount[2] += 1;
+            diffCount[3] += meta.insize;
+            diffCount[4] += meta.outsize;
+            if (meta.error !== "") {
+                html[9] = "<p><strong>Error:</strong> " + meta.error + "</p>";
+            }
+            return data;
+        },
+        fs             = require("fs"),
+        http           = require("http"),
+        path           = require("path"),
+        sfiledump      = [],
+        dfiledump      = [],
+        sState         = [],
+        dState         = [],
+        clidata        = [
+            [], [], []
+        ],
+        lf             = "\n",
+        method         = "auto",
+        startTime      = Date.now(),
+        versionString  = (function pdNodeLocal__versionString() {
+            var dstring = "",
+                mstring = 0,
+                month   = [
+                    "January",
+                    "February",
+                    "March",
+                    "April",
+                    "May",
+                    "June",
+                    "July",
+                    "August",
+                    "September",
+                    "October",
+                    "November",
+                    "December"
+                ];
+            global.edition = pdapp.edition;
+            dstring        = global
+                .edition
+                .latest
+                .toString();
+            mstring        = Number(dstring.slice(2, 4)) - 1;
+            return "\x1B[36mVersion\x1B[39m: " + global.edition.version + " \x1B[36mDated\x1B[39m: " + dstring.slice(4, 6) + " " + month[mstring] + " 20" + dstring.slice(0, 2);
+        }()),
+        dir            = [
+            0, 0, 0
+        ],
+        address        = {
+            dabspath: "",
+            dorgpath: "",
+            oabspath: "",
+            oorgpath: "",
+            sabspath: "",
+            sorgpath: ""
+        },
+        help           = false,
+        total          = [
+            0, 0
+        ],
         colors         = {
             del     : {
                 charEnd  : "\x1B[22m",
@@ -252,15 +283,14 @@ Examples:
                 return;
             }
 
-            // indexes of diffCount array 0 - total number of differences 1 - the number of
-            // files containing those differences last - total file count (not counting
-            // (sub)directories)
+            // indexes of diffCount array
+            //* 0 - total number of differences
+            //* 1 - the number of files containing those differences
+            //* 2 - total file count (not counting sub)directories)
+            //* 3 - total input size (in characters from all files)
+            //* 4 - total output size (in characters from all files)
             if ((method !== "directory" && method !== "subdirectory") || sfiledump.length === 1) {
-                diffCount[1] = 1;
-                diffCount.push("1 file");
                 plural[1] = "";
-            } else {
-                diffCount.push(sfiledump.length + " files");
             }
             if (options.diffcli === true && options.mode === "diff") {
                 if (options.summaryonly === true && clidata[2].length > 0) {
@@ -312,7 +342,9 @@ Examples:
                 log.push("parsed ");
             }
             if (options.mode !== "diff" || method === "directory" || method === "subdirectory") {
-                log.push(diffCount[diffCount.length - 1]);
+                log.push(diffCount[2]);
+                log.push(" file");
+                log.push(plural[2]);
                 log.push(". ");
             }
             if (options.mode === "diff" && (method === "directory" || method === "subdirectory")) {
@@ -340,14 +372,11 @@ Examples:
 
         //html report template
         reports        = function pdNodeLocal__reports() {
-            var result = prettydiff.api(options);
-            if (global.meta.error !== "") {
-                result = global.meta.error;
-            }
+            var result = prettydiff();
             html[7]  = options.color;
             html[10] = result;
             if (options.jsscope !== "none" && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
-                html[12] = builder.script.beautify;
+                html[12] = global.finalFile.script.beautify;
                 return html.join("");
             }
             return html.join("");
@@ -801,8 +830,6 @@ Examples:
             if (options.mode === "parse") {
                 data.report = JSON.stringify(data.report[0]);
             }
-            diffCount[0] += global.meta.difftotal;
-            diffCount[1] += 1;
             if (global.meta.error !== "") {
                 if (data.last === true) {
                     ender();
@@ -823,8 +850,6 @@ Examples:
             var a      = 0,
                 plural = "",
                 pdlen  = output[0].length;
-            diffCount[0] += global.meta.difftotal;
-            diffCount[1] += 1;
             if (options.summaryonly === true) {
                 clidata[2].push(itempath);
             } else {
@@ -871,7 +896,7 @@ Examples:
         screenWrite    = function pdNodeLocal__screenWrite() {
             var report = [];
             if (options.mode === "diff" && options.diffcli === true) {
-                return cliWrite(prettydiff.api(options), "", false);
+                return cliWrite(prettydiff(), "", false);
             }
             if (options.mode === "diff") {
                 return console.log(reports());
@@ -879,7 +904,7 @@ Examples:
             if (options.jsscope !== "none" && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
                 return console.log(reports());
             }
-            report = prettydiff.api(options);
+            report = prettydiff();
             if (options.mode === "parse") {
                 report = JSON.stringify(report);
             }
@@ -907,7 +932,7 @@ Examples:
             if (typeof options.context !== "number" || options.context < 0) {
                 console.log(lf + colors.filepath.start + data.localpath + colors.filepath.end);
             }
-            cliWrite(prettydiff.api(options), data.localpath, data.last);
+            cliWrite(prettydiff(), data.localpath, data.last);
         },
 
         // is a file read operation complete? executed from readLocalFile executed from
@@ -938,16 +963,12 @@ Examples:
             if (sState[data.index] === true && ((options.mode === "diff" && dState[data.index] === true) || options.mode !== "diff")) {
                 if (options.mode === "diff" && sfiledump[data.index] !== dfiledump[data.index]) {
                     if (dfiledump[data.index] === "" || dfiledump[data.index] === "\n") {
-                        diffCount[0] += 1;
-                        diffCount[0] += 1;
                         total[1]     += 1;
                         console.log("Diff file at " + data.localpath + " is \x1B[31mempty\x1B[39m but the source file is not.");
                         if (total[0] === total[1]) {
                             ender();
                         }
                     } else if (sfiledump[data.index] === "" || sfiledump[data.index] === "\n") {
-                        diffCount[0] += 1;
-                        diffCount[0] += 1;
                         total[1]     += 1;
                         console.log("Source file at " + data.localpath + " is \x1B[31mempty\x1B[39m but the diff file is not.");
                         if (total[0] === total[1]) {
@@ -1734,7 +1755,7 @@ Examples:
                                             options.diffcli = false;
                                         }
                                         if (options.diffcli === true) {
-                                            return cliWrite(prettydiff.api(options), "", false);
+                                            return cliWrite(prettydiff(), "", false);
                                         }
                                         return screenWrite();
                                     }
@@ -1775,6 +1796,7 @@ Examples:
                                 }
                                 if (dir[0] === 1 && dir[2] === 1 && (method === "directory" || method === "subdirectory")) {
                                     state = false;
+                                    options.nodeasync = true;
                                     return directory();
                                 }
                             } else {
@@ -1790,6 +1812,7 @@ Examples:
                                 }
                                 if (dir[2] === 1 && (method === "directory" || method === "subdirectory")) {
                                     state = false;
+                                    options.nodeasync = true;
                                     return directory();
                                 }
                             }

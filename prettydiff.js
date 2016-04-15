@@ -1,7 +1,6 @@
-
 /*prettydiff.com topcoms: true, insize: 4, inchar: " ", vertical: true */
 /*jshint laxbreak: true*/
-/*global __dirname, ace, csspretty, csvpretty, define, diffview, exports, global, jspretty, markuppretty, process, require, safeSort */
+/*global __dirname, ace, csspretty, csvpretty, define, diffview, exports, finalFile, global, jspretty, markuppretty, process, require, safeSort */
 /*
 
  Execute in a NodeJS app:
@@ -94,21 +93,20 @@
 
  */
 if (typeof global.meta !== "object") {
-    //schema for global.meta
-    //lang - array, language detection
-    //time - string, proctime (total execution time minus visual rendering)
-    //insize - number, input size
-    //outsize - number, output size
-    //difftotal - number, difference count
-    //difflines - number, difference lines
-    global.meta      = {
-        error: "",
-        lang: ["", "", ""],
-        time: "",
-        insize: 0,
-        outsize: 0,
+    // schema for global.meta lang - array, language detection time - string,
+    // proctime (total execution time minus visual rendering) insize - number, input
+    // size outsize - number, output size difftotal - number, difference count
+    // difflines - number, difference lines
+    global.meta = {
+        difflines: 0,
         difftotal: 0,
-        difflines: 0
+        error    : "",
+        insize   : 0,
+        lang     : [
+            "", "", ""
+        ],
+        outsize  : 0,
+        time     : ""
     };
 }
 if (typeof require === "function" && typeof ace !== "object") {
@@ -117,6 +115,12 @@ if (typeof require === "function" && typeof ace !== "object") {
         var localPath = (typeof process === "object" && typeof process.cwd === "function" && (process.cwd() === "/" || (/^([a-z]:\\)$/).test(process.cwd()) === true) && typeof __dirname === "string")
             ? __dirname
             : ".";
+        if (global.finalFile === undefined) {
+            global.finalFile = require(localPath + "/lib/finalFile.js").api;
+        }
+        if (global.safeSort === undefined) {
+            global.safeSort = require(localPath + "/lib/safeSort.js").api;
+        }
         if (global.csspretty === undefined) {
             global.csspretty = require(localPath + "/lib/csspretty.js").api;
         }
@@ -126,17 +130,11 @@ if (typeof require === "function" && typeof ace !== "object") {
         if (global.diffview === undefined) {
             global.diffview = require(localPath + "/lib/diffview.js").api;
         }
-        if (global.finalFile === undefined) {
-            global.finalFile = require(localPath + "/lib/finalFile.js").api();
-        }
         if (global.jspretty === undefined) {
             global.jspretty = require(localPath + "/lib/jspretty.js").api;
         }
         if (global.markuppretty === undefined) {
             global.markuppretty = require(localPath + "/lib/markuppretty.js").api;
-        }
-        if (global.safeSort === undefined) {
-            global.safeSort = require(localPath + "/lib/safeSort.js").api;
         }
     }());
 } else {
@@ -158,11 +156,12 @@ var prettydiff = function prettydiff_(api) {
                 return Date.parse(dateItem);
             }()),
         core      = function core_(api) {
-            var spacetest   = (/^\s+$/g),
-                apioutput   = "",
-                apidiffout  = "",
-                builder     = global.finalFile,
-                html        = [
+            var spacetest    = (/^\s+$/g),
+                apioutput    = "",
+                apidiffout   = "",
+                metaerror    = "",
+                builder      = global.finalFile,
+                html         = [
                     builder.html.head, //0
                     builder.css.color.canvas, //1
                     builder.css.color.shadow, //2
@@ -178,7 +177,7 @@ var prettydiff = function prettydiff_(api) {
                     builder.script.diff, //12
                     builder.html.end //13
                 ],
-                setlangmode = function core__setlangmode(input) {
+                setlangmode  = function core__setlangmode(input) {
                     if (input === "css" || input === "less" || input === "scss") {
                         return "css";
                     }
@@ -202,7 +201,7 @@ var prettydiff = function prettydiff_(api) {
                     }
                     return "javascript";
                 },
-                nameproper  = function core__nameproper(input) {
+                nameproper   = function core__nameproper(input) {
                     if (input === "javascript") {
                         return "JavaScript";
                     }
@@ -241,7 +240,7 @@ var prettydiff = function prettydiff_(api) {
                     }
                     return input.toUpperCase();
                 },
-                options     = {
+                options      = {
                     // determines api source as necessary to make a decision about whether to supply
                     // externally needed JS functions to reports
                     api            : (api.api === undefined || api.api.length === 0)
@@ -378,6 +377,13 @@ var prettydiff = function prettydiff_(api) {
                     // nochainindent - prevent indentation when JavaScript chains of methods are
                     // broken onto multiple lines
                     nochainindent  : (api.nochainindent === true || api.nochainindent === "true"),
+                    // nodeasync - meta data has to be passed in the output for bulk async
+                    // operations otherwise there is cross-talk, which means prettydiff has to return
+                    // an array of [data, meta] instead of a single string
+                    nodeasync      : (api.nodeasync === true || api.nodeasync === "true"),
+                    // nodeerror - nodeonly rule about whether parse errors should be logged to the
+                    // console
+                    nodeerror      : (api.nodeerror === true || api.nodeerror === "true"),
                     // noleadzero - in CSS removes and prevents a run of 0s from appearing
                     // immediately before a value's decimal.
                     noleadzero     : (api.noleadzero === true || api.noleadzero === "true"),
@@ -389,7 +395,8 @@ var prettydiff = function prettydiff_(api) {
                     parseFormat    : (api.parseFormat === "sequential" || api.parseFormat === "htmltable")
                         ? api.parseFormat
                         : "parallel",
-                    //parseSpace - whether whitespace tokens between tags should be included in the parse tree output
+                    // parseSpace - whether whitespace tokens between tags should be included in the
+                    // parse tree output
                     parseSpace     : (api.parseSpace === true || api.parseSpace === "true"),
                     //preserve - should empty lines be preserved in beautify operations of JSPretty?
                     preserve       : (function core__optionPreserve() {
@@ -471,8 +478,47 @@ var prettydiff = function prettydiff_(api) {
                         ? 80
                         : Number(api.wrap)
                 },
-                autoval     = ["", "", ""],
-                auto        = function core__auto(a) {
+                autoval      = [
+                    "", "", ""
+                ],
+                jspretty     = function core__jspretty() {
+                    var jsout = global.jspretty(options);
+                    if (options.nodeasync === true) {
+                        metaerror = jsout[1];
+                        return jsout[0];
+                    }
+                    metaerror = global.meta.error;
+                    return jsout;
+                },
+                markuppretty = function core__markuppretty() {
+                    var markout = global.markuppretty(options);
+                    if (options.nodeasync === true) {
+                        metaerror = markout[1];
+                        if (options.mode === "beautify" && options.inchar !== "\t") {
+                            markout[0] = markout[0].replace(/\r?\n[\t]*\u0020\/>/g, "");
+                        } else if (options.mode === "diff") {
+                            markout[0] = markout[0].replace(/\r?\n[\t]*\ \/>/g, "");
+                        }
+                        return markout[0];
+                    }
+                    metaerror = global.meta.error;
+                    if (options.mode === "beautify" && options.inchar !== "\t") {
+                        markout = markout.replace(/\r?\n[\t]*\u0020\/>/g, "");
+                    } else if (options.mode === "diff") {
+                        markout = markout.replace(/\r?\n[\t]*\ \/>/g, "");
+                    }
+                    return markout;
+                },
+                csspretty    = function core__markupcss() {
+                    var cssout = global.csspretty(options);
+                    if (options.nodeasync === true) {
+                        metaerror = cssout[1];
+                        return cssout[0];
+                    }
+                    metaerror = global.meta.error;
+                    return cssout;
+                },
+                auto         = function core__auto(a) {
                     var b      = [],
                         c      = 0,
                         d      = 0,
@@ -641,7 +687,7 @@ var prettydiff = function prettydiff_(api) {
                     }
                     return output("unknown");
                 },
-                proctime    = function core__proctime() {
+                proctime     = function core__proctime() {
                     var minuteString = "",
                         hourString   = "",
                         minutes      = 0,
@@ -681,7 +727,7 @@ var prettydiff = function prettydiff_(api) {
                     }
                     return hourString + minuteString + secondString;
                 },
-                pdcomment   = function core__pdcomment() {
+                pdcomment    = function core__pdcomment() {
                     var comment    = options.source,
                         a          = 0,
                         b          = options.source.length,
@@ -874,8 +920,76 @@ var prettydiff = function prettydiff_(api) {
                             }
                         }
                     }
+                },
+                output       = function core__output(finalProduct, difftotal, difflines) {
+                    var meta = {
+                        difflines: 0,
+                        difftotal: 0,
+                        error    : "",
+                        insize   : 0,
+                        lang     : [
+                            "", "", ""
+                        ],
+                        outsize  : 0,
+                        time     : ""
+                    };
+                    meta.lang   = autoval;
+                    meta.time   = proctime();
+                    meta.insize = (options.mode === "diff")
+                        ? api.source.length + api.diff.length
+                        : api.source.length;
+                    if (options.mode === "parse" && options.lang !== "text" && (autoval[0] !== "" || options.lang !== "auto")) {
+                        if (options.parseFormat === "sequential" || options.parseFormat === "htmltable") {
+                            meta.outsize = finalProduct.data.length;
+                        } else {
+                            meta.outsize = finalProduct.data.token.length;
+                        }
+                    } else {
+                        meta.outsize = finalProduct.length;
+                    }
+                    if (autoval[0] === "text" && options.mode !== "diff") {
+                        if (autoval[2] === "unknown") {
+                            meta.error = "Language is set to auto, but could not be detected. File not parsed.";
+                        } else {
+                            meta.error = "Language is set to text, but plain text is only supported in diff mode. File not" +
+                                    " parsed.";
+                        }
+                    }
+                    if (difftotal !== undefined) {
+                        meta.difftotal = difftotal;
+                    }
+                    if (difflines !== undefined) {
+                        meta.difflines = difflines;
+                    }
+                    meta.error = metaerror;
+                    if (options.nodeasync === true) {
+                        return [finalProduct, meta];
+                    }
+                    global.meta = meta;
+                    return finalProduct;
                 };
+            if (options.source === "") {
+                metaerror = "options.source is empty!";
+                return output("");
+            }
+            if (options.mode === "diff") {
+                if (options.diff === "") {
+                    metaerror = "options.mode is 'diff' and options.diff is empty!";
+                    return output("");
+                }
+                if (options.lang === "csv") {
+                    options.lang = "text";
+                }
+            }
             pdcomment();
+            if (options.lang === "auto") {
+                autoval      = auto(options.source);
+                options.lang = autoval[1];
+            } else if (options.api === "dom") {
+                autoval = [options.lang, options.lang, options.lang];
+            } else {
+                options.lang = setlangmode(options.lang);
+            }
             if (api.alphasort === true || api.alphasort === "true" || api.objsort === true || api.objsort === "true") {
                 options.objsort = "all";
             }
@@ -889,25 +1003,10 @@ var prettydiff = function prettydiff_(api) {
             }
             if (api.vertical === true || api.vertical === "true") {
                 options.vertical = "all";
-            }
-            if (options.source === "") {
-                return "Error: Source sample is missing.";
-            }
-            if (options.mode === "diff") {
-                if (options.diff === "Diff sample is missing.") {
-                    return "Error: Diff sample is missing.";
-                }
-                if (options.lang === "csv") {
-                    options.lang = "text";
-                }
-            }
-            if (options.lang === "auto") {
-                autoval      = auto(options.source);
-                options.lang = autoval[1];
-            } else if (options.api === "dom") {
-                autoval    = [options.lang, options.lang, options.lang];
-            } else {
-                options.lang = setlangmode(options.lang);
+            } else if (api.vertical === "cssonly") {
+                options.vertical = "css";
+            } else if (api.vertical === "jsonly") {
+                options.vertical = "js";
             }
             if (autoval[0] === "dustjs") {
                 options.dustjs = true;
@@ -921,86 +1020,9 @@ var prettydiff = function prettydiff_(api) {
             }
             global.jsxstatus = false;
             if (autoval[0] === "text" && options.mode !== "diff") {
-                global.meta.lang = autoval;
-                global.meta.time = proctime();
-                global.meta.insize = api.source.length;
-                if (autoval[2] === "unknown") {
-                    global.meta.error = "Language is set to auto, but could not be detected. File not parsed.";
-                } else {
-                    global.meta.error = "Language is set to text, but plain text is only supported in diff mode. File not parsed.";
-                }
-                return options.source;
-            }
-            if (options.mode === "minify" || options.mode === "parse" || options.mode === "analysis") {
-                if (options.mode === "analysis") {
-                    options.accessibility = true;
-                }
-                if (options.lang === "css") {
-                    apioutput = global.csspretty(options);
-                } else if (options.lang === "csv") {
-                    apioutput = global.csvpretty(options);
-                } else if (options.lang === "markup") {
-                    apioutput = global.markuppretty(options);
-                } else if (options.lang === "text") {
-                    apioutput  = options.source;
-                    apidiffout = "";
-                } else {
-                    apioutput = global.jspretty(options);
-                }
-                if (global.jsxstatus === true) {
-                    autoval    = ["jsx", "javascript", "React JSX"];
-                }
-                global.meta.lang = autoval;
-                global.meta.time = proctime();
-                global.meta.insize = api.source.length;
-                if (options.mode === "minify" || options.mode === "analysis") {
-                    global.meta.outsize = apioutput.length;
-                } else if (options.parseFormat === "sequential" || options.parseFormat === "htmltable") {
-                    global.meta.outsize = apioutput.data.length;
-                } else {
-                    global.meta.outsize = apioutput.data.token.length;
-                }
-                return apioutput;
-            }
-            if (options.mode === "beautify") {
-                if (options.lang === "css") {
-                    apioutput  = global.csspretty(options);
-                } else if (options.lang === "csv") {
-                    apioutput  = global.csvpretty(options);
-                } else if (options.lang === "markup") {
-                    if (api.vertical === "jsonly") {
-                        options.vertical = "jsonly";
-                    }
-                    apioutput  = global.markuppretty(options);
-                    if (options.inchar !== "\t") {
-                        apioutput = apioutput.replace(/\r?\n[\t]*\u0020\/>/g, "");
-                    }
-                } else if (options.lang === "text") {
-                    apioutput  = options.source;
-                    apidiffout = "";
-                } else {
-                    if (api.vertical === "jsonly") {
-                        options.vertical = "jsonly";
-                    }
-                    apioutput  = global.jspretty(options);
-                }
-                if (apidiffout === false) {
-                    apidiffout = "";
-                }
-                if (options.api === "" && options.jsscope !== "none" && options.lang === "javascript") {
-                    html[7]  = options.color;
-                    html[10] = apidiffout;
-                    html[12] = builder.script.beautify;
-                    apioutput = html.join("");
-                }
-                if (global.jsxstatus === true) {
-                    autoval    = ["jsx", "javascript", "React JSX"];
-                }
-                global.meta.lang = autoval;
-                global.meta.time = proctime();
-                global.meta.insize = api.source.length;
-                global.meta.outsize = apioutput.length;
-                return apioutput;
+                metaerror = "Language is either text or undetermined, but text is only allowed for the 'diff'" +
+                        " mode!";
+                return output(options.source);
             }
             if (options.mode === "diff") {
                 options.vertical = false;
@@ -1009,31 +1031,24 @@ var prettydiff = function prettydiff_(api) {
                 if (options.diffcomments === false) {
                     options.comments = "nocomment";
                 }
-                if (options.source === "" || options.diff === "") {
-                    return "";
-                }
                 if (options.lang === "css") {
-                    apioutput      = global.csspretty(options);
+                    apioutput      = csspretty();
                     options.source = options.diff;
-                    apidiffout     = global.csspretty(options);
+                    apidiffout     = csspretty();
                 } else if (options.lang === "csv") {
                     apioutput  = global.csvpretty(options);
                     apidiffout = global.csvpretty(options);
                 } else if (options.lang === "markup") {
-                    apioutput      = global
-                        .markuppretty(options)
-                        .replace(/\r?\n[\t]*\ \/>/g, "");
+                    apioutput      = markuppretty();
                     options.source = options.diff;
-                    apidiffout     = global
-                        .markuppretty(options)
-                        .replace(/\r?\n[\t]*\ \/>/g, "");
+                    apidiffout     = markuppretty();
                 } else if (options.lang === "text") {
                     apioutput  = options.source;
                     apidiffout = options.diff;
                 } else {
-                    apioutput      = global.jspretty(options);
+                    apioutput      = jspretty();
                     options.source = options.diff;
-                    apidiffout     = global.jspretty(options);
+                    apidiffout     = jspretty();
                 }
                 if (options.quote === true) {
                     apioutput  = apioutput.replace(/'/g, "\"");
@@ -1054,38 +1069,60 @@ var prettydiff = function prettydiff_(api) {
                     options.difflabel = "New Text";
                 }
                 if (global.jsxstatus === true) {
-                    autoval    = ["jsx", "javascript", "React JSX"];
+                    autoval = ["jsx", "javascript", "React JSX"];
                 }
-                global.meta.lang = autoval;
-                global.meta.time = proctime();
-                global.meta.insize = api.source.length + api.diff.length;
-                global.meta.outsize = apioutput.length;
                 return (function core__diff() {
                     var a = "";
                     options.diff   = apidiffout;
                     options.source = apioutput;
                     if (options.diffcli === true) {
-                        return global.diffview(options);
+                        return output(global.diffview(options));
                     }
                     if (apioutput === "Error: This does not appear to be JavaScript." || apidiffout === "Error: This does not appear to be JavaScript.") {
-                        return "<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (d" +
-                                    "iff only)</em>. <span style='display:block'>The input does not appear to be mark" +
-                                    "up, CSS, or JavaScript.</span></p>";
+                        return output("<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (d" +
+                                "iff only)</em>. <span style='display:block'>The input does not appear to be mark" +
+                                "up, CSS, or JavaScript.</span></p>");
                     }
                     if (options.lang === "text") {
                         options.inchar = "";
                     }
                     a = global.diffview(options);
                     if (global.jsxstatus === true) {
-                        autoval    = ["jsx", "javascript", "React JSX"];
+                        autoval = ["jsx", "javascript", "React JSX"];
                     }
                     if (options.api === "") {
                         html[7]  = options.color;
-                        html[10] = a;
-                        return html.join("");
+                        html[10] = a[0];
+                        return output(html.join(""), a[1], a[2]);
                     }
-                    return a;
+                    return output(a[0], a[1], a[2]);
                 }());
+            } else {
+                if (options.mode === "analysis") {
+                    options.accessibility = true;
+                }
+                if (options.lang === "css") {
+                    apioutput = csspretty();
+                } else if (options.lang === "csv") {
+                    apioutput = global.csvpretty(options);
+                } else if (options.lang === "markup") {
+                    apioutput = markuppretty();
+                } else if (options.lang === "text") {
+                    apioutput  = options.source;
+                    apidiffout = "";
+                } else {
+                    apioutput = jspretty();
+                }
+                if (options.mode === "beautify" && options.api === "" && options.jsscope !== "none" && options.lang === "javascript") {
+                    html[7]   = options.color;
+                    html[10]  = apidiffout;
+                    html[12]  = builder.script.beautify;
+                    apioutput = html.join("");
+                }
+                if (global.jsxstatus === true) {
+                    autoval = ["jsx", "javascript", "React JSX"];
+                }
+                return output(apioutput);
             }
         };
     return core(api);
@@ -1095,23 +1132,23 @@ global.edition        = {
         ace: 160307
     },
     api          : {
-        dom      : 160407, //dom.js
-        nodeLocal: 160407, //node-local.js
-        wsh      : 160407
+        dom      : 160413, //dom.js
+        nodeLocal: 160413, //node-local.js
+        wsh      : 160413
     },
-    css          : 160407, //css files
-    csspretty    : 160407, //csspretty lib
+    css          : 160413, //css files
+    csspretty    : 160413, //csspretty lib
     csvpretty    : 160307, //csvpretty lib
-    diffview     : 160307, //diffview lib
-    documentation: 160407, //documentation.xhtml
-    jspretty     : 160407, //jspretty lib
+    diffview     : 160413, //diffview lib
+    documentation: 160413, //documentation.xhtml
+    jspretty     : 160413, //jspretty lib
     latest       : 0,
-    lint         : 160229, //unit test and lint automation as test/lint.js
-    markuppretty : 160407, //markuppretty lib
-    prettydiff   : 160407, //this file
+    lint         : 160413, //unit test and lint automation as test/lint.js
+    markuppretty : 160413, //markuppretty lib
+    prettydiff   : 160413, //this file
     safeSort     : 160307, //safeSort lib
-    version      : "2.0.0 alpha", //version number
-    webtool      : 160407
+    version      : "2.0.0 alpha 1", //version number
+    webtool      : 160413
 };
 global.edition.latest = (function edition_latest() {
     "use strict";

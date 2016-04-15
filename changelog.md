@@ -10,8 +10,10 @@
 * Fixes #293
 * Modified markup `</li>` insertion logic
 * Updated test runner file system simulation to work correctly on Windows.
-* Added option "parseRecord".  If false the output of mode "parse" is a collection of *parallel* data types. If the option is true the output is a *sequential* array where each index is a child array of data respective to a given parsed token.
-* Added option "parseSpace". Determines whether white space content tokens should exist in the parse tree output of the parse mode.
+* *new option* - "nodeasync".  Asynchronous bulk operations like reading from a directory produces cross-talk when assigning meta data to a global object.  The desired goal of version 2 is to have the prettydiff function return a single string and meta data to a global object.  In this case, for reliability, the prettydiff function will return an array of [data, meta] where data is the desired string output and meta is the metadata object similar to Pretty Diff version 1.
+* *new option* - "nodeerror".  Sometimes it is desirable and informative to log parse errors to the console.  Such a feature can become excessive noise and break unit tests though.
+* *new option* - "parseRecord".  If false the output of mode "parse" is a collection of *parallel* data types. If the option is true the output is a *sequential* array where each index is a child array of data respective to a given parsed token.
+* *new option* - "parseSpace". Determines whether white space content tokens should exist in the parse tree output of the parse mode.
 * Enabling accessibility analysis and reporting in the new "analysis" mode.
 * **Breaking change** - Updated mode "parse" to output an object with two keys: *definition* and *data*.  The definition property stores a text description of each data type supplied in the data property.  The data property stores the parsed data.
 * **Breaking change** - Added mode "analysis" to generate reports of code evaluation.  The program now outputs only the desired data instead of an array of desired data plus a report.

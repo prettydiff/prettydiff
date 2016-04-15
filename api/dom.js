@@ -1,5 +1,5 @@
 /*prettydiff.com api.topcoms: true, api.inchar: " ", api.insize: 4, api.vertical: true */
-/*global ace, ActiveXObject, ArrayBuffer, AudioContext, console, csspretty, csvpretty, diffview, document, FileReader, global, jspretty, localStorage, location, markuppretty, prettydiff, navigator, safeSort, setTimeout, Uint8Array, window, XMLHttpRequest*/
+/*global ace, ActiveXObject, ArrayBuffer, AudioContext, console, csspretty, csvpretty, diffview, document, FileReader, finalFile, global, jspretty, localStorage, location, markuppretty, prettydiff, navigator, safeSort, setTimeout, Uint8Array, window, XMLHttpRequest*/
 /*jshint laxbreak: true*/
 /*jslint for: true, this: true*/
 /***********************************************************************

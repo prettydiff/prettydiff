@@ -983,6 +983,38 @@
                                         Method Chain Indentation</li>
                                 </ul>
                             </li>
+                            <li id="nodeasync">
+                                <h4>nodeasync
+                                    <strong>(node-local.js only)</strong>
+                                </h4>
+                                <ul>
+                                    <li>
+                                        <h5>Description</h5>
+                                        The goal of Pretty Diff version 2 is to have the prettydiff function return a single string of the desired output and write extranous meta data to a global object. Unfortunately, with bulk asynchronous operations, such as <em>readmethod:directory</em> assignments to a shared global object will result in cross-talk.  This means to capture and communicate the meta data precisely a new object must be passed in on the options and returned from the function, which returning a Pretty Diff version 1 styled array of <em>[data, meta]</em> where data is the desired string output and meta is the meta data object.  If you are not using the node-local.js file for Node.js interaction and the meta data is not important then the prettydiff function will simply return a single desired string.</li>
+                                    <li>
+                                        <h5>Type</h5>
+                                        boolean</li>
+                                    <li>
+                                        <h5>Default</h5>
+                                        false</li>
+                                </ul>
+                            </li>
+                            <li id="nodeerror">
+                                <h4>nodeerror
+                                    <strong>(node-local.js only)</strong>
+                                </h4>
+                                <ul>
+                                    <li>
+                                        <h5>Description</h5>
+                                        Sometimes it is informative to log parse errors to the console.  This behavior can result in excessive noise and break unit tests though.</li>
+                                    <li>
+                                        <h5>Type</h5>
+                                        boolean</li>
+                                    <li>
+                                        <h5>Default</h5>
+                                        false</li>
+                                </ul>
+                            </li>
                             <li id="noleadzero">
                                 <h4>noleadzero</h4>
                                 <ul>
