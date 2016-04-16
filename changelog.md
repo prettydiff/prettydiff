@@ -5,6 +5,7 @@
 * Fixed some missing semicolon insertion during JavaScript parsing.
 * Fixed a curly brace insertion bug in JavaScript do/while loops.
 * Fixes a javascript defect in generated diff report HTML files.
+* Fixes a defect in "varword: list" where comments precede the reference.
 * Expands JavaScript conversion of operators `++` and `--` under the *correct* option.
 * Fixes #294
 * Fixes #293

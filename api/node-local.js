@@ -1,5 +1,6 @@
 /*prettydiff.com api.topcoms: true, api.insize: 4, api.inchar: " ", api.vertical: true */
 /*jshint laxbreak: true*/
+/*jslint node: true*/
 /***********************************************************************
  node-local is written by Austin Cheney on 6 Nov 2012.  Anybody may use
  this code without permission so long as this comment exists verbatim in

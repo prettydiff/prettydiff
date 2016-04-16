@@ -118,7 +118,7 @@
             console.log(finalTime + "total time");
             console.log("");
         },
-        prettydiff = require("../prettydiff.js").api,
+        prettydiff = require("../prettydiff.js"),
         options    = {},
         errout     = function taskrunner_errout(errtext) {
             console.log("");
@@ -163,7 +163,7 @@
             options.diffcli = true;
             options.context = 2;
             options.lang    = "text";
-            report          = prettydiff(options)[0];
+            report          = prettydiff.api(options)[0];
             pdlen           = report[0].length;
             if (report.length < 3) {
                 console.log("");
@@ -291,7 +291,7 @@
                                 }
                             } else if (raw[a][0] === correct[a][0]) {
                                 options.source = raw[a][1];
-                                output         = prettydiff(options);
+                                output         = prettydiff.api(options);
                                 if (output.charAt(output.length - 1) !== "\n") {
                                     output = output + "\n";
                                 }
@@ -375,6 +375,7 @@
                         "bin",
                         "coverage",
                         "ignore",
+                        "JSLint",
                         "node_modules",
                         "test/samples_correct",
                         "test/samples_raw"
@@ -391,37 +392,36 @@
                     },
                     lintrun         = function taskrunner_lint_lintrun() {
                         var lintit = function taskrunner_lint_lintrun_lintit(val, ind, arr) {
-                            var JSLINT = jslint,
-                                ltext  = new JSLINT({edition: "latest", for: true, node: true, white: true});
-                            options.source = val[1];
-                            ltext.write({
-                                body: prettydiff(options),
-                                file: val[0]
-                            });
-                            ltext.on("data", function taskrunner_lint_lintrun_lintit_lintOn(chunk) {
-                                var errors = chunk.linted.errors,
-                                    failed = false,
-                                    ecount = 0,
-                                    report = function taskrunner_lint_lintrun_lintit_lintOn_report(val) {
-                                        if (val === null || val.message.indexOf("Unexpected dangling '_'") === 0 || (/Bad\ property\ name\ '\w+_'\./).test(val.message) === true) {
-                                            return;
-                                        }
-                                        failed = true;
-                                        if (ecount === 0) {
-                                            console.log("\x1B[31mJSLint errors on\x1B[39m " + chunk.file);
-                                            console.log("");
-                                        }
-                                        ecount += 1;
-                                        console.log("On line " + val.line + " at column: " + val.column);
-                                        console.log(val.message);
-                                        console.log("");
-                                    };
-                                if (chunk.linted.ok === false) {
-                                    errors.forEach(report);
-                                    if (failed === true) {
-                                        errout("\x1B[31mLint fail\x1B[39m :(");
+                            var result = {},
+                                failed = false,
+                                ecount = 0,
+                                report = function taskrunner_lint_lintrun_lintit_lintOn_report(warning) {
+                                    //start with an exclusion list.  There are some warnings that I don't care about
+                                    if (warning === null) {
+                                        return;
                                     }
-                                }
+                                    if (warning.message.indexOf("Unexpected dangling '_'") === 0) {
+                                        return;
+                                    }
+                                    if ((/Bad\ property\ name\ '\w+_'\./).test(warning.message) === true) {
+                                        return;
+                                    }
+                                    if (warning.message.indexOf("/*global*/ requires") === 0) {
+                                        return;
+                                    }
+                                    failed = true;
+                                    if (ecount === 0) {
+                                        console.log("\x1B[31mJSLint errors on\x1B[39m " + val[0]);
+                                        console.log("");
+                                    }
+                                    ecount += 1;
+                                    console.log("On line " + warning.line + " at column: " + warning.column);
+                                    console.log(warning.message);
+                                    console.log("");
+                                };
+                            options.source = val[1];
+                            result = jslint(prettydiff.api(options), {"for":true});
+                            if (result.ok === true) {
                                 console.log("\x1B[32mLint is good for file " + (ind + 1) + ":\x1B[39m " + val[0]);
                                 if (ind === arr.length - 1) {
                                     console.log("");
@@ -429,7 +429,20 @@
                                     console.log("");
                                     return next();
                                 }
-                            });
+                            } else {
+                                result.warnings.forEach(report);
+                                if (failed === true) {
+                                    errout("\x1B[31mLint fail\x1B[39m :(");
+                                } else {
+                                    console.log("\x1B[32mLint is good for file " + (ind + 1) + ":\x1B[39m " + val[0]);
+                                    if (ind === arr.length - 1) {
+                                        console.log("");
+                                        console.log("\x1B[32mLint operation complete!\x1B[39m");
+                                        console.log("");
+                                        return next();
+                                    }
+                                }
+                            }
                         };
                         options = {
                             correct     : false,
@@ -443,8 +456,7 @@
                             nocaseindent: false,
                             objsort     : "all",
                             preserve    : true,
-                            varword     : "none",
-                            vertical    : "all",
+                            styleguide  : "jslint",
                             wrap        : 80
                         };
                         files.forEach(lintit);
@@ -463,50 +475,107 @@
                             ? "" + (dateobj.getMonth() + 1)
                             : "0" + (dateobj.getMonth() + 1),
                         date    = Number("" + dateobj.getFullYear() + month + day),
-                        today   = require("./today.js").date,
-                        child   = require("child_process").exec,
-                        caller  = function taskrunner_lint_install_caller() {
-                            console.log("\x1B[36mInstalling JSLint...\x1B[36m");
-                            child("npm install jslint", {
-                                timeout: 30000
-                            }, function taskrunner_lint_install_caller_callback(error, stdout, stderr) {
-                                if (error !== null) {
-                                    return errout(error);
-                                }
-                                if (typeof stderr === "string" && stderr.length > 0) {
-                                    return errout(stderr);
-                                }
-                                jslint = require("jslint").LintStream;
-                                console.log("\x1B[32mInstalled JSLint edition:\x1B[39m " + jslint({edition: "latest"}).JSlint.edition);
+                        today   = require("./today.js").date;
+                    fs.stat("JSLint", function taskrunner_lint_install_stat(erstat, stats) {
+                        var child   = require("child_process").exec,
+                            command = "git pull origin master",
+                            absent  = (JSON.stringify(erstat).indexOf("ENOENT") > -1),
+                            childtask = function taskrunner_lint_install_stat_childtask() {
+                                child(command, {
+                                    timeout: 30000
+                                }, function taskrunner_lint_install_stat_childtask_child(erchild, stdout, stderr) {
+                                    var cdupcallback = function () {
+                                        fs.readFile("JSLint/jslint.js", "utf8", function taskrunner_lint_install_stat_childtask_child_readFile(erread, data) {
+                                            var moduleready = function taskrunner_lint_install_stat_childtask_child_callback() {
+                                                jslint = require(process.cwd() + "/JSLint/jslint.js");
+                                                fs.writeFile("test/today.js", "/*global exports*/var today=" + date + ";exports.date=today;", "utf8", function (werr) {
+                                                    if (werr !== null && werr !== undefined) {
+                                                        errout(werr);
+                                                    }
+                                                });
+                                                console.log("\x1B[36mInstalled JSLint edition:\x1B[39m " + jslint().edition);
+                                                flag.lint = true;
+                                                if (flag.fs === true) {
+                                                    lintrun();
+                                                }
+                                            };
+                                            if (erread !== null && erread !== undefined) {
+                                                return errout(erread);
+                                            }
+                                            //Only modify the jslint.js file once, so we have to check to see if it is already modified
+                                            if (data.slice(data.length - 30).indexOf("\nmodule.exports = jslint;") < 0) {
+                                                data = data + "\nmodule.exports = jslint;";
+                                                fs.writeFile("JSLint/jslint.js", data, "utf8", function taskrunner_lint_install_stat_childtask_child_readFile_writeFile(erwrite) {
+                                                    if (erwrite !== null && erwrite !== undefined) {
+                                                        return errout(erwrite);
+                                                    }
+                                                    moduleready();
+                                                });
+                                            } else {
+                                                moduleready();
+                                            }
+                                            return stdout;
+                                        });
+                                    };
+                                    if (erchild !== null) {
+                                        return errout(erchild);
+                                    }
+                                    if (typeof stderr === "string" && stderr.length > 0 && stderr.indexOf("Cloning into") < 0) {
+                                        return errout(stderr);
+                                    }
+                                    //jslint is now installed by clone or pull from github. If by "pull" then we are in the child directory and need to come up
+                                    if (command === "git pull origin master") {
+                                        child("cd ..", function taskrunner_lint_install_stat_childtask_child_cdup(erup, upout, upstd) {
+                                            if (erup !== null) {
+                                                return errout(erup);
+                                            }
+                                            if (typeof upstd === "string" && upstd.length > 0) {
+                                                return errout(upstd);
+                                            }
+                                            cdupcallback();
+                                            return upout;
+                                        });
+                                    } else {
+                                        cdupcallback();
+                                    }
+                                });
+                            };
+                        if (erstat !== null && erstat !== undefined && absent === false) {
+                            return errout(erstat);
+                        }
+                        //does the directory JSLint exist? If not clone from github. If so then:
+                        //* cd JSLint
+                        //* git pull
+                        //* cd ..
+                        //Although changing directory is simple with process.chdir these must be issued as child processes to prevent interference from reading JavaScript files in the project
+                        if (absent === false && stats.isDirectory() === true) {
+                            //we only need to install once per day, so determine if JSLint has already installed today
+                            if (today < date) {
+                                console.log("Pulling latest JSLint...");
+                                child("cd JSLint", function taskrunner_lint_install_stat_cdJSLint(ercd, cdout, cderr) {
+                                    if (ercd !== null) {
+                                        return errout(ercd);
+                                    }
+                                    if (typeof cderr === "string" && cderr.length > 0) {
+                                        return errout(cderr);
+                                    }
+                                    childtask();
+                                    return cdout;
+                                });
+                            } else {
+                                jslint = require(process.cwd() + "/JSLint/jslint.js");
+                                console.log("Running prior installed JSLint version " + jslint().edition + ".");
                                 flag.lint = true;
                                 if (flag.fs === true) {
                                     lintrun();
                                 }
-                                return stdout;
-                            });
-                            fs.writeFile("test/today.js", "var today=" + date + ";exports.date=today;");
-                        };
-                    if (date > today) {
-                        caller();
-                    } else {
-                        fs
-                            .stat("/node_modules/jslint", function taskrunner_lint_install_stat(err) {
-                                if (typeof err === "string") {
-                                    if (err.indexOf("no such file or directory") > 0) {
-                                        caller();
-                                    } else {
-                                        errout(err);
-                                    }
-                                } else {
-                                    jslint = require("jslint").LintStream;
-                                    console.log("\x1B[36mJSLint edition:\x1B[39m " + jslint({edition: "latest"}).JSlint.edition);
-                                    flag.lint = true;
-                                    if (flag.fs === true) {
-                                        lintrun();
-                                    }
-                                }
-                            });
-                    }
+                            }
+                        } else {
+                            console.log("Cloning JSLint...");
+                            command = "git submodule add https://github.com/douglascrockford/JSLint.git";
+                            childtask();
+                        }
+                    });
                 }());
                 (function taskrunner_lint_getFiles() {
                     var fc       = 0,
@@ -600,8 +669,10 @@
                         }
                         console.log("");
                         console.log("\x1B[36mTesting package.json beautification...\x1B[39m");
-                        options.source = data;
-                        prettydata     = prettydiff(options);
+                        options.source     = data;
+                        options.styleguide = "none";
+                        options.vertical   = "all";
+                        prettydata     = prettydiff.api(options);
                         if (data.replace(/(\s+)$/, "") !== prettydata.replace(/(\s+)$/, "")) {
                             diffFiles("package.json", data, prettydata);
                             errout("\x1B[31mPretty Diff corrupted package.json\x1B[36m");
@@ -743,17 +814,17 @@
                                             check : "node api/node-local.js source:\"inch.json\" readmethod:\"file\" mode:\"beautify" +
                                                     "\" output:\"test/simulation/inch\"",
                                             name  : "Beautify inch.json",
-                                            verify: "\nFile successfully written.\n\nPretty Diff beautified 1 file. Executed in."
+                                            verify: "\nFile successfully written.\n\nPretty Diff beautified x files. Executed in."
                                         }, {
                                             check : "node api/node-local.js source:\"api\" readmethod:\"directory\" mode:\"beautify\"" +
                                                         " output:\"test/simulation/api\"",
                                             name  : "Beautify api directory",
-                                            verify: "\nPretty Diff beautified -10 files. Executed in."
+                                            verify: "\nPretty Diff beautified x files. Executed in."
                                         }, {
                                             check : "node api/node-local.js source:\"test\" readmethod:\"subdirectory\" mode:\"parse" +
                                                     "\" output:\"test/simulation/all/big\"",
                                             name  : "Subdirectory parse all prettydiff",
-                                            verify: "\nPretty Diff parsed -10 files. Executed in."
+                                            verify: "\nPretty Diff parsed x files. Executed in."
                                         }
                                     ]
                                 }, {
@@ -772,7 +843,7 @@
                                         }, {
                                             check : "cat test/simulation/all/big/today.js",
                                             name  : "check for a file in a subdirectory operation",
-                                            verify: "{\"data\":{\"begin\":[0,0,0,0,0,0,0,0,0,0,0],\"depth\":[\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"global\"],\"lines\":[0,0,0,0,0,0,0,0,0,0,0],\"token\":[\"var\",\"today\",\"=\",\"20999999\",\";\",\"exports\",\".\",\"date\",\"=\",\"today\",\";\"],\"types\":[\"word\",\"word\",\"operator\",\"literal\",\"separator\",\"word\",\"separator\",\"word\",\"operator\",\"word\",\"separator\"]},\"definition\":{\"begin\":\"number - The index where the current container starts\",\"depth\":\"string - The name of the current container\",\"lines\":\"number - Whether the token is preceeded any space and/or line breaks in the original code source\",\"token\":\"string - The parsed code tokens\",\"types\":\"string - Data types of the tokens: comment, comment-inline, end, literal, markup, operator, regex, separator, start, template, template_else, template_end, template_start, word\"}}"
+                                            verify: "{\"data\":{\"begin\":[0,0,0,0,0,0,0,0,0,0,0,0],\"depth\":[\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"global\"],\"lines\":[0,0,0,0,0,0,0,0,0,0,0,0],\"token\":[\"/*global exports*/\",\"var\",\"today\",\"=\",\"20999999\",\";\",\"exports\",\".\",\"date\",\"=\",\"today\",\";\"],\"types\":[\"comment\",\"word\",\"word\",\"operator\",\"literal\",\"separator\",\"word\",\"separator\",\"word\",\"operator\",\"word\",\"separator\"]},\"definition\":{\"begin\":\"number - The index where the current container starts\",\"depth\":\"string - The name of the current container\",\"lines\":\"number - Whether the token is preceeded any space and/or line breaks in the original code source\",\"token\":\"string - The parsed code tokens\",\"types\":\"string - Data types of the tokens: comment, comment-inline, end, literal, markup, operator, regex, separator, start, template, template_else, template_end, template_start, word\"}}"
                                         }, {
                                             check : "cat test/simulation/all/big/samples_correct/beautification_markup_comment.txt",
                                             name  : "check for a deeper file in a subdirectory operation",
@@ -1032,7 +1103,7 @@
                                     stdout = stdout.replace(/(\s+)$/, "");
                                     stdout = stdout.replace(/<strong>Execution\ time:<\/strong>\ <em>([0-9]+\ hours\ )?([0-9]+\ minutes\ )?[0-9]+(\.[0-9]+)?\ seconds\ <\/em>/g, "<strong>Execution time:</strong> <em>0</em>");
                                     stdout = stdout.replace(/Executed\ in\ ([0-9]+\ hours\ )?([0-9]+\ minutes\ )?[0-9]+(\.[0-9]+)?\ seconds/g, "Executed in");
-                                    stdout = stdout.replace(/\ \d+\ files\./, " -10 files.");
+                                    stdout = stdout.replace(/\ \d+\ files?\./, " x files.");
                                     stdout = stdout.replace(/20\d{6}/, "20999999");
                                     //determine pass/fail status of a given test unit
                                     if (stdout.indexOf("Source file at ") > -1 && stdout.indexOf("is \x1B[31mempty\x1B[39m but the diff file is not.") > 0) {
@@ -1041,7 +1112,7 @@
                                         stdout = stdout.slice(0, stdout.indexOf("Diff file at") + 12) + " - " + stdout.slice(stdout.indexOf("is \x1B[31mempty\x1B[39m but the source file is not."));
                                     }
                                     if (stdout.indexOf("Pretty Diff found 0 differences.") < 0) {
-                                        stdout = stdout.replace(/Pretty\ Diff\ found\ \d+\ differences./, "Pretty Diff found -10 differences.");
+                                        stdout = stdout.replace(/Pretty\ Diff\ found\ \d+\ differences./, "Pretty Diff found x differences.");
                                     }
                                     if (typeof err === "string") {
                                         data.push("fail");

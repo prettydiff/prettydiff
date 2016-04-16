@@ -936,8 +936,8 @@ var prettydiff = function prettydiff_(api) {
                     meta.lang   = autoval;
                     meta.time   = proctime();
                     meta.insize = (options.mode === "diff")
-                        ? api.source.length + api.diff.length
-                        : api.source.length;
+                        ? options.source.length + options.diff.length
+                        : options.source.length;
                     if (options.mode === "parse" && options.lang !== "text" && (autoval[0] !== "" || options.lang !== "auto")) {
                         if (options.parseFormat === "sequential" || options.parseFormat === "htmltable") {
                             meta.outsize = finalProduct.data.length;
