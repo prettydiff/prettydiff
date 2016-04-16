@@ -1580,16 +1580,6 @@
                             <p>Various options are available for greater portability</p>
                             <ul>
                                 <li>
-                                    <h4>NPM</h4>
-                                    <p>Global install, run it anywhere on the command line using global command
-                                        <em>prettydiff</em>
-                                        <code>npm install prettydiff -g</code>
-                                    </p>
-                                    <p>Local install, better for testing and developing the application
-                                        <code>npm install prettydiff</code>
-                                    </p>
-                                </li>
-                                <li>
                                     <h4>Bower</h4>
                                     <p>
                                         <code>bower install prettydiff</code>
@@ -1985,7 +1975,7 @@
                                     <code>git checkout -b branchName</code>
                                 </li>
                                 <li>Run the unit tests to verify if your changes are breaking things:
-                                    <code>npm install</code>
+                                    <code>node test/lint.js</code>
                                 </li>
                                 <li>Open a pull request on Github. Ensure there are comments in the pull request
                                     explaining the what the change does and why it is needed. Including additional
@@ -1997,30 +1987,17 @@
                             <h4>Running the Tests</h4>
                             <p>The unit tests run using NPM scripts and require JSLint as a dev dependency.
                                 Run the unit tests with the following commands:
-                                <code>cd node_modules/prettydiff</code>
-                                <code>npm install</code>
-                                <code>npm test</code>
+                                <code>cd prettydiff</code>
+                                <code>node test/lint.js</code>
                             </p>
                             <p>The
                                 <a href="test/lint.js">unit test script</a>
-                                checks for the latest version of JSLint each time it runs, so the
-                                <em>npm install</em>
-                                command only needs to be run once each time a new version of Pretty Diff is
-                                installed.</p>
+                                checks for the latest version of JSLint once per day that it runs.</p>
                             <p>The unit tests run in phases, which are different kinds of tests. The name
                                 and order of the test phases are indicated in an array named
                                 <em>order</em>
                                 located at the top of the test script file. Alter that array to run only certain
                                 types of unit tests.</p>
-                            <h4>Known Unit Test Problems</h4>
-                            <ol>
-                                <li>
-                                    <code>npm ERR! Cannot read property 'target' of null</code>
-                                    <p>This is an unresolved NPM error
-                                        <a href="https://github.com/npm/npm/issues/10686#issuecomment-187254105">https://github.com/npm/npm/issues/10686#issuecomment-187254105</a>
-                                    </p>
-                                </li>
-                            </ol>
                         </div>
                         <div class="segment">
                             <h3>New Option Guidance</h3>

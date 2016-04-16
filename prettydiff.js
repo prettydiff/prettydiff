@@ -5,8 +5,6 @@
 
  Execute in a NodeJS app:
 
-    npm install prettydiff        (local install)
-
     var prettydiff = require("prettydiff"),
         args       = {
             source: "asdf",
@@ -16,8 +14,6 @@
         output     = prettydiff.api(args);
 
  Execute on command line with NodeJS:
-
-    npm install prettydiff -g     (global install)
 
     prettydiff source:"c:\mydirectory\myfile.js" readmethod:"file" diff:"c:\myotherfile.js"
 
