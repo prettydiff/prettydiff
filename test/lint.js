@@ -524,7 +524,7 @@
                                         return errout(stderr);
                                     }
                                     //jslint is now installed by clone or pull from github. If by "pull" then we are in the child directory and need to come up
-                                    if (command === "git pull origin master") {
+                                    if (command === "git pull") {
                                         child("cd ..", function taskrunner_lint_install_stat_childtask_child_cdup(erup, upout, upstd) {
                                             if (erup !== null) {
                                                 return errout(erup);
@@ -559,7 +559,16 @@
                                     if (typeof cderr === "string" && cderr.length > 0) {
                                         return errout(cderr);
                                     }
-                                    childtask();
+                                    child("git checkout master", function taskrunner_lint_install_stat_cdJSLint_chechkout(erch, chout, cherr) {
+                                        if (erch !== null) {
+                                            return errout(erch);
+                                        }
+                                        if (typeof cherr === "string" && cherr.length > 0) {
+                                            return errout(cherr);
+                                        }
+                                        childtask();
+                                        return chout;
+                                    });
                                     return cdout;
                                 });
                             } else {
