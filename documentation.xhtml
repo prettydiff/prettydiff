@@ -92,8 +92,8 @@
                             <p>Pretty Diff was created to compare code samples for various web based
                                 languages even if one (or both) code samples were minified. Currently, the
                                 project operates by beautifying code and then comparing that the beautified
-                                product of the code samples. The goal in the
-                                <a href="https://github.com/prettydiff/prettydiff/issues/71">next version</a>
+                                product of the code samples. The goal in a
+                                <a href="https://github.com/prettydiff/prettydiff/issues/71">future version</a>
                                 is to introduce the comparison step directly into the beautifiers between the
                                 parse step and the beautification step to become a truely language aware code
                                 comparison and analysis tool.</p>
@@ -140,6 +140,8 @@
                                     (AST). Pretty Diff, instead, produces parallel arrays for its internal
                                     operations. The parse mode simply makes these data arrays available for
                                     independent analysis.</dd>
+                                <dt>analysis</dt>
+                                <dd>HTML formatted reports evaluating the code.  The reports differ in content and structure by the parser(s) used.</dd>
                             </dl>
                         </div>
                         <div class="segment" id="languages">
@@ -161,6 +163,29 @@
                                 <dd>The markuppretty library supports XML, HTML, and a wide variety of HTML
                                     templating schemes such as Handlebars and Mustache templates.</dd>
                             </dl>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h2>
+                        <button aria-disabled="true" class="heading" role="presentation">Output Formats and Types
+                            <span aria-hidden="true">Show</span>
+                        </button>
+                    </h2>
+                    <div class="content-hide">
+                        <div class="segment">
+                            <h3>General Output</h3>
+                            <p>New in version 2 is that most opertions will output a single string.  This makes the application more predictable and easier to integrate into other applications.</p>
+                        </div>
+                        <div class="segment">
+                            <h3>Exceptions</h3>
+                            <p>For increased speed and convenience there are some features that could not be delivered as a single string.  The list is as follows:</p>
+                            <ul>
+                                <li>Parse mode with <strong>parseFormat:parallel</strong> will return an object with a key named definition and a key named data.  The data property will contain an object of arrays by name and the definition object will contain and object of identify key names to the data object where each value defines the data type.</li>
+                                <li>Parse mode with <strong>parseFormat:sequential</strong> will a nearly identical object to that described by parseFormat:parallel.  The only difference is that the data property contains an array of array children where each child array is a parsed token and corresponding data fields.</li>
+                                <li>Parse mode with <strong>parseFormat:htmltable</strong> will return a string of the parse data arranged in an HTML table.</li>
+                                <li>The option <strong>nodeasync</strong> returns an array where all prior described output is the first index and the second index is an object containing brief metadata, otherwise stored in the <em>global.meta</em> object.  The reason for this is to allow meta data collection during parallel operations without collision.  If this option is ignored then all prior described output formats are generated and the meta data is dumped in the global.meta object, but that meta data is not reliable.</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -914,7 +939,7 @@
                                         string</li>
                                     <li>
                                         <h5>Accepted values</h5>
-                                        beautify, diff, minify, parse</li>
+                                        analysis, beautify, diff, minify, parse</li>
                                     <li>
                                         <h5>Default</h5>
                                         diff</li>
@@ -1641,6 +1666,9 @@
                                                 </li>
                                                 <li>diff library -
                                                     <a href="http://prettydiff.com/lib/diffview.js">http://prettydiff.com/lib/diffview.js</a>
+                                                </li>
+                                                <li>finalFile (HTML template) library -
+                                                    <a href="http://prettydiff.com/lib/finalFile.js">http://prettydiff.com/lib/finalFile.js</a>
                                                 </li>
                                                 <li>JavaScript library -
                                                     <a href="http://prettydiff.com/lib/jspretty.js">http://prettydiff.com/lib/jspretty.js</a>

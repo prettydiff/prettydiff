@@ -638,7 +638,9 @@
             packagejson: function taskrunner_packagejson() {
                 fs
                     .readFile("package.json", "utf8", function taskrunner_packagejson_readFile(err, data) {
-                        var prettydata = "";
+                        var prettydata = "",
+                            globalmeta = "{\"difflines\":0,\"difftotal\":0,\"error\":\"\",\"insize\":xxx,\"lang\":[\"json\",\"javascript\",\"JSON\"],\"outsize\":xxx,\"time\":\"0.000 seconds\"}",
+                            strmeta    = "";
                         if (err !== null && err !== undefined) {
                             errout("Cannot read package.json");
                         }
@@ -647,15 +649,25 @@
                         }
                         console.log("");
                         console.log("\x1B[36mTesting package.json beautification...\x1B[39m");
+                        options.lang       = "auto";
+                        options.mode       = "beautify";
+                        options.objsort    = "all";
                         options.source     = data;
                         options.styleguide = "none";
                         options.vertical   = "all";
-                        prettydata     = prettydiff.api(options);
+                        prettydata         = prettydiff.api(options);
+                        strmeta            = JSON.stringify(global.meta).replace(/size":\d+/g, "size\":xxx").replace(/\d+\.\d+\ seconds/, "0.000 seconds");
                         if (data.replace(/(\s+)$/, "") !== prettydata.replace(/(\s+)$/, "")) {
                             diffFiles("package.json", data, prettydata);
                             errout("\x1B[31mPretty Diff corrupted package.json\x1B[36m");
                         }
                         console.log("\x1B[32mThe package.json file is beautified properly.\x1B[36m");
+                        if (strmeta !== globalmeta) {
+                            diffFiles("package.json", strmeta, globalmeta);
+                            errout("\x1B[31mglobal.meta is broken from package.json beautification.\x1B[39m");
+                            console.log("");
+                        }
+                        console.log("\x1B[32mglobal.meta global object is properly constructed.\x1B[39m");
                         return next();
                     });
             },
