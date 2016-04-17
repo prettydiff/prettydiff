@@ -1,0 +1,28 @@
+/*prettydiff.com varword:each, correct:true, wrap:80*/
+var a = 0,
+b = 1,
+c = 2;
+
+let d= 1, e= 2,f=3;
+
+const g =1, h=2, i=3
+
+a;
+
+//a really big comment that wraps at 80 characters wide just to see what happens with varword and such madness when the comment is multiple lines deep.  Will it work correctly or will it break
+const j= 1,
+
+//a really big comment that wraps at 80 characters wide just to see what happens with varword and such madness when the comment is multiple lines deep.  Will it work correctly or will it break
+k= 1,
+
+//a really big comment that wraps at 80 characters wide just to see what happens with varword and such madness when the comment is multiple lines deep.  Will it work correctly or will it break
+j= 1;
+
+/*a really big comment that wraps at 80 characters wide just to see what happens with varword and such madness when the comment is multiple lines deep.  Will it work correctly or will it break*/
+let j= 1,
+
+/*a really big comment that wraps at 80 characters wide just to see what happens with varword and such madness when the comment is multiple lines deep.  Will it work correctly or will it break*/
+k= 1,
+
+/*a really big comment that wraps at 80 characters wide just to see what happens with varword and such madness when the comment is multiple lines deep.  Will it work correctly or will it break*/
+j= 1;
