@@ -478,7 +478,7 @@
                         today   = require("./today.js").date;
                     fs.stat("JSLint", function taskrunner_lint_install_stat(erstat, stats) {
                         var child   = require("child_process").exec,
-                            command = "git pull origin master",
+                            command = "git submodule foreach git pull",
                             absent  = (JSON.stringify(erstat).indexOf("ENOENT") > -1),
                             childtask = function taskrunner_lint_install_stat_childtask() {
                                 child(command, {
@@ -524,20 +524,7 @@
                                         return errout(stderr);
                                     }
                                     //jslint is now installed by clone or pull from github. If by "pull" then we are in the child directory and need to come up
-                                    if (command === "git pull") {
-                                        child("cd ..", function taskrunner_lint_install_stat_childtask_child_cdup(erup, upout, upstd) {
-                                            if (erup !== null) {
-                                                return errout(erup);
-                                            }
-                                            if (typeof upstd === "string" && upstd.length > 0) {
-                                                return errout(upstd);
-                                            }
-                                            cdupcallback();
-                                            return upout;
-                                        });
-                                    } else {
-                                        cdupcallback();
-                                    }
+                                    cdupcallback();
                                 });
                             };
                         if (erstat !== null && erstat !== undefined && absent === false) {
@@ -545,32 +532,14 @@
                         }
                         //does the directory JSLint exist? If not clone from github. If so then:
                         //* cd JSLint
-                        //* git pull
+                        //* git submodule foreach git pull
                         //* cd ..
                         //Although changing directory is simple with process.chdir these must be issued as child processes to prevent interference from reading JavaScript files in the project
                         if (absent === false && stats.isDirectory() === true) {
                             //we only need to install once per day, so determine if JSLint has already installed today
                             if (today < date) {
                                 console.log("Pulling latest JSLint...");
-                                child("cd JSLint", function taskrunner_lint_install_stat_cdJSLint(ercd, cdout, cderr) {
-                                    if (ercd !== null) {
-                                        return errout(ercd);
-                                    }
-                                    if (typeof cderr === "string" && cderr.length > 0) {
-                                        return errout(cderr);
-                                    }
-                                    child("git checkout master", function taskrunner_lint_install_stat_cdJSLint_chechkout(erch, chout, cherr) {
-                                        if (erch !== null) {
-                                            return errout(erch);
-                                        }
-                                        if (typeof cherr === "string" && cherr.length > 0) {
-                                            return errout(cherr);
-                                        }
-                                        childtask();
-                                        return chout;
-                                    });
-                                    return cdout;
-                                });
+                                childtask();
                             } else {
                                 jslint = require(process.cwd() + "/JSLint/jslint.js");
                                 console.log("Running prior installed JSLint version " + jslint().edition + ".");

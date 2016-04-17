@@ -118,7 +118,7 @@ Pretty Diff would be executed using the following on CLI:
 
 ### Run the unit tests
 
-    cd node_modules/prettydiff
+    cd prettydiff
     node test/lint.js
 
 ## License:
