@@ -1,4 +1,4 @@
-/*prettydiff.com varword:each, correct:true, wrap:80*/
+/*prettydiff.com varword:list, correct:true, wrap:80*/
 var a = 0;
 var b = 1;
 var c = 2;

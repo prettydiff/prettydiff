@@ -235,8 +235,8 @@
     }
 
 
-    var/** holds major version number for IE or NaN for real browsers */
-        msie,
+    /** holds major version number for IE or NaN for real browsers */
+    var msie,
         jqLite, // delay binding since jQuery could be loaded after us.
         jQuery, // delay binding
         slice    = [].slice,
@@ -12110,8 +12110,8 @@
                             i,
                             length;
 
-                        // down while you can, then up and next sibling or up and next sibling until back
-                        // at root
+                        // down while you can, then up and next sibling or up and next sibling until
+                        // back at root
                         while ((current = next)) {
                             event.currentScope = current;
                             listeners          = current.$$listeners[name] || [];
@@ -13067,8 +13067,8 @@
     };
 
     // Helper functions follow. Copied from:
-    // http://docs.closure-library.googlecode.com/git/closure_goog_string_string.js.s
-    // ource.html#line962 Prereq: s is a string.
+    // http://docs.closure-library.googlecode.com/git/closure_goog_string_string.js.source.html#line962
+    // Prereq: s is a string.
     function escapeForRegexp(s) {
         return s
             .replace(/([-()\[\]{}+?*.$\^|,:#<!\\])/g, "\\$1")
@@ -15108,8 +15108,8 @@
         s   : dateGetter("Seconds", 1),
         ss  : dateGetter("Seconds", 2),
         // while ISO 8601 requires fractions to be prefixed with `.` or `,` we can be
-        // just safely rely on using `sss` since we currently don't support single or two
-        // digit fractions
+        // just safely rely on using `sss` since we currently don't support single or
+        // two digit fractions
         sss : dateGetter("Milliseconds", 3),
         y   : dateGetter("FullYear", 1),
         yy  : dateGetter("FullYear", 2, 0, true),
@@ -15207,7 +15207,7 @@
 
         var R_ISO8601_STR = /^(\d{4})-?(\d\d)-?(\d\d)(?:T(\d\d)(?::?(\d\d)(?::?(\d\d)(?:\.(\d+))?)?)?(Z|([+-])(\d\d):?(\d\d))?)?$/;
         // 1        2       3         4          5          6          7          8  9
-        //   10      11
+        // 10      11
         function jsonStringToDate(string) {
             var match;
             if (match = string.match(R_ISO8601_STR)) {
@@ -19854,8 +19854,8 @@
                         var value = parseFloat(scope.$eval(numberExp));
 
                         if (!isNaN(value)) {
-                            // if explicit number rule such as 1, 2, 3... is defined, just use it. Otherwise,
-                            // check it against pluralization rules in $locale service
+                            // if explicit number rule such as 1, 2, 3... is defined, just use it.
+                            // Otherwise, check it against pluralization rules in $locale service
                             if (!(value in whens)) {
                                 value = $locale.pluralCat(value - offset);
                             }
@@ -21137,9 +21137,9 @@
         "$compile",
         "$parse",
         function ($compile, $parse) {
-            //000011111111110000000000022222222220000000000000000000003333333333000000000000
-            //004444444444444440000000005555555555555550000000666666666666666000000000000000
-            //777777777700000000000000000008888888888
+            // 000011111111110000000000022222222220000000000000000000003333333333000000000
+            // 000004444444444444440000000005555555555555550000000666666666666666000000000
+            // 000000777777777700000000000000000008888888888
             var NG_OPTIONS_REGEXP = /^\s*([\s\S]+?)(?:\s+as\s+([\s\S]+?))?(?:\s+group\s+by\s+([\s\S]+?))?\s+for\s+(?:([\$\w][\$\w]*)|(?:\(\s*([\$\w][\$\w]*)\s*,\s*([\$\w][\$\w]*)\s*\)))\s+in\s+([\s\S]+?)(?:\s+track\s+by\s+([\s\S]+?))?$/,
                 nullModelCtrl     = {
                     $setViewValue: noop
