@@ -571,10 +571,17 @@
                                     if (ft === fc) {
                                         flag.files = true;
                                     }
-                                    files.push([
-                                        filePath.slice(filePath.indexOf("/prettydiff/") + 12),
-                                        data
-                                    ]);
+                                    if (path.sep === "\\") {
+                                        files.push([
+                                            filePath.slice(filePath.indexOf("\\prettydiff\\") + 14),
+                                            data
+                                        ]);
+                                    } else {
+                                        files.push([
+                                            filePath.slice(filePath.indexOf("/prettydiff/") + 12),
+                                            data
+                                        ]);
+                                    }
                                     if (flag.files === true && flag.items === true) {
                                         flag.fs = true;
                                         if (flag.lint === true) {
@@ -1167,8 +1174,8 @@
                                             options.source = tasks[a];
                                             options.mode   = "parse";
                                             options.lang   = "javascript";
-                                            echo           = prettydiff(options);
-                                            fs.writeFile(echo.token.slice(3).join("").replace(/(x;)$/, ""), echo.token[1].slice(1, echo.token[1].length - 1), buildstep);
+                                            echo           = prettydiff.api(options);
+                                            fs.writeFile(echo.data.token.slice(3).join("").replace(/(x?;)$/, ""), echo.data.token[1].slice(1, echo.data.token[1].length - 1), buildstep);
                                         } else {
                                             childExec(tasks[a], buildstep);
                                         }
