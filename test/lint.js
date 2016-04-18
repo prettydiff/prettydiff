@@ -520,7 +520,7 @@
                                     if (erchild !== null) {
                                         return errout(erchild);
                                     }
-                                    if (typeof stderr === "string" && stderr.length > 0 && stderr.indexOf("Cloning into") < 0) {
+                                    if (typeof stderr === "string" && stderr.length > 0 && stderr.indexOf("Cloning into") < 0 && stderr.indexOf("From http") < 0) {
                                         return errout(stderr);
                                     }
                                     //jslint is now installed by clone or pull from github. If by "pull" then we are in the child directory and need to come up
