@@ -288,7 +288,7 @@ global.meta = {
         "", //9 - for meta analysis, like stats and accessibility
         "", //10 - for generated report
         pd.data.builder.html.script, //11
-        pd.data.builder.script.diff, //12
+        pd.data.builder.script.minimal, //12
         pd.data.builder.html.end //13
     ];
 
@@ -3123,6 +3123,13 @@ global.meta = {
                 .app
                 .zTop(top);
             pd.data.html[7] = pd.data.color;
+            if (pd.data.mode === "diff") {
+                pd.data.html[12] = pd.data.builder.script.diff;
+            } else if (pd.data.mode === "beau" && pd.data.langvalue[0] === "javascript" && ((pd.id("jsscope-yes") !== null && pd.id("jsscope-yes").checked === true) || (pd.id("jsscope-html") !== null && pd.id("jsscope-html").checked === true))) {
+                pd.data.html[12] = pd.data.builder.script.beautify;
+            } else {
+                pd.data.html[12] = pd.data.builder.script.minimal;
+            }
             if (button.innerHTML === "S") {
                 if (pd.data.mode === "diff") {
                     pd.data.node.save.checked = true;

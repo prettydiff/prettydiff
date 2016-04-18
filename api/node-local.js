@@ -145,7 +145,7 @@ Examples:
             "", //9 - for meta analysis, like stats and accessibility
             "", //10 - for generated report
             global.finalFile.html.script, //11
-            global.finalFile.script.diff, //12
+            global.finalFile.script.minimal, //12
             global.finalFile.html.end //13
         ],
         prettydiff     = function pdNodeLocal__prettydiff() {
@@ -185,7 +185,8 @@ Examples:
                 html[10] = data;
                 if (options.jsscope !== "none" && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
                     html[12] = global.finalFile.script.beautify;
-                    return html.join("");
+                } else if (options.mode === "diff") {
+                    html[12] = global.finalFile.script.diff;
                 }
                 return html.join("");
             }

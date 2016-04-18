@@ -170,7 +170,7 @@ var prettydiff = function prettydiff_(api) {
                     "", //9 - for meta analysis, like stats and accessibility
                     "", //10 - for generated report
                     builder.html.script, //11
-                    builder.script.diff, //12
+                    builder.script.minimal, //12
                     builder.html.end //13
                 ],
                 setlangmode  = function core__setlangmode(input) {
@@ -1015,6 +1015,7 @@ var prettydiff = function prettydiff_(api) {
                 options.lang     = "javscript";
             }
             global.jsxstatus = false;
+            html[7]          = options.color;
             if (autoval[0] === "text" && options.mode !== "diff") {
                 metaerror = "Language is either text or undetermined, but text is only allowed for the 'diff'" +
                         " mode!";
@@ -1087,8 +1088,8 @@ var prettydiff = function prettydiff_(api) {
                         autoval = ["jsx", "javascript", "React JSX"];
                     }
                     if (options.api === "") {
-                        html[7]  = options.color;
                         html[10] = a[0];
+                        html[12] = builder.script.diff;
                         return output(html.join(""), a[1], a[2]);
                     }
                     return output(a[0], a[1], a[2]);
@@ -1109,11 +1110,15 @@ var prettydiff = function prettydiff_(api) {
                 } else {
                     apioutput = jspretty();
                 }
-                if (options.mode === "beautify" && options.api === "" && options.jsscope !== "none" && options.lang === "javascript") {
-                    html[7]   = options.color;
-                    html[10]  = apidiffout;
-                    html[12]  = builder.script.beautify;
-                    apioutput = html.join("");
+                if (options.api === "") {
+                    if (options.mode === "analysis" || (options.mode === "parse" && options.parseFormat === "htmltable")) {
+                        html[10]  = apidiffout;
+                        apioutput = html.join("");
+                    } else if (options.mode === "beautify" && options.jsscope !== "none" && options.lang === "javascript") {
+                        html[10]  = apidiffout;
+                        html[12]  = builder.script.beautify;
+                        apioutput = html.join("");
+                    }
                 }
                 if (global.jsxstatus === true) {
                     autoval = ["jsx", "javascript", "React JSX"];
