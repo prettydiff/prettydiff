@@ -478,7 +478,7 @@
                         today   = require("./today.js").date;
                     fs.stat("JSLint", function taskrunner_lint_install_stat(erstat, stats) {
                         var child   = require("child_process").exec,
-                            command = "git submodule foreach git pull",
+                            command = "git submodule foreach git pull origin master",
                             absent  = (JSON.stringify(erstat).indexOf("ENOENT") > -1),
                             childtask = function taskrunner_lint_install_stat_childtask() {
                                 child(command, {
@@ -532,7 +532,7 @@
                         }
                         //does the directory JSLint exist? If not clone from github. If so then:
                         //* cd JSLint
-                        //* git submodule foreach git pull
+                        //* git submodule foreach git pull origin master
                         //* cd ..
                         //Although changing directory is simple with process.chdir these must be issued as child processes to prevent interference from reading JavaScript files in the project
                         if (absent === false && stats.isDirectory() === true) {
