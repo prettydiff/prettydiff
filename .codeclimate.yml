@@ -1,0 +1,26 @@
+engines:
+  csslint:
+    enabled: false
+  duplication:
+    enabled: true
+  eslint:
+    enabled: true
+  fixme:
+    enabled: true
+  nodesecurity:
+    enabled: true
+ratings:
+  paths:
+  - "**.js"
+  - "**.css"
+  - "**.xhtml"
+exclude_paths:
+- test/samples_raw
+- test/samples_correct
+- ace
+- "**.txt"
+- "**.php"
+- JSLint
+addons:
+    code_climate:
+        repo_token: 09d716865a6bee80e8ecae07a5708eae0c6a327b092f5c027e89f37251bc21c8
