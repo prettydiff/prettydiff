@@ -92,8 +92,8 @@
                             <p>Pretty Diff was created to compare code samples for various web based
                                 languages even if one (or both) code samples were minified. Currently, the
                                 project operates by beautifying code and then comparing that the beautified
-                                product of the code samples. The goal in the
-                                <a href="https://github.com/prettydiff/prettydiff/issues/71">next version</a>
+                                product of the code samples. The goal in a
+                                <a href="https://github.com/prettydiff/prettydiff/issues/71">future version</a>
                                 is to introduce the comparison step directly into the beautifiers between the
                                 parse step and the beautification step to become a truely language aware code
                                 comparison and analysis tool.</p>
@@ -128,18 +128,20 @@
                                     require two code samples.</dd>
                                 <dt>beautify</dt>
                                 <dd>Pretty Diff has progressively moved from community driven dependencies to
-                                    custom parsers to accomplish code beautification. Currently, the project
-                                    provides some amount of code analysis as an additional product of
-                                    beautification.</dd>
+                                    custom parsers to accomplish code beautification for a diversity of features and
+                                    requests.</dd>
                                 <dt>minify</dt>
                                 <dd>Each of Pretty Diff's beautification libraries has a minify feature. The
                                     goal is to reduce code size but only to such an extent that the code can be
                                     restored to its prior state through beautification, excluding code comments.</dd>
                                 <dt>parse</dt>
-                                <dd>Most code parsers generate an final product called an Abstract Syntax Tree
+                                <dd>Most code parsers generate a final product called an Abstract Syntax Tree
                                     (AST). Pretty Diff, instead, produces parallel arrays for its internal
                                     operations. The parse mode simply makes these data arrays available for
                                     independent analysis.</dd>
+                                <dt>analysis</dt>
+                                <dd>HTML formatted reports evaluating the code. The reports differ in content
+                                    and structure by the parser(s) used.</dd>
                             </dl>
                         </div>
                         <div class="segment" id="languages">
@@ -166,6 +168,55 @@
                 </div>
                 <div>
                     <h2>
+                        <button aria-disabled="true" class="heading" role="presentation">Output Formats and Types
+                            <span aria-hidden="true">Show</span>
+                        </button>
+                    </h2>
+                    <div class="content-hide">
+                        <div class="segment">
+                            <h3>General Output</h3>
+                            <p>New in version 2 is that most opertions will output a single string. This
+                                makes the application more predictable and easier to integrate into other
+                                applications. Brief metadata about the operation is stored in a global object
+                                named
+                                <em>global.meta</em>.</p>
+                        </div>
+                        <div class="segment">
+                            <h3>Exceptions</h3>
+                            <p>For increased speed and convenience there are some features that could not be
+                                delivered as a single string. The list is as follows:</p>
+                            <ul>
+                                <li>Parse mode with
+                                    <strong>parseFormat:parallel</strong>
+                                    will return an object with a key named definition and a key named data. The data
+                                    property will contain an object of arrays by name and the definition object will
+                                    contain and object of identify key names to the data object where each value
+                                    defines the data type.</li>
+                                <li>Parse mode with
+                                    <strong>parseFormat:sequential</strong>
+                                    will a nearly identical object to that described by parseFormat:parallel. The
+                                    only difference is that the data property contains an array of array children
+                                    where each child array is a parsed token and corresponding data fields.</li>
+                                <li>Parse mode with
+                                    <strong>parseFormat:htmltable</strong>
+                                    will return a string of the parse data arranged in an HTML table.</li>
+                                <li>The option
+                                    <strong>nodeasync</strong>
+                                    returns an array where all prior described output is the first index and the
+                                    second index is an object containing brief metadata, otherwise stored in the
+                                    <em>global.meta</em>
+                                    object. The reason for this is to allow meta data collection during parallel
+                                    operations without collision. If this option is ignored then all prior described
+                                    output formats are generated and the meta data is dumped in the global.meta
+                                    object, but that meta data is not reliable. An unintended byproduct of this
+                                    feature is that Pretty Diff version 2 can accomplish nearly complete backwards
+                                    compatibility to Pretty Diff v1 by setting this option to true.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <h2>
                         <button aria-disabled="true" class="heading" role="presentation">API (Options)
                             <span aria-hidden="true">Show</span>
                         </button>
@@ -177,8 +228,7 @@
                                 <ul>
                                     <li>
                                         <h5>Description</h5>
-                                        Used internally to decide if some small JavaScript functions need to be included
-                                        with report output based upon the operating environment.</li>
+                                        Used internally to decide how to format documents and reports.</li>
                                 </ul>
                             </li>
                             <li id="braceline">
@@ -915,7 +965,7 @@
                                         string</li>
                                     <li>
                                         <h5>Accepted values</h5>
-                                        beautify, diff, minify, parse</li>
+                                        analysis, beautify, diff, minify, parse</li>
                                     <li>
                                         <h5>Default</h5>
                                         diff</li>
@@ -971,7 +1021,8 @@
                                 <ul>
                                     <li>
                                         <h5>Description</h5>
-                                        If indentation should be ignored for chains of JavaScript methods that are broken onto multiple lines.</li>
+                                        If indentation should be ignored for chains of JavaScript methods that are
+                                        broken onto multiple lines.</li>
                                     <li>
                                         <h5>Type</h5>
                                         boolean</li>
@@ -981,6 +1032,51 @@
                                     <li>
                                         <h5>As labeled in the HTML tool</h5>
                                         Method Chain Indentation</li>
+                                </ul>
+                            </li>
+                            <li id="nodeasync">
+                                <h4>nodeasync
+                                    <strong>(node-local.js only)</strong>
+                                </h4>
+                                <ul>
+                                    <li>
+                                        <h5>Description</h5>
+                                        The goal of Pretty Diff version 2 is to have the prettydiff function return a
+                                        single string of the desired output and write extranous meta data to a global
+                                        object. Unfortunately, with bulk asynchronous operations, such as
+                                        <em>readmethod:directory</em>
+                                        assignments to a shared global object will result in cross-talk. This means to
+                                        capture and communicate the meta data precisely a new object must be passed in
+                                        on the options and returned from the function, which returning a Pretty Diff
+                                        version 1 styled array of
+                                        <em>[data, meta]</em>
+                                        where data is the desired string output and meta is the meta data object. If you
+                                        are not using the node-local.js file for Node.js interaction and the meta data
+                                        is not important then the prettydiff function will simply return a single
+                                        desired string.</li>
+                                    <li>
+                                        <h5>Type</h5>
+                                        boolean</li>
+                                    <li>
+                                        <h5>Default</h5>
+                                        false</li>
+                                </ul>
+                            </li>
+                            <li id="nodeerror">
+                                <h4>nodeerror
+                                    <strong>(node-local.js only)</strong>
+                                </h4>
+                                <ul>
+                                    <li>
+                                        <h5>Description</h5>
+                                        Sometimes it is informative to log parse errors to the console. This behavior
+                                        can result in excessive noise and break unit tests though.</li>
+                                    <li>
+                                        <h5>Type</h5>
+                                        boolean</li>
+                                    <li>
+                                        <h5>Default</h5>
+                                        false</li>
                                 </ul>
                             </li>
                             <li id="noleadzero">
@@ -1033,6 +1129,49 @@
                                     <li>
                                         <h5>Type</h5>
                                         string</li>
+                                </ul>
+                            </li>
+                            <li id="parseFormat">
+                                <h4>parseFormat</h4>
+                                <ul>
+                                    <li>
+                                        <h5>Description</h5>
+                                        When in parse mode if the output should be arrays of data types (parallel),
+                                        arrays of token records (sequential), or an HTML table.</li>
+                                    <li>
+                                        <h5>Type</h5>
+                                        string</li>
+                                    <li>
+                                        <h5>Default</h5>
+                                        parallel</li>
+                                    <li>
+                                        <h5>Accepted values</h5>
+                                        parallel, sequential, htmltable</li>
+                                    <li>
+                                        <h5>As labeled in the HTML tool</h5>
+                                        Parsed Output Format</li>
+                                </ul>
+                            </li>
+                            <li id="parseSpace">
+                                <h4>parseSpace</h4>
+                                <ul>
+                                    <li>
+                                        <h5>Description</h5>
+                                        If whitespace tokens should be included in the output parse tree. Including
+                                        whitespace tokens in the parse tree is the more standards conformant approach.
+                                        Whitespace tokens can be inferred through examination of the
+                                        <em>lines</em>
+                                        data facet for a given token and tends to make reading the parse tree more
+                                        challenging.</li>
+                                    <li>
+                                        <h5>Type</h5>
+                                        boolean</li>
+                                    <li>
+                                        <h5>Default</h5>
+                                        false</li>
+                                    <li>
+                                        <h5>As labeled in the HTML tool</h5>
+                                        Include Whitespace Tokens</li>
                                 </ul>
                             </li>
                             <li id="preserve">
@@ -1120,22 +1259,6 @@
                                     <li>
                                         <h5>Accepted values</h5>
                                         auto, directory, file, filescreen, screen, subdirectory</li>
-                                </ul>
-                            </li>
-                            <li id="report">
-                                <h4>report
-                                    <strong>(node-local.js only)</strong>
-                                </h4>
-                                <ul>
-                                    <li>
-                                        <h5>Description</h5>
-                                        Determines if a meta data report should be generated.</li>
-                                    <li>
-                                        <h5>Type</h5>
-                                        boolean</li>
-                                    <li>
-                                        <h5>Default</h5>
-                                        true</li>
                                 </ul>
                             </li>
                             <li id="selectorlist">
@@ -1521,16 +1644,6 @@
                             <p>Various options are available for greater portability</p>
                             <ul>
                                 <li>
-                                    <h4>NPM</h4>
-                                    <p>Global install, run it anywhere on the command line using global command
-                                        <em>prettydiff</em>
-                                        <code>npm install prettydiff -g</code>
-                                    </p>
-                                    <p>Local install, better for testing and developing the application
-                                        <code>npm install prettydiff</code>
-                                    </p>
-                                </li>
-                                <li>
                                     <h4>Bower</h4>
                                     <p>
                                         <code>bower install prettydiff</code>
@@ -1593,6 +1706,9 @@
                                                 <li>diff library -
                                                     <a href="http://prettydiff.com/lib/diffview.js">http://prettydiff.com/lib/diffview.js</a>
                                                 </li>
+                                                <li>finalFile (HTML template) library -
+                                                    <a href="http://prettydiff.com/lib/finalFile.js">http://prettydiff.com/lib/finalFile.js</a>
+                                                </li>
                                                 <li>JavaScript library -
                                                     <a href="http://prettydiff.com/lib/jspretty.js">http://prettydiff.com/lib/jspretty.js</a>
                                                 </li>
@@ -1620,6 +1736,8 @@
                                     </ul>
                                 </li>
                             </ul>
+                            <p>Pretty Diff is no longer published to NPM. For more information please see:
+                                <a href="https://github.com/prettydiff/prettydiff/issues/291" style="display:block">https://github.com/prettydiff/prettydiff/issues/291</a>.</p>
                         </div>
                         <div class="segment" id="runcode">
                             <h3>Run the Code</h3>
@@ -1637,14 +1755,14 @@
                                 </li>
                                 <li>
                                     <p>Run it on the command line with Node.js and local NPM installation
-                                        <code>cd node_modules/prettydiff</code>
-                                        <code>node api/node_modules.js option:value option:value</code>
+                                        <code>cd prettydiff</code>
+                                        <code>node api/node-local.js option:value option:value</code>
                                     </p>
                                 </li>
                                 <li>
                                     <p>Run it on the command line with Node.js and Bower installation
                                         <code>cd bower_components/prettydiff</code>
-                                        <code>node api/node_modules.js option:value option:value</code>
+                                        <code>node api/node-local.js option:value option:value</code>
                                     </p>
                                 </li>
                                 <li>
@@ -1914,14 +2032,23 @@
                     <div class="content-hide">
                         <div class="segment">
                             <h3>Contribution Guide</h3>
-                            <p>For questions, features, or bug reports please open an issue on <a href="https://github.com/prettydiff/prettydiff/issues">Github</a>.</p>
+                            <p>For questions, features, or bug reports please open an issue on
+                                <a href="https://github.com/prettydiff/prettydiff/issues">Github</a>.</p>
                             <p>If you wish to propose code changes then follow these steps:</p>
                             <ol>
                                 <li>Fork the repository on Github.</li>
-                                <li>Clone your forked repository to your local machine: <code>git clone https://github.com/username/prettydiff.git</code></li>
-                                <li>Create a new branch for your changes: <code>git checkout -b branchName</code></li>
-                                <li>Run the unit tests to verify if your changes are breaking things: <code>npm install</code></li>
-                                <li>Open a pull request on Github.  Ensure there are comments in the pull request explaining the what the change does and why it is needed.  Including additional unit tests with the pull request earns extra love.</li>
+                                <li>Clone your forked repository to your local machine:
+                                    <code>git clone https://github.com/username/prettydiff.git</code>
+                                </li>
+                                <li>Create a new branch for your changes:
+                                    <code>git checkout -b branchName</code>
+                                </li>
+                                <li>Run the unit tests to verify if your changes are breaking things:
+                                    <code>node test/lint.js</code>
+                                </li>
+                                <li>Open a pull request on Github. Ensure there are comments in the pull request
+                                    explaining the what the change does and why it is needed. Including additional
+                                    unit tests with the pull request earns extra love.</li>
                             </ol>
                         </div>
                         <div class="segment">
@@ -1929,64 +2056,88 @@
                             <h4>Running the Tests</h4>
                             <p>The unit tests run using NPM scripts and require JSLint as a dev dependency.
                                 Run the unit tests with the following commands:
-                                <code>cd node_modules/prettydiff</code>
-                                <code>npm install</code>
-                                <code>npm test</code>
+                                <code>cd prettydiff</code>
+                                <code>node test/lint.js</code>
                             </p>
                             <p>The
                                 <a href="test/lint.js">unit test script</a>
-                                checks for the latest version of JSLint each time it runs, so the
-                                <em>npm install</em>
-                                command only needs to be run once each time a new version of Pretty Diff is
-                                installed.</p>
+                                checks for the latest version of JSLint once per day that it runs.</p>
                             <p>The unit tests run in phases, which are different kinds of tests. The name
                                 and order of the test phases are indicated in an array named
                                 <em>order</em>
                                 located at the top of the test script file. Alter that array to run only certain
                                 types of unit tests.</p>
-                            <h4>Known Unit Test Problems</h4>
-                            <ol>
-                                <li>
-                                    <code>npm ERR! Cannot read property 'target' of null</code>
-                                    <p>This is an unresolved NPM error
-                                        <a href="https://github.com/npm/npm/issues/10686#issuecomment-187254105">https://github.com/npm/npm/issues/10686#issuecomment-187254105</a>
-                                    </p>
-                                </li>
-                            </ol>
                         </div>
                         <div class="segment">
                             <h3>New Option Guidance</h3>
                             <h4>Rapid Experimentation</h4>
-                            <p>The easiest way to experiment with adding new options is to arbitrarily add an option assign and value to the top of the given library.  For example, if you wish to add a new JavaScript option then just before the <em>tokenizer</em> include a line of code like: <code>option.myNewOptionName = true</code>  A new option reference exists that is avilable through out the library that can allow or suppress new logic with minimal regression.  This line of code will have to be removed later, but it allows for rapid experimentation.</p>
+                            <p>The easiest way to experiment with adding new options is to arbitrarily add
+                                an option assign and value to the top of the given library. For example, if you
+                                wish to add a new JavaScript option then just before the
+                                <em>tokenizer</em>
+                                include a line of code like:
+                                <code>option.myNewOptionName = true</code>
+                                A new option reference exists that is avilable through out the library that can
+                                allow or suppress new logic with minimal regression. This line of code will have
+                                to be removed later, but it allows for rapid experimentation.</p>
                             <h4>Checklist</h4>
-                            <p>The following checklist explains how to expand the documentation and supported APIs of Pretty Diff for new options.</p>
+                            <p>The following checklist explains how to expand the documentation and
+                                supported APIs of Pretty Diff for new options.</p>
                             <ul>
-                                <li>prettydiff.js - Add new option and default values/type to the <em>options</em> object.</li>
-                                <li>documentation.xhtml - Define the new option in the documentation <a href="#options">options</a> section.</li>
+                                <li>prettydiff.js - Add new option and default values/type to the
+                                    <em>options</em>
+                                    object.</li>
+                                <li>documentation.xhtml - Define the new option in the documentation
+                                    <a href="#options">options</a>
+                                    section.</li>
                                 <li>Web tool (if not a Node.js only option)
                                     <ul>
-                                        <li>index.xhtml - Some options are mode specific while others aren't.  Options should be added to the appropriate language section of each supported mode.</li>
-                                        <li>api/dom.js - Add option support to the supported language modes of <em>pd.event.recycle</em>.  The supported language modes are defined as functions: <em>dom__event_recycle_beautify</em>, <em>dom__event_recycle_diff</em>, <em>dom__event_recycle_minify</em>, <em>dom__event_recycle_parse</em>.</li>
-                                        <li>api/dom.js - Add state support by including the option ids to <em>pd.app.options</em>.</li>
+                                        <li>index.xhtml - Some options are mode specific while others aren't. Options
+                                            should be added to the appropriate language section of each supported mode.</li>
+                                        <li>api/dom.js - Add option support to the supported language modes of
+                                            <em>pd.event.recycle</em>. The supported language modes are defined as functions:
+                                            <em>dom__event_recycle_beautify</em>,
+                                            <em>dom__event_recycle_diff</em>,
+                                            <em>dom__event_recycle_minify</em>,
+                                            <em>dom__event_recycle_parse</em>.</li>
+                                        <li>api/dom.js - Add state support by including the option ids to
+                                            <em>pd.app.options</em>.</li>
                                     </ul>
                                 </li>
                                 <li>api/prettydiff.js - WSH support (if not a Node.js only option)
                                     <ul>
-                                        <li>Add a description of the new option to the documentation in <em>outerror</em> function.</li>
-                                        <li>Add functional support to the list of options (near the bottom of the file) usings the convention <em>WScript.Arguments.Named</em>.</li>
+                                        <li>Add a description of the new option to the documentation in
+                                            <em>outerror</em>
+                                            function.</li>
+                                        <li>Add functional support to the list of options (near the bottom of the file)
+                                            usings the convention
+                                            <em>WScript.Arguments.Named</em>.</li>
                                     </ul>
                                 </li>
                                 <li>api/node-local.js - Node.js support
                                     <ul>
-                                        <li>Add option name and a default value/type to the declared <em>options</em> object.</li>
-                                        <li>Add the option to the internal documentation in the <em>pdNodeLocal__error</em> function.</li>
-                                        <li>Add functional support for the new option to the loop near the top of function <em>pdNodeLocal__start</em>.</li>
+                                        <li>Add option name and a default value/type to the declared
+                                            <em>options</em>
+                                            object.</li>
+                                        <li>Add the option to the internal documentation in the
+                                            <em>pdNodeLocal__error</em>
+                                            function.</li>
+                                        <li>Add functional support for the new option to the loop near the top of function
+                                            <em>pdNodeLocal__start</em>.</li>
                                     </ul>
                                 </li>
-                                <li>The various libraries are written for independent execution, so each gets their own default definition for supported options, such as: <em>jspretty__options</em>. in the lib/jspretty.js file.  New options need to be added in these locations where appropriate.</li>
+                                <li>The various libraries are written for independent execution, so each gets
+                                    their own default definition for supported options, such as:
+                                    <em>jspretty__options</em>. in the lib/jspretty.js file. New options need to be
+                                    added in these locations where appropriate.</li>
                             </ul>
                             <h4>Additional Guidance</h4>
-                            <p>Keep things alphabetized where possible.  Ideal option names are a balance of uniquely and specifically descriptive but also as short as possible.  Options should ideally support a single data type, though exceptions can be made.  Frequently run the unit tests to determine if the new option causses regression or understand if regression is necessary.  Never be afraid to open a Github issue or send an email when further guidance is demanded or questions arise.</p>
+                            <p>Keep things alphabetized where possible. Ideal option names are a balance of
+                                uniquely and specifically descriptive but also as short as possible. Options
+                                should ideally support a single data type, though exceptions can be made.
+                                Frequently run the unit tests to determine if the new option causses regression
+                                or understand if regression is necessary. Never be afraid to open a Github issue
+                                or send an email when further guidance is demanded or questions arise.</p>
                         </div>
                     </div>
                 </div>
@@ -2189,6 +2340,7 @@
                 </div>
             </section>
         </div>
+        <script src="lib/finalFile.js" type="application/javascript"></script>
         <script src="api/dom.js" type="application/javascript"></script>
         <script src="lib/safeSort.js" type="application/javascript"></script>
         <script src="lib/csspretty.js" type="application/javascript"></script>

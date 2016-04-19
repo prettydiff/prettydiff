@@ -2699,7 +2699,7 @@ if (typeof jQuery == "undefined") {
                         };
                     jQuery.event.special[fix] = {
                         setup   : function () {
-                            if (attaches ++=== 0) {
+                            if (attaches++ === 0) {
                                 document.addEventListener(orig, handler, true);
                             }
                         },
@@ -4270,9 +4270,7 @@ if (typeof jQuery == "undefined") {
         }
         function sibling(cur, dir) {
             do {
-                {
-                    cur = cur[dir];
-                }
+                cur = cur[dir];
             } while (cur && cur.nodeType !== 1);
             return cur;
         }
@@ -6040,7 +6038,7 @@ if (typeof jQuery == "undefined") {
                     .type
                     .toUpperCase();
                 s.hasContent = !rnoContent.test(s.type);
-                if (fireGlobals && jQuery.active ++=== 0) {
+                if (fireGlobals && jQuery.active++ === 0) {
                     jQuery
                         .event
                         .trigger("ajaxStart");
@@ -6565,9 +6563,7 @@ if (typeof jQuery == "undefined") {
                             if (unit !== "px" && start) {
                                 start = jQuery.css(tween.elem, prop, true) || end || 1;
                                 do {
-                                    {
-                                        scale = scale || ".5";
-                                    }
+                                    scale = scale || ".5";
                                     start = start / scale;
                                     jQuery.style(tween.elem, prop, start + unit);
                                 } while (scale !== (scale = tween.cur() / target) && scale !== 1 && --maxIterations);
@@ -16896,9 +16892,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     month = 1;
                     day   = doy;
                     do {
-                        {
-                            dim = this._getDaysInMonth(year, month - 1);
-                        }
+                        dim = this._getDaysInMonth(year, month - 1);
                         if (day <= dim) {
                             break;
                         }
@@ -30634,7 +30628,7 @@ if (jQuery) {
                     var count  = 0,
                         length = s.length,
                         match;
-                    while (pattern.match(s) && count ++< length) {
+                    while (pattern.match(s) && count++ < length) {
                         match = pattern.exec(s);
                         s     = this.gsub(match[2], obj[match[3]], s).str;
                     }

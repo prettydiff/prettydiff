@@ -3083,8 +3083,8 @@
                                 .model(YAHOO.lang.JSON.parse(history));
                             if (defaultLob == namespace.historyObject.lob) {
                                 // Default wizard needs to be shown - already rendered on the page Let's start
-                                // up the wizard by calling it's initializer function (note the naming convention
-                                // wizardType+'Fn')
+                                // up the wizard by calling it's initializer function (note the naming
+                                // convention wizardType+'Fn')
                                 eval("namespace.wizardObj = " + namespace.historyObject.lob + "Fn(namespace.historyObject);");
 
                                 // for dropdown, initial the destination based on the current origin/initial
@@ -4250,9 +4250,9 @@
 
             var s_account = "expedia80001";
 
-            // We only want to log s_BrandEAPID for a select group of tpid/eapid pairs. Enter
-            // the pair below and set the value to the logged eapid s_BrandEAPID table,
-            // lookup is 'expedia<Tpid>-<EAPID>'
+            // We only want to log s_BrandEAPID for a select group of tpid/eapid pairs.
+            // Enter the pair below and set the value to the logged eapid s_BrandEAPID
+            // table, lookup is 'expedia<Tpid>-<EAPID>'
             s_BrandEAPIDTable                     = new Object();
             s_BrandEAPIDTable["expedia30035-327"] = "327";
             s_BrandEAPIDTable["expedia30036-392"] = "392";

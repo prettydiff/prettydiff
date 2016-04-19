@@ -1448,7 +1448,7 @@
                 if (i <= primIndex) {
                     --primIndex;
                 }
-                ranges.splice(--i, 2, new Range(inv
+                ranges.splice(i -= 1, 2, new Range(inv
                     ? to
                     : from, inv
                     ? from

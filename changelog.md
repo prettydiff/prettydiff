@@ -1,5 +1,28 @@
 # Pretty Diff change log
 
+## v2.0.0
+
+* Fixed some missing semicolon insertion during JavaScript parsing.
+* Fixed a curly brace insertion bug in JavaScript do/while loops.
+* Fixes a javascript defect in generated diff report HTML files.
+* Fixes a defect in "varword: list" where comments precede the reference.
+* Option varword now accounts for var, let, and const
+* Expands JavaScript conversion of operators `++` and `--` under the *correct* option.
+* Fixes #294
+* Fixes #293
+* Modified markup `</li>` insertion logic
+* Updated test runner file system simulation to work correctly on Windows.
+* *new option* - "nodeasync".  Asynchronous bulk operations like reading from a directory produces cross-talk when assigning meta data to a global object.  The desired goal of version 2 is to have the prettydiff function return a single string and meta data to a global object.  In this case, for reliability, the prettydiff function will return an array of [data, meta] where data is the desired string output and meta is the metadata object similar to Pretty Diff version 1.
+* *new option* - "nodeerror".  Sometimes it is desirable and informative to log parse errors to the console.  Such a feature can become excessive noise and break unit tests though.
+* *new option* - "parseRecord".  If false the output of mode "parse" is a collection of *parallel* data types. If the option is true the output is a *sequential* array where each index is a child array of data respective to a given parsed token.
+* *new option* - "parseSpace". Determines whether white space content tokens should exist in the parse tree output of the parse mode.
+* Enabling accessibility analysis and reporting in the new "analysis" mode.
+* **Breaking change** - Updated mode "parse" to output an object with two keys: *definition* and *data*.  The definition property stores a text description of each data type supplied in the data property.  The data property stores the parsed data.
+* **Breaking change** - Added mode "analysis" to generate reports of code evaluation.  The program now outputs only the desired data instead of an array of desired data plus a report.
+* **Breaking change** - Due to the other changes the Node.js only option *report* is removed.
+* **Breaking change** - There is no longer a `global.report` property to store extra information. This is replaced with `global.meta` which stores parse errors, execution duration, number of differences, input size, output size, and can be extended to store additional metadata into the future.
+* **Breaking change - Pretty Diff will no longer publish to NPM.**
+
 ## v1.16.37
 
 * Stronger CSS edge case parsing support
