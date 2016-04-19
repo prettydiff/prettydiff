@@ -128,20 +128,20 @@
                                     require two code samples.</dd>
                                 <dt>beautify</dt>
                                 <dd>Pretty Diff has progressively moved from community driven dependencies to
-                                    custom parsers to accomplish code beautification. Currently, the project
-                                    provides some amount of code analysis as an additional product of
-                                    beautification.</dd>
+                                    custom parsers to accomplish code beautification for a diversity of features and
+                                    requests.</dd>
                                 <dt>minify</dt>
                                 <dd>Each of Pretty Diff's beautification libraries has a minify feature. The
                                     goal is to reduce code size but only to such an extent that the code can be
                                     restored to its prior state through beautification, excluding code comments.</dd>
                                 <dt>parse</dt>
-                                <dd>Most code parsers generate an final product called an Abstract Syntax Tree
+                                <dd>Most code parsers generate a final product called an Abstract Syntax Tree
                                     (AST). Pretty Diff, instead, produces parallel arrays for its internal
                                     operations. The parse mode simply makes these data arrays available for
                                     independent analysis.</dd>
                                 <dt>analysis</dt>
-                                <dd>HTML formatted reports evaluating the code.  The reports differ in content and structure by the parser(s) used.</dd>
+                                <dd>HTML formatted reports evaluating the code. The reports differ in content
+                                    and structure by the parser(s) used.</dd>
                             </dl>
                         </div>
                         <div class="segment" id="languages">
@@ -175,16 +175,42 @@
                     <div class="content-hide">
                         <div class="segment">
                             <h3>General Output</h3>
-                            <p>New in version 2 is that most opertions will output a single string.  This makes the application more predictable and easier to integrate into other applications.</p>
+                            <p>New in version 2 is that most opertions will output a single string. This
+                                makes the application more predictable and easier to integrate into other
+                                applications. Brief metadata about the operation is stored in a global object
+                                named
+                                <em>global.meta</em>.</p>
                         </div>
                         <div class="segment">
                             <h3>Exceptions</h3>
-                            <p>For increased speed and convenience there are some features that could not be delivered as a single string.  The list is as follows:</p>
+                            <p>For increased speed and convenience there are some features that could not be
+                                delivered as a single string. The list is as follows:</p>
                             <ul>
-                                <li>Parse mode with <strong>parseFormat:parallel</strong> will return an object with a key named definition and a key named data.  The data property will contain an object of arrays by name and the definition object will contain and object of identify key names to the data object where each value defines the data type.</li>
-                                <li>Parse mode with <strong>parseFormat:sequential</strong> will a nearly identical object to that described by parseFormat:parallel.  The only difference is that the data property contains an array of array children where each child array is a parsed token and corresponding data fields.</li>
-                                <li>Parse mode with <strong>parseFormat:htmltable</strong> will return a string of the parse data arranged in an HTML table.</li>
-                                <li>The option <strong>nodeasync</strong> returns an array where all prior described output is the first index and the second index is an object containing brief metadata, otherwise stored in the <em>global.meta</em> object.  The reason for this is to allow meta data collection during parallel operations without collision.  If this option is ignored then all prior described output formats are generated and the meta data is dumped in the global.meta object, but that meta data is not reliable.</li>
+                                <li>Parse mode with
+                                    <strong>parseFormat:parallel</strong>
+                                    will return an object with a key named definition and a key named data. The data
+                                    property will contain an object of arrays by name and the definition object will
+                                    contain and object of identify key names to the data object where each value
+                                    defines the data type.</li>
+                                <li>Parse mode with
+                                    <strong>parseFormat:sequential</strong>
+                                    will a nearly identical object to that described by parseFormat:parallel. The
+                                    only difference is that the data property contains an array of array children
+                                    where each child array is a parsed token and corresponding data fields.</li>
+                                <li>Parse mode with
+                                    <strong>parseFormat:htmltable</strong>
+                                    will return a string of the parse data arranged in an HTML table.</li>
+                                <li>The option
+                                    <strong>nodeasync</strong>
+                                    returns an array where all prior described output is the first index and the
+                                    second index is an object containing brief metadata, otherwise stored in the
+                                    <em>global.meta</em>
+                                    object. The reason for this is to allow meta data collection during parallel
+                                    operations without collision. If this option is ignored then all prior described
+                                    output formats are generated and the meta data is dumped in the global.meta
+                                    object, but that meta data is not reliable. An unintended byproduct of this
+                                    feature is that Pretty Diff version 2 can accomplish nearly complete backwards
+                                    compatibility to Pretty Diff v1 by setting this option to true.</li>
                             </ul>
                         </div>
                     </div>
@@ -1015,7 +1041,19 @@
                                 <ul>
                                     <li>
                                         <h5>Description</h5>
-                                        The goal of Pretty Diff version 2 is to have the prettydiff function return a single string of the desired output and write extranous meta data to a global object. Unfortunately, with bulk asynchronous operations, such as <em>readmethod:directory</em> assignments to a shared global object will result in cross-talk.  This means to capture and communicate the meta data precisely a new object must be passed in on the options and returned from the function, which returning a Pretty Diff version 1 styled array of <em>[data, meta]</em> where data is the desired string output and meta is the meta data object.  If you are not using the node-local.js file for Node.js interaction and the meta data is not important then the prettydiff function will simply return a single desired string.</li>
+                                        The goal of Pretty Diff version 2 is to have the prettydiff function return a
+                                        single string of the desired output and write extranous meta data to a global
+                                        object. Unfortunately, with bulk asynchronous operations, such as
+                                        <em>readmethod:directory</em>
+                                        assignments to a shared global object will result in cross-talk. This means to
+                                        capture and communicate the meta data precisely a new object must be passed in
+                                        on the options and returned from the function, which returning a Pretty Diff
+                                        version 1 styled array of
+                                        <em>[data, meta]</em>
+                                        where data is the desired string output and meta is the meta data object. If you
+                                        are not using the node-local.js file for Node.js interaction and the meta data
+                                        is not important then the prettydiff function will simply return a single
+                                        desired string.</li>
                                     <li>
                                         <h5>Type</h5>
                                         boolean</li>
@@ -1031,7 +1069,8 @@
                                 <ul>
                                     <li>
                                         <h5>Description</h5>
-                                        Sometimes it is informative to log parse errors to the console.  This behavior can result in excessive noise and break unit tests though.</li>
+                                        Sometimes it is informative to log parse errors to the console. This behavior
+                                        can result in excessive noise and break unit tests though.</li>
                                     <li>
                                         <h5>Type</h5>
                                         boolean</li>
@@ -1697,6 +1736,8 @@
                                     </ul>
                                 </li>
                             </ul>
+                            <p>Pretty Diff is no longer published to NPM. For more information please see:
+                                <a href="https://github.com/prettydiff/prettydiff/issues/291" style="display:block">https://github.com/prettydiff/prettydiff/issues/291</a>.</p>
                         </div>
                         <div class="segment" id="runcode">
                             <h3>Run the Code</h3>
