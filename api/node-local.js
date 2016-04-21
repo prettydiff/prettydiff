@@ -739,6 +739,7 @@ Examples:
                 count    = 1,
                 writing  = function pdNodeLocal__fileWrite_writing(ending, dataA) {
                     if (dataA.binary === true) {
+                        //binary
                         fs
                             .writeFile(dataA.finalpath, dataA.file, function pdNodeLocal__fileWrite_writing_writeFileBinary(err) {
                                 if (err !== null) {
@@ -751,12 +752,13 @@ Examples:
                                 }
                             });
                     } else if (dataA.file === "") {
+                        //empty files
                         fs
                             .writeFile(dataA.finalpath + ending, "", function pdNodeLocal__fileWrite_writing_writeFileEmpty(err) {
                                 if (err !== null) {
                                     console.log(lf + "Error writing empty output." + lf);
                                     console.log(err);
-                                } else if (method === "file") {
+                                } else if (method === "file" && options.endquietly !== "quiet") {
                                     console.log(lf + "Empty file successfully written to file.");
                                 }
                                 total[1] += 1;
@@ -770,7 +772,7 @@ Examples:
                                 if (err !== null) {
                                     console.log(lf + "Error writing file output." + lf);
                                     console.log(err);
-                                } else if (method === "file") {
+                                } else if (method === "file" && options.endquietly !== "quiet") {
                                     if (ending.indexOf("-report") === 0) {
                                         console.log(lf + "Report successfully written to file.");
                                     } else {
@@ -806,8 +808,14 @@ Examples:
                 };
             options.source = sfiledump[data.index];
             if (options.mode === "diff") {
-                data.finalpath = address.oabspath + dirs.join("__") + "__" + filename;
+                if (method === "file") {
+                    data.finalpath = options.output;
+                } else {
+                    data.finalpath = address.oabspath + dirs.join("__") + "__" + filename;
+                }
                 options.diff   = dfiledump[data.index];
+            } else if (method === "file") {
+                data.finalpath = options.output;
             } else {
                 data.finalpath = address.oabspath + dirs.join(path.sep);
             }
@@ -1421,7 +1429,9 @@ Examples:
                     address.dorgpath = itempath;
                 }
                 if (name === "output") {
-                    if (x === ".") {
+                    if (method === "file") {
+                        outready = true;
+                    } else if (x === ".") {
                         address.oabspath = cwd;
                         address.oorgpath = cwd;
                         outready         = true;
@@ -1676,10 +1686,15 @@ Examples:
                         cliflag = false,
                         status  = function pdNodeLocal__start_stat_init_status() {
                             var tempaddy = "";
-                            // status codes -1 is not file or directory 0 is status pending 1 is directory 2
-                            // is file 3 is file via http/s
+                            // status codes
+                            //* -1 is not file or directory
+                            //* 0 is status pending
+                            //* 1 is directory
+                            //* 2 is file 3 is file via http/s
                             //
-                            //dir[0] - diff dir[1] - output dir[2] - source
+                            //* dir[0] - diff
+                            //* dir[1] - output
+                            //* dir[2] - source
                             if (dir[2] === 0) {
                                 return;
                             }

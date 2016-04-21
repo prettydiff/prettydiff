@@ -200,6 +200,11 @@
                                 <li>Parse mode with
                                     <strong>parseFormat:htmltable</strong>
                                     will return a string of the parse data arranged in an HTML table.</li>
+                                <li>Diff mode with
+                                    <strong>diffcli:true</strong>
+                                    will return an array of numbers representing the locations of differences from
+                                    the supplied code samples for custom processing and formatting on the command
+                                    line.</li>
                                 <li>The option
                                     <strong>nodeasync</strong>
                                     returns an array where all prior described output is the first index and the
@@ -1125,7 +1130,7 @@
                                 <ul>
                                     <li>
                                         <h5>Description</h5>
-                                        Determines the location of where files should be saved.</li>
+                                        Determines the location of where files should be saved.  This is required if the <a href="#readmethod">readmethod</a> option has a value of: auto, directory, file, or subdirectory. When the readmethod option has other values, such as screen or filescreen, this option is not used.  If the readmethod option has a value of <em>file</em> the value of this option is used to create or overwrite a file at the specified location.  For all other readmethod values the value of this option designates the location of a directory.</li>
                                     <li>
                                         <h5>Type</h5>
                                         string</li>
@@ -1749,12 +1754,7 @@
                                         index.xhtml file.</p>
                                 </li>
                                 <li>
-                                    <p>Run it on the command line with Node.js and global NPM installation
-                                        <code>prettydiff option:value option:value</code>
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>Run it on the command line with Node.js and local NPM installation
+                                    <p>Run it on the command line with Node.js
                                         <code>cd prettydiff</code>
                                         <code>node api/node-local.js option:value option:value</code>
                                     </p>
@@ -2054,7 +2054,7 @@
                         <div class="segment">
                             <h3>Unit Tests</h3>
                             <h4>Running the Tests</h4>
-                            <p>The unit tests run using NPM scripts and require JSLint as a dev dependency.
+                            <p>The unit tests require JSLint as a dev dependency.
                                 Run the unit tests with the following commands:
                                 <code>cd prettydiff</code>
                                 <code>git submodule init</code>

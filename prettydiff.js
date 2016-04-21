@@ -964,11 +964,11 @@ var prettydiff = function prettydiff_(api) {
                     global.meta = meta;
                     return finalProduct;
                 };
-            if (options.source === "") {
+            if (options.source === "" && (options.mode === "beautify" || options.mode === "minify" || options.mode === "analysis" || (options.mode === "diff" && options.diffcli === false) || (options.mode === "parse" && options.parseFormat === "htmltable"))) {
                 metaerror = "options.source is empty!";
                 return output("");
             }
-            if (options.mode === "diff") {
+            if (options.mode === "diff" && options.diffcli === false) {
                 if (options.diff === "") {
                     metaerror = "options.mode is 'diff' and options.diff is empty!";
                     return output("");
