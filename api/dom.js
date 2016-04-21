@@ -1281,9 +1281,11 @@ global.meta = {
                     } else if (id === "jsscope-html") {
                         data = ["jsscope", "true"];
                     } else if (id === "jsscope-no") {
-                        data = ["jsscope", "false"];
+                        data = ["jsscope", "none"];
                     } else if (id === "jsscope-yes") {
-                        data = ["jsscope", "true"];
+                        data = ["jsscope", "html"];
+                    } else if (id === "jsscope-html") {
+                        data = ["jsscope", "report"];
                     } else if (id === "jsspaced-no" || id === "jsspace-no") {
                         data = ["jsspace", "false"];
                     } else if (id === "jsspaced-yes" || id === "jsspace-yes") {
