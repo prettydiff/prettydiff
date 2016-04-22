@@ -6,10 +6,10 @@
     "use strict";
     var order      = [
             "lint", //        - run jslint on all unexcluded files in the repo
-            //"packagejson", // - beautify the package.json file and compare it to itself
-            //"coreunits", //   - run a variety of files through the application and compare the result to a known good file
+            "packagejson", // - beautify the package.json file and compare it to itself
+            "coreunits", //   - run a variety of files through the application and compare the result to a known good file
             //"diffunits", //   - unit tests for the diff process
-            //"simulations" //  - simulate a variety of execution steps and options from the command line
+            "simulations" //  - simulate a variety of execution steps and options from the command line
         ],
         startTime  = Date.now(),
         fs         = require("fs"),
@@ -490,8 +490,9 @@
                                         fs
                                             .readFile("JSLint/jslint.js", "utf8", function taskrunner_lint_install_stat_childtask_child_readFile(erread, data) {
                                                 var moduleready = function taskrunner_lint_install_stat_childtask_child_callback() {
+                                                    var todaystring = "/*global exports*/var today=" + date + ";exports.date=today;";
                                                     jslint = require(process.cwd() + "/JSLint/jslint.js");
-                                                    fs.writeFile("test/today.js", "/*global exports*/var today=" + date + ";exports.date=today;", "utf8", function (werr) {
+                                                    fs.writeFile("test/today.js", todaystring, function (werr) {
                                                         if (werr !== null && werr !== undefined) {
                                                             errout(werr);
                                                         }
