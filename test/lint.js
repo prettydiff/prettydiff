@@ -5,11 +5,11 @@
 (function taskrunner() {
     "use strict";
     var order      = [
-            //"lint", //        - run jslint on all unexcluded files in the repo
+            "lint", //        - run jslint on all unexcluded files in the repo
             //"packagejson", // - beautify the package.json file and compare it to itself
             //"coreunits", //   - run a variety of files through the application and compare the result to a known good file
             //"diffunits", //   - unit tests for the diff process
-            "simulations" //  - simulate a variety of execution steps and options from the command line
+            //"simulations" //  - simulate a variety of execution steps and options from the command line
         ],
         startTime  = Date.now(),
         fs         = require("fs"),
@@ -3459,7 +3459,7 @@
                                                         ".colorchange;//]]>\r\n</script></body></html>"
                                         }
                                     ]
-                                }/*, {
+                                }, {
                                     group: "write to new locations",
                                     units: [
                                         {
@@ -3483,8 +3483,8 @@
                                     group: "file system checks",
                                     units: [
                                         {
-                                            check : "cat test/simulation/inch/inch.json",
-                                            name  : "print out asdf/inch.json",
+                                            check : "cat test/simulation/inch.json",
+                                            name  : "print out test/simulation/inch.json",
                                             verify: "{\n    \"files\": {\n        \"included\": [\"prettydiff.js\"]\n    }\n}"
                                         }, {
                                             check : "ls test/simulation/api",
@@ -3528,7 +3528,7 @@
                                                         "l\"}}"
                                         }
                                     ]
-                                }*/
+                                }
                             ]
                         }
                     ],
