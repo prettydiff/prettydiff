@@ -333,7 +333,7 @@ var prettydiff = function prettydiff_(api) {
                     // immediately before a value's decimal.
                     noleadzero     : (api.noleadzero === true || api.noleadzero === "true"),
                     //objsort will alphabetize object keys in JavaScript
-                    objsort        : (api.objsort === "all" || api.objsort === "js" || api.objsort === "css" || api.objsort === "css" || api.objsort === true || api.objsort === "true")
+                    objsort        : (api.objsort === "all" || api.objsort === "js" || api.objsort === "css" || api.objsort === true || api.objsort === "true")
                         ? api.objsort
                         : "none",
                     //parseFormat - determine how the parse tree should be organized and formatted
@@ -631,58 +631,38 @@ var prettydiff = function prettydiff_(api) {
                     for (c = 0; c < b; c += 1) {
                         if (typeof build[c][1] === "string") {
                             build[c][0] = build[c][0].replace("api.", "");
-                            if (build[c][0] === "braces" || build[c][0] === "indent") {
-                                if (build[c][1] === "knr") {
-                                    options.braces = "knr";
-                                } else if (build[c][1] === "allman") {
-                                    options.braces = "allman";
-                                }
-                            } else if (build[c][0] === "comments") {
-                                if (build[c][1] === "indent") {
-                                    options.comments = "indent";
-                                } else if (build[c][1] === "noindent") {
-                                    options.comments = "noindent";
-                                }
-                            } else if (build[c][0] === "diffview") {
-                                if (build[c][1] === "sidebyside") {
-                                    options.diffview = "sidebyside";
-                                } else if (build[c][1] === "inline") {
-                                    options.diffview = "inline";
-                                }
+                            if ((build[c][0] === "braces" || build[c][0] === "indent") && (build[c][1] === "knr" || build[c][1] === "allman")) {
+                                options.braces = "allman";
+                            } else if (build[c][0] === "color" && typeof b[c][1] === "string" && b[c][1] !== "") {
+                                options.color = b[c][1];
+                            } else if (build[c][0] === "comments" && (build[c][1] === "indent" || build[c][1] === "noindent")) {
+                                options.comments = "noindent";
+                            } else if (build[c][0] === "diffview" && (build[c][1] === "sidebyside" || build[c][1] === "inline")) {
+                                options.diffview = build[c][1];
                             } else if (build[c][0] === "lang" || build[c][0] === "langdefault") {
                                 options[build[c][0]] = language.setlangmode(build[c][1]);
-                            } else if (build[c][0] === "mode") {
-                                if (build[c][1] === "beautify") {
-                                    options.mode = "beautify";
-                                } else if (build[c][1] === "minify") {
-                                    options.mode = "minify";
-                                } else if (build[c][1] === "diff") {
-                                    options.mode = "diff";
-                                } else if (build[c][1] === "parse") {
-                                    options.mode = "parse";
-                                }
-                            } else if (build[c][0] === "quoteConvert") {
-                                if (build[c][1] === "single") {
-                                    options.quoteConvert = "single";
-                                } else if (build[c][1] === "double") {
-                                    options.quoteConvert = "double";
-                                } else if (build[c][1] === "none") {
-                                    options.quoteConvert = "none";
-                                }
-                            } else if (build[c][0] === "style") {
-                                if (build[c][1] === "indent") {
-                                    options.style = "indent";
-                                } else if (build[c][1] === "noindent") {
-                                    options.style = "noindent";
-                                }
-                            } else if (build[c][0] === "varword") {
-                                if (build[c][1] === "each") {
-                                    options.varword = "each";
-                                } else if (build[c][1] === "list") {
-                                    options.varword = "list";
-                                } else if (build[c][1] === "none") {
-                                    options.varword = "none";
-                                }
+                            } else if (build[c][0] === "mode" && (build[c][1] === "beautify" || build[c][1] === "minify" || build[c][1] === "diff" || build[c][1] === "parse")) {
+                                options.mode = build[c][1];
+                            } else if ((build[c][0] === "formatArray" || build[c][0] === "formatObject") && (build[c][1] === "default" || build[c][1] === "indent" || build[c][1] === "inline")) {
+                                options[build[c][0]] = build[c][1];
+                            } else if (build[c][0] === "jsscope" && (build[c][1] === "html" || build[c][1] === "none" || build[c][1] === "report")) {
+                                options.jsscope = build[c][1];
+                            } else if (build[c][0] === "lang" || build[c][0] === "langdefault") {
+                                options[build[c][0]] = language.setlangmode(api.langdefault.toLowerCase());
+                            } else if (build[c][0] === "mode" && (build[c][1] === "analysis" || build[c][1] === "beautify" || build[c][1] === "diff" || build[c][1] === "minify" || build[c][1] === "parse")) {
+                                options.mode = build[c][1];
+                            } else if (build[c][0] === "objsort" && (build[c][1] === "all" || build[c][1] === "js" || build[c][1] === "css" || build[c][1] === "css" || build[c][1] === "true")) {
+                                options.objsort = build[c][1];
+                            } else if (build[c][0] === "parseFormat" && (build[c][1] === "htmltable" || build[c][1] === "parallel" || build[c][1] === "sequential")) {
+                                options.parseFormat = build[c][1];
+                            } else if (build[c][0] === "quoteConvert" && (build[c][1] === "single" || build[c][1] === "double" || build[c][1] === "none")) {
+                                options.quoteConvert = build[c][1];
+                            } else if (build[c][0] === "style" && (build[c][1] === "indent" || build[c][1] === "noindent")) {
+                                options.style = build[c][1];
+                            } else if (build[c][0] === "varword" && (build[c][1] === "each" || build[c][1] === "list" || build[c][1] === "none")) {
+                                options.varword = build[c][1];
+                            } else if (build[c][0] === "vertical" && (build[c][1] === "all" || build[c][1] === "css" || build[c][1] === "js" || build[c][1] === "none")) {
+                                options.vertical = build[c][1];
                             } else if (options[build[c][0]] !== undefined) {
                                 if (build[c][1] === "true") {
                                     options[build[c][0]] = true;

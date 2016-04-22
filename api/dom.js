@@ -577,15 +577,16 @@ global.meta = {
                     return;
                 },
                 // defaultt      = actual default lang value from the select list
-                defaultt    = (pd.data.node.langdefault === null || pd.data.node.langdefault.nodeName.toLowerCase() !== "select")
-                    ? "javascript"
-                    : setlangmode(pd.data.node.langdefault[pd.data.node.langdefault.selectedIndex].value);
+                defaultt    = "";
             if (typeof language !== "object") {
                 return;
             }
             auto = language.auto;
             setlangmode = language.setlangmode;
             nameproper = language.nameproper;
+            defaultt = (pd.data.node.langdefault === null || pd.data.node.langdefault.nodeName.toLowerCase() !== "select")
+                ? "javascript"
+                : setlangmode(pd.data.node.langdefault[pd.data.node.langdefault.selectedIndex].value);
             if (obj !== undefined && obj !== null) {
                 if (pd.test.ace === true && obj.getValue !== undefined) {
                     sample = obj.getValue();
