@@ -320,6 +320,14 @@ var prettydiff = function prettydiff_(api) {
                     // force_indent - should markup beautification always force indentation even if
                     // disruptive
                     force_indent   : (api.force_indent === true || api.force_indent === "true"),
+                    // formatArray - defines whether JavaScript array keys should be indented or kept on a single line
+                    formatArray    : (api.formatArray === "indent" || api.formatArray === "inline")
+                        ? api.formatArray
+                        : "default",
+                    // formatObject - defines whether JavaScript object properties should be indented or kept on a single line
+                    formatObject   : (api.formatObject === "indent" || api.formatObject === "inline")
+                        ? api.formatObject
+                        : "default",
                     // html - should markup be presumed to be HTML with all the aloppiness HTML
                     // allows
                     html           : (api.html === true || api.html === "true" || (typeof api.html === "string" && api.html === "html-yes")),

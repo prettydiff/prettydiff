@@ -1125,6 +1125,18 @@ global.meta = {
                         data = ["force_indent", "false"];
                     } else if (id === "bforce_indent-yes" || id === "dforce_indent-yes") {
                         data = ["force_indent", "true"];
+                    } else if (id === "bformatarray-default" || id === "dformatarray-default") {
+                        data = ["formatArray", "default"];
+                    } else if (id === "bformatarray-indent" || id === "dformatarray-indent") {
+                        data = ["formatArray", "indent"];
+                    } else if (id === "bformatarray-inline" || id === "dformatarray-inline") {
+                        data = ["formatArray", "inline"];
+                    } else if (id === "bformatobject-default" || id === "dformatobject-default") {
+                        data = ["formatObject", "default"];
+                    } else if (id === "bformatobject-indent" || id === "dformatobject-indent") {
+                        data = ["formatObject", "indent"];
+                    } else if (id === "bformatobject-inline" || id === "dformatobject-inline") {
+                        data = ["formatObject", "inline"];
                     } else if (id === "bjslines-all" || id === "djslines-all") {
                         data = ["preserve", "all"];
                     } else if (id === "bjslines-css" || id === "djslines-css") {
@@ -3969,6 +3981,12 @@ global.meta = {
                     endcomma       = pd.id("bendcomma-yes"),
                     forceAttribute = pd.id("bforce_attribute-yes"),
                     forceIndent    = pd.id("bforce_indent-yes"),
+                    formatADefault = pd.id("bformatarray-default"),
+                    formatAIndent  = pd.id("bformatarray-indent"),
+                    formatAInline  = pd.id("bformatarray-inline"),
+                    formatODefault = pd.id("bformatobject-default"),
+                    formatOIndent  = pd.id("bformatobject-indent"),
+                    formatOInline  = pd.id("bformatobject-inline"),
                     html           = pd.id("html-yes"),
                     jscorrect      = pd.id("jscorrect-yes"),
                     jshtml         = pd.id("jsscope-html"),
@@ -4067,6 +4085,20 @@ global.meta = {
                 api.endcomma        = (endcomma !== null && endcomma.checked === true);
                 api.force_attribute = (forceAttribute !== null && forceAttribute.checked === true);
                 api.force_indent    = (forceIndent !== null && forceIndent.checked === true);
+                if (formatADefault !== null && formatADefault.checked === true) {
+                    api.formatArray = "default";
+                } else if (formatAIndent !== null && formatAIndent.checked === true) {
+                    api.formatArray = "indent";
+                } else if (formatAInline !== null && formatAInline.checked === true) {
+                    api.formatArray = "inline";
+                }
+                if (formatODefault !== null && formatODefault.checked === true) {
+                    api.formatObject = "default";
+                } else if (formatOIndent !== null && formatOIndent.checked === true) {
+                    api.formatObject = "indent";
+                } else if (formatOInline !== null && formatOInline.checked === true) {
+                    api.formatObject = "inline";
+                }
                 api.html            = (html !== null && html.checked === true);
                 api.inlevel         = (offset === null || isNaN(offset.value) === true)
                     ? 0
@@ -4239,6 +4271,12 @@ global.meta = {
                     elseline        = pd.id("jselselined-yes"),
                     forceAttribute  = pd.id("dforce_attribute-yes"),
                     forceIndent     = pd.id("dforce_indent-yes"),
+                    formatADefault  = pd.id("dformatarray-default"),
+                    formatAIndent   = pd.id("dformatarray-indent"),
+                    formatAInline   = pd.id("dformatarray-inline"),
+                    formatODefault  = pd.id("dformatarray-default"),
+                    formatOIndent   = pd.id("dformatarray-indent"),
+                    formatOInline   = pd.id("dformatarray-inline"),
                     html            = pd.id("htmld-yes"),
                     inline          = pd.id("inline"),
                     methodchain     = pd.id("dmethodchain-yes"),
@@ -4300,6 +4338,20 @@ global.meta = {
                 api.elseline        = (elseline !== null && elseline.checked !== false);
                 api.force_attribute = (forceAttribute !== null && forceAttribute.checked === true);
                 api.force_indent    = (forceIndent !== null && forceIndent.checked === true);
+                if (formatADefault !== null && formatADefault.checked === true) {
+                    api.formatArray = "default";
+                } else if (formatAIndent !== null && formatAIndent.checked === true) {
+                    api.formatArray = "indent";
+                } else if (formatAInline !== null && formatAInline.checked === true) {
+                    api.formatArray = "inline";
+                }
+                if (formatODefault !== null && formatODefault.checked === true) {
+                    api.formatObject = "default";
+                } else if (formatOIndent !== null && formatOIndent.checked === true) {
+                    api.formatObject = "indent";
+                } else if (formatOInline !== null && formatOInline.checked === true) {
+                    api.formatObject = "inline";
+                }
                 api.html            = (html !== null && html.checked === true);
                 api.insize          = (quantity === null || isNaN(quantity.value) === true)
                     ? 4

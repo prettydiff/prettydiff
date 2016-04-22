@@ -83,6 +83,8 @@ Examples:
             endquietly     : "",
             force_attribute: false,
             force_indent   : false,
+            formatArray    : "default",
+            formatObject   : "default",
             html           : false,
             inchar         : " ",
             inlevel        : 0,
@@ -518,6 +520,14 @@ Examples:
             a.push("* force_indent - boolean - If lang is 'markup' this will force indentation upon");
             a.push("                           all content and tags without regard for the creation");
             a.push("                           of new text nodes. Default is false.");
+            a.push("");
+            a.push("* formatArray  - string  - Determines if all JavaScript array indexes should be");
+            a.push("                           indented, never indented, or left to the default.");
+            a.push("                 Accepted values: default, indent, inline");
+            a.push("");
+            a.push("* formatObject - string  - Determines if all JavaScript object properties should");
+            a.push("                           be indented, never indented, or left to the default.");
+            a.push("                 Accepted values: default, indent, inline");
             a.push("");
             a.push("* help         - string  - This list of argument definitions. The value is");
             a.push("                           unnecessary and is required only to pass in use of");
@@ -1531,6 +1541,10 @@ Examples:
                     options.force_attribute = true;
                 } else if (d[b][0] === "force_indent" && d[b][1] === "true") {
                     options.force_indent = true;
+                } else if (d[b][0] === "formatArray" && (d[b][1] === "indent" || d[b][1] === "inline")) {
+                    options.formatArray = d[b][1];
+                } else if (d[b][0] === "formatObject" && (d[b][1] === "indent" || d[b][1] === "inline")) {
+                    options.formatObject = d[b][1];
                 } else if (d[b][0] === "html" && d[b][1] === "true") {
                     options.html = true;
                 } else if (d[b][0] === "inchar" && d[b][1].length > 0) {
