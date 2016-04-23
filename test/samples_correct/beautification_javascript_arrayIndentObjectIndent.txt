@@ -1,0 +1,48 @@
+/*prettydiff.com formatArray:indent, formatObject:indent*/
+var a = [
+        1,
+        2,
+        3
+    ],
+    b = [
+        aa,
+        ab,
+        ac,
+        ad,
+        ae,
+        af,
+        ag,
+        ah
+    ],
+    c = [
+        1, //first comment
+        2,
+        3, //other comment
+        4,
+        5
+    ],
+    d = import ([
+        "a",
+        "b",
+        "c"
+    ]) from "wherever",
+    e = {
+        cat: "meow",
+        dog: "bark"
+    },
+    f = ({
+        cat,
+        dog
+    }),
+    g = import ({
+        cat: "meow",
+        dog: "bark"
+    }) from dog,
+    h = {
+        cat: "meow",
+        cub: "bear",
+        dog: "bark", //object comment
+        gap: "hole",
+        hit: "bat",
+        mop: "bucket"
+    };
