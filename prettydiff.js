@@ -661,7 +661,7 @@ var prettydiff = function prettydiff_(api) {
                                     options.mode = build[c][1];
                                 }
                             } else if (build[c][0] === "objsort") {
-                                if (build[c][1] === "all" || build[c][1] === "js" || build[c][1] === "css" || build[c][1] === "css" || build[c][1] === "true") {
+                                if (build[c][1] === "all" || build[c][1] === "js" || build[c][1] === "css" || build[c][1] === "none" || build[c][1] === "true" || build[c][1] === "false") {
                                     options.objsort = build[c][1];
                                 }
                             } else if (build[c][0] === "parseFormat") {
