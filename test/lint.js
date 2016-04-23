@@ -175,7 +175,7 @@
             // report indexes from diffcli feature of diffview.js 0 - source line number 1 -
             // source code line 2 - diff line number 3 - diff code line 4 - change 5 - index
             // of options.context (not parallel) 6 - total count of differences
-            if (report[0][0] < 2) {
+            if (sampleName !== "phases.simulations" && report[0][0] < 2) {
                 diffs += 1;
                 console.log("");
                 console.log(colors.filepath.start + sampleName);
@@ -222,9 +222,9 @@
                     }
                 }
             }
-            console.log("");
-            console.log(diffs + colors.filepath.start + " differences counted." + colors.filepath.end);
             if (sampleName !== "phases.simulations") {
+                console.log("");
+                console.log(diffs + colors.filepath.start + " differences counted." + colors.filepath.end);
                 errout("Pretty Diff " + colors.del.lineStart + "failed" + colors.del.lineEnd + " on file: " + colors.filepath.start + sampleName + colors.filepath.end);
             }
         },
@@ -490,8 +490,9 @@
                                         fs
                                             .readFile("JSLint/jslint.js", "utf8", function taskrunner_lint_install_stat_childtask_child_readFile(erread, data) {
                                                 var moduleready = function taskrunner_lint_install_stat_childtask_child_callback() {
+                                                    var todaystring = "/*global exports*/var today=" + date + ";exports.date=today;";
                                                     jslint = require(process.cwd() + "/JSLint/jslint.js");
-                                                    fs.writeFile("test/today.js", "/*global exports*/var today=" + date + ";exports.date=today;", "utf8", function (werr) {
+                                                    fs.writeFile("test/today.js", todaystring, function (werr) {
                                                         if (werr !== null && werr !== undefined) {
                                                             errout(werr);
                                                         }
@@ -2104,9 +2105,13 @@
                                             verify: ""
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"file\" " +
-                                                        "output:\"test/simulation\" mode:\"diff\" diff:\"test/simulation/testa.txt\"",
+                                                        "output:\"test/simulation/testaxx.txt\" mode:\"diff\" diff:\"test/simulation/testa.txt\"",
                                             name  : "Diff file and source file are same file, readmethod file",
                                             verify: "\nPretty Diff found 0 differences. Executed in."
+                                        }, {
+                                            check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"file\" output:\"test/simulation/testayy.txt\" mode:\"beautify\" endquietly:\"quiet\"",
+                                            name  : "option endquietly",
+                                            verify: ""
                                         }
                                     ]
                                 }, {
@@ -2162,7 +2167,7 @@
                                                         "al\" href=\"http://prettydiff.com/\" type=\"application/xhtml+xml\"/><meta http-" +
                                                         "equiv=\"Content-Type\" content=\"application/xhtml+xml;charset=UTF-8\"/><meta ht" +
                                                         "tp-equiv=\"Content-Style-Type\" content=\"text/css\"/><style type=\"text/css\">/" +
-                                                        "*<![CDATA[*/#prettydiff.canvas{background:#986 url(\"data:image/png;base64,iVBOR" +
+                                                        "*<![CDATA[*\/#prettydiff.canvas{background:#986 url(\"data:image/png;base64,iVBOR" +
                                                         "w0KGgoAAAANSUhEUgAAAAQAAAAECAIAAAAmkwkpAAAACXBIWXMAAC4jAAAuIwF4pT92AAAKT2lDQ1BQa" +
                                                         "G90b3Nob3AgSUNDIHByb2ZpbGUAAHjanVNnVFPpFj333vRCS4iAlEtvUhUIIFJCi4AUkSYqIQkQSogho" +
                                                         "dkVUcERRUUEG8igiAOOjoCMFVEsDIoK2AfkIaKOg6OIisr74Xuja9a89+bN/rXXPues852zzwfACAyWS" +
@@ -3380,7 +3385,7 @@
                                                         "eme label,#prettydiff #dcolorScheme label{display:inline-block;font-size:1em}#pr" +
                                                         "ettydiff .clear{clear:both;display:block}#prettydiff caption,#prettydiff .conten" +
                                                         "t-hide{height:1em;left:-1000em;overflow:hidden;position:absolute;top:-1000em;wid" +
-                                                        "th:1em}/*]]>*/</style></head><body id=\"prettydiff\" class=\"white\"><div class=" +
+                                                        "th:1em}/*]]>*\/</style></head><body id=\"prettydiff\" class=\"white\"><div class=" +
                                                         "\"contentarea\" id=\"report\"><section role=\"heading\"><h1><svg height=\"2000.0" +
                                                         "00000pt\" id=\"pdlogo\" preserveAspectRatio=\"xMidYMid meet\" version=\"1.0\" vi" +
                                                         "ewBox=\"0 0 2000.000000 2000.000000\" width=\"2000.000000pt\" xmlns=\"http://www" +
@@ -3460,7 +3465,7 @@
                                     units: [
                                         {
                                             check : "node api/node-local.js source:\"inch.json\" readmethod:\"file\" mode:\"beautify" +
-                                                    "\" output:\"test/simulation/inch\"",
+                                                    "\" output:\"test/simulation/inch.json\"",
                                             name  : "Beautify inch.json",
                                             verify: "\nFile successfully written.\n\nPretty Diff beautified x files. Executed in."
                                         }, {
@@ -3479,8 +3484,8 @@
                                     group: "file system checks",
                                     units: [
                                         {
-                                            check : "cat test/simulation/inch/inch.json",
-                                            name  : "print out asdf/inch.json",
+                                            check : "cat test/simulation/inch.json",
+                                            name  : "print out test/simulation/inch.json",
                                             verify: "{\n    \"files\": {\n        \"included\": [\"prettydiff.js\"]\n    }\n}"
                                         }, {
                                             check : "ls test/simulation/api",
@@ -3494,7 +3499,7 @@
                                             verify: "{\"data\":{\"begin\":[0,0,0,0,0,0,0,0,0,0,0,0],\"depth\":[\"global\",\"global\"," +
                                                         "\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"g" +
                                                         "lobal\",\"global\",\"global\"],\"lines\":[0,0,0,0,0,0,0,0,0,0,0,0],\"token\":[\"" +
-                                                        "/*global exports*/\",\"var\",\"today\",\"=\",\"20999999\",\";\",\"exports\",\"." +
+                                                        "/*global exports*\/\",\"var\",\"today\",\"=\",\"20999999\",\";\",\"exports\",\"." +
                                                         "\",\"date\",\"=\",\"today\",\";\"],\"types\":[\"comment\",\"word\",\"word\",\"op" +
                                                         "erator\",\"literal\",\"separator\",\"word\",\"separator\",\"word\",\"operator\"," +
                                                         "\"word\",\"separator\"]},\"definition\":{\"begin\":\"number - The index where th" +
@@ -3578,7 +3583,8 @@
                             child     = function taskrunner_simulations_shell_child(param) {
                                 param.check = slashfix(param.check);
                                 childExec(param.check, function taskrunner_simulations_shell_child_childExec(err, stdout, stderr) {
-                                    var data      = [param.name],
+                                    var failflag  = false,
+                                        data      = [param.name],
                                         verifies  = function taskrunner_simulations_shell_child_childExec_verifies(output, list) {
                                             var aa  = 0,
                                                 len = list.length;
@@ -3597,7 +3603,7 @@
                                             } while (aa < len);
                                             data.push("fail");
                                             data.push("Unexpected output:");
-                                            diffFiles("phases.simulations", output, list);
+                                            failflag = true;
                                         },
                                         //what to do when a group concludes
                                         writeLine = function taskrunner_simulations_shell_child_childExec_writeLine(item) {
@@ -3755,14 +3761,13 @@
                                             finished[depth] += 1;
                                             if (single === false && finished[depth] === 1) {
                                                 if (depth === 0) {
-                                                    console.log("");
                                                     console.log(tab.slice(tablen) + "\x1B[36mTest group: \x1B[39m\x1B[33m" + groupname[depth] + "\x1B[39m");
                                                 } else {
-                                                    console.log("");
                                                     console.log(tab.slice(tablen) + "Test unit " + (finished[depth - 1] + 1) + " of " + grouplen[depth - 1] + ", \x1B[36mtest group: \x1B[39m\x1B[33m" + groupname[depth] + "\x1B[39m");
                                                 }
                                             }
-                                            console.log(tab + item[0]);
+                                            console.log("");
+                                            console.log(tab.slice(tab.length - 2) + "\x1B[36m*\x1B[39m " + item[0]);
                                             console.log(tab + status + finished[depth] + " of " + grouplen[depth] + totaln);
                                             if (item[1] !== "pass") {
                                                 fails += 1;
@@ -3795,10 +3800,10 @@
                                         data.push("fail");
                                         data.push(stderr);
                                     } else if (stdout !== param.verify) {
-                                        if (typeof param.verify === "string" || param.verify.length === 0) {
+                                        if (typeof param.verify === "string" || (typeof param.verify !== "string" && param.verify.length === 0)) {
                                             data.push("fail");
                                             data.push("Unexpected output:");
-                                            diffFiles("phases.simulations", stdout, param.verify);
+                                            failflag = true;
                                         } else {
                                             verifies(stdout, param.verify);
                                         }
@@ -3809,6 +3814,10 @@
                                     }
                                     total += 1;
                                     writeLine(data);
+                                    if (failflag === true) {
+                                        failflag = false;
+                                        diffFiles("phases.simulations", stdout, param.verify);
+                                    }
                                 });
                             },
                             buildup   = function taskrunner_simulations_shell_buildup(tasks) {

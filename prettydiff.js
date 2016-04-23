@@ -1,6 +1,6 @@
 /*prettydiff.com topcoms: true, insize: 4, inchar: " ", vertical: true */
 /*jshint laxbreak: true*/
-/*global __dirname, ace, csspretty, csvpretty, define, diffview, exports, finalFile, global, jspretty, markuppretty, process, require, safeSort */
+/*global __dirname, ace, csspretty, csvpretty, define, diffview, exports, finalFile, global, jspretty, language, markuppretty, process, require, safeSort */
 /*
 
  Execute in a NodeJS app:
@@ -111,6 +111,9 @@ if (typeof require === "function" && typeof ace !== "object") {
         var localPath = (typeof process === "object" && typeof process.cwd === "function" && (process.cwd() === "/" || (/^([a-z]:\\)$/).test(process.cwd()) === true) && typeof __dirname === "string")
             ? __dirname
             : ".";
+        if (global.language === undefined) {
+            global.language = require(localPath + "/lib/language.js").api;
+        }
         if (global.finalFile === undefined) {
             global.finalFile = require(localPath + "/lib/finalFile.js").api;
         }
@@ -139,6 +142,7 @@ if (typeof require === "function" && typeof ace !== "object") {
     global.diffview     = diffview;
     global.finalFile    = finalFile;
     global.jspretty     = jspretty;
+    global.language     = language;
     global.markuppretty = markuppretty;
     global.safeSort     = safeSort;
 }
@@ -173,69 +177,6 @@ var prettydiff = function prettydiff_(api) {
                     builder.script.minimal, //12
                     builder.html.end //13
                 ],
-                setlangmode  = function core__setlangmode(input) {
-                    if (input === "css" || input === "less" || input === "scss") {
-                        return "css";
-                    }
-                    if (input.indexOf("html") > -1 || input === "html" || input === "ejs" || input === "html_ruby" || input === "handlebars" || input === "swig" || input === "twig" || input === "php" || input === "dustjs") {
-                        return "html";
-                    }
-                    if (input === "markup" || input === "jsp" || input === "xml" || input === "xhtml") {
-                        return "markup";
-                    }
-                    if (input === "javascript" || input === "json" || input === "jsx") {
-                        return "javascript";
-                    }
-                    if (input === "text") {
-                        return "text";
-                    }
-                    if (input === "csv") {
-                        return "csv";
-                    }
-                    if (input === "tss" || input === "titanium") {
-                        return "tss";
-                    }
-                    return "javascript";
-                },
-                nameproper   = function core__nameproper(input) {
-                    if (input === "javascript") {
-                        return "JavaScript";
-                    }
-                    if (input === "text") {
-                        return "Plain Text";
-                    }
-                    if (input === "jsx") {
-                        return "React JSX";
-                    }
-                    if (input === "scss") {
-                        return "SCSS (Sass)";
-                    }
-                    if (input === "ejs") {
-                        return "EJS Template";
-                    }
-                    if (input === "handlebars") {
-                        return "Handlebars Template";
-                    }
-                    if (input === "html_ruby") {
-                        return "ERB (Ruby) Template";
-                    }
-                    if (input === "tss" || input === "titanium") {
-                        return "Titanium Stylesheets";
-                    }
-                    if (input === "typescript") {
-                        return "TypeScript (not supported yet)";
-                    }
-                    if (input === "twig") {
-                        return "HTML TWIG Template";
-                    }
-                    if (input === "jsp") {
-                        return "JSTL (JSP)";
-                    }
-                    if (input === "java") {
-                        return "Java (not supported yet)";
-                    }
-                    return input.toUpperCase();
-                },
                 options      = {
                     // determines api source as necessary to make a decision about whether to supply
                     // externally needed JS functions to reports
@@ -320,6 +261,14 @@ var prettydiff = function prettydiff_(api) {
                     // force_indent - should markup beautification always force indentation even if
                     // disruptive
                     force_indent   : (api.force_indent === true || api.force_indent === "true"),
+                    // formatArray - defines whether JavaScript array keys should be indented or kept on a single line
+                    formatArray    : (api.formatArray === "indent" || api.formatArray === "inline")
+                        ? api.formatArray
+                        : "default",
+                    // formatObject - defines whether JavaScript object properties should be indented or kept on a single line
+                    formatObject   : (api.formatObject === "indent" || api.formatObject === "inline")
+                        ? api.formatObject
+                        : "default",
                     // html - should markup be presumed to be HTML with all the aloppiness HTML
                     // allows
                     html           : (api.html === true || api.html === "true" || (typeof api.html === "string" && api.html === "html-yes")),
@@ -347,12 +296,12 @@ var prettydiff = function prettydiff_(api) {
                             : api.jsscope,
                     //lang - which programming language will we be analyzing
                     lang           : (typeof api.lang === "string" && api.lang !== "auto")
-                        ? setlangmode(api.lang.toLowerCase())
+                        ? language.setlangmode(api.lang.toLowerCase())
                         : "auto",
                     // langdefault - what language should lang value "auto" resort to when it cannot
                     // determine the language
                     langdefault    : (typeof api.langdefault === "string")
-                        ? setlangmode(api.langdefault.toLowerCase())
+                        ? language.setlangmode(api.langdefault.toLowerCase())
                         : "text",
                     // methodchain - if JavaScript method chains should be strung onto a single line
                     // instead of indented
@@ -384,7 +333,7 @@ var prettydiff = function prettydiff_(api) {
                     // immediately before a value's decimal.
                     noleadzero     : (api.noleadzero === true || api.noleadzero === "true"),
                     //objsort will alphabetize object keys in JavaScript
-                    objsort        : (api.objsort === "all" || api.objsort === "js" || api.objsort === "css" || api.objsort === "css" || api.objsort === true || api.objsort === "true")
+                    objsort        : (api.objsort === "all" || api.objsort === "js" || api.objsort === "css" || api.objsort === true || api.objsort === "true")
                         ? api.objsort
                         : "none",
                     //parseFormat - determine how the parse tree should be organized and formatted
@@ -514,175 +463,6 @@ var prettydiff = function prettydiff_(api) {
                     metaerror = global.meta.error;
                     return cssout;
                 },
-                auto         = function core__auto(a) {
-                    var b      = [],
-                        c      = 0,
-                        d      = 0,
-                        join   = "",
-                        flaga  = false,
-                        flagb  = false,
-                        output = function core__auto_output(langname) {
-                            if (langname === "unknown") {
-                                return [
-                                    options.langdefault,
-                                    setlangmode(options.langdefault),
-                                    "unknown"
-                                ];
-                            }
-                            if (langname === "xhtml") {
-                                return ["xml", "html", "XHTML"];
-                            }
-                            if (langname === "tss") {
-                                return ["tss", "tss", "Titanium Stylesheets"];
-                            }
-                            return [langname, setlangmode(langname), nameproper(langname)];
-                        };
-                    if (a === null) {
-                        return;
-                    }
-                    if ((/\sclass\s+\w/).test(a) === false && (/(\s|;|\})((if)|(for)|(function\s*\w*))\s*\(/).test(a) === false && (/return\s*\w*\s*(;|\})/).test(a) === false && (a === undefined || (/^(\s*#(?!(!\/)))/).test(a) === true || (/\n\s*(\.|@)\w+(\(?|(\s*:))/).test(a) === true)) {
-                        if ((/\$[a-zA-Z]/).test(a) === true || (/\{\s*(\w|\.|\$|#)+\s*\{/).test(a) === true) {
-                            return output("scss");
-                        }
-                        if ((/@[a-zA-Z]/).test(a) === true || (/\{\s*(\w|\.|@|#)+\s*\{/).test(a) === true) {
-                            return output("less");
-                        }
-                        return output("css");
-                    }
-                    b = a
-                        .replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "")
-                        .split("");
-                    c = b.length;
-                    if (((/^([\s\w\-]*<)/).test(a) === false || a.indexOf("<") < 0 || a.indexOf("function") < a.indexOf("<")) && (/(>[\s\w\-]*)$/).test(a) === false) {
-                        for (d = 1; d < c; d += 1) {
-                            if (flaga === false) {
-                                if (b[d] === "*" && b[d - 1] === "/") {
-                                    b[d - 1] = "";
-                                    flaga    = true;
-                                } else if (flagb === false && b[d] === "f" && d < c - 6 && b[d + 1] === "i" && b[d + 2] === "l" && b[d + 3] === "t" && b[d + 4] === "e" && b[d + 5] === "r" && b[d + 6] === ":") {
-                                    flagb = true;
-                                }
-                            } else if (flaga === true && b[d] === "*" && d !== c - 1 && b[d + 1] === "/") {
-                                flaga    = false;
-                                b[d]     = "";
-                                b[d + 1] = "";
-                            } else if (flagb === true && b[d] === ";") {
-                                flagb = false;
-                                b[d]  = "";
-                            }
-                            if (flaga === true || flagb === true) {
-                                b[d] = "";
-                            }
-                        }
-                        join = b.join("");
-                        if ((/^(\s*(\{|\[)(?!%))/).test(a) === true && (/((\]|\})\s*)$/).test(a) && a.indexOf(",") !== -1) {
-                            return output("json");
-                        }
-                        if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/((var)|(let)|(const))\s+(\w|\$)+[a-zA-Z0-9]*/).test(a) === true || (/console\.log\(/).test(a) === true || (/export\s+default\s+class\s+/).test(a) === true || (/document\.get/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
-                            if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1)) {
-                                if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
-                                    return output("typescript");
-                                }
-                                return output("javascript");
-                            }
-                            return output("unknown");
-                        }
-                        if (a.indexOf("{") !== -1 && (/^(\s*[\{\$\.#@a-z0-9])|^(\s*\/(\*|\/))|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && (/\=\s*(\{|\[|\()/).test(join) === false && (((/(\+|-|\=|\?)\=/).test(join) === false || (/\/\/\s*\=+/).test(join) === true) || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
-                            if (((/:\s*((number)|(string))/).test(a) === true || (/this\.\w+\s*\=/).test(a) === true) && (/((public)|(private))\s+/).test(a) === true) {
-                                return output("typescript");
-                            }
-                            if ((/((public)|(private))\s+(((static)?\s+(v|V)oid)|(class)|(final))/).test(a) === true) {
-                                return output("java");
-                            }
-                            if ((/\sclass\s+\w/).test(a) === false && (/<[a-zA-Z]/).test(a) === true && (/<\/[a-zA-Z]/).test(a) === true && ((/\s?\{%/).test(a) === true || (/\{(\{|#)(?!(\{|#|\=))/).test(a) === true)) {
-                                return output("twig");
-                            }
-                            if ((/^\s*(\$|@)/).test(a) === false && ((/:\s*(\{|\(|\[)/).test(a) === true || (/(\{|\s|;)render\s*\(\)\s*\{/).test(a) === true || (/^(\s*return;?\s*\{)/).test(a) === true) && (/(\};?\s*)$/).test(a) === true) {
-                                return output("javascript");
-                            }
-                            if ((/\{\{#/).test(a) === true && (/\{\{\//).test(a) === true && (/<\w/).test(a) === true) {
-                                return output("handlebars");
-                            }
-                            if ((/\{\s*(\w|\.|@|#)+\s*\{/).test(a) === true) {
-                                return output("less");
-                            }
-                            if ((/\$(\w|-)/).test(a) === true) {
-                                return output("scss");
-                            }
-                            if ((/(;|\{|:)\s*@\w/).test(a) === true) {
-                                return output("less");
-                            }
-                            return output("css");
-                        }
-                        if ((/"\s*:\s*\{/).test(a) === true) {
-                            return output("tss");
-                        }
-                        if (a.indexOf("{%") > -1) {
-                            return output("twig");
-                        }
-                        return output("unknown");
-                    }
-                    if ((((/(>[\w\s:]*)?<(\/|!)?[\w\s:\-\[]+/).test(a) === true || (/^(\s*<\?xml)/).test(a) === true) && ((/^([\s\w]*<)/).test(a) === true || (/(>[\s\w]*)$/).test(a) === true)) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
-                        if ((/^(\s*<!doctype\ html>)/i).test(a) === true || (/^(\s*<html)/i).test(a) === true || ((/^(\s*<!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
-                            if ((/<%\s*\}/).test(a) === true) {
-                                return output("ejs");
-                            }
-                            if ((/<%\s*end/).test(a) === true) {
-                                return output("html_ruby");
-                            }
-                            if ((/\{\{(#|\/|\{)/).test(a) === true) {
-                                return output("handlebars");
-                            }
-                            if ((/\{\{end\}\}/).test(a) === true) {
-                                //place holder for Go lang templates
-                                return output("html");
-                            }
-                            if ((/\s?\{%/).test(a) === true && (/\{(\{|#)(?!(\{|#|\=))/).test(a) === true) {
-                                return output("twig");
-                            }
-                            if ((/<\?/).test(a) === true) {
-                                return output("php");
-                            }
-                            if ((/<jsp:include\s/).test(a) === true || (/<c:((set)|(if))\s/).test(a) === true) {
-                                return output("jsp");
-                            }
-                            if ((/\{(#|\?|\^|@|<|\+|~)/).test(a) === true && (/\{\//).test(a) === true) {
-                                return output("dustjs");
-                            }
-                            return output("html");
-                        }
-                        if ((/<jsp:include\s/).test(a) === true || (/<c:((set)|(if))\s/).test(a) === true) {
-                            return output("jsp");
-                        }
-                        if ((/<%\s*\}/).test(a) === true) {
-                            return output("ejs");
-                        }
-                        if ((/<%\s*end/).test(a) === true) {
-                            return output("html_ruby");
-                        }
-                        if ((/\{\{(#|\/|\{)/).test(a) === true) {
-                            return output("handlebars");
-                        }
-                        if ((/\{\{end\}\}/).test(a) === true) {
-                            //place holder for Go lang templates
-                            return output("xml");
-                        }
-                        if ((/\s?\{%/).test(a) === true && (/\{\{(?!(\{|#|\=))/).test(a) === true) {
-                            return output("twig");
-                        }
-                        if ((/<\?(?!(xml))/).test(a) === true) {
-                            return output("php");
-                        }
-                        if ((/\{(#|\?|\^|@|<|\+|~)/).test(a) === true && (/\{\//).test(a) === true) {
-                            return output("dustjs");
-                        }
-                        if ((/<jsp:include\s/).test(a) === true || (/<c:((set)|(if))\s/).test(a) === true) {
-                            return output("jsp");
-                        }
-                        return output("xml");
-                    }
-                    return output("unknown");
-                },
                 proctime     = function core__proctime() {
                     var minuteString = "",
                         hourString   = "",
@@ -795,8 +575,7 @@ var prettydiff = function prettydiff_(api) {
                         }
                     }
                     comment = sourceChar
-                        .join("")
-                        .toLowerCase();
+                        .join("");
                     b       = comment.length;
                     for (c = 0; c < b; c += 1) {
                         if ((typeof comment.charAt(c - 1) !== "string" || comment.charAt(c - 1) !== "\\") && (comment.charAt(c) === "\"" || comment.charAt(c) === "'")) {
@@ -852,56 +631,58 @@ var prettydiff = function prettydiff_(api) {
                         if (typeof build[c][1] === "string") {
                             build[c][0] = build[c][0].replace("api.", "");
                             if (build[c][0] === "braces" || build[c][0] === "indent") {
-                                if (build[c][1] === "knr") {
-                                    options.braces = "knr";
-                                } else if (build[c][1] === "allman") {
-                                    options.braces = "allman";
+                                if (build[c][1] === "knr" || build[c][1] === "allman") {
+                                    options.braces = build[c][1];
+                                }
+                            } else if (build[c][0] === "color") {
+                                if (typeof b[c][1] === "string" && b[c][1] !== "") {
+                                    options.color = b[c][1];
                                 }
                             } else if (build[c][0] === "comments") {
-                                if (build[c][1] === "indent") {
-                                    options.comments = "indent";
-                                } else if (build[c][1] === "noindent") {
+                                if (build[c][1] === "indent" || build[c][1] === "noindent") {
                                     options.comments = "noindent";
                                 }
                             } else if (build[c][0] === "diffview") {
-                                if (build[c][1] === "sidebyside") {
-                                    options.diffview = "sidebyside";
-                                } else if (build[c][1] === "inline") {
-                                    options.diffview = "inline";
+                                if (build[c][1] === "sidebyside" || build[c][1] === "inline") {
+                                    options.diffview = build[c][1];
+                                }
+                            } else if (build[c][0] === "formatArray" || build[c][0] === "formatObject") {
+                                if (build[c][1] === "default" || build[c][1] === "indent" || build[c][1] === "inline") {
+                                    options[build[c][0]] = build[c][1];
+                                }
+                            } else if (build[c][0] === "jsscope") {
+                                if (build[c][1] === "html" || build[c][1] === "none" || build[c][1] === "report") {
+                                    options.jsscope = build[c][1];
                                 }
                             } else if (build[c][0] === "lang" || build[c][0] === "langdefault") {
-                                options[build[c][0]] = setlangmode(build[c][1]);
+                                options[build[c][0]] = language.setlangmode(build[c][1]);
                             } else if (build[c][0] === "mode") {
-                                if (build[c][1] === "beautify") {
-                                    options.mode = "beautify";
-                                } else if (build[c][1] === "minify") {
-                                    options.mode = "minify";
-                                } else if (build[c][1] === "diff") {
-                                    options.mode = "diff";
-                                } else if (build[c][1] === "parse") {
-                                    options.mode = "parse";
+                                if (build[c][1] === "beautify" || build[c][1] === "minify" || build[c][1] === "diff" || build[c][1] === "parse" || build[c][1] === "analysis") {
+                                    options.mode = build[c][1];
+                                }
+                            } else if (build[c][0] === "objsort") {
+                                if (build[c][1] === "all" || build[c][1] === "js" || build[c][1] === "css" || build[c][1] === "none" || build[c][1] === "true" || build[c][1] === "false") {
+                                    options.objsort = build[c][1];
+                                }
+                            } else if (build[c][0] === "parseFormat") {
+                                if (build[c][1] === "htmltable" || build[c][1] === "parallel" || build[c][1] === "sequential") {
+                                    options.parseFormat = build[c][1];
                                 }
                             } else if (build[c][0] === "quoteConvert") {
-                                if (build[c][1] === "single") {
-                                    options.quoteConvert = "single";
-                                } else if (build[c][1] === "double") {
-                                    options.quoteConvert = "double";
-                                } else if (build[c][1] === "none") {
-                                    options.quoteConvert = "none";
+                                if (build[c][1] === "single" || build[c][1] === "double" || build[c][1] === "none") {
+                                    options.quoteConvert = build[c][1];
                                 }
                             } else if (build[c][0] === "style") {
-                                if (build[c][1] === "indent") {
-                                    options.style = "indent";
-                                } else if (build[c][1] === "noindent") {
-                                    options.style = "noindent";
+                                if (build[c][1] === "indent" || build[c][1] === "noindent") {
+                                    options.style = build[c][1];
                                 }
                             } else if (build[c][0] === "varword") {
-                                if (build[c][1] === "each") {
-                                    options.varword = "each";
-                                } else if (build[c][1] === "list") {
-                                    options.varword = "list";
-                                } else if (build[c][1] === "none") {
-                                    options.varword = "none";
+                                if (build[c][1] === "each" || build[c][1] === "list" || build[c][1] === "none") {
+                                    options.varword = build[c][1];
+                                }
+                            } else if (build[c][0] === "vertical") {
+                                if (build[c][1] === "all" || build[c][1] === "css" || build[c][1] === "js" || build[c][1] === "none") {
+                                    options.vertical = build[c][1];
                                 }
                             } else if (options[build[c][0]] !== undefined) {
                                 if (build[c][1] === "true") {
@@ -964,11 +745,11 @@ var prettydiff = function prettydiff_(api) {
                     global.meta = meta;
                     return finalProduct;
                 };
-            if (options.source === "") {
+            if (options.source === "" && (options.mode === "beautify" || options.mode === "minify" || options.mode === "analysis" || (options.mode === "diff" && options.diffcli === false) || (options.mode === "parse" && options.parseFormat === "htmltable"))) {
                 metaerror = "options.source is empty!";
                 return output("");
             }
-            if (options.mode === "diff") {
+            if (options.mode === "diff" && options.diffcli === false) {
                 if (options.diff === "") {
                     metaerror = "options.mode is 'diff' and options.diff is empty!";
                     return output("");
@@ -979,12 +760,12 @@ var prettydiff = function prettydiff_(api) {
             }
             pdcomment();
             if (options.lang === "auto") {
-                autoval      = auto(options.source);
+                autoval      = language.auto(options.source, options.langdefault);
                 options.lang = autoval[1];
             } else if (options.api === "dom") {
                 autoval = [options.lang, options.lang, options.lang];
             } else {
-                options.lang = setlangmode(options.lang);
+                options.lang = language.setlangmode(options.lang);
             }
             if (api.alphasort === true || api.alphasort === "true" || api.objsort === true || api.objsort === "true") {
                 options.objsort = "all";
@@ -1133,27 +914,28 @@ global.edition        = {
         ace: 160307
     },
     api          : {
-        dom      : 160418, //dom.js
-        nodeLocal: 160418, //node-local.js
-        wsh      : 160418
+        dom      : 160422, //dom.js
+        nodeLocal: 160422, //node-local.js
+        wsh      : 160422
     },
     css          : 160418, //css files
     csspretty    : 160418, //csspretty lib
     csvpretty    : 160307, //csvpretty lib
     diffview     : 160418, //diffview lib
-    documentation: 160418, //documentation.xhtml
-    jspretty     : 160418, //jspretty lib
+    documentation: 160422, //documentation.xhtml
+    jspretty     : 160422, //jspretty lib
+    language     : 160422, //language lib
     latest       : 0,
-    lint         : 160418, //unit test and lint automation as test/lint.js
-    markuppretty : 160418, //markuppretty lib
-    prettydiff   : 160418, //this file
+    lint         : 160422, //unit test and lint automation as test/lint.js
+    markuppretty : 160422, //markuppretty lib
+    prettydiff   : 160422, //this file
     safeSort     : 160307, //safeSort lib
-    version      : "2.0.0", //version number
-    webtool      : 160418
+    version      : "2.0.1", //version number
+    webtool      : 160422
 };
 global.edition.latest = (function edition_latest() {
     "use strict";
-    return Math.max(global.edition.css, global.edition.csspretty, global.edition.csvpretty, global.edition.diffview, global.edition.documentation, global.edition.jspretty, global.edition.markuppretty, global.edition.prettydiff, global.edition.webtool, global.edition.api.dom, global.edition.api.nodeLocal, global.edition.api.wsh);
+    return Math.max(global.edition.css, global.edition.csspretty, global.edition.csvpretty, global.edition.diffview, global.edition.documentation, global.edition.jspretty, global.edition.language, global.edition.markuppretty, global.edition.prettydiff, global.edition.webtool, global.edition.api.dom, global.edition.api.nodeLocal, global.edition.api.wsh);
 }());
 if (typeof exports === "object" || typeof exports === "function") {
     //commonjs and nodejs support

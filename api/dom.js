@@ -1,5 +1,5 @@
 /*prettydiff.com api.topcoms: true, api.inchar: " ", api.insize: 4, api.vertical: true */
-/*global ace, ActiveXObject, ArrayBuffer, AudioContext, console, csspretty, csvpretty, diffview, document, FileReader, finalFile, global, jspretty, localStorage, location, markuppretty, prettydiff, navigator, safeSort, setTimeout, Uint8Array, window, XMLHttpRequest*/
+/*global ace, ActiveXObject, ArrayBuffer, AudioContext, console, csspretty, csvpretty, diffview, document, FileReader, finalFile, global, jspretty, language, localStorage, location, markuppretty, prettydiff, navigator, safeSort, setTimeout, Uint8Array, window, XMLHttpRequest*/
 /*jshint laxbreak: true*/
 /*jslint for: true, this: true*/
 /***********************************************************************
@@ -182,7 +182,7 @@ global.meta = {
     pd.data             = {
         announcetext : "",
         audio        : {},
-        builder      : finalFile,
+        builder      : {},
         color        : "white", //for use with HTML themes
         commentString: [],
         diff         : "",
@@ -275,22 +275,25 @@ global.meta = {
         tabtrue      : false,
         zIndex       : 10
     };
-    pd.data.html        = [
-        pd.data.builder.html.head, //0
-        pd.data.builder.css.color.canvas, //1
-        pd.data.builder.css.color.shadow, //2
-        pd.data.builder.css.color.white, //3
-        pd.data.builder.css.reports, //4
-        pd.data.builder.css.global, //5
-        pd.data.builder.html.body, //6
-        pd.data.builder.html.color, //7
-        pd.data.builder.html.intro, //8
-        "", //9 - for meta analysis, like stats and accessibility
-        "", //10 - for generated report
-        pd.data.builder.html.script, //11
-        pd.data.builder.script.minimal, //12
-        pd.data.builder.html.end //13
-    ];
+    if (typeof finalFile === "object") {
+        pd.data.builder = finalFile;
+        pd.data.html        = [
+            pd.data.builder.html.head, //0
+            pd.data.builder.css.color.canvas, //1
+            pd.data.builder.css.color.shadow, //2
+            pd.data.builder.css.color.white, //3
+            pd.data.builder.css.reports, //4
+            pd.data.builder.css.global, //5
+            pd.data.builder.html.body, //6
+            pd.data.builder.html.color, //7
+            pd.data.builder.html.intro, //8
+            "", //9 - for meta analysis, like stats and accessibility
+            "", //10 - for generated report
+            pd.data.builder.html.script, //11
+            pd.data.builder.script.minimal, //12
+            pd.data.builder.html.end //13
+        ];
+    }
 
     //namespace for Ace editors
     pd.ace              = {};
@@ -564,258 +567,26 @@ global.meta = {
         langkey  : function dom__app_langkey(all, obj, lang) {
             var value       = [],
                 sample      = "",
-                setlangmode = function dom__app_langkey_setlangmode(input) {
-                    if (input === "css" || input === "less" || input === "scss") {
-                        return "css";
-                    }
-                    if (input.indexOf("html") > -1 || input === "html" || input === "dustjs" || input === "ejs" || input === "elm" || input === "html_ruby" || input === "handlebars" || input === "liquid" || input === "php" || input === "swig" || input === "twig" || input === "volt") {
-                        return "html";
-                    }
-                    if (input === "markup" || input === "jsp" || input === "xml" || input === "xhtml" || input === "coldfusion") {
-                        return "markup";
-                    }
-                    if (input === "javascript" || input === "json" || input === "jsx") {
-                        return "javascript";
-                    }
-                    if (input === "text" || input === "csv") {
-                        return "text";
-                    }
-                    if (input === "csv") {
-                        return "csv";
-                    }
-                    return "javascript";
+                auto        = function () {
+                    return;
                 },
-                nameproper  = function dom__app_langkey_nameproper(input) {
-                    if (input === "javascript") {
-                        return "JavaScript";
-                    }
-                    if (input === "markup") {
-                        return "markup";
-                    }
-                    if (input === "text") {
-                        return "Plain Text";
-                    }
-                    if (input === "coldfusion") {
-                        return "ColdFusion";
-                    }
-                    if (input === "dustjs") {
-                        return "Dust.js";
-                    }
-                    if (input === "ejs") {
-                        return "EJS Template";
-                    }
-                    if (input === "elm") {
-                        return "Elm Template";
-                    }
-                    if (input === "handlebars") {
-                        return "Handlebars Template";
-                    }
-                    if (input === "html_ruby") {
-                        return "ERB (Ruby) Template";
-                    }
-                    if (input === "java") {
-                        return "Java (not supported yet)";
-                    }
-                    if (input === "jsp") {
-                        return "JSTL (JSP)";
-                    }
-                    if (input === "jsx") {
-                        return "React JSX";
-                    }
-                    if (input === "liquid") {
-                        return "Liquid Template";
-                    }
-                    if (input === "scss") {
-                        return "SCSS (Sass)";
-                    }
-                    if (input === "tss" || input === "titanium") {
-                        return "Titanium Stylesheets";
-                    }
-                    if (input === "twig") {
-                        return "HTML TWIG Template";
-                    }
-                    if (input === "typescript") {
-                        return "TypeScript (not supported yet)";
-                    }
-                    if (input === "volt") {
-                        return "Volt Template";
-                    }
-                    return input.toUpperCase();
+                setlangmode = function () {
+                    return;
                 },
-                defaultt    = (pd.data.node.langdefault === null || pd.data.node.langdefault.nodeName.toLowerCase() !== "select")
-                    ? "javascript"
-                    : setlangmode(pd.data.node.langdefault[pd.data.node.langdefault.selectedIndex].value),
+                nameproper  = function () {
+                    return;
+                },
                 // defaultt      = actual default lang value from the select list
-                // [0] = language value for ace mode
-                // [1] = prettydiff language category from [0]
-                // [2] = pretty formatting for text output to user
-                auto = function dom__app_langkey_auto(a) {
-                    var b      = [],
-                        c      = 0,
-                        d      = 0,
-                        join   = "",
-                        flaga  = false,
-                        flagb  = false,
-                        output = function dom__app_langkey_auto_output(langname) {
-                            if (langname === "unknown") {
-                                return [defaultt, setlangmode(defaultt), "unknown"];
-                            }
-                            if (langname === "xhtml" || langname === "markup") {
-                                return ["xml", "html", "XHTML"];
-                            }
-                            if (langname === "tss") {
-                                return ["tss", "tss", "Titanium Stylesheets"];
-                            }
-                            return [langname, setlangmode(langname), nameproper(langname)];
-                        };
-                    if (a === null) {
-                        return;
-                    }
-                    if ((/\sclass\s+\w/).test(a) === false && (/(\s|;|\})((if)|(for)|(function\s*\w*))\s*\(/).test(a) === false && (/((var)|(let)|(const))\s*\w/).test(a) === false && (/return\s*\w*\s*(;|\})/).test(a) === false && (a === undefined || (/^(\s*#(?!(!\/)))/).test(a) === true || (/\n\s*(\.|@)\w+(\(?|(\s*:))/).test(a) === true)) {
-                        if ((/\$[a-zA-Z]/).test(a) === true || (/\{\s*(\w|\.|\$|#)+\s*\{/).test(a) === true) {
-                            return output("scss");
-                        }
-                        if ((/@[a-zA-Z]/).test(a) === true || (/\{\s*(\w|\.|@|#)+\s*\{/).test(a) === true) {
-                            return output("less");
-                        }
-                        return output("css");
-                    }
-                    b = a
-                        .replace(/\[[a-zA-Z][\w\-]*\=("|')?[a-zA-Z][\w\-]*("|')?\]/g, "")
-                        .split("");
-                    c = b.length;
-                    if ((/^([\s\w\-]*<)/).test(a) === false && (/(>[\s\w\-]*)$/).test(a) === false) {
-                        for (d = 1; d < c; d += 1) {
-                            if (flaga === false) {
-                                if (b[d] === "*" && b[d - 1] === "/") {
-                                    b[d - 1] = "";
-                                    flaga    = true;
-                                } else if (flagb === false && b[d] === "f" && d < c - 6 && b[d + 1] === "i" && b[d + 2] === "l" && b[d + 3] === "t" && b[d + 4] === "e" && b[d + 5] === "r" && b[d + 6] === ":") {
-                                    flagb = true;
-                                }
-                            } else if (flaga === true && b[d] === "*" && d !== c - 1 && b[d + 1] === "/") {
-                                flaga    = false;
-                                b[d]     = "";
-                                b[d + 1] = "";
-                            } else if (flagb === true && b[d] === ";") {
-                                flagb = false;
-                                b[d]  = "";
-                            }
-                            if (flaga === true || flagb === true) {
-                                b[d] = "";
-                            }
-                        }
-                        join = b.join("");
-                        if ((/^(\s*(\{|\[)(?!%))/).test(a) === true && (/((\]|\})\s*)$/).test(a) && a.indexOf(",") !== -1) {
-                            return output("json");
-                        }
-                        if ((/((\}?(\(\))?\)*;?\s*)|([a-z0-9]("|')?\)*);?(\s*\})*)$/i).test(a) === true && ((/(((var)|(let)|(const))\s+(\w|\$)+[a-zA-Z0-9]*)/).test(a) === true || (/console\.log\(/).test(a) === true || (/export\s+default\s+class\s+/).test(a) === true || (/document\.get/).test(a) === true || (/((\=|(\$\())\s*function)|(\s*function\s+(\w*\s+)?\()/).test(a) === true || a.indexOf("{") === -1 || (/^(\s*if\s+\()/).test(a) === true)) {
-                            if (a.indexOf("(") > -1 || a.indexOf("=") > -1 || (a.indexOf(";") > -1 && a.indexOf("{") > -1)) {
-                                if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
-                                    return output("typescript");
-                                }
-                                return output("javascript");
-                            }
-                            return output("unknown");
-                        }
-                        if (a.indexOf("{") !== -1 && (/^(\s*[\{\$\.#@a-z0-9])|^(\s*\/(\*|\/))|^(\s*\*\s*\{)/i).test(a) === true && (/^(\s*if\s*\()/).test(a) === false && (/\=\s*(\{|\[|\()/).test(join) === false && (((/(\+|-|\=|\?)\=/).test(join) === false || (/\/\/\s*\=+/).test(join) === true) || ((/\=+('|")?\)/).test(a) === true && (/;\s*base64/).test(a) === true)) && (/function(\s+\w+)*\s*\(/).test(join) === false) {
-                            if ((/:\s*((number)|(string))/).test(a) === true && (/((public)|(private))\s+/).test(a) === true) {
-                                return output("typescript");
-                            }
-                            if ((/((public)|(private))\s+(((static)?\s+(v|V)oid)|(class)|(final))/).test(a) === true) {
-                                return output("java");
-                            }
-                            if ((/\sclass\s+\w/).test(a) === false && (/<[a-zA-Z]/).test(a) === true && (/<\/[a-zA-Z]/).test(a) === true && ((/\s?\{%/).test(a) === true || (/\{(\{|#)(?!(\{|#|\=))/).test(a) === true)) {
-                                return output("twig");
-                            }
-                            if ((/^\s*(\$|@)/).test(a) === false && ((/:\s*(\{|\(|\[)/).test(a) === true || (/(\{|\s|;)render\s*\(\)\s*\{/).test(a) === true || (/^(\s*return;?\s*\{)/).test(a) === true) && (/(\};?\s*)$/).test(a) === true) {
-                                return output("javascript");
-                            }
-                            if ((/\{\{#/).test(a) === true && (/\{\{\//).test(a) === true && (/<\w/).test(a) === true) {
-                                return output("handlebars");
-                            }
-                            if ((/\{\s*(\w|\.|@|#)+\s*\{/).test(a) === true) {
-                                return output("less");
-                            }
-                            if ((/\$(\w|-)/).test(a) === true) {
-                                return output("scss");
-                            }
-                            if ((/(;|\{|:)\s*@\w/).test(a) === true) {
-                                return output("less");
-                            }
-                            return output("css");
-                        }
-                        if ((/"\s*:\s*\{/).test(a) === true) {
-                            return output("tss");
-                        }
-                        if (a.indexOf("{\%") > -1) {
-                            return output("twig");
-                        }
-                        return output("unknown");
-                    }
-                    if ((((/(>[\w\s:]*)?<(\/|!)?[\w\s:\-\[]+/).test(a) === true || (/^(\s*<\?xml)/).test(a) === true) && ((/^([\s\w]*<)/).test(a) === true || (/(>[\s\w]*)$/).test(a) === true)) || ((/^(\s*<s((cript)|(tyle)))/i).test(a) === true && (/(<\/s((cript)|(tyle))>\s*)$/i).test(a) === true)) {
-                        if ((/^(\s*<!doctype\ html>)/i).test(a) === true || (/^(\s*<html)/i).test(a) === true || ((/^(\s*<!DOCTYPE\s+((html)|(HTML))\s+PUBLIC\s+)/).test(a) === true && (/XHTML\s+1\.1/).test(a) === false && (/XHTML\s+1\.0\s+(S|s)((trict)|(TRICT))/).test(a) === false)) {
-                            if ((/<%\s*\}/).test(a) === true) {
-                                return output("ejs");
-                            }
-                            if ((/<%\s*end/).test(a) === true) {
-                                return output("html_ruby");
-                            }
-                            if ((/\{\{(#|\/|\{)/).test(a) === true) {
-                                return output("handlebars");
-                            }
-                            if ((/\{\{end\}\}/).test(a) === true) {
-                                //place holder for Go lang templates
-
-                                return output("html");
-                            }
-                            if ((/\s?\{%/).test(a) === true && (/\{(\{|#)(?!(\{|#|\=))/).test(a) === true) {
-                                return output("twig");
-                            }
-                            if ((/<\?/).test(a) === true) {
-                                return output("php");
-                            }
-                            if ((/<jsp:include\s/).test(a) === true || (/<c:((set)|(if))\s/).test(a) === true) {
-                                return output("jsp");
-                            }
-                            if ((/\{(#|\?|\^|@|<|\+|~)/).test(a) === true && (/\{\//).test(a) === true) {
-                                return output("dustjs");
-                            }
-                            return output("html");
-                        }
-                        if ((/<jsp:include\s/).test(a) === true || (/<c:((set)|(if))\s/).test(a) === true) {
-                            return output("jsp");
-                        }
-                        if ((/<%\s*\}/).test(a) === true) {
-                            return output("ejs");
-                        }
-                        if ((/<%\s*end/).test(a) === true) {
-                            return output("html_ruby");
-                        }
-                        if ((/\{\{(#|\/|\{)/).test(a) === true) {
-                            return output("handlebars");
-                        }
-                        if ((/\{\{end\}\}/).test(a) === true) {
-                            //place holder for Go lang templates
-
-                            return output("xml");
-                        }
-                        if ((/\s?\{%/).test(a) === true && (/\{\{(?!(\{|#|\=))/).test(a) === true) {
-                            return output("twig");
-                        }
-                        if ((/<\?(?!(xml))/).test(a) === true) {
-                            return output("php");
-                        }
-                        if ((/\{(#|\?|\^|@|<|\+|~)/).test(a) === true && (/\{\//).test(a) === true) {
-                            return output("dustjs");
-                        }
-                        if ((/<jsp:include\s/).test(a) === true || (/<c:((set)|(if))\s/).test(a) === true) {
-                            return output("jsp");
-                        }
-                        return output("xml");
-                    }
-                    return output("unknown");
-                };
+                defaultt    = "";
+            if (typeof language !== "object") {
+                return;
+            }
+            auto = language.auto;
+            setlangmode = language.setlangmode;
+            nameproper = language.nameproper;
+            defaultt = (pd.data.node.langdefault === null || pd.data.node.langdefault.nodeName.toLowerCase() !== "select")
+                ? "javascript"
+                : setlangmode(pd.data.node.langdefault[pd.data.node.langdefault.selectedIndex].value);
             if (obj !== undefined && obj !== null) {
                 if (pd.test.ace === true && obj.getValue !== undefined) {
                     sample = obj.getValue();
@@ -841,7 +612,7 @@ global.meta = {
             } else if (lang !== "") {
                 pd.data.langvalue = [lang, setlangmode(lang), nameproper(lang)];
             } else if (sample !== "" || pd.test.ace === false) {
-                pd.data.langvalue = auto(sample);
+                pd.data.langvalue = auto(sample, defaultt);
             } else {
                 pd.data.langvalue = [defaultt, setlangmode(defaultt), nameproper(defaultt)];
             }
@@ -849,7 +620,7 @@ global.meta = {
             if (pd.test.ace === true) {
                 if (all === true || pd.data.mode === "beau") {
                     if (all === true && lang === "") {
-                        value             = auto(pd.ace.beauIn.getValue());
+                        value             = auto(pd.ace.beauIn.getValue(), defaultt);
                         pd.data.langvalue = value;
                     }
                     if (value[0] === "tss") {
@@ -876,7 +647,7 @@ global.meta = {
                 }
                 if (all === true || pd.data.mode === "minn") {
                     if (all === true && lang === "") {
-                        value             = auto(pd.ace.minnIn.getValue());
+                        value             = auto(pd.ace.minnIn.getValue(), defaultt);
                         pd.data.langvalue = value;
                     }
                     if (value[0] === "tss") {
@@ -903,7 +674,7 @@ global.meta = {
                 }
                 if (all === true || pd.data.mode === "pars") {
                     if (all === true && lang === "") {
-                        value             = auto(pd.ace.parsIn.getValue());
+                        value             = auto(pd.ace.parsIn.getValue(), defaultt);
                         pd.data.langvalue = value;
                     }
                     if (value[0] === "tss") {
@@ -930,7 +701,7 @@ global.meta = {
                 }
                 if (all === true || pd.data.mode === "diff") {
                     if (all === true && lang === "") {
-                        value             = auto(pd.ace.diffBase.getValue());
+                        value             = auto(pd.ace.diffBase.getValue(), defaultt);
                         pd.data.langvalue = value;
                     }
                     if (value[0] === "tss") {
@@ -961,16 +732,16 @@ global.meta = {
             }
             if (value.length < 1 && lang === "") {
                 if (pd.data.mode === "beau" && pd.data.node.codeBeauIn !== null) {
-                    value = auto(pd.data.node.codeBeauIn.value);
+                    value = auto(pd.data.node.codeBeauIn.value, defaultt);
                 } else if (pd.data.mode === "minn" && pd.data.node.codeMinnIn !== null) {
-                    value = auto(pd.data.node.codeMinnIn.value);
+                    value = auto(pd.data.node.codeMinnIn.value, defaultt);
                 } else if (pd.data.mode === "pars" && pd.data.node.codeParsIn !== null) {
-                    value = auto(pd.data.node.codeParsIn.value);
+                    value = auto(pd.data.node.codeParsIn.value, defaultt);
                 } else {
                     if (pd.data.node.codeDiffBase !== null) {
-                        value = auto(pd.data.node.codeDiffBase.value);
+                        value = auto(pd.data.node.codeDiffBase.value, defaultt);
                     } else if (pd.data.node.codeDiffNew !== null) {
-                        value = auto(pd.data.node.codeDiffNew.value);
+                        value = auto(pd.data.node.codeDiffNew.value, defaultt);
                     }
                 }
                 if (value.length < 1) {
@@ -1125,6 +896,18 @@ global.meta = {
                         data = ["force_indent", "false"];
                     } else if (id === "bforce_indent-yes" || id === "dforce_indent-yes") {
                         data = ["force_indent", "true"];
+                    } else if (id === "bformatarray-default" || id === "dformatarray-default") {
+                        data = ["formatArray", "default"];
+                    } else if (id === "bformatarray-indent" || id === "dformatarray-indent") {
+                        data = ["formatArray", "indent"];
+                    } else if (id === "bformatarray-inline" || id === "dformatarray-inline") {
+                        data = ["formatArray", "inline"];
+                    } else if (id === "bformatobject-default" || id === "dformatobject-default") {
+                        data = ["formatObject", "default"];
+                    } else if (id === "bformatobject-indent" || id === "dformatobject-indent") {
+                        data = ["formatObject", "indent"];
+                    } else if (id === "bformatobject-inline" || id === "dformatobject-inline") {
+                        data = ["formatObject", "inline"];
                     } else if (id === "bjslines-all" || id === "djslines-all") {
                         data = ["preserve", "all"];
                     } else if (id === "bjslines-css" || id === "djslines-css") {
@@ -1281,9 +1064,11 @@ global.meta = {
                     } else if (id === "jsscope-html") {
                         data = ["jsscope", "true"];
                     } else if (id === "jsscope-no") {
-                        data = ["jsscope", "false"];
+                        data = ["jsscope", "none"];
                     } else if (id === "jsscope-yes") {
-                        data = ["jsscope", "true"];
+                        data = ["jsscope", "html"];
+                    } else if (id === "jsscope-html") {
+                        data = ["jsscope", "report"];
                     } else if (id === "jsspaced-no" || id === "jsspace-no") {
                         data = ["jsspace", "false"];
                     } else if (id === "jsspaced-yes" || id === "jsspace-yes") {
@@ -3967,6 +3752,12 @@ global.meta = {
                     endcomma       = pd.id("bendcomma-yes"),
                     forceAttribute = pd.id("bforce_attribute-yes"),
                     forceIndent    = pd.id("bforce_indent-yes"),
+                    formatADefault = pd.id("bformatarray-default"),
+                    formatAIndent  = pd.id("bformatarray-indent"),
+                    formatAInline  = pd.id("bformatarray-inline"),
+                    formatODefault = pd.id("bformatobject-default"),
+                    formatOIndent  = pd.id("bformatobject-indent"),
+                    formatOInline  = pd.id("bformatobject-inline"),
                     html           = pd.id("html-yes"),
                     jscorrect      = pd.id("jscorrect-yes"),
                     jshtml         = pd.id("jsscope-html"),
@@ -4065,6 +3856,20 @@ global.meta = {
                 api.endcomma        = (endcomma !== null && endcomma.checked === true);
                 api.force_attribute = (forceAttribute !== null && forceAttribute.checked === true);
                 api.force_indent    = (forceIndent !== null && forceIndent.checked === true);
+                if (formatADefault !== null && formatADefault.checked === true) {
+                    api.formatArray = "default";
+                } else if (formatAIndent !== null && formatAIndent.checked === true) {
+                    api.formatArray = "indent";
+                } else if (formatAInline !== null && formatAInline.checked === true) {
+                    api.formatArray = "inline";
+                }
+                if (formatODefault !== null && formatODefault.checked === true) {
+                    api.formatObject = "default";
+                } else if (formatOIndent !== null && formatOIndent.checked === true) {
+                    api.formatObject = "indent";
+                } else if (formatOInline !== null && formatOInline.checked === true) {
+                    api.formatObject = "inline";
+                }
                 api.html            = (html !== null && html.checked === true);
                 api.inlevel         = (offset === null || isNaN(offset.value) === true)
                     ? 0
@@ -4237,6 +4042,12 @@ global.meta = {
                     elseline        = pd.id("jselselined-yes"),
                     forceAttribute  = pd.id("dforce_attribute-yes"),
                     forceIndent     = pd.id("dforce_indent-yes"),
+                    formatADefault  = pd.id("dformatarray-default"),
+                    formatAIndent   = pd.id("dformatarray-indent"),
+                    formatAInline   = pd.id("dformatarray-inline"),
+                    formatODefault  = pd.id("dformatarray-default"),
+                    formatOIndent   = pd.id("dformatarray-indent"),
+                    formatOInline   = pd.id("dformatarray-inline"),
                     html            = pd.id("htmld-yes"),
                     inline          = pd.id("inline"),
                     methodchain     = pd.id("dmethodchain-yes"),
@@ -4298,6 +4109,20 @@ global.meta = {
                 api.elseline        = (elseline !== null && elseline.checked !== false);
                 api.force_attribute = (forceAttribute !== null && forceAttribute.checked === true);
                 api.force_indent    = (forceIndent !== null && forceIndent.checked === true);
+                if (formatADefault !== null && formatADefault.checked === true) {
+                    api.formatArray = "default";
+                } else if (formatAIndent !== null && formatAIndent.checked === true) {
+                    api.formatArray = "indent";
+                } else if (formatAInline !== null && formatAInline.checked === true) {
+                    api.formatArray = "inline";
+                }
+                if (formatODefault !== null && formatODefault.checked === true) {
+                    api.formatObject = "default";
+                } else if (formatOIndent !== null && formatOIndent.checked === true) {
+                    api.formatObject = "indent";
+                } else if (formatOInline !== null && formatOInline.checked === true) {
+                    api.formatObject = "inline";
+                }
                 api.html            = (html !== null && html.checked === true);
                 api.insize          = (quantity === null || isNaN(quantity.value) === true)
                     ? 4
@@ -5988,6 +5813,10 @@ global.meta = {
                                 dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "jspretty.js") {
                                 date               = global.edition.jspretty;
+                                dateCell.innerHTML = conversion(date);
+                                dateList.push([date, row[b].innerHTML]);
+                            } else if (lib === "language.js") {
+                                date               = global.edition.language;
                                 dateCell.innerHTML = conversion(date);
                                 dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "lint.js") {

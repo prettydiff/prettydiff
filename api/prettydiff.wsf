@@ -146,6 +146,10 @@
                                 "n all content and tags without regard for the creation of new text nodes. Defaul" +
                                 "t is false.");
                         error.push("");
+                        error.push("* formatArray    - string  - Determines whether JavaScript array indexes should always indented, remain on a single line, or left to the default formatting. Accepted values are: default, indent, inline");
+                        error.push("");
+                        error.push("* formatObject   - string  - Determines whether JavaScript object properties should always indented, remain on a single line, or left to the default formatting. Accepted values are: default, indent, inline");
+                        error.push("");
                         error.push("* help           - string  - This list of argument definitions. The value is unn" +
                                 "ecessary and is required only to pass in use of the parameter.");
                         error.push("");
@@ -491,6 +495,12 @@
                 args.endcomma        = (WScript.Arguments.Named("endcomma") === "true" || WScript.Arguments.Named("endcomma") === true);
                 args.force_attribute = (WScript.Arguments.Named("force_attribute") === "true" || WScript.Arguments.Named("force_attribute") === true);
                 args.force_indent    = (WScript.Arguments.Named("force_indent") === "true" || WScript.Arguments.Named("force_indent") === true);
+                args.formatArray     = (WScript.Arguments.Named("formatArray") === "indent" || WScript.Arguments.Named("formatArray") === "inline")
+                    ? WScript.Arguments.Named("formatArray")
+                    : "default";
+                args.formatObject    = (WScript.Arguments.Named("formatObject") === "indent" || WScript.Arguments.Named("formatObject") === "inline")
+                    ? WScript.Arguments.Named("formatObject")
+                    : "default";
                 args.html            = (WScript.Arguments.Named("html") === "true" || WScript.Arguments.Named("html") === true);
                 args.inchar          = WScript
                     .Arguments
