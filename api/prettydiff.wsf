@@ -67,6 +67,10 @@
                     if (WScript.Arguments.Count() === 0 || help === true) {
                         error.push("Arguments      - Type    - Definition");
                         error.push("-------------------------------------");
+                        error.push("* attributetoken - boolean - If true markup attributes are provided as separate " +
+                                "tokens in the parse table of mode parse. Otherwise attributes are a data propert" +
+                                "y of their respective element. Default is false.");
+                        error.push("");
                         error.push("* braceline      - boolean - Inserts a newline after an opening curly brace and " +
                                 "before a closing curly brace. Default is false.");
                         error.push("");
@@ -146,9 +150,13 @@
                                 "n all content and tags without regard for the creation of new text nodes. Defaul" +
                                 "t is false.");
                         error.push("");
-                        error.push("* formatArray    - string  - Determines whether JavaScript array indexes should always indented, remain on a single line, or left to the default formatting. Accepted values are: default, indent, inline");
+                        error.push("* formatArray    - string  - Determines whether JavaScript array indexes should " +
+                                "always indented, remain on a single line, or left to the default formatting. Acc" +
+                                " epted values are: default, indent, inline");
                         error.push("");
-                        error.push("* formatObject   - string  - Determines whether JavaScript object properties should always indented, remain on a single line, or left to the default formatting. Accepted values are: default, indent, inline");
+                        error.push("* formatObject   - string  - Determines whether JavaScript object properties sho" +
+                                "uld always indented, remain on a single line, or left to the default formatting." +
+                                " Accepted values are: default, indent, inline");
                         error.push("");
                         error.push("* help           - string  - This list of argument definitions. The value is unn" +
                                 "ecessary and is required only to pass in use of the parameter.");
@@ -197,7 +205,8 @@
                         error.push("* nocaseindent   - boolean - If a case statement should receive the same indenta" +
                                 "tion as the containing switch block.");
                         error.push("");
-                        error.push("* nochainindent  - boolean - If indentation should be prevented for JavaScript methods broken onto multiple lines.");
+                        error.push("* nochainindent  - boolean - If indentation should be prevented for JavaScript m"
+                                "ethods broken onto multiple lines.");
                         error.push("");
                         error.push("* noleadzero     - boolean - If in CSS values leading 0s immediately preceeding " +
                                 "a decimal should be removed or prevented.");
@@ -210,11 +219,12 @@
                                 "ot exist it will be created. If this argument is missing output will print to sc" +
                                 "reen.");
                         error.push("");
-                        error.push("* parseFormat    - boolean - When in parse mode if the output should be arrays of" +
-                                " records (sequential), arrays of data types (parallel), or an HTML table.  Defau" +
-                                "lt is parallel.");
+                        error.push("* parseFormat    - boolean - When in parse mode if the output should be arrays o" +
+                                "f records (sequential), arrays of data types (parallel), or an HTML table.  Defa" +
+                                "ult is parallel.");
                         error.push("");
-                        error.push("* parseSpace     - boolean - Whether whitespace tokens should be in the generated parse tree. Default is false.");
+                        error.push("* parseSpace     - boolean - Whether whitespace tokens should be in the generate" +
+                                "d parse tree. Default is false.");
                         error.push("");
                         error.push("* preserve       - number  - The number of acceptable empty lines.");
                         error.push("");
@@ -466,6 +476,7 @@
             }
             if (fail === false) {
                 args.api             = "wsf";
+                args.attributetoken  = (WScript.Arguments.Named("attributetoken") === "true" || WScript.Arguments.Named("attributetoken") === true);
                 args.braceline       = (WScript.Arguments.Named("braceline") === "true" || WScript.Arguments.Named("braceline") === true);
                 args.bracepadding    = (WScript.Arguments.Named("bracepadding") === "true" || WScript.Arguments.Named("bracepadding") === true);
                 args.braces          = (WScript.Arguments.Named("indent") === "allman")
