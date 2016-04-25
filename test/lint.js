@@ -566,7 +566,7 @@
                                         if (typeof suberr === "string") {
                                             return errout(suberr);
                                         }
-                                        if (typeof substd === "string" && substd.length > 0) {
+                                        if (typeof substd === "string" && substd.length > 0 && substd.indexOf("Cloning into") < 0) {
                                             return errout(substd);
                                         }
                                         console.log("git submodule update");
