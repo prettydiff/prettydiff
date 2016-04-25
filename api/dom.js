@@ -860,7 +860,11 @@ global.meta = {
                 (function dom__app_options_comment() {
                     var a    = 0,
                         data = [];
-                    if (id === "baselabel") {
+                    if (id === "attributetoken-no") {
+                        data = ["attributetoken", "false"];
+                    } else if (id === "attributetoken-yes") {
+                        data = ["attributetoken", "true"];
+                    } else if (id === "baselabel") {
                         data = ["sourcelabel", item.value];
                     } else if (id === "bbraceline-no" || id === "dbraceline-no") {
                         data = ["braceline", "false"];
@@ -4331,7 +4335,8 @@ global.meta = {
                 }
             }
             (function dom__event_recycle_parse() {
-                var dustjs       = pd.id("pdustyes"),
+                var attributetoken = pd.id("attributetoken-yes"),
+                    dustjs       = pd.id("pdustyes"),
                     html         = pd.id("phtml-yes"),
                     jscorrect    = pd.id("pjscorrect-yes"),
                     methodchainc = pd.id("dmethodchain-chain"),
@@ -4361,6 +4366,7 @@ global.meta = {
                         api.source = pd.data.node.codeParsIn.value;
                     }
                 }
+                api.attributetoken = (attributetoken !== null && attributetoken.checked === true);
                 api.correct      = (jscorrect !== null && jscorrect.checked === true);
                 api.dustjs       = (dustjs !== null && dustjs.checked === true);
                 api.html         = (html !== null && html.checked === true);

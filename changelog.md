@@ -1,5 +1,10 @@
 # Pretty Diff change log
 
+## v2.0.2
+
+* **attributetoken**.  Whether attributes should be parsed as a data property of the element or a separate token in the parse table.
+* Markup code now outputs two additional data facets on the parse table: begin and daddy.  Daddy stores the tag name of a token's parent element.  Begin stores the index of that parent element.
+
 ## v2.0.1
 
 ### Defect resolutions
@@ -24,7 +29,7 @@
 * **nodeasync**.  Asynchronous bulk operations like reading from a directory produces cross-talk when assigning meta data to a global object.  The desired goal of version 2 is to have the prettydiff function return a single string and meta data to a global object.  In this case, for reliability, the prettydiff function will return an array of [data, meta] where data is the desired string output and meta is the metadata object similar to Pretty Diff version 1.
 * **nodeerror**.  Sometimes it is desirable and informative to log parse errors to the console.  Such a feature can become excessive noise and break unit tests though.
 * **parseRecord**.  If false the output of mode "parse" is a collection of *parallel* data types. If the option is true the output is a *sequential* array where each index is a child array of data respective to a given parsed token.
-* **parseSpace**. Determines whether white space content tokens should exist in the parse tree output of the parse mode.
+* **parseSpace**.  Determines whether white space content tokens should exist in the parse tree output of the parse mode.
 
 ### Minor fixes:
 * Enabling accessibility analysis and reporting in the new "analysis" mode.

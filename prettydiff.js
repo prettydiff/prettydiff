@@ -183,6 +183,9 @@ var prettydiff = function prettydiff_(api) {
                     api            : (api.api === undefined || api.api.length === 0)
                         ? ""
                         : api.api,
+                    // attributetoken - whether attributes should be represented as token items in
+                    // the parse table or whether they should be a data properties of their element
+                    attributetoken : (api.attributetoken === true || api.attributetoken === "true"),
                     // braceline - should a new line pad the interior of blocks (curly braces) in
                     // JavaScript
                     braceline      : (api.braceline === true || api.braceline === "true"),
@@ -914,24 +917,24 @@ global.edition        = {
         ace: 160307
     },
     api          : {
-        dom      : 160422, //dom.js
-        nodeLocal: 160422, //node-local.js
-        wsh      : 160422
+        dom      : 160425, //dom.js
+        nodeLocal: 160425, //node-local.js
+        wsh      : 160425
     },
     css          : 160418, //css files
     csspretty    : 160418, //csspretty lib
     csvpretty    : 160307, //csvpretty lib
     diffview     : 160418, //diffview lib
-    documentation: 160422, //documentation.xhtml
+    documentation: 160425, //documentation.xhtml
     jspretty     : 160422, //jspretty lib
     language     : 160422, //language lib
     latest       : 0,
     lint         : 160422, //unit test and lint automation as test/lint.js
-    markuppretty : 160422, //markuppretty lib
-    prettydiff   : 160422, //this file
+    markuppretty : 160425, //markuppretty lib
+    prettydiff   : 160425, //this file
     safeSort     : 160307, //safeSort lib
-    version      : "2.0.1", //version number
-    webtool      : 160422
+    version      : "2.0.2", //version number
+    webtool      : 160425
 };
 global.edition.latest = (function edition_latest() {
     "use strict";
