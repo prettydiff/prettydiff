@@ -510,15 +510,14 @@
                                                 // already modified
                                                 if (data.slice(data.length - 30).indexOf("\nmodule.exports = jslint;") < 0) {
                                                     data = data + "\nmodule.exports = jslint;";
-                                                    fs.writeFile("JSLint/jslint.js", data, "utf8", function taskrunner_lint_install_stat_childtask_child_readFile_writeFile(erwrite) {
+                                                    return fs.writeFile("JSLint/jslint.js", data, "utf8", function taskrunner_lint_install_stat_childtask_child_readFile_writeFile(erwrite) {
                                                         if (erwrite !== null && erwrite !== undefined) {
                                                             return errout(erwrite);
                                                         }
                                                         moduleready();
                                                     });
-                                                } else {
-                                                    moduleready();
                                                 }
+                                                moduleready();
                                                 return stdout;
                                             });
                                     };
@@ -540,6 +539,20 @@
                                     // are in the child directory and need to come up
                                     cdupcallback();
                                 });
+                            },
+                            absentfun = function taskrunner_lint_install_stat_childtask_absentfun() {
+                                // we only need to install once per day, so determine if JSLint has already
+                                // installed today
+                                if (today < date) {
+                                    console.log("Pulling latest JSLint...");
+                                    return childtask();
+                                }
+                                jslint = require(process.cwd() + "/JSLint/jslint.js");
+                                console.log("Running prior installed JSLint version " + jslint().edition + ".");
+                                flag.lint = true;
+                                if (flag.fs === true) {
+                                    lintrun();
+                                }
                             };
                         if (erstat !== null && erstat !== undefined && absent === false) {
                             return errout(erstat);
@@ -551,24 +564,11 @@
                         // be issued as child processes to prevent interference from reading JavaScript
                         // files in the project
                         if (absent === false && stats.isDirectory() === true) {
-                            // we only need to install once per day, so determine if JSLint has already
-                            // installed today
-                            if (today < date) {
-                                console.log("Pulling latest JSLint...");
-                                childtask();
-                            } else {
-                                jslint = require(process.cwd() + "/JSLint/jslint.js");
-                                console.log("Running prior installed JSLint version " + jslint().edition + ".");
-                                flag.lint = true;
-                                if (flag.fs === true) {
-                                    lintrun();
-                                }
-                            }
-                        } else {
-                            console.log("Cloning JSLint...");
-                            command = "git submodule add https://github.com/douglascrockford/JSLint.git";
-                            childtask();
+                            return absentfun();
                         }
+                        console.log("Cloning JSLint...");
+                        command = "git submodule add https://github.com/douglascrockford/JSLint.git";
+                        childtask();
                     });
                 }());
                 (function taskrunner_lint_getFiles() {
