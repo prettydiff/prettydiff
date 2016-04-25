@@ -183,6 +183,9 @@ var prettydiff = function prettydiff_(api) {
                     api            : (api.api === undefined || api.api.length === 0)
                         ? ""
                         : api.api,
+                    // attributetoken - whether attributes should be represented as token items in
+                    // the parse table or whether they should be a data properties of their element
+                    attributetoken : (api.attributetoken === true || api.attributetoken === "true"),
                     // braceline - should a new line pad the interior of blocks (curly braces) in
                     // JavaScript
                     braceline      : (api.braceline === true || api.braceline === "true"),

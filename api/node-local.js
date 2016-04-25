@@ -57,6 +57,7 @@ Examples:
         }()),
         options        = {
             api            : "node",
+            attributetoken : false,
             braceline      : false,
             bracepadding   : false,
             braces         : "knr",
@@ -416,9 +417,14 @@ Examples:
             a.push("");
             a.push("Arguments      - Type    - Definition");
             a.push("-------------------------------------");
+            a.push("* attributetoken - boolean - If true markup attributes are provided as separate");
+            a.push("                           tokens in the parse table of mode parse. Otherwise");
+            a.push("                           attributes are a data property of their respective");
+            a.push("                           element. Default is false.");
+            a.push("");
             a.push("* braceline    - boolean - If true a new line character will be inserted after");
             a.push("                           opening curly braces and before closing curly");
-            a.push("                            braces. Default is false.");
+            a.push("                           braces. Default is false.");
             a.push("");
             a.push("* bracepadding - boolean - Inserts a space after the start of a contain and");
             a.push("                           before the end of the container in JavaScript if the");
@@ -1483,6 +1489,8 @@ Examples:
                     options.version = true;
                 } else if (d[b][0] === "api") {
                     options.api = "node";
+                } else if (d[b][0] === "attributetoken" && d[b][1] === "true") {
+                    options.attributetoken = true;
                 } else if (d[b][0] === "braceline" && d[b][1] === "true") {
                     options.braceline = true;
                 } else if (d[b][0] === "bracepadding" && d[b][1] === "true") {
