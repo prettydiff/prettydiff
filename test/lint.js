@@ -481,7 +481,6 @@
                     fs.stat("JSLint", function taskrunner_lint_install_stat(erstat, stats) {
                         var child     = require("child_process").exec,
                             command   = "git submodule foreach git pull origin master",
-                            absent    = (JSON.stringify(erstat).indexOf("ENOENT") > -1),
                             childtask = function taskrunner_lint_install_stat_childtask() {
                                 child(command, {
                                     timeout: 30000
@@ -540,7 +539,7 @@
                                     cdupcallback();
                                 });
                             },
-                            absentfun = function taskrunner_lint_install_stat_childtask_absentfun() {
+                            absentfun = function taskrunner_lint_install_stat_absentfun() {
                                 // we only need to install once per day, so determine if JSLint has already
                                 // installed today
                                 if (today < date) {
@@ -553,18 +552,48 @@
                                 if (flag.fs === true) {
                                     lintrun();
                                 }
+                            },
+                            initfun = function taskrunner_lint_install_stat_initfun() {
+                                child("git submodule init", function (initerr, initout, initstd) {
+                                    if (typeof initerr === "string") {
+                                        return errout(initerr);
+                                    }
+                                    if (typeof initstd === "string" && initstd.length > 0) {
+                                        return errout(initstd);
+                                    }
+                                    console.log("git submodule init");
+                                    child("git submodule update", function (suberr, subout, substd) {
+                                        if (typeof suberr === "string") {
+                                            return errout(suberr);
+                                        }
+                                        if (typeof substd === "string" && substd.length > 0) {
+                                            return errout(substd);
+                                        }
+                                        console.log("git submodule update");
+                                        absentfun();
+                                        return subout;
+                                    });
+                                    return initout;
+                                });
                             };
-                        if (erstat !== null && erstat !== undefined && absent === false) {
+                        if (erstat !== null && erstat !== undefined) {
                             return errout(erstat);
                         }
-                        //does the directory JSLint exist? If not clone from github. If so then:
-                        //* cd JSLint
-                        //* git submodule foreach git pull origin master
-                        // * cd .. Although changing directory is simple with process.chdir these must
-                        // be issued as child processes to prevent interference from reading JavaScript
-                        // files in the project
-                        if (absent === false && stats.isDirectory() === true) {
-                            return absentfun();
+                        if (stats.isDirectory() === true) {
+                            return fs.readdir("JSLint", function (direrr, files) {
+                                if (typeof direrr === "string") {
+                                    return errout(direrr);
+                                }
+                                if (path.sep === "\\") {
+                                    console.log("dir JSLint");
+                                } else {
+                                    console.log("ls JSLint");
+                                }
+                                if (files.length < 1) {
+                                    return initfun();
+                                }
+                                return absentfun();
+                            });
                         }
                         console.log("Cloning JSLint...");
                         command = "git submodule add https://github.com/douglascrockford/JSLint.git";
