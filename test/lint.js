@@ -3633,7 +3633,9 @@
                             }()),
                             child     = function taskrunner_simulations_shell_child(param) {
                                 param.check = slashfix(param.check);
-                                childExec(param.check, function taskrunner_simulations_shell_child_childExec(err, stdout, stderr) {
+                                childExec(param.check, {
+                                    timeout: 1200000
+                                }, function taskrunner_simulations_shell_child_childExec(err, stdout, stderr) {
                                     var failflag  = false,
                                         data      = [param.name],
                                         verifies  = function taskrunner_simulations_shell_child_childExec_verifies(output, list) {
