@@ -2,7 +2,7 @@
 environment:
   matrix:
   # node.js
-  - nodejs_version: "5.11.0"
+  - nodejs_version: "5.10.1"
   - nodejs_version: "5.4.1"
   - nodejs_version: "5.3"
   - nodejs_version: "5.2"
