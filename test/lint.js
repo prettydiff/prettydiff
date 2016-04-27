@@ -14,7 +14,7 @@
         startTime  = Date.now(),
         fs         = require("fs"),
         path       = require("path"),
-        humantime  = function taskrunner_humantime() {
+        humantime  = function taskrunner_humantime(finished) {
             var minuteString = "",
                 hourString   = "",
                 secondString = "",
@@ -90,11 +90,17 @@
                 },
                 minute       = function core__proctime_minute() {
                     minutes      = parseInt((elapsed / 60), 10);
-                    minuteString = plural(minutes, " minute");
+                    minuteString = (finished === true)
+                        ? plural(minutes, " minute")
+                        : (minutes < 10)
+                            ? "0" + minutes
+                            : "" + minutes;
                     minutes      = elapsed - (minutes * 60);
-                    secondString = (minutes === 1)
-                        ? " 1 second "
-                        : minutes.toFixed(3) + " seconds ";
+                    secondString = (finished === true)
+                        ? (minutes === 1)
+                            ? " 1 second "
+                            : minutes.toFixed(3) + " seconds "
+                        : minutes.toFixed(3);
                 };
             memory       = process.memoryUsage();
             finalMem     = prettybytes(memory.rss);
@@ -106,24 +112,42 @@
                 minute();
             } else if (elapsed >= 3600) {
                 hours      = parseInt((elapsed / 3600), 10);
-                hourString = hours.toString();
                 elapsed    = elapsed - (hours * 3600);
-                hourString = plural(hours, " hour");
+                hourString = (finished === true)
+                    ? plural(hours, " hour")
+                    : (hours < 10)
+                        ? "0" + hours
+                        : "" + hours;
                 minute();
             } else {
-                secondString = plural(secondString, " second");
+                secondString = (finished === true)
+                    ? plural(secondString, " second")
+                    : secondString;
             }
-            finalTime = hourString + minuteString + secondString;
-            console.log(finalMem + " of memory consumed");
-            console.log(finalTime + "total time");
-            console.log("");
+            if (finished === true) {
+                finalTime = hourString + minuteString + secondString;
+                console.log(finalMem + " of memory consumed");
+                console.log(finalTime + "total time");
+                console.log("");
+            } else {
+                if (hourString === "") {
+                    hourString = "00";
+                }
+                if (minuteString === "") {
+                    minuteString = "00";
+                }
+                if ((/^([0-9]\.)/).test(secondString) === true) {
+                    secondString = "0" + secondString;
+                }
+                return "\x1B[36m[" + hourString + ":" + minuteString + ":" + secondString + "]\x1B[39m ";
+            }
         },
         prettydiff = require("../prettydiff.js"),
         options    = {},
         errout     = function taskrunner_errout(errtext) {
             console.log("");
             console.error(errtext);
-            humantime();
+            humantime(true);
             process.exit(1);
         },
         next       = function taskrunner_nextInit() {
@@ -297,7 +321,7 @@
                                 }
                                 if (output === correct[a][1]) {
                                     filecount += 1;
-                                    console.log("\x1B[32mPretty Diff is good with file " + filecount + ":\x1B[39m " + correct[a][0]);
+                                    console.log(humantime(false) + "\x1B[32mPretty Diff is good with file " + filecount + ":\x1B[39m " + correct[a][0]);
                                     if (a === len - 1) {
                                         return next();
                                     }
@@ -361,7 +385,6 @@
                 console.log("");
                 console.log("");
                 console.log("\x1B[36mCore Unit Testing\x1B[39m");
-                console.log("");
                 readDir("raw");
                 readDir("correct");
             },
@@ -422,7 +445,7 @@
                             options.source = val[1];
                             result         = jslint(prettydiff.api(options), {"for": true});
                             if (result.ok === true) {
-                                console.log("\x1B[32mLint is good for file " + (ind + 1) + ":\x1B[39m " + val[0]);
+                                console.log(humantime(false) + "\x1B[32mLint is good for file " + (ind + 1) + ":\x1B[39m " + val[0]);
                                 if (ind === arr.length - 1) {
                                     console.log("");
                                     console.log("\x1B[32mLint operation complete!\x1B[39m");
@@ -436,7 +459,7 @@
                                 if (failed === true) {
                                     errout("\x1B[31mLint fail\x1B[39m :(");
                                 } else {
-                                    console.log("\x1B[32mLint is good for file " + (ind + 1) + ":\x1B[39m " + val[0]);
+                                    console.log(humantime(false) + "\x1B[32mLint is good for file " + (ind + 1) + ":\x1B[39m " + val[0]);
                                     if (ind === arr.length - 1) {
                                         console.log("");
                                         console.log("\x1B[32mLint operation complete!\x1B[39m");
@@ -717,13 +740,13 @@
                             diffFiles("package.json", data, prettydata);
                             errout("\x1B[31mPretty Diff corrupted package.json\x1B[36m");
                         }
-                        console.log("\x1B[32mThe package.json file is beautified properly.\x1B[36m");
+                        console.log(humantime(false) + "\x1B[32mThe package.json file is beautified properly.\x1B[36m");
                         if (strmeta !== globalmeta) {
                             diffFiles("package.json", strmeta, globalmeta);
                             errout("\x1B[31mglobal.meta is broken from package.json beautification.\x1B[39m");
                             console.log("");
                         }
-                        console.log("\x1B[32mglobal.meta global object is properly constructed.\x1B[39m");
+                        console.log(humantime(false) + "\x1B[32mglobal.meta global object is properly constructed.\x1B[39m");
                         return next();
                     });
             },
@@ -3670,8 +3693,8 @@
                                                     ? ""
                                                     : " in current group, " + total + " total",
                                                 status        = (item[1] === "pass")
-                                                    ? "\x1B[32mPass\x1B[39m test "
-                                                    : "\x1B[31mFail\x1B[39m test ",
+                                                    ? humantime(false) + "\x1B[32mPass\x1B[39m test "
+                                                    : humantime(false) + "\x1B[31mFail\x1B[39m test ",
                                                 groupComplete = function taskrunner_simulations_shell_child_childExec_writeLint_groupCompleteInit() {
                                                     return;
                                                 },
@@ -3772,15 +3795,15 @@
                                                     var a    = 0,
                                                         len  = tasks.length,
                                                         task = function taskrunner_simulations_shell_child_writeLine_teardown_task() {
-                                                            var winerr       = false,
-                                                                execCallback = function taskrunner_simulations_shell_child_writeLine_teardown_task_exec(err, stdout, stderr) {
+                                                            var execCallback = function taskrunner_simulations_shell_child_writeLine_teardown_task_exec(err, stdout, stderr) {
                                                                     a += 1;
                                                                     if (typeof err === "string") {
                                                                         console.log(err);
                                                                     } else if (typeof stderr === "string" && stderr !== "") {
                                                                         console.log(stderr);
-                                                                        if (path.sep === "\\" && stderr.indexOf("The directory is not empty.") > 0) {
-                                                                            winerr = true;
+                                                                        if (path.sep === "\\" && stdout.indexOf("The directory is not empty.") > 0) {
+                                                                            console.log("Async error in Windows file system.  Trying one more time...");
+                                                                            return setTimeout(childExec(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
                                                                         }
                                                                     } else {
                                                                         if (a === len) {
@@ -3795,10 +3818,6 @@
                                                             tasks[a] = slashfix(tasks[a]);
                                                             console.log(tab + "  " + tasks[a]);
                                                             childExec(tasks[a], execCallback);
-                                                            if (winerr === true) {
-                                                                console.log("Async error in Windows file system.  Trying one more time...");
-                                                                childExec(tasks[a], execCallback);
-                                                            }
                                                         };
                                                     console.log("");
                                                     console.log(tab + "\x1B[36mTeardown\x1B[39m for group: \x1B[33m" + groupname[depth] + "\x1B[39m \x1B[36mstarted\x1B[39m.");
@@ -3971,7 +3990,7 @@
         var complete = function taskrunner_complete() {
             console.log("");
             console.log("All tasks complete... Exiting clean!");
-            humantime();
+            humantime(true);
             process.exit(0);
         };
         if (order.length < 1) {
