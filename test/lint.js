@@ -3799,6 +3799,9 @@
                                                                     a += 1;
                                                                     if (typeof err === "string") {
                                                                         console.log(err);
+                                                                        if (stdout.indexOf("The directory is not empty.") > 0) {
+                                                                            return setTimeout(childExec(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
+                                                                        }
                                                                     } else if (typeof stderr === "string" && stderr !== "") {
                                                                         console.log(stderr);
                                                                         if (path.sep === "\\" && stdout.indexOf("The directory is not empty.") > 0) {
