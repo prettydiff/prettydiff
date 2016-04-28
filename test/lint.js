@@ -3799,16 +3799,21 @@
                                                                     a += 1;
                                                                     if (typeof err === "string") {
                                                                         console.log(err);
-                                                                        if (stdout.indexOf("The directory is not empty.") > 0) {
+                                                                        if (err.indexOf("The directory is not empty.") > 0) {
+                                                                            console.log("(err) Async error in Windows file system.  Trying one more time...");
                                                                             return setTimeout(childExec(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
                                                                         }
                                                                     } else if (typeof stderr === "string" && stderr !== "") {
                                                                         console.log(stderr);
-                                                                        if (path.sep === "\\" && stdout.indexOf("The directory is not empty.") > 0) {
-                                                                            console.log("Async error in Windows file system.  Trying one more time...");
+                                                                        if (stderr.indexOf("The directory is not empty.") > 0) {
+                                                                            console.log("(stderr) Async error in Windows file system.  Trying one more time...");
                                                                             return setTimeout(childExec(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
                                                                         }
                                                                     } else {
+                                                                        if (stdout.indexOf("The directory is not empty.") > 0) {
+                                                                            console.log("(stdout) Async error in Windows file system.  Trying one more time...");
+                                                                            return setTimeout(childExec(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
+                                                                        }
                                                                         if (a === len) {
                                                                             console.log(tab + "\x1B[36mTeardown\x1B[39m for group: \x1B[33m" + groupname[depth] + "\x1B[39m \x1B[32mcomplete\x1B[39m.");
                                                                             console.log("");
