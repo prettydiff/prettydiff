@@ -5,9 +5,9 @@
 (function taskrunner() {
     "use strict";
     var order      = [
-            //"lint", //        - run jslint on all unexcluded files in the repo
-            //"packagejson", // - beautify the package.json file and compare it to itself
-            //"coreunits", //   - run a variety of files through the application and compare the result to a known good file
+            "lint", //        - run jslint on all unexcluded files in the repo
+            "packagejson", // - beautify the package.json file and compare it to itself
+            "coreunits", //   - run a variety of files through the application and compare the result to a known good file
             //"diffunits", //   - unit tests for the diff process
             "simulations" //  - simulate a variety of execution steps and options from the command line
         ],
@@ -2137,7 +2137,7 @@
                                                         "e=pd.colorchange}());//]]>\r\n</script></body></html>"
                                         }
                                     ]
-                                }/*, {
+                                }, {
                                     group: "simple file tests",
                                     units: [
                                         {
@@ -3608,7 +3608,7 @@
                                                         "ate_start, xml\"}}"
                                         }
                                     ]
-                                }*/
+                                }
                             ]
                         }
                     ],
@@ -3806,17 +3806,20 @@
                                                                         console.log(err);
                                                                         if (err.indexOf("The directory is not empty.") > 0) {
                                                                             console.log("(err) Async error in Windows file system.  Trying one more time...");
+                                                                            a -= 1;
                                                                             return setTimeout(childExec(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
                                                                         }
                                                                     } else if (typeof stderr === "string" && stderr !== "") {
                                                                         console.log(stderr);
                                                                         if (stderr.indexOf("The directory is not empty.") > 0) {
                                                                             console.log("(stderr) Async error in Windows file system.  Trying one more time...");
+                                                                            a -= 1;
                                                                             return setTimeout(childExec(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
                                                                         }
                                                                     } else {
                                                                         if (stdout.indexOf("The directory s not empty.") > 0) {
                                                                             console.log("(stdout) Async error in Windows file system.  Trying one more time...");
+                                                                            a -= 1;
                                                                             return setTimeout(childExec(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
                                                                         }
                                                                         if (a === len) {
