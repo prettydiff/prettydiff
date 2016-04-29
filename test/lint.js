@@ -5,9 +5,9 @@
 (function taskrunner() {
     "use strict";
     var order      = [
-            "lint", //        - run jslint on all unexcluded files in the repo
-            "packagejson", // - beautify the package.json file and compare it to itself
-            "coreunits", //   - run a variety of files through the application and compare the result to a known good file
+            //"lint", //        - run jslint on all unexcluded files in the repo
+            //"packagejson", // - beautify the package.json file and compare it to itself
+            //"coreunits", //   - run a variety of files through the application and compare the result to a known good file
             //"diffunits", //   - unit tests for the diff process
             "simulations" //  - simulate a variety of execution steps and options from the command line
         ],
@@ -544,13 +544,18 @@
                                             });
                                     };
                                     if (erchild !== null) {
-                                        if (stderr.indexOf("Your local changes to the following files would be overwritten by merge:") > 0) {
-                                            console.log("");
-                                            console.log("");
-                                            console.log("You need to update JSLint manually for the moment:");
-                                            console.log("1. cd JSLint");
-                                            console.log("2. git checkout jslint.js");
-                                            console.log("3. cd ..");
+                                        if (stderr.indexOf("Could not resolve host: github.com") > 0) {
+                                            return fs.stat("JSLint/jslint.js", function taskrunner_lint_install_stat_childtask_child_filestat(jerstat, jstats) {
+                                                if (typeof jerstat === "string") {
+                                                    return errout(jerstat);
+                                                }
+                                                if (jstats.isFile() === true) {
+                                                    console.log("Could not connect to Github, but it looks like JSLint is installed.  Running prior installed JSLint.");
+                                                    return cdupcallback();
+                                                }
+                                                console.log("Could not connect to Github, and JSLint does not appear to be installed.  Skipping to next phase.");
+                                                return next();
+                                            });
                                         }
                                         return errout(erchild);
                                     }
@@ -2132,7 +2137,7 @@
                                                         "e=pd.colorchange}());//]]>\r\n</script></body></html>"
                                         }
                                     ]
-                                }, {
+                                }/*, {
                                     group: "simple file tests",
                                     units: [
                                         {
@@ -3603,7 +3608,7 @@
                                                         "ate_start, xml\"}}"
                                         }
                                     ]
-                                }
+                                }*/
                             ]
                         }
                     ],
@@ -3810,7 +3815,7 @@
                                                                             return setTimeout(childExec(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
                                                                         }
                                                                     } else {
-                                                                        if (stdout.indexOf("The directory is not empty.") > 0) {
+                                                                        if (stdout.indexOf("The directory s not empty.") > 0) {
                                                                             console.log("(stdout) Async error in Windows file system.  Trying one more time...");
                                                                             return setTimeout(childExec(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
                                                                         }
