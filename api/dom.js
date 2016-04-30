@@ -3580,7 +3580,7 @@ global.meta = {
                             pdlang = "characters";
                         }
                         if (global.meta.error === "" || global.meta.error === undefined) {
-                            pd.data.node.announce.innerHTML = pd.data.node.announce.innerHTML + "<span><em>Execution time:</em> <strong>" + global.meta.time + "</strong>. <em>Output size:</em> <strong>" + commanumb(global.meta.outsize) + " " + pdlang + "</strong></span>";
+                            pd.data.node.announce.innerHTML = pd.data.node.announce.innerHTML + "<span><em>Execution time:</em> <strong>" + global.meta.time.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</strong>. <em>Output size:</em> <strong>" + commanumb(global.meta.outsize) + " " + pdlang + "</strong></span>";
                         } else {
                             pd.data.node.announce.innerHTML = pd.data.node.announce.innerHTML + "<span><strong>" + global.meta.error + "</strong></span>";
                         }
