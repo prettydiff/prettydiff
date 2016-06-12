@@ -48,3 +48,11 @@ comment*/
 
 // Ok
 .mixin(@variable) {}
+
+
+a:not(md-icon, .no-margin-bottom) {
+    margin-bottom: 10px;
+}
+.cat {
+    margin: 0 {{ some_variable }}em;
+}
