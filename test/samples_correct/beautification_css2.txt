@@ -90,3 +90,10 @@ a {
 h1\\ {
     color: \\;
 }
+
+.example {
+    @include media($desktop-min) {
+        padding: 1em;
+        @include span-columns(4);
+    }
+}

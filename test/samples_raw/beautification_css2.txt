@@ -87,3 +87,10 @@ a {
 h1\\{
     color: \\;
 }
+
+.example {
+    @include media($desktop-min) {
+        @include span-columns(4);
+        padding: 1em;
+    }
+}
