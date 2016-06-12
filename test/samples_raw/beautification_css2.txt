@@ -94,3 +94,8 @@ h1\\{
         padding: 1em;
     }
 }
+
+@var1: "/images/image1.jpg";
+.a{
+    background: url(@var1) no-repeat 0 0 scroll transparent;
+}

@@ -97,3 +97,7 @@ h1\\ {
         @include span-columns(4);
     }
 }
+@var1: "/images/image1.jpg";
+.a {
+    background: url(@var1) no-repeat 0 0 scroll transparent;
+}
