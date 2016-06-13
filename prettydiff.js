@@ -410,6 +410,8 @@ var prettydiff = function prettydiff_(api) {
                     // topcoms - should comments at the top of a JavaScript or CSS source be
                     // preserved during minify operations
                     topcoms        : (api.topcoms === true || api.topcoms === "true"),
+                    // unformatted - if the internals of markup tags should be preserved
+                    unformatted    : (api.unformatted === true || api.unformatted === "true"),
                     // varword - should consecutive variables be merged into a comma separated list
                     // or the opposite
                     varword        : (api.varword === "each" || api.varword === "list")
@@ -718,7 +720,7 @@ var prettydiff = function prettydiff_(api) {
                     meta.insize = (options.mode === "diff")
                         ? options.source.length + options.diff.length
                         : options.source.length;
-                    if (options.mode === "parse" && options.lang !== "text" && (autoval[0] !== "" || options.lang !== "auto")) {
+                    if (options.mode === "parse" && options.lang !== "text" && typeof finalProduct === "object" && (autoval[0] !== "" || options.lang !== "auto")) {
                         if (options.parseFormat === "sequential" || options.parseFormat === "htmltable") {
                             meta.outsize = finalProduct.data.length;
                         } else {
