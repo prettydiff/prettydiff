@@ -563,13 +563,16 @@
                                                 return errout(stderror);
                                             }
                                             execution();
+                                        },
+                                        childproc = function taskrunner_lint_install_stat_childtask_child_childproc() {
+                                            child("git submodule foreach git pull origin master", {
+                                                timeout: 30000
+                                            }, function taskrunner_lint_install_stat_childtask_child_moduleinstall(erchild, stdout, stderr) {
+                                                errorhandle(erchild, stderr, cdupcallback);
+                                                return stdout;
+                                            });
                                         };
-                                    errorhandle(childerror, childstderr, child("git submodule foreach git pull origin master", {
-                                        timeout: 30000
-                                    }, function taskrunner_lint_install_stat_childtask_child_moduleinstall(erchild, stdout, stderr) {
-                                        errorhandle(erchild, stderr, cdupcallback);
-                                        return stdout;
-                                    }));
+                                    errorhandle(childerror, childstderr, childproc);
                                     return childstdout;
                                 });
                             },
