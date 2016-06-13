@@ -407,7 +407,8 @@
                         files: false,
                         fs   : false,
                         items: false,
-                        lint : false
+                        lint : false,
+                        today: false
                     },
                     files           = [],
                     jslint          = function taskrunner_declareJSLINT() {
@@ -518,10 +519,14 @@
                                                         if (werr !== null && werr !== undefined) {
                                                             errout(werr);
                                                         }
+                                                        flag.today = true;
+                                                        if (flag.fs === true && flag.lint === true) {
+                                                            lintrun();
+                                                        }
                                                     });
                                                     console.log("\x1B[36mInstalled JSLint edition:\x1B[39m " + jslint().edition);
                                                     flag.lint = true;
-                                                    if (flag.fs === true) {
+                                                    if (flag.fs === true && flag.today === true) {
                                                         lintrun();
                                                     }
                                                 };
@@ -586,7 +591,7 @@
                                 jslint = require(process.cwd() + "/JSLint/jslint.js");
                                 console.log("Running prior installed JSLint version " + jslint().edition + ".");
                                 flag.lint = true;
-                                if (flag.fs === true) {
+                                if (flag.fs === true && flag.today === true) {
                                     lintrun();
                                 }
                             },
@@ -666,7 +671,7 @@
                                     }
                                     if (flag.files === true && flag.items === true) {
                                         flag.fs = true;
-                                        if (flag.lint === true) {
+                                        if (flag.lint === true && flag.today === true) {
                                             flag.files = false;
                                             lintrun();
                                         }
