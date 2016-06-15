@@ -223,3 +223,8 @@ export const Welcome = ({name}) => (
         Hello, {name}.
     </div>
 );
+ReactDOM.render(
+    <Voting hasVoted="Trainspotting" winner="Trainspotting" pair={pair}/>,
+    document.getElementById("app"),
+    asdf
+);

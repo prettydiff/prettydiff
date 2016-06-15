@@ -590,8 +590,9 @@
                                 }
                                 jslint = require(process.cwd() + "/JSLint/jslint.js");
                                 console.log("Running prior installed JSLint version " + jslint().edition + ".");
-                                flag.lint = true;
-                                if (flag.fs === true && flag.today === true) {
+                                flag.lint  = true;
+                                flag.today = true;
+                                if (flag.fs === true) {
                                     lintrun();
                                 }
                             },
