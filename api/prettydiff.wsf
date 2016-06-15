@@ -289,6 +289,8 @@
                         error.push("* topcoms        - boolean - If mode is 'minify' this determines whether comment" +
                                 "s above the first line of code should be kept. Default is false.");
                         error.push("");
+                        error.push("* unformatted    - boolean - If markup tags should have their insides preserved.");
+                        error.push("");
                         error.push("* varword        - string  - Can merge consecutive var statements in a single co" +
                                 "mma separated list or the oppose. The value 'list' will merge and 'each' is the " +
                                 "opposite. Default is 'none'.");
@@ -595,6 +597,7 @@
                 args.textpreserve = (WScript.Arguments.Named("textpreserve") === "true" || WScript.Arguments.Named("textpreserve") === true);
                 args.titanium     = (WScript.Arguments.Named("topcoms") === "true" || WScript.Arguments.Named("topcoms") === true);
                 args.topcoms      = (WScript.Arguments.Named("topcoms") !== "false" && WScript.Arguments.Named("topcoms") !== false);
+                args.unformatted  = (WScript.Arguments.Named("unformatted") !== "false" && WScript.Arguments.Named("unformatted") !== false);
                 args.varword      = (WScript.Arguments.Named("varword") === "each" || WScript.Arguments.Named("varword") === "list")
                     ? WScript
                         .Arguments

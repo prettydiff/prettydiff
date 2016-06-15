@@ -125,6 +125,7 @@ Examples:
             textpreserve   : false,
             titanium       : false,
             topcoms        : false,
+            unformatted    : false,
             varword        : "none",
             version        : false,
             vertical       : "js",
@@ -708,6 +709,9 @@ Examples:
             a.push("* topcoms      - boolean - If mode is 'minify' this determines whether comments");
             a.push("                           above the first line of code should be kept. Default");
             a.push("                           is false.");
+            a.push("");
+            a.push("* unformatted  - boolean - If markup tags should have their insides preserved.");
+            a.push("                           Default is false.");
             a.push("");
             a.push("* varword      - string  - If consecutive JavaScript variables should be merged");
             a.push("                           into a comma separated list ('list') or the opposite");
@@ -1673,6 +1677,8 @@ Examples:
                     options.titanium = true;
                 } else if (d[b][0] === "topcoms" && d[b][1] === "true") {
                     options.topcoms = true;
+                } else if (d[b][0] === "unformatted" && d[b][1] === "true") {
+                    options.unformatted = true;
                 } else if (d[b][0] === "varword" && (d[b][1] === "each" || d[b][1] === "list")) {
                     options.varword = d[b][1];
                 } else if (d[b][0] === "vertical") {

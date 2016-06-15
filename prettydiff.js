@@ -410,6 +410,8 @@ var prettydiff = function prettydiff_(api) {
                     // topcoms - should comments at the top of a JavaScript or CSS source be
                     // preserved during minify operations
                     topcoms        : (api.topcoms === true || api.topcoms === "true"),
+                    // unformatted - if the internals of markup tags should be preserved
+                    unformatted    : (api.unformatted === true || api.unformatted === "true"),
                     // varword - should consecutive variables be merged into a comma separated list
                     // or the opposite
                     varword        : (api.varword === "each" || api.varword === "list")
@@ -718,7 +720,7 @@ var prettydiff = function prettydiff_(api) {
                     meta.insize = (options.mode === "diff")
                         ? options.source.length + options.diff.length
                         : options.source.length;
-                    if (options.mode === "parse" && options.lang !== "text" && (autoval[0] !== "" || options.lang !== "auto")) {
+                    if (options.mode === "parse" && options.lang !== "text" && typeof finalProduct === "object" && (autoval[0] !== "" || options.lang !== "auto")) {
                         if (options.parseFormat === "sequential" || options.parseFormat === "htmltable") {
                             meta.outsize = finalProduct.data.length;
                         } else {
@@ -917,24 +919,24 @@ global.edition        = {
         ace: 160307
     },
     api          : {
-        dom      : 160425, //dom.js
-        nodeLocal: 160425, //node-local.js
-        wsh      : 160425
+        dom      : 160614, //dom.js
+        nodeLocal: 160614, //node-local.js
+        wsh      : 160614
     },
     css          : 160418, //css files
-    csspretty    : 160418, //csspretty lib
+    csspretty    : 160614, //csspretty lib
     csvpretty    : 160307, //csvpretty lib
     diffview     : 160418, //diffview lib
-    documentation: 160425, //documentation.xhtml
-    jspretty     : 160422, //jspretty lib
+    documentation: 160614, //documentation.xhtml
+    jspretty     : 160614, //jspretty lib
     language     : 160422, //language lib
     latest       : 0,
-    lint         : 160422, //unit test and lint automation as test/lint.js
-    markuppretty : 160425, //markuppretty lib
-    prettydiff   : 160425, //this file
+    lint         : 160614, //unit test and lint automation as test/lint.js
+    markuppretty : 160614, //markuppretty lib
+    prettydiff   : 160614, //this file
     safeSort     : 160307, //safeSort lib
-    version      : "2.0.3", //version number
-    webtool      : 160425
+    version      : "2.0.4", //version number
+    webtool      : 160614
 };
 global.edition.latest = (function edition_latest() {
     "use strict";

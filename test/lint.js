@@ -407,7 +407,8 @@
                         files: false,
                         fs   : false,
                         items: false,
-                        lint : false
+                        lint : false,
+                        today: false
                     },
                     files           = [],
                     jslint          = function taskrunner_declareJSLINT() {
@@ -503,25 +504,29 @@
                         today   = require("./today.js").date;
                     fs.stat("JSLint", function taskrunner_lint_install_stat(erstat, stats) {
                         var child     = require("child_process").exec,
-                            command   = "git submodule foreach git pull origin master",
+                            command   = "git submodule foreach git reset --hard origin/master",
                             childtask = function taskrunner_lint_install_stat_childtask() {
                                 child(command, {
                                     timeout: 30000
-                                }, function taskrunner_lint_install_stat_childtask_child(erchild, stdout, stderr) {
-                                    var cdupcallback = function () {
+                                }, function taskrunner_lint_install_stat_childtask_child(childerror, childstdout, childstderr) {
+                                    var cdupcallback = function taskrunner_lint_install_stat_childtask_child_cdupcallback() {
                                         fs
-                                            .readFile("JSLint/jslint.js", "utf8", function taskrunner_lint_install_stat_childtask_child_readFile(erread, data) {
-                                                var moduleready = function taskrunner_lint_install_stat_childtask_child_callback() {
+                                            .readFile("JSLint/jslint.js", "utf8", function taskrunner_lint_install_stat_childtask_child_cdupcallback_readFile(erread, data) {
+                                                var moduleready = function taskrunner_lint_install_stat_childtask_child_cdupcallback_readFile_moduleready() {
                                                     var todaystring = "/*global exports*/var today=" + date + ";exports.date=today;";
                                                     jslint = require(process.cwd() + "/JSLint/jslint.js");
-                                                    fs.writeFile("test/today.js", todaystring, function (werr) {
+                                                    fs.writeFile("test/today.js", todaystring, function taskrunner_lint_install_stat_childtask_child_cdupcallback_readFile_moduleready_writeFile(werr) {
                                                         if (werr !== null && werr !== undefined) {
                                                             errout(werr);
+                                                        }
+                                                        flag.today = true;
+                                                        if (flag.fs === true && flag.lint === true) {
+                                                            lintrun();
                                                         }
                                                     });
                                                     console.log("\x1B[36mInstalled JSLint edition:\x1B[39m " + jslint().edition);
                                                     flag.lint = true;
-                                                    if (flag.fs === true) {
+                                                    if (flag.fs === true && flag.today === true) {
                                                         lintrun();
                                                     }
                                                 };
@@ -540,31 +545,40 @@
                                                     });
                                                 }
                                                 moduleready();
+                                            });
+                                        },
+                                        errorhandle = function taskrunner_lint_install_stat_childtask_child_errorhandle(errormsg, stderror, execution) {
+                                            if (errormsg !== null) {
+                                                if (stderror.indexOf("Could not resolve host: github.com") > 0) {
+                                                    return fs.stat("JSLint/jslint.js", function taskrunner_lint_install_stat_childtask_child_errorhandle_filestat(jerstat, jstats) {
+                                                        if (typeof jerstat === "string") {
+                                                            return errout(jerstat);
+                                                        }
+                                                        if (jstats.isFile() === true) {
+                                                            console.log("Could not connect to Github, but it looks like JSLint is installed.  Running prior installed JSLint.");
+                                                            return cdupcallback();
+                                                        }
+                                                        console.log("Could not connect to Github, and JSLint does not appear to be installed.  Skipping to next phase.");
+                                                        return next();
+                                                    });
+                                                }
+                                                return errout(errormsg);
+                                            }
+                                            if (typeof stderror === "string" && stderror.length > 0 && stderror.indexOf("Cloning into") < 0 && stderror.indexOf("From http") < 0) {
+                                                return errout(stderror);
+                                            }
+                                            execution();
+                                        },
+                                        childproc = function taskrunner_lint_install_stat_childtask_child_childproc() {
+                                            child("git submodule foreach git pull origin master", {
+                                                timeout: 30000
+                                            }, function taskrunner_lint_install_stat_childtask_child_moduleinstall(erchild, stdout, stderr) {
+                                                errorhandle(erchild, stderr, cdupcallback);
                                                 return stdout;
                                             });
-                                    };
-                                    if (erchild !== null) {
-                                        if (stderr.indexOf("Could not resolve host: github.com") > 0) {
-                                            return fs.stat("JSLint/jslint.js", function taskrunner_lint_install_stat_childtask_child_filestat(jerstat, jstats) {
-                                                if (typeof jerstat === "string") {
-                                                    return errout(jerstat);
-                                                }
-                                                if (jstats.isFile() === true) {
-                                                    console.log("Could not connect to Github, but it looks like JSLint is installed.  Running prior installed JSLint.");
-                                                    return cdupcallback();
-                                                }
-                                                console.log("Could not connect to Github, and JSLint does not appear to be installed.  Skipping to next phase.");
-                                                return next();
-                                            });
-                                        }
-                                        return errout(erchild);
-                                    }
-                                    if (typeof stderr === "string" && stderr.length > 0 && stderr.indexOf("Cloning into") < 0 && stderr.indexOf("From http") < 0) {
-                                        return errout(stderr);
-                                    }
-                                    // jslint is now installed by clone or pull from github. If by "pull" then we
-                                    // are in the child directory and need to come up
-                                    cdupcallback();
+                                        };
+                                    errorhandle(childerror, childstderr, childproc);
+                                    return childstdout;
                                 });
                             },
                             absentfun = function taskrunner_lint_install_stat_absentfun() {
@@ -576,7 +590,8 @@
                                 }
                                 jslint = require(process.cwd() + "/JSLint/jslint.js");
                                 console.log("Running prior installed JSLint version " + jslint().edition + ".");
-                                flag.lint = true;
+                                flag.lint  = true;
+                                flag.today = true;
                                 if (flag.fs === true) {
                                     lintrun();
                                 }
@@ -657,7 +672,7 @@
                                     }
                                     if (flag.files === true && flag.items === true) {
                                         flag.fs = true;
-                                        if (flag.lint === true) {
+                                        if (flag.lint === true && flag.today === true) {
                                             flag.files = false;
                                             lintrun();
                                         }

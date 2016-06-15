@@ -987,6 +987,10 @@ global.meta = {
                         data = ["textpreserve", "false"];
                     } else if (id === "btextpreserveyes" || id === "dtextpreserveyes" || id === "mtextpreserveyes" || id === "ptextpreserveyes") {
                         data = ["textpreserve", "true"];
+                    } else if (id === "bunformatted-no" || id === "dunformatted-no" || id === "munformatted-no" || id === "punformatted-no") {
+                        data = ["unformatted", "false"];
+                    } else if (id === "bunformatted-yes" || id === "dunformatted-yes" || id === "munformatted-yes" || id === "punformatted-yes") {
+                        data = ["unformatted", "true"];
                     } else if (id === "bvarword-each" || id === "dvarword-each" || id === "mvarword-each" || id === "pvarword-each") {
                         data = ["varword", "each"];
                     } else if (id === "bvarword-list" || id === "dvarword-list" || id === "mvarword-list" || id === "pvarword-list") {
@@ -3290,17 +3294,21 @@ global.meta = {
                                     render = pd.id("parsehtml-yes");
                                 if (api.parseFormat !== "htmltable" || render === null || (api.parseFormat === "htmltable" && render.checked === false)) {
                                     if (pd.data.node.codeParsOut !== null && api.lang !== "csv") {
+                                        build = JSON.stringify(output.data);
+                                        if (api.parseFormat === "htmltable") {
+                                            build = build.slice(1, build.length - 1).replace(/\\"/g, "\"");
+                                        }
                                         if (pd.test.ace === true) {
                                             pd
                                                 .ace
                                                 .parsOut
-                                                .setValue(JSON.stringify(output.data).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                                .setValue(build);
                                             pd
                                                 .ace
                                                 .parsOut
                                                 .clearSelection();
                                         } else {
-                                            pd.data.node.codeParsOut.value = JSON.stringify(output.data).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                                            pd.data.node.codeParsOut.value = build;
                                         }
                                     }
                                     return;
@@ -3790,6 +3798,7 @@ global.meta = {
                     tagsort        = pd.id("btagsort-yes"),
                     ternaryline    = pd.id("bternaryline-yes"),
                     textpreserve   = pd.id("btextpreserveyes"),
+                    unformatted    = pd.id("bunformatted-yes"),
                     varworde       = pd.id("bvarword-each"),
                     varwordl       = pd.id("bvarword-list"),
                     verticala      = pd.id("vertical-all"),
@@ -3933,6 +3942,7 @@ global.meta = {
                 api.tagsort      = (tagsort !== null && tagsort.checked === true);
                 api.ternaryline  = (ternaryline !== null && ternaryline.checked === true);
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
+                api.unformatted  = (unformatted !== null && unformatted.checked === true);
                 if (varworde !== null && varworde.checked === true) {
                     api.varword = "each";
                 } else if (varwordl !== null && varwordl.checked === true) {
@@ -3972,6 +3982,7 @@ global.meta = {
                     tagsort      = pd.id("mtagsort-yes"),
                     textpreserve = pd.id("mtextpreserveyes"),
                     topcoms      = pd.id("topcoms-yes"),
+                    unformatted  = pd.id("munformatted-yes"),
                     wrap         = pd.id("mini-wrap");
                 if (pd.data.node.codeMinnIn !== null) {
                     if (api.lang === "auto" && pd.data.langvalue.length === 0) {
@@ -4022,6 +4033,7 @@ global.meta = {
                 api.tagsort      = (tagsort !== null && tagsort.checked === true);
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
                 api.topcoms      = (topcoms !== null && topcoms.checked === true);
+                api.unformatted  = (unformatted !== null && unformatted.checked === true);
                 api.wrap         = (wrap !== null && isNaN(wrap.value) === false)
                     ? wrap.value
                     : -1;
@@ -4073,6 +4085,7 @@ global.meta = {
                     tagsort         = pd.id("dtagsort-yes"),
                     ternaryline     = pd.id("dternaryline-yes"),
                     textpreserve    = pd.id("dtextpreserveyes"),
+                    unformatted     = pd.id("dunformatted-yes"),
                     wrap            = pd.id("diff-wrap");
                 pd.data.node.codeDiffBase = pd.id("baseText");
                 pd.data.node.codeDiffNew  = pd.id("newText");
@@ -4162,6 +4175,7 @@ global.meta = {
                 api.tagsort      = (tagsort !== null && tagsort.checked === true);
                 api.ternaryline  = (ternaryline !== null && ternaryline.checked === true);
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
+                api.unformatted  = (unformatted !== null && unformatted.checked === true);
                 api.wrap         = (wrap === null || isNaN(wrap.value) === true)
                     ? 72
                     : Number(wrap.value);
@@ -4354,6 +4368,7 @@ global.meta = {
                     tagmerge     = pd.id("ptagmerge-yes"),
                     tagsort      = pd.id("ptagsort-yes"),
                     textpreserve = pd.id("ptextpreserveyes"),
+                    unformatted  = pd.id("punformatted-yes"),
                     varworde     = pd.id("pvarword-each"),
                     varwordl     = pd.id("pvarword-list");
                 if (pd.data.node.codeParsIn !== null) {
@@ -4373,6 +4388,7 @@ global.meta = {
                 api.tagmerge     = (tagmerge !== null && tagmerge.checked === true);
                 api.tagsort      = (tagsort !== null && tagsort.checked === true);
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
+                api.unformatted  = (unformatted !== null && unformatted.checked === true);
                 if (methodchainc !== null && methodchainc.checked === true) {
                     api.methodchain = "chain";
                 } else if (methodchaini !== null && methodchaini.checked === true) {

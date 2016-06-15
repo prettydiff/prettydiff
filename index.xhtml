@@ -649,7 +649,7 @@
                                 </span>
                             </p>
                             <p>
-                                <strong>Property Sorting, CSS / JavaScript
+                                <strong>Property Sorting, CSS / JavaScript / Markup
                                     <a class="apiname" href="documentation.xhtml#objsort">(objsort)</a>
                                 </strong>
                                 <span>
@@ -834,6 +834,19 @@
                                 <span>
                                     <input id="dtextpreserveyes" name="dtextpreserve" type="radio"/>
                                     <label for="dtextpreserveyes">Preserve white space in text</label>
+                                </span>
+                            </p>
+                            <p>
+                                <strong>Do Not Format Inside of Tags
+                                    <a class="apiname" href="documentation.xhtml#commline">(unformatted)</a>
+                                </strong>
+                                <span>
+                                    <input checked="checked" id="dunformatted-no" name="dunformatted" type="radio"/>
+                                    <label for="dunformatted-no">Format tag insides</label>
+                                </span>
+                                <span>
+                                    <input id="dunformatted-yes" name="dunformatted" type="radio"/>
+                                    <label for="dunformatted-yes">Preserve tag interiors</label>
                                 </span>
                             </p>
                         </fieldset>
@@ -1100,7 +1113,7 @@
                                     <a href="guide/jscorrect.xhtml">guide</a>.</span>
                             </p>
                             <p>
-                                <strong>Property Sorting, CSS / JavaScript
+                                <strong>Property Sorting, CSS / JavaScript / Markup
                                     <a class="apiname" href="documentation.xhtml#objsort">(objsort)</a>
                                 </strong>
                                 <span>
@@ -1336,6 +1349,19 @@
                                 <span>
                                     <input id="btextpreserveyes" name="btextpreserve" type="radio"/>
                                     <label for="btextpreserveyes">Preserve white space in text</label>
+                                </span>
+                            </p>
+                            <p>
+                                <strong>Do Not Format Inside of Tags
+                                    <a class="apiname" href="documentation.xhtml#commline">(unformatted)</a>
+                                </strong>
+                                <span>
+                                    <input checked="checked" id="bunformatted-no" name="bunformatted" type="radio"/>
+                                    <label for="bunformatted-no">Format tag insides</label>
+                                </span>
+                                <span>
+                                    <input id="bunformatted-yes" name="bunformatted" type="radio"/>
+                                    <label for="bunformatted-yes">Preserve tag interiors</label>
                                 </span>
                             </p>
                         </fieldset>
@@ -1580,7 +1606,7 @@
                     <fieldset>
                         <legend>Multifunction Options</legend>
                         <p>
-                            <strong>Property Sorting, CSS / JavaScript
+                            <strong>Property Sorting, CSS / JavaScript / Markup
                                 <a class="apiname" href="documentation.xhtml#objsort">(objsort)</a>
                             </strong>
                             <span>
@@ -1715,6 +1741,19 @@
                                 <label for="mtextpreserveyes">Preserve white space in text</label>
                             </span>
                         </p>
+                        <p>
+                            <strong>Do Not Format Inside of Tags
+                                <a class="apiname" href="documentation.xhtml#commline">(unformatted)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="munformatted-no" name="munformatted" type="radio"/>
+                                <label for="munformatted-no">Format tag insides</label>
+                            </span>
+                            <span>
+                                <input id="munformatted-yes" name="munformatted" type="radio"/>
+                                <label for="munformatted-yes">Preserve tag interiors</label>
+                            </span>
+                        </p>
                     </fieldset>
                 </div>
                 <div class="options" id="parseops" style="display:none;">
@@ -1722,6 +1761,21 @@
                     <p class="apiname">(API name in parenthesis)</p>
                     <fieldset>
                         <legend>Multifunction Options</legend>
+                        <p>
+                            <strong>Fix Sloppy Code
+                                <a class="apiname" href="documentation.xhtml#correct">(correct)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="pjscorrect-no" name="pjscorrect" type="radio"/>
+                                <label for="pjscorrect-no">Ignore code correction</label>
+                            </span>
+                            <span>
+                                <input id="pjscorrect-yes" name="pjscorrect" type="radio"/>
+                                <label for="pjscorrect-yes">Correct for sloppiness</label>
+                            </span>
+                            <span>Read the
+                                <a href="guide/jscorrect.xhtml">guide</a>.</span>
+                        </p>
                         <p>
                             <strong>Parsed Output Format
                                 <a class="apiname" href="documentation.xhtml#parseFormat">(parseFormat)</a>
@@ -1751,7 +1805,7 @@
                             </span>
                         </p>
                         <p>
-                            <strong>Property Sorting, CSS / JavaScript
+                            <strong>Property Sorting, CSS / JavaScript / Markup
                                 <a class="apiname" href="documentation.xhtml#objsort">(objsort)</a>
                             </strong>
                             <span>
@@ -1886,24 +1940,22 @@
                                 <label for="ptextpreserveyes">Preserve white space in text</label>
                             </span>
                         </p>
+                        <p>
+                            <strong>Do Not Format Inside of Tags
+                                <a class="apiname" href="documentation.xhtml#commline">(unformatted)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="punformatted-no" name="punformatted" type="radio"/>
+                                <label for="punformatted-no">Format tag insides</label>
+                            </span>
+                            <span>
+                                <input id="punformatted-yes" name="punformatted" type="radio"/>
+                                <label for="punformatted-yes">Preserve tag interiors</label>
+                            </span>
+                        </p>
                     </fieldset>
                     <fieldset>
                         <legend>JavaScript Options</legend>
-                        <p>
-                            <strong>Fix Sloppy Code
-                                <a class="apiname" href="documentation.xhtml#correct">(correct)</a>
-                            </strong>
-                            <span>
-                                <input checked="checked" id="pjscorrect-no" name="pjscorrect" type="radio"/>
-                                <label for="pjscorrect-no">Ignore code correction</label>
-                            </span>
-                            <span>
-                                <input id="pjscorrect-yes" name="pjscorrect" type="radio"/>
-                                <label for="pjscorrect-yes">Correct for sloppiness</label>
-                            </span>
-                            <span>Read the
-                                <a href="guide/jscorrect.xhtml">guide</a>.</span>
-                        </p>
                         <p>
                             <strong>Variable Lists
                                 <a class="apiname" href="documentation.xhtml#varword">(varword)</a>
@@ -1924,7 +1976,7 @@
                     </fieldset>
                 </div>
                 <div class="options" id="analysisops" style="display:none;">
-                    <h2>Parse Options</h2>
+                    <h2>Analysis Options</h2>
                     <!--p class="apiname">(API name in parenthesis)</p>
                     <fieldset>
                         <legend>Multifunction Options</legend>

@@ -87,3 +87,15 @@ a {
 h1\\{
     color: \\;
 }
+
+.example {
+    @include media($desktop-min) {
+        @include span-columns(4);
+        padding: 1em;
+    }
+}
+
+@var1: "/images/image1.jpg";
+.a{
+    background: url(@var1) no-repeat 0 0 scroll transparent;
+}
