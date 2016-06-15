@@ -919,24 +919,24 @@ global.edition        = {
         ace: 160307
     },
     api          : {
-        dom      : 160425, //dom.js
-        nodeLocal: 160425, //node-local.js
-        wsh      : 160425
+        dom      : 160614, //dom.js
+        nodeLocal: 160614, //node-local.js
+        wsh      : 160614
     },
     css          : 160418, //css files
-    csspretty    : 160418, //csspretty lib
+    csspretty    : 160614, //csspretty lib
     csvpretty    : 160307, //csvpretty lib
     diffview     : 160418, //diffview lib
-    documentation: 160425, //documentation.xhtml
-    jspretty     : 160422, //jspretty lib
+    documentation: 160614, //documentation.xhtml
+    jspretty     : 160614, //jspretty lib
     language     : 160422, //language lib
     latest       : 0,
-    lint         : 160422, //unit test and lint automation as test/lint.js
-    markuppretty : 160425, //markuppretty lib
-    prettydiff   : 160425, //this file
+    lint         : 160614, //unit test and lint automation as test/lint.js
+    markuppretty : 160614, //markuppretty lib
+    prettydiff   : 160614, //this file
     safeSort     : 160307, //safeSort lib
-    version      : "2.0.3", //version number
-    webtool      : 160425
+    version      : "2.0.4", //version number
+    webtool      : 160614
 };
 global.edition.latest = (function edition_latest() {
     "use strict";
