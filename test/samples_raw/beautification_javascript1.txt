@@ -14,3 +14,6 @@ function () {var a = "",b}
 var a = function () {var g = 0, h = 1
 
 return},b=1;
+export default {
+    foo: 'bar', cat:'meow'
+}

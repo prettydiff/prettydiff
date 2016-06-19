@@ -816,7 +816,7 @@
                                             check : "node api/node-local.js source:\"<a><b> <c/>    </b></a>\" readmethod:\"screen\" " +
                                                         "mode:\"parse\"",
                                             name  : "Parse markup.",
-                                            verify: "{\"data\":{\"attrs\":[[],[],[],[],[]],\"begin\":[-1,0,1,1,0],\"daddy\":[\"root\"" +
+                                            verify: "{\"data\":{\"attrs\":[[],[],[],[],[]],\"begin\":[0,0,1,1,0],\"daddy\":[\"root\"" +
                                                         ",\"a\",\"b\",\"b\",\"a\"],\"jscom\":[false,false,false,false,false],\"linen\":[1" +
                                                         ",1,1,1,1],\"lines\":[0,0,1,1,0],\"presv\":[false,false,false,false,false],\"toke" +
                                                         "n\":[\"<a>\",\"<b>\",\"<c/>\",\"</b>\",\"</a>\"],\"types\":[\"start\",\"start\"," +
@@ -2217,7 +2217,7 @@
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"filescr" +
                                                         "een\" mode:\"parse\"",
                                             name  : "Parse markup.",
-                                            verify: "{\"data\":{\"attrs\":[[],[],[],[],[]],\"begin\":[-1,0,1,1,0],\"daddy\":[\"root\"" +
+                                            verify: "{\"data\":{\"attrs\":[[],[],[],[],[]],\"begin\":[0,0,1,1,0],\"daddy\":[\"root\"" +
                                                         ",\"a\",\"b\",\"b\",\"a\"],\"jscom\":[false,false,false,false,false],\"linen\":[1" +
                                                         ",1,1,1,1],\"lines\":[0,0,1,1,0],\"presv\":[false,false,false,false,false],\"toke" +
                                                         "n\":[\"<a>\",\"<b>\",\"<c/>\",\"</b>\",\"</a>\"],\"types\":[\"start\",\"start\"," +
@@ -3602,7 +3602,7 @@
                                         }, {
                                             check : "cat test/simulation/all/big/samples_correct/beautification_markup_comment.txt",
                                             name  : "check for a deeper file in a subdirectory operation",
-                                            verify: "{\"data\":{\"attrs\":[[],[],[],[],[],[]],\"begin\":[-1,0,0,2,2,0],\"daddy\":[\"r" +
+                                            verify: "{\"data\":{\"attrs\":[[],[],[],[],[],[]],\"begin\":[0,0,0,2,2,0],\"daddy\":[\"r" +
                                                         "oot\",\"person\",\"person\",\"name\",\"name\",\"person\"],\"jscom\":[false,false" +
                                                         ",false,false,false,false],\"linen\":[1,2,3,3,3,4],\"lines\":[0,1,1,0,0,1],\"pres" +
                                                         "v\":[false,true,false,false,false,false],\"token\":[\"<person>\",\"<!-- comment " +
