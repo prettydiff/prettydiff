@@ -62,11 +62,13 @@ render(dropdown);
 
 // JSX
 var box = <Box>
-    {shouldShowAnswer(user)
-        ? <Answer value={false}>no</Answer>
-        : <Box.Comment>
-            Text Content
-        </Box.Comment>}
+    {
+        shouldShowAnswer(user)
+            ? <Answer value={false}>no</Answer>
+            : <Box.Comment>
+                    Text Content
+                </Box.Comment>
+    }
 </Box>;
 var a = function () {
     return <tsdf>asdf</tsdf>;
@@ -133,10 +135,12 @@ var TodoList = React.createClass({
         var createItem = function (itemText) {
             return <li>{itemText}</li>;
         };
-        return <ul>{this
-                .props
-                .items
-                .map(createItem)}</ul>;
+        return <ul>{
+                this
+                    .props
+                    .items
+                    .map(createItem)
+            }</ul>;
     }
 });
 var TodoApp = React.createClass({

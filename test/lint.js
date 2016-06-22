@@ -627,11 +627,6 @@
                                 if (typeof direrr === "string") {
                                     return errout(direrr);
                                 }
-                                if (path.sep === "\\") {
-                                    console.log("dir JSLint");
-                                } else {
-                                    console.log("ls JSLint");
-                                }
                                 if (files.length < 1) {
                                     return initfun();
                                 }
