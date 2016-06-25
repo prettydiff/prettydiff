@@ -272,6 +272,8 @@ var prettydiff = function prettydiff_(api) {
                     formatObject   : (api.formatObject === "indent" || api.formatObject === "inline")
                         ? api.formatObject
                         : "default",
+                    //functionname - if a space should occur between a function name and its arguments paren
+                    functionname   : (api.functionname === true || api.functionname === "true"),
                     // html - should markup be presumed to be HTML with all the aloppiness HTML
                     // allows
                     html           : (api.html === true || api.html === "true" || (typeof api.html === "string" && api.html === "html-yes")),

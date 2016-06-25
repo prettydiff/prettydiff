@@ -86,6 +86,7 @@ Examples:
             force_indent   : false,
             formatArray    : "default",
             formatObject   : "default",
+            functionname   : false,
             html           : false,
             inchar         : " ",
             inlevel        : 0,
@@ -536,6 +537,9 @@ Examples:
             a.push("* formatObject - string  - Determines if all JavaScript object properties should");
             a.push("                           be indented, never indented, or left to the default.");
             a.push("                 Accepted values: default, indent, inline");
+            a.push("");
+            a.push("* functionname - boolean - If a space should follow a JavaScript function name.");
+            a.push("                           Default is false.");
             a.push("");
             a.push("* help         - string  - This list of argument definitions. The value is");
             a.push("                           unnecessary and is required only to pass in use of");
@@ -1566,6 +1570,8 @@ Examples:
                     options.formatArray = d[b][1];
                 } else if (d[b][0] === "formatObject" && (d[b][1] === "indent" || d[b][1] === "inline")) {
                     options.formatObject = d[b][1];
+                } else if (d[b][0] === "functionname" && d[b][1] === "true") {
+                    options.functionname = true;
                 } else if (d[b][0] === "html" && d[b][1] === "true") {
                     options.html = true;
                 } else if (d[b][0] === "inchar" && d[b][1].length > 0) {

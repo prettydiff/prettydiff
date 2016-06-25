@@ -158,6 +158,8 @@
                                 "uld always indented, remain on a single line, or left to the default formatting." +
                                 " Accepted values are: default, indent, inline");
                         error.push("");
+                        error.push("* functionname   - boolean - If a space should follow a JavaScript function name. Default is false.");
+                        error.push("");
                         error.push("* help           - string  - This list of argument definitions. The value is unn" +
                                 "ecessary and is required only to pass in use of the parameter.");
                         error.push("");
@@ -514,6 +516,7 @@
                 args.formatObject    = (WScript.Arguments.Named("formatObject") === "indent" || WScript.Arguments.Named("formatObject") === "inline")
                     ? WScript.Arguments.Named("formatObject")
                     : "default";
+                args.functionname    = (WScript.Arguments.Named("functionname") === "true" || WScript.Arguments.Named("html") === true);
                 args.html            = (WScript.Arguments.Named("html") === "true" || WScript.Arguments.Named("html") === true);
                 args.inchar          = WScript
                     .Arguments

@@ -912,6 +912,10 @@ global.meta = {
                         data = ["formatObject", "indent"];
                     } else if (id === "bformatobject-inline" || id === "dformatobject-inline") {
                         data = ["formatObject", "inline"];
+                    } else if (id === "bfunctionname-no" || id === "dfunctionname-no") {
+                        data = ["functionname", "false"];
+                    } else if (id === "bfunctionname-yes" || id === "dfunctionname-yes") {
+                        data = ["functionname", "true"];
                     } else if (id === "bjslines-all" || id === "djslines-all") {
                         data = ["preserve", "all"];
                     } else if (id === "bjslines-css" || id === "djslines-css") {
@@ -3770,6 +3774,7 @@ global.meta = {
                     formatODefault = pd.id("bformatobject-default"),
                     formatOIndent  = pd.id("bformatobject-indent"),
                     formatOInline  = pd.id("bformatobject-inline"),
+                    functionname   = pd.id("bfunctionname-yes"),
                     html           = pd.id("html-yes"),
                     jscorrect      = pd.id("jscorrect-yes"),
                     jshtml         = pd.id("jsscope-html"),
@@ -3883,6 +3888,7 @@ global.meta = {
                 } else if (formatOInline !== null && formatOInline.checked === true) {
                     api.formatObject = "inline";
                 }
+                api.functionname    = (functionname !== null && functionname.checked === true);
                 api.html            = (html !== null && html.checked === true);
                 api.inlevel         = (offset === null || isNaN(offset.value) === true)
                     ? 0
@@ -4064,6 +4070,7 @@ global.meta = {
                     formatODefault  = pd.id("dformatarray-default"),
                     formatOIndent   = pd.id("dformatarray-indent"),
                     formatOInline   = pd.id("dformatarray-inline"),
+                    functionname    = pd.id("dfunctionname-yes"),
                     html            = pd.id("htmld-yes"),
                     inline          = pd.id("inline"),
                     methodchain     = pd.id("dmethodchain-yes"),
@@ -4140,6 +4147,7 @@ global.meta = {
                 } else if (formatOInline !== null && formatOInline.checked === true) {
                     api.formatObject = "inline";
                 }
+                api.functionname    = (functionname !== null && functiobname.checked === true);
                 api.html            = (html !== null && html.checked === true);
                 api.insize          = (quantity === null || isNaN(quantity.value) === true)
                     ? 4
