@@ -91,6 +91,7 @@ Examples:
             inchar         : " ",
             inlevel        : 0,
             insize         : 4,
+            jekyll         : false,
             jsscope        : "none",
             lang           : "auto",
             langdefault    : "text",
@@ -558,6 +559,9 @@ Examples:
             a.push("");
             a.push("* insize       - number  - The number of characters to comprise a single");
             a.push("                           indentation. Defaults to '4'.");
+            a.push("");
+            a.push("* jekyll       - boolean - If YAML Jekyll HTML template comments are supported.");
+            a.push("                           Default is false.");
             a.push("");
             a.push("* jsscope      - string  - If 'html' JavaScript beautification produces HTML");
             a.push("                           formatted output coloring function scope and");
@@ -1586,6 +1590,8 @@ Examples:
                     options.inlevel = Number(d[b][1]);
                 } else if (d[b][0] === "insize" && isNaN(d[b][1]) === false) {
                     options.insize = Number(d[b][1]);
+                } else if (d[b][0] === "jekyll" && d[b][1] === "true") {
+                    options.jekyll = true;
                 } else if (d[b][0] === "jsscope") {
                     if (d[b][1] === "true") {
                         options.jsscope = "report";

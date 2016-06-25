@@ -176,6 +176,8 @@
                         error.push("* insize         - number  - The number of characters to comprise a single inden" +
                                 "tation. Defaults to '4'.");
                         error.push("");
+                        error.push("* jekyll         - boolean - If YAML Jekyll HTML templates should be supported. Default is false.");
+                        error.push("");
                         error.push("* jsscope        - string  - If 'html' JavaScript beautification produces HTML f" +
                                 "ormatted output coloring function scope and variables to indicate scope depth an" +
                                 "d inheritance. The value 'report' is similar to the value 'html', except that it" +
@@ -527,6 +529,7 @@
                 args.insize          = (isNaN(WScript.Arguments.Named("insize")))
                     ? 4
                     : Number(WScript.Arguments.Named("insize"));
+                args.jekyll          = (WScript.Arguments.Named("jekyll") === "true" || WScript.Arguments.Named("jekyll") === true);
                 args.jsscope         = (WScript.Arguments.Named("jsscope") === "html" || WScript.Arguments.Named("jsscope") === "report")
                     ? WScript
                         .Arguments

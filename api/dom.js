@@ -860,7 +860,19 @@ global.meta = {
                 (function dom__app_options_comment() {
                     var a    = 0,
                         data = [];
-                    if (id === "attributetoken-no") {
+                    if (id === "adustno" || id === "bdustno" || id === "ddustno" || id === "mdustno" || id === "pdustno") {
+                        data = ["dustjs", "false"];
+                    } else if (id === "adustyes" || id === "bdustyes" || id === "ddustyes" || id === "mdustyes" || id === "pdustyes") {
+                        data = ["dustjs", "true"];
+                    } else if (id === "ahtml-no" || id === "htmld-no" || id === "html-no" || id === "htmlm-no" || id === "phtml-no") {
+                        data = ["html", "false"];
+                    } else if (id === "ahtml-no" || id === "htmld-yes" || id === "html-yes" || id === "htmlm-yes" || id === "phtml-yes") {
+                        data = ["html", "true"];
+                    } else if (id === "ajekyll-no" || id === "bjekyll-no" || id === "djekyll-no" || id === "mjekyll-no" || id === "pjekyll-no") {
+                        data = ["jekyll", "false"];
+                    } else if (id === "ajekyll-yes" || id === "bjekyll-yes" || id === "djekyll-yes" || id === "mjekyll-yes" || id === "pjekyll-yes") {
+                        data = ["jekyll", "true"];
+                    } else if (id === "attributetoken-no") {
                         data = ["attributetoken", "false"];
                     } else if (id === "attributetoken-yes") {
                         data = ["attributetoken", "true"];
@@ -882,10 +894,6 @@ global.meta = {
                         data = ["compressedcss", "false"];
                     } else if (id === "bcompressedcss-yes" || id === "dcompressedcss-yes") {
                         data = ["compressedcss", "true"];
-                    } else if (id === "bdustno" || id === "ddustno" || id === "mdustno" || id === "pdustno") {
-                        data = ["dustjs", "false"];
-                    } else if (id === "bdustyes" || id === "ddustyes" || id === "mdustyes" || id === "pdustyes") {
-                        data = ["dustjs", "true"];
                     } else if (id === "beau-wrap" || id === "diff-wrap" || id === "mini-wrap") {
                         data = ["wrap", item.value];
                     } else if (id === "bendcomma-no") {
@@ -1045,10 +1053,6 @@ global.meta = {
                         data = ["diffspaceignore", "false"];
                     } else if (id === "diffspaceignorey") {
                         data = ["diffspaceignore", "true"];
-                    } else if (id === "htmld-no" || id === "html-no" || id === "htmlm-no" || id === "phtml-no") {
-                        data = ["html", "false"];
-                    } else if (id === "htmld-yes" || id === "html-yes" || id === "htmlm-yes" || id === "phtml-yes") {
-                        data = ["html", "true"];
                     } else if (id === "incomment-no") {
                         data = ["comments", "noindent"];
                     } else if (id === "incomment-yes") {
@@ -3776,6 +3780,7 @@ global.meta = {
                     formatOInline  = pd.id("bformatobject-inline"),
                     functionname   = pd.id("bfunctionname-yes"),
                     html           = pd.id("html-yes"),
+                    jekyll         = pd.id("bjekyll-yes"),
                     jscorrect      = pd.id("jscorrect-yes"),
                     jshtml         = pd.id("jsscope-html"),
                     jsspace        = pd.id("jsspace-no"),
@@ -3896,6 +3901,7 @@ global.meta = {
                 api.insize          = (quantity === null || isNaN(quantity.value) === true)
                     ? 4
                     : Number(quantity.value);
+                api.jekyll          = (jekyll !== null && jekyll.checked === true);
                 if (pd.data.node.jsscope !== null && pd.data.node.jsscope.checked === true) {
                     api.jsscope = "report";
                 } else if (jshtml !== null && jshtml.checked === true) {
@@ -3977,6 +3983,7 @@ global.meta = {
                     dustjs       = pd.id("mdustyes"),
                     html         = pd.id("htmlm-yes"),
                     correct      = pd.id("mjscorrect-yes"),
+                    jekyll       = pd.id("mjekyll-yes"),
                     miniwrap     = pd.id("miniwrapm-yes"),
                     objsorta     = pd.id("mobjsort-all"),
                     objsortc     = pd.id("mobjsort-cssonly"),
@@ -4034,6 +4041,7 @@ global.meta = {
                 api.correct      = (correct !== null && correct.checked === true);
                 api.dustjs       = (dustjs !== null && dustjs.checked === true);
                 api.html         = (html !== null && html.checked === true);
+                api.jekyll       = (jekyll !== null && jekyll.checked === true);
                 api.miniwrap     = (miniwrap !== null && miniwrap.checked === true);
                 api.tagmerge     = (tagmerge !== null && tagmerge.checked === true);
                 api.tagsort      = (tagsort !== null && tagsort.checked === true);
@@ -4073,6 +4081,7 @@ global.meta = {
                     functionname    = pd.id("dfunctionname-yes"),
                     html            = pd.id("htmld-yes"),
                     inline          = pd.id("inline"),
+                    jekyll          = pd.id("djekyll-yes"),
                     methodchain     = pd.id("dmethodchain-yes"),
                     newLabel        = pd.id("newlabel"),
                     nocaseindent    = pd.id("dnocaseindent-yes"),
@@ -4147,11 +4156,12 @@ global.meta = {
                 } else if (formatOInline !== null && formatOInline.checked === true) {
                     api.formatObject = "inline";
                 }
-                api.functionname    = (functionname !== null && functiobname.checked === true);
+                api.functionname    = (functionname !== null && functionname.checked === true);
                 api.html            = (html !== null && html.checked === true);
                 api.insize          = (quantity === null || isNaN(quantity.value) === true)
                     ? 4
                     : Number(quantity.value);
+                api.jekyll          = (jekyll !== null && jekyll.checked === true);
                 api.methodchain     = (methodchain !== null && methodchain.checked === true);
                 api.nocaseindent    = (nocaseindent !== null && nocaseindent.checked === true);
                 api.nochainindent   = (nochainindent !== null && nochainindent.checked === true);
@@ -4360,10 +4370,8 @@ global.meta = {
                 var attributetoken = pd.id("attributetoken-yes"),
                     dustjs       = pd.id("pdustyes"),
                     html         = pd.id("phtml-yes"),
+                    jekyll       = pd.id("pjekyll-yes"),
                     jscorrect    = pd.id("pjscorrect-yes"),
-                    methodchainc = pd.id("dmethodchain-chain"),
-                    methodchaini = pd.id("dmethodchain-indent"),
-                    methodchainn = pd.id("dmethodchain-none"),
                     objsorta     = pd.id("pobjsort-all"),
                     objsortc     = pd.id("pobjsort-cssonly"),
                     objsortj     = pd.id("pobjsort-jsonly"),
@@ -4397,13 +4405,6 @@ global.meta = {
                 api.tagsort      = (tagsort !== null && tagsort.checked === true);
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
                 api.unformatted  = (unformatted !== null && unformatted.checked === true);
-                if (methodchainc !== null && methodchainc.checked === true) {
-                    api.methodchain = "chain";
-                } else if (methodchaini !== null && methodchaini.checked === true) {
-                    api.methodchain = "indent";
-                } else if (methodchainn !== null && methodchainn.checked === true) {
-                    api.methodchain = "none";
-                }
                 if (objsorta !== null && objsorta.checked === true) {
                     api.objsort = "all";
                 } else if (objsortc !== null && objsortc.checked === true) {
@@ -4471,6 +4472,18 @@ global.meta = {
                 api.source = pd.data.node.codeAnalIn.value;
             }
             api.mode = "analysis";
+            (function dom__event_recycle_analysis() {
+                var dustjs = pd.id("adustyes"),
+                    html   = pd.id("ahtml-yes"),
+                    jekyll = pd.id("ajekyll-yes");
+                if (dustjs !== null && dustjs.checked === true) {
+                    api.dustjs = true;
+                } else if (html !== null && html.checked === true) {
+                    api.html = true;
+                } else if (jekyll !== null && jekyll.checked === true) {
+                    api.jekyll = true;
+                }
+            }());
         }
         if (domain.test(api.source) === true && pd.test.xhr === true) {
             (function dom__event_recycle_xhrSource() {

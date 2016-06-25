@@ -291,6 +291,8 @@ var prettydiff = function prettydiff_(api) {
                     insize         : (isNaN(api.insize))
                         ? 4
                         : Number(api.insize),
+                    // jekyll - If the delimiter "---" should be used to create comments in markup.
+                    jekyll         : (api.jekyll === true || api.jekyll === "true"),
                     // jsscope - do you want to enable the jsscope feature of JSPretty?  This
                     // feature will output formatted HTML instead of text code showing which
                     // variables are declared at which functional depth
