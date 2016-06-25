@@ -4401,6 +4401,7 @@ global.meta = {
                 api.correct      = (jscorrect !== null && jscorrect.checked === true);
                 api.dustjs       = (dustjs !== null && dustjs.checked === true);
                 api.html         = (html !== null && html.checked === true);
+                api.jekyll       = (jekyll !== null && jekyll.checked === true);
                 api.tagmerge     = (tagmerge !== null && tagmerge.checked === true);
                 api.tagsort      = (tagsort !== null && tagsort.checked === true);
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
