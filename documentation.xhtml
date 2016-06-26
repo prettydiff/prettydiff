@@ -811,6 +811,23 @@
                                         Formatting Object Literals</li>
                                 </ul>
                             </li>
+                            <li id="functionname">
+                                <h4>functionname</h4>
+                                <ul>
+                                    <li>
+                                        <h5>Description</h5>
+                                        Wether a space should occur between a function name and the arguments parenthesis.</li>
+                                    <li>
+                                        <h5>Type</h5>
+                                        boolean</li>
+                                    <li>
+                                        <h5>Default</h5>
+                                        false</li>
+                                    <li>
+                                        <h5>As labeled in the HTML tool</h5>
+                                        Space After Function Name</li>
+                                </ul>
+                            </li>
                             <li id="help">
                                 <h4>help
                                     <strong>(node-local.js only)</strong>
@@ -897,6 +914,23 @@
                                     <li>
                                         <h5>As labeled in the HTML tool</h5>
                                         Indentation size</li>
+                                </ul>
+                            </li>
+                            <li id="jekyll">
+                                <h4>jekyll</h4>
+                                <ul>
+                                    <li>
+                                        <h5>Description</h5>
+                                        If YAML Jekyll HTML template comments should be supported.</li>
+                                    <li>
+                                        <h5>Type</h5>
+                                        boolean</li>
+                                    <li>
+                                        <h5>Default</h5>
+                                        false</li>
+                                    <li>
+                                        <h5>As labeled in the HTML tool</h5>
+                                        YAML Jekyll Support</li>
                                 </ul>
                             </li>
                             <li id="jsscope">
@@ -1847,6 +1881,10 @@
                                     <p>Run it on the command line with Node.js
                                         <code>cd prettydiff</code>
                                         <code>node api/node-local.js option:value option:value</code>
+                                        <code></code>
+                                        <code>node api/node-local.js help &nbsp;&nbsp;&nbsp;&nbsp; - prints instructions to the console</code>
+                                        <code>node api/node-local.js version &nbsp; - prints only the version string to the console</code>
+                                        <code>node api/node-local.js list &nbsp;&nbsp;&nbsp;&nbsp; - displays a list of all current settings on the console</code>
                                     </p>
                                 </li>
                                 <li>
@@ -2191,7 +2229,8 @@
                                             <em>dom__event_recycle_beautify</em>,
                                             <em>dom__event_recycle_diff</em>,
                                             <em>dom__event_recycle_minify</em>,
-                                            <em>dom__event_recycle_parse</em>.</li>
+                                            <em>dom__event_recycle_parse</em>,
+                                            <em>dom__event_recycle_analysis</em>.</li>
                                         <li>api/dom.js - Add state support by including the option ids to
                                             <em>pd.app.options</em>.</li>
                                     </ul>
@@ -2204,6 +2243,7 @@
                                         <li>Add functional support to the list of options (near the bottom of the file)
                                             usings the convention
                                             <em>WScript.Arguments.Named</em>.</li>
+                                        <li>If the option requires predefined string values then it would need to be defined near the bottom of <em>core__pdcomment</em> for support in the Pretty Diff options comment.</li>
                                     </ul>
                                 </li>
                                 <li>api/node-local.js - Node.js support

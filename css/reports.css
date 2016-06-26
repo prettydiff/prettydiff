@@ -101,6 +101,10 @@
 #prettydiff .beautify em.l15,
 #prettydiff .beautify em.l16{height:2.2em;margin:0 0 -1em;position:relative;top:-0.5em}
 #prettydiff .beautify em.l0{margin-left:-0.5em;padding-left:0.5em}
+#prettydiff #webtool table table{margin:0 -0.1em -0.1em;width:100%}
+#prettydiff #webtool table table td,
+#prettydiff #webtool table table th{font-size:1em}
+#prettydiff #webtool table td.nested{padding:0.5em}
 
 /*webtool - overrides*/
 #prettydiff #report .beautify,

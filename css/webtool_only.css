@@ -40,9 +40,10 @@
 #prettydiff.white .minimize:hover{background:#fee;border-color:#600;color:#600}
 #prettydiff.white .maximize:hover{background:#efe;border-color:#010;color:#010}
 #prettydiff.white .resize:hover{background:#eef8ff;border-color:#006;color:#006}
-#prettydiff.white #webtool th{background:#ddd}
-#prettydiff.white #webtool th.heading{background:#eee}
+#prettydiff.white #webtool td.nested .header th,
+#prettydiff.white #webtool .header th{background:#eef}
 #prettydiff.white #webtool thead th{background:#eef}
+#prettydiff.white #webtool td.nested th{background:#eee}
 #prettydiff.white #textareaTabKey em{color:#00f}
 #prettydiff.white #announcement strong,
 #prettydiff.white #textareaTabKey strong{color:#b00}

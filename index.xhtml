@@ -82,7 +82,7 @@
                 </span>
                 <span>
                     <input id="modeparse" name="mode" type="radio"/>
-                    <label for="modeparse">Parse Tree</label>
+                    <label for="modeparse">Parse Table</label>
                 </span>
                 <span>
                     <input id="modeanalysis" name="mode" type="radio"/>
@@ -325,7 +325,7 @@
                                     <td id="stminn">0</td>
                                 </tr>
                                 <tr>
-                                    <th>Parse Tree</th>
+                                    <th>Parse Table</th>
                                     <td id="stpars">0</td>
                                 </tr>
                                 <tr>
@@ -785,6 +785,19 @@
                                 </span>
                             </p>
                             <p>
+                                <strong>YAML Jekyll Support
+                                    <a class="apiname" href="documentation.xhtml#jekyll">(jekyll)</a>
+                                </strong>
+                                <span>
+                                    <input checked="checked" id="djekyll-no" name="djekyll" type="radio"/>
+                                    <label for="djekyll-no">No Jekyll</label>
+                                </span>
+                                <span>
+                                    <input id="djekyll-yes" name="djekyll" type="radio"/>
+                                    <label for="djekyll-yes">Support for Jekyll comments</label>
+                                </span>
+                            </p>
+                            <p>
                                 <strong>Indent Style/Script
                                     <a class="apiname" href="documentation.xhtml#style">(style)</a>
                                 </strong>
@@ -923,6 +936,19 @@
                                 <span>
                                     <input id="dformatobject-inline" name="dformatobject" type="radio"/>
                                     <label for="dformatobject-inline">Force on one line</label>
+                                </span>
+                            </p>
+                            <p>
+                                <strong>Space After Function Name
+                                    <a class="apiname" href="documentation.xhtml#functionname">(functionname)</a>
+                                </strong>
+                                <span>
+                                    <input checked="checked" id="dfunctionname-no" name="dfunctionname" type="radio"/>
+                                    <label for="dfunctionname-no">No space</label>
+                                </span>
+                                <span>
+                                    <input id="dfunctionname-yes" name="dfunctionname" type="radio"/>
+                                    <label for="dfunctionname-yes">Space after function name</label>
                                 </span>
                             </p>
                             <p>
@@ -1287,6 +1313,19 @@
                                 </span>
                             </p>
                             <p>
+                                <strong>YAML Jekyll Support
+                                    <a class="apiname" href="documentation.xhtml#jekyll">(jekyll)</a>
+                                </strong>
+                                <span>
+                                    <input checked="checked" id="bjekyll-no" name="bjekyll" type="radio"/>
+                                    <label for="bjekyll-no">No Jekyll</label>
+                                </span>
+                                <span>
+                                    <input id="bjekyll-yes" name="bjekyll" type="radio"/>
+                                    <label for="bjekyll-yes">Support for Jekyll comments</label>
+                                </span>
+                            </p>
+                            <p>
                                 <strong>End Self-Closing Tags with a Space
                                     <a class="apiname" href="documentation.xhtml#spaceclose">(spaceclose)</a>
                                 </strong>
@@ -1451,6 +1490,19 @@
                                 <span>
                                     <input id="bformatobject-inline" name="bformatobject" type="radio"/>
                                     <label for="bformatobject-inline">Force on one line</label>
+                                </span>
+                            </p>
+                            <p>
+                                <strong>Space After Function Name
+                                    <a class="apiname" href="documentation.xhtml#functionname">(functionname)</a>
+                                </strong>
+                                <span>
+                                    <input checked="checked" id="bfunctionname-no" name="bfunctionname" type="radio"/>
+                                    <label for="bfunctionname-no">No space</label>
+                                </span>
+                                <span>
+                                    <input id="bfunctionname-yes" name="bfunctionname" type="radio"/>
+                                    <label for="bfunctionname-yes">Space after function name</label>
                                 </span>
                             </p>
                             <p>
@@ -1703,6 +1755,19 @@
                             </span>
                         </p>
                         <p>
+                            <strong>YAML Jekyll Support
+                                <a class="apiname" href="documentation.xhtml#jekyll">(jekyll)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="mjekyll-no" name="mjekyll" type="radio"/>
+                                <label for="mjekyll-no">No Jekyll</label>
+                            </span>
+                            <span>
+                                <input id="mjekyll-yes" name="mjekyll" type="radio"/>
+                                <label for="mjekyll-yes">Support for Jekyll comments</label>
+                            </span>
+                        </p>
+                        <p>
                             <strong>Merge Empty Tag Sets Into A Single Self-Closing Tag
                                 <a class="apiname" href="documentation.xhtml#tagmerge">(tagmerge)</a>
                             </strong>
@@ -1889,6 +1954,19 @@
                             </span>
                         </p>
                         <p>
+                            <strong>YAML Jekyll Support
+                                <a class="apiname" href="documentation.xhtml#jekyll">(jekyll)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="pjekyll-no" name="pjekyll" type="radio"/>
+                                <label for="pjekyll-no">No Jekyll</label>
+                            </span>
+                            <span>
+                                <input id="pjekyll-yes" name="pjekyll" type="radio"/>
+                                <label for="pjekyll-yes">Support for Jekyll comments</label>
+                            </span>
+                        </p>
+                        <p>
                             <strong>Include Whitespace Tokens
                                 <a class="apiname" href="documentation.xhtml#parseSpace">(parseSpace)</a>
                             </strong>
@@ -1990,6 +2068,45 @@
                         <span>
                             <input id="analysishtml-yes" name="analysishtml" type="radio"/>
                             <label for="analysishtml-yes">Render HTML (to read now in this tool)</label>
+                        </span>
+                    </p>
+                    <p>
+                        <strong>Dust.js Template
+                            <a class="apiname" href="documentation.xhtml#dustjs">(dustjs)</a>
+                        </strong>
+                        <span>
+                            <input checked="checked" id="adustno" name="adust" type="radio"/>
+                            <label for="adustno">Not a Dust.js template</label>
+                        </span>
+                        <span>
+                            <input id="adustyes" name="adust" type="radio"/>
+                            <label for="adustyes">Dust.js template</label>
+                        </span>
+                    </p>
+                    <p>
+                        <strong>Presume HTML
+                            <a class="apiname" href="documentation.xhtml#html">(html)</a>
+                        </strong>
+                        <span>
+                            <input checked="checked" id="ahtml-yes" name="apresumehtml" type="radio"/>
+                            <label for="ahtml-yes">Tolerate HTML sillyness</label>
+                        </span>
+                        <span>
+                            <input id="ahtml-no" name="apresumehtml" type="radio"/>
+                            <label for="ahtml-no">Strict XML syntax</label>
+                        </span>
+                    </p>
+                    <p>
+                        <strong>YAML Jekyll Support
+                            <a class="apiname" href="documentation.xhtml#jekyll">(jekyll)</a>
+                        </strong>
+                        <span>
+                            <input checked="checked" id="ajekyll-no" name="ajekyll" type="radio"/>
+                            <label for="ajekyll-no">No Jekyll</label>
+                        </span>
+                        <span>
+                            <input id="ajekyll-yes" name="ajekyll" type="radio"/>
+                            <label for="ajekyll-yes">Support for Jekyll comments</label>
                         </span>
                     </p>
                 </div>

@@ -24,6 +24,8 @@
 #prettydiff.shadow #report .author,
 #prettydiff.shadow fieldset{background:#222;border-color:#666}
 #prettydiff.shadow fieldset fieldset{background:#333}
+#prettydiff.shadow .nested td,
+#prettydiff.shadow .segment,
 #prettydiff.shadow fieldset fieldset input,
 #prettydiff.shadow fieldset fieldset select{background:#222}
 #prettydiff.shadow h2,
@@ -34,7 +36,6 @@
 #prettydiff.shadow select,
 #prettydiff.shadow legend{color: #ccc}
 #prettydiff.shadow .contentarea{box-shadow:0 1em 1em #000}
-#prettydiff.shadow .segment{background:#222}
 #prettydiff.shadow h2 button,
 #prettydiff.shadow td,
 #prettydiff.shadow th,
@@ -48,9 +49,12 @@
 #prettydiff.shadow ol.segment h4 strong{color:#f30}
 #prettydiff.shadow button{background-color:#333;border-color:#666;box-shadow:0 0.25em 0.5em #000;color:#ccc}
 #prettydiff.shadow button:hover{background-color:#777;border-color:#aaa;box-shadow:0 0.25em 0.5em #222;color:#fff}
-#prettydiff.shadow th{background:#444}
+#prettydiff.shadow th,
 #prettydiff.shadow thead th,
-#prettydiff.shadow th.heading{background:#444}
+#prettydiff.shadow th.heading{background:#666;border-color:#999}
+#prettydiff.shadow th.nested,
+#prettydiff.shadow td.nested,
+#prettydiff.shadow .nested td.nested{background:#444}
 #prettydiff.shadow .diff h3{background:#000;border-color:#666}
 #prettydiff.shadow .segment,
 #prettydiff.shadow .data li,

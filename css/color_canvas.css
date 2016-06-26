@@ -33,6 +33,7 @@
 #prettydiff.canvas .segment{background:#fff}
 #prettydiff.canvas h2 button,
 #prettydiff.canvas .segment,
+#prettydiff.canvas th,
 #prettydiff.canvas ol.segment li{border-color:#420}
 #prettydiff.canvas th{background:#e8ddcc}
 #prettydiff.canvas li h4{color:#06f}
@@ -40,12 +41,14 @@
 #prettydiff.canvas ol.segment h4 strong{color:#c00}
 #prettydiff.canvas button{background-color:#ddddd8;border-color:#420;box-shadow:0 0.25em 0.5em #b8a899;color:#900}
 #prettydiff.canvas button:hover{background-color:#ccb;border-color:#630;box-shadow:0 0.25em 0.5em #b8a899;color:#630}
-#prettydiff.canvas th{background:#ccccc8}
+#prettydiff.canvas td.nested{background:#ccccc8}
+#prettydiff.canvas th.nested,
+#prettydiff.canvas th{background:#ddddd8}
 #prettydiff.canvas thead th,
+#prettydiff.canvas tr.header th,
 #prettydiff.canvas th.heading{background:#ccb}
 #prettydiff.canvas .diff h3{background:#ddd;border-color:#999}
 #prettydiff.canvas td,
-#prettydiff.canvas th,
 #prettydiff.canvas .segment,
 #prettydiff.canvas .count li,
 #prettydiff.canvas .data li,

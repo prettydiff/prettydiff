@@ -158,6 +158,8 @@
                                 "uld always indented, remain on a single line, or left to the default formatting." +
                                 " Accepted values are: default, indent, inline");
                         error.push("");
+                        error.push("* functionname   - boolean - If a space should follow a JavaScript function name. Default is false.");
+                        error.push("");
                         error.push("* help           - string  - This list of argument definitions. The value is unn" +
                                 "ecessary and is required only to pass in use of the parameter.");
                         error.push("");
@@ -173,6 +175,8 @@
                         error.push("");
                         error.push("* insize         - number  - The number of characters to comprise a single inden" +
                                 "tation. Defaults to '4'.");
+                        error.push("");
+                        error.push("* jekyll         - boolean - If YAML Jekyll HTML templates should be supported. Default is false.");
                         error.push("");
                         error.push("* jsscope        - string  - If 'html' JavaScript beautification produces HTML f" +
                                 "ormatted output coloring function scope and variables to indicate scope depth an" +
@@ -514,6 +518,7 @@
                 args.formatObject    = (WScript.Arguments.Named("formatObject") === "indent" || WScript.Arguments.Named("formatObject") === "inline")
                     ? WScript.Arguments.Named("formatObject")
                     : "default";
+                args.functionname    = (WScript.Arguments.Named("functionname") === "true" || WScript.Arguments.Named("html") === true);
                 args.html            = (WScript.Arguments.Named("html") === "true" || WScript.Arguments.Named("html") === true);
                 args.inchar          = WScript
                     .Arguments
@@ -524,6 +529,7 @@
                 args.insize          = (isNaN(WScript.Arguments.Named("insize")))
                     ? 4
                     : Number(WScript.Arguments.Named("insize"));
+                args.jekyll          = (WScript.Arguments.Named("jekyll") === "true" || WScript.Arguments.Named("jekyll") === true);
                 args.jsscope         = (WScript.Arguments.Named("jsscope") === "html" || WScript.Arguments.Named("jsscope") === "report")
                     ? WScript
                         .Arguments

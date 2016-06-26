@@ -54,22 +54,28 @@ Add this code to your application
 
 Run in windows
 
-    prettydiff source:"c:\myDirectory" readmethod:"subdirectory" diff:"c:\myOtherDirectory"
+    node api/node-local.js source:"c:\myDirectory" readmethod:"subdirectory" diff:"c:\myOtherDirectory"
 
 Run in Linux and OSX
 
-    prettydiff source:"myDirectory" mode:"beautify" readmethod:"subdirectory" output:"path/to/outputDirectory"
+    node api/node-local.js source:"myDirectory" mode:"beautify" readmethod:"subdirectory" output:"path/to/outputDirectory"
 
 To see a *man* page provide no arguments or these: help, man, manual
 
-    prettydiff
-    prettydiff help
-    prettydiff man
+    node api/node-local.js h
+    node api/node-local.js help
+    node api/node-local.js man
+    node api/node-local.js manual
 
 To see only the version number supply only *v* or *version* as an argument:
 
-    prettydiff v
-    prettydiff version
+    node api/node-local.js v
+    node api/node-local.js version
+
+To see a list of current settings on the console supply *list* as an argument:
+
+    node api/node-local.js l
+    node api/node-local.js list
 
 #### Set configurations with a **.prettydiffrc** file.
 

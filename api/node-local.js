@@ -86,13 +86,16 @@ Examples:
             force_indent   : false,
             formatArray    : "default",
             formatObject   : "default",
+            functionname   : false,
             html           : false,
             inchar         : " ",
             inlevel        : 0,
             insize         : 4,
+            jekyll         : false,
             jsscope        : "none",
             lang           : "auto",
             langdefault    : "text",
+            listoptions    : false,
             methodchain    : "indent",
             miniwrap       : false,
             mode           : "diff",
@@ -536,6 +539,9 @@ Examples:
             a.push("                           be indented, never indented, or left to the default.");
             a.push("                 Accepted values: default, indent, inline");
             a.push("");
+            a.push("* functionname - boolean - If a space should follow a JavaScript function name.");
+            a.push("                           Default is false.");
+            a.push("");
             a.push("* help         - string  - This list of argument definitions. The value is");
             a.push("                           unnecessary and is required only to pass in use of");
             a.push("                           the parameter.");
@@ -553,6 +559,9 @@ Examples:
             a.push("");
             a.push("* insize       - number  - The number of characters to comprise a single");
             a.push("                           indentation. Defaults to '4'.");
+            a.push("");
+            a.push("* jekyll       - boolean - If YAML Jekyll HTML template comments are supported.");
+            a.push("                           Default is false.");
             a.push("");
             a.push("* jsscope      - string  - If 'html' JavaScript beautification produces HTML");
             a.push("                           formatted output coloring function scope and");
@@ -731,12 +740,18 @@ Examples:
             a.push("                           the given character width");
             a.push("");
             a.push("\x1B[1mUsage\x1B[22m");
-            a.push(color.bool + "prettydiff\x1B[39m " + color.word + "option1:\x1B[39m" + color.string + "\"value\"\x1B[39m " + color.word + "option2:\x1B[39m" + color.string + "\"value\"\x1B[39m ...");
-            a.push(color.bool + "prettydiff\x1B[39m " + color.word + "source:\x1B[39m" + color.string + "\"myApplication.js\"\x1B[39m " + color.word + "readmethod:\x1B[39m" + color.string + "\"filescreen\"\x1B[39m " + color.word + "mode:\x1B[39m" + color.string + "\"beautify\"\x1B[39m");
-            a.push(color.bool + "prettydiff\x1B[39m " + color.word + "source:\x1B[39m" + color.string + "\"old_directory\"\x1B[39m " + color.word + "diff:\x1B[39m" + color.string + "\"new_directory\"\x1B[39m " + color.word + "readmethod:\x1B[39m" + color.string + "\"subdirectory\"\x1B[39m");
+            a.push(color.bool + "node api/node-local.js\x1B[39m " + color.word + "option1:\x1B[39m" + color.string + "\"value\"\x1B[39m " + color.word + "option2:\x1B[39m" + color.string + "\"value\"\x1B[39m ...");
+            a.push(color.bool + "node api/node-local.js\x1B[39m " + color.word + "source:\x1B[39m" + color.string + "\"myApplication.js\"\x1B[39m " + color.word + "readmethod:\x1B[39m" + color.string + "\"filescreen\"\x1B[39m " + color.word + "mode:\x1B[39m" + color.string + "\"beautify\"\x1B[39m");
+            a.push(color.bool + "node api/node-local.js\x1B[39m " + color.word + "source:\x1B[39m" + color.string + "\"old_directory\"\x1B[39m " + color.word + "diff:\x1B[39m" + color.string + "\"new_directory\"\x1B[39m " + color.word + "readmethod:\x1B[39m" + color.string + "\"subdirectory\"\x1B[39m");
             a.push("");
+            a.push(color.bool + "node api/node-local.js\x1B[39m " + color.word + "help\x1B[39m        to see this help message");
+            a.push(color.bool + "node api/node-local.js\x1B[39m " + color.word + "version\x1B[39m     to see only the version line");
+            a.push(color.bool + "node api/node-local.js\x1B[39m " + color.word + "list\x1B[39m        to see the current settings");
             a.push(versionString);
             a.push("");
+            if (options.source === "" && options.help === false && options.version === false && options.listoptions === false) {
+                a.push("options.source does not have a value!");
+            }
             return a
                 .join(lf)
                 .replace(/\r?\n\*\ \w+\s+-/g, opname)
@@ -1487,10 +1502,12 @@ Examples:
         c = d.length;
         for (b = 0; b < c; b += 1) {
             if (d[b].length === 2) {
-                if (options.version === false && d[b][0] === "" && (d[b][1] === "help" || d[b][1] === "man" || d[b][1] === "manual")) {
+                if (options.version === false && options.listoptions === false && d[b][0] === "" && (d[b][1] === "help" || d[b][1] === "man" || d[b][1] === "manual")) {
                     help = true;
                 } else if (help === false && d[b][0] === "" && (d[b][1] === "v" || d[b][1] === "version")) {
                     options.version = true;
+                } else if (help === false && d[b][0] === "" && (d[b][1] === "l" || d[b][1] === "list")) {
+                    options.listoptions = true;
                 } else if (d[b][0] === "api") {
                     options.api = "node";
                 } else if (d[b][0] === "attributetoken" && d[b][1] === "true") {
@@ -1557,6 +1574,8 @@ Examples:
                     options.formatArray = d[b][1];
                 } else if (d[b][0] === "formatObject" && (d[b][1] === "indent" || d[b][1] === "inline")) {
                     options.formatObject = d[b][1];
+                } else if (d[b][0] === "functionname" && d[b][1] === "true") {
+                    options.functionname = true;
                 } else if (d[b][0] === "html" && d[b][1] === "true") {
                     options.html = true;
                 } else if (d[b][0] === "inchar" && d[b][1].length > 0) {
@@ -1571,6 +1590,8 @@ Examples:
                     options.inlevel = Number(d[b][1]);
                 } else if (d[b][0] === "insize" && isNaN(d[b][1]) === false) {
                     options.insize = Number(d[b][1]);
+                } else if (d[b][0] === "jekyll" && d[b][1] === "true") {
+                    options.jekyll = true;
                 } else if (d[b][0] === "jsscope") {
                     if (d[b][1] === "true") {
                         options.jsscope = "report";
@@ -1699,6 +1720,8 @@ Examples:
                     help = true;
                 } else if (d[b] === "v" || d[b] === "version" || d[b][0] === "v" || d[b][0] === "version") {
                     options.version = true;
+                } else if (d[b] === "l" || d[b] === "list" || d[b][0] === "l" || d[b][0] === "list") {
+                    options.listoptions = true;
                 }
             }
         }
@@ -1879,6 +1902,27 @@ Examples:
                     if (c === 1 && options.version === true) {
                         return console.log(versionString);
                     }
+                    if (options.listoptions === true) {
+                        (function pdNodeLocal__start_stat_init_listoptions() {
+                            var sample = JSON.stringify(options),
+                                mode   = options.mode,
+                                source = options.source,
+                                vert   = options.vertical;
+                            options.mode     = "beautify";
+                            options.source   = sample;
+                            options.vertical = "all";
+                            sample           = pdapp.api(options);
+                            console.log("");
+                            console.log(colors.filepath.start + "Current option settings:" + colors.filepath.end);
+                            console.log(sample.slice(1, sample.length - 1));
+                            options.mode     = mode;
+                            options.source   = source;
+                            options.vertical = vert;
+                        }());
+                        if (c === 1) {
+                            return;
+                        }
+                    }
                     if (options.source === "") {
                         return console.log("Error: 'source' argument is empty");
                     }
@@ -1972,7 +2016,7 @@ Examples:
                                         pathslash("output", options.output);
                                     }
                                     help = false;
-                                    if (options.help === true && (process.argv.length < 3 || options.source === undefined || options.source === "")) {
+                                    if (options.help === true && options.version === false && options.listoptions === false && (process.argv.length < 3 || options.source === undefined || options.source === "")) {
                                         help = true;
                                     }
                                     init();

@@ -28,3 +28,4 @@ var a = function () {
         return;
     },
     b = 1;
+export default {cat: "meow", foo: "bar"};

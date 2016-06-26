@@ -24,6 +24,7 @@
 #prettydiff.white #report .author,
 #prettydiff.white fieldset{background:#eee;border-color:#999}
 #prettydiff.white .diff h3{background:#ddd;border-color:#999}
+#prettydiff.white th.nested,
 #prettydiff.white fieldset fieldset{background:#ddd}
 #prettydiff.white .contentarea{box-shadow: 0 1em 1em #999}
 #prettydiff.white button{background-color:#eee;border-color:#999;box-shadow:0 0.25em 0.5em #ccc;color:#666}
@@ -32,17 +33,20 @@
 #prettydiff.white h2 button,
 #prettydiff.white h3{color:#b00}
 #prettydiff.white th{background:#eee;color:#333}
+#prettydiff.white tr.header th,
 #prettydiff.white thead th{background:#eef}
 #prettydiff.white .report strong{color:#009}
 #prettydiff.white .report em{color:#080}
 #prettydiff.white h2 button,
 #prettydiff.white td,
-#prettydiff.white th,
 #prettydiff.white .segment,
 #prettydiff.white .count li,
-#prettydiff.white .diff-right
-#prettydiff.white ol.segment li{border-color:#ccc}
+#prettydiff.white .diff-right,
+#prettydiff.white ol.segment li,
 #prettydiff.white .data li{border-color:#ccc}
+#prettydiff.white tbody th{border-color:#999}
+#prettydiff.white td.nested{background:#d8d8d8}
+#prettydiff.white th.nested{background:#eee}
 #prettydiff.white .count li.fold{color:#900}
 #prettydiff.white .count{background:#eed;border-color:#999}
 #prettydiff.white h2 button{background:#f8f8f8;box-shadow:0.1em 0.1em 0.25em #ddd}
