@@ -360,6 +360,8 @@ var prettydiff = function prettydiff_(api) {
                         }
                         return Number(api.preserve);
                     }()),
+                    // qml - if the language is qml (beautified as JavaScript that looks like CSS)
+                    qml            : (api.qml === true || api.qml === "true"),
                     // quote - should all single quote characters be converted to double quote
                     // characters during a diff operation to reduce the number of false positive
                     // comparisons
@@ -775,6 +777,13 @@ var prettydiff = function prettydiff_(api) {
                 autoval = [options.lang, options.lang, options.lang];
             } else {
                 options.lang = language.setlangmode(options.lang);
+            }
+            if (options.qml === true) {
+                if (options.mode === "minify") {
+                    options.qml = false;
+                } else {
+                    options.lang = "javascript";
+                }
             }
             if (api.alphasort === true || api.alphasort === "true" || api.objsort === true || api.objsort === "true") {
                 options.objsort = "all";

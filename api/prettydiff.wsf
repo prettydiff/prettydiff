@@ -232,6 +232,8 @@
                         error.push("");
                         error.push("* preserve       - number  - The number of acceptable empty lines.");
                         error.push("");
+                        error.push("* qml             - boolean - Enable syntax support for QML. Default is false. Not supported with minification or option objsort.");
+                        error.push("");
                         error.push("* quote          - boolean - If true and mode is 'diff' then all single quote ch" +
                                 "aracters will be replaced by double quote characters in both the source and diff" +
                                 " file input so as to eliminate some differences from the diff report HTML output" +
@@ -577,6 +579,7 @@
                         args.preserve = Number(pres)
                     }
                 }());
+                args.qml          = (WScript.Arguments.Named("qml") === "true" || WScript.Arguments.Named("qml") === true);
                 args.quote        = (WScript.Arguments.Named("quote") === "true" || WScript.Arguments.Named("quote") === true);
                 args.quoteConvert = (WScript.Arguments.Named("quoteConvert") === "double" || WScript.Arguments.Named("quoteConvert") === "single")
                     ? WScript

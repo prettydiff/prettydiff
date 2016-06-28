@@ -110,6 +110,7 @@ Examples:
             parseFormat    : "parallel",
             parseSpace     : false,
             preserve       : 1,
+            qml            : false,
             quote          : false,
             quoteConvert   : "none",
             readmethod     : "auto",
@@ -628,6 +629,9 @@ Examples:
             a.push("                           is false.");
             a.push("");
             a.push("* preserve     - number  - The maximum number of empty lines to retain.");
+            a.push("");
+            a.push("* qml          - boolean - Enable syntax support for QML. Default is false and is");
+            a.push("                           not supported with minification or option objsort.");
             a.push("");
             a.push("* quote        - boolean - If true and mode is 'diff' then all single quote");
             a.push("                           characters will be replaced by double quote");
@@ -1647,6 +1651,8 @@ Examples:
                     } else {
                         options.preserve = Number(d[b][1]);
                     }
+                } else if (d[b][0] === "qml" && d[b][1] === "true") {
+                    options.qml = true;
                 } else if (d[b][0] === "quote" && d[b][1] === "true") {
                     options.quote = true;
                 } else if (d[b][0] === "quoteConvert" && (d[b][1] === "single" || d[b][1] === "double")) {
