@@ -773,6 +773,9 @@ var prettydiff = function prettydiff_(api) {
             if (options.lang === "auto") {
                 autoval      = language.auto(options.source, options.langdefault);
                 options.lang = autoval[1];
+            } else if (options.lang === "qml") {
+                options.qml = true;
+                options.lang = "javascript";
             } else if (options.api === "dom") {
                 autoval = [options.lang, options.lang, options.lang];
             } else {

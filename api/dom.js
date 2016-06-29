@@ -872,10 +872,6 @@ global.meta = {
                         data = ["jekyll", "false"];
                     } else if (id === "ajekyll-yes" || id === "bjekyll-yes" || id === "djekyll-yes" || id === "mjekyll-yes" || id === "pjekyll-yes") {
                         data = ["jekyll", "true"];
-                    } else if (id === "aqml-no" || id === "bqml-no" || id === "dqml-no" || id === "pqml-no") {
-                        data = ["qml", "false"];
-                    } else if (id === "aqml-yes" || id === "bqml-yes" || id === "dqml-yes" || id === "pqml-yes") {
-                        data = ["qml", "true"];
                     } else if (id === "attributetoken-no") {
                         data = ["attributetoken", "false"];
                     } else if (id === "attributetoken-yes") {
@@ -3801,7 +3797,6 @@ global.meta = {
                     objsortm       = pd.id("bobjsort-markuponly"),
                     offset         = pd.id("inlevel"),
                     preserve       = pd.id("bpreserve"),
-                    qml            = pd.id("bqml-yes"),
                     quantity       = pd.id("beau-quan"),
                     quotecond      = pd.id("bquoteconvert-double"),
                     quotecons      = pd.id("bquoteconvert-single"),
@@ -3939,7 +3934,6 @@ global.meta = {
                 if (preserve !== null) {
                     api.preserve = preserve.value;
                 }
-                api.qml = (qml !== null && qml.checked === true);
                 if (quotecond !== null && quotecond.checked === true) {
                     api.quoteConvert = "double";
                 } else if (quotecons !== null && quotecons.checked === true) {
@@ -4097,7 +4091,6 @@ global.meta = {
                     objsortj        = pd.id("dobjsort-jsonly"),
                     objsortm        = pd.id("dobjsort-markuponly"),
                     preserve        = pd.id("dpreserve"),
-                    qml             = pd.id("dqml-yes"),
                     quantity        = pd.id("diff-quan"),
                     quote           = pd.id("diffquoten"),
                     selectorlist    = pd.id("dselectorlist-yes"),
@@ -4186,7 +4179,6 @@ global.meta = {
                 if (preserve !== null) {
                     api.preserve = preserve.value;
                 }
-                api.qml          = (qml !== null && qml.checked === true);
                 api.quote        = (quote !== null && quote.checked === true);
                 api.selectorlist = (selectorlist !== null && selectorlist.checked === true);
                 api.semicolon    = (semicolon !== null && semicolon.checked === true);
@@ -4387,7 +4379,6 @@ global.meta = {
                     parseFh      = pd.id("parseFormat-htmltable"),
                     parseFs      = pd.id("parseFormat-sequential"),
                     parseSpace   = pd.id("parsespace-yes"),
-                    qml          = pd.id("pqml-yes"),
                     quotecond    = pd.id("pquoteconvert-double"),
                     quotecons    = pd.id("pquoteconvert-single"),
                     tagmerge     = pd.id("ptagmerge-yes"),
@@ -4411,7 +4402,6 @@ global.meta = {
                 api.dustjs       = (dustjs !== null && dustjs.checked === true);
                 api.html         = (html !== null && html.checked === true);
                 api.jekyll       = (jekyll !== null && jekyll.checked === true);
-                api.qml          = (qml !== null && qml.checked === true);
                 api.tagmerge     = (tagmerge !== null && tagmerge.checked === true);
                 api.tagsort      = (tagsort !== null && tagsort.checked === true);
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
@@ -4486,12 +4476,10 @@ global.meta = {
             (function dom__event_recycle_analysis() {
                 var dustjs = pd.id("adustyes"),
                     html   = pd.id("ahtml-yes"),
-                    jekyll = pd.id("ajekyll-yes"),
-                    qml    = pd.id("aqml-yes");
+                    jekyll = pd.id("ajekyll-yes");
                 api.dustjs = (dustjs !== null && dustjs.checked === true);
                 api.html   = (html !== null && html.checked === true);
                 api.jekyll = (jekyll !== null && jekyll.checked === true);
-                api.qml    = (qml !== null && qml.checked === true);
             }());
         }
         if (domain.test(api.source) === true && pd.test.xhr === true) {

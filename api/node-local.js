@@ -630,8 +630,7 @@ Examples:
             a.push("");
             a.push("* preserve     - number  - The maximum number of empty lines to retain.");
             a.push("");
-            a.push("* qml          - boolean - Enable syntax support for QML. Default is false and is");
-            a.push("                           not supported with minification or option objsort.");
+            a.push("* qml          - boolean - Enables QML syntax support in the jspretty library.");
             a.push("");
             a.push("* quote        - boolean - If true and mode is 'diff' then all single quote");
             a.push("                           characters will be replaced by double quote");
