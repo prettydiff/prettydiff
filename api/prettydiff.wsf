@@ -67,6 +67,8 @@
                     if (WScript.Arguments.Count() === 0 || help === true) {
                         error.push("Arguments      - Type    - Definition");
                         error.push("-------------------------------------");
+                        error.push("* apacheVelocity - boolean - Enables Apache Velocity template language in the markuppretty library.");
+                        error.push("");
                         error.push("* attributetoken - boolean - If true markup attributes are provided as separate " +
                                 "tokens in the parse table of mode parse. Otherwise attributes are a data propert" +
                                 "y of their respective element. Default is false.");

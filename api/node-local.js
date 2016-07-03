@@ -56,6 +56,7 @@ Examples:
             return localPath;
         }()),
         options        = {
+            apacheVelocity : false,
             api            : "node",
             attributetoken : false,
             braceline      : false,
@@ -422,6 +423,9 @@ Examples:
             a.push("");
             a.push("Arguments      - Type    - Definition");
             a.push("-------------------------------------");
+            a.push("* apacheVelocity - boolean - Provides support for Apache Velocity template");
+            a.push("                           language. Default is false.");
+            a.push("");
             a.push("* attributetoken - boolean - If true markup attributes are provided as separate");
             a.push("                           tokens in the parse table of mode parse. Otherwise");
             a.push("                           attributes are a data property of their respective");
@@ -1505,7 +1509,9 @@ Examples:
         c = d.length;
         for (b = 0; b < c; b += 1) {
             if (d[b].length === 2) {
-                if (options.version === false && options.listoptions === false && d[b][0] === "" && (d[b][1] === "help" || d[b][1] === "man" || d[b][1] === "manual")) {
+                if (d[b][0] === "apacheVelocity" && d[b][1] === "true") {
+                    options.apacheVelocity = true;
+                } else if (options.version === false && options.listoptions === false && d[b][0] === "" && (d[b][1] === "help" || d[b][1] === "man" || d[b][1] === "manual")) {
                     help = true;
                 } else if (help === false && d[b][0] === "" && (d[b][1] === "v" || d[b][1] === "version")) {
                     options.version = true;

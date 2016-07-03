@@ -183,6 +183,8 @@ var prettydiff = function prettydiff_(api) {
                     api            : (api.api === undefined || api.api.length === 0)
                         ? ""
                         : api.api,
+                    // apacheVelocity - provides support for Apache Velocity markup templates
+                    apacheVelocity : (api.apacheVelocity === true || api.apacheVelocity === "true"),
                     // attributetoken - whether attributes should be represented as token items in
                     // the parse table or whether they should be a data properties of their element
                     attributetoken : (api.attributetoken === true || api.attributetoken === "true"),
@@ -776,10 +778,20 @@ var prettydiff = function prettydiff_(api) {
             } else if (options.lang === "qml") {
                 options.qml = true;
                 options.lang = "javascript";
+            } else if (options.lang === "velocity") {
+                options.apacheVelocity = true;
+                options.lang = "markup";
             } else if (options.api === "dom") {
                 autoval = [options.lang, options.lang, options.lang];
             } else {
                 options.lang = language.setlangmode(options.lang);
+            }
+            if (options.apacheVelocity === true) {
+                if (options.mode === "minify") {
+                    options.apacheVelocity = false;
+                } else {
+                    options.lang = "markup";
+                }
             }
             if (options.qml === true) {
                 if (options.mode === "minify") {
