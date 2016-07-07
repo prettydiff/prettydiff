@@ -39,7 +39,7 @@ var Mist = React.createClass({
 var content = (
     <Nav>
         {/* child comment, put {} around */}
-        <Person /* multi
+        <Person
             /* multi
             line
             comment */
