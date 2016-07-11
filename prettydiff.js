@@ -183,6 +183,8 @@ var prettydiff = function prettydiff_(api) {
                     api            : (api.api === undefined || api.api.length === 0)
                         ? ""
                         : api.api,
+                    // apacheVelocity - provides support for Apache Velocity markup templates
+                    apacheVelocity : (api.apacheVelocity === true || api.apacheVelocity === "true"),
                     // attributetoken - whether attributes should be represented as token items in
                     // the parse table or whether they should be a data properties of their element
                     attributetoken : (api.attributetoken === true || api.attributetoken === "true"),
@@ -360,6 +362,8 @@ var prettydiff = function prettydiff_(api) {
                         }
                         return Number(api.preserve);
                     }()),
+                    // qml - if the language is qml (beautified as JavaScript that looks like CSS)
+                    qml            : (api.qml === true || api.qml === "true"),
                     // quote - should all single quote characters be converted to double quote
                     // characters during a diff operation to reduce the number of false positive
                     // comparisons
@@ -771,10 +775,30 @@ var prettydiff = function prettydiff_(api) {
             if (options.lang === "auto") {
                 autoval      = language.auto(options.source, options.langdefault);
                 options.lang = autoval[1];
+            } else if (options.lang === "qml") {
+                options.qml = true;
+                options.lang = "javascript";
+            } else if (options.lang === "velocity") {
+                options.apacheVelocity = true;
+                options.lang = "markup";
             } else if (options.api === "dom") {
                 autoval = [options.lang, options.lang, options.lang];
             } else {
                 options.lang = language.setlangmode(options.lang);
+            }
+            if (options.apacheVelocity === true) {
+                if (options.mode === "minify") {
+                    options.apacheVelocity = false;
+                } else {
+                    options.lang = "markup";
+                }
+            }
+            if (options.qml === true) {
+                if (options.mode === "minify") {
+                    options.qml = false;
+                } else {
+                    options.lang = "javascript";
+                }
             }
             if (api.alphasort === true || api.alphasort === "true" || api.objsort === true || api.objsort === "true") {
                 options.objsort = "all";
@@ -923,24 +947,24 @@ global.edition        = {
         ace: 160307
     },
     api          : {
-        dom      : 160625, //dom.js
-        nodeLocal: 160625, //node-local.js
-        wsh      : 160625
+        dom      : 160710, //dom.js
+        nodeLocal: 160710, //node-local.js
+        wsh      : 160710
     },
     css          : 160625, //css files
     csspretty    : 160614, //csspretty lib
     csvpretty    : 160307, //csvpretty lib
-    diffview     : 160418, //diffview lib
-    documentation: 160625, //documentation.xhtml
-    jspretty     : 160625, //jspretty lib
-    language     : 160422, //language lib
+    diffview     : 160710, //diffview lib
+    documentation: 160710, //documentation.xhtml
+    jspretty     : 160710, //jspretty lib
+    language     : 160710, //language lib
     latest       : 0,
     lint         : 160625, //unit test and lint automation as test/lint.js
-    markuppretty : 160625, //markuppretty lib
-    prettydiff   : 160625, //this file
+    markuppretty : 160710, //markuppretty lib
+    prettydiff   : 160710, //this file
     safeSort     : 160307, //safeSort lib
-    version      : "2.0.5", //version number
-    webtool      : 160625
+    version      : "2.1.0", //version number
+    webtool      : 160710
 };
 global.edition.latest = (function edition_latest() {
     "use strict";

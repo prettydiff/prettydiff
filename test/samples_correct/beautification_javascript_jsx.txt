@@ -39,7 +39,7 @@ var Mist = React.createClass({
 var content = (
     <Nav>
         {/* child comment, put {} around */}
-        <Person /* multi
+        <Person
             /* multi
             line
             comment */
@@ -232,3 +232,20 @@ ReactDOM.render(
     document.getElementById("app"),
     asdf
 );
+
+class Header extends Component {
+    renderLinks() {
+        if (this.props.authenticated) {
+            return (a);
+        } else {
+            return [
+                <li key="signin" className="nav-item">
+                    <Link className="nav-link" to="/signin">Sign in</Link>
+                </li>,
+                <li key="signout" className="nav-item">
+                    <Link className="nav-link" to="/signup ">Sign Up</Link>
+                </li>
+            ];
+        }
+    }
+}

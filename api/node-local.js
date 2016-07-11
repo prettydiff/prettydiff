@@ -56,6 +56,7 @@ Examples:
             return localPath;
         }()),
         options        = {
+            apacheVelocity : false,
             api            : "node",
             attributetoken : false,
             braceline      : false,
@@ -110,6 +111,7 @@ Examples:
             parseFormat    : "parallel",
             parseSpace     : false,
             preserve       : 1,
+            qml            : false,
             quote          : false,
             quoteConvert   : "none",
             readmethod     : "auto",
@@ -421,6 +423,9 @@ Examples:
             a.push("");
             a.push("Arguments      - Type    - Definition");
             a.push("-------------------------------------");
+            a.push("* apacheVelocity - boolean - Provides support for Apache Velocity template");
+            a.push("                           language. Default is false.");
+            a.push("");
             a.push("* attributetoken - boolean - If true markup attributes are provided as separate");
             a.push("                           tokens in the parse table of mode parse. Otherwise");
             a.push("                           attributes are a data property of their respective");
@@ -628,6 +633,8 @@ Examples:
             a.push("                           is false.");
             a.push("");
             a.push("* preserve     - number  - The maximum number of empty lines to retain.");
+            a.push("");
+            a.push("* qml          - boolean - Enables QML syntax support in the jspretty library.");
             a.push("");
             a.push("* quote        - boolean - If true and mode is 'diff' then all single quote");
             a.push("                           characters will be replaced by double quote");
@@ -1502,7 +1509,9 @@ Examples:
         c = d.length;
         for (b = 0; b < c; b += 1) {
             if (d[b].length === 2) {
-                if (options.version === false && options.listoptions === false && d[b][0] === "" && (d[b][1] === "help" || d[b][1] === "man" || d[b][1] === "manual")) {
+                if (d[b][0] === "apacheVelocity" && d[b][1] === "true") {
+                    options.apacheVelocity = true;
+                } else if (options.version === false && options.listoptions === false && d[b][0] === "" && (d[b][1] === "help" || d[b][1] === "man" || d[b][1] === "manual")) {
                     help = true;
                 } else if (help === false && d[b][0] === "" && (d[b][1] === "v" || d[b][1] === "version")) {
                     options.version = true;
@@ -1647,6 +1656,8 @@ Examples:
                     } else {
                         options.preserve = Number(d[b][1]);
                     }
+                } else if (d[b][0] === "qml" && d[b][1] === "true") {
+                    options.qml = true;
                 } else if (d[b][0] === "quote" && d[b][1] === "true") {
                     options.quote = true;
                 } else if (d[b][0] === "quoteConvert" && (d[b][1] === "single" || d[b][1] === "double")) {

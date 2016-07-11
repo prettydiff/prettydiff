@@ -228,6 +228,23 @@
                     </h2>
                     <div class="content-hide">
                         <ol class="segment" id="options">
+                            <li id="apacheVelocity">
+                                <h4>apacheVelocity</h4>
+                                <ul>
+                                    <li>
+                                        <h5>Description</h5>
+                                        Enables Apache Velocity syntax support in the <a href="lib/markuppretty.js">markuppretty.js</a> library. If accessing the markuppretty.js library directly without the Pretty Diff application set the option <em>apacheVelocity</em> to true.  Otherwise, this option can be set directly or by providing the value <em>apacheVelocity</em> to option <a href="#lang">lang</a>. Velocity is not supported in minification mode.</li>
+                                    <li>
+                                        <h5>Type</h5>
+                                        boolean</li>
+                                    <li>
+                                        <h5>Default</h5>
+                                        false</li>
+                                    <li>
+                                        <h5>As labeled in the HTML tool</h5>
+                                        (only available in the language selection)</li>
+                                </ul>
+                            </li>
                             <li id="api">
                                 <h4>api</h4>
                                 <ul>
@@ -1300,6 +1317,23 @@
                                         Empty Lines</li>
                                 </ul>
                             </li>
+                            <li id="qml">
+                                <h4>qml</h4>
+                                <ul>
+                                    <li>
+                                        <h5>Description</h5>
+                                        Enables QML syntax support in the <a href="lib/jspretty.js">jspretty.js</a> library. If accessing the jspretty.js library directly without the Pretty Diff application set the option <em>qml</em> to true.  Otherwise, this option can be set directly or by providing the value <em>qml</em> to option <a href="#lang">lang</a>. QML is not supported in minification mode.</li>
+                                    <li>
+                                        <h5>Type</h5>
+                                        boolean</li>
+                                    <li>
+                                        <h5>Default</h5>
+                                        false</li>
+                                    <li>
+                                        <h5>As labeled in the HTML tool</h5>
+                                        (only available in the language selection)</li>
+                                </ul>
+                            </li>
                             <li id="quote">
                                 <h4>quote</h4>
                                 <ul>
@@ -2135,6 +2169,9 @@
                         <div class="segment">
                             <h3>Additional guides not directly related to the Pretty Diff application</h3>
                             <ol>
+                                <li>
+                                    <a href="guide/unrelated_codeisevil.xhtml">Code is Evil</a>
+                                </li>
                                 <li>
                                     <a href="guide/unrelated_dom.xhtml">The DOM Explained, Quick and Simple</a>
                                 </li>

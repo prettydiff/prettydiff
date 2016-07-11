@@ -4179,9 +4179,9 @@ global.meta = {
                 if (preserve !== null) {
                     api.preserve = preserve.value;
                 }
-                api.quote        = (quote !== null && quote.checked !== false);
+                api.quote        = (quote !== null && quote.checked === true);
                 api.selectorlist = (selectorlist !== null && selectorlist.checked === true);
-                api.semicolon    = (semicolon !== null && semicolon.checked !== false);
+                api.semicolon    = (semicolon !== null && semicolon.checked === true);
                 api.sourcelabel  = (baseLabel === null)
                     ? "base"
                     : baseLabel.value;
@@ -4477,13 +4477,9 @@ global.meta = {
                 var dustjs = pd.id("adustyes"),
                     html   = pd.id("ahtml-yes"),
                     jekyll = pd.id("ajekyll-yes");
-                if (dustjs !== null && dustjs.checked === true) {
-                    api.dustjs = true;
-                } else if (html !== null && html.checked === true) {
-                    api.html = true;
-                } else if (jekyll !== null && jekyll.checked === true) {
-                    api.jekyll = true;
-                }
+                api.dustjs = (dustjs !== null && dustjs.checked === true);
+                api.html   = (html !== null && html.checked === true);
+                api.jekyll = (jekyll !== null && jekyll.checked === true);
             }());
         }
         if (domain.test(api.source) === true && pd.test.xhr === true) {
