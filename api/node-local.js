@@ -203,6 +203,7 @@ Examples:
         },
         fs             = require("fs"),
         http           = require("http"),
+        https          = require("https"),
         path           = require("path"),
         sfiledump      = [],
         dfiledump      = [],
@@ -1130,23 +1131,41 @@ Examples:
 
         //resolve file contents from a web address executed from init
         readHttpFile   = function pdNodeLocal__readHttpFile(data) {
-            var file = ["", 0];
-            http.get(data.absolutepath, function pdNodeLocal__readHttpFile_get(res) {
-                file[1] = Number(res.headers["content-length"]);
-                res.setEncoding("utf8");
-                res.on("data", function pdNodeLocal__readHttpFile_get_response(chunk) {
-                    file[0] += chunk;
-                    if (file[0].length === file[1]) {
-                        data.file = file[0];
+            var file     = "",
+                protocol = data.absolutepath.indexOf("s://");
+            if (protocol > 0 && protocol < 10) {
+                https.get(data.absolutepath, function pdNodeLocal__readHttpFile_sget(res) {
+                    res.setEncoding("utf8");
+                    res.on("data", function pdNodeLocal__readHttpFile_sget_response(chunk) {
+                        file += chunk;
+                    });
+                    res.on("end", function pdNodeLocal__readHttpFile_sget_end() {
+                        data.file = file;
                         if (data.type === "diff") {
-                            dfiledump[data.index] = file[0];
+                            dfiledump[data.index] = file;
                         } else {
-                            sfiledump[data.index] = file[0];
+                            sfiledump[data.index] = file;
                         }
                         fileComplete(data);
-                    }
+                    });
                 });
-            });
+            } else {
+                http.get(data.absolutepath, function pdNodeLocal__readHttpFile_get(res) {
+                    res.setEncoding("utf8");
+                    res.on("data", function pdNodeLocal__readHttpFile_get_response(chunk) {
+                        file += chunk;
+                    });
+                    res.on("end", function pdNodeLocal__readHttpFile_get_end() {
+                        data.file = file;
+                        if (data.type === "diff") {
+                            dfiledump[data.index] = file;
+                        } else {
+                            sfiledump[data.index] = file;
+                        }
+                        fileComplete(data);
+                    });
+                });
+            }
         },
 
         //gather files in directory and sub directories executed from init
