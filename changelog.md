@@ -1,5 +1,27 @@
 # Pretty Diff change log
 
+## v2.1.0
+
+### Defect resolutions
+* Fixed #289 - Minor enhancement to the fuzzy string comparison of the diff library.
+* Fixed #321 - Several edge case markup parsing defects
+* Fixed #324 - JSX parsing defect related to XML tags inside JS arrays
+
+### New Options
+* **apacheVelocity** - Supplies support Apache Velocity with a variety of delimiters. issue #280
+* **qml** - Adds support for QML language using the JavaScript parser. issue #278
+
+## v2.0.5
+
+### Defect resolutions
+* Fixed #262 - Adds substantially greater depth to the parsers' direct output.
+* Fixed #317 - The JavaScript keyword `export` was not properly supported resulting in a semicolon being injected into the object body.
+* Fixed #318 - An enhancement to autocorrect for markup tags that contain an extra brace at the front or back. This minor enhancement also exposed a defect in support of `<<` and `<<<` delimited tags.
+
+### New Options
+* **functionname** - Supplies a space after a function's name. issue #312
+* **jekyll** - Adds support for YAML Jekyll HTML template comments delimited by `---`. issue #311
+
 ## v2.0.2
 
 * **attributetoken**.  Whether attributes should be parsed as a data property of the element or a separate token in the parse table.
