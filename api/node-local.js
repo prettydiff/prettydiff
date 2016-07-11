@@ -1132,39 +1132,31 @@ Examples:
         //resolve file contents from a web address executed from init
         readHttpFile   = function pdNodeLocal__readHttpFile(data) {
             var file     = "",
-                protocol = data.absolutepath.indexOf("s://");
+                protocol = data.absolutepath.indexOf("s://"),
+                callback = function pdNodeLocal__readHttpFile_callback(res) {
+                    res.setEncoding("utf8");
+                    res.on("data", function pdNodeLocal__readHttpFile_callback_response(chunk) {
+                        file += chunk;
+                    });
+                    res.on("end", function pdNodeLocal__readHttpFile_callback_end() {
+                        data.file = file;
+                        if (data.type === "diff") {
+                            dfiledump[data.index] = file;
+                        } else {
+                            sfiledump[data.index] = file;
+                        }
+                        fileComplete(data);
+                    });
+                    res.on("error", function pdNodeLocal__readHttpFile_callback_error(error) {
+                        console.log("Error downloading file via HTTP:");
+                        console.log("");
+                        console.log(error);
+                    });
+                };
             if (protocol > 0 && protocol < 10) {
-                https.get(data.absolutepath, function pdNodeLocal__readHttpFile_sget(res) {
-                    res.setEncoding("utf8");
-                    res.on("data", function pdNodeLocal__readHttpFile_sget_response(chunk) {
-                        file += chunk;
-                    });
-                    res.on("end", function pdNodeLocal__readHttpFile_sget_end() {
-                        data.file = file;
-                        if (data.type === "diff") {
-                            dfiledump[data.index] = file;
-                        } else {
-                            sfiledump[data.index] = file;
-                        }
-                        fileComplete(data);
-                    });
-                });
+                https.get(data.absolutepath, callback);
             } else {
-                http.get(data.absolutepath, function pdNodeLocal__readHttpFile_get(res) {
-                    res.setEncoding("utf8");
-                    res.on("data", function pdNodeLocal__readHttpFile_get_response(chunk) {
-                        file += chunk;
-                    });
-                    res.on("end", function pdNodeLocal__readHttpFile_get_end() {
-                        data.file = file;
-                        if (data.type === "diff") {
-                            dfiledump[data.index] = file;
-                        } else {
-                            sfiledump[data.index] = file;
-                        }
-                        fileComplete(data);
-                    });
-                });
+                http.get(data.absolutepath, callback);
             }
         },
 
