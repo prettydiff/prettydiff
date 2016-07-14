@@ -3858,7 +3858,8 @@ if (typeof jQuery == "undefined") {
                     matchAnyContext  = addCombinator(function (elem) {
                         return indexOf.call(checkContext, elem) > -1;
                     }, implicitRelative, true),
-                    matchers         = [function (elem, context, xml) {
+                    matchers         = [
+                        function (elem, context, xml) {
                             return (!leadingRelative && (xml || context !== outermostContext)) || ((checkContext = context).nodeType
                                 ? matchContext(elem, context, xml)
                                 : matchAnyContext(elem, context, xml));
@@ -6546,7 +6547,8 @@ if (typeof jQuery == "undefined") {
             rrun                = /queueHooks$/,
             animationPrefilters = [defaultPrefilter],
             tweeners            = {
-                "*": [function (prop, value) {
+                "*": [
+                    function (prop, value) {
                         var end,
                             unit,
                             tween         = this.createTween(prop, value),

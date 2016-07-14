@@ -5,9 +5,9 @@
 (function taskrunner() {
     "use strict";
     var order      = [
-            "lint", //        - run jslint on all unexcluded files in the repo
-            "packagejson", // - beautify the package.json file and compare it to itself
-            "coreunits", //   - run a variety of files through the application and compare the result to a known good file
+            //"lint", //        - run jslint on all unexcluded files in the repo
+            //"packagejson", // - beautify the package.json file and compare it to itself
+            //"coreunits", //   - run a variety of files through the application and compare the result to a known good file
             //"diffunits", //   - unit tests for the diff process
             "simulations" //  - simulate a variety of execution steps and options from the command line
         ],
@@ -783,7 +783,13 @@
                     tests     = [
                         {
                             buildup : [
-                                "mkdir test/simulation",
+                                function taskrunner_simulations_buildup0() {
+                                    fs.mkdir("test/simulation", function taskrunner_simulations_buildup0_callback(err) {
+                                        if (err !== null) {
+                                            return errout(err);
+                                        }
+                                    });
+                                },
                                 "echo \"<a><b> <c/>    </b></a>\" > test/simulation/testa.txt",
                                 "echo \"<a><b> <d/>    </b></a>\" > test/simulation/testb.txt",
                                 "echo \"\" > test/simulation/testa1.txt",
@@ -3841,9 +3847,13 @@
                                                                         taskrunner_simulations_shell_child_writeLine_teardown_task();
                                                                     }
                                                                 };
-                                                            tasks[a] = slashfix(tasks[a]);
-                                                            console.log(tab + "  " + tasks[a]);
-                                                            childExec(tasks[a], execCallback);
+                                                            if (typeof tasks[a] === "function") {
+                                                                tasks[a]();
+                                                            } else {
+                                                                tasks[a] = slashfix(tasks[a]);
+                                                                console.log(tab + "  " + tasks[a]);
+                                                                childExec(tasks[a], execCallback);
+                                                            }
                                                         };
                                                     console.log("");
                                                     console.log(tab + "\x1B[36mTeardown\x1B[39m for group: \x1B[33m" + groupname[depth] + "\x1B[39m \x1B[36mstarted\x1B[39m.");
@@ -3951,9 +3961,14 @@
                                                 }
                                             }
                                         };
-                                        tasks[a] = slashfix(tasks[a]);
-                                        console.log(tab + "  " + tasks[a]);
-                                        if (path.sep === "\\" && (/^(echo\s+("|'))/).test(tasks[a]) === true) {
+                                        if (typeof tasks[a] === "function") {
+                                            tasks[a]();
+                                            a += 1;
+                                            if (a < len) {
+                                                taskrunner_simulations_shell_buildup_task();
+                                            }
+                                        } else if (path.sep === "\\" && (/^(echo\s+("|'))/).test(tasks[a]) === true) {
+                                            tasks[a] = slashfix(tasks[a]);
                                             //windows will write CLI strings to files including the containing quotes
                                             options.source = tasks[a];
                                             options.mode   = "parse";
@@ -3961,6 +3976,7 @@
                                             echo           = prettydiff.api(options);
                                             fs.writeFile(echo.data.token.slice(3).join("").replace(/(x?;)$/, ""), echo.data.token[1].slice(1, echo.data.token[1].length - 1), buildstep);
                                         } else {
+                                            tasks[a] = slashfix(tasks[a]);
                                             childExec(tasks[a], buildstep);
                                         }
                                     };
