@@ -3656,7 +3656,7 @@
                             if (output.indexOf("node api/node-local.js") === 0) {
                                 output = output + " crlf:\"true\"";
                             }
-                            output = output.replace(/^(rm\ (-\w+\ )*)/, "powershell.exe -nologo -noprofile -command \"rm") + " -r -force\"");
+                            output = output.replace(/^(rm\ (-\w+\ )*)/, "powershell.exe -nologo -noprofile -command \"rm") + " -r -force\"";
                             output = output.replace(/^(cat\ )/, "type ");
                             output = output.replace(/^(ls\ (-\w+\ )*)/, "dir /b ");
                         }
