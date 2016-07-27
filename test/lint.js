@@ -5,9 +5,9 @@
 (function taskrunner() {
     "use strict";
     var order      = [
-            //"lint", //        - run jslint on all unexcluded files in the repo
-            //"packagejson", // - beautify the package.json file and compare it to itself
-            //"coreunits", //   - run a variety of files through the application and compare the result to a known good file
+            "lint", //        - run jslint on all unexcluded files in the repo
+            "packagejson", // - beautify the package.json file and compare it to itself
+            "coreunits", //   - run a variety of files through the application and compare the result to a known good file
             //"diffunits", //   - unit tests for the diff process
             "simulations" //  - simulate a variety of execution steps and options from the command line
         ],
@@ -3656,7 +3656,9 @@
                             if (output.indexOf("node api/node-local.js") === 0) {
                                 output = output + " crlf:\"true\"";
                             }
-                            output = output.replace(/^(rm\ (-\w+\ )*)/, "powershell.exe -nologo -noprofile -command \"rm ") + " -r -force\"";
+                            if ((/^(rm\ (-\w+\ )*)/).test(output) === true) {
+                                output = output.replace(/^(rm\ (-\w+\ )*)/, "powershell.exe -nologo -noprofile -command \"rm ") + " -r -force\"";
+                            }
                             output = output.replace(/^(cat\ )/, "type ");
                             output = output.replace(/^(ls\ (-\w+\ )*)/, "dir /b ");
                         }
