@@ -402,6 +402,8 @@ var prettydiff = function prettydiff_(api) {
                     styleguide     : (typeof api.styleguide === "string")
                         ? api.styleguide
                         : "",
+                    // summaryonly - node only option to output only the diff summary
+                    summaryonly    : (api.summaryonly === true || api.summaryonly === "true"),
                     // tagmerge - Allows combining immediately adjacent start and end tags of the
                     // same name into a single self-closing tag:  <a href="home"></a> into
                     // <a//href="home"/>

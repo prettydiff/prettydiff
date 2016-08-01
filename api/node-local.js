@@ -893,6 +893,9 @@ Examples:
                 pdlen  = output[0].length;
             if (options.summaryonly === true) {
                 clidata[2].push(itempath);
+                if (method === "screen" || method === "filescreen") {
+                    return console.log("Total differences: " + diffCount[0]);
+                }
             } else {
                 if (diffCount[0] !== 1) {
                     plural = "s";
@@ -909,22 +912,16 @@ Examples:
                         } else {
                             console.log(lf + colors.filepath.start + itempath + lf + "Line: " + output[0][a] + colors.filepath.end);
                         }
-                        if (output[3][a - 2] !== undefined) {
-                            console.log(output[3][a - 2]);
-                        }
-                        if (output[3][a - 1] !== undefined) {
-                            console.log(output[3][a - 1]);
-                        }
                     }
                     if (output[4][a] === "delete") {
-                        console.log(colors.del.lineStart + output[1][a].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
+                        console.log(colors.del.lineStart + output[1][a].replace(/\\x(1)B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
                     } else if (output[4][a] === "insert") {
-                        console.log(colors.ins.lineStart + output[3][a].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
+                        console.log(colors.ins.lineStart + output[3][a].replace(/\\x(1)B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
                     } else if (output[4][a] === "equal" && a > 1) {
                         console.log(output[3][a]);
                     } else if (output[4][a] === "replace") {
-                        console.log(colors.del.lineStart + output[1][a].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
-                        console.log(colors.ins.lineStart + output[3][a].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
+                        console.log(colors.del.lineStart + output[1][a].replace(/\\x(1)B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
+                        console.log(colors.ins.lineStart + output[3][a].replace(/\\x(1)B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
                     }
                 }
             }
@@ -2014,7 +2011,7 @@ Examples:
                                 }
                                 method = options.readmethod;
                                 if (s !== options.source) {
-                                    pathslash("source", options.source);
+                                     pathslash("source", options.source);
                                 }
                                 if (dd !== options.diff) {
                                     pathslash("diff", options.diff);
