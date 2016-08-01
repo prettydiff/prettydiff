@@ -304,21 +304,21 @@ Examples:
             if (enderflag === true) {
                 return;
             }
-            if (options.endquietly !== "log" && (method === "filescreen" || method === "screen")) {
+            if (options.endquietly !== "log" && options.summaryonly === false && (method === "filescreen" || method === "screen")) {
                 return;
             }
 
             // indexes of diffCount array
             //* 0 - total number of differences
             //* 1 - the number of files containing those differences
-            //* 2 - total file count (not counting sub)directories)
+            //* 2 - total file count (not counting (sub)directories)
             //* 3 - total input size (in characters from all files)
             //* 4 - total output size (in characters from all files)
             if ((method !== "directory" && method !== "subdirectory") || sfiledump.length === 1) {
                 plural[1] = "";
             }
             if (options.diffcli === true && options.mode === "diff") {
-                if (options.summaryonly === true && clidata[2].length > 0) {
+                if (options.summaryonly === true && options.readmethod !== "screen" && clidata[2].length > 0) {
                     log.push(lf + "Files changed:" + lf);
                     log.push(colors.filepath.start);
                     log.push(clidata[2].join(lf));
@@ -894,7 +894,7 @@ Examples:
             if (options.summaryonly === true) {
                 clidata[2].push(itempath);
                 if (method === "screen" || method === "filescreen") {
-                    return console.log("Total differences: " + diffCount[0]);
+                    return ender();
                 }
             } else {
                 if (diffCount[0] !== 1) {
@@ -1682,6 +1682,9 @@ Examples:
                     }
                     if (d[b][1] === "directory") {
                         options.readmethod = "directory";
+                    }
+                    if (d[b][1] === "screen") {
+                        options.readmethod = "screen";
                     }
                     if (d[b][1] === "subdirectory") {
                         options.readmethod = "subdirectory";
