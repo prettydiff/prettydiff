@@ -734,10 +734,13 @@
                                     <li>
                                         <h5>Description</h5>
                                         If a terminating comma should be inserted into arrays, object literals, and
-                                        destructured objects.</li>
+                                        destructured objects.  The <em>multiline</em> value forces terminating commas but only to objects and arrays that are beautified to more than one line.  As a result the multiline value is only available to beautify and diff modes and it behaves identically to the <em>never</em> value during parse time.</li>
                                     <li>
                                         <h5>Type</h5>
-                                        boolean</li>
+                                        string</li>
+                                    <li>
+                                        <h5>Accepted values</h5>
+                                        always, multiline, never</li>
                                     <li>
                                         <h5>Default</h5>
                                         false</li>

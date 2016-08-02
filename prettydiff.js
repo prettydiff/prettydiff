@@ -264,7 +264,11 @@ var prettydiff = function prettydiff_(api) {
                     elseline       : (api.elseline === true || api.elseline === "true"),
                     // endcomma - if a trailing comma should be injected at the end of arrays and
                     // object literals in JavaScript
-                    endcomma       : (api.endcomma === true || api.endcomma === "true"),
+                    endcomma       : (api.endcomma === true || api.endcomma === "true" || api.endcomma === "always")
+                        ? "always"
+                        : (api.endcomma === "multiline")
+                            ? "multiline"
+                            : "never",
                     // force_attribute - forces indentation of all markup attriubtes
                     force_attribute: (api.force_attribute === true || api.force_attribute === "true"),
                     // force_indent - should markup beautification always force indentation even if
@@ -669,6 +673,14 @@ var prettydiff = function prettydiff_(api) {
                             } else if (build[c][0] === "diffview") {
                                 if (build[c][1] === "sidebyside" || build[c][1] === "inline") {
                                     options.diffview = build[c][1];
+                                }
+                            } else if (build[c][0] === "endcomma") {
+                                if (build[c][1] === "true" || build[c][1] === "always") {
+                                    options.endcomma = "always";
+                                } else if (build[c][1] === "false" || build[c][1] === "never") {
+                                    options.endcomma = "never";
+                                } else if (build[c][1] === "multiline") {
+                                    options.endcomma = "multiline";
                                 }
                             } else if (build[c][0] === "formatArray" || build[c][0] === "formatObject") {
                                 if (build[c][1] === "default" || build[c][1] === "indent" || build[c][1] === "inline") {

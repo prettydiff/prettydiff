@@ -878,6 +878,14 @@ global.meta = {
                         data = ["attributetoken", "true"];
                     } else if (id === "baselabel") {
                         data = ["sourcelabel", item.value];
+                    } else if (id === "bbracestyle-collapse" || id === "dbracestyle-collapse") {
+                        data = ["brace_style", "collapse"];
+                    } else if (id === "bbracestyle-expand" || id === "dbracestyle-expand") {
+                        data = ["brace_style", "expand"];
+                    } else if (id === "bbracestyle-inline" || id === "dbracestyle-inline") {
+                        data = ["brace_style", "collapse-preserve-inline"];
+                    } else if (id === "bbracestyle-none" || id === "dbracestyle-none") {
+                        data = ["brace_style", "none"];
                     } else if (id === "bbraceline-no" || id === "dbraceline-no") {
                         data = ["braceline", "false"];
                     } else if (id === "bbraceline-yes" || id === "dbraceline-yes") {
@@ -896,10 +904,12 @@ global.meta = {
                         data = ["compressedcss", "true"];
                     } else if (id === "beau-wrap" || id === "diff-wrap" || id === "mini-wrap") {
                         data = ["wrap", item.value];
-                    } else if (id === "bendcomma-no") {
-                        data = ["endcomma", "false"];
-                    } else if (id === "bendcomma-yes") {
-                        data = ["endcomma", "true"];
+                    } else if (id === "bendcomma-always" || id === "dendcomma-always") {
+                        data = ["endcomma", "always"];
+                    } else if (id === "bendcomma-multiline" || id === "dendcomma-multiline") {
+                        data = ["endcomma", "multiline"];
+                    } else if (id === "bendcomma-never" || id === "dendcomma-never") {
+                        data = ["endcomma", "never"];
                     } else if (id === "bforce_attribute-no" || id === "dforce_attribute-no") {
                         data = ["force_attribute", "false"];
                     } else if (id === "bforce_attribute-yes" || id === "dforce_attribute-yes") {
@@ -3772,7 +3782,8 @@ global.meta = {
                     csslines       = pd.id("cssinsertlines-yes"),
                     dustjs         = pd.id("bdustyes"),
                     elseline       = pd.id("jselseline-yes"),
-                    endcomma       = pd.id("bendcomma-yes"),
+                    endcommaa      = pd.id("bendcomma-always"),
+                    endcommam      = pd.id("bendcomma-multiline"),
                     forceAttribute = pd.id("bforce_attribute-yes"),
                     forceIndent    = pd.id("bforce_indent-yes"),
                     formatADefault = pd.id("bformatarray-default"),
@@ -3886,7 +3897,11 @@ global.meta = {
                 api.dustjs          = (pd.data.langvalue[0] === "dustjs" || (dustjs !== null && dustjs.checked === true));
                 api.dustjs          = (dustjs !== null && dustjs.checked === true);
                 api.elseline        = (elseline !== null && elseline.checked === true);
-                api.endcomma        = (endcomma !== null && endcomma.checked === true);
+                api.endcomma        = (endcommaa !== null && endcommaa.checked === true)
+                    ? api.endcomma = "always"
+                    : (endcommam !== null && endcommam.checked === true)
+                        ? api.endcomma = "multiline"
+                        : "never";
                 api.force_attribute = (forceAttribute !== null && forceAttribute.checked === true);
                 api.force_indent    = (forceIndent !== null && forceIndent.checked === true);
                 if (formatADefault !== null && formatADefault.checked === true) {
@@ -4083,7 +4098,8 @@ global.meta = {
                     diffspaceignore = pd.id("diffspaceignorey"),
                     dustjs          = pd.id("ddustyes"),
                     elseline        = pd.id("jselselined-yes"),
-                    endcomma        = pd.id("dendcomma-yes"),
+                    endcommaa       = pd.id("dendcomma-always"),
+                    endcommam       = pd.id("dendcomma-multiline"),
                     forceAttribute  = pd.id("dforce_attribute-yes"),
                     forceIndent     = pd.id("dforce_indent-yes"),
                     formatADefault  = pd.id("dformatarray-default"),
@@ -4161,7 +4177,11 @@ global.meta = {
                     : "inline";
                 api.dustjs          = (dustjs !== null && dustjs.checked === true);
                 api.elseline        = (elseline !== null && elseline.checked !== false);
-                api.endcomma        = (endcomma !== null && endcomma.checked === true);
+                api.endcomma        = (endcommaa !== null && endcommaa.checked === true)
+                    ? api.endcomma = "always"
+                    : (endcommam !== null && endcommam.checked === true)
+                        ? api.endcomma = "multiline"
+                        : "never";
                 api.force_attribute = (forceAttribute !== null && forceAttribute.checked === true);
                 api.force_indent    = (forceIndent !== null && forceIndent.checked === true);
                 if (formatADefault !== null && formatADefault.checked === true) {

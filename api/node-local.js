@@ -82,7 +82,7 @@ Examples:
             diffview       : "sidebyside",
             dustjs         : false,
             elseline       : false,
-            endcomma       : false,
+            endcomma       : "never",
             endquietly     : "",
             force_attribute: false,
             force_indent   : false,
@@ -527,8 +527,10 @@ Examples:
             a.push("                           onto a new line in JavaScript beautification.");
             a.push("                           Defaults to false.");
             a.push("");
-            a.push("* endcomma     - boolean - If there should be a trailing comma in JavaScript");
-            a.push("                           arrays and objects.");
+            a.push("* endcomma     - string  - If there should be a trailing comma in JavaScript");
+            a.push("                           arrays and objects. Value \"multiline\" only applies");
+            a.push("                           to modes beautify and diff. Default is \"never\".");
+            a.push("                 Accepted values: always, multiline, never");
             a.push("");
             a.push("* endquietly   - string  - Determine if terminal logging should be allowed or ");
             a.push("                           suppressed.  The value 'quiet' eliminates terminal");
@@ -1581,8 +1583,14 @@ Examples:
                     options.dustjs = true;
                 } else if (d[b][0] === "elseline" && d[b][1] === "true") {
                     options.elseline = true;
-                } else if (d[b][0] === "endcomma" && d[b][1] === "true") {
-                    options.endcomma = true;
+                } else if (d[b][0] === "endcomma") {
+                    if (d[b][1] === "true" || d[b][1] === "always") {
+                        options.endcomma = "always";
+                    } else if (d[b][1] === "multiline") {
+                        options.endcomma = "multiline";
+                    } else {
+                        options.endcomma = "never";
+                    }
                 } else if (d[b][0] === "endquietly") {
                     if (d[b][1] === "quiet") {
                         enderflag = true;

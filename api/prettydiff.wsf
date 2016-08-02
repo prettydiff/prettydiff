@@ -145,8 +145,8 @@
                         error.push("* elseline       - boolean - The keyword 'else' will be pushed to a new line if " +
                                 "this is true. Defaults to false.");
                         error.push("");
-                        error.push("* endcomma       - boolean - If there should be a trailing comma in JavaScript a" +
-                                "rrays and objects.");
+                        error.push("* endcomma       - string  - If there should be a trailing comma in JavaScript a" +
+                                "rrays and objects. The value \"multiline\" is only available to modes beautify and diff. Default is \"never\".");
                         error.push("");
                         error.push("* force_attribute - boolean - If all markup attributes should be indented each o" +
                                 "nto their own line. Default is false.");
@@ -519,7 +519,11 @@
                     : "sidebyside";
                 args.dustjs          = (WScript.Arguments.Named("dustjs") === "true" || WScript.Arguments.Named("dustjs") === true);
                 args.elseline        = (WScript.Arguments.Named("elseline") === "true" || WScript.Arguments.Named("elseline") === true);
-                args.endcomma        = (WScript.Arguments.Named("endcomma") === "true" || WScript.Arguments.Named("endcomma") === true);
+                args.endcomma        = (WScript.Arguments.Named("endcomma") === "true" || WScript.Arguments.Named("endcomma") === true || WScript.Arguments.Named("endcomma") === "always")
+                    ? "always"
+                    : (WScript.Arguments.Named("endcomma") === "multiline")
+                        ? "multiline"
+                        : "never";
                 args.force_attribute = (WScript.Arguments.Named("force_attribute") === "true" || WScript.Arguments.Named("force_attribute") === true);
                 args.force_indent    = (WScript.Arguments.Named("force_indent") === "true" || WScript.Arguments.Named("force_indent") === true);
                 args.formatArray     = (WScript.Arguments.Named("formatArray") === "indent" || WScript.Arguments.Named("formatArray") === "inline")
