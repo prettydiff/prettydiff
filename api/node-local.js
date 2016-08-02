@@ -59,6 +59,7 @@ Examples:
             apacheVelocity : false,
             api            : "node",
             attributetoken : false,
+            brace_style    : "none",
             braceline      : false,
             bracepadding   : false,
             braces         : "knr",
@@ -431,6 +432,10 @@ Examples:
             a.push("                           tokens in the parse table of mode parse. Otherwise");
             a.push("                           attributes are a data property of their respective");
             a.push("                           element. Default is false.");
+            a.push("");
+            a.push("* brace_style  - string  - Emulates JSBeautify's brace_style option using");
+            a.push("                           existing Pretty Diff options. Default is \"none\".");
+            a.push("               Accepted values: collapse, collapse-preserve-inline, expand, none");
             a.push("");
             a.push("* braceline    - boolean - If true a new line character will be inserted after");
             a.push("                           opening curly braces and before closing curly");
@@ -1529,6 +1534,8 @@ Examples:
                     options.api = "node";
                 } else if (d[b][0] === "attributetoken" && d[b][1] === "true") {
                     options.attributetoken = true;
+                } else if (d[b][0] === "brace_style" && (d[b][1] === "collapse" || d[b][1] === "collapse-preserve-inline" || d[b][1] === "expand")) {
+                    options.brace_style = d[b][1];
                 } else if (d[b][0] === "braceline" && d[b][1] === "true") {
                     options.braceline = true;
                 } else if (d[b][0] === "bracepadding" && d[b][1] === "true") {

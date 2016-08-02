@@ -39,5 +39,11 @@
         "type": "git",
         "url" : "https://github.com/prettydiff/prettydiff"
     },
+    "variants"   : {
+        "cli"     : [
+            "ace", "guide", "images", "test"
+        ],
+        "complete": []
+    },
     "version"    : "2.1.1"
 }

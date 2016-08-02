@@ -73,6 +73,9 @@
                                 "tokens in the parse table of mode parse. Otherwise attributes are a data propert" +
                                 "y of their respective element. Default is false.");
                         error.push("");
+                        error.push("* brace_style    - string  - Emulates JSBeautify's brace_style option using existing Pretty Diff options.");
+                        error.push("                   Accepted values: collapse, collapse-preserve-inline, expand, none");
+                        error.push("");
                         error.push("* braceline      - boolean - Inserts a newline after an opening curly brace and " +
                                 "before a closing curly brace. Default is false.");
                         error.push("");
@@ -487,6 +490,9 @@
             if (fail === false) {
                 args.api             = "wsf";
                 args.attributetoken  = (WScript.Arguments.Named("attributetoken") === "true" || WScript.Arguments.Named("attributetoken") === true);
+                args.brace_style     = (WScript.Arguments.Named("braceline") === "collapse" || WScript.Arguments.Named("braceline") === "collapse-preserve-inline"  || WScript.Arguments.Named("braceline") === "expand")
+                    ? args.brace_style
+                    : none;
                 args.braceline       = (WScript.Arguments.Named("braceline") === "true" || WScript.Arguments.Named("braceline") === true);
                 args.bracepadding    = (WScript.Arguments.Named("bracepadding") === "true" || WScript.Arguments.Named("bracepadding") === true);
                 args.braces          = (WScript.Arguments.Named("indent") === "allman")

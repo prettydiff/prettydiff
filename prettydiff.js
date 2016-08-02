@@ -188,6 +188,10 @@ var prettydiff = function prettydiff_(api) {
                     // attributetoken - whether attributes should be represented as token items in
                     // the parse table or whether they should be a data properties of their element
                     attributetoken : (api.attributetoken === true || api.attributetoken === "true"),
+                    // brace-style - provided to emulate JSBeautify's brace-style option
+                    brace_style    : (api.brace_style === "collapse" || api.brace_style === "collapse-preserve-inline" || api.brace_style === "expand")
+                        ? api.brace_style
+                        : "collapse",
                     // braceline - should a new line pad the interior of blocks (curly braces) in
                     // JavaScript
                     braceline      : (api.braceline === true || api.braceline === "true"),
@@ -645,6 +649,11 @@ var prettydiff = function prettydiff_(api) {
                     for (c = 0; c < b; c += 1) {
                         if (typeof build[c][1] === "string") {
                             build[c][0] = build[c][0].replace("api.", "");
+                            if (build[c][0] === "brace_style") {
+                                if (build[c][1] === "collapse" || build[c][1] === "collapse-preserve-inline" || build[c][1] === "expand" || build[c][1] === "none") {
+                                    options.brace_style = build[c][1];
+                                }
+                            }
                             if (build[c][0] === "braces" || build[c][0] === "indent") {
                                 if (build[c][1] === "knr" || build[c][1] === "allman") {
                                     options.braces = build[c][1];

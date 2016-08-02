@@ -3759,7 +3759,10 @@ global.meta = {
         //determine options based upon mode of operations
         if (pd.data.mode === "beau") {
             (function dom__event_recycle_beautify() {
-                var braceline      = pd.id("bbraceline-no"),
+                var brace_stylec   = pd.id("bbracestyle-collapse"),
+                    brace_stylee   = pd.id("bbracestyle-expand"),
+                    brace_stylei   = pd.id("bbracestyle-inline"),
+                    braceline      = pd.id("bbraceline-no"),
                     bracepadding   = pd.id("bbracepadding-yes"),
                     braces         = pd.id("jsindent-all"),
                     chars          = pd.id("beau-space"),
@@ -3836,6 +3839,13 @@ global.meta = {
                         api.source = pd.data.node.codeBeauIn.value;
                     }
                 }
+                api.brace_style  = (brace_stylec !== null && brace_stylec.checked === true)
+                    ? "collapse"
+                    : (brace_stylee !== null && brace_stylee.checked === true)
+                        ? "expand"
+                        : (brace_stylei !== null && brace_stylei.checked === true)
+                            ? "collapse-preserve-inline"
+                            : "none";
                 api.braceline    = (braceline === null || braceline.checked === false);
                 api.bracepadding = (bracepadding !== null && bracepadding.checked === true);
                 api.braces       = (braces === null || braces.checked === false)
@@ -4057,7 +4067,10 @@ global.meta = {
         if (pd.data.mode === "diff") {
             api.jsscope = false;
             (function dom__event_recycle_diff() {
-                var braceline       = pd.id("dbraceline-no"),
+                var brace_stylec    = pd.id("dbracestyle-collapse"),
+                    brace_stylee    = pd.id("dbracestyle-expand"),
+                    brace_stylei    = pd.id("dbracestyle-inline"),
+                    braceline       = pd.id("dbraceline-no"),
                     bracepadding    = pd.id("dbracepadding-no"),
                     braces          = pd.id("jsindentd-all"),
                     baseLabel       = pd.id("baselabel"),
@@ -4070,6 +4083,7 @@ global.meta = {
                     diffspaceignore = pd.id("diffspaceignorey"),
                     dustjs          = pd.id("ddustyes"),
                     elseline        = pd.id("jselselined-yes"),
+                    endcomma        = pd.id("dendcomma-yes"),
                     forceAttribute  = pd.id("dforce_attribute-yes"),
                     forceIndent     = pd.id("dforce_indent-yes"),
                     formatADefault  = pd.id("dformatarray-default"),
@@ -4116,6 +4130,13 @@ global.meta = {
                             .langkey(false, pd.data.node.codeDiffBase, "");
                     }
                 }
+                api.brace_style  = (brace_stylec !== null && brace_stylec.checked === true)
+                    ? "collapse"
+                    : (brace_stylee !== null && brace_stylee.checked === true)
+                        ? "expand"
+                        : (brace_stylei !== null && brace_stylei.checked === true)
+                            ? "collapse-preserve-inline"
+                            : "none";
                 api.braceline     = (braceline === null || braceline.checked === false);
                 api.bracepadding  = (bracepadding === null || bracepadding.checked === false);
                 api.braces        = (braces === null || braces.checked === false)
@@ -4140,6 +4161,7 @@ global.meta = {
                     : "inline";
                 api.dustjs          = (dustjs !== null && dustjs.checked === true);
                 api.elseline        = (elseline !== null && elseline.checked !== false);
+                api.endcomma        = (endcomma !== null && endcomma.checked === true);
                 api.force_attribute = (forceAttribute !== null && forceAttribute.checked === true);
                 api.force_indent    = (forceIndent !== null && forceIndent.checked === true);
                 if (formatADefault !== null && formatADefault.checked === true) {
