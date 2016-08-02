@@ -191,7 +191,7 @@ var prettydiff = function prettydiff_(api) {
                     // brace-style - provided to emulate JSBeautify's brace-style option
                     brace_style    : (api.brace_style === "collapse" || api.brace_style === "collapse-preserve-inline" || api.brace_style === "expand")
                         ? api.brace_style
-                        : "collapse",
+                        : "none",
                     // braceline - should a new line pad the interior of blocks (curly braces) in
                     // JavaScript
                     braceline      : (api.braceline === true || api.braceline === "true"),
