@@ -3492,7 +3492,7 @@ global.meta = {
                                 }
                             }());
                         }
-                        if (api.diffview === "sidebyside") {
+                        if (api.diffview === "sidebyside" && diffList.length > 2) {
                             diffList[2].onmousedown  = pd.event.colSliderGrab;
                             diffList[2].ontouchstart = pd.event.colSliderGrab;
                         }
