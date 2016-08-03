@@ -188,6 +188,10 @@ var prettydiff = function prettydiff_(api) {
                     // attributetoken - whether attributes should be represented as token items in
                     // the parse table or whether they should be a data properties of their element
                     attributetoken : (api.attributetoken === true || api.attributetoken === "true"),
+                    // brace-style - provided to emulate JSBeautify's brace-style option
+                    brace_style    : (api.brace_style === "collapse" || api.brace_style === "collapse-preserve-inline" || api.brace_style === "expand")
+                        ? api.brace_style
+                        : "none",
                     // braceline - should a new line pad the interior of blocks (curly braces) in
                     // JavaScript
                     braceline      : (api.braceline === true || api.braceline === "true"),
@@ -260,7 +264,11 @@ var prettydiff = function prettydiff_(api) {
                     elseline       : (api.elseline === true || api.elseline === "true"),
                     // endcomma - if a trailing comma should be injected at the end of arrays and
                     // object literals in JavaScript
-                    endcomma       : (api.endcomma === true || api.endcomma === "true"),
+                    endcomma       : (api.endcomma === true || api.endcomma === "true" || api.endcomma === "always")
+                        ? "always"
+                        : (api.endcomma === "multiline")
+                            ? "multiline"
+                            : "never",
                     // force_attribute - forces indentation of all markup attriubtes
                     force_attribute: (api.force_attribute === true || api.force_attribute === "true"),
                     // force_indent - should markup beautification always force indentation even if
@@ -342,7 +350,7 @@ var prettydiff = function prettydiff_(api) {
                     // immediately before a value's decimal.
                     noleadzero     : (api.noleadzero === true || api.noleadzero === "true"),
                     //objsort will alphabetize object keys in JavaScript
-                    objsort        : (api.objsort === "all" || api.objsort === "js" || api.objsort === "css" || api.objsort === true || api.objsort === "true")
+                    objsort        : (api.objsort === "all" || api.objsort === "js" || api.objsort === "css" || api.objsort === "markup" || api.objsort === true || api.objsort === "true")
                         ? api.objsort
                         : "none",
                     //parseFormat - determine how the parse tree should be organized and formatted
@@ -402,6 +410,8 @@ var prettydiff = function prettydiff_(api) {
                     styleguide     : (typeof api.styleguide === "string")
                         ? api.styleguide
                         : "",
+                    // summaryonly - node only option to output only the diff summary
+                    summaryonly    : (api.summaryonly === true || api.summaryonly === "true"),
                     // tagmerge - Allows combining immediately adjacent start and end tags of the
                     // same name into a single self-closing tag:  <a href="home"></a> into
                     // <a//href="home"/>
@@ -643,6 +653,11 @@ var prettydiff = function prettydiff_(api) {
                     for (c = 0; c < b; c += 1) {
                         if (typeof build[c][1] === "string") {
                             build[c][0] = build[c][0].replace("api.", "");
+                            if (build[c][0] === "brace_style") {
+                                if (build[c][1] === "collapse" || build[c][1] === "collapse-preserve-inline" || build[c][1] === "expand" || build[c][1] === "none") {
+                                    options.brace_style = build[c][1];
+                                }
+                            }
                             if (build[c][0] === "braces" || build[c][0] === "indent") {
                                 if (build[c][1] === "knr" || build[c][1] === "allman") {
                                     options.braces = build[c][1];
@@ -659,6 +674,14 @@ var prettydiff = function prettydiff_(api) {
                                 if (build[c][1] === "sidebyside" || build[c][1] === "inline") {
                                     options.diffview = build[c][1];
                                 }
+                            } else if (build[c][0] === "endcomma") {
+                                if (build[c][1] === "true" || build[c][1] === "always") {
+                                    options.endcomma = "always";
+                                } else if (build[c][1] === "false" || build[c][1] === "never") {
+                                    options.endcomma = "never";
+                                } else if (build[c][1] === "multiline") {
+                                    options.endcomma = "multiline";
+                                }
                             } else if (build[c][0] === "formatArray" || build[c][0] === "formatObject") {
                                 if (build[c][1] === "default" || build[c][1] === "indent" || build[c][1] === "inline") {
                                     options[build[c][0]] = build[c][1];
@@ -674,7 +697,7 @@ var prettydiff = function prettydiff_(api) {
                                     options.mode = build[c][1];
                                 }
                             } else if (build[c][0] === "objsort") {
-                                if (build[c][1] === "all" || build[c][1] === "js" || build[c][1] === "css" || build[c][1] === "none" || build[c][1] === "true" || build[c][1] === "false") {
+                                if (build[c][1] === "all" || build[c][1] === "js" || build[c][1] === "css" || build[c][1] === "markup" || build[c][1] === "none" || build[c][1] === "true" || build[c][1] === "false") {
                                     options.objsort = build[c][1];
                                 }
                             } else if (build[c][0] === "parseFormat") {
@@ -947,24 +970,24 @@ global.edition        = {
         ace: 160307
     },
     api          : {
-        dom      : 160710, //dom.js
-        nodeLocal: 160710, //node-local.js
-        wsh      : 160710
+        dom      : 160803, //dom.js
+        nodeLocal: 160803, //node-local.js
+        wsh      : 160803
     },
     css          : 160625, //css files
-    csspretty    : 160614, //csspretty lib
+    csspretty    : 160803, //csspretty lib
     csvpretty    : 160307, //csvpretty lib
-    diffview     : 160710, //diffview lib
-    documentation: 160710, //documentation.xhtml
-    jspretty     : 160710, //jspretty lib
-    language     : 160710, //language lib
+    diffview     : 160803, //diffview lib
+    documentation: 160803, //documentation.xhtml
+    jspretty     : 160803, //jspretty lib
+    language     : 160803, //language lib
     latest       : 0,
-    lint         : 160625, //unit test and lint automation as test/lint.js
-    markuppretty : 160710, //markuppretty lib
-    prettydiff   : 160710, //this file
+    lint         : 160803, //unit test and lint automation as test/lint.js
+    markuppretty : 160803, //markuppretty lib
+    prettydiff   : 160803, //this file
     safeSort     : 160307, //safeSort lib
-    version      : "2.1.0", //version number
-    webtool      : 160710
+    version      : "2.1.1", //version number
+    webtool      : 160803
 };
 global.edition.latest = (function edition_latest() {
     "use strict";

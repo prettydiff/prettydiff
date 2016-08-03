@@ -557,6 +557,7 @@
             min-height: 450px;
         }
     };
+
     @md : {
         .@{targetClass} {
             .itemResultsCard {
@@ -592,6 +593,7 @@
             }
         }
     };
+
     @sm : {
         .@{targetClass} {
             .itemcost .i-baggage-x {
@@ -744,6 +746,7 @@
             }
         }
     };
+
     @xxs: {
         .@{targetClass} {
             .itemResultsCard {

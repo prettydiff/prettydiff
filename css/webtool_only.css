@@ -196,7 +196,7 @@
 #prettydiff #webtool p,
 #prettydiff #webtool li,
 #prettydiff #webtool td,
-#prettydiff #webtool th{font-family:"Lucida Sans Unicode","Helvetica","Arial",sans-serif;font-size:1.2em}
+#prettydiff #webtool th{font-family:"Lucida Sans Unicode","Helvetica","Arial",sans-serif;font-size:1.2em;letter-spacing:0.05em}
 #prettydiff #webtool th.heading{border-width:0.05em;font-size:2em}
 #prettydiff #webtool div{font-family:"Century Gothic","Trebuchet MS";margin:0 auto;text-align:left;border-width:0.1em;border-style:solid}
 

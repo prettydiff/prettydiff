@@ -878,6 +878,14 @@ global.meta = {
                         data = ["attributetoken", "true"];
                     } else if (id === "baselabel") {
                         data = ["sourcelabel", item.value];
+                    } else if (id === "bbracestyle-collapse" || id === "dbracestyle-collapse") {
+                        data = ["brace_style", "collapse"];
+                    } else if (id === "bbracestyle-expand" || id === "dbracestyle-expand") {
+                        data = ["brace_style", "expand"];
+                    } else if (id === "bbracestyle-inline" || id === "dbracestyle-inline") {
+                        data = ["brace_style", "collapse-preserve-inline"];
+                    } else if (id === "bbracestyle-none" || id === "dbracestyle-none") {
+                        data = ["brace_style", "none"];
                     } else if (id === "bbraceline-no" || id === "dbraceline-no") {
                         data = ["braceline", "false"];
                     } else if (id === "bbraceline-yes" || id === "dbraceline-yes") {
@@ -896,10 +904,12 @@ global.meta = {
                         data = ["compressedcss", "true"];
                     } else if (id === "beau-wrap" || id === "diff-wrap" || id === "mini-wrap") {
                         data = ["wrap", item.value];
-                    } else if (id === "bendcomma-no") {
-                        data = ["endcomma", "false"];
-                    } else if (id === "bendcomma-yes") {
-                        data = ["endcomma", "true"];
+                    } else if (id === "bendcomma-always" || id === "dendcomma-always") {
+                        data = ["endcomma", "always"];
+                    } else if (id === "bendcomma-multiline" || id === "dendcomma-multiline") {
+                        data = ["endcomma", "multiline"];
+                    } else if (id === "bendcomma-never" || id === "dendcomma-never") {
+                        data = ["endcomma", "never"];
                     } else if (id === "bforce_attribute-no" || id === "dforce_attribute-no") {
                         data = ["force_attribute", "false"];
                     } else if (id === "bforce_attribute-yes" || id === "dforce_attribute-yes") {
@@ -3482,7 +3492,7 @@ global.meta = {
                                 }
                             }());
                         }
-                        if (api.diffview === "sidebyside") {
+                        if (api.diffview === "sidebyside" && diffList.length > 2) {
                             diffList[2].onmousedown  = pd.event.colSliderGrab;
                             diffList[2].ontouchstart = pd.event.colSliderGrab;
                         }
@@ -3759,7 +3769,10 @@ global.meta = {
         //determine options based upon mode of operations
         if (pd.data.mode === "beau") {
             (function dom__event_recycle_beautify() {
-                var braceline      = pd.id("bbraceline-no"),
+                var brace_stylec   = pd.id("bbracestyle-collapse"),
+                    brace_stylee   = pd.id("bbracestyle-expand"),
+                    brace_stylei   = pd.id("bbracestyle-inline"),
+                    braceline      = pd.id("bbraceline-no"),
                     bracepadding   = pd.id("bbracepadding-yes"),
                     braces         = pd.id("jsindent-all"),
                     chars          = pd.id("beau-space"),
@@ -3769,7 +3782,8 @@ global.meta = {
                     csslines       = pd.id("cssinsertlines-yes"),
                     dustjs         = pd.id("bdustyes"),
                     elseline       = pd.id("jselseline-yes"),
-                    endcomma       = pd.id("bendcomma-yes"),
+                    endcommaa      = pd.id("bendcomma-always"),
+                    endcommam      = pd.id("bendcomma-multiline"),
                     forceAttribute = pd.id("bforce_attribute-yes"),
                     forceIndent    = pd.id("bforce_indent-yes"),
                     formatADefault = pd.id("bformatarray-default"),
@@ -3836,6 +3850,13 @@ global.meta = {
                         api.source = pd.data.node.codeBeauIn.value;
                     }
                 }
+                api.brace_style  = (brace_stylec !== null && brace_stylec.checked === true)
+                    ? "collapse"
+                    : (brace_stylee !== null && brace_stylee.checked === true)
+                        ? "expand"
+                        : (brace_stylei !== null && brace_stylei.checked === true)
+                            ? "collapse-preserve-inline"
+                            : "none";
                 api.braceline    = (braceline === null || braceline.checked === false);
                 api.bracepadding = (bracepadding !== null && bracepadding.checked === true);
                 api.braces       = (braces === null || braces.checked === false)
@@ -3876,7 +3897,11 @@ global.meta = {
                 api.dustjs          = (pd.data.langvalue[0] === "dustjs" || (dustjs !== null && dustjs.checked === true));
                 api.dustjs          = (dustjs !== null && dustjs.checked === true);
                 api.elseline        = (elseline !== null && elseline.checked === true);
-                api.endcomma        = (endcomma !== null && endcomma.checked === true);
+                api.endcomma        = (endcommaa !== null && endcommaa.checked === true)
+                    ? "always"
+                    : (endcommam !== null && endcommam.checked === true)
+                        ? "multiline"
+                        : "never";
                 api.force_attribute = (forceAttribute !== null && forceAttribute.checked === true);
                 api.force_indent    = (forceIndent !== null && forceIndent.checked === true);
                 if (formatADefault !== null && formatADefault.checked === true) {
@@ -4057,7 +4082,10 @@ global.meta = {
         if (pd.data.mode === "diff") {
             api.jsscope = false;
             (function dom__event_recycle_diff() {
-                var braceline       = pd.id("dbraceline-no"),
+                var brace_stylec    = pd.id("dbracestyle-collapse"),
+                    brace_stylee    = pd.id("dbracestyle-expand"),
+                    brace_stylei    = pd.id("dbracestyle-inline"),
+                    braceline       = pd.id("dbraceline-no"),
                     bracepadding    = pd.id("dbracepadding-no"),
                     braces          = pd.id("jsindentd-all"),
                     baseLabel       = pd.id("baselabel"),
@@ -4070,6 +4098,8 @@ global.meta = {
                     diffspaceignore = pd.id("diffspaceignorey"),
                     dustjs          = pd.id("ddustyes"),
                     elseline        = pd.id("jselselined-yes"),
+                    endcommaa       = pd.id("dendcomma-always"),
+                    endcommam       = pd.id("dendcomma-multiline"),
                     forceAttribute  = pd.id("dforce_attribute-yes"),
                     forceIndent     = pd.id("dforce_indent-yes"),
                     formatADefault  = pd.id("dformatarray-default"),
@@ -4116,6 +4146,13 @@ global.meta = {
                             .langkey(false, pd.data.node.codeDiffBase, "");
                     }
                 }
+                api.brace_style  = (brace_stylec !== null && brace_stylec.checked === true)
+                    ? "collapse"
+                    : (brace_stylee !== null && brace_stylee.checked === true)
+                        ? "expand"
+                        : (brace_stylei !== null && brace_stylei.checked === true)
+                            ? "collapse-preserve-inline"
+                            : "none";
                 api.braceline     = (braceline === null || braceline.checked === false);
                 api.bracepadding  = (bracepadding === null || bracepadding.checked === false);
                 api.braces        = (braces === null || braces.checked === false)
@@ -4140,6 +4177,11 @@ global.meta = {
                     : "inline";
                 api.dustjs          = (dustjs !== null && dustjs.checked === true);
                 api.elseline        = (elseline !== null && elseline.checked !== false);
+                api.endcomma        = (endcommaa !== null && endcommaa.checked === true)
+                    ? "always"
+                    : (endcommam !== null && endcommam.checked === true)
+                        ? "multiline"
+                        : "never";
                 api.force_attribute = (forceAttribute !== null && forceAttribute.checked === true);
                 api.force_indent    = (forceIndent !== null && forceIndent.checked === true);
                 if (formatADefault !== null && formatADefault.checked === true) {

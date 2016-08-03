@@ -99,3 +99,19 @@ h1\\{
 .a{
     background: url(@var1) no-repeat 0 0 scroll transparent;
 }
+
+.foo {
+  color: green;
+}
+
+@media all and (min-width: 12em) {
+  .foo {
+    color: red;
+  }
+}
+
+@media all and (min-width: 48em) {
+  .foo {
+    color: blue;
+  }
+}

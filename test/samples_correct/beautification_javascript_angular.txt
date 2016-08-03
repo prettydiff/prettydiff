@@ -7308,7 +7308,8 @@
                 }
             ],
             // transform incoming response data
-            transformResponse: [function (data) {
+            transformResponse: [
+                function (data) {
                     if (isString(data)) {
                         // strip json vulnerability protection prefix
                         data = data.replace(PROTECTION_PREFIX, "");
@@ -18690,7 +18691,8 @@
    </doc:example>
 
  */
-    var ngControllerDirective = [function () {
+    var ngControllerDirective = [
+        function () {
             return {controller: "@", priority: 500, scope: true};
         }
     ];

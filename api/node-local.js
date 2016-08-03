@@ -59,6 +59,7 @@ Examples:
             apacheVelocity : false,
             api            : "node",
             attributetoken : false,
+            brace_style    : "none",
             braceline      : false,
             bracepadding   : false,
             braces         : "knr",
@@ -81,7 +82,7 @@ Examples:
             diffview       : "sidebyside",
             dustjs         : false,
             elseline       : false,
-            endcomma       : false,
+            endcomma       : "never",
             endquietly     : "",
             force_attribute: false,
             force_indent   : false,
@@ -203,6 +204,7 @@ Examples:
         },
         fs             = require("fs"),
         http           = require("http"),
+        https          = require("https"),
         path           = require("path"),
         sfiledump      = [],
         dfiledump      = [],
@@ -236,7 +238,7 @@ Examples:
                 .latest
                 .toString();
             mstring        = Number(dstring.slice(2, 4)) - 1;
-            return "\x1B[36mVersion\x1B[39m: " + global.edition.version + " \x1B[36mDated\x1B[39m: " + dstring.slice(4, 6) + " " + month[mstring] + " 20" + dstring.slice(0, 2);
+            return "\u001B[36mVersion\u001B[39m: " + global.edition.version + " \u001B[36mDated\u001B[39m: " + dstring.slice(4, 6) + " " + month[mstring] + " 20" + dstring.slice(0, 2);
         }()),
         dir            = [
             0, 0, 0
@@ -255,20 +257,20 @@ Examples:
         ],
         colors         = {
             del     : {
-                charEnd  : "\x1B[22m",
-                charStart: "\x1B[1m",
-                lineEnd  : "\x1B[39m",
-                lineStart: "\x1B[31m"
+                charEnd  : "\u001B[22m",
+                charStart: "\u001B[1m",
+                lineEnd  : "\u001B[39m",
+                lineStart: "\u001B[31m"
             },
             filepath: {
-                end  : "\x1B[39m",
-                start: "\x1B[36m"
+                end  : "\u001B[39m",
+                start: "\u001B[36m"
             },
             ins     : {
-                charEnd  : "\x1B[22m",
-                charStart: "\x1B[1m",
-                lineEnd  : "\x1B[39m",
-                lineStart: "\x1B[32m"
+                charEnd  : "\u001B[22m",
+                charStart: "\u001B[1m",
+                lineEnd  : "\u001B[39m",
+                lineStart: "\u001B[32m"
             }
         },
         enderflag      = false,
@@ -303,21 +305,21 @@ Examples:
             if (enderflag === true) {
                 return;
             }
-            if (options.endquietly !== "log" && (method === "filescreen" || method === "screen")) {
+            if (options.endquietly !== "log" && options.summaryonly === false && (method === "filescreen" || method === "screen")) {
                 return;
             }
 
             // indexes of diffCount array
             //* 0 - total number of differences
             //* 1 - the number of files containing those differences
-            //* 2 - total file count (not counting sub)directories)
+            //* 2 - total file count (not counting (sub)directories)
             //* 3 - total input size (in characters from all files)
             //* 4 - total output size (in characters from all files)
             if ((method !== "directory" && method !== "subdirectory") || sfiledump.length === 1) {
                 plural[1] = "";
             }
             if (options.diffcli === true && options.mode === "diff") {
-                if (options.summaryonly === true && clidata[2].length > 0) {
+                if (options.summaryonly === true && options.readmethod !== "screen" && clidata[2].length > 0) {
                     log.push(lf + "Files changed:" + lf);
                     log.push(colors.filepath.start);
                     log.push(clidata[2].join(lf));
@@ -398,28 +400,28 @@ Examples:
         error          = (function pdNodeLocal__error() {
             var a       = [],
                 color   = {
-                    accepted: "\x1B[31m",
-                    bool    : "\x1B[35m",
-                    number  : "\x1B[36m",
-                    string  : "\x1B[33m",
-                    word    : "\x1B[32m"
+                    accepted: "\u001B[31m",
+                    bool    : "\u001B[35m",
+                    number  : "\u001B[36m",
+                    string  : "\u001B[33m",
+                    word    : "\u001B[32m"
                 },
                 opname  = function pdNodeLocal__opname(x) {
                     var value = x.match(/\w+/);
-                    return x.replace(value, color.word + value + "\x1B[39m");
+                    return x.replace(value, color.word + value + "\u001B[39m");
                 },
                 vallist = function pdNodeLocal__vallist(x) {
-                    var value = x.split(":\x1B[39m"),
+                    var value = x.split(":\u001B[39m"),
                         items = value[1].split(","),
                         len   = items.length,
                         b     = 0;
                     for (b = 0; b < len; b += 1) {
-                        items[b] = items[b].replace(/\s(?=\w)/, " " + color.string) + "\x1B[39m";
+                        items[b] = items[b].replace(/\s(?=\w)/, " " + color.string) + "\u001B[39m";
                     }
-                    return value[0] + ":\x1B[39m" + items.join(",");
+                    return value[0] + ":\u001B[39m" + items.join(",");
                 };
             a.push(lf);
-            a.push("\x1B[1mOptions\x1B[22m");
+            a.push("\u001B[1mOptions\u001B[22m");
             a.push("");
             a.push("Arguments      - Type    - Definition");
             a.push("-------------------------------------");
@@ -430,6 +432,10 @@ Examples:
             a.push("                           tokens in the parse table of mode parse. Otherwise");
             a.push("                           attributes are a data property of their respective");
             a.push("                           element. Default is false.");
+            a.push("");
+            a.push("* brace_style  - string  - Emulates JSBeautify's brace_style option using");
+            a.push("                           existing Pretty Diff options. Default is \"none\".");
+            a.push("               Accepted values: collapse, collapse-preserve-inline, expand, none");
             a.push("");
             a.push("* braceline    - boolean - If true a new line character will be inserted after");
             a.push("                           opening curly braces and before closing curly");
@@ -521,8 +527,10 @@ Examples:
             a.push("                           onto a new line in JavaScript beautification.");
             a.push("                           Defaults to false.");
             a.push("");
-            a.push("* endcomma     - boolean - If there should be a trailing comma in JavaScript");
-            a.push("                           arrays and objects.");
+            a.push("* endcomma     - string  - If there should be a trailing comma in JavaScript");
+            a.push("                           arrays and objects. Value \"multiline\" only applies");
+            a.push("                           to modes beautify and diff. Default is \"never\".");
+            a.push("                 Accepted values: always, multiline, never");
             a.push("");
             a.push("* endquietly   - string  - Determine if terminal logging should be allowed or ");
             a.push("                           suppressed.  The value 'quiet' eliminates terminal");
@@ -746,14 +754,14 @@ Examples:
             a.push("                           wrapping occurs on the last space character prior to");
             a.push("                           the given character width");
             a.push("");
-            a.push("\x1B[1mUsage\x1B[22m");
-            a.push(color.bool + "node api/node-local.js\x1B[39m " + color.word + "option1:\x1B[39m" + color.string + "\"value\"\x1B[39m " + color.word + "option2:\x1B[39m" + color.string + "\"value\"\x1B[39m ...");
-            a.push(color.bool + "node api/node-local.js\x1B[39m " + color.word + "source:\x1B[39m" + color.string + "\"myApplication.js\"\x1B[39m " + color.word + "readmethod:\x1B[39m" + color.string + "\"filescreen\"\x1B[39m " + color.word + "mode:\x1B[39m" + color.string + "\"beautify\"\x1B[39m");
-            a.push(color.bool + "node api/node-local.js\x1B[39m " + color.word + "source:\x1B[39m" + color.string + "\"old_directory\"\x1B[39m " + color.word + "diff:\x1B[39m" + color.string + "\"new_directory\"\x1B[39m " + color.word + "readmethod:\x1B[39m" + color.string + "\"subdirectory\"\x1B[39m");
+            a.push("\u001B[1mUsage\u001B[22m");
+            a.push(color.bool + "node api/node-local.js\u001B[39m " + color.word + "option1:\u001B[39m" + color.string + "\"value\"\u001B[39m " + color.word + "option2:\u001B[39m" + color.string + "\"value\"\u001B[39m ...");
+            a.push(color.bool + "node api/node-local.js\u001B[39m " + color.word + "source:\u001B[39m" + color.string + "\"myApplication.js\"\u001B[39m " + color.word + "readmethod:\u001B[39m" + color.string + "\"filescreen\"\u001B[39m " + color.word + "mode:\u001B[39m" + color.string + "\"beautify\"\u001B[39m");
+            a.push(color.bool + "node api/node-local.js\u001B[39m " + color.word + "source:\u001B[39m" + color.string + "\"old_directory\"\u001B[39m " + color.word + "diff:\u001B[39m" + color.string + "\"new_directory\"\u001B[39m " + color.word + "readmethod:\u001B[39m" + color.string + "\"subdirectory\"\u001B[39m");
             a.push("");
-            a.push(color.bool + "node api/node-local.js\x1B[39m " + color.word + "help\x1B[39m        to see this help message");
-            a.push(color.bool + "node api/node-local.js\x1B[39m " + color.word + "version\x1B[39m     to see only the version line");
-            a.push(color.bool + "node api/node-local.js\x1B[39m " + color.word + "list\x1B[39m        to see the current settings");
+            a.push(color.bool + "node api/node-local.js\u001B[39m " + color.word + "help\u001B[39m        to see this help message");
+            a.push(color.bool + "node api/node-local.js\u001B[39m " + color.word + "version\u001B[39m     to see only the version line");
+            a.push(color.bool + "node api/node-local.js\u001B[39m " + color.word + "list\u001B[39m        to see the current settings");
             a.push(versionString);
             a.push("");
             if (options.source === "" && options.help === false && options.version === false && options.listoptions === false) {
@@ -762,11 +770,11 @@ Examples:
             return a
                 .join(lf)
                 .replace(/\r?\n\*\ \w+\s+-/g, opname)
-                .replace(/-\ boolean\ -/g, "- " + color.bool + "boolean\x1B[39m -")
-                .replace(/-\ string\ {2,}-/g, "- " + color.string + "string\x1B[39m  -")
-                .replace(/-\ number\ {2,}-/g, "- " + color.number + "number\x1B[39m  -")
-                .replace(/\r?\n\ {17,}Accepted\ values:/g, lf + "                 " + color.accepted + "Accepted values:\x1B[39m")
-                .replace(/Accepted\ values:\\x1B\[39m(\s+\w+,?)+/g, vallist);
+                .replace(/-\ boolean\ -/g, "- " + color.bool + "boolean\u001B[39m -")
+                .replace(/-\ string\ {2,}-/g, "- " + color.string + "string\u001B[39m  -")
+                .replace(/-\ number\ {2,}-/g, "- " + color.number + "number\u001B[39m  -")
+                .replace(/\r?\n\ {17,}Accepted\ values:/g, lf + "                 " + color.accepted + "Accepted values:\u001B[39m")
+                .replace(/Accepted\ values:\\u001B\[39m(\s+\w+,?)+/g, vallist);
         }()),
 
         //write output to a file executed from fileComplete
@@ -889,9 +897,15 @@ Examples:
         cliWrite       = function pdNodeLocal__cliWrite(output, itempath, last) {
             var a      = 0,
                 plural = "",
+                count  = 0,
+                line   = 0,
+                lcount = 0,
                 pdlen  = output[0].length;
             if (options.summaryonly === true) {
                 clidata[2].push(itempath);
+                if (method === "screen" || method === "filescreen") {
+                    return ender();
+                }
             } else {
                 if (diffCount[0] !== 1) {
                     plural = "s";
@@ -902,28 +916,32 @@ Examples:
                     console.log(lf + colors.filepath.start + itempath + lf + "Line: " + output[0][a] + colors.filepath.end);
                 }
                 for (a = 0; a < pdlen; a += 1) {
-                    if (output[0][a + 1] !== undefined && output[0][a] === output[2][a + 1] && output[2][a] === output[0][a + 1] && output[0][a] !== output[2][a]) {
-                        if (options.readmethod === "screen" || (options.readmethod === "auto" && method === "screen")) {
-                            console.log(lf + "Line: " + output[0][a] + colors.filepath.end);
-                        } else {
-                            console.log(lf + colors.filepath.start + itempath + lf + "Line: " + output[0][a] + colors.filepath.end);
+                    if (output[4][a] === "equal" && output[4][a + 1] === "equal" && output[4][a + 2] !== undefined && output[4][a + 2] !== "equal") {
+                        count += 1;
+                        if (count === 51) {
+                            break;
                         }
-                        if (output[3][a - 2] !== undefined) {
-                            console.log(output[3][a - 2]);
-                        }
-                        if (output[3][a - 1] !== undefined) {
-                            console.log(output[3][a - 1]);
+                        line   = output[0][a] + 2;
+                        lcount = 0;
+                        console.log("");
+                        console.log(colors.filepath.start + "Line: " + line + colors.filepath.end);
+                        if (a === 0) {
+                            console.log(output[3][a]);
+                            console.log(output[3][a + 1]);
                         }
                     }
-                    if (output[4][a] === "delete") {
-                        console.log(colors.del.lineStart + output[1][a].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
-                    } else if (output[4][a] === "insert") {
-                        console.log(colors.ins.lineStart + output[3][a].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
-                    } else if (output[4][a] === "equal" && a > 1) {
-                        console.log(output[3][a]);
-                    } else if (output[4][a] === "replace") {
-                        console.log(colors.del.lineStart + output[1][a].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
-                        console.log(colors.ins.lineStart + output[3][a].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
+                    if (lcount < 7) {
+                        lcount += 1;
+                        if (output[4][a] === "delete") {
+                            console.log(colors.del.lineStart + output[1][a].replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
+                        } else if (output[4][a] === "insert") {
+                            console.log(colors.ins.lineStart + output[3][a].replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
+                        } else if (output[4][a] === "equal" && a > 1) {
+                            console.log(output[3][a]);
+                        } else if (output[4][a] === "replace") {
+                            console.log(colors.del.lineStart + output[1][a].replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
+                            console.log(colors.ins.lineStart + output[3][a].replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
+                        }
                     }
                 }
             }
@@ -1004,13 +1022,13 @@ Examples:
                 if (options.mode === "diff" && sfiledump[data.index] !== dfiledump[data.index]) {
                     if (dfiledump[data.index] === "" || dfiledump[data.index] === "\n") {
                         total[1]     += 1;
-                        console.log("Diff file at " + data.localpath + " is \x1B[31mempty\x1B[39m but the source file is not.");
+                        console.log("Diff file at " + data.localpath + " is \u001B[31mempty\u001B[39m but the source file is not.");
                         if (total[0] === total[1]) {
                             ender();
                         }
                     } else if (sfiledump[data.index] === "" || sfiledump[data.index] === "\n") {
                         total[1]     += 1;
-                        console.log("Source file at " + data.localpath + " is \x1B[31mempty\x1B[39m but the diff file is not.");
+                        console.log("Source file at " + data.localpath + " is \u001B[31mempty\u001B[39m but the diff file is not.");
                         if (total[0] === total[1]) {
                             ender();
                         }
@@ -1130,23 +1148,33 @@ Examples:
 
         //resolve file contents from a web address executed from init
         readHttpFile   = function pdNodeLocal__readHttpFile(data) {
-            var file = ["", 0];
-            http.get(data.absolutepath, function pdNodeLocal__readHttpFile_get(res) {
-                file[1] = Number(res.headers["content-length"]);
-                res.setEncoding("utf8");
-                res.on("data", function pdNodeLocal__readHttpFile_get_response(chunk) {
-                    file[0] += chunk;
-                    if (file[0].length === file[1]) {
-                        data.file = file[0];
+            var file     = "",
+                protocol = data.absolutepath.indexOf("s://"),
+                callback = function pdNodeLocal__readHttpFile_callback(res) {
+                    res.setEncoding("utf8");
+                    res.on("data", function pdNodeLocal__readHttpFile_callback_response(chunk) {
+                        file += chunk;
+                    });
+                    res.on("end", function pdNodeLocal__readHttpFile_callback_end() {
+                        data.file = file;
                         if (data.type === "diff") {
-                            dfiledump[data.index] = file[0];
+                            dfiledump[data.index] = file;
                         } else {
-                            sfiledump[data.index] = file[0];
+                            sfiledump[data.index] = file;
                         }
                         fileComplete(data);
-                    }
-                });
-            });
+                    });
+                    res.on("error", function pdNodeLocal__readHttpFile_callback_error(error) {
+                        console.log("Error downloading file via HTTP:");
+                        console.log("");
+                        console.log(error);
+                    });
+                };
+            if (protocol > 0 && protocol < 10) {
+                https.get(data.absolutepath, callback);
+            } else {
+                http.get(data.absolutepath, callback);
+            }
         },
 
         //gather files in directory and sub directories executed from init
@@ -1521,6 +1549,8 @@ Examples:
                     options.api = "node";
                 } else if (d[b][0] === "attributetoken" && d[b][1] === "true") {
                     options.attributetoken = true;
+                } else if (d[b][0] === "brace_style" && (d[b][1] === "collapse" || d[b][1] === "collapse-preserve-inline" || d[b][1] === "expand")) {
+                    options.brace_style = d[b][1];
                 } else if (d[b][0] === "braceline" && d[b][1] === "true") {
                     options.braceline = true;
                 } else if (d[b][0] === "bracepadding" && d[b][1] === "true") {
@@ -1566,8 +1596,14 @@ Examples:
                     options.dustjs = true;
                 } else if (d[b][0] === "elseline" && d[b][1] === "true") {
                     options.elseline = true;
-                } else if (d[b][0] === "endcomma" && d[b][1] === "true") {
-                    options.endcomma = true;
+                } else if (d[b][0] === "endcomma") {
+                    if (d[b][1] === "true" || d[b][1] === "always") {
+                        options.endcomma = "always";
+                    } else if (d[b][1] === "multiline") {
+                        options.endcomma = "multiline";
+                    } else {
+                        options.endcomma = "never";
+                    }
                 } else if (d[b][0] === "endquietly") {
                     if (d[b][1] === "quiet") {
                         enderflag = true;
@@ -1675,6 +1711,9 @@ Examples:
                     if (d[b][1] === "directory") {
                         options.readmethod = "directory";
                     }
+                    if (d[b][1] === "screen") {
+                        options.readmethod = "screen";
+                    }
                     if (d[b][1] === "subdirectory") {
                         options.readmethod = "subdirectory";
                     }
@@ -1769,7 +1808,7 @@ Examples:
                                     } else {
                                         if (options.output === "" && options.mode !== "diff") {
                                             console.log("");
-                                            console.log("\x1B[91mNo output option is specified, so no files written.\x1B[39m");
+                                            console.log("\u001B[91mNo output option is specified, so no files written.\u001B[39m");
                                             console.log("");
                                         }
                                         method = "file";
@@ -2003,7 +2042,7 @@ Examples:
                                 }
                                 method = options.readmethod;
                                 if (s !== options.source) {
-                                    pathslash("source", options.source);
+                                     pathslash("source", options.source);
                                 }
                                 if (dd !== options.diff) {
                                     pathslash("diff", options.diff);

@@ -870,6 +870,27 @@
                         <fieldset>
                             <legend>JavaScript Options</legend>
                             <p>
+                                <strong>Brace Style
+                                    <a class="apiname" href="documentation.xhtml#brace_style">(brace_style)</a>
+                                </strong>
+                                <span>
+                                    <input checked="checked" id="dbracestyle-none" name="dbracestyle" type="radio"/>
+                                    <label for="dbracestyle-none">Avoid this option</label>
+                                </span>
+                                <span>
+                                    <input id="dbracestyle-collapse" name="dbracestyle" type="radio"/>
+                                    <label for="dbracestyle-collapse">collapse</label>
+                                </span>
+                                <span>
+                                    <input id="dbracestyle-inline" name="dbracestyle" type="radio"/>
+                                    <label for="dbracestyle-inline">collapse-preserve-inline</label>
+                                </span>
+                                <span>
+                                    <input id="dbracestyle-expand" name="dbracestyle" type="radio"/>
+                                    <label for="dbracestyle-expand">expand</label>
+                                </span>
+                            </p>
+                            <p>
                                 <strong>Brace Lines
                                     <a class="apiname" href="documentation.xhtml#braceline">(braceline)</a>
                                 </strong>
@@ -893,6 +914,23 @@
                                 <span>
                                     <input id="dbracepadding-yes" name="dbracepadding" type="radio"/>
                                     <label for="dbracepadding-yes">Pads container characters from their contents.</label>
+                                </span>
+                            </p>
+                            <p>
+                                <strong>Trailing Commas
+                                    <a class="apiname" href="documentation.xhtml#endcomma">(endcomma)</a>
+                                </strong>
+                                <span>
+                                    <input checked="checked" id="dendcomma-never" name="dendcomma" type="radio"/>
+                                    <label for="dendcomma-never">Remove trailing commas</label>
+                                </span>
+                                <span>
+                                    <input id="dendcomma-always" name="dendcomma" type="radio"/>
+                                    <label for="dendcomma-always">Add trailing commas</label>
+                                </span>
+                                <span>
+                                    <input id="dendcomma-multiline" name="dendcomma" type="radio"/>
+                                    <label for="dendcomma-multiline">Only to multiline objects/arrays</label>
                                 </span>
                             </p>
                             <p>
@@ -1411,6 +1449,27 @@
                         <fieldset>
                             <legend>JavaScript Options</legend>
                             <p>
+                                <strong>Brace Style
+                                    <a class="apiname" href="documentation.xhtml#brace_style">(brace_style)</a>
+                                </strong>
+                                <span>
+                                    <input checked="checked" id="bbracestyle-none" name="bbracestyle" type="radio"/>
+                                    <label for="bbracestyle-none">Avoid this option</label>
+                                </span>
+                                <span>
+                                    <input id="bbracestyle-collapse" name="bbracestyle" type="radio"/>
+                                    <label for="bbracestyle-collapse">collapse</label>
+                                </span>
+                                <span>
+                                    <input id="bbracestyle-inline" name="bbracestyle" type="radio"/>
+                                    <label for="bbracestyle-inline">collapse-preserve-inline</label>
+                                </span>
+                                <span>
+                                    <input id="bbracestyle-expand" name="bbracestyle" type="radio"/>
+                                    <label for="bbracestyle-expand">expand</label>
+                                </span>
+                            </p>
+                            <p>
                                 <strong>Brace Lines
                                     <a class="apiname" href="documentation.xhtml#braceline">(braceline)</a>
                                 </strong>
@@ -1454,12 +1513,16 @@
                                     <a class="apiname" href="documentation.xhtml#endcomma">(endcomma)</a>
                                 </strong>
                                 <span>
-                                    <input checked="checked" id="bendcomma-no" name="bendcomma" type="radio"/>
-                                    <label for="bendcomma-no">Remove trailing commas</label>
+                                    <input checked="checked" id="bendcomma-never" name="bendcomma" type="radio"/>
+                                    <label for="bendcomma-never">Remove trailing commas</label>
                                 </span>
                                 <span>
-                                    <input id="bendcomma-yes" name="bendcomma" type="radio"/>
-                                    <label for="bendcomma-yes">Add trailing commas</label>
+                                    <input id="bendcomma-always" name="bendcomma" type="radio"/>
+                                    <label for="bendcomma-always">Add trailing commas</label>
+                                </span>
+                                <span>
+                                    <input id="bendcomma-multiline" name="bendcomma" type="radio"/>
+                                    <label for="bendcomma-multiline">Only to multiline objects/arrays</label>
                                 </span>
                             </p>
                             <p>

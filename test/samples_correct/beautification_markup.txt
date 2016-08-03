@@ -96,3 +96,14 @@
         123;
     </Script>
 </A>
+<a>
+    <b first="<c:out qwer="rtyu" asdf="zxcv"/> werasdf">
+        asdf
+    </b>
+    <d attr="if a < b return true"/>
+    <CFMODULE
+        ReturnVariable="displayContent"
+        Template="../../common/capture_content.cfm">
+        <e/>
+    </CFMODULE>
+</a>
