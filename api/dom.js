@@ -3898,9 +3898,9 @@ global.meta = {
                 api.dustjs          = (dustjs !== null && dustjs.checked === true);
                 api.elseline        = (elseline !== null && elseline.checked === true);
                 api.endcomma        = (endcommaa !== null && endcommaa.checked === true)
-                    ? api.endcomma = "always"
+                    ? "always"
                     : (endcommam !== null && endcommam.checked === true)
-                        ? api.endcomma = "multiline"
+                        ? "multiline"
                         : "never";
                 api.force_attribute = (forceAttribute !== null && forceAttribute.checked === true);
                 api.force_indent    = (forceIndent !== null && forceIndent.checked === true);
@@ -4178,9 +4178,9 @@ global.meta = {
                 api.dustjs          = (dustjs !== null && dustjs.checked === true);
                 api.elseline        = (elseline !== null && elseline.checked !== false);
                 api.endcomma        = (endcommaa !== null && endcommaa.checked === true)
-                    ? api.endcomma = "always"
+                    ? "always"
                     : (endcommam !== null && endcommam.checked === true)
-                        ? api.endcomma = "multiline"
+                        ? "multiline"
                         : "never";
                 api.force_attribute = (forceAttribute !== null && forceAttribute.checked === true);
                 api.force_indent    = (forceIndent !== null && forceIndent.checked === true);
