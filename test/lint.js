@@ -139,7 +139,7 @@
                 if ((/^([0-9]\.)/).test(secondString) === true) {
                     secondString = "0" + secondString;
                 }
-                return "\x1B[36m[" + hourString + ":" + minuteString + ":" + secondString + "]\x1B[39m ";
+                return "\u001B[36m[" + hourString + ":" + minuteString + ":" + secondString + "]\u001B[39m ";
             }
         },
         prettydiff = require("../prettydiff.js"),
@@ -157,28 +157,26 @@
             var aa     = 0,
                 line   = 0,
                 pdlen  = 0,
-                count  = [
-                    0, 0
-                ],
+                count  = 0,
                 diffs  = 0,
                 lcount = 0,
                 report = [],
                 colors = {
                     del     : {
-                        charEnd  : "\x1B[22m",
-                        charStart: "\x1B[1m",
-                        lineEnd  : "\x1B[39m",
-                        lineStart: "\x1B[31m"
+                        charEnd  : "\u001B[22m",
+                        charStart: "\u001B[1m",
+                        lineEnd  : "\u001B[39m",
+                        lineStart: "\u001B[31m"
                     },
                     filepath: {
-                        end  : "\x1B[39m",
-                        start: "\x1B[36m"
+                        end  : "\u001B[39m",
+                        start: "\u001B[36m"
                     },
                     ins     : {
-                        charEnd  : "\x1B[22m",
-                        charStart: "\x1B[1m",
-                        lineEnd  : "\x1B[39m",
-                        lineStart: "\x1B[32m"
+                        charEnd  : "\u001B[22m",
+                        charStart: "\u001B[1m",
+                        lineEnd  : "\u001B[39m",
+                        lineStart: "\u001B[32m"
                     }
                 };
             options.mode    = "diff";
@@ -195,7 +193,6 @@
                 console.log(report[0]);
                 return errout(colors.del.lineStart + "bad test" + colors.del.lineEnd);
             }
-            count[0] += report[report.length - 1];
             // report indexes from diffcli feature of diffview.js 0 - source line number 1 -
             // source code line 2 - diff line number 3 - diff code line 4 - change 5 - index
             // of options.context (not parallel) 6 - total count of differences
@@ -207,8 +204,8 @@
             }
             for (aa = 0; aa < pdlen; aa += 1) {
                 if (report[4][aa] === "equal" && report[4][aa + 1] === "equal" && report[4][aa + 2] !== undefined && report[4][aa + 2] !== "equal") {
-                    count[1] += 1;
-                    if (count[1] === 51) {
+                    count += 1;
+                    if (count === 51) {
                         break;
                     }
                     line   = report[0][aa] + 2;
@@ -230,19 +227,19 @@
                         } else if (report[1][aa].replace(/\ +/g, "") === "") {
                             report[1][aa] = "(indentation)";
                         }
-                        console.log(colors.del.lineStart + report[1][aa].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
+                        console.log(colors.del.lineStart + report[1][aa].replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
                     } else if (report[4][aa] === "insert" && report[2][aa] !== report[2][aa + 1]) {
                         if (report[3][aa] === "") {
                             report[3][aa] = "(empty line)";
                         } else if (report[3][aa].replace(/\ +/g, "") === "") {
                             report[3][aa] = "(indentation)";
                         }
-                        console.log(colors.ins.lineStart + report[3][aa].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
+                        console.log(colors.ins.lineStart + report[3][aa].replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
                     } else if (report[4][aa] === "equal" && aa > 1) {
                         console.log(report[3][aa]);
                     } else if (report[4][aa] === "replace") {
-                        console.log(colors.del.lineStart + report[1][aa].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
-                        console.log(colors.ins.lineStart + report[3][aa].replace(/\\x1B/g, "\\x1B").replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
+                        console.log(colors.del.lineStart + report[1][aa].replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
+                        console.log(colors.ins.lineStart + report[3][aa].replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
                     }
                 }
             }
@@ -298,10 +295,10 @@
                         for (a = 0; a < len; a += 1) {
                             if (raw[a] === undefined || correct[a] === undefined) {
                                 if (raw[a] === undefined) {
-                                    console.log("\x1B[33msamples_raw directory is missing file:\x1B[39m " + correct[a][0]);
+                                    console.log("\u001B[33msamples_raw directory is missing file:\u001B[39m " + correct[a][0]);
                                     correct.splice(a, 1);
                                 } else {
-                                    console.log("\x1B[33msamples_correct directory is missing file:\x1B[39m " + raw[a][0]);
+                                    console.log("\u001B[33msamples_correct directory is missing file:\u001B[39m " + raw[a][0]);
                                     raw.splice(a, 1);
                                 }
                                 len = (raw.length > correct.length)
@@ -310,7 +307,7 @@
                                 a   -= 1;
                                 if (a === len - 1) {
                                     console.log("");
-                                    console.log("\x1B[32mCore Unit Testing Complete\x1B[39m");
+                                    console.log("\u001B[32mCore Unit Testing Complete\u001B[39m");
                                     return next();
                                 }
                             } else if (raw[a][0] === correct[a][0]) {
@@ -321,7 +318,7 @@
                                 }
                                 if (output === correct[a][1]) {
                                     filecount += 1;
-                                    console.log(humantime(false) + "\x1B[32mPretty Diff is good with file " + filecount + ":\x1B[39m " + correct[a][0]);
+                                    console.log(humantime(false) + "\u001B[32mPretty Diff is good with file " + filecount + ":\u001B[39m " + correct[a][0]);
                                     if (a === len - 1) {
                                         return next();
                                     }
@@ -330,10 +327,10 @@
                                 }
                             } else {
                                 if (raw[a][0] < correct[a][0]) {
-                                    console.log("\x1B[33mCorrect samples directory is missing file:\x1B[39m " + raw[a][0]);
+                                    console.log("\u001B[33mCorrect samples directory is missing file:\u001B[39m " + raw[a][0]);
                                     raw.splice(a, 1);
                                 } else {
-                                    console.log("\x1B[33mRaw samples directory is missing file:\x1B[39m " + correct[a][0]);
+                                    console.log("\u001B[33mRaw samples directory is missing file:\u001B[39m " + correct[a][0]);
                                     correct.splice(a, 1);
                                 }
                                 len = (raw.length > correct.length)
@@ -384,7 +381,7 @@
                     };
                 console.log("");
                 console.log("");
-                console.log("\x1B[36mCore Unit Testing\x1B[39m");
+                console.log("\u001B[36mCore Unit Testing\u001B[39m");
                 readDir("raw");
                 readDir("correct");
             },
@@ -435,7 +432,7 @@
                                     }
                                     failed = true;
                                     if (ecount === 0) {
-                                        console.log("\x1B[31mJSLint errors on\x1B[39m " + val[0]);
+                                        console.log("\u001B[31mJSLint errors on\u001B[39m " + val[0]);
                                         console.log("");
                                     }
                                     ecount += 1;
@@ -446,10 +443,10 @@
                             options.source = val[1];
                             result         = jslint(prettydiff.api(options), {"for": true});
                             if (result.ok === true) {
-                                console.log(humantime(false) + "\x1B[32mLint is good for file " + (ind + 1) + ":\x1B[39m " + val[0]);
+                                console.log(humantime(false) + "\u001B[32mLint is good for file " + (ind + 1) + ":\u001B[39m " + val[0]);
                                 if (ind === arr.length - 1) {
                                     console.log("");
-                                    console.log("\x1B[32mLint operation complete!\x1B[39m");
+                                    console.log("\u001B[32mLint operation complete!\u001B[39m");
                                     console.log("");
                                     return next();
                                 }
@@ -458,12 +455,12 @@
                                     .warnings
                                     .forEach(report);
                                 if (failed === true) {
-                                    errout("\x1B[31mLint fail\x1B[39m :(");
+                                    errout("\u001B[31mLint fail\u001B[39m :(");
                                 } else {
-                                    console.log(humantime(false) + "\x1B[32mLint is good for file " + (ind + 1) + ":\x1B[39m " + val[0]);
+                                    console.log(humantime(false) + "\u001B[32mLint is good for file " + (ind + 1) + ":\u001B[39m " + val[0]);
                                     if (ind === arr.length - 1) {
                                         console.log("");
-                                        console.log("\x1B[32mLint operation complete!\x1B[39m");
+                                        console.log("\u001B[32mLint operation complete!\u001B[39m");
                                         console.log("");
                                         return next();
                                     }
@@ -489,7 +486,7 @@
                     };
                 console.log("");
                 console.log("");
-                console.log("\x1B[36mBeautifying and Linting\x1B[39m");
+                console.log("\u001B[36mBeautifying and Linting\u001B[39m");
                 console.log("** Note that line numbers of error messaging reflects beautified code line.");
                 console.log("");
                 (function taskrunner_lint_install() {
@@ -524,7 +521,7 @@
                                                             lintrun();
                                                         }
                                                     });
-                                                    console.log("\x1B[36mInstalled JSLint edition:\x1B[39m " + jslint().edition);
+                                                    console.log("\u001B[36mInstalled JSLint edition:\u001B[39m " + jslint().edition);
                                                     flag.lint = true;
                                                     if (flag.fs === true && flag.today === true) {
                                                         lintrun();
@@ -739,7 +736,7 @@
                             return next();
                         }
                         console.log("");
-                        console.log("\x1B[36mTesting package.json beautification...\x1B[39m");
+                        console.log("\u001B[36mTesting package.json beautification...\u001B[39m");
                         options.lang       = "auto";
                         options.mode       = "beautify";
                         options.objsort    = "all";
@@ -753,15 +750,15 @@
                             .replace(/\d+\.\d+\ seconds/, "0.000 seconds");
                         if (data.replace(/(\s+)$/, "") !== prettydata.replace(/(\s+)$/, "")) {
                             diffFiles("package.json", data, prettydata);
-                            errout("\x1B[31mPretty Diff corrupted package.json\x1B[36m");
+                            errout("\u001B[31mPretty Diff corrupted package.json\u001B[36m");
                         }
-                        console.log(humantime(false) + "\x1B[32mThe package.json file is beautified properly.\x1B[36m");
+                        console.log(humantime(false) + "\u001B[32mThe package.json file is beautified properly.\u001B[36m");
                         if (strmeta !== globalmeta) {
                             diffFiles("package.json", strmeta, globalmeta);
-                            errout("\x1B[31mglobal.meta is broken from package.json beautification.\x1B[39m");
+                            errout("\u001B[31mglobal.meta is broken from package.json beautification.\u001B[39m");
                             console.log("");
                         }
-                        console.log(humantime(false) + "\x1B[32mglobal.meta global object is properly constructed.\x1B[39m");
+                        console.log(humantime(false) + "\u001B[32mglobal.meta global object is properly constructed.\u001B[39m");
                         return next();
                     });
             },
@@ -2165,24 +2162,24 @@
                                             check : "node api/node-local.js source:\"<a><b> <c/>    </b></a>\" readmethod:\"screen\" " +
                                                         "mode:\"diff\" diff:\"<a><b> <d/>    </b></a>\" diffcli:true",
                                             name  : "Test diffcli option",
-                                            verify: "\nScreen input with 1 difference\n\nLine: 3\x1b[39m\n<a>\n    <b>\n\x1B[31m     " +
-                                                        "   <\x1B[1mc\x1B[22m/>\x1B[39m\n\x1B[32m        <\x1B[1md\x1B[22m/>\x1B[39m\n   " +
+                                            verify: "\nScreen input with 1 difference\n\n\u001B[36mLine: 3\u001B[39m\n<a>\n    <b>\n\u001B[31m     " +
+                                                        "   <\u001B[1mc\u001B[22m/>\u001B[39m\n\u001B[32m        <\u001B[1md\u001B[22m/>\u001B[39m\n   " +
                                                         " </b>\n</a>"
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa1.txt\" readmethod:\"filesc" +
                                                         "reen\" mode:\"diff\" diff:\"test/simulation/testa.txt\"",
                                             name  : "Source file is empty",
-                                            verify: "Source file at - is \x1B[31mempty\x1B[39m but the diff file is not."
+                                            verify: "Source file at - is \u001B[31mempty\u001B[39m but the diff file is not."
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"filescr" +
                                                         "een\" mode:\"diff\" diff:\"test/simulation/testa1.txt\"",
                                             name  : "Diff file is empty",
-                                            verify: "Diff file at - is \x1B[31mempty\x1B[39m but the source file is not."
+                                            verify: "Diff file at - is \u001B[31mempty\u001B[39m but the source file is not."
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"filescr" +
                                                         "een\" mode:\"diff\" diff:\"test/simulation/testa1.txt\" diffcli:\"true\"",
                                             name  : "Diff file is empty with diffcli option",
-                                            verify: "Diff file at - is \x1B[31mempty\x1B[39m but the source file is not."
+                                            verify: "Diff file at - is \u001B[31mempty\u001B[39m but the source file is not."
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"filescr" +
                                                         "een\" mode:\"diff\" diff:\"test/simulation/testa.txt\"",
@@ -3711,13 +3708,13 @@
                                                 plural        = "",
                                                 groupn        = single
                                                     ? ""
-                                                    : " for group: \x1B[39m\x1B[33m" + groupname[depth] + "\x1B[39m",
+                                                    : " for group: \u001B[39m\u001B[33m" + groupname[depth] + "\u001B[39m",
                                                 totaln        = single
                                                     ? ""
                                                     : " in current group, " + total + " total",
                                                 status        = (item[1] === "pass")
-                                                    ? humantime(false) + "\x1B[32mPass\x1B[39m test "
-                                                    : humantime(false) + "\x1B[31mFail\x1B[39m test ",
+                                                    ? humantime(false) + "\u001B[32mPass\u001B[39m test "
+                                                    : humantime(false) + "\u001B[31mFail\u001B[39m test ",
                                                 groupComplete = function taskrunner_simulations_shell_child_childExec_writeLint_groupCompleteInit() {
                                                     return;
                                                 },
@@ -3728,17 +3725,17 @@
                                                     }
                                                     if (passcount[depth] === finished[depth]) {
                                                         if (grouplen[depth] === 1) {
-                                                            console.log(tab.slice(tablen) + "\x1B[32mThe test passed" + groupn + "\x1B[39m");
+                                                            console.log(tab.slice(tablen) + "\u001B[32mThe test passed" + groupn + "\u001B[39m");
                                                         } else {
-                                                            console.log(tab.slice(tablen) + "\x1B[32mAll " + grouplen[depth] + " tests/groups passed" + groupn + "\x1B[39m");
+                                                            console.log(tab.slice(tablen) + "\u001B[32mAll " + grouplen[depth] + " tests/groups passed" + groupn + "\u001B[39m");
                                                         }
                                                         groupPass = true;
                                                     } else {
                                                         if (passcount[depth] === 0) {
                                                             if (grouplen[depth] === 1) {
-                                                                console.log(tab.slice(tablen) + "\x1B[31mThe test failed" + groupn + "\x1B[39m");
+                                                                console.log(tab.slice(tablen) + "\u001B[31mThe test failed" + groupn + "\u001B[39m");
                                                             } else {
-                                                                console.log(tab.slice(tablen) + "\x1B[31mAll " + grouplen[depth] + " tests/groups failed" + groupn + "\x1B[39m");
+                                                                console.log(tab.slice(tablen) + "\u001B[31mAll " + grouplen[depth] + " tests/groups failed" + groupn + "\u001B[39m");
                                                             }
                                                         } else {
                                                             fgroup  += 1;
@@ -3749,7 +3746,7 @@
                                                             } else {
                                                                 plural = "s";
                                                             }
-                                                            console.log(tab.slice(tablen) + "\x1B[31m" + fail + "\x1B[39m test" + plural + " (" + failper.toFixed(0) + "%) failed of \x1B[32m" + finished[depth] + "\x1B[39m tests" + groupn + ".");
+                                                            console.log(tab.slice(tablen) + "\u001B[31m" + fail + "\u001B[39m test" + plural + " (" + failper.toFixed(0) + "%) failed of \u001B[32m" + finished[depth] + "\u001B[39m tests" + groupn + ".");
                                                         }
                                                     }
                                                     teardowns.pop();
@@ -3763,7 +3760,7 @@
                                                     if (depth > -1) {
                                                         tab             = tab.slice(tablen);
                                                         finished[depth] += 1;
-                                                        groupn          = " for group: \x1B[39m\x1B[33m" + groupname[depth] + "\x1B[39m";
+                                                        groupn          = " for group: \u001B[39m\u001B[33m" + groupname[depth] + "\u001B[39m";
                                                         if (groupPass === true) {
                                                             passcount[depth] += 1;
                                                         }
@@ -3792,13 +3789,13 @@
                                                             : "s";
                                                         gcount -= 1;
                                                         if (fails === 0) {
-                                                            console.log("\x1B[32mPassed all " + total + " test" + plural + " from all " + gcount + " groups.\x1B[39m");
+                                                            console.log("\u001B[32mPassed all " + total + " test" + plural + " from all " + gcount + " groups.\u001B[39m");
                                                             console.log("");
-                                                            console.log("\x1B[32mCLI simulation complete\x1B[39m");
+                                                            console.log("\u001B[32mCLI simulation complete\u001B[39m");
                                                             return next();
                                                         }
                                                         if (fails === total) {
-                                                            errout("\x1B[31mFailed all " + total + " test" + plural + " from all " + gcount + " groups.\x1B[39m");
+                                                            errout("\u001B[31mFailed all " + total + " test" + plural + " from all " + gcount + " groups.\u001B[39m");
                                                         } else {
                                                             // a hack, this should not increment when a test failure occurred in a child
                                                             // group
@@ -3806,7 +3803,7 @@
                                                             if (fgroup === 1) {
                                                                 groupn = "";
                                                             }
-                                                            errout("\x1B[31mFailed " + fails + " test" + totaln + " from " + fgroup + " group" + groupn + "\x1B[39m out of " + total + " total tests across " + gcount + " group" + status + ".");
+                                                            errout("\u001B[31mFailed " + fails + " test" + totaln + " from " + fgroup + " group" + groupn + "\u001B[39m out of " + total + " total tests across " + gcount + " group" + status + ".");
                                                         }
                                                         return stdout;
                                                     }
@@ -3841,7 +3838,7 @@
                                                                             return setTimeout(childExec(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
                                                                         }
                                                                         if (a === len) {
-                                                                            console.log(tab + "\x1B[36mTeardown\x1B[39m for group: \x1B[33m" + groupname[depth] + "\x1B[39m \x1B[32mcomplete\x1B[39m.");
+                                                                            console.log(tab + "\u001B[36mTeardown\u001B[39m for group: \u001B[33m" + groupname[depth] + "\u001B[39m \u001B[32mcomplete\u001B[39m.");
                                                                             console.log("");
                                                                             groupEnd();
                                                                             return stdout;
@@ -3858,7 +3855,7 @@
                                                             }
                                                         };
                                                     console.log("");
-                                                    console.log(tab + "\x1B[36mTeardown\x1B[39m for group: \x1B[33m" + groupname[depth] + "\x1B[39m \x1B[36mstarted\x1B[39m.");
+                                                    console.log(tab + "\u001B[36mTeardown\u001B[39m for group: \u001B[33m" + groupname[depth] + "\u001B[39m \u001B[36mstarted\u001B[39m.");
                                                     task();
                                                 };
                                             groupComplete   = function taskrunner_simulations_shell_child_writeLine_groupComplete() {
@@ -3871,13 +3868,13 @@
                                             finished[depth] += 1;
                                             if (single === false && finished[depth] === 1) {
                                                 if (depth === 0) {
-                                                    console.log(tab.slice(tablen) + "\x1B[36mTest group: \x1B[39m\x1B[33m" + groupname[depth] + "\x1B[39m");
+                                                    console.log(tab.slice(tablen) + "\u001B[36mTest group: \u001B[39m\u001B[33m" + groupname[depth] + "\u001B[39m");
                                                 } else {
-                                                    console.log(tab.slice(tablen) + "Test unit " + (finished[depth - 1] + 1) + " of " + grouplen[depth - 1] + ", \x1B[36mtest group: \x1B[39m\x1B[33m" + groupname[depth] + "\x1B[39m");
+                                                    console.log(tab.slice(tablen) + "Test unit " + (finished[depth - 1] + 1) + " of " + grouplen[depth - 1] + ", \u001B[36mtest group: \u001B[39m\u001B[33m" + groupname[depth] + "\u001B[39m");
                                                 }
                                             }
                                             console.log("");
-                                            console.log(tab.slice(tab.length - 2) + "\x1B[36m*\x1B[39m " + item[0]);
+                                            console.log(tab.slice(tab.length - 2) + "\u001B[36m*\u001B[39m " + item[0]);
                                             console.log(tab + status + finished[depth] + " of " + grouplen[depth] + totaln);
                                             if (item[1] !== "pass") {
                                                 fails += 1;
@@ -3895,10 +3892,10 @@
                                     stdout = stdout.replace(/\ \d+\ files?\./, " x files.");
                                     stdout = stdout.replace(/20\d{6}/, "20999999");
                                     //determine pass/fail status of a given test unit
-                                    if (stdout.indexOf("Source file at ") > -1 && stdout.indexOf("is \x1B[31mempty\x1B[39m but the diff file is not.") > 0) {
-                                        stdout = stdout.slice(0, stdout.indexOf("Source file at") + 14) + " - " + stdout.slice(stdout.indexOf("is \x1B[31mempty\x1B[39m but the diff file is not."));
-                                    } else if (stdout.indexOf("Diff file at ") > -1 && stdout.indexOf("is \x1B[31mempty\x1B[39m but the source file is not.") > 0) {
-                                        stdout = stdout.slice(0, stdout.indexOf("Diff file at") + 12) + " - " + stdout.slice(stdout.indexOf("is \x1B[31mempty\x1B[39m but the source file is not."));
+                                    if (stdout.indexOf("Source file at ") > -1 && stdout.indexOf("is \u001B[31mempty\u001B[39m but the diff file is not.") > 0) {
+                                        stdout = stdout.slice(0, stdout.indexOf("Source file at") + 14) + " - " + stdout.slice(stdout.indexOf("is \u001B[31mempty\u001B[39m but the diff file is not."));
+                                    } else if (stdout.indexOf("Diff file at ") > -1 && stdout.indexOf("is \u001B[31mempty\u001B[39m but the source file is not.") > 0) {
+                                        stdout = stdout.slice(0, stdout.indexOf("Diff file at") + 12) + " - " + stdout.slice(stdout.indexOf("is \u001B[31mempty\u001B[39m but the source file is not."));
                                     }
                                     if (stdout.indexOf("Pretty Diff found 0 differences.") < 0) {
                                         stdout = stdout.replace(/Pretty\ Diff\ found\ \d+\ differences./, "Pretty Diff found x differences.");
@@ -3938,16 +3935,16 @@
                                         var buildstep = function taskrunner_simulations_shell_buildup_task_buildstep(err, stdout, stderr) {
                                             a += 1;
                                             if (typeof err === "string") {
-                                                console.log("\x1B[31mError:\x1B[39m " + err);
+                                                console.log("\u001B[31mError:\u001B[39m " + err);
                                                 console.log("Terminated early");
                                             } else if (typeof stderr === "string" && stderr !== "") {
-                                                console.log("\x1B[31mError:\x1B[39m " + stderr);
+                                                console.log("\u001B[31mError:\u001B[39m " + stderr);
                                                 console.log("Terminated early");
                                             } else {
                                                 if (a < len) {
                                                     taskrunner_simulations_shell_buildup_task();
                                                 } else {
-                                                    console.log(tab + "\x1B[36mBuildup\x1B[39m for group: \x1B[33m" + testData.group + "\x1B[39m \x1B[32mcomplete\x1B[39m.");
+                                                    console.log(tab + "\u001B[36mBuildup\u001B[39m for group: \u001B[33m" + testData.group + "\u001B[39m \u001B[32mcomplete\u001B[39m.");
                                                     if (index[depth] === 0 && units[depth][index[depth]].group !== undefined) {
                                                         taskrunner_simulations_shell(units[depth][index[depth]]);
                                                         return stdout;
@@ -3983,7 +3980,7 @@
                                         }
                                     };
                                 console.log("");
-                                console.log(tab + "\x1B[36mBuildup\x1B[39m for group: \x1B[33m" + testData.group + "\x1B[39m \x1B[36mstarted\x1B[39m.");
+                                console.log(tab + "\u001B[36mBuildup\u001B[39m for group: \u001B[33m" + testData.group + "\u001B[39m \u001B[36mstarted\u001B[39m.");
                                 task();
                             };
                         passcount.push(0);
@@ -4022,7 +4019,7 @@
                     };
                 console.log("");
                 console.log("");
-                console.log("\x1B[36mCLI simulation tests\x1B[39m");
+                console.log("\u001B[36mCLI simulation tests\u001B[39m");
                 tests.sort(unitsort);
                 if (tests[tests.length - 1].group === undefined) {
                     single = true;
