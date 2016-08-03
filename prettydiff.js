@@ -350,7 +350,7 @@ var prettydiff = function prettydiff_(api) {
                     // immediately before a value's decimal.
                     noleadzero     : (api.noleadzero === true || api.noleadzero === "true"),
                     //objsort will alphabetize object keys in JavaScript
-                    objsort        : (api.objsort === "all" || api.objsort === "js" || api.objsort === "css" || api.objsort === true || api.objsort === "true")
+                    objsort        : (api.objsort === "all" || api.objsort === "js" || api.objsort === "css" || api.objsort === "markup" || api.objsort === true || api.objsort === "true")
                         ? api.objsort
                         : "none",
                     //parseFormat - determine how the parse tree should be organized and formatted
@@ -697,7 +697,7 @@ var prettydiff = function prettydiff_(api) {
                                     options.mode = build[c][1];
                                 }
                             } else if (build[c][0] === "objsort") {
-                                if (build[c][1] === "all" || build[c][1] === "js" || build[c][1] === "css" || build[c][1] === "none" || build[c][1] === "true" || build[c][1] === "false") {
+                                if (build[c][1] === "all" || build[c][1] === "js" || build[c][1] === "css" || build[c][1] === "markup" || build[c][1] === "none" || build[c][1] === "true" || build[c][1] === "false") {
                                     options.objsort = build[c][1];
                                 }
                             } else if (build[c][0] === "parseFormat") {
@@ -970,24 +970,24 @@ global.edition        = {
         ace: 160307
     },
     api          : {
-        dom      : 160710, //dom.js
-        nodeLocal: 160710, //node-local.js
-        wsh      : 160710
+        dom      : 160803, //dom.js
+        nodeLocal: 160803, //node-local.js
+        wsh      : 160803
     },
     css          : 160625, //css files
-    csspretty    : 160614, //csspretty lib
+    csspretty    : 160803, //csspretty lib
     csvpretty    : 160307, //csvpretty lib
-    diffview     : 160710, //diffview lib
-    documentation: 160710, //documentation.xhtml
-    jspretty     : 160710, //jspretty lib
-    language     : 160710, //language lib
+    diffview     : 160803, //diffview lib
+    documentation: 160803, //documentation.xhtml
+    jspretty     : 160803, //jspretty lib
+    language     : 160803, //language lib
     latest       : 0,
-    lint         : 160625, //unit test and lint automation as test/lint.js
-    markuppretty : 160710, //markuppretty lib
-    prettydiff   : 160710, //this file
+    lint         : 160803, //unit test and lint automation as test/lint.js
+    markuppretty : 160803, //markuppretty lib
+    prettydiff   : 160803, //this file
     safeSort     : 160307, //safeSort lib
     version      : "2.1.1", //version number
-    webtool      : 160710
+    webtool      : 160803
 };
 global.edition.latest = (function edition_latest() {
     "use strict";
