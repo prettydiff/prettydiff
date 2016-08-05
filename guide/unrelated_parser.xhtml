@@ -1,0 +1,290 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.1//EN' 'http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd'>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Pretty Diff - Guide: How to write a parser</title>
+        <link href="../css/index.css" media="all" rel="stylesheet" type="text/css" />
+        <link
+            href="http://prettydiff.com/guide/unrelated_dom.xhtml"
+            rel="canonical"
+            type="application/xhtml+xml" />
+        <link
+            href="http://prettydiff.com/images/favicon.ico"
+            rel="icon"
+            type="image/x-icon" />
+        <link
+            href="http://prettydiff.com/labels.rdf"
+            rel="meta"
+            title="ICRA labels"
+            type="application/rdf+xml" />
+        <meta content="width=device-width, initial-scale=1" name="viewport" />
+        <meta content="index, follow" name="robots" />
+        <meta content="Pretty Diff - Guide: How to write a parser" name="DC.title" />
+        <meta
+            content="(pics-1.1 'http://www.icra.org/pics/vocabularyv03/' l gen true for 'http://prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for 'http://www.prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))"
+            http-equiv="pics-Label" />
+        <meta content="Austin Cheney" name="author" />
+        <meta
+            content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify HTML."
+            name="description" />
+        <meta content="Global" name="distribution" />
+        <meta content="en" http-equiv="Content-Language" />
+        <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type" />
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter" />
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit" />
+        <meta content="text/css" http-equiv="content-style-type" />
+        <meta content="application/javascript" http-equiv="content-script-type" />
+        <meta
+            content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
+            name="google-site-verification" />
+    </head>
+    <body class="white" id="prettydiff">
+        <div class="contentarea" id="page">
+            <section role="heading">
+                <h1>
+                    <svg
+                        height="2000.000000pt"
+                        id="pdlogo"
+                        preserveAspectRatio="xMidYMid meet"
+                        version="1.0"
+                        viewBox="0 0 2000.000000 2000.000000"
+                        width="2000.000000pt"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <g
+                            fill="#999"
+                            stroke="none"
+                            transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
+                            <path
+                                d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z" /></g>
+                    </svg>
+                    <a href="prettydiff.com.xhtml">Pretty Diff</a>
+                    - Guide: How to write a parser</h1>
+                <p id="dcolorScheme">
+                    <label class="label" for="colorScheme">Color Scheme</label>
+                    <select id="colorScheme">
+                        <option>Canvas</option>
+                        <option>Shadow</option>
+                        <option selected="selected">White</option>
+                    </select>
+                </p>
+                <p>Explore some
+                    <a href="samples.xhtml">samples</a>
+                    or browse
+                    <a href="https://github.com/prettydiff/prettydiff">Pretty Diff on GitHub</a>.</p>
+            </section>
+            <section role="main">
+                <h2>How to write a parser</h2>
+                <div class="segment" id="doc_contents">
+                    <h3>Table of Contents</h3>
+                    <ol>
+                        <li>
+                            <a href="#intro">Introduction</a>
+                        </li>
+                        <li>
+                            <a href="#definitions">Definition of terms</a>
+                        </li>
+                        <li>
+                            <a href="#pdway">Preferences, parsing the Pretty Diff way</a>
+                        </li>
+                        <li>
+                            <a href="#howto">How to write a parser</a>
+                            <ol>
+                                <li>
+                                    <a href="#howto-setup">Setup and get started</a>
+                                </li>
+                                <li>
+                                    <a href="#howto-lexer">Write a lexer</a>
+                                </li>
+                                <li>
+                                    <a href="#howto-useit">Use the parsed output</a>
+                                </li>
+                            </ol>
+                        </li>
+                    </ol>
+                </div>
+                <div class="segment" id="intro">
+                    <h3>Introduction</h3>
+                    <p>A parsing application merely provides the means of taking some input and
+                        transforming it into works that computers can understand. The ability to write
+                        parsers is to programming as the ability to write is to literacy, which is to
+                        say that learning to write a simple parsing application opens new worlds of
+                        instant capabilities. Some quick examples are a search engine spider, quickly
+                        scraping relevant data out of a spreadsheet, analyzing financial data, or
+                        quickly making sense of human language. The ability to understand and write
+                        parsing applications will instantly transform any mediocre programmer into a
+                        near rockstar.</p>
+                    <p>The concepts, opinions, and theories expressed in this guide are universal to
+                        programming. The methods and approaches are expressed according to JavaScript
+                        language.</p>
+                </div>
+                <div class="segment" id="definitions">
+                    <h3>Definition of terms</h3>
+                    <ul>
+                        <li>
+                            <strong>abstract syntax tree (AST)</strong>
+                            <p>An AST is a single organized body of output that describes tokens according
+                                to descriptors provided by the parser in an organization that defines the
+                                relationships of those tokens according the grammar(s) of the desired consuming
+                                application. This is often a big object where each data facet is a token with
+                                descriptions and child objects for each token as organized according to a
+                                language grammar. This is the most common output format provided by parsers.</p>
+                        </li>
+                        <li>
+                            <strong>grammar</strong>
+                            <p>A second set of rules, after syntax, to determine how parsed tokens come
+                                together to form output that is intelligble to the consuming application. An
+                                example is that syntax determines how to form words and sentences in human
+                                written language, but grammar determines how those words and sentences come
+                                together in a way that provides understandability.</p>
+                        </li>
+                        <li>
+                            <strong>lexer</strong>
+                            <p>A lexer is a utility that scans input looking for syntax rules in order to
+                                organize the input into
+                                <em>tokens</em>. The lexer will determine when a part of the input forms a code
+                                comment, for example, and where that comment ends so as to begin something else.</p>
+                        </li>
+                        <li>
+                            <strong>parser</strong>
+                            <p>A parser is an analysis scheme to examine a list of tokens produced by a
+                                lexer to determine a variety of qualities like: data types, token relationships,
+                                validation, and other higher order qualities.</p>
+                        </li>
+                        <li>
+                            <strong>parse table</strong>
+                            <p>An alternative output format, compared to AST. Instead of arranging data in a
+                                single giant object representing a tree of tokens a parse table outputs data in
+                                table or a series of parallel arrays.</p>
+                        </li>
+                        <li>
+                            <strong>syntax</strong>
+                            <p>A fancy term that refers to the defining rule set to determine the expected
+                                out. Syntax most commonly refers to the rules necessary to form a programming
+                                language, but represent the bounds by which any lexer applies even if not to
+                                form a programming language.</p>
+                        </li>
+                        <li>
+                            <strong>token</strong>
+                            <p>A token is an element of output formed from examining the input against a set
+                                of rules.</p>
+                        </li>
+                        <li>
+                            <strong>type</strong>
+                            <p>A type, commonly referred to as a
+                                <em>language data type</em>, is a categorical label for a given token. Some
+                                common examples of data types are: string, comment, object, null, and number.</p>
+                        </li>
+                    </ul>
+                </div>
+                <div class="segment" id="pdway">
+                    <h3>Preferences, parsing the Pretty Diff way</h3>
+                    <p>In many parsing applications the lexer and parser are well separated
+                        subjects. In the common approach a lexer scans an input and produces tokens for
+                        the parser to analyze and the parser produces an AST for output. When the
+                        applications are well optimized they can execute more than twice as fast as the
+                        Pretty Diff approach, but there are limitations to this approach.</p>
+                    <p>The parsers used in the Pretty Diff application combine the lexer and parser
+                        into a single operation. The lexer scans the input looking for syntax and once a
+                        token is identified it is immediately parsed before the lexer progresses
+                        forward. This allows for advanced decisions, such as code correction and grammar
+                        analysis, to occur immediately. These advanced features make the total execution
+                        time of the parsing operation slower, which can make the Pretty Diff approach to
+                        parsing appear more than twice as slow as other comparable parsers. Despite that
+                        the Pretty Diff appeoach is substantially faster and more simple than attempting
+                        to apply any such advanced analysis as a separate process outside the parser.</p>
+                    <p>The Pretty Diff approach produces output in the form of parallel arrays
+                        instead of an AST format. The idea is that an AST can be created from a parse
+                        table approach provided one of the categories of data is structure and placement
+                        information, but a parse table cannot be created from an AST without running
+                        another parsing operation. The parse table approach also allows for sorting and
+                        analysis by selectively targeting various areas and data types without
+                        consideration for the output as a whole.</p>
+                </div>
+                <div class="segment" id="howto">
+                    <h3>How to...</h3>
+                    <div class="segment" id="howto-setup">
+                        <h4>Setup and get started</h4>
+                        <p>One of the primary reasons I prefer to write in JavaScript is because lambda
+                            expressions are a native quality not hidden behind a convention. To get started
+                            I prefer to write a function against a single global reference that contains
+                            everything I need.</p>
+                        <div class='beautify' data-prettydiff-ignore='true'><ol class='count'><li class='fold' title='folds from line 1 to line 5'>- 1</li><li>2</li><li>3</li><li>4</li><li>5</li></ol><ol class='data'><li>var <em class='s0'>myParser</em> = function (<em class='s1'>options</em>) <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>var <em class='s1'>token</em> = [],<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>types</em> = [],<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>parse</em> = function () <em class='s2'>{</em><em class='s2'>}</em>;<em>&#xA;</em></li><li class='l0'><em class='s1'>}</em>;<em>&#xA;</em></li></ol></div>
+                        <p>In the above code sample we can see a single global variable,
+                            <em>myParser</em>, that contains some declared variables. The references token
+                            and types will store data while
+                            <em>parse</em>
+                            is a child function to store all the lexer/parser relevant instructions. This
+                            will allow availability to the token and type data outside the
+                            <em>parse</em>
+                            function so that we can maintain separation of concerns and data availability
+                            without having to pass things around. Now let's jump into the
+                            <em>parse</em>
+                            child function where we are going to write a simple lexer/parser.</p>
+                    </div>
+                    <div class="segment" id="howto-lexer">
+                        <h4>Writing a lexer</h4>
+                        <p>When writing a lexer I prefer to be as explicit as possible. The more
+                            explicit the code the lower the risk of unexpected results. This means the code
+                            will follow an imperative coding style. First, let's convert the input into a
+                            string, if it isn't a string already, and then into an array that we can loop
+                            through.</p>
+                        <div class='beautify' data-prettydiff-ignore='true'><ol class='count'><li class='fold' title='folds from line 1 to line 9'>- 1</li><li>2</li><li>3</li><li>4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li></ol><ol class='data'><li>parse = function () <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>var <em class='s1'>data</em> = options.input<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        .input<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        .toString()<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        .split(""),<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>len</em>  = <em class='s1'>data</em>.length,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>a</em>    = 0;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>for (<em class='s1'>a</em> = 0; <em class='s1'>a</em> &lt; <em class='s1'>len</em>; <em class='s1'>a</em> += 1) {}<em>&#xA;</em></li><li class='l0'><em class='s1'>}</em>;<em>&#xA;</em></li></ol></div>
+                        <p>Converting the input into an array is not required, but it makes things much
+                            easier and faster to manipulate. Looping through a binary buffer, for instance,
+                            can be more challenging to think through as humans don't read binary or
+                            hexidecimal as fast as they read code and strings. Arrays are substantially
+                            faster and more expressive to evaluate than large strings.</p>
+                        <p>Using a
+                            <em>for</em>
+                            to iterate through an array is now considered an anti-pattern in JavaScript
+                            since the ECMAScript5 version of the language provides a
+                            <em>foreach</em>
+                            method. I deliberately choose to use a for loop because there are times where it
+                            is necessary to jump around to various indexes or iterate across the input
+                            differently.</p>
+                        <p>Now that we have the basic lexer written let's evaluate some syntax. We are
+                            going to evaluate a C language styled block comment. A block comment begins
+                            <em>/*</em>
+                            and ends with
+                            <em>*/</em>. To impose additional separation of concerns we will put this rule
+                            behind another child function. First, lets create a rule and the child function:</p>
+                        <div class='beautify' data-prettydiff-ignore='true'><ol class='count'><li class='fold' title='folds from line 1 to line 14'>- 1</li><li>2</li><li>3</li><li>4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>10</li><li>11</li><li>12</li><li>13</li><li>14</li></ol><ol class='data'><li>parse = function () <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>var <em class='s1'>data</em>         = options.input<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        .input<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        .toString()<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        .split(""),<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>len</em>          = <em class='s1'>data</em>.length,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>a</em>            = 0,<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>commentBlock</em> = function () <em class='s2'>{</em><em class='s2'>}</em>;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>for (<em class='s1'>a</em> = 0; <em class='s1'>a</em> &lt; <em class='s1'>len</em>; <em class='s1'>a</em> += 1) {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    if (<em class='s1'>data</em>[<em class='s1'>a</em>] === "/" &amp;&amp; <em class='s1'>data</em>[<em class='s1'>a</em> + 1] === "*") {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        <em class='s1'>commentBlock</em>();<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    }<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>}<em>&#xA;</em></li><li class='l0'><em class='s1'>}</em>;<em>&#xA;</em></li></ol></div>
+                        <p>Now lets define the lexical analysis for a block comment:</p>
+                        <div class='beautify' data-prettydiff-ignore='true'><ol class='count'><li class='fold' title='folds from line 1 to line 13'>- 1</li><li>2</li><li>3</li><li>4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>10</li><li>11</li><li>12</li><li>13</li></ol><ol class='data'><li>commentBlock = function () <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>var <em class='s1'>comment</em> = [],<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>b</em>       = 0;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>for (<em class='s1'>b</em> = 0; <em class='s1'>b</em> &lt; len; <em class='s1'>b</em> += 1) {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>comment</em>.push(data[<em class='s1'>b</em>]);<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    if (data[<em class='s1'>b</em>] === "/" &amp;&amp; data[<em class='s1'>b</em> - 1] === "*") {<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>        break;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    }<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>}<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>a = <em class='s1'>b</em>;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>token.push(<em class='s1'>comment</em>.join(""));<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>types.push("comment-block");<em>&#xA;</em></li><li class='l0'><em class='s1'>}</em>;<em>&#xA;</em></li></ol></div>
+                        <p>A couple of things happened. We created a new reference
+                            <em>b</em>
+                            as a separate iterator. In this case the secondary iterator isn't needed and is
+                            only present as an example that additional iterators can be used. Additional
+                            iterators allow the freedom to traverse the data independently from the primary
+                            iterator
+                            <em>a</em>. If you choose to create an additional interator be sure to reassign
+                            the value of the primary iterator before exiting the current function to avoid
+                            duplicated effort.</p>
+                        <p>At the end of this function we push a token, the entire block comment, and a
+                            type. In this case we know the data type by knowing the syntax. This isn't
+                            always the case. We won't know if a word is a language keyword or a user defined
+                            reference without some additional effort. It is my opinion overall efficiency
+                            increases by supplying these additional evaluations directly into the parser.
+                            The additional tasks will always make the parser slower, which is wasted effort
+                            if it isn't needed. Unfortunately, it is extremely diffecult to know what is or
+                            isn't needed at parse time and performing these additional evaluations later,
+                            after the parsing completes, is far more expensive still.</p>
+                        <p>Here is what the combined code looks like:</p>
+                        <div class='beautify' data-prettydiff-ignore='true'><ol class='count'><li class='fold' title='folds from line 1 to line 33'>- 1</li><li>2</li><li>3</li><li class='fold' title='folds from line 4 to line 30'>- 4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>10</li><li>11</li><li class='fold' title='folds from line 12 to line 24'>- 12</li><li>13</li><li>14</li><li>15</li><li>16</li><li>17</li><li>18</li><li>19</li><li>20</li><li>21</li><li>22</li><li>23</li><li>24</li><li>25</li><li>26</li><li>27</li><li>28</li><li>29</li><li>30</li><li>31</li><li>32</li><li>33</li></ol><ol class='data'><li>var <em class='s0'>myParser</em> = function (<em class='s1'>options</em>) <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>var <em class='s1'>token</em> = [],<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>types</em> = [],<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>parse</em> = function () <em class='s2'>{</em><em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>    var <em class='s2'>data</em>         = <em class='s1'>options</em><em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            .source<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            .input<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            .toString()<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            .split(""),<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        <em class='s2'>len</em>          = <em class='s2'>data</em>.length,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        <em class='s2'>a</em>            = 0,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        <em class='s2'>commentBlock</em> = function () <em class='s3'>{</em><em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>        var <em class='s3'>comment</em> = [],<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>            <em class='s3'>b</em>       = 0;<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>        for (<em class='s3'>b</em> = 0; <em class='s3'>b</em> &lt; <em class='s2'>len</em>; <em class='s3'>b</em> += 1) {<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>            <em class='s3'>comment</em>.push(<em class='s2'>data</em>[<em class='s3'>b</em>]);<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>            if (<em class='s2'>data</em>[<em class='s3'>b</em>] === "/" &amp;&amp; <em class='s2'>data</em>[<em class='s3'>b</em> - 1] === "*") {<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>                break;<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>            }<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>        }<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>        <em class='s2'>a</em> = <em class='s3'>b</em>;<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>        <em class='s1'>token</em>.push(<em class='s3'>comment</em>.join(""));<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>        <em class='s1'>types</em>.push("comment-block");<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>    <em class='s3'>}</em>;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>    for (<em class='s2'>a</em> = 0; <em class='s2'>a</em> &lt; <em class='s2'>len</em>; <em class='s2'>a</em> += 1) {<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        if (<em class='s2'>data</em>[<em class='s2'>a</em>] === "/" &amp;&amp; <em class='s2'>data</em>[<em class='s2'>a</em> + 1] === "*") {<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            <em class='s2'>commentBlock</em>();<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        }<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>    }<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em><em class='l1'>    </em><em class='s2'>}</em>;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em><em class='s1'>parse</em>();<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>return {token: <em class='s1'>token</em>, types: <em class='s1'>types</em>};<em>&#xA;</em></li><li class='l0'><em class='s1'>}</em>;<em>&#xA;</em></li></ol></div>
+                    </div>
+                    <div class="segment" id="howto-useit">
+                        <h4>Use the parsed output</h4>
+                        <p>Once the parser completes the parallel arrays will be populated with data. It
+                            is important that these parallel arrays always have the same number of indexes
+                            and each index describes the data at that index of the token array. Knowing this
+                            can save a lot of effort debuggin failures later.</p>
+                        <p>Since the output is merely a couple of arrays the data can be easily iterated
+                            over. The data can also be examined by specific data types through examination
+                            of the types array.  Pretty Diff includes several additional parallel arrays for describing qualities such as white space, markup attributes, markup parent element, JavaScript code structure, and more.  These additional arrays provide data immediately without need for additional parsing steps.</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <script src="../api/dom.js" type="application/javascript"></script>
+    </body>
+</html>

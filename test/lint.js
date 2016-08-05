@@ -3888,7 +3888,7 @@
                                         };
                                     stdout = stdout.replace(/(\s+)$/, "");
                                     stdout = stdout.replace(/<strong>Execution\ time:<\/strong>\ <em>([0-9]+\ hours\ )?([0-9]+\ minutes\ )?[0-9]+(\.[0-9]+)?\ seconds\ <\/em>/g, "<strong>Execution time:</strong> <em>0</em>");
-                                    stdout = stdout.replace(/Executed\ in\ ([0-9]+\ hours\ )?([0-9]+\ minutes\ )?[0-9]+(\.[0-9]+)?\ seconds/g, "Executed in");
+                                    stdout = stdout.replace(/Executed\ in\ ([0-9]+\ hours?\ )?([0-9]+\ minutes?\ )?[0-9]+(\.[0-9]+)?\ seconds?/g, "Executed in");
                                     stdout = stdout.replace(/\ \d+\ files?\./, " x files.");
                                     stdout = stdout.replace(/20\d{6}/, "20999999");
                                     //determine pass/fail status of a given test unit
