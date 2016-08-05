@@ -76,9 +76,6 @@
                 *******   license end   *******
 
 
- Join the Pretty Diff mailing list at:
- https://groups.google.com/d/forum/pretty-diff
-
  Special thanks to:
 
  * Harry Whitfield for the numerous test cases provided against
