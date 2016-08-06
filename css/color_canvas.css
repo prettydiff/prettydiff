@@ -44,9 +44,10 @@
 #prettydiff.canvas td.nested{background:#ccccc8}
 #prettydiff.canvas th.nested,
 #prettydiff.canvas th{background:#ddddd8}
+#prettydiff.canvas tr:hover{background:#eee8ee}
 #prettydiff.canvas thead th,
 #prettydiff.canvas tr.header th,
-#prettydiff.canvas th.heading{background:#ccb}
+#prettydiff.canvas th.heading{background:#ddc}
 #prettydiff.canvas .diff h3{background:#ddd;border-color:#999}
 #prettydiff.canvas td,
 #prettydiff.canvas .segment,

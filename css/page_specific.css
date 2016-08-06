@@ -12,3 +12,5 @@
 #prettydiff #page > div{border-style:none}
 #prettydiff #page textarea{font-size:1.6em}
 #prettydiff #page code{font-size:1.2em}
+#prettydiff #page .beautify{font-size: 1.2em}
+#prettydiff #page li .beautify{font-size:0.75em}
