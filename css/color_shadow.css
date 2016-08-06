@@ -49,6 +49,7 @@
 #prettydiff.shadow ol.segment h4 strong{color:#f30}
 #prettydiff.shadow button{background-color:#333;border-color:#666;box-shadow:0 0.25em 0.5em #000;color:#ccc}
 #prettydiff.shadow button:hover{background-color:#777;border-color:#aaa;box-shadow:0 0.25em 0.5em #222;color:#fff}
+#prettydiff.shadow tr:hover{background:#353}
 #prettydiff.shadow th,
 #prettydiff.shadow thead th,
 #prettydiff.shadow th.heading{background:#666;border-color:#999}
