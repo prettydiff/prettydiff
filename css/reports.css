@@ -32,6 +32,10 @@
 #prettydiff #css-uri{left:40em}
 #prettydiff #css-uri td{text-align:left}
 #prettydiff .report .analysis th{text-align:left}
+#prettydiff table.code td,
+#prettydiff table.code th{font-size:0.9em}
+#prettydiff table.code td,
+#prettydiff table.code th,
 #prettydiff .report .analysis .parseData td{font-family:'Courier New',Courier,'Lucida Console',monospace;text-align:left;white-space:pre}
 #prettydiff .report .analysis td{text-align:right}
 #prettydiff .analysis{float:left;margin:0 1em 1em 0}

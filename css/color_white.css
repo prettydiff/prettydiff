@@ -33,6 +33,7 @@
 #prettydiff.white h2 button,
 #prettydiff.white h3{color:#b00}
 #prettydiff.white th{background:#eee;color:#333}
+#prettydiff.white tr:hover{background:#efe}
 #prettydiff.white tr.header th,
 #prettydiff.white thead th{background:#eef}
 #prettydiff.white .report strong{color:#009}
