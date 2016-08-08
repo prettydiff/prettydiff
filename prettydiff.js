@@ -971,11 +971,11 @@ global.edition        = {
         nodeLocal: 160803, //node-local.js
         wsh      : 160803
     },
-    css          : 160625, //css files
-    csspretty    : 160803, //csspretty lib
+    css          : 160807, //css files
+    csspretty    : 160808, //csspretty lib
     csvpretty    : 160307, //csvpretty lib
     diffview     : 160803, //diffview lib
-    documentation: 160803, //documentation.xhtml
+    documentation: 160807, //documentation.xhtml
     jspretty     : 160803, //jspretty lib
     language     : 160803, //language lib
     latest       : 0,
@@ -983,7 +983,7 @@ global.edition        = {
     markuppretty : 160803, //markuppretty lib
     prettydiff   : 160803, //this file
     safeSort     : 160307, //safeSort lib
-    version      : "2.1.1", //version number
+    version      : "2.1.3", //version number
     webtool      : 160803
 };
 global.edition.latest = (function edition_latest() {
