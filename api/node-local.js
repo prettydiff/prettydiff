@@ -142,22 +142,6 @@ Examples:
         ],
         method         = "auto",
         pdapp          = require(libs + "prettydiff.js"),
-        html           = [
-            global.finalFile.html.head, //0
-            global.finalFile.css.color.canvas, //1
-            global.finalFile.css.color.shadow, //2
-            global.finalFile.css.color.white, //3
-            global.finalFile.css.reports, //4
-            global.finalFile.css.global, //5
-            global.finalFile.html.body, //6
-            global.finalFile.html.color, //7
-            global.finalFile.html.intro, //8
-            "", //9 - for meta analysis, like stats and accessibility
-            "", //10 - for generated report
-            global.finalFile.html.script, //11
-            global.finalFile.script.minimal, //12
-            global.finalFile.html.end //13
-        ],
         prettydiff     = function pdNodeLocal__prettydiff() {
             var pdresponse = pdapp.api(options),
                 data       = (options.nodeasync === true)
@@ -188,17 +172,17 @@ Examples:
             diffCount[3] += meta.insize;
             diffCount[4] += meta.outsize;
             if (meta.error !== "") {
-                html[9] = "<p><strong>Error:</strong> " + meta.error + "</p>";
+                global.finalFile.order[9] = "<p><strong>Error:</strong> " + meta.error + "</p>";
             }
             if (options.mode === "diff" || options.mode === "analysis" || (options.mode === "parse" && options.parseFormat === "htmltable")) {
-                html[7]  = options.color;
-                html[10] = data;
+                global.finalFile.order[7]  = options.color;
+                global.finalFile.order[10] = data;
                 if (options.jsscope !== "none" && options.mode === "beautify" && (options.lang === "javascript" || options.lang === "auto")) {
-                    html[12] = global.finalFile.script.beautify;
+                    global.finalFile.order[12] = global.finalFile.script.beautify;
                 } else if (options.mode === "diff") {
-                    html[12] = global.finalFile.script.diff;
+                    global.finalFile.order[12] = global.finalFile.script.diff;
                 }
-                return html.join("");
+                return global.finalFile.order.join("");
             }
             return data;
         },
