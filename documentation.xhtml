@@ -176,7 +176,7 @@
                                 makes the application more predictable and easier to integrate into other
                                 applications. Brief metadata about the operation is stored in a global object
                                 named
-                                <em>global.meta</em>.</p>
+                                <em>global.prettydiff.meta</em>.</p>
                         </div>
                         <div class="segment">
                             <h3>Exceptions</h3>
@@ -206,10 +206,10 @@
                                     <strong>nodeasync</strong>
                                     returns an array where all prior described output is the first index and the
                                     second index is an object containing brief metadata, otherwise stored in the
-                                    <em>global.meta</em>
+                                    <em>global.prettydiff.meta</em>
                                     object. The reason for this is to allow meta data collection during parallel
                                     operations without collision. If this option is ignored then all prior described
-                                    output formats are generated and the meta data is dumped in the global.meta
+                                    output formats are generated and the meta data is dumped in the global.prettydiff.meta
                                     object, but that meta data is not reliable. An unintended byproduct of this
                                     feature is that Pretty Diff version 2 can accomplish nearly complete backwards
                                     compatibility to Pretty Diff v1 by setting this option to true.</li>
@@ -1961,7 +1961,7 @@
                                         <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lang&nbsp;&nbsp;: "text"</code>
                                         <code>&nbsp;&nbsp;&nbsp;&nbsp;},</code>
                                         <code>&nbsp;&nbsp;&nbsp;&nbsp;output&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-                                            prettydiff.api(args);</code>
+                                            prettydiff(args);</code>
                                     </p>
                                 </li>
                                 <li>

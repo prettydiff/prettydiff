@@ -185,7 +185,7 @@
             options.diffcli = true;
             options.context = 2;
             options.lang    = "text";
-            report          = prettydiff.api(options)[0];
+            report          = prettydiff(options)[0];
             pdlen           = report[0].length;
             if (report.length < 3) {
                 console.log("");
@@ -312,7 +312,7 @@
                                 }
                             } else if (raw[a][0] === correct[a][0]) {
                                 options.source = raw[a][1];
-                                output         = prettydiff.api(options);
+                                output         = prettydiff(options);
                                 if (output.charAt(output.length - 1) !== "\n") {
                                     output = output + "\n";
                                 }
@@ -441,7 +441,7 @@
                                     console.log("");
                                 };
                             options.source = val[1];
-                            result         = jslint(prettydiff.api(options), {"for": true});
+                            result         = jslint(prettydiff(options), {"for": true});
                             if (result.ok === true) {
                                 console.log(humantime(false) + "\u001B[32mLint is good for file " + (ind + 1) + ":\u001B[39m " + val[0]);
                                 if (ind === arr.length - 1) {
@@ -743,9 +743,9 @@
                         options.source     = data;
                         options.styleguide = "none";
                         options.vertical   = "all";
-                        prettydata         = prettydiff.api(options);
+                        prettydata         = prettydiff(options);
                         strmeta            = JSON
-                            .stringify(global.meta)
+                            .stringify(global.prettydiff.meta)
                             .replace(/size":\d+/g, "size\":xxx")
                             .replace(/\d+\.\d+\ seconds/, "0.000 seconds");
                         if (data.replace(/(\s+)$/, "") !== prettydata.replace(/(\s+)$/, "")) {
@@ -755,10 +755,10 @@
                         console.log(humantime(false) + "\u001B[32mThe package.json file is beautified properly.\u001B[36m");
                         if (strmeta !== globalmeta) {
                             diffFiles("package.json", strmeta, globalmeta);
-                            errout("\u001B[31mglobal.meta is broken from package.json beautification.\u001B[39m");
+                            errout("\u001B[31mglobal.prettydiff.meta is broken from package.json beautification.\u001B[39m");
                             console.log("");
                         }
-                        console.log(humantime(false) + "\u001B[32mglobal.meta global object is properly constructed.\u001B[39m");
+                        console.log(humantime(false) + "\u001B[32mglobal.prettydiff.meta global object is properly constructed.\u001B[39m");
                         return next();
                     });
             },
@@ -3972,7 +3972,7 @@
                                             options.source = tasks[a];
                                             options.mode   = "parse";
                                             options.lang   = "javascript";
-                                            echo           = prettydiff.api(options);
+                                            echo           = prettydiff(options);
                                             fs.writeFile(echo.data.token.slice(3).join("").replace(/(x?;)$/, ""), echo.data.token[1].slice(1, echo.data.token[1].length - 1), buildstep);
                                         } else {
                                             tasks[a] = slashfix(tasks[a]);

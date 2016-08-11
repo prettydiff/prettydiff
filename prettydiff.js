@@ -1,6 +1,6 @@
 /*prettydiff.com topcoms: true, insize: 4, inchar: " ", vertical: true */
 /*jshint laxbreak: true*/
-/*global __dirname, ace, csspretty, csvpretty, define, diffview, exports, finalFile, global, jspretty, language, markuppretty, options, process, require, safeSort */
+/*global __dirname, ace, console, define, global, module, options, process, require */
 /*
 
  Execute in a NodeJS app:
@@ -11,7 +11,7 @@
             diff  : "asdd",
             lang  : "text"
         },
-        output     = prettydiff.api(args);
+        output     = prettydiff(args);
 
  Execute on command line with NodeJS:
 
@@ -85,12 +85,15 @@
  https://plus.google.com/105958105635636993368/posts
 
  */
-if (typeof global.meta !== "object") {
-    // schema for global.meta lang - array, language detection time - string,
+if (typeof global.prettydiff !== "object") {
+    global.prettydiff = {};
+}
+if (typeof global.prettydiff.meta !== "object") {
+    // schema for global.prettydiff.meta lang - array, language detection time - string,
     // proctime (total execution time minus visual rendering) insize - number, input
     // size outsize - number, output size difftotal - number, difference count
     // difflines - number, difference lines
-    global.meta = {
+    global.prettydiff.meta = {
         difflines: 0,
         difftotal: 0,
         error    : "",
@@ -102,52 +105,42 @@ if (typeof global.meta !== "object") {
         time     : ""
     };
 }
-if (typeof require === "function" && typeof ace !== "object") {
+if (typeof require === "function" && (typeof ace !== "object" || ace.prettydiffid === undefined)) {
     (function glib_prettydiff() {
         "use strict";
         var localPath = (typeof process === "object" && typeof process.cwd === "function" && (process.cwd() === "/" || (/^([a-z]:\\)$/).test(process.cwd()) === true) && typeof __dirname === "string")
             ? __dirname
             : ".";
-        if (global.language === undefined) {
-            global.language = require(localPath + "/lib/language.js").api;
+        if (global.prettydiff.language === undefined) {
+            global.prettydiff.language = require(localPath + "/lib/language.js");
         }
-        if (global.finalFile === undefined) {
-            global.finalFile = require(localPath + "/lib/finalFile.js").api;
+        if (global.prettydiff.finalFile === undefined) {
+            global.prettydiff.finalFile = require(localPath + "/lib/finalFile.js");
         }
-        if (global.safeSort === undefined) {
-            global.safeSort = require(localPath + "/lib/safeSort.js").api;
+        if (global.prettydiff.csspretty === undefined) {
+            global.prettydiff.csspretty = require(localPath + "/lib/csspretty.js");
         }
-        if (global.csspretty === undefined) {
-            global.csspretty = require(localPath + "/lib/csspretty.js").api;
+        if (global.prettydiff.csvpretty === undefined) {
+            global.prettydiff.csvpretty = require(localPath + "/lib/csvpretty.js");
         }
-        if (global.csvpretty === undefined) {
-            global.csvpretty = require(localPath + "/lib/csvpretty.js").api;
+        if (global.prettydiff.diffview === undefined) {
+            global.prettydiff.diffview = require(localPath + "/lib/diffview.js");
         }
-        if (global.diffview === undefined) {
-            global.diffview = require(localPath + "/lib/diffview.js").api;
+        if (global.prettydiff.jspretty === undefined) {
+            global.prettydiff.jspretty = require(localPath + "/lib/jspretty.js");
         }
-        if (global.jspretty === undefined) {
-            global.jspretty = require(localPath + "/lib/jspretty.js").api;
+        if (global.prettydiff.options === undefined) {
+            global.prettydiff.options = require(localPath + "/lib/options.js");
         }
-        if (global.options === undefined) {
-            global.options = require(localPath + "/lib/options.js").api();
+        if (global.prettydiff.safeSort === undefined) {
+            global.prettydiff.safeSort = require(localPath + "/lib/safeSort.js");
         }
-        if (global.markuppretty === undefined) {
-            global.markuppretty = require(localPath + "/lib/markuppretty.js").api;
+        if (global.prettydiff.markuppretty === undefined) {
+            global.prettydiff.markuppretty = require(localPath + "/lib/markuppretty.js");
         }
     }());
-} else {
-    global.csspretty    = csspretty;
-    global.csvpretty    = csvpretty;
-    global.diffview     = diffview;
-    global.finalFile    = finalFile;
-    global.jspretty     = jspretty;
-    global.language     = language;
-    global.markuppretty = markuppretty;
-    global.options      = options;
-    global.safeSort     = safeSort;
 }
-var prettydiff = function prettydiff_(api) {
+global.prettydiff.prettydiff = function prettydiff_(api) {
     "use strict";
     var startTime = (typeof Date.now === "function")
             ? Date.now()
@@ -160,19 +153,19 @@ var prettydiff = function prettydiff_(api) {
                 apioutput    = "",
                 apidiffout   = "",
                 metaerror    = "",
-                finalFile    = global.finalFile,
-                options      = global.options.functions.validate(api),
+                finalFile    = global.prettydiff.finalFile,
+                options      = global.prettydiff.options.functions.validate(api),
                 jspretty     = function core__jspretty() {
-                    var jsout = global.jspretty(options);
+                    var jsout = global.prettydiff.jspretty(options);
                     if (options.nodeasync === true) {
                         metaerror = jsout[1];
                         return jsout[0];
                     }
-                    metaerror = global.meta.error;
+                    metaerror = global.prettydiff.meta.error;
                     return jsout;
                 },
                 markuppretty = function core__markuppretty() {
-                    var markout = global.markuppretty(options);
+                    var markout = global.prettydiff.markuppretty(options);
                     if (options.nodeasync === true) {
                         metaerror = markout[1];
                         if (options.mode === "beautify" && options.inchar !== "\t") {
@@ -182,7 +175,7 @@ var prettydiff = function prettydiff_(api) {
                         }
                         return markout[0];
                     }
-                    metaerror = global.meta.error;
+                    metaerror = global.prettydiff.meta.error;
                     if (options.mode === "beautify" && options.inchar !== "\t") {
                         markout = markout.replace(/\r?\n[\t]*\u0020\/>/g, "");
                     } else if (options.mode === "diff") {
@@ -191,12 +184,12 @@ var prettydiff = function prettydiff_(api) {
                     return markout;
                 },
                 csspretty    = function core__markupcss() {
-                    var cssout = global.csspretty(options);
+                    var cssout = global.prettydiff.csspretty(options);
                     if (options.nodeasync === true) {
                         metaerror = cssout[1];
                         return cssout[0];
                     }
-                    metaerror = global.meta.error;
+                    metaerror = global.prettydiff.meta.error;
                     return cssout;
                 },
                 proctime     = function core__proctime() {
@@ -283,7 +276,7 @@ var prettydiff = function prettydiff_(api) {
                     if (options.nodeasync === true) {
                         return [finalProduct, meta];
                     }
-                    global.meta = meta;
+                    global.prettydiff.meta = meta;
                     return finalProduct;
                 };
             if (options.source === "" && (options.mode === "beautify" || options.mode === "minify" || options.mode === "analysis" || (options.mode === "diff" && options.diffcli === false) || (options.mode === "parse" && options.parseFormat === "htmltable"))) {
@@ -317,8 +310,8 @@ var prettydiff = function prettydiff_(api) {
                     options.source = options.diff;
                     apidiffout     = csspretty();
                 } else if (options.lang === "csv") {
-                    apioutput  = global.csvpretty(options);
-                    apidiffout = global.csvpretty(options);
+                    apioutput  = global.prettydiff.csvpretty(options);
+                    apidiffout = global.prettydiff.csvpretty(options);
                 } else if (options.lang === "markup") {
                     apioutput      = markuppretty();
                     options.source = options.diff;
@@ -349,7 +342,7 @@ var prettydiff = function prettydiff_(api) {
                 if (options.difflabel === "" || spacetest.test(options.difflabel)) {
                     options.difflabel = "New Text";
                 }
-                if (global.jsxstatus === true) {
+                if (options.jsx === true) {
                     options.autoval = ["jsx", "javascript", "React JSX"];
                 }
                 return (function core__diff() {
@@ -357,7 +350,7 @@ var prettydiff = function prettydiff_(api) {
                     options.diff   = apidiffout;
                     options.source = apioutput;
                     if (options.diffcli === true) {
-                        return output(global.diffview(options));
+                        return output(global.prettydiff.diffview(options));
                     }
                     if (apioutput === "Error: This does not appear to be JavaScript." || apidiffout === "Error: This does not appear to be JavaScript.") {
                         return output("<p><strong>Error:</strong> Please try using the option labeled <em>Plain Text (d" +
@@ -367,8 +360,8 @@ var prettydiff = function prettydiff_(api) {
                     if (options.lang === "text") {
                         options.inchar = "";
                     }
-                    a = global.diffview(options);
-                    if (global.jsxstatus === true) {
+                    a = global.prettydiff.diffview(options);
+                    if (options.jsx === true) {
                         options.autoval = ["jsx", "javascript", "React JSX"];
                     }
                     if (options.api === "") {
@@ -385,7 +378,7 @@ var prettydiff = function prettydiff_(api) {
                 if (options.lang === "css") {
                     apioutput = csspretty();
                 } else if (options.lang === "csv") {
-                    apioutput = global.csvpretty(options);
+                    apioutput = global.prettydiff.csvpretty(options);
                 } else if (options.lang === "markup") {
                     apioutput = markuppretty();
                 } else if (options.lang === "text") {
@@ -404,7 +397,7 @@ var prettydiff = function prettydiff_(api) {
                         apioutput = finalFile.order.join("");
                     }
                 }
-                if (global.jsxstatus === true) {
+                if (options.jsx === true) {
                     options.autoval = ["jsx", "javascript", "React JSX"];
                 }
                 return output(apioutput);
@@ -412,7 +405,7 @@ var prettydiff = function prettydiff_(api) {
         };
     return core(api);
 };
-global.edition        = {
+global.prettydiff.edition        = {
     addon        : {
         ace: 160307
     },
@@ -436,31 +429,36 @@ global.edition        = {
     version      : "2.1.3", //version number
     webtool      : 160803
 };
-global.edition.latest = (function edition_latest() {
+global.prettydiff.edition.latest = (function edition_latest() {
     "use strict";
-    return Math.max(global.edition.css, global.edition.csspretty, global.edition.csvpretty, global.edition.diffview, global.edition.documentation, global.edition.jspretty, global.edition.language, global.edition.markuppretty, global.edition.prettydiff, global.edition.webtool, global.edition.api.dom, global.edition.api.nodeLocal, global.edition.api.wsh);
+    return Math.max(global.prettydiff.edition.css, global.prettydiff.edition.csspretty, global.prettydiff.edition.csvpretty, global.prettydiff.edition.diffview, global.prettydiff.edition.documentation, global.prettydiff.edition.jspretty, global.prettydiff.edition.language, global.prettydiff.edition.markuppretty, global.prettydiff.edition.prettydiff, global.prettydiff.edition.webtool, global.prettydiff.edition.api.dom, global.prettydiff.edition.api.nodeLocal, global.prettydiff.edition.api.wsh);
 }());
-if (typeof exports === "object" || typeof exports === "function") {
+if (typeof module === "object" && typeof module.parent === "object") {
     //commonjs and nodejs support
-    exports.edition = global.edition;
-    exports.meta    = global.meta;
-    exports.api     = function commonjs(x) {
+    module.exports.edition    = global.prettydiff.edition;
+    module.exports.meta       = global.prettydiff.meta;
+    module.exports            = function commonjs_prettydiff(x) {
         "use strict";
-        return prettydiff(x);
+        return global.prettydiff.prettydiff(x);
     };
-} else if ((typeof define === "object" || typeof define === "function") && (ace === undefined || ace.prettydiffid === undefined)) {
+    if (process.argv.length === 2 && process.argv[1].indexOf("prettydiff.js") > -1) {
+        console.log("Please try:  node api/node-local.js");
+    }
+} else if ((typeof define === "object" || typeof define === "function") && (typeof ace !== "object" || ace.prettydiffid === undefined)) {
     //requirejs support
-    define(function requirejs(require, exports) {
+    define(function requirejs(require, module) {
         "use strict";
-        exports.edition = global.edition;
-        exports.meta    = global.meta;
-        exports.api     = function requirejs_export(x) {
-            return prettydiff(x);
+        module.exports.edition    = global.prettydiff.edition;
+        module.exports.meta       = global.prettydiff.meta;
+        module.exports            = function requirejs_prettydiff_export(x) {
+            return global.prettydiff.prettydiff(x);
         };
         //worthless if block to appease RequireJS and JSLint
         if (typeof require === "number") {
             return require;
         }
-        return exports.api;
+        return function requirejs_prettydiff_module(x) {
+            global.prettydiff.prettydiff(x);
+        };
     });
 }

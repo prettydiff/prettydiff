@@ -48,7 +48,7 @@ Add this code to your application
             diff  : "asdd",
             lang  : "text"
         },
-        output     = prettydiff.api(args);
+        output     = prettydiff(args);
 
 #### Execute from the command line
 

@@ -2,7 +2,7 @@
     <job id="main">
         <script type="text/javascript">
             var global = {};
-            global.meta      = {
+            global.prettydiff.meta      = {
                 error: "",
                 lang: ["", "", ""],
                 time: "",
@@ -12,6 +12,9 @@
                 difflines: 0
             };
         </script>
+        <script type="text/javascript" src="../lib/global.js"></script>
+        <script type="text/javascript" src="../lib/language.js"></script>
+        <script type="text/javascript" src="../lib/options.js"></script>
         <script type="text/javascript" src="../lib/safeSort.js"></script>
         <script type="text/javascript" src="../lib/csspretty.js"></script>
         <script type="text/javascript" src="../lib/csvpretty.js"></script>
@@ -20,7 +23,7 @@
         <script type="text/javascript" src="../lib/jspretty.js"></script>
         <script type="text/javascript" src="../lib/markuppretty.js"></script>
         <script type="text/javascript" src="../prettydiff.js">
-        /*global WScript, prettydiff, Enumerator*/
+        /*global WScript, Enumerator*/
         (function () {
             "use strict";
             var args       = {},
@@ -451,17 +454,11 @@
                 //shell = {},
                 color = "",
                 report     = "";
-            global.csspretty    = csspretty;
-            global.csvpretty    = csvpretty;
-            global.diffview     = diffview;
-            global.jspretty     = jspretty;
-            global.markuppretty = markuppretty;
-            global.safeSort     = safeSort;
-            if (prettydiff === undefined) {
+            if (global.prettydiff.prettydiff === undefined) {
                 if (WScript.Fullname.indexOf("cscript.exe") > -1) {
                     WScript
                         .StdOut
-                        .WriteLine("The prettydiff function is undefined.");
+                        .WriteLine("The prettydiff function is undefined or not locally available.");
                     WScript
                         .StdOut
                         .WriteLine("This likely means the prettydiff.js file cannot be resolved at its specified loc" +
@@ -691,7 +688,7 @@
                 }
             }
             if (fail === false) {
-                pd = prettydiff(args);
+                pd = global.prettydiff.prettydiff(args);
                 if (args.mode === "parse" && typeof JSON === "object") {
                     args[0] = JSON.stringify(args[0]);
                 }
@@ -699,10 +696,10 @@
                     html[0] = lf + lf + lf + lf + html[0];
                 }
                 html[7]  = options.color;
-                if (global.meta.error === "" || global.meta.error === undefined) {
+                if (global.prettydiff.meta.error === "" || global.prettydiff.meta.error === undefined) {
                     html[10] = pd;
                 } else {
-                    html[10] = global.meta.error;
+                    html[10] = global.prettydiff.meta.error;
                 }
                 if (args.jsscope !== "none" && args.mode === "beautify" && (args.lang === "javascript" || args.lang === "auto")) {
                     html[12] = builder.script.beautify;
