@@ -11,11 +11,6 @@
  http: //prettydiff.com/
 
  ***********************************************************************/
-var global = global || {
-    prettydiff: {
-        pd: {}
-    }
-};
 global.prettydiff.meta = {
     error: "",
     lang: ["", "", ""],
