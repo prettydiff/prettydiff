@@ -11,6 +11,11 @@
  http: //prettydiff.com/
 
  ***********************************************************************/
+var global = global || {
+    prettydiff: {
+        pd: {}
+    }
+};
 global.prettydiff.meta = {
     error: "",
     lang: ["", "", ""],
@@ -22,7 +27,8 @@ global.prettydiff.meta = {
 };
 (function dom__init() {
     "use strict";
-    var load     = function dom__load_init() {
+    var pd       = global.prettydiff.pd,
+        load     = function dom__load_init() {
             return;
         },
         loadPrep = function dom__loadPrep() {
@@ -76,8 +82,7 @@ global.prettydiff.meta = {
                 save        : pd.id("diff-save")
             };
             load();
-        },
-        pd       = global.pd;
+        };
 
     if (location.href.indexOf("codemirror=") > 0) {
         (function dom__codemirror() {
