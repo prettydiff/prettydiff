@@ -1329,9 +1329,9 @@ Examples:
                                 }
                                 init();
                             } else {
-                                pdrc = require(pdrcpath);
-                                if (pdrc.preset !== undefined) {
-                                    options = pdrc.preset(options);
+                                global.prettydiff.prettydiffrc = require(pdrcpath);
+                                if (global.prettydiff.prettydiffrc !== undefined) {
+                                    options = global.prettydiff.prettydiffrc(options);
                                     method  = options.readmethod;
                                     if (s !== options.source) {
                                         pathslash("source", options.source);
