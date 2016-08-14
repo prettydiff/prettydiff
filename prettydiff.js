@@ -17,9 +17,6 @@
 
     prettydiff source:"c:\mydirectory\myfile.js" readmethod:"file" diff:"c:\myotherfile.js"
 
- Execute with WSH:
-    cscript prettydiff.wsf /source:"myFile.xml" /mode:"beautify"
-
  Execute from JavaScript:
     var global = {},
         args   = {
@@ -425,8 +422,7 @@ global.prettydiff.edition        = {
     },
     api          : {
         dom      : 160803, //dom.js
-        nodeLocal: 160803, //node-local.js
-        wsh      : 160803
+        nodeLocal: 160803 //node-local.js
     },
     css          : 160807, //css files
     csspretty    : 160808, //csspretty lib
@@ -445,7 +441,7 @@ global.prettydiff.edition        = {
 };
 global.prettydiff.edition.latest = (function edition_latest() {
     "use strict";
-    return Math.max(global.prettydiff.edition.css, global.prettydiff.edition.csspretty, global.prettydiff.edition.csvpretty, global.prettydiff.edition.diffview, global.prettydiff.edition.documentation, global.prettydiff.edition.jspretty, global.prettydiff.edition.language, global.prettydiff.edition.markuppretty, global.prettydiff.edition.prettydiff, global.prettydiff.edition.webtool, global.prettydiff.edition.api.dom, global.prettydiff.edition.api.nodeLocal, global.prettydiff.edition.api.wsh);
+    return Math.max(global.prettydiff.edition.css, global.prettydiff.edition.csspretty, global.prettydiff.edition.csvpretty, global.prettydiff.edition.diffview, global.prettydiff.edition.documentation, global.prettydiff.edition.jspretty, global.prettydiff.edition.language, global.prettydiff.edition.markuppretty, global.prettydiff.edition.prettydiff, global.prettydiff.edition.webtool, global.prettydiff.edition.api.dom, global.prettydiff.edition.api.nodeLocal);
 }());
 if (typeof module === "object" && typeof module.parent === "object") {
     //commonjs and nodejs support

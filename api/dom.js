@@ -5590,10 +5590,6 @@ global.prettydiff.meta = {
                                 date               = global.prettydiff.edition.prettydiff;
                                 dateCell.innerHTML = conversion(date);
                                 dateList.push([date, row[b].innerHTML]);
-                            } else if (lib === "prettydiff.wsf") {
-                                date               = global.prettydiff.edition.api.wsh;
-                                dateCell.innerHTML = conversion(date);
-                                dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "safeSort.js") {
                                 date               = global.prettydiff.edition.safeSort;
                                 dateCell.innerHTML = conversion(date);

@@ -87,29 +87,21 @@ The .prettydiffrc first checks for JSON format. This allows a simple means of de
 
 Please feel free to use index.xhtml file to supplement dom.js.  Otherwise, dom.js requires supplemental assistance to map DOM nodes from an HTML source.  dom.js is fault tolerant so nodes mapped to the supplied index.xhtml don't need to be supported from custom HTML.
 
-To run Pretty Diff using dom.js include the following two script tags and bind the pd.recycle() function to the executing event.  Please refer to index.xhtml for an HTML example and documentation.xhtml for option and execution information.
+To run Pretty Diff using dom.js include the following two script tags and bind the global.prettydiff.pd.recycle() function to the executing event.  Please refer to index.xhtml for an HTML example and documentation.xhtml for option and execution information.
 
-    <script src="api/dom.js" type="application/javascript"></script>
+    <script src="lib/global.js" type="application/javascript"></script>
+    <script src="lib/language.js" type="application/javascript"></script>
+    <script src="lib/options.js" type="application/javascript"></script>
+    <script src="lib/finalFile.js" type="application/javascript"></script>
     <script src="lib/safeSort.js" type="application/javascript"></script>
+    <script src="ace/ace.js" type="application/javascript"></script> **(optional)**
+    <script src="api/dom.js" type="application/javascript"></script>
     <script src="lib/csspretty.js" type="application/javascript"></script>
     <script src="lib/csvpretty.js" type="application/javascript"></script>
     <script src="lib/diffview.js" type="application/javascript"></script>
     <script src="lib/jspretty.js" type="application/javascript"></script>
     <script src="lib/markuppretty.js" type="application/javascript"></script>
     <script src="prettydiff.js" type="application/javascript"></script>
-
-### Run on Windows command line with WSH
-
-Create a WSH script file using XML syntax and with a file extension of
-"WSF".  This file must have a tag for each supported argument, must be
-capable of reading from a file, and retrieving dependencies.
-
-http://prettydiff.com/api/prettydiff.wsf
-
-Pretty Diff would be executed using the following on CLI:
-
-    cscript prettydiff.wsf
-    cscript prettydiff.wsf /source:"myFile.xml" /mode:"beautify"
 
 ### Execute with vanilla JS
 
