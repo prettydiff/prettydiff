@@ -3582,10 +3582,10 @@
                                             verify: "{\n    \"files\": {\n        \"included\": [\"prettydiff.js\"]\n    }\n}"
                                         }, {
                                             check : "ls test/simulation/api",
-                                            name  : "check for 3 files in api directory",
+                                            name  : "check for 2 files in api directory",
                                             verify: (path.sep === "\\")
-                                                ? "dom.js\r\nnode-local.js\r\nprettydiff.wsf"
-                                                : "dom.js\nnode-local.js\nprettydiff.wsf"
+                                                ? "dom.js\r\nnode-local.js"
+                                                : "dom.js\nnode-local.js"
                                         }, {
                                             check : "cat test/simulation/all/big/today.js",
                                             name  : "check for a file in a subdirectory operation",

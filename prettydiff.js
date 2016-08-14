@@ -17,6 +17,9 @@
 
     prettydiff source:"c:\mydirectory\myfile.js" readmethod:"file" diff:"c:\myotherfile.js"
 
+ Execute with WSH:
+    cscript prettydiff.wsf /source:"myFile.xml" /mode:"beautify"
+
  Execute from JavaScript:
     var global = {},
         args   = {
@@ -276,17 +279,6 @@ global.prettydiff.prettydiff = function prettydiff_(api) {
                     global.prettydiff.meta = meta;
                     return finalProduct;
                 };
-            /*if (options.api === "node") {
-                options.diff = (typeof api.diff === "string" && api.diff.length > 0 && (/^(\s+)$/).test(api.diff) === false)
-                    ? api.diff
-                    : "";
-                options.output = (typeof api.output === "string" && api.output.length > 0 && (/^(\s+)$/).test(api.output) === false)
-                    ? api.output
-                    : "";
-                options.source = (typeof api.source === "string" && api.source.length > 0 && (/^(\s+)$/).test(api.source) === false)
-                    ? api.source
-                    : "";
-            }*/
             if (options.api === "node" && options.readmethod !== "auto") {
                 console.log(options.source);
             }
@@ -421,27 +413,29 @@ global.prettydiff.edition        = {
         ace: 160307
     },
     api          : {
-        dom      : 160803, //dom.js
-        nodeLocal: 160803 //node-local.js
+        dom      : 160814, //dom.js
+        nodeLocal: 160814 //node-local.js
     },
-    css          : 160807, //css files
-    csspretty    : 160808, //csspretty lib
-    csvpretty    : 160307, //csvpretty lib
-    diffview     : 160803, //diffview lib
-    documentation: 160807, //documentation.xhtml
-    jspretty     : 160803, //jspretty lib
-    language     : 160803, //language lib
+    css          : 160814, //css files
+    csspretty    : 160814, //csspretty lib
+    csvpretty    : 160814, //csvpretty lib
+    diffview     : 160814, //diffview lib
+    documentation: 160814, //documentation.xhtml
+    finalFile    : 160814, //HTML report generator
+    jspretty     : 160814, //jspretty lib
+    language     : 160814, //language lib
     latest       : 0,
-    lint         : 160803, //unit test and lint automation as test/lint.js
-    markuppretty : 160803, //markuppretty lib
-    prettydiff   : 160803, //this file
-    safeSort     : 160307, //safeSort lib
+    lint         : 160814, //unit test and lint automation as test/lint.js
+    markuppretty : 160814, //markuppretty lib
+    options      : 160814, //options management
+    prettydiff   : 160814, //this file
+    safeSort     : 160814, //safeSort lib
     version      : "2.1.3", //version number
-    webtool      : 160803
+    webtool      : 160814
 };
 global.prettydiff.edition.latest = (function edition_latest() {
     "use strict";
-    return Math.max(global.prettydiff.edition.css, global.prettydiff.edition.csspretty, global.prettydiff.edition.csvpretty, global.prettydiff.edition.diffview, global.prettydiff.edition.documentation, global.prettydiff.edition.jspretty, global.prettydiff.edition.language, global.prettydiff.edition.markuppretty, global.prettydiff.edition.prettydiff, global.prettydiff.edition.webtool, global.prettydiff.edition.api.dom, global.prettydiff.edition.api.nodeLocal);
+    return Math.max(global.prettydiff.edition.css, global.prettydiff.edition.csspretty, global.prettydiff.edition.csvpretty, global.prettydiff.edition.diffview, global.prettydiff.edition.documentation, global.prettydiff.edition.finalFile, global.prettydiff.edition.jspretty, global.prettydiff.edition.language, global.prettydiff.edition.markuppretty, global.prettydiff.edition.options, global.prettydiff.edition.prettydiff, global.prettydiff.edition.webtool, global.prettydiff.edition.api.dom, global.prettydiff.edition.api.nodeLocal);
 }());
 if (typeof module === "object" && typeof module.parent === "object") {
     //commonjs and nodejs support

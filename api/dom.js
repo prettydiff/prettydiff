@@ -5562,6 +5562,10 @@ global.prettydiff.meta = {
                                 date               = global.prettydiff.edition.api.dom;
                                 dateCell.innerHTML = conversion(date);
                                 dateList.push([date, row[b].innerHTML]);
+                            } else if (lib === "finalFile.js") {
+                                date               = global.prettydiff.edition.finalFile;
+                                dateCell.innerHTML = conversion(date);
+                                dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "jspretty.js") {
                                 date               = global.prettydiff.edition.jspretty;
                                 dateCell.innerHTML = conversion(date);
@@ -5576,6 +5580,10 @@ global.prettydiff.meta = {
                                 dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "markuppretty.js") {
                                 date               = global.prettydiff.edition.markuppretty;
+                                dateCell.innerHTML = conversion(date);
+                                dateList.push([date, row[b].innerHTML]);
+                            } else if (lib === "options.js") {
+                                date               = global.prettydiff.edition.options;
                                 dateCell.innerHTML = conversion(date);
                                 dateList.push([date, row[b].innerHTML]);
                             } else if (lib === "node-local.js") {
