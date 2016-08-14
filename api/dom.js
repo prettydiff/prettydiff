@@ -3277,7 +3277,7 @@ global.prettydiff.meta = {
                         if (global.prettydiff.meta.error === "" || global.prettydiff.meta.error === undefined) {
                             pd.data.node.announce.innerHTML = pd.data.node.announce.innerHTML + "<span><em>Execution time:</em> <strong>" + global.prettydiff.meta.time.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</strong>. <em>Output size:</em> <strong>" + commanumb(global.prettydiff.meta.outsize) + " " + pdlang + "</strong></span>";
                         } else {
-                            pd.data.node.announce.innerHTML = pd.data.node.announce.innerHTML + "<span><strong>" + global.prettydiff.meta.error + "</strong></span>";
+                            pd.data.node.announce.innerHTML = pd.data.node.announce.innerHTML + "<span><strong>" + global.prettydiff.meta.error.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</strong></span>";
                         }
                     }
                 }

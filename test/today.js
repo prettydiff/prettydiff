@@ -1,1 +1,1 @@
-/*global exports*/var today=20160612;exports.date=today;
+/*global module*/var today=20160814;module.exports=today;

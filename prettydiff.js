@@ -279,6 +279,20 @@ global.prettydiff.prettydiff = function prettydiff_(api) {
                     global.prettydiff.meta = meta;
                     return finalProduct;
                 };
+            /*if (options.api === "node") {
+                options.diff = (typeof api.diff === "string" && api.diff.length > 0 && (/^(\s+)$/).test(api.diff) === false)
+                    ? api.diff
+                    : "";
+                options.output = (typeof api.output === "string" && api.output.length > 0 && (/^(\s+)$/).test(api.output) === false)
+                    ? api.output
+                    : "";
+                options.source = (typeof api.source === "string" && api.source.length > 0 && (/^(\s+)$/).test(api.source) === false)
+                    ? api.source
+                    : "";
+            }*/
+            if (options.api === "node" && options.readmethod !== "auto") {
+                console.log(options.source);
+            }
             if (options.source === "" && (options.mode === "beautify" || options.mode === "minify" || options.mode === "analysis" || (options.mode === "diff" && options.diffcli === false) || (options.mode === "parse" && options.parseFormat === "htmltable"))) {
                 metaerror = "options.source is empty!";
                 return output("");

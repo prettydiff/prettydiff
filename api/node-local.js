@@ -62,9 +62,16 @@ Examples:
             0, 0, 0, 0, 0
         ],
         method         = "auto",
+        langauto       = false,
         pdapp          = require(libs + "prettydiff.js"),
         prettydiff     = function pdNodeLocal__prettydiff() {
-            var pdresponse = pdapp(options),
+            var lang       = (function pdNodeLocal__prettydiff_lang() {
+                    if (langauto === true) {
+                        options.lang = "auto";
+                    }
+                    return options.lang;
+                }()),
+                pdresponse = pdapp(options),
                 data       = (options.nodeasync === true)
                     ? (options.mode === "parse" && method !== "screen" && method !== "filescreen" && options.parseFormat !== "htmltable")
                         ? JSON.stringify(pdresponse[0])
@@ -104,6 +111,9 @@ Examples:
                     global.prettydiff.finalFile.order[12] = global.prettydiff.finalFile.script.diff;
                 }
                 return global.prettydiff.finalFile.order.join("");
+            }
+            if (lang === null) {
+                return lang;
             }
             return data;
         },
@@ -924,6 +934,7 @@ Examples:
         var argument  = process
                 .argv
                 .slice(2),
+            opreturn  = [],
             alphasort = false,
             outready  = false,
             pdrcpath  = __dirname.replace(/(api)$/, "") + ".prettydiffrc",
@@ -936,7 +947,8 @@ Examples:
                     olen     = 0,
                     basepath = "",
                     makeout  = function pdNodeLocal__start_pathslash_makeout() {
-                        basepath = basepath + odirs[olen] + path.sep;
+                        basepath = basepath + odirs[olen];
+                        basepath = basepath.replace(/(\/|\\)+$/, "") + path.sep;
                         fs.mkdir(basepath, function pdNodeLocal__start_pathslash_makeout_mkdir(err) {
                             if (err !== undefined && err !== null && err.code !== "EEXIST") {
                                 console.log(err);
@@ -1037,6 +1049,9 @@ Examples:
                         odirs    = address
                             .oorgpath
                             .split(path.sep);
+                        if (options.readmethod === "file") {
+                            odirs.pop();
+                        }
                         makeout();
                     }
                 }
@@ -1046,7 +1061,18 @@ Examples:
                 }
                 return itempath;
             };
-        help = options.functions.node(argument);
+        opreturn = options.functions.node(argument);
+        help     = opreturn[0];
+        langauto = opreturn[1];
+        if (options.diff !== "") {
+            options.diff = pathslash("diff", options.diff);
+        }
+        if (options.output !== "") {
+            options.output = pathslash("output", options.output);
+        }
+        if (options.source !== "") {
+            options.source = pathslash("source", options.source);
+        }
         method = options.readmethod;
         options.api = "none";
         if (options.output === "") {
