@@ -176,7 +176,7 @@
                                 makes the application more predictable and easier to integrate into other
                                 applications. Brief metadata about the operation is stored in a global object
                                 named
-                                <em>global.meta</em>.</p>
+                                <em>global.prettydiff.meta</em>.</p>
                         </div>
                         <div class="segment">
                             <h3>Exceptions</h3>
@@ -206,10 +206,10 @@
                                     <strong>nodeasync</strong>
                                     returns an array where all prior described output is the first index and the
                                     second index is an object containing brief metadata, otherwise stored in the
-                                    <em>global.meta</em>
+                                    <em>global.prettydiff.meta</em>
                                     object. The reason for this is to allow meta data collection during parallel
                                     operations without collision. If this option is ignored then all prior described
-                                    output formats are generated and the meta data is dumped in the global.meta
+                                    output formats are generated and the meta data is dumped in the global.prettydiff.meta
                                     object, but that meta data is not reliable. An unintended byproduct of this
                                     feature is that Pretty Diff version 2 can accomplish nearly complete backwards
                                     compatibility to Pretty Diff v1 by setting this option to true.</li>
@@ -1046,7 +1046,7 @@
                                         css, csv, javascript, markup, text</li>
                                     <li>
                                         <h5>Default</h5>
-                                        javascript (dom.js - HTML tool), text (node-local.js and prettydiff.wsf)</li>
+                                        text</li>
                                     <li>
                                         <h5>As labeled in the HTML tool</h5>
                                         Auto detect default</li>
@@ -1909,9 +1909,6 @@
                                                 <li>Node (allows execution on command line with Node.js) -
                                                     <a href="http://prettydiff.com/api/node-local.js">http://prettydiff.com/api/node-local.js</a>
                                                 </li>
-                                                <li>WSH (allows execution on Windows command line when Node.js is not available) -
-                                                    <a href="http://prettydiff.com/api/prettydiff.wsf">http://prettydiff.com/api/prettydiff.wsf</a>
-                                                </li>
                                             </ul>
                                         </li>
                                     </ul>
@@ -1948,11 +1945,6 @@
                                     </p>
                                 </li>
                                 <li>
-                                    <p>Run it on the Windows command line with wscript or cscript
-                                        <code>cscript api/prettydiff.wsf /option:value /option:value</code>
-                                    </p>
-                                </li>
-                                <li>
                                     <p>Run it from your own Node application
                                         <code>var prettydiff = require("prettydiff"),</code>
                                         <code>&nbsp;&nbsp;&nbsp;&nbsp;args&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {</code>
@@ -1961,7 +1953,7 @@
                                         <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lang&nbsp;&nbsp;: "text"</code>
                                         <code>&nbsp;&nbsp;&nbsp;&nbsp;},</code>
                                         <code>&nbsp;&nbsp;&nbsp;&nbsp;output&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-                                            prettydiff.api(args);</code>
+                                            prettydiff(args);</code>
                                     </p>
                                 </li>
                                 <li>
@@ -2262,21 +2254,18 @@
                             <h3>New Option Guidance</h3>
                             <h4>Rapid Experimentation</h4>
                             <p>The easiest way to experiment with adding new options is to arbitrarily add
-                                an option assign and value to the top of the given library. For example, if you
+                                an option and value to the top of the given library. For example, if you
                                 wish to add a new JavaScript option then just before the
                                 <em>tokenizer</em>
                                 include a line of code like:
-                                <code>option.myNewOptionName = true</code>
-                                A new option reference exists that is avilable through out the library that can
+                                <code>options.myNewOptionName = true</code>
+                                A new option reference exists that is avilable through out the application that can
                                 allow or suppress new logic with minimal regression. This line of code will have
                                 to be removed later, but it allows for rapid experimentation.</p>
                             <h4>Checklist</h4>
                             <p>The following checklist explains how to expand the documentation and
                                 supported APIs of Pretty Diff for new options.</p>
                             <ul>
-                                <li>prettydiff.js - Add new option and default values/type to the
-                                    <em>options</em>
-                                    object.</li>
                                 <li>documentation.xhtml - Define the new option in the documentation
                                     <a href="#options">options</a>
                                     section.</li>
@@ -2291,31 +2280,15 @@
                                             <em>dom__event_recycle_minify</em>,
                                             <em>dom__event_recycle_parse</em>,
                                             <em>dom__event_recycle_analysis</em>.</li>
-                                        <li>api/dom.js - Add state support by including the option ids to
-                                            <em>pd.app.options</em>.</li>
                                     </ul>
                                 </li>
-                                <li>api/prettydiff.js - WSH support (if not a Node.js only option)
+                                <li>api/options.js
+                                    <p>Extend the following functions in the api/options.js file to define the option application wide.</p>
                                     <ul>
-                                        <li>Add a description of the new option to the documentation in
-                                            <em>outerror</em>
-                                            function.</li>
-                                        <li>Add functional support to the list of options (near the bottom of the file)
-                                            usings the convention
-                                            <em>WScript.Arguments.Named</em>.</li>
-                                        <li>If the option requires predefined string values then it would need to be defined near the bottom of <em>core__pdcomment</em> for support in the Pretty Diff options comment.</li>
-                                    </ul>
-                                </li>
-                                <li>api/node-local.js - Node.js support
-                                    <ul>
-                                        <li>Add option name and a default value/type to the declared
-                                            <em>options</em>
-                                            object.</li>
-                                        <li>Add the option to the internal documentation in the
-                                            <em>pdNodeLocal__error</em>
-                                            function.</li>
-                                        <li>Add functional support for the new option to the loop near the top of function
-                                            <em>pdNodeLocal__start</em>.</li>
+                                        <li><strong>definitions</strong> - define the option and provide a simple text description</li>
+                                        <li><strong>validate</strong> - the logic to assign values against accepted criteria</li>
+                                        <li><strong>pdcomment</strong> - only necessary if option is string type with a list of accepted values</li>
+                                        <li><strong>domops</strong> - associate ID names (from HTML) to values for populating the pretty diff comment in the web tool</li>
                                     </ul>
                                 </li>
                                 <li>The various libraries are written for independent execution, so each gets
@@ -2386,7 +2359,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <a href="diffview.css">diffview.css</a>
+                                        <a href="css">css</a>
                                     </td>
                                     <td>
                                         <a href="http://prettydiff.com/">Austin Cheney</a>
@@ -2435,6 +2408,16 @@
                                 </tr>
                                 <tr>
                                     <td>
+                                        <a href="lib/finalFile.js">finalFile.js</a>
+                                    </td>
+                                    <td>
+                                        <a href="http://prettydiff.com/">Austin Cheney</a>
+                                    </td>
+                                    <td>HTML report generator.</td>
+                                    <td class="date"></td>
+                                </tr>
+                                <tr>
+                                    <td>
                                         <a href="lib/jspretty.js">jspretty.js</a>
                                     </td>
                                     <td>
@@ -2445,7 +2428,7 @@
                                             <a href="http://g6auc.me.uk/">Harry Whitfield</a>
                                             - QA support</span>
                                     </td>
-                                    <td>Beautifies JavaScript code.</td>
+                                    <td>Parses JavaScript code.</td>
                                     <td class="date"></td>
                                 </tr>
                                 <tr>
@@ -2479,7 +2462,17 @@
                                     <td>
                                         <a href="http://prettydiff.com/">Austin Cheney</a>
                                     </td>
-                                    <td>Minifies markup code.</td>
+                                    <td>Parses markup code.</td>
+                                    <td class="date"></td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <a href="lib/options.js">options.js</a>
+                                    </td>
+                                    <td>
+                                        <a href="http://prettydiff.com/">Austin Cheney</a>
+                                    </td>
+                                    <td>Options management.</td>
                                     <td class="date"></td>
                                 </tr>
                                 <tr>
@@ -2514,16 +2507,6 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <a href="api/prettydiff.wsf">prettydiff.wsf</a>
-                                    </td>
-                                    <td>
-                                        <a href="http://prettydiff.com/">Austin Cheney</a>
-                                    </td>
-                                    <td>Pretty Diff API for Windows Script Host.</td>
-                                    <td class="date"></td>
-                                </tr>
-                                <tr>
-                                    <td>
                                         <a href="lib/safeSort.js">safeSort.js</a>
                                     </td>
                                     <td>
@@ -2544,6 +2527,7 @@
                 </div>
             </section>
         </div>
+        <script src="lib/global.js" type="application/javascript"></script>
         <script src="lib/language.js" type="application/javascript"></script>
         <script src="lib/finalFile.js" type="application/javascript"></script>
         <script src="api/dom.js" type="application/javascript"></script>

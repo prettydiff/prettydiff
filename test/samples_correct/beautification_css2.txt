@@ -53,11 +53,11 @@ p {
 
 //investigate comment token at parse time
 a {
-    $(var)-size: 100%;
     *color     : black;
     _background: white;
     /**/
     font-size  : big;
+    $(var)-size: 100%;
 }
 
 //trouble with the quotes
@@ -118,3 +118,10 @@ h1\\ {
         color: blue;
     }
 }
+
+//scss map
+$grid: (
+    'columns'  : 12,
+    'gutter'   : (.5 * $u),
+    'max-width': (40 * $u)
+);

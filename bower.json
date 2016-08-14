@@ -28,7 +28,6 @@
         "jsl.txt",
         "robots.txt",
         "training.xhtml",
-        "markup_beauty.wsf",
         "difflib.old",
         "prettydiff.com.html",
         "styleguide.php",
@@ -37,5 +36,5 @@
     ],
     "main": "./",
     "name": "prettydiff",
-    "version": "2.1.1"
+    "version": "2.1.3"
 }

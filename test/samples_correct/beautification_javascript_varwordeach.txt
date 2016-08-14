@@ -28,11 +28,20 @@ const k = 1;
 // deep.  Will it work correctly or will it break
 const j = 1;
 
-/*a really big comment that wraps at 80 characters wide just to see what happens with varword and such madness when the comment is multiple lines deep.  Will it work correctly or will it break*/
+/* a really big comment that wraps at 80 characters wide just to see what
+ * happens with varword and such madness when the comment is multiple lines
+ * deep.  Will it work correctly or will it break
+ */
 let j = 1;
 
-/*a really big comment that wraps at 80 characters wide just to see what happens with varword and such madness when the comment is multiple lines deep.  Will it work correctly or will it break*/
+/* a really big comment that wraps at 80 characters wide just to see what
+ * happens with varword and such madness when the comment is multiple lines
+ * deep.  Will it work correctly or will it break
+ */
 let k = 1;
 
-/*a really big comment that wraps at 80 characters wide just to see what happens with varword and such madness when the comment is multiple lines deep.  Will it work correctly or will it break*/
+/* a really big comment that wraps at 80 characters wide just to see what
+ * happens with varword and such madness when the comment is multiple lines
+ * deep.  Will it work correctly or will it break
+ */
 let j = 1;
