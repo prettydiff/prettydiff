@@ -2168,8 +2168,8 @@
                                                         "mode:\"diff\" diff:\"<a><b> <d/>    </b></a>\" diffcli:true",
                                             name  : "Test diffcli option",
                                             verify: "\nScreen input with 1 difference\n\n\u001B[36mLine: 3\u001B[39m\n<a>\n    <b>\n" +
-                                                    "u001B[31m        <\u001B[1mc\u001B[22m/>\u001B[39m\n\u001B[32m        <\u001B[1m" +
-                                                    "d\u001B[22m/>\u001B[39m\n    </b>\n</a>"
+                                                    "\u001B[31m        <\u001B[1mc\u001B[22m/>\u001B[39m\n\u001B[32m        <\u001B[1" +
+                                                    "md\u001B[22m/>\u001B[39m\n    </b>\n</a>"
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa1.txt\" readmethod:\"filesc" +
                                                         "reen\" mode:\"diff\" diff:\"test/simulation/testa.txt\"",
