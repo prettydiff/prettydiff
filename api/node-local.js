@@ -130,31 +130,7 @@ Examples:
         ],
         lf             = "\n",
         startTime      = Date.now(),
-        versionString  = (function pdNodeLocal__versionString() {
-            var dstring = "",
-                mstring = 0,
-                month   = [
-                    "January",
-                    "February",
-                    "March",
-                    "April",
-                    "May",
-                    "June",
-                    "July",
-                    "August",
-                    "September",
-                    "October",
-                    "November",
-                    "December"
-                ];
-            dstring        = global
-                .prettydiff
-                .edition
-                .latest
-                .toString();
-            mstring        = Number(dstring.slice(2, 4)) - 1;
-            return "\u001B[36mVersion\u001B[39m: " + global.prettydiff.edition.version + " \u001B[36mDated\u001B[39m: " + dstring.slice(4, 6) + " " + month[mstring] + " 20" + dstring.slice(0, 2);
-        }()),
+        versionString  = options.functions.versionString(),
         dir            = [
             0, 0, 0
         ],
