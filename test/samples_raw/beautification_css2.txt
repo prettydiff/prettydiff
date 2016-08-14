@@ -115,3 +115,10 @@ h1\\{
     color: blue;
   }
 }
+
+//scss map
+$grid: (
+  'max-width': (40 * $u),
+  'columns': 12,
+  'gutter': (.5 * $u)
+);
