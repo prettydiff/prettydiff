@@ -9,9 +9,10 @@
 //if (option.mode === "beautify" || option.lang === "auto") {
 //    option.wrap = 120;
 //}
-global.prettydiff.prettydiffrc = function (option) {
+(function prettydiffrc_init() {
     "use strict";
-    //       edit below this line
+    var prettydiffrc = function prettydiffrc(option) {
+        //       edit below this line
 
 
 
@@ -19,24 +20,26 @@ global.prettydiff.prettydiffrc = function (option) {
 
 
 
-    //       edit above this line
-    return option;
-};
+        //       edit above this line
+        return option;
+    };
 
-if (typeof module === "object" && typeof module.parent === "object") {
-    //commonjs and nodejs support
-    module.exports = global.prettydiff.prettydiffrc;
-} else if ((typeof define === "object" || typeof define === "function") && (typeof ace !== "object" || ace.prettydiffid === undefined)) {
-    //requirejs support
-    define(function requirejs(require, module) {
-        "use strict";
-        module.exports = global.prettydiffrc.preset;
-        //worthless if block to appease RequireJS and JSLint
-        if (typeof require === "number") {
-            return require;
-        }
-        return function requirejs_prettydiffrc_module(x) {
-            global.prettydiff.prettydiffrc(x);
-        };
-    });
-}
+    if (typeof module === "object" && typeof module.parent === "object") {
+        //commonjs and nodejs support
+        module.exports = prettydiffrc;
+    } else if ((typeof define === "object" || typeof define === "function") && (typeof ace !== "object" || ace.prettydiffid === undefined)) {
+        //requirejs support
+        define(function requirejs(require, module) {
+            module.exports = prettydiffrc;
+            //worthless if block to appease RequireJS and JSLint
+            if (typeof require === "number") {
+                return require;
+            }
+            return function requirejs_prettydiffrc_module(x) {
+                prettydiffrc(x);
+            };
+        });
+    } else {
+        global.prettydiff.prettydiffrc = prettydiffrc;
+    }
+}());
