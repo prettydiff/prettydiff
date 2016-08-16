@@ -510,7 +510,7 @@
                                             fs
                                                 .readFile("JSLint/jslint.js", "utf8", function taskrunner_lint_install_stat_childtask_child_cdupcallback_readFile(erread, data) {
                                                     var moduleready = function taskrunner_lint_install_stat_childtask_child_cdupcallback_readFile_moduleready() {
-                                                        var todaystring = "/*global module*/var today=" + date + ";module.exports=today;";
+                                                        var todaystring = "/*global module*/(function () {\"use strict\";var today=" + date + ";module.exports=today;}());";
                                                         jslint = require(process.cwd() + "/JSLint/jslint.js");
                                                         fs.writeFile("test/today.js", todaystring, function taskrunner_lint_install_stat_childtask_child_cdupcallback_readFile_moduleready_writeFile(werr) {
                                                             if (werr !== null && werr !== undefined) {
@@ -2091,68 +2091,70 @@
                                                         "n></select></p><p>Find <a href=\"https://github.com/prettydiff/prettydiff\">Pret" +
                                                         "ty Diff on GitHub</a>.</p></section><section role=\"main\"><p><strong>Number of " +
                                                         "differences:</strong> <em>1</em> differences from <em>1</em> line of code.</p><d" +
-                                                        "iv class='diff'><div class='diff-left'><h3 class='texttitle'>Base Sample</h3><ol" +
-                                                        " class='count'><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li></ol><ol class=" +
-                                                        "\"data\" data-prettydiff-ignore=\"true\"><li class=\"equal\">&lt;a&gt;&#10;</li>" +
-                                                        "<li class=\"equal\">    &lt;b&gt;&#10;</li><li class=\"replace\">        &lt;<em" +
-                                                        ">c</em>/&gt;&#10;</li><li class=\"equal\">    &lt;/b&gt;&#10;</li><li class=\"eq" +
-                                                        "ual\">&lt;/a&gt;&#10;</li></ol></div><div class='diff-right'><h3 class='texttitl" +
-                                                        "e'>New Sample</h3><ol class='count' style='cursor:w-resize'><li>1</li><li>2</li>" +
-                                                        "<li>3</li><li>4</li><li>5</li></ol><ol class=\"data\" data-prettydiff-ignore=\"t" +
-                                                        "rue\"><li class=\"equal\">&lt;a&gt;&#10;</li><li class=\"equal\">    &lt;b&gt;&#" +
-                                                        "10;</li><li class=\"replace\">        &lt;<em>d</em>/&gt;&#10;</li><li class=\"e" +
-                                                        "qual\">    &lt;/b&gt;&#10;</li><li class=\"equal\">&lt;/a&gt;&#10;</li></ol></di" +
-                                                        "v><p class=\"author\">Diff view written by <a href=\"http://prettydiff.com/\">Pr" +
-                                                        "etty Diff</a>.</p></div></section></div><script type=\"application/javascript\">" +
-                                                        "//<![CDATA[\r\nvar pd={};pd.colorchange=function(){\"use strict\";var options=th" +
-                                                        "is.getElementsByTagName(\"option\");document.getElementsByTagName(\"body\")[0].s" +
-                                                        "etAttribute(\"class\",options[this.selectedIndex].innerHTML.toLowerCase())};pd.d" +
-                                                        "ifffold=function dom__difffold(){\"use strict\";var a=0,b=0,self=this,title=self" +
-                                                        ".getAttribute(\"title\").split(\"line \"),min=Number(title[1].substr(0,title[1]." +
-                                                        "indexOf(\" \"))),max=Number(title[2]),inner=self.innerHTML,lists=[],parent=self." +
-                                                        "parentNode.parentNode,listnodes=(parent.getAttribute(\"class\")===\"diff\")?pare" +
-                                                        "nt.getElementsByTagName(\"ol\"):parent.parentNode.getElementsByTagName(\"ol\"),l" +
-                                                        "istLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a].getEleme" +
-                                                        "ntsByTagName(\"li\"))}max=(max>=lists[0].length)?lists[0].length:max;if(inner.ch" +
-                                                        "arAt(0)===\"-\"){self.innerHTML=\"+\"+inner.substr(1);for(a=min;a<max;a+=1){for(" +
-                                                        "b=0;b<listLen;b+=1){lists[b][a].style.display=\"none\"}}}else{self.innerHTML=\"-" +
-                                                        "\"+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[b][a].sty" +
-                                                        "le.display=\"block\"}}}};pd.colSliderGrab=function(e){\"use strict\";var event=e" +
-                                                        "||window.event,touch=(e!==null&&e.type===\"touchstart\"),node=this,diffRight=nod" +
-                                                        "e.parentNode,diff=diffRight.parentNode,subOffset=0,lists=diff.getElementsByTagNa" +
-                                                        "me(\"ol\"),counter=lists[0].clientWidth,data=lists[1].clientWidth,width=lists[2]" +
-                                                        ".parentNode.clientWidth,total=lists[2].parentNode.parentNode.clientWidth,offset=" +
-                                                        "lists[2].parentNode.offsetLeft-lists[2].parentNode.parentNode.offsetLeft,min=((t" +
-                                                        "otal-counter-data-2)-width),max=(total-width-counter),status=\"ew\",minAdjust=mi" +
-                                                        "n+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight.previousSibling,drop=" +
-                                                        "function dom__event_colSliderGrab_drop(f){f=f||window.event;f.preventDefault();n" +
-                                                        "ode.style.cursor=status+\"-resize\";if(touch===true){document.ontouchmove=null;d" +
-                                                        "ocument.ontouchend=null}else{document.onmousemove=null;document.onmouseup=null}}" +
-                                                        ",boxmove=function dom__event_colSliderGrab_boxmove(f){f=f||window.event;f.preven" +
-                                                        "tDefault();if(touch===true){subOffset=offset-f.touches[0].clientX}else{subOffset" +
-                                                        "=offset-f.clientX}if(subOffset>minAdjust&&subOffset<maxAdjust){withinRange=true}" +
-                                                        "if(withinRange===true&&subOffset>maxAdjust){diffRight.style.width=((total-counte" +
-                                                        "r-2)/10)+\"em\";status=\"e\"}else if(withinRange===true&&subOffset<minAdjust){di" +
-                                                        "ffRight.style.width=((total-counter-data-2)/10)+\"em\";status=\"w\"}else if(subO" +
-                                                        "ffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10)+\"em\";st" +
-                                                        "atus=\"ew\"}if(touch===true){document.ontouchend=drop}else{document.onmouseup=dr" +
-                                                        "op}};event.preventDefault();if(typeof pd.data===\"object\"&&pd.data.node.report." +
-                                                        "code.box!==null){offset+=pd.data.node.report.code.box.offsetLeft;offset-=pd.data" +
-                                                        ".node.report.code.body.scrollLeft}else{subOffset=(document.body.parentNode.scrol" +
-                                                        "lLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:document.bod" +
-                                                        "y.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.cursor=\"ew-r" +
-                                                        "esize\";diff.style.width=(total/10)+\"em\";diff.style.display=\"inline-block\";i" +
-                                                        "f(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(diffLeft.nod" +
-                                                        "eType!==1)}diffLeft.style.display=\"block\";diffRight.style.width=(diffRight.cli" +
-                                                        "entWidth/10)+\"em\";diffRight.style.position=\"absolute\";if(touch===true){docum" +
-                                                        "ent.ontouchmove=boxmove;document.ontouchstart=false}else{document.onmousemove=bo" +
-                                                        "xmove;document.onmousedown=null}return false};(function(){\"use strict\";var lis" +
-                                                        "ts=document.getElementById(\"prettydiff\").getElementsByTagName(\"ol\"),cells=li" +
-                                                        "sts[0].getElementsByTagName(\"li\"),len=cells.length,a=0;for(a=0;a<len;a+=1){if(" +
-                                                        "cells[a].getAttribute(\"class\")===\"fold\"){cells[a].onclick=pd.difffold}}if(li" +
-                                                        "sts.length>3){lists[2].onmousedown=pd.colSliderGrab;lists[2].ontouchstart=pd.col" +
-                                                        "SliderGrab}pd.colorscheme=document.getElementById(\"colorScheme\");pd.colorschem" +
-                                                        "e.onchange=pd.colorchange}());//]]>\r\n</script></body></html>"
+                                                        "iv class='diff'><div class='diff-left'><h3 class='texttitle'>Source Sample</h3><" +
+                                                        "ol class='count'><li class=\"fold\" title=\"folds from line 1 to line 2\">- 1</l" +
+                                                        "i><li>2</li><li class=\"fold\" title=\"folds from line 3 to line 3\">- 3</li><li" +
+                                                        " class=\"fold\" title=\"folds from line 4 to line 5\">- 4</li><li>5</li></ol><ol" +
+                                                        " class=\"data\" data-prettydiff-ignore=\"true\"><li class=\"equal\">&lt;a&gt;&#1" +
+                                                        "0;</li><li class=\"equal\">    &lt;b&gt;&#10;</li><li class=\"replace\">        " +
+                                                        "&lt;<em>c</em>/&gt;&#10;</li><li class=\"equal\">    &lt;/b&gt;&#10;</li><li cla" +
+                                                        "ss=\"equal\">&lt;/a&gt;&#10;</li></ol></div><div class='diff-right'><h3 class='t" +
+                                                        "exttitle'>New Sample</h3><ol class='count' style='cursor:w-resize'><li>1</li><li" +
+                                                        ">2</li><li>3</li><li>4</li><li>5</li></ol><ol class=\"data\" data-prettydiff-ign" +
+                                                        "ore=\"true\"><li class=\"equal\">&lt;a&gt;&#10;</li><li class=\"equal\">    &lt;" +
+                                                        "b&gt;&#10;</li><li class=\"replace\">        &lt;<em>d</em>/&gt;&#10;</li><li cl" +
+                                                        "ass=\"equal\">    &lt;/b&gt;&#10;</li><li class=\"equal\">&lt;/a&gt;&#10;</li></" +
+                                                        "ol></div><p class=\"author\">Diff view written by <a href=\"http://prettydiff.co" +
+                                                        "m/\">Pretty Diff</a>.</p></div></section></div><script type=\"application/javasc" +
+                                                        "ript\">//<![CDATA[\r\nvar pd={};pd.colorchange=function(){\"use strict\";var opt" +
+                                                        "ions=this.getElementsByTagName(\"option\");document.getElementsByTagName(\"body" +
+                                                        "\")[0].setAttribute(\"class\",options[this.selectedIndex].innerHTML.toLowerCase(" +
+                                                        "))};pd.difffold=function dom__difffold(){\"use strict\";var a=0,b=0,self=this,ti" +
+                                                        "tle=self.getAttribute(\"title\").split(\"line \"),min=Number(title[1].substr(0,t" +
+                                                        "itle[1].indexOf(\" \"))),max=Number(title[2]),inner=self.innerHTML,lists=[],pare" +
+                                                        "nt=self.parentNode.parentNode,listnodes=(parent.getAttribute(\"class\")===\"diff" +
+                                                        "\")?parent.getElementsByTagName(\"ol\"):parent.parentNode.getElementsByTagName(" +
+                                                        "\"ol\"),listLen=listnodes.length;for(a=0;a<listLen;a+=1){lists.push(listnodes[a]" +
+                                                        ".getElementsByTagName(\"li\"))}max=(max>=lists[0].length)?lists[0].length:max;if" +
+                                                        "(inner.charAt(0)===\"-\"){self.innerHTML=\"+\"+inner.substr(1);for(a=min;a<max;a" +
+                                                        "+=1){for(b=0;b<listLen;b+=1){lists[b][a].style.display=\"none\"}}}else{self.inne" +
+                                                        "rHTML=\"-\"+inner.substr(1);for(a=min;a<max;a+=1){for(b=0;b<listLen;b+=1){lists[" +
+                                                        "b][a].style.display=\"block\"}}}};pd.colSliderGrab=function(e){\"use strict\";va" +
+                                                        "r event=e||window.event,touch=(e!==null&&e.type===\"touchstart\"),node=this,diff" +
+                                                        "Right=node.parentNode,diff=diffRight.parentNode,subOffset=0,lists=diff.getElemen" +
+                                                        "tsByTagName(\"ol\"),counter=lists[0].clientWidth,data=lists[1].clientWidth,width" +
+                                                        "=lists[2].parentNode.clientWidth,total=lists[2].parentNode.parentNode.clientWidt" +
+                                                        "h,offset=lists[2].parentNode.offsetLeft-lists[2].parentNode.parentNode.offsetLef" +
+                                                        "t,min=((total-counter-data-2)-width),max=(total-width-counter),status=\"ew\",min" +
+                                                        "Adjust=min+15,maxAdjust=max-15,withinRange=false,diffLeft=diffRight.previousSibl" +
+                                                        "ing,drop=function dom__event_colSliderGrab_drop(f){f=f||window.event;f.preventDe" +
+                                                        "fault();node.style.cursor=status+\"-resize\";if(touch===true){document.ontouchmo" +
+                                                        "ve=null;document.ontouchend=null}else{document.onmousemove=null;document.onmouse" +
+                                                        "up=null}},boxmove=function dom__event_colSliderGrab_boxmove(f){f=f||window.event" +
+                                                        ";f.preventDefault();if(touch===true){subOffset=offset-f.touches[0].clientX}else{" +
+                                                        "subOffset=offset-f.clientX}if(subOffset>minAdjust&&subOffset<maxAdjust){withinRa" +
+                                                        "nge=true}if(withinRange===true&&subOffset>maxAdjust){diffRight.style.width=((tot" +
+                                                        "al-counter-2)/10)+\"em\";status=\"e\"}else if(withinRange===true&&subOffset<minA" +
+                                                        "djust){diffRight.style.width=((total-counter-data-2)/10)+\"em\";status=\"w\"}els" +
+                                                        "e if(subOffset<max&&subOffset>min){diffRight.style.width=((width+subOffset)/10)+" +
+                                                        "\"em\";status=\"ew\"}if(touch===true){document.ontouchend=drop}else{document.onm" +
+                                                        "ouseup=drop}};event.preventDefault();if(typeof pd.data===\"object\"&&pd.data.nod" +
+                                                        "e.report.code.box!==null){offset+=pd.data.node.report.code.box.offsetLeft;offset" +
+                                                        "-=pd.data.node.report.code.body.scrollLeft}else{subOffset=(document.body.parentN" +
+                                                        "ode.scrollLeft>document.body.scrollLeft)?document.body.parentNode.scrollLeft:doc" +
+                                                        "ument.body.scrollLeft;offset-=subOffset}offset+=node.clientWidth;node.style.curs" +
+                                                        "or=\"ew-resize\";diff.style.width=(total/10)+\"em\";diff.style.display=\"inline-" +
+                                                        "block\";if(diffLeft.nodeType!==1){do{diffLeft=diffLeft.previousSibling}while(dif" +
+                                                        "fLeft.nodeType!==1)}diffLeft.style.display=\"block\";diffRight.style.width=(diff" +
+                                                        "Right.clientWidth/10)+\"em\";diffRight.style.position=\"absolute\";if(touch===tr" +
+                                                        "ue){document.ontouchmove=boxmove;document.ontouchstart=false}else{document.onmou" +
+                                                        "semove=boxmove;document.onmousedown=null}return false};(function(){\"use strict" +
+                                                        "\";var lists=document.getElementById(\"prettydiff\").getElementsByTagName(\"ol\"" +
+                                                        "),cells=lists[0].getElementsByTagName(\"li\"),len=cells.length,a=0;for(a=0;a<len" +
+                                                        ";a+=1){if(cells[a].getAttribute(\"class\")===\"fold\"){cells[a].onclick=pd.difff" +
+                                                        "old}}if(lists.length>3){lists[2].onmousedown=pd.colSliderGrab;lists[2].ontouchst" +
+                                                        "art=pd.colSliderGrab}pd.colorscheme=document.getElementById(\"colorScheme\");pd." +
+                                                        "colorscheme.onchange=pd.colorchange}());//]]>\r\n</script></body></html>"
                                         }
                                     ]
                                 }, {
@@ -2168,8 +2170,8 @@
                                                         "mode:\"diff\" diff:\"<a><b> <d/>    </b></a>\" diffcli:true",
                                             name  : "Test diffcli option",
                                             verify: "\nScreen input with 1 difference\n\n\u001B[36mLine: 3\u001B[39m\n<a>\n    <b>\n" +
-                                                    "\u001B[31m        <\u001B[1mc\u001B[22m/>\u001B[39m\n\u001B[32m        <\u001B[1" +
-                                                    "md\u001B[22m/>\u001B[39m\n    </b>\n</a>"
+                                                    "\u001B[31m        <\u001B[1mc\u001B[22m/>\u001B[39m\n\u001B[32m        <\u001B[m" +
+                                                    "d\u001B[22m/>\u001B[39m\n    </b>\n</a>"
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa1.txt\" readmethod:\"filesc" +
                                                         "reen\" mode:\"diff\" diff:\"test/simulation/testa.txt\"",
@@ -3506,51 +3508,51 @@
                                                         "le class='analysis' summary='JavaScript character size comparison'><caption>Java" +
                                                         "Script data report</caption><thead><tr><th>Data Label</th><th>Input</th><th>Outp" +
                                                         "ut</th><th>Literal Increase</th><th>Percentage Increase</th></tr></thead><tbody>" +
-                                                        "<tr><th>Total Character Size</th><td>57</td><td>67</td><td>10</td><td>17.54%</td" +
-                                                        "></tr><tr><th>Total Lines of Code</th><td>1</td><td>12</td><td>11</td><td>1100.0" +
-                                                        "0%</td></tr></tbody></table><table class='analysis' summary='JavaScript componen" +
-                                                        "t analysis'><caption>JavaScript component analysis</caption><thead><tr><th>JavaS" +
-                                                        "cript Component</th><th>Component Quantity</th><th>Percentage Quantity from Sect" +
-                                                        "ion</th><th>Percentage Qauntity from Total</th><th>Character Length</th><th>Perc" +
-                                                        "entage Length from Section</th><th>Percentage Length from Total</th></tr></thead" +
-                                                        "><tbody><tr><th>Total Accounted</th><td>13</td><td>100.00%</td><td>100.00%</td><" +
-                                                        "td>57</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Comments</th>" +
-                                                        "</tr><tr><th>Block Comments</th><td>1</td><td>100.00%</td><td>7.69%</td><td>17</" +
-                                                        "td><td>100.00%</td><td>29.82%</td></tr><tr><th>Inline Comments</th><td>0</td><td" +
-                                                        ">0.00%</td><td>0.00%</td><td>0</td><td>0.00%</td><td>0.00%</td></tr><tr><th>Comm" +
-                                                        "ent Total</th><td>1</td><td>100.00%</td><td>7.69%</td><td>17</td><td>100.00%</td" +
-                                                        "><td>29.82%</td></tr><tr><th colspan='7'>Whitespace Outside of Strings and Comme" +
-                                                        "nts</th></tr><tr><th>New Lines</th><td>0</td><td>0.00%</td><td>0.00%</td><td>0</" +
-                                                        "td><td>0.00%</td><td>0.00%</td></tr><tr><th>Spaces</th><td>1</td><td>100.00%</td" +
-                                                        "><td>7.69%</td><td>1</td><td>100.00%</td><td>1.75%</td></tr><tr><th>Tabs</th><td" +
-                                                        ">0</td><td>0.00%</td><td>0.00%</td><td>0</td><td>0.00%</td><td>0.00%</td></tr><t" +
-                                                        "r><th>Other Whitespace</th><td>0</td><td>0.00%</td><td>0.00%</td><td>0</td><td>0" +
-                                                        ".00%</td><td>0.00%</td></tr><tr><th>Total Whitespace</th><td>1</td><td>100.00%</" +
-                                                        "td><td>7.69%</td><td>1</td><td>100.00%</td><td>1.75%</td></tr><tr><th colspan='7" +
-                                                        "'>Literals</th></tr><tr><th>Strings</th><td>0</td><td>0.00%</td><td>0.00%</td><t" +
-                                                        "d>0</td><td>0.00%</td><td>0.00%</td></tr><tr><th>Numbers</th><td>1</td><td>100.0" +
-                                                        "0%</td><td>7.69%</td><td>8</td><td>100.00%</td><td>14.04%</td></tr><tr><th>Regul" +
-                                                        "ar Expressions</th><td>0</td><td>0.00%</td><td>0.00%</td><td>0</td><td>0.00%</td" +
-                                                        "><td>0.00%</td></tr><tr><th>Total Literals</th><td>1</td><td>100.00%</td><td>7.6" +
-                                                        "9%</td><td>8</td><td>100.00%</td><td>14.04%</td></tr><tr><th colspan='7'>Syntax " +
-                                                        "Characters</th></tr><tr><th>Quote Characters</th><td>0</td><td>0.00%</td><td>0.0" +
-                                                        "0%</td><td>0</td><td>0.00%</td><td>0.00%</td></tr><tr><th>Commas</th><td>0</td><" +
-                                                        "td>0.00%</td><td>0.00%</td><td>0</td><td>0.00%</td><td>0.00%</td></tr><tr><th>Co" +
-                                                        "ntainment Characters</th><td>0</td><td>0.00%</td><td>0.00%</td><td>0</td><td>0.0" +
-                                                        "0%</td><td>0.00%</td></tr><tr><th>Semicolons</th><td>2</td><td>40.00%</td><td>15" +
-                                                        ".38%</td><td>2</td><td>40.00%</td><td>3.51%</td></tr><tr><th>Operators</th><td>3" +
-                                                        "</td><td>60.00%</td><td>23.08%</td><td>3</td><td>60.00%</td><td>5.26%</td></tr><" +
-                                                        "tr><th>Total Syntax Characters</th><td>5</td><td>100.00%</td><td>38.46%</td><td>" +
-                                                        "5</td><td>100.00%</td><td>8.77%</td></tr><tr><th colspan='7'>Keywords and Variab" +
-                                                        "les</th></tr><tr><th>Words</th><td>5</td><td>100.00%</td><td>38.46%</td><td>26</" +
-                                                        "td><td>100.00%</td><td>45.61%</td></tr><tr><th colspan='7'>Server-side Tags</th>" +
-                                                        "</tr><tr><th>Server Tags</th><td>0</td><td>100.00%</td><td>0.00%</td><td>0</td><" +
-                                                        "td>100.00%</td><td>0.00%</td></tr></tbody></table></div></section></div><script " +
-                                                        "type=\"application/javascript\">//<![CDATA[\r\nvar pd={};pd.colorchange=function" +
-                                                        "(){\"use strict\";var options=this.getElementsByTagName(\"option\");document.get" +
-                                                        "ElementsByTagName(\"body\")[0].setAttribute(\"class\",options[this.selectedIndex" +
-                                                        "].innerHTML.toLowerCase())};document.getElementById(\"colorScheme\").onchange=pd" +
-                                                        ".colorchange;//]]>\r\n</script></body></html>"
+                                                        "<tr><th>Total Character Size</th><td>89</td><td>109</td><td>20</td><td>22.47%</t" +
+                                                        "d></tr><tr><th>Total Lines of Code</th><td>1</td><td>24</td><td>23</td><td>2300." +
+                                                        "00%</td></tr></tbody></table><table class='analysis' summary='JavaScript compone" +
+                                                        "nt analysis'><caption>JavaScript component analysis</caption><thead><tr><th>Java" +
+                                                        "Script Component</th><th>Component Quantity</th><th>Percentage Quantity from Sec" +
+                                                        "tion</th><th>Percentage Qauntity from Total</th><th>Character Length</th><th>Per" +
+                                                        "centage Length from Section</th><th>Percentage Length from Total</th></tr></thea" +
+                                                        "d><tbody><tr><th>Total Accounted</th><td>29</td><td>100.00%</td><td>100.00%</td>" +
+                                                        "<td>89</td><td>100.00%</td><td>100.00%</td></tr><tr><th colspan='7'>Comments</th" +
+                                                        "></tr><tr><th>Block Comments</th><td>1</td><td>100.00%</td><td>3.45%</td><td>17<" +
+                                                        "/td><td>100.00%</td><td>19.10%</td></tr><tr><th>Inline Comments</th><td>0</td><t" +
+                                                        "d>0.00%</td><td>0.00%</td><td>0</td><td>0.00%</td><td>0.00%</td></tr><tr><th>Com" +
+                                                        "ment Total</th><td>1</td><td>100.00%</td><td>3.45%</td><td>17</td><td>100.00%</t" +
+                                                        "d><td>19.10%</td></tr><tr><th colspan='7'>Whitespace Outside of Strings and Comm" +
+                                                        "ents</th></tr><tr><th>New Lines</th><td>0</td><td>0.00%</td><td>0.00%</td><td>0<" +
+                                                        "/td><td>0.00%</td><td>0.00%</td></tr><tr><th>Spaces</th><td>3</td><td>100.00%</t" +
+                                                        "d><td>10.34%</td><td>3</td><td>100.00%</td><td>3.37%</td></tr><tr><th>Tabs</th><" +
+                                                        "td>0</td><td>0.00%</td><td>0.00%</td><td>0</td><td>0.00%</td><td>0.00%</td></tr>" +
+                                                        "<tr><th>Other Whitespace</th><td>0</td><td>0.00%</td><td>0.00%</td><td>0</td><td" +
+                                                        ">0.00%</td><td>0.00%</td></tr><tr><th>Total Whitespace</th><td>3</td><td>100.00%" +
+                                                        "</td><td>10.34%</td><td>3</td><td>100.00%</td><td>3.37%</td></tr><tr><th colspan" +
+                                                        "='7'>Literals</th></tr><tr><th>Strings</th><td>1</td><td>50.00%</td><td>3.45%</t" +
+                                                        "d><td>10</td><td>55.56%</td><td>11.24%</td></tr><tr><th>Numbers</th><td>1</td><t" +
+                                                        "d>50.00%</td><td>3.45%</td><td>8</td><td>44.44%</td><td>8.99%</td></tr><tr><th>R" +
+                                                        "egular Expressions</th><td>0</td><td>0.00%</td><td>0.00%</td><td>0</td><td>0.00%" +
+                                                        "</td><td>0.00%</td></tr><tr><th>Total Literals</th><td>2</td><td>100.00%</td><td" +
+                                                        ">6.90%</td><td>18</td><td>100.00%</td><td>20.22%</td></tr><tr><th colspan='7'>Sy" +
+                                                        "ntax Characters</th></tr><tr><th>Quote Characters</th><td>2</td><td>11.76%</td><" +
+                                                        "td>6.90%</td><td>2</td><td>11.76%</td><td>2.25%</td></tr><tr><th>Commas</th><td>" +
+                                                        "0</td><td>0.00%</td><td>0.00%</td><td>0</td><td>0.00%</td><td>0.00%</td></tr><tr" +
+                                                        "><th>Containment Characters</th><td>8</td><td>47.06%</td><td>27.59%</td><td>8</t" +
+                                                        "d><td>47.06%</td><td>8.99%</td></tr><tr><th>Semicolons</th><td>4</td><td>23.53%<" +
+                                                        "/td><td>13.79%</td><td>4</td><td>23.53%</td><td>4.49%</td></tr><tr><th>Operators" +
+                                                        "</th><td>3</td><td>17.65%</td><td>10.34%</td><td>3</td><td>17.65%</td><td>3.37%<" +
+                                                        "/td></tr><tr><th>Total Syntax Characters</th><td>17</td><td>100.00%</td><td>58.6" +
+                                                        "2%</td><td>17</td><td>100.00%</td><td>19.10%</td></tr><tr><th colspan='7'>Keywor" +
+                                                        "ds and Variables</th></tr><tr><th>Words</th><td>6</td><td>100.00%</td><td>20.69%" +
+                                                        "</td><td>34</td><td>100.00%</td><td>38.20%</td></tr><tr><th colspan='7'>Server-s" +
+                                                        "ide Tags</th></tr><tr><th>Server Tags</th><td>0</td><td>100.00%</td><td>0.00%</t" +
+                                                        "d><td>0</td><td>100.00%</td><td>0.00%</td></tr></tbody></table></div></section><" +
+                                                        "/div><script type=\"application/javascript\">//<![CDATA[\r\nvar pd={};pd.colorch" +
+                                                        "ange=function(){\"use strict\";var options=this.getElementsByTagName(\"option\")" +
+                                                        ";document.getElementsByTagName(\"body\")[0].setAttribute(\"class\",options[this." +
+                                                        "selectedIndex].innerHTML.toLowerCase())};document.getElementById(\"colorScheme\"" +
+                                                        ").onchange=pd.colorchange;//]]>\r\n</script></body></html>"
                                         }
                                     ]
                                 }, {
@@ -3589,19 +3591,24 @@
                                         }, {
                                             check : "cat test/simulation/all/big/today.js",
                                             name  : "check for a file in a subdirectory operation",
-                                            verify: "{\"data\":{\"begin\":[0,0,0,0,0,0,0,0,0,0,0,0],\"depth\":[\"global\",\"global\"," +
-                                                        "\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"global\",\"g" +
-                                                        "lobal\",\"global\",\"global\"],\"lines\":[0,0,0,0,0,0,0,0,0,0,0,0],\"token\":[\"" +
-                                                        "/*global module*/\",\"var\",\"today\",\"=\",\"20999999\",\";\",\"module\",\".\"," +
-                                                        "\"exports\",\"=\",\"today\",\";\"],\"types\":[\"comment\",\"word\",\"word\",\"op" +
-                                                        "erator\",\"literal\",\"separator\",\"word\",\"separator\",\"word\",\"operator\"," +
-                                                        "\"word\",\"separator\"]},\"definition\":{\"begin\":\"number - The index where th" +
-                                                        "e current container starts\",\"depth\":\"string - The name of the current contai" +
-                                                        "ner\",\"lines\":\"number - Whether the token is preceeded any space and/or line " +
-                                                        "breaks in the original code source\",\"token\":\"string - The parsed code tokens" +
-                                                        "\",\"types\":\"string - Data types of the tokens: comment, comment-inline, end, " +
-                                                        "literal, markup, operator, regex, separator, start, template, template_else, tem" +
-                                                        "plate_end, template_start, word\"}}"
+                                            verify: "{\"data\":{\"begin\":[0,1,1,3,3,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,20,20,1,0],\"depth" +
+                                                        "\":[\"global\",\"paren\",\"paren\",\"expression\",\"expression\",\"function\",\"" +
+                                                        "function\",\"function\",\"function\",\"function\",\"function\",\"function\",\"fu" +
+                                                        "nction\",\"function\",\"function\",\"function\",\"function\",\"function\",\"func" +
+                                                        "tion\",\"function\",\"method\",\"method\",\"paren\",\"global\"],\"lines\":[0,0,0" +
+                                                        ",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],\"token\":[\"/*global module*/\",\"(" +
+                                                        "\",\"function\",\"(\",\")\",\"{\",\"\\\"use strict\\\"\",\";\",\"var\",\"today\"" +
+                                                        ",\"=\",\"20999999\",\";\",\"module\",\".\",\"exports\",\"=\",\"today\",\";\",\"}" +
+                                                        "\",\"(\",\")\",\")\",\";\"],\"types\":[\"comment\",\"start\",\"word\",\"start\"," +
+                                                        "\"end\",\"start\",\"literal\",\"separator\",\"word\",\"word\",\"operator\",\"lit" +
+                                                        "eral\",\"separator\",\"word\",\"separator\",\"word\",\"operator\",\"word\",\"sep" +
+                                                        "arator\",\"end\",\"start\",\"end\",\"end\",\"separator\"]},\"definition\":{\"beg" +
+                                                        "in\":\"number - The index where the current container starts\",\"depth\":\"strin" +
+                                                        "g - The name of the current container\",\"lines\":\"number - Whether the token i" +
+                                                        "s preceeded any space and/or line breaks in the original code source\",\"token\"" +
+                                                        ":\"string - The parsed code tokens\",\"types\":\"string - Data types of the toke" +
+                                                        "ns: comment, comment-inline, end, literal, markup, operator, regex, separator, s" +
+                                                        "tart, template, template_else, template_end, template_start, word\"}}"
                                         }, {
                                             check : "cat test/simulation/all/big/samples_correct/beautification_markup_comment.txt",
                                             name  : "check for a deeper file in a subdirectory operation",
