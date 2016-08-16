@@ -841,7 +841,7 @@ global.prettydiff.meta = {
                 if (item.nodeName.toLowerCase() === "select") {
                     node = item[item.selectedIndex].value;
                 } else {
-                    node = node.value;
+                    node = item.value;
                 }
                 pd.data.commentString = global.prettydiff.options.functions.domops(id, node, pd.data.commentString);
                 if (pd.data.node.comment !== null) {
@@ -6440,11 +6440,6 @@ global.prettydiff.meta = {
             if (pd.data.node.comment !== null) {
                 if (pd.data.commentString.length === 0) {
                     pd.data.node.comment.innerHTML = "/*prettydiff.com */";
-                } else if (pd.data.commentString.length === 1) {
-                    pd.data.node.comment.innerHTML = "/*prettydiff.com " + pd
-                        .data
-                        .commentString[0]
-                        .replace("api.", "") + " */";
                 } else {
                     pd.data.node.comment.innerHTML = "/*prettydiff.com " + pd
                         .data

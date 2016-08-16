@@ -44,26 +44,12 @@ Examples:
         cwd            = (process.cwd() === "/")
             ? __dirname
             : process.cwd(),
-        libs           = (function pdNodeLocal__libs() {
-            global.prettydiff              = {};
-            global.prettydiff.language     = require(localPath + "lib/language.js");
-            global.prettydiff.safeSort     = require(localPath + "lib/safeSort.js");
-            global.prettydiff.options      = require(localPath + "lib/options.js");
-            global.prettydiff.csspretty    = require(localPath + "lib/csspretty.js");
-            global.prettydiff.csvpretty    = require(localPath + "lib/csvpretty.js");
-            global.prettydiff.diffview     = require(localPath + "lib/diffview.js");
-            global.prettydiff.finalFile    = require(localPath + "lib/finalFile.js");
-            global.prettydiff.jspretty     = require(localPath + "lib/jspretty.js");
-            global.prettydiff.markuppretty = require(localPath + "lib/markuppretty.js");
-            return localPath;
-        }()),
-        options        = global.prettydiff.options,
+        options        = {},
         diffCount      = [
             0, 0, 0, 0, 0
         ],
         method         = "auto",
         langauto       = false,
-        pdapp          = require(libs + "prettydiff.js"),
         prettydiff     = function pdNodeLocal__prettydiff() {
             var lang       = (function pdNodeLocal__prettydiff_lang() {
                     if (langauto === true) {
@@ -71,7 +57,7 @@ Examples:
                     }
                     return options.lang;
                 }()),
-                pdresponse = pdapp(options),
+                pdresponse = global.prettydiff.prettydiff(options),
                 data       = (options.nodeasync === true)
                     ? (options.mode === "parse" && method !== "screen" && method !== "filescreen" && options.parseFormat !== "htmltable")
                         ? JSON.stringify(pdresponse[0])
@@ -130,7 +116,6 @@ Examples:
         ],
         lf             = "\n",
         startTime      = Date.now(),
-        versionString  = options.functions.versionString(),
         dir            = [
             0, 0, 0
         ],
@@ -548,7 +533,7 @@ Examples:
                         options.diff   = dfiledump[data.index];
                         options.source = sfiledump[data.index];
                         screenWrite();
-                    } else if (method === "file" || method === "directory" || method === "subdirectory") {
+                    } else if (method === "file" || method === "directory" || method === "subdirectory") {if(method === "subdirectory")
                         fileWrite(data);
                     }
                     sState[data.index] = false;
@@ -905,6 +890,19 @@ Examples:
             }
         };
 
+    global.prettydiff              = {};
+    global.prettydiff.language     = require(localPath + "lib/language.js");
+    global.prettydiff.safeSort     = require(localPath + "lib/safeSort.js");
+    global.prettydiff.options      = require(localPath + "lib/options.js");
+    global.prettydiff.csspretty    = require(localPath + "lib/csspretty.js");
+    global.prettydiff.csvpretty    = require(localPath + "lib/csvpretty.js");
+    global.prettydiff.diffview     = require(localPath + "lib/diffview.js");
+    global.prettydiff.finalFile    = require(localPath + "lib/finalFile.js");
+    global.prettydiff.jspretty     = require(localPath + "lib/jspretty.js");
+    global.prettydiff.markuppretty = require(localPath + "lib/markuppretty.js");
+    global.prettydiff.prettydiff   = require(localPath + "prettydiff.js");
+    options                        = global.prettydiff.options;
+
     //defaults for the options
     (function pdNodeLocal__start() {
         var argument  = process
@@ -1025,6 +1023,23 @@ Examples:
                         odirs    = address
                             .oorgpath
                             .split(path.sep);
+                        if (odirs[0] === "..") {
+                            (function pdNodeLocal__start_pathslash_stat() {
+                                var abs = path.resolve().split(path.sep),
+                                    a   = 0;
+                                do {
+                                    a += 1;
+                                } while (odirs[a] === "..");
+                                odirs.splice(0, a);
+                                abs.splice(0, a);
+                                do {
+                                    odirs.splice(0, 0, abs.pop());
+                                } while (abs.length > 0);
+                                if (path.sep === "/") {
+                                    odirs.splice(0, 0, "");
+                                }
+                            }());
+                        }
                         if (options.readmethod === "file") {
                             odirs.pop();
                         }
@@ -1215,10 +1230,6 @@ Examples:
                     if (alphasort === true) {
                         options.objsort = "all";
                     }
-                    if (options.lang === "tss") {
-                        options.titanium = true;
-                        options.lang     = "javascript";
-                    }
                     if (options.mode !== "diff") {
                         options.diffcli     = false;
                         options.summaryonly = false;
@@ -1231,7 +1242,7 @@ Examples:
                         return console.log(options.functions.consolePrint());
                     }
                     if (help === true && options.version === true) {
-                        return console.log(versionString);
+                        return console.log(options.functions.versionString);
                     }
                     if (options.listoptions === true) {
                         (function pdNodeLocal__start_stat_init_listoptions() {
@@ -1242,7 +1253,7 @@ Examples:
                             options.mode     = "beautify";
                             options.source   = sample;
                             options.vertical = "all";
-                            sample           = pdapp(options);
+                            sample           = global.prettydiff.prettydiff(options);
                             console.log("");
                             console.log(colors.filepath.start + "Current option settings:" + colors.filepath.end);
                             console.log(sample.slice(1, sample.length - 1));
