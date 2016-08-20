@@ -78,7 +78,7 @@ global.prettydiff.meta = {
             };
             load();
         };
-
+    document.consolePrint = global.prettydiff.options.functions.consolePrint;
     if (location.href.indexOf("codemirror=") > 0) {
         (function dom__codemirror() {
             var loc     = location
@@ -602,6 +602,33 @@ global.prettydiff.meta = {
             }
             value = pd.data.langvalue;
             if (pd.test.ace === true) {
+                if (all === true || pd.data.mode === "anal") {
+                    if (all === true && lang === "") {
+                        value             = auto(pd.ace.analIn.getValue(), defaultt);
+                        pd.data.langvalue = value;
+                    }
+                    if (value[0] === "tss") {
+                        value[0] = "javascript";
+                    } else if (value[0] === "dustjs") {
+                        value[0] = "html";
+                    } else if (value[0] === "markup") {
+                        value[0] = "xml";
+                    }
+                    if (pd.data.node.codeAnalIn !== null) {
+                        pd
+                            .ace
+                            .analIn
+                            .getSession()
+                            .setMode("ace/mode/" + value[0]);
+                    }
+                    if (pd.data.node.codeAnalOut !== null) {
+                        pd
+                            .ace
+                            .analOut
+                            .getSession()
+                            .setMode("ace/mode/" + value[0]);
+                    }
+                }
                 if (all === true || pd.data.mode === "beau") {
                     if (all === true && lang === "") {
                         value             = auto(pd.ace.beauIn.getValue(), defaultt);
@@ -1017,6 +1044,22 @@ global.prettydiff.meta = {
                     .ace
                     .minnOut
                     .setTheme(theme);
+                pd
+                    .ace
+                    .parsIn
+                    .setTheme(theme);
+                pd
+                    .ace
+                    .parsOut
+                    .setTheme(theme);
+                pd
+                    .ace
+                    .analIn
+                    .setTheme(theme);
+                pd
+                    .ace
+                    .analOut
+                    .setTheme(theme);
             }
             pd.data.color = color;
             if (logo !== null) {
@@ -1024,10 +1067,8 @@ global.prettydiff.meta = {
                     logoColor = "664";
                 } else if (color === "shadow") {
                     logoColor = "999";
-                } else if (color === "white") {
-                    logoColor = "666";
                 } else {
-                    logoColor = "000";
+                    logoColor = "666";
                 }
                 logo.style.borderColor = "#" + logoColor;
                 logo
@@ -6484,7 +6525,7 @@ global.prettydiff.meta = {
                             value = params[b]
                                 .toLowerCase()
                                 .substr(2);
-                            if (value === "beautify" && pd.data.node.modeBeau !== null) {
+                            if (value === "beautify" && pd.data.node.modeBeau !== null) {console.log("asdf")
                                 pd
                                     .event
                                     .modeToggle(pd.data.node.modeBeau);

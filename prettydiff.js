@@ -209,6 +209,9 @@
                                 if (x !== 1) {
                                     a = a + "s";
                                 }
+                                if (y !== " second") {
+                                    a = a + " ";
+                                }
                                 return a;
                             },
                             minute       = function core__proctime_minute() {
