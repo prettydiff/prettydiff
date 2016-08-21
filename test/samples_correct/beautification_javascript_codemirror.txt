@@ -9174,7 +9174,7 @@
                 }
             }
             // If the result is smaller than 25 lines, ensure that it is a single leaf node.
-            if (this.size - n < 25 && (this.children.length > 1 || !(this.children[0]instanceof LeafChunk))) {
+            if (this.size - n < 25 && (this.children.length > 1 || !(this.children[0] instanceof LeafChunk))) {
                 var lines = [];
                 this.collapse(lines);
                 this.children           = [new LeafChunk(lines)];
