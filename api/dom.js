@@ -1,4 +1,4 @@
-/*prettydiff.com api.topcoms: true, api.inchar: " ", api.insize: 4, api.vertical: true */
+/*prettydiff.com topcoms: true, inchar: " ", insize: 4, vertical: true */
 /*global ace, ActiveXObject, ArrayBuffer, AudioContext, console, document, FileReader, global, localStorage, location, navigator, setTimeout, Uint8Array, window, XMLHttpRequest*/
 /*jshint laxbreak: true*/
 /*jslint for: true, this: true*/
@@ -6525,7 +6525,7 @@ global.prettydiff.meta = {
                             value = params[b]
                                 .toLowerCase()
                                 .substr(2);
-                            if (value === "beautify" && pd.data.node.modeBeau !== null) {console.log("asdf")
+                            if (value === "beautify" && pd.data.node.modeBeau !== null) {
                                 pd
                                     .event
                                     .modeToggle(pd.data.node.modeBeau);
