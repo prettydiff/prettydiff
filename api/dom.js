@@ -3117,7 +3117,7 @@ global.prettydiff.meta = {
                     }
                     if (pd.data.node.report.code.box !== null) {
                         if (api.jsscope === "report" && pd.data.langvalue[1] === "javascript" && output.indexOf("Error:") !== 0) {
-                            pd.data.node.report.code.body.innerHTML = pd.data.node.report.code.body.innerHTML + output;
+                            pd.data.node.report.code.body.innerHTML = output;
                             if (pd.data.node.report.code.body.style.display === "none") {
                                 pd
                                     .event
