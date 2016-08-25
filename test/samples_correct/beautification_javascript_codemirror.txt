@@ -5435,7 +5435,7 @@
             if (l < doc.first || l >= doc.first + doc.size) {
                 return (possible = false);
             }
-            line = l;
+            line           = l;
             return lineObj = getLine(doc, l);
         }
         function moveOnce(boundToLine) {

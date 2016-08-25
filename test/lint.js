@@ -318,7 +318,7 @@
                                 }
                                 if (output === correct[a][1]) {
                                     filecount += 1;
-                                    console.log(humantime(false) + "\u001B[32mPretty Diff is good with file " + filecount + ":\u001B[39m " + correct[a][0]);
+                                    console.log(humantime(false) + "\u001B[32mPass " + filecount + ":\u001B[39m " + correct[a][0]);
                                     if (a === len - 1) {
                                         return next();
                                     }

@@ -6647,7 +6647,7 @@
                     var b = c.createElement("div");
                     b.style.display = "none",
                     b.innerHTML     = "   <link/><table></table><a href='/a' style='color:red;float:left;opacity:.55;'>" +
-                                          "a</a><input type='checkbox'/>";
+                                         "a</a><input type='checkbox'/>";
                     var e = b.getElementsByTagName("*"),
                         f = b.getElementsByTagName("a")[0],
                         g = c.createElement("select"),
@@ -6740,7 +6740,7 @@
                                     .removeChild(a)
                                     .style
                                     .display = "none",
-                                a            = e = null;
+                                a             = e = null;
                             }
                         });
                         var n = function (a) {
@@ -7902,8 +7902,8 @@
                         d.isFunction(e) && (f = e, e = b),
                         a = (a || "").split(" ");
                         while ((h = a[i++]) != null) {
-                            j = p.exec(h),
-                            k = "",
+                            j       = p.exec(h),
+                            k       = "",
                             j && (k = j[0], h = h.replace(p, ""));
                             if (h === "hover") {
                                 a.push("mouseenter" + k, "mouseleave" + k);
@@ -10111,7 +10111,7 @@
                             l["Content-Type"] = e.contentType;
                         }
                         e.ifModified && (k = k || e.url, d.lastModified[k] && (l["If-Modified-Since"] = d.lastModified[k]), d.etag[k] && (l["If-None-Match"] = d.etag[k])),
-                        l.Accept = e.dataTypes[0] && e.accepts[e.dataTypes[0]]
+                        l.Accept     = e.dataTypes[0] && e.accepts[e.dataTypes[0]]
                             ? e.accepts[e.dataTypes[0]] + (e.dataTypes[0] !== "*"
                                 ? ", */*; q=0.01"
                                 : "")
@@ -10578,8 +10578,8 @@
                     },
                     fx    : function (a, b, c) {
                         this.options = b,
-                        this.elem = a,
-                        this.prop = c,
+                        this.elem    = a,
+                        this.prop    = c,
                         b.orig || (b.orig = {});
                     },
                     speed : function (a, b, c) {
@@ -10858,9 +10858,9 @@
                             h,
                             i = parseFloat(d.css(a, "marginTop")) || 0,
                             j = "<div style='position:absolute;top:0;left:0;margin:0;border:5px solid #000;paddin" +
-                                    "g:0;width:1px;height:1px;'><div></div></div><table style='position:absolute;top:" +
-                                    "0;left:0;margin:0;border:5px solid #000;padding:0;width:1px;height:1px;' cellpad" +
-                                    "ding='0' cellspacing='0'><tr><td></td></tr></table>";
+                                  "g:0;width:1px;height:1px;'><div></div></div><table style='position:absolute;top:" +
+                                  "0;left:0;margin:0;border:5px solid #000;padding:0;width:1px;height:1px;' cellpad" +
+                                  "ding='0' cellspacing='0'><tr><td></td></tr></table>";
                         d.extend(b.style, {
                             border    : 0,
                             height    : "1px",
@@ -12209,7 +12209,7 @@
                         .each(function () {
                             var ad   = this,
                                 elem = "<iframe scrolling='no' frameborder='0' bordercolor='#000000' vspace='0' hspace='" +
-                                        "0' marginheight='0' marginwidth='0'></iframe>";
+                                         "0' marginheight='0' marginwidth='0'></iframe>";
                             if (ad.selector) {
                                 var e = jQuery(elem);
                                 if (e != null) {
@@ -12683,7 +12683,7 @@
                         } else {
                             popunder    = "/popWindow";
                             winfeatures = "left='150',top='200',width='500',height='250',scrollbars='0',resizable='0',toolb" +
-                                              "ar='0',location='0',menubar='0',status='1',directories='0'";
+                                             "ar='0',location='0',menubar='0',status='1',directories='0'";
                         }
                         urladditions_parameters.service = service;
                         urladditions_parameters.oneway  = url_parameters.oneway;
@@ -14844,8 +14844,8 @@
                             e_char               : "*The city or airport code can only contain letters.",
                             e_child              : "*Please enter the age of each child.",
                             e_child_unaccompanied: "*All minors must be age 15 or older or traveling with at least one adult (18 - 6" +
-                                                       "4 years) or one senior (65+ years). Please revise your traveler age criteria and" +
-                                                       " try your search again.",
+                                                      "4 years) or one senior (65+ years). Please revise your traveler age criteria and" +
+                                                      " try your search again.",
                             e_date               : "*The arrival date is before the departure date.",
                             e_date_range_hot     : "*Your requested dates are more than 30 days apart.",
                             e_date_range_vac     : "*Your requested dates are more than 26 days apart.",
@@ -18308,14 +18308,14 @@
                         maxRetries : 10,
                         servicetag : "TRAVELOCITY",
                         serviceUrl : "http://www.travelocity.com/servicegateway/globaltrips-shopping-svcs/subscription" +
-                                         "-management-1.0/services/SubscriptionService/Subscribe",
+                                        "-management-1.0/services/SubscriptionService/Subscribe",
                         SID        : "T000V00000X806241813008610115010671183",
                         state      : "HomePageWidget",
                         sVSTrackUrl: "http://travel.travelocity.com/___waseq.img",
                         terms_link : {
                             height: 400,
                             url   : "http://www.travelocity.com/info/info_popup/0,,TRAVELOCITY:EN|TERMS_WINDOW,00.htm" +
-                                        "l",
+                                       "l",
                             width : 500
                         }
                     };
@@ -18450,7 +18450,7 @@
                     },
                     source                    : "gls",
                     url                       : "/servicegateway/shopping-svcs/global-location-svc-autocomplete-1.0/services/auto" +
-                                                    "complete"
+                                                   "complete"
                 };
 
                 jQuery._autocomplete(jQuery.extend({}, AutoCompleteOptions, {elementId: "ho-to"}));
@@ -18501,8 +18501,8 @@
                         attrs   : {
                             height: 250,
                             src   : "http://dm.travelocity.com/html.ng/site=travelocity&cobrand=TRAVELOCITY&adsize=30" +
-                                        "0x250&area=homepage&tile=106119156132734&transactionID=901011327342356&random=06" +
-                                        "1190761327342?",
+                                       "0x250&area=homepage&tile=106119156132734&transactionID=901011327342356&random=06" +
+                                       "1190761327342?",
                             title : "Adversitement",
                             width : 300
                         },
@@ -18511,8 +18511,8 @@
                         attrs   : {
                             height: 296,
                             src   : "http://dm.travelocity.com/html.ng/site=travelocity&cobrand=TRAVELOCITY&adsize=34" +
-                                        "2x296&area=homepage&tile=106119156132734&transactionID=901011327342356&random=06" +
-                                        "1190761327342?",
+                                       "2x296&area=homepage&tile=106119156132734&transactionID=901011327342356&random=06" +
+                                       "1190761327342?",
                             title : "Adversitement",
                             width : 342
                         },
@@ -18521,8 +18521,8 @@
                         attrs   : {
                             height: 90,
                             src   : "http://dm.travelocity.com/html.ng/site=travelocity&cobrand=TRAVELOCITY&adsize=72" +
-                                        "8x90&area=homepage&tile=106119156132734&transactionID=901011327342356&random=061" +
-                                        "190761327342?",
+                                       "8x90&area=homepage&tile=106119156132734&transactionID=901011327342356&random=061" +
+                                       "190761327342?",
                             title : "Adversitement",
                             width : 728
                         },

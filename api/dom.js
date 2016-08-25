@@ -5780,6 +5780,9 @@ global.prettydiff.meta = {
             pd
                 .app
                 .fixHeight();
+            if (location.href.indexOf("ignore") > 0 && pd.id("headline") !== null) {
+                pd.id("headline").innerHTML = "<h2>BETA TEST SITE.</h2> <p>Official Pretty Diff is at <a href=\"http://prettydiff.com/\">http://prettydiff.com/</a></p> <span class=\"clear\"></span>";
+            }
             if (pd.data.node.announce !== null) {
                 pd.data.announcetext = pd.data.node.announce.innerHTML;
             }

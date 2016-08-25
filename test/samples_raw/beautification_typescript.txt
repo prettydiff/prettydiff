@@ -1,4 +1,4 @@
-
+/*prettydiff.com typescript:true*/
 function combinor<T>(...rest: T[]): T {
 	return rest.reduce((previous: T, current: T) => {
 		return <any> previous + <any> current;

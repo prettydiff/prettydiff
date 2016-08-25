@@ -1017,8 +1017,8 @@ if (typeof jQuery == "undefined") {
                 support.reliableHiddenOffsets            = isSupported && (tds[0].offsetHeight === 0);
                 div.innerHTML                            = "";
                 div.style.cssText                        = "box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;p" +
-                                                               "adding:1px;border:1px;display:block;width:4px;margin-top:1%;position:absolute;to" +
-                                                               "p:1%;";
+                                                              "adding:1px;border:1px;display:block;width:4px;margin-top:1%;position:absolute;to" +
+                                                              "p:1%;";
                 support.boxSizing                        = (div.offsetWidth === 4);
                 support.doesNotIncludeMarginInBodyOffset = (body.offsetTop !== 1);
                 if (window.getComputedStyle) {
@@ -4408,7 +4408,7 @@ if (typeof jQuery == "undefined") {
             return safeFrag;
         }
         var nodeNames          = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figcaption|figure|foot" +
-                                "er|header|hgroup|mark|meter|nav|output|progress|section|summary|time|video",
+                               "er|header|hgroup|mark|meter|nav|output|progress|section|summary|time|video",
             rinlinejQuery      = / jQuery\d+="(?:null|\d+)"/g,
             rleadingWhitespace = /^\s+/,
             rxhtmlTag          = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/gi,
@@ -12145,7 +12145,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
         };
         (function (jQuery, undefined) {
             var stepHooks     = "backgroundColor borderBottomColor borderLeftColor borderRightColor borderTopColo" +
-                               "r color columnRuleColor outlineColor textDecorationColor textEmphasisColor",
+                              "r color columnRuleColor outlineColor textDecorationColor textEmphasisColor",
                 rplusequals   = /^([\-+])=\s*(\d+\.?\d*)/,
                 stringParsers = [
                     {
@@ -14309,7 +14309,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             baseClasses      = "ui-button ui-widget ui-state-default ui-corner-all",
             stateClasses     = "ui-state-hover ui-state-active ",
             typeClasses      = "ui-button-icons-only ui-button-icon-only ui-button-text-icons ui-button-text-ico" +
-                                   "n-primary ui-button-text-icon-secondary ui-button-text-only",
+                                  "n-primary ui-button-text-icon-secondary ui-button-text-only",
             formResetHandler = function () {
                 var buttons = $(this).find(":ui-button");
                 setTimeout(function () {
@@ -15903,7 +15903,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     inMinYear = (minDate && minDate.getFullYear() === drawYear);
                     inMaxYear = (maxDate && maxDate.getFullYear() === drawYear);
                     monthHtml += "<select class='ui-datepicker-month' data-handler='selectMonth' data-event='chang" +
-                                    "e'>";
+                                   "e'>";
                     for (month = 0; month < 12; month += 1) {
                         if ((!inMinYear || month >= minDate.getMonth()) && (!inMaxYear || month <= maxDate.getMonth())) {
                             monthHtml += "<option value='" + month + "'" + (month === drawMonth
@@ -15946,7 +15946,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             ? Math.min(endYear, maxDate.getFullYear())
                             : endYear);
                         inst.yearshtml += "<select class='ui-datepicker-year' data-handler='selectYear' data-event='change'" +
-                                             ">";
+                                            ">";
                         for (; year <= endYear; year += 1) {
                             inst.yearshtml += "<option value='" + year + "'" + (year === drawYear
                                 ? " selected='selected'"
@@ -31518,10 +31518,10 @@ if (jQuery) {
             return b = a
                 .event
                 .fix(c),
-            b.type = "mousewheel",
+            b.type   = "mousewheel",
             c.wheelDelta && (e = c.wheelDelta / 120),
             c.detail && (e = -c.detail / 3),
-            h = e,
+            h        = e,
             c.axis !== undefined && c.axis === c.HORIZONTAL_AXIS && (h = 0, g = -1 * e),
             c.wheelDeltaY !== undefined && (h = c.wheelDeltaY / 120),
             c.wheelDeltaX !== undefined && (g = -1 * c.wheelDeltaX / 120),
@@ -31748,7 +31748,7 @@ if (jQuery) {
         f("skewY");
         f("x", !0);
         f("y", !0);
-        l.prototype                  = {
+        l.prototype                     = {
             get          : function (a) {
                 return this.getter[a]
                     ? this
@@ -31860,7 +31860,7 @@ if (jQuery) {
                 return b.join(" ");
             }
         };
-        d.fn.transition              = d.fn.transit = function (a, b, c, f) {
+        d.fn.transition                 = d.fn.transit = function (a, b, c, f) {
             var h = this,
                 g = 0,
                 j = !0;
@@ -31920,7 +31920,7 @@ if (jQuery) {
                     : c();
             return this;
         };
-        d.transit.getTransitionValue = q;
+        d.transit.getTransitionValue    = q;
     })(jQuery);
     adobe        = {
         msgs   : {
@@ -34910,7 +34910,7 @@ if (jQuery) {
     adobe.fn.gnavGetIMSInfo             = function () {
         var adobe_host = window.location.hostname,
             confURL    = "https://www.adobe.com/svcs/configurations/clients/adobedotcomIMS/client_aliases/" +
-                        "adobedotcom?landscape=" + adobe_host;
+                       "adobedotcom?landscape=" + adobe_host;
         if (($.string(adobe_host).include("stage")) || ($.string(adobe_host).include("dev")) || ($.string(adobe_host).include("qa"))) {
             var confURL = "/svcs/configurations/clients/adobedotcomIMS/client_aliases/adobedotcom?landscape" +
                     "=" + adobe_host;
