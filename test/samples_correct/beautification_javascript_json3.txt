@@ -5,7 +5,7 @@ var a = {
             }
         },
         "xyz": [
-            ["iuo" : "sdf"]
+            ["iuo": "sdf"]
         ]
     }, {
         sd : [
