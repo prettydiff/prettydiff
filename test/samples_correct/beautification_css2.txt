@@ -1,5 +1,5 @@
 //Pretty Diff does not correct for the space between property name and colon
-@page:left {
+@page :left {
     background: black;
 }
 
