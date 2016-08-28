@@ -450,8 +450,8 @@
                         <h4>Extend the parser</h4>
                         <p>A well written parser is extensible, which means additional supplimental
                             rules can be added later to allow new features at minimal collision with
-                            existing features. Before a parser can be extensible it has be sturdy and
-                            confident in its current target language and conventions. The additional of new
+                            existing features. Before a parser can be extensible it has to be sturdy and
+                            confident in its current target language and conventions. The addition of new
                             rules, features, or even languages dramatically increases the risk of errors and
                             malformed output by the parser. Seek out diverse code examples and integrate
                             them into some form to test automation. Constantly seek to discover input that
@@ -465,23 +465,24 @@
                             from users. This is unfortunately true even for the most widely used of parsers.
                             Extreme care for precision, even when currently unnecessary, helps mitigate some
                             of these unknown errors.</p>
-                        <p>A another general rule is to perceive the code in negatives, as in
+                        <p>Another general rule is to perceive the code in negatives, as in
                             <em>what can't or shouldn't be done</em>. Thinking about the code's decisions in
                             a more pessimistic view is a key way to limit risk by continously focusing on
                             predictable operations in the face of unknown and diverse input. This form of
                             thinking reenforces the idea that rules must be specific and not allow
-                            deviations from a desired predictable state or output. As new features are added
+                            deviations from a desired predictable state of output. As new features are added
                             think about them in terms of what they shouldn't do. The rules that define a new
                             feature will likely be simple, but ensuring their presence does not open
                             regression or complicate maintenance with extended complexity demands some
                             special care and discipline.</p>
                         <p>Since code parsing is comprised by a series of simple and mundane tasks with
-                            the primary goals of sturdiness and performance and a distant secondary goal of
+                            the primary goals of sturdiness and performance plus a distant secondary goal of
                             extensibility the code tends to be rather boring. Imperative coding styles
                             appear to work best for this kind of work. The end result for the code author is
                             all about ensuring the code is as predictable as possible and contains the
                             fewest instructions possible. Fewer instructions means less code to maintain or
-                            test and fewer things for the computer to evaluate (performance).</p>
+                            test (less developer time) and fewer things for the computer to evaluate
+                            (performance).</p>
                     </div>
                 </div>
                 <div class="segment" id="enjoyment">
