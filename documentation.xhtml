@@ -1715,6 +1715,20 @@
                                         Top Comments, CSS / JavaScript</li>
                                 </ul>
                             </li>
+                            <li id="typescript">
+                                <h4>typescript</h4>
+                                <ul>
+                                    <li>
+                                        <h5>Description</h5>
+                                        If the language is TypeScript this internal option prevents collisions in edge cases that look similar to React JSX format.</li>
+                                    <li>
+                                        <h5>Type</h5>
+                                        boolean</li>
+                                    <li>
+                                        <h5>Default</h5>
+                                        false</li>
+                                </ul>
+                            </li>
                             <li id="unformatted">
                                 <h4>unformatted</h4>
                                 <ul>
@@ -2094,11 +2108,11 @@
                                 interpretation. These are examples of appropriate option strings:</p>
                             <ul>
                                 <li>
-                                    <code>/*prettydiff.com api.mode:beautify, api.lang:javascript, api.inchar:"abc"*/</code>
+                                    <code>/*prettydiff.com mode:beautify, lang:javascript, inchar:"abc"*/</code>
                                 </li>
                                 <li>
-                                    <code>&lt;!--/*prettydiff.com api.mode: beautify, api.lang: javascript,
-                                        api.inchar: "abc", api.html: true */--&gt;</code>
+                                    <code>&lt;!--/*prettydiff.com mode: beautify, lang: javascript,
+                                        inchar: "abc", html: true */--&gt;</code>
                                 </li>
                             </ul>
                         </div>
@@ -2139,6 +2153,7 @@
                                     <a href="#source">source</a>. "?", "&amp;", and "#" characters in the URI value
                                     must be URI escaped (percent encoded).</dd>
                             </dl>
+                            <p>Any defined option name is also supported as a parameter.</p>
                             <p>Here is an example:
                                 <code>http://prettydiff.com/?s=http://prettydiff.com/prettydiff.js&amp;m=beautify&amp;correct</code>
                             </p>

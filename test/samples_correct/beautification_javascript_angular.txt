@@ -3862,7 +3862,7 @@
                 } else {
                     try {
                         path.unshift(serviceName);
-                        cache[serviceName] = INSTANTIATING;
+                        cache[serviceName]        = INSTANTIATING;
                         return cache[serviceName] = factory(serviceName);
                     } catch (err) {
                         if (cache[serviceName] === INSTANTIATING) {
@@ -8907,7 +8907,7 @@
                     mediumDate: "MMM d, y",
                     mediumTime: "h:mm:ss a",
                     MONTH     : "January,February,March,April,May,June,July,August,September,October,November,Dec" +
-                                    "ember".split(","),
+                                   "ember".split(","),
                     short     : "M/d/yy h:mm a",
                     shortDate : "M/d/yy",
                     SHORTDAY  : "Sun,Mon,Tue,Wed,Thu,Fri,Sat".split(","),

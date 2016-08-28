@@ -157,7 +157,17 @@
 #prettydiff.shadow .ace_selection.ace_start{background:#ffe}
 #prettydiff.shadow .ace_comment{color:#ce9}
 #prettydiff.shadow .ace_variable{color:#cef}
-#prettydiff.shadow .ace_active-line{background:#444}
+#prettydiff.shadow .ace_active-line{background:#333}
+#prettydiff.shadow .ace-idle-fingers .ace_keyword,
+#prettydiff.shadow .ace-idle-fingers .ace_meta,
+#prettydiff.shadow .ace-idle-fingers .ace_type{color:#ea6}
+#prettydiff.shadow .ace-idle-fingers .ace_identifier,
+#prettydiff.shadow .ace-idle-fingers .ace_variable{color:#ddd}
+#prettydiff.shadow .ace-idle-fingers .ace_constant,
+#prettydiff.shadow .ace-idle-fingers .ace_constant.ace_character,
+#prettydiff.shadow .ace-idle-fingers .ace_constant.ace_character.ace_escape,
+#prettydiff.shadow .ace-idle-fingers .ace_constant.ace_other,
+#prettydiff.shadow .ace-idle-fingers .ace_support.ace_constant{color:#8cc9fb}
 #prettydiff.shadow .unchecked{background:#666}
 #prettydiff.shadow #textareaTabKey em{color:#cf3}
 #prettydiff.shadow .box .body{background:#222}

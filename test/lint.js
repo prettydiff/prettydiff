@@ -163,20 +163,20 @@
                 report = [],
                 colors = {
                     del     : {
-                        charEnd  : "\u001B[22m",
-                        charStart: "\u001B[1m",
-                        lineEnd  : "\u001B[39m",
-                        lineStart: "\u001B[31m"
+                        charEnd  : "\u001b[22m",
+                        charStart: "\u001b[1m",
+                        lineEnd  : "\u001b[39m",
+                        lineStart: "\u001b[31m"
                     },
                     filepath: {
-                        end  : "\u001B[39m",
-                        start: "\u001B[36m"
+                        end  : "\u001b[39m",
+                        start: "\u001b[36m"
                     },
                     ins     : {
-                        charEnd  : "\u001B[22m",
-                        charStart: "\u001B[1m",
-                        lineEnd  : "\u001B[39m",
-                        lineStart: "\u001B[32m"
+                        charEnd  : "\u001b[22m",
+                        charStart: "\u001b[1m",
+                        lineEnd  : "\u001b[39m",
+                        lineStart: "\u001b[32m"
                     }
                 };
             options.mode    = "diff";
@@ -318,7 +318,7 @@
                                 }
                                 if (output === correct[a][1]) {
                                     filecount += 1;
-                                    console.log(humantime(false) + "\u001B[32mPretty Diff is good with file " + filecount + ":\u001B[39m " + correct[a][0]);
+                                    console.log(humantime(false) + "\u001B[32mPass " + filecount + ":\u001B[39m " + correct[a][0]);
                                     if (a === len - 1) {
                                         return next();
                                     }
@@ -2170,8 +2170,8 @@
                                                         "mode:\"diff\" diff:\"<a><b> <d/>    </b></a>\" diffcli:true",
                                             name  : "Test diffcli option",
                                             verify: "\nScreen input with 1 difference\n\n\u001B[36mLine: 3\u001B[39m\n<a>\n    <b>\n" +
-                                                    "\u001B[31m        <\u001B[1mc\u001B[22m/>\u001B[39m\n\u001B[32m        <\u001B[m" +
-                                                    "d\u001B[22m/>\u001B[39m\n    </b>\n</a>"
+                                                    "\u001B[31m        <\u001B[1mc\u001B[22m/>\u001B[39m\n\u001B[32m        <\u001B[" +
+                                                    "1md\u001B[22m/>\u001B[39m\n    </b>\n</a>"
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa1.txt\" readmethod:\"filesc" +
                                                         "reen\" mode:\"diff\" diff:\"test/simulation/testa.txt\"",

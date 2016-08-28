@@ -1116,7 +1116,7 @@
         var b = c.createElement("div");
         b.style.display = "none",
         b.innerHTML     = "   <link/><table></table><a href='/a' style='color:red;float:left;opacity:.55;'>" +
-                              "a</a><input type='checkbox'/>";
+                             "a</a><input type='checkbox'/>";
         var e = b.getElementsByTagName("*"),
             f = b.getElementsByTagName("a")[0],
             g = c.createElement("select"),
@@ -1209,7 +1209,7 @@
                         .removeChild(a)
                         .style
                         .display = "none",
-                    a            = e = null;
+                    a             = e = null;
                 }
             });
             var n = function (a) {
@@ -2371,8 +2371,8 @@
             d.isFunction(e) && (f = e, e = b),
             a = (a || "").split(" ");
             while ((h = a[i++]) != null) {
-                j = p.exec(h),
-                k = "",
+                j       = p.exec(h),
+                k       = "",
                 j && (k = j[0], h = h.replace(p, ""));
                 if (h === "hover") {
                     a.push("mouseenter" + k, "mouseleave" + k);
@@ -2547,8 +2547,8 @@
                         ? n = p(j)
                         : u = !1;
                     while (x.length) {
-                        r = x.pop(),
-                        s = r,
+                        r   = x.pop(),
+                        s   = r,
                         l.relative[r]
                             ? s = x.pop()
                             : r = "",
@@ -4437,13 +4437,13 @@
                             a < 0 && (a = 0);
                         }
                     }
-                    u.status = a,
+                    u.status     = a,
                     u.statusText = c,
                     q
                         ? h.resolveWith(f, [t, c, u])
                         : h.rejectWith(f, [u, c, v]),
                     u.statusCode(j),
-                    j = b,
+                    j            = b,
                     s && g.trigger("ajax" + (q
                         ? "Success"
                         : "Error"), [
@@ -4580,7 +4580,7 @@
                 l["Content-Type"] = e.contentType;
             }
             e.ifModified && (k = k || e.url, d.lastModified[k] && (l["If-Modified-Since"] = d.lastModified[k]), d.etag[k] && (l["If-None-Match"] = d.etag[k])),
-            l.Accept = e.dataTypes[0] && e.accepts[e.dataTypes[0]]
+            l.Accept     = e.dataTypes[0] && e.accepts[e.dataTypes[0]]
                 ? e.accepts[e.dataTypes[0]] + (e.dataTypes[0] !== "*"
                     ? ", */*; q=0.01"
                     : "")
@@ -5047,8 +5047,8 @@
         },
         fx    : function (a, b, c) {
             this.options = b,
-            this.elem = a,
-            this.prop = c,
+            this.elem    = a,
+            this.prop    = c,
             b.orig || (b.orig = {});
         },
         speed : function (a, b, c) {
@@ -5327,9 +5327,9 @@
                 h,
                 i = parseFloat(d.css(a, "marginTop")) || 0,
                 j = "<div style='position:absolute;top:0;left:0;margin:0;border:5px solid #000;paddin" +
-                        "g:0;width:1px;height:1px;'><div></div></div><table style='position:absolute;top:" +
-                        "0;left:0;margin:0;border:5px solid #000;padding:0;width:1px;height:1px;' cellpad" +
-                        "ding='0' cellspacing='0'><tr><td></td></tr></table>";
+                      "g:0;width:1px;height:1px;'><div></div></div><table style='position:absolute;top:" +
+                      "0;left:0;margin:0;border:5px solid #000;padding:0;width:1px;height:1px;' cellpad" +
+                      "ding='0' cellspacing='0'><tr><td></td></tr></table>";
             d.extend(b.style, {
                 border    : 0,
                 height    : "1px",
@@ -9376,7 +9376,7 @@ jQuery.cookie = function (name, value, options) {
             case "Z":
             case "ZZ":
                 e.isUTC = !0,
-                f = (b + "").match(z),
+                f       = (b + "").match(z),
                 f && f[1] && (e.tzh =~~ f[1]),
                 f && f[2] && (e.tzm =~~ f[2]),
                 f && f[0] === "+" && (e.tzh = -e.tzh, e.tzm = -e.tzm)

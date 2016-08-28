@@ -1,0 +1,38 @@
+var a = 1;
+function combinor<T>(...rest: T[]): T {
+	return rest.reduce((previous: T, current: T) => {
+		return <any> previous + <any> current;
+	}, rest[0] || null);
+	const strs = combinor<string>('one', 'two');
+
+	const nums = combinor<number>(1, 2);
+}
+
+function asdf() {
+	export interface Drawable {
+		id: number;
+		name?: string;
+		draw: (target: Node) => void;
+	}
+
+	class Rect implements Drawable {
+		id: number;
+		draw(target: Node) {}
+	}
+
+	const thing: Drawable = {
+		id: 0,
+		draw: function (target: Node) { }
+	};
+}
+
+function qwer() {
+	interface DrawMethod {
+		(target: Node): void;
+		(target: number, options?: Object): void;
+	}
+
+	let method: DrawMethod = function(target: any) { };
+
+	let anotherMethod: DrawMethod = function(target: any, options?: Object) { };
+}
