@@ -1,5 +1,41 @@
 # Pretty Diff change log
 
+## v2.1.5
+
+### Defect resolutions
+* Fixed #346 - Fixed CSS defect where `selector :first-child` becomes `selector:first-child`
+
+### Enhancement
+* #202, #344 - Adding support for TypeScript, TSX, Java, and C# languages with unit tests
+
+## v2.1.4
+* bug fixes
+
+## v2.1.3
+
+### Defect resolutions
+* Fixed #338 - Fixed defective support of SCSS maps
+* Fixed #340 - Fixed a collision with Twig and Liquid syntaxes
+
+### Enhancement
+* #334 - Centralized and isolated options management
+
+## v2.1.1
+
+### Defect resolutions
+* Fixed #330 - Corrupted markup parsing when encountering style properties parsed as JavaScript regex
+* Fixed #331 - Empty lines scrubbed from CSS prior to *@media* declarations
+* Fixed #332 - Broken code on an edge case with diff option `diffspaceignore`
+* Fixed #333 - `summaryonly` diff option was broken
+
+### Enhancement
+* #334 - Advanced markup attribute parsing so that attributes can contain child tags with quoted attributes identical to the quotes encapsulating this child tag without collision and without regression
+
+### New Options
+* **endcomma** - Prior existing option `endcomma` converted from boolean to string to add value `multiline` so that terminal commas are only added to arrays and objects spanning multiple lines. issue #335
+* **brace_style** - Adds a new option similar to JSBeautify's brace_style option. issue #326
+
+
 ## v2.1.0
 
 ### Defect resolutions

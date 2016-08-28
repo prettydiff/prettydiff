@@ -1,4 +1,4 @@
-/*prettydiff.com api.topcoms: true, api.inchar: " ", api.insize: 4, api.vertical: true */
+/*prettydiff.com topcoms: true, inchar: " ", insize: 4, vertical: true */
 /*global ace, ActiveXObject, ArrayBuffer, AudioContext, console, document, FileReader, global, localStorage, location, navigator, setTimeout, Uint8Array, window, XMLHttpRequest*/
 /*jshint laxbreak: true*/
 /*jslint for: true, this: true*/
@@ -602,6 +602,33 @@ global.prettydiff.meta = {
             }
             value = pd.data.langvalue;
             if (pd.test.ace === true) {
+                if (all === true || pd.data.mode === "anal") {
+                    if (all === true && lang === "") {
+                        value             = auto(pd.ace.analIn.getValue(), defaultt);
+                        pd.data.langvalue = value;
+                    }
+                    if (value[0] === "tss") {
+                        value[0] = "javascript";
+                    } else if (value[0] === "dustjs") {
+                        value[0] = "html";
+                    } else if (value[0] === "markup") {
+                        value[0] = "xml";
+                    }
+                    if (pd.data.node.codeAnalIn !== null) {
+                        pd
+                            .ace
+                            .analIn
+                            .getSession()
+                            .setMode("ace/mode/" + value[0]);
+                    }
+                    if (pd.data.node.codeAnalOut !== null) {
+                        pd
+                            .ace
+                            .analOut
+                            .getSession()
+                            .setMode("ace/mode/" + value[0]);
+                    }
+                }
                 if (all === true || pd.data.mode === "beau") {
                     if (all === true && lang === "") {
                         value             = auto(pd.ace.beauIn.getValue(), defaultt);
@@ -1017,6 +1044,22 @@ global.prettydiff.meta = {
                     .ace
                     .minnOut
                     .setTheme(theme);
+                pd
+                    .ace
+                    .parsIn
+                    .setTheme(theme);
+                pd
+                    .ace
+                    .parsOut
+                    .setTheme(theme);
+                pd
+                    .ace
+                    .analIn
+                    .setTheme(theme);
+                pd
+                    .ace
+                    .analOut
+                    .setTheme(theme);
             }
             pd.data.color = color;
             if (logo !== null) {
@@ -1024,10 +1067,8 @@ global.prettydiff.meta = {
                     logoColor = "664";
                 } else if (color === "shadow") {
                     logoColor = "999";
-                } else if (color === "white") {
-                    logoColor = "666";
                 } else {
-                    logoColor = "000";
+                    logoColor = "666";
                 }
                 logo.style.borderColor = "#" + logoColor;
                 logo
@@ -3076,7 +3117,7 @@ global.prettydiff.meta = {
                     }
                     if (pd.data.node.report.code.box !== null) {
                         if (api.jsscope === "report" && pd.data.langvalue[1] === "javascript" && output.indexOf("Error:") !== 0) {
-                            pd.data.node.report.code.body.innerHTML = pd.data.node.report.code.body.innerHTML + output;
+                            pd.data.node.report.code.body.innerHTML = output;
                             if (pd.data.node.report.code.body.style.display === "none") {
                                 pd
                                     .event
@@ -4191,6 +4232,16 @@ global.prettydiff.meta = {
                 api.dustjs = (dustjs !== null && dustjs.checked === true);
                 api.html   = (html !== null && html.checked === true);
                 api.jekyll = (jekyll !== null && jekyll.checked === true);
+            }());
+        }
+        if (pd.param !== undefined) {
+            (function dom__event_recycle_parameters() {
+                var keys = Object.keys(pd.param),
+                    a = 0,
+                    len = keys.length;
+                for (a = 0; a < len; a += 1) {
+                    api[keys[a]] = pd.param[keys[a]];
+                }
             }());
         }
         if (domain.test(api.source) === true && pd.test.xhr === true) {
@@ -5639,6 +5690,7 @@ global.prettydiff.meta = {
                 delay();
             };
         if (page === "webtool") {
+            document.consolePrint = global.prettydiff.options.functions.consolePrint;
             pd.data.node.report.feed.body = (pd.data.node.report.feed.box === null)
                 ? null
                 : pd
@@ -5739,6 +5791,9 @@ global.prettydiff.meta = {
             pd
                 .app
                 .fixHeight();
+            if (location.href.indexOf("ignore") > 0 && pd.id("headline") !== null) {
+                pd.id("headline").innerHTML = "<h2>BETA TEST SITE.</h2> <p>Official Pretty Diff is at <a href=\"http://prettydiff.com/\">http://prettydiff.com/</a></p> <span class=\"clear\"></span>";
+            }
             if (pd.data.node.announce !== null) {
                 pd.data.announcetext = pd.data.node.announce.innerHTML;
             }
@@ -6475,45 +6530,56 @@ global.prettydiff.meta = {
                             .href
                             .split("?")[1]
                             .split("&"),
+                        param    = [],
                         paramLen = params.length,
-                        value    = "",
                         source   = "",
                         diff     = "";
+                    pd.param = {};
                     for (b = 0; b < paramLen; b += 1) {
-                        if (params[b].indexOf("m=") === 0) {
-                            value = params[b]
-                                .toLowerCase()
-                                .substr(2);
-                            if (value === "beautify" && pd.data.node.modeBeau !== null) {
+                        param = params[b].split("=");
+                        if (param.length > 1) {
+                            param[1] = param[1].toLowerCase();
+                        } else {
+                            param.push("");
+                        }
+                        if (param[0] === "m" || param[0] === "mode") {
+                            param[0] = "mode";
+                            if (param[1] === "beautify" && pd.data.node.modeBeau !== null) {
                                 pd
                                     .event
                                     .modeToggle(pd.data.node.modeBeau);
                                 pd.data.node.modeBeau.checked = true;
-                            } else if (value === "minify" && pd.data.node.modeMinn !== null) {
+                            } else if (param[1] === "minify" && pd.data.node.modeMinn !== null) {
                                 pd
                                     .event
                                     .modeToggle(pd.data.node.modeMinn);
                                 pd.data.node.modeMinn.checked = true;
-                            } else if (value === "diff" && pd.data.node.modeDiff !== null) {
+                            } else if (param[1] === "diff" && pd.data.node.modeDiff !== null) {
                                 pd
                                     .event
                                     .modeToggle(pd.data.node.modeDiff);
                                 pd.data.node.modeDiff.checked = true;
-                            } else if (value === "parse" && pd.data.node.modePars !== null) {
+                            } else if (param[1] === "parse" && pd.data.node.modePars !== null) {
                                 pd
                                     .event
                                     .modeToggle(pd.data.node.modePars);
                                 pd.data.node.modePars.checked = true;
-                            } else if (value === "analysis" && pd.data.node.modeAnal !== null) {
+                            } else if (param[1] === "analysis" && pd.data.node.modeAnal !== null) {
                                 pd
                                     .event
                                     .modeToggle(pd.data.node.modeAnal);
                                 pd.data.node.modeAnal.checked = true;
+                            } else {
+                                params.splice(b, 1);
+                                b -= 1;
+                                paramLen -= 1;
                             }
-                        } else if (params[b].indexOf("s=") === 0) {
-                            source = params[b].substr(2);
-                        } else if (params[b].indexOf("d=") === 0 && pd.data.node.codeDiffNew !== null) {
-                            diff = params[b].substr(2);
+                        } else if (param[0] === "s" || param[1] === "source") {
+                            param[0] = "source";
+                            source = param[1];
+                        } else if ((param[0] === "d" || param[1] === "diff") && pd.data.node.codeDiffNew !== null) {
+                            param[0] = "diff";
+                            diff = param[1];
                             if (pd.data.node.codeDiffNew !== null) {
                                 if (pd.test.ace === true) {
                                     pd
@@ -6528,28 +6594,26 @@ global.prettydiff.meta = {
                                     pd.data.node.codeDiffNew.value = diff;
                                 }
                             }
-                        } else if (params[b].indexOf("l=") === 0 && pd.data.node.lang !== null) {
-                            value = params[b]
-                                .toLowerCase()
-                                .substr(2);
-                            if (value === "text" || value === "plain" || value === "plaintext") {
-                                value = "text";
+                        } else if ((param[0] === "l" || param[0] === "lang" || param[0] === "language") && pd.data.node.lang !== null) {
+                            param[0] = "lang";
+                            if (param[1] === "text" || param[1] === "plain" || param[1] === "plaintext") {
+                                param[1] = "text";
                                 pd
                                     .event
                                     .modeToggle(pd.data.node.modeDiff);
-                            } else if (value === "js" || value === "") {
-                                value = "javascript";
-                            } else if (value === "markup") {
-                                value = "xml";
-                            } else if (value === "jstl") {
-                                value = "jsp";
-                            } else if (value === "erb" || value === "ejs") {
-                                value = "html_ruby";
-                            } else if (value === "tss" || value === "titanium") {
-                                value = "tss";
+                            } else if (param[1] === "js" || param[1] === "") {
+                                param[1] = "javascript";
+                            } else if (param[1] === "markup") {
+                                param[1] = "xml";
+                            } else if (param[1] === "jstl") {
+                                param[1] = "jsp";
+                            } else if (param[1] === "erb" || param[1] === "ejs") {
+                                param[1] = "html_ruby";
+                            } else if (param[1] === "tss" || param[1] === "titanium") {
+                                param[1] = "tss";
                             }
                             for (c = options.length - 1; c > -1; c -= 1) {
-                                if (options[c].value === value) {
+                                if (options[c].value === param[1]) {
                                     pd.data.node.lang.selectedIndex = c;
                                     break;
                                 }
@@ -6559,62 +6623,60 @@ global.prettydiff.meta = {
                                     .ace
                                     .diffBase
                                     .getSession()
-                                    .setMode("ace/mode/" + value);
+                                    .setMode("ace/mode/" + param[1]);
                                 pd
                                     .ace
                                     .diffNew
                                     .getSession()
-                                    .setMode("ace/mode/" + value);
+                                    .setMode("ace/mode/" + param[1]);
                                 pd
                                     .ace
                                     .beauIn
                                     .getSession()
-                                    .setMode("ace/mode/" + value);
+                                    .setMode("ace/mode/" + param[1]);
                                 pd
                                     .ace
                                     .beauOut
                                     .getSession()
-                                    .setMode("ace/mode/" + value);
+                                    .setMode("ace/mode/" + param[1]);
                                 pd
                                     .ace
                                     .minnIn
                                     .getSession()
-                                    .setMode("ace/mode/" + value);
+                                    .setMode("ace/mode/" + param[1]);
                                 pd
                                     .ace
                                     .minnOut
                                     .getSession()
-                                    .setMode("ace/mode/" + value);
+                                    .setMode("ace/mode/" + param[1]);
                                 pd
                                     .ace
                                     .parsIn
                                     .getSession()
-                                    .setMode("ace/mode/" + value);
+                                    .setMode("ace/mode/" + param[1]);
                                 pd
                                     .ace
                                     .parsOut
                                     .getSession()
-                                    .setMode("ace/mode/" + value);
+                                    .setMode("ace/mode/" + param[1]);
                                 pd
                                     .ace
                                     .analIn
                                     .getSession()
-                                    .setMode("ace/mode/" + value);
+                                    .setMode("ace/mode/" + param[1]);
                                 pd
                                     .ace
                                     .analOut
                                     .getSession()
-                                    .setMode("ace/mode/" + value);
+                                    .setMode("ace/mode/" + param[1]);
                             }
                             pd
                                 .event
                                 .langOps(pd.data.node.lang);
-                        } else if (params[b].indexOf("c=") === 0) {
-                            value = params[b]
-                                .toLowerCase()
-                                .substr(2);
+                        } else if (param[0] === "c" || param[0] === "color") {
+                            param[0] = "color";
                             for (c = colors.length - 1; c > -1; c -= 1) {
-                                if (colors[c].innerHTML.toLowerCase() === value) {
+                                if (colors[c].innerHTML.toLowerCase() === param[1]) {
                                     color.selectedIndex = c;
                                     pd
                                         .event
@@ -6622,19 +6684,28 @@ global.prettydiff.meta = {
                                     break;
                                 }
                             }
-                        } else if (params[b].indexOf("jsscope") === 0) {
+                            if (c < 0) {
+                                params.splice(b, 1);
+                                b -= 1;
+                                paramLen -= 1;
+                            }
+                        } else if (param[0] === "jsscope") {
+                            param[1] = "true";
                             if (pd.data.node.jsscope !== null) {
                                 pd.data.node.jsscope.checked = true;
                             }
                             pd
                                 .app
                                 .hideOutput(pd.data.node.jsscope);
-                        } else if (params[b].indexOf("jscorrect") === 0 || params[b].indexOf("correct") === 0) {
+                        } else if (param[0] === "jscorrect" || param[0] === "correct") {
+                            param[0] = "correct";
+                            param[1] = "true";
                             node = pd.id("jscorrect-yes");
                             if (node !== null) {
                                 node.checked = true;
                             }
-                        } else if (params[b].indexOf("html") === 0) {
+                        } else if (param[0] === "html") {
+                            param[1] = "true";
                             node = pd.id("html-yes");
                             if (node !== null) {
                                 pd
@@ -6647,9 +6718,6 @@ global.prettydiff.meta = {
                                     .app
                                     .options(node);
                             }
-                            value = params[b]
-                                .toLowerCase()
-                                .substr(2);
                             for (c = options.length - 1; c > -1; c -= 1) {
                                 if (options[c].value === "html") {
                                     pd.data.node.lang.selectedIndex = c;
@@ -6702,6 +6770,7 @@ global.prettydiff.meta = {
                                     .setMode("ace/mode/html");
                             }
                         }
+                        pd.param[param[0]] = param[1];
                     }
                     if (source !== "") {
                         if (pd.data.node.codeBeauIn !== null && pd.data.mode === "beau") {
