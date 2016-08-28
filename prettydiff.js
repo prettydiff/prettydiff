@@ -413,25 +413,25 @@
             ace: 160307
         },
         api          : {
-            dom      : 160816, //dom.js
+            dom      : 160827, //dom.js
             nodeLocal: 160816 //node-local.js
         },
         css          : 160814, //css files
-        csspretty    : 160816, //csspretty lib
+        csspretty    : 160827, //csspretty lib
         csvpretty    : 160816, //csvpretty lib
         diffview     : 160816, //diffview lib
-        documentation: 160814, //documentation.xhtml
+        documentation: 160827, //documentation.xhtml
         finalFile    : 160816, //HTML report generator
-        jspretty     : 160816, //jspretty lib
-        language     : 160816, //language lib
+        jspretty     : 160827, //jspretty lib
+        language     : 160827, //language lib
         latest       : 0,
         lint         : 160816, //unit test and lint automation as test/lint.js
         markuppretty : 160816, //markuppretty lib
-        options      : 160816, //options management
+        options      : 160827, //options management
         prettydiff   : 160816, //this file
         safeSort     : 160816, //safeSort lib
         version      : "2.1.5", //version number
-        webtool      : 160814
+        webtool      : 160827
     };
     global.prettydiff.edition.latest = (function edition_latest() {
         return Math.max(global.prettydiff.edition.css, global.prettydiff.edition.csspretty, global.prettydiff.edition.csvpretty, global.prettydiff.edition.diffview, global.prettydiff.edition.documentation, global.prettydiff.edition.finalFile, global.prettydiff.edition.jspretty, global.prettydiff.edition.language, global.prettydiff.edition.markuppretty, global.prettydiff.edition.options, global.prettydiff.edition.prettydiff, global.prettydiff.edition.webtool, global.prettydiff.edition.api.dom, global.prettydiff.edition.api.nodeLocal);
