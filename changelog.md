@@ -1,5 +1,9 @@
 # Pretty Diff change log
 
+## v2.1.6
+
+* Fixed a defect with the guide pages
+
 ## v2.1.5
 
 ### Defect resolutions

@@ -101,7 +101,16 @@
                                 <li>
                                     <a href="#howto-useit">Use the parsed output</a>
                                 </li>
+                                <li>
+                                    <a href="#howto-structure">Define structures</a>
+                                </li>
+                                <li>
+                                    <a href="#howto-extend">Extend the parser</a>
+                                </li>
                             </ol>
+                        </li>
+                        <li>
+                            <a href="#enjoyment">Enjoyment and fulfillment</a>
                         </li>
                     </ol>
                 </div>
@@ -397,9 +406,154 @@
                             element, JavaScript code structure, and more. These additional arrays provide
                             data immediately without need for additional parsing steps.</p>
                     </div>
+                    <div class="segment" id="howto-structure">
+                        <h4>Define structures</h4>
+                        <p>In addition to describing tokens by data type it is also frequently necessary
+                            to describe them by the current structure in the application code. In markup
+                            based languages there are parent elements and child elements, so a given
+                            element's structure can be described by a parent element's tag name. In many
+                            programming languages this distinction is less clear.</p>
+                        <p>For languages that use a C language based syntax an easy way to think about
+                            is in terms of matching start and end delimiters comprised of
+                            <em>(</em>,
+                            <em>{</em>,
+                            <em>[</em>,
+                            <em>&lt;</em>
+                            and
+                            <em>)</em>,
+                            <em>}</em>,
+                            <em>]</em>,
+                            <em>&gt;</em>
+                            respectively. The C language syntax family comprises JavaScript, Java, C#,
+                            TypeScript, and many other languages. A structure is defined by the delimiter
+                            character and context rules in a given language. For instance the
+                            <em>[</em>
+                            and
+                            <em>]</em>
+                            typically describe a list or array structure, but in C# it can also describe a
+                            data type attribute given the context
+                            <em>[</em>, word type, optional white space, and
+                            <em>:</em>
+                            (a colon). The easiest way to think about it is that you always know where you
+                            are in parsing the code, what has already been parsed, and some idea of what is
+                            coming. Always keeping that simple rule in mind helps prevent elaborate
+                            conventions from distracting the simple ideas of parsing structures with
+                            precision without guessing or rework.</p>
+                        <p>Some structures allow context rules and conventions not permitted in other
+                            various structures. It is helpful to describe structures during the initial
+                            lexing and parsing process to allow decisions later without introducing an
+                            additional parsing step. An example is that it may be desirable to identify
+                            references, values, and their assignment with distinction which can vary in
+                            syntax by the containing structure even within a single language.</p>
+                    </div>
+                    <div class="segment" id="howto-extend">
+                        <h4>Extend the parser</h4>
+                        <p>A well written parser is extensible, which means additional supplimental
+                            rules can be added later to allow new features at minimal collision with
+                            existing features. Before a parser can be extensible it has to be sturdy and
+                            confident in its current target language and conventions. The addition of new
+                            rules, features, or even languages dramatically increases the risk of errors and
+                            malformed output by the parser. Seek out diverse code examples and integrate
+                            them into some form to test automation. Constantly seek to discover input that
+                            will break the parser or output corrupted results. Once a corrupting code sample
+                            is discovered ensure it is added to test automation as a test unit.</p>
+                        <p>A general rule is to define data type names as specifically and precisely as
+                            possible in the parser, perhaps even more specifically than the current need
+                            demands. When writing a parser all the given edge cases and collisions of
+                            various features of the target language likely aren't known. Unfortunately, many
+                            of these edge cases will be discovered in production once error reports surface
+                            from users. This is unfortunately true even for the most widely used of parsers.
+                            Extreme care for precision, even when currently unnecessary, helps mitigate some
+                            of these unknown errors.</p>
+                        <p>Another general rule is to perceive the code in negatives, as in
+                            <em>what can't or shouldn't be done</em>. Thinking about the code's decisions in
+                            a more pessimistic view is a key way to limit risk by continously focusing on
+                            predictable operations in the face of unknown and diverse input. This form of
+                            thinking reenforces the idea that rules must be specific and not allow
+                            deviations from a desired predictable state of output. As new features are added
+                            think about them in terms of what they shouldn't do. The rules that define a new
+                            feature will likely be simple, but ensuring their presence does not open
+                            regression or complicate maintenance with extended complexity demands some
+                            special care and discipline.</p>
+                        <p>Since code parsing is comprised by a series of simple and mundane tasks with
+                            the primary goals of sturdiness and performance plus a distant secondary goal of
+                            extensibility the code tends to be rather boring. Imperative coding styles
+                            appear to work best for this kind of work. The end result for the code author is
+                            all about ensuring the code is as predictable as possible and contains the
+                            fewest instructions possible. Fewer instructions means less code to maintain or
+                            test (less developer time) and fewer things for the computer to evaluate
+                            (performance).</p>
+                    </div>
+                </div>
+                <div class="segment" id="enjoyment">
+                    <h3>Enjoyment and fulfillment</h3>
+                    <p>Writing parsers isn't fun and exciting like writing the next hot video game.
+                        It probably won't unlock the keys to the next major computer science
+                        breakthrough. Writing parsers will, however, make you a better programmer.
+                        Writing parsers will infuse in you a disciplined, conservative, and humble
+                        approach to programming. It is often a thankless effort hidden beneath layers of
+                        rules and utilities not visible to the end user. When you do well few people
+                        will notice. When you break a user's code many will notice and few will forgive
+                        you. Writing parsers is not the path to heroism.</p>
+                    <p>I believe writing parsers has made me a better programmer in ways many other
+                        programming disciplines could not. I believe I have learned qualities and
+                        decisions that differ from many of my software developer peers because the goals
+                        are different.</p>
+                    <p>Application predictability is important. Unpredictable outputs often results
+                        in harm. Helpful tooling and exciting or clever new conventions and features
+                        won't make the code more predictable. The only things that make code more
+                        predictable are fewer instructions, clearer flow control paths, separation of
+                        concerns, and increased testing. The end result is boring stuff and code put on
+                        a diet. Dieting in code is often, for many developers, an unacceptable
+                        inconvenience much like dieting in real life.</p>
+                    <p>You are on your own. There might be a team you can turn to help answer
+                        questions, or an adviser to guide you through tough decisions, or there might
+                        even be a helpful toolkit to assist with testing. None of those things will
+                        solve hard problems for you. You will be forced to make decisions. Many of these
+                        decisions could mean catastrophic failure that breaks a user's code. Many times
+                        you won't have any idea. There isn't going to be a magical framwork out there to
+                        make decisions for you. There is no solution in a box to write APIs for you or
+                        manage expectations. You are on your own. You have to make hard decisions and
+                        when you break a user's code, because it will happen, you have to own those
+                        consequences and seek resolution.</p>
+                    <p>Simplicity is different than easiness. Easy means lower developer effort for
+                        the developer writing the code, but simplicity means less effort for everybody
+                        else to include your users and the processing computer. These terms could not be
+                        more different. The job of a competent developer is to make that distinction and
+                        solve for it as directly as possible. Nobody will forgive you when you fail.
+                        Your users will, however, recognize the additional effort to compensate for the
+                        external failures around you if that means increased application dependability
+                        or user fulfillment.</p>
+                    <p>Superior programmers are simply people who iterate faster. There is no way to
+                        know if you have solved a given problem until you have tested the solution. Once
+                        the problem is solved you won't know if you have created additional problems or
+                        regression issues without running additional tests. The pattern here is to
+                        attempt a solution and then attempt to verify the solution against various
+                        validations. The key to success is not some brilliant vision or the magic
+                        ability to avoid failure. The key to success is simply speed. There is clearly
+                        more to it than that, like a diversity of reliable test cases, but in the end it
+                        always comes down to speed. The best way to think about this is that a developer
+                        who works 10 times faster than the next developer is allowed to fail 10 times
+                        more frequently before releasing code into production. The way to achieve
+                        superior speed is to access the problems as directly as possible. Each barrier
+                        between you and the problem will slow you down. Common barriers are too many
+                        tools, abstractions, build processes, compile steps, frameworks, missing
+                        documentation, unclear flow control, and so forth. Increased speed pays
+                        unforeseeable compounded dividends over time as you learn to further increase
+                        your speed with more precise forms of automation, organization, and planning.</p>
+                    <p>Writing parsers is actually enjoyable and fulfilling. Over time you notice
+                        that your discipline and development capabilities increase. Your speed
+                        dramatically increases over time as each edge case can quickly consume large
+                        portions of your life and mental health. Your ability to perceive large complex
+                        problems before they occur and address them with simple elegant solutions is
+                        something only you can appreciate, but it applies to many areas of life even
+                        outside of software. Given enough practice your ability to write software
+                        architectures seems to spotanously arise from nothing when really it is the
+                        result of solving many tiny edge cases paired with a modest amount of planning.</p>
                 </div>
             </section>
         </div>
+        <script src="../lib/global.js" type="application/javascript"></script>
         <script src="../api/dom.js" type="application/javascript"></script>
     </body>
 </html>
