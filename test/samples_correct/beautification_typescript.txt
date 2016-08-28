@@ -1,4 +1,4 @@
-/*prettydiff.com typescript:true*/
+var a = 1;
 function combinor<T>(...rest: T[]): T {
     return rest.reduce((previous: T, current: T) => {
         return <any> previous + <any> current;
@@ -13,7 +13,7 @@ function asdf() {
         id   : number;
         name?: string;
         draw : (target: Node) => void;
-    };
+    }
 
     class Rect implements Drawable {
         id: number;

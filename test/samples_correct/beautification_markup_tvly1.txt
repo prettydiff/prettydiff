@@ -8078,8 +8078,8 @@
                                     ? n = p(j)
                                     : u = !1;
                                 while (x.length) {
-                                    r = x.pop(),
-                                    s = r,
+                                    r   = x.pop(),
+                                    s   = r,
                                     l.relative[r]
                                         ? s = x.pop()
                                         : r = "",
@@ -9968,13 +9968,13 @@
                                         a < 0 && (a = 0);
                                     }
                                 }
-                                u.status = a,
+                                u.status     = a,
                                 u.statusText = c,
                                 q
                                     ? h.resolveWith(f, [t, c, u])
                                     : h.rejectWith(f, [u, c, v]),
                                 u.statusCode(j),
-                                j = b,
+                                j            = b,
                                 s && g.trigger("ajax" + (q
                                     ? "Success"
                                     : "Error"), [

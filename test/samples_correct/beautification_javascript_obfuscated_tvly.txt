@@ -2547,8 +2547,8 @@
                         ? n = p(j)
                         : u = !1;
                     while (x.length) {
-                        r = x.pop(),
-                        s = r,
+                        r   = x.pop(),
+                        s   = r,
                         l.relative[r]
                             ? s = x.pop()
                             : r = "",
@@ -4437,13 +4437,13 @@
                             a < 0 && (a = 0);
                         }
                     }
-                    u.status = a,
+                    u.status     = a,
                     u.statusText = c,
                     q
                         ? h.resolveWith(f, [t, c, u])
                         : h.rejectWith(f, [u, c, v]),
                     u.statusCode(j),
-                    j = b,
+                    j            = b,
                     s && g.trigger("ajax" + (q
                         ? "Success"
                         : "Error"), [
@@ -9376,7 +9376,7 @@ jQuery.cookie = function (name, value, options) {
             case "Z":
             case "ZZ":
                 e.isUTC = !0,
-                f = (b + "").match(z),
+                f       = (b + "").match(z),
                 f && f[1] && (e.tzh =~~ f[1]),
                 f && f[2] && (e.tzm =~~ f[2]),
                 f && f[0] === "+" && (e.tzh = -e.tzh, e.tzm = -e.tzm)
