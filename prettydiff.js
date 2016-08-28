@@ -420,7 +420,7 @@
         csspretty    : 160827, //csspretty lib
         csvpretty    : 160816, //csvpretty lib
         diffview     : 160816, //diffview lib
-        documentation: 160827, //documentation.xhtml
+        documentation: 160828, //documentation.xhtml and various guide pages
         finalFile    : 160816, //HTML report generator
         jspretty     : 160827, //jspretty lib
         language     : 160827, //language lib
@@ -430,7 +430,7 @@
         options      : 160827, //options management
         prettydiff   : 160816, //this file
         safeSort     : 160816, //safeSort lib
-        version      : "2.1.5", //version number
+        version      : "2.1.6", //version number
         webtool      : 160827
     };
     global.prettydiff.edition.latest = (function edition_latest() {
