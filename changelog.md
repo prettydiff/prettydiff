@@ -1,8 +1,15 @@
 # Pretty Diff change log
 
+## v2.1.7
+
+### Defect resolutions
+* Fixed #349 - Added curly braces as markup attribute delimiters in support of RiotJS
+
 ## v2.1.6
 
-* Fixed a defect with the guide pages
+### Defect resolutions
+* Fixed a defect in the HTML instructional guides
+>>>>>>> bumping version number for merge
 
 ## v2.1.5
 
