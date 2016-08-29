@@ -426,11 +426,11 @@
         language     : 160827, //language lib
         latest       : 0,
         lint         : 160816, //unit test and lint automation as test/lint.js
-        markuppretty : 160816, //markuppretty lib
+        markuppretty : 160828, //markuppretty lib
         options      : 160827, //options management
         prettydiff   : 160816, //this file
         safeSort     : 160816, //safeSort lib
-        version      : "2.1.6", //version number
+        version      : "2.1.7", //version number
         webtool      : 160827
     };
     global.prettydiff.edition.latest = (function edition_latest() {
