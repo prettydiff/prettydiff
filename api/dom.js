@@ -2578,7 +2578,7 @@ global.prettydiff.meta = {
                 body       = top.getElementsByTagName("div")[0],
                 bodyInner  = body
                     .innerHTML
-                    .replace(/\ xmlns\=("|')http:\/\/www\.w3\.org\/1999\/xhtml("|')/g, ""),
+                    .replace(/\u0020xmlns\=("|')http:\/\/www\.w3\.org\/1999\/xhtml("|')/g, ""),
                 lastChild  = {},
                 content    = [],
                 pageHeight = 0,
@@ -2596,7 +2596,7 @@ global.prettydiff.meta = {
             // added support for Firefox and Opera because they support long URIs.  This
             // extra support allows for local file creation.
             if (anchor === true && button.innerHTML === "S" && reportonly === false) {
-                if (bodyInner === "" || ((/Please\ try\ using\ the\ option\ labeled\ ((&lt;)|<)em((&gt;)|>)Plain\ Text\ \(diff\ only\)((&lt;)|<)\/em((&gt;)|>)\./).test(bodyInner) === true && (/div\ class\=("|')diff("|')/).test(bodyInner) === false)) {
+                if (bodyInner === "" || ((/Please\u0020try\u0020using\u0020the\u0020option\u0020labeled\u0020((&lt;)|<)em((&gt;)|>)Plain\u0020Text\u0020\(diff\u0020only\)((&lt;)|<)\/em((&gt;)|>)\./).test(bodyInner) === true && (/div\u0020class\=("|')diff("|')/).test(bodyInner) === false)) {
                     return false;
                 }
                 if (reportonly === true) {

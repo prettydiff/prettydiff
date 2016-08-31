@@ -1,5 +1,10 @@
 # Pretty Diff change log
 
+## v2.1.8
+
+* Fixed a TypeScript defect that left code with too much indentation.
+* Modified code in support of a JSLint enhancement.
+
 ## v2.1.7
 
 ### Defect resolutions

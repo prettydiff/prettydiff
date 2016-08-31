@@ -171,7 +171,7 @@
                             if (options.mode === "beautify" && options.inchar !== "\t") {
                                 markout[0] = markout[0].replace(/\r?\n[\t]*\u0020\/>/g, "");
                             } else if (options.mode === "diff") {
-                                markout[0] = markout[0].replace(/\r?\n[\t]*\ \/>/g, "");
+                                markout[0] = markout[0].replace(/\r?\n[\t]*\u0020\/>/g, "");
                             }
                             return markout[0];
                         }
@@ -179,7 +179,7 @@
                         if (options.mode === "beautify" && options.inchar !== "\t") {
                             markout = markout.replace(/\r?\n[\t]*\u0020\/>/g, "");
                         } else if (options.mode === "diff") {
-                            markout = markout.replace(/\r?\n[\t]*\ \/>/g, "");
+                            markout = markout.replace(/\r?\n[\t]*\u0020\/>/g, "");
                         }
                         return markout;
                     },
@@ -413,24 +413,24 @@
             ace: 160307
         },
         api          : {
-            dom      : 160827, //dom.js
+            dom      : 160831, //dom.js
             nodeLocal: 160816 //node-local.js
         },
         css          : 160814, //css files
-        csspretty    : 160827, //csspretty lib
+        csspretty    : 160831, //csspretty lib
         csvpretty    : 160816, //csvpretty lib
-        diffview     : 160816, //diffview lib
+        diffview     : 160831, //diffview lib
         documentation: 160828, //documentation.xhtml and various guide pages
         finalFile    : 160816, //HTML report generator
         jspretty     : 160827, //jspretty lib
-        language     : 160827, //language lib
+        language     : 160831, //language lib
         latest       : 0,
-        lint         : 160816, //unit test and lint automation as test/lint.js
-        markuppretty : 160828, //markuppretty lib
-        options      : 160827, //options management
-        prettydiff   : 160816, //this file
+        lint         : 160831, //unit test and lint automation as test/lint.js
+        markuppretty : 160831, //markuppretty lib
+        options      : 160831, //options management
+        prettydiff   : 160831, //this file
         safeSort     : 160816, //safeSort lib
-        version      : "2.1.7", //version number
+        version      : "2.1.8", //version number
         webtool      : 160827
     };
     global.prettydiff.edition.latest = (function edition_latest() {
