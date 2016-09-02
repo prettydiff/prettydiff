@@ -1,5 +1,16 @@
 # Pretty Diff change log
 
+## v2.1.8
+
+### Defect resolutions
+* Fixed #356 - C# code sample defect: binary literal notation, inline comments between `)` and `{` of blocks
+* Fixed #352 - a TypeScript defect that left code with too much indentation.
+
+### Enhancement
+* Fixed #354 - ERB tag indentation
+* Fixed #353 - Upgrading markup attribute parsing to parse values apart from attribute names.
+* Modified code in support of a JSLint enhancement.
+
 ## v2.1.7
 
 ### Defect resolutions

@@ -1,0 +1,22 @@
+enum ActionType { Append, Erase }
+
+interface AppendAction {
+    type: ActionType.Append;
+    text: string;
+}
+
+interface EraseAction {
+    type: ActionType.Erase;
+    numChars: number;
+}
+
+function updateText(currentText: string, action: AppendAction | EraseAction) {
+    if (action.type === ActionType.Append) {
+        // 'action' has type 'AppendAction'
+        return currentText + action.text;
+    }
+    else {
+        // 'action' has type 'EraseAction'
+        return currentText.slice(0, -action.numChars);
+    }
+}

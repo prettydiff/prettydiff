@@ -19,7 +19,7 @@
         <meta content="f23066f9248025f1b2e079c7089ce26f" name="p:domain_verify" />
         <!-- Pinterest -->
         <meta content="aeVxP6zTHeQzT620ipj5+ikXd/VXcdlKoYUJ/C6vVdY=" name="verify-v1" />
-        <META content="016fe886aca30800" name="y_key" />
+        <meta content="016fe886aca30800" name="y_key" />
         <meta content="64067037679" property="fb:page_id" />
         <link href="www.travelocity.com" rel="canonical" />
         <script
@@ -840,12 +840,12 @@
                                         <li>
                                             <div class="xp-b-clearfix">
                                                 <input
-                                                    checked
+                                                    checked="checked"
                                                     class="wizardRadio xp-b-left"
                                                     id="flight-only"
                                                     name="srch"
                                                     type="radio"
-                                                    wizardType="flightOnly" />
+                                                    wizardtype="flightOnly" />
                                                 <label
                                                     class="xp-b-left xp-w-label-lob"
                                                     for="flight-only"
@@ -862,7 +862,7 @@
                                                     id="hot-only"
                                                     name="srch"
                                                     type="radio"
-                                                    wizardType="hotelOnly" />
+                                                    wizardtype="hotelOnly" />
                                                 <label class="xp-b-left xp-w-label-lob" for="hot-only" id="hot-only-label">
                                                     Hotel
                                                 </label>
@@ -875,7 +875,7 @@
                                                     id="car-only"
                                                     name="srch"
                                                     type="radio"
-                                                    wizardType="carOnly" />
+                                                    wizardtype="carOnly" />
                                                 <label class="xp-b-left xp-w-label-lob" for="car-only" id="car-only-label">
                                                     Car
                                                 </label>
@@ -888,7 +888,7 @@
                                                     id="activities-only"
                                                     name="srch"
                                                     type="radio"
-                                                    wizardType="activitiesOnly" />
+                                                    wizardtype="activitiesOnly" />
                                                 <label
                                                     class="xp-b-left xp-w-label-lob"
                                                     for="activities-only"
@@ -904,7 +904,7 @@
                                                     id="cruise-only"
                                                     name="srch"
                                                     type="radio"
-                                                    wizardType="cruiseOnly" />
+                                                    wizardtype="cruiseOnly" />
                                                 <label
                                                     class="xp-b-left xp-w-label-lob"
                                                     for="cruise-only"
@@ -936,7 +936,7 @@
                                                         id="flight-hot"
                                                         name="srch"
                                                         type="radio"
-                                                        wizardType="flightAndHotel" />
+                                                        wizardtype="flightAndHotel" />
                                                     <label class="xp-b-left xp-w-label-lob" for="flight-hot" id="flight-hot-label">
                                                         Flight + Hotel
                                                     </label>
@@ -950,7 +950,7 @@
                                                         id="flight-car"
                                                         name="srch"
                                                         type="radio"
-                                                        wizardType="flightAndCar" />
+                                                        wizardtype="flightAndCar" />
                                                     <label class="xp-b-left xp-w-label-lob" for="flight-car" id="flight-car-label">
                                                         Flight + Car
                                                     </label>
@@ -964,7 +964,7 @@
                                                         id="flight-hot-car"
                                                         name="srch"
                                                         type="radio"
-                                                        wizardType="flightHotelAndCar" />
+                                                        wizardtype="flightHotelAndCar" />
                                                     <label
                                                         class="xp-b-left xp-w-label-lob"
                                                         for="flight-hot-car"
@@ -981,7 +981,7 @@
                                                         id="hot-car"
                                                         name="srch"
                                                         type="radio"
-                                                        wizardType="hotelAndCar" />
+                                                        wizardtype="hotelAndCar" />
                                                     <label class="xp-b-left xp-w-label-lob" for="hot-car" id="hot-car-label">
                                                         Hotel + Car
                                                     </label>
@@ -1022,7 +1022,7 @@
 
                                     <div id="uw_flight_wiz">
 
-                                        <FORM NAME="fltWizFrm" action="/Home.htm" id="fltWizFrm" method="post">
+                                        <form name="fltWizFrm" action="/Home.htm" id="fltWizFrm" method="post">
                                             <input id="action" name="action" type="hidden" value="" />
                                             <input
                                                 id="uw_flight_add_multi_dest_hidden"
@@ -1120,7 +1120,7 @@
                                                                     </span>Leaving from:</label>
                                                                 <input
                                                                     id="uw_flight_origin_input"
-                                                                    maxLength="100"
+                                                                    maxlength="100"
                                                                     required="true"
                                                                     requiredmessage="requiredFieldMessage"
                                                                     type="text"
@@ -1145,7 +1145,7 @@
                                                                     id="uw_flight_dep_date_input"
                                                                     maxlength="12"
                                                                     name="flightSearchWizard_inpDepartureDate"
-                                                                    priorToCurrentDate="true"
+                                                                    priortocurrentdate="true"
                                                                     priortocurrentdatemessage="priorToCurrentDateMessage"
                                                                     required="true"
                                                                     requiredmessage="requiredFieldMessage"
@@ -1251,8 +1251,8 @@
                                                                 <input
                                                                     class="xp-b-clear"
                                                                     id="uw_flight_destination_input"
-                                                                    maxLength="100"
-                                                                    notEqual="uw_flight_origin_input"
+                                                                    maxlength="100"
+                                                                    notequal="uw_flight_origin_input"
                                                                     notequalmessage="notequalmessage"
                                                                     required="true"
                                                                     requiredmessage="requiredFieldMessage"
@@ -1272,7 +1272,7 @@
                                                                 <div class="xp-w-cell-small" id="uw_flight_ret_date">
                                                                     <label for="uw_flight_return_date_input" id="uw_flight_return_date_label">Returning:</label>
                                                                     <input
-                                                                        afterEqual="uw_flight_dep_date_input"
+                                                                        afterequal="uw_flight_dep_date_input"
                                                                         afterequalmessage="dateSequenceMessage"
                                                                         autocomplete="off"
                                                                         date="true"
@@ -1281,7 +1281,7 @@
                                                                         id="uw_flight_return_date_input"
                                                                         maxlength="12"
                                                                         name="flightSearchWizard_inpReturnDate"
-                                                                        priorToCurrentDate="true"
+                                                                        priortocurrentdate="true"
                                                                         priortocurrentdatemessage="priorToCurrentDateMessage"
                                                                         required="true"
                                                                         requiredmessage="requiredFieldMessage"
@@ -2022,16 +2022,16 @@
                                                         <div class="xp-w-cell xp-w-cell-half xp-w-cell-last" id="uw_flight_class_div">
                                                             <label for="uw_flight_class_input" id="uw_flight_class_label">Class:</label>
                                                             <select id="uw_flight_class_input" name="flightSearchWizard_inpFlightClass">
-                                                                <option value=1>
+                                                                <option value="1">
                                                                     First Class
                                                                 </option>
-                                                                <option value=2>
+                                                                <option value="2">
                                                                     Business
                                                                 </option>
                                                                 <option selected="selected" value="3">
                                                                     Economy/Coach
                                                                 </option>
-                                                                <option value=5>
+                                                                <option value="5">
                                                                     Premium Economy
                                                                 </option>
                                                             </select>
@@ -2105,7 +2105,7 @@
                                                         class="xp-b-submit2"
                                                         href="#"
                                                         id="uw_flight_submit_lnk"
-                                                        onClick="try{trackClick(this, 'a', document.getElementById('pageId').value + '.SrchWzd.Flight');}catch(e){}">Search For Flights</a>
+                                                        onclick="try{trackClick(this, 'a', document.getElementById('pageId').value + '.SrchWzd.Flight');}catch(e){}">Search For Flights</a>
                                                     <span class="xp-b-rightSubmit2">
                                                         <!-- -->
                                                     </span>
@@ -2125,18 +2125,18 @@
                                                         class="xp-b-submit2"
                                                         href="#"
                                                         id="uw_flight_fh_submit_lnk"
-                                                        onClick="try{trackClick(this, 'a', document.getElementById('pageId').value + '.SrchWzd.FH');}catch(e){}">Search for Flight+Hotel</a>
+                                                        onclick="try{trackClick(this, 'a', document.getElementById('pageId').value + '.SrchWzd.FH');}catch(e){}">Search for Flight+Hotel</a>
                                                     <span class="xp-b-rightSubmit2">
                                                         <!-- -->
                                                     </span>
                                                 </span>
                                             </p>
-                                        </FORM>
-                                        <FORM
-                                            NAME="flightSearchForm"
+                                        </form>
+                                        <form
+                                            name="flightSearchForm"
                                             action="/Flights-Search"
                                             id="flightSearchForm"
-                                            method="get"></FORM>
+                                            method="get"></form>
                                     </div>
 
                                     <div
@@ -3489,28 +3489,28 @@
                                 <a
                                     class="social_col1"
                                     href="https://www.facebook.com/travelocity"
-                                    onClick="s_exp_trackClick(this,'e','Homepage.Facebook.Icon')"
+                                    onclick="s_exp_trackClick(this,'e','Homepage.Facebook.Icon')"
                                     target="_blank"><img
                                     alt="Facebook icon"
                                     src="http://media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/facebook_68x68.png" /></a>
                                 <a
                                     class="social_col2"
                                     href="https://twitter.com/travelocity"
-                                    onClick="s_exp_trackClick(this,'e','Homepage.Twitter.Icon')"
+                                    onclick="s_exp_trackClick(this,'e','Homepage.Twitter.Icon')"
                                     target="_blank"><img
                                     alt="Twitter icon"
                                     src="http://media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/twitter_68x68.png" /></a>
                                 <a
                                     class="social_col1"
                                     href="https://plus.google.com/+Travelocity"
-                                    onClick="s_exp_trackClick(this,'e','Homepage.GooglePlus.Icon')"
+                                    onclick="s_exp_trackClick(this,'e','Homepage.GooglePlus.Icon')"
                                     target="_blank"><img
                                     alt="Google Plus icon"
                                     src="http://media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/google-plus_68x68.png" /></a>
                                 <a
                                     class="social_col2"
                                     href="http://www.youtube.com/travelocity"
-                                    onClick="s_exp_trackClick(this,'e','Homepage.YouTube.Icon')"
+                                    onclick="s_exp_trackClick(this,'e','Homepage.YouTube.Icon')"
                                     target="_blank"><img
                                     alt="YouTube icon"
                                     src="http://media.travelocitycustomercare.com/media/content/expus/graphics/launch/home/tvly/youtube_68x68.png" /></a>

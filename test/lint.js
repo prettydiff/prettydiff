@@ -224,14 +224,14 @@
                     if (report[4][aa] === "delete" && report[0][aa] !== report[0][aa + 1]) {
                         if (report[1][aa] === "") {
                             report[1][aa] = "(empty line)";
-                        } else if (report[1][aa].replace(/\ +/g, "") === "") {
+                        } else if (report[1][aa].replace(/\u0020+/g, "") === "") {
                             report[1][aa] = "(indentation)";
                         }
                         console.log(colors.del.lineStart + report[1][aa].replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
                     } else if (report[4][aa] === "insert" && report[2][aa] !== report[2][aa + 1]) {
                         if (report[3][aa] === "") {
                             report[3][aa] = "(empty line)";
-                        } else if (report[3][aa].replace(/\ +/g, "") === "") {
+                        } else if (report[3][aa].replace(/\u0020+/g, "") === "") {
                             report[3][aa] = "(indentation)";
                         }
                         console.log(colors.ins.lineStart + report[3][aa].replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
@@ -424,7 +424,7 @@
                                     if (warning.message.indexOf("Unexpected dangling '_'") === 0) {
                                         return;
                                     }
-                                    if ((/Bad\ property\ name\ '\w+_'\./).test(warning.message) === true) {
+                                    if ((/Bad\u0020property\u0020name\u0020'\w+_'\./).test(warning.message) === true) {
                                         return;
                                     }
                                     if (warning.message.indexOf("/*global*/ requires") === 0) {
@@ -749,7 +749,7 @@
                         strmeta            = JSON
                             .stringify(global.prettydiff.meta)
                             .replace(/size":\d+/g, "size\":xxx")
-                            .replace(/\d+\.\d+\ seconds/, "0.000 seconds");
+                            .replace(/\d+\.\d+\u0020seconds/, "0.000 seconds");
                         if (data.replace(/(\s+)$/, "") !== prettydata.replace(/(\s+)$/, "")) {
                             diffFiles("package.json", data, prettydata);
                             errout("\u001B[31mPretty Diff corrupted package.json\u001B[36m");
@@ -819,7 +819,7 @@
                                             check : "node api/node-local.js source:\"<a><b> <c/>    </b></a>\" readmethod:\"screen\" " +
                                                         "mode:\"parse\"",
                                             name  : "Parse markup.",
-                                            verify: "{\"data\":{\"attrs\":[[],[],[],[],[]],\"begin\":[0,0,1,1,0],\"daddy\":[\"root\"," +
+                                            verify: "{\"data\":{\"attrs\":[{},{},{},{},{}],\"begin\":[0,0,1,1,0],\"daddy\":[\"root\"," +
                                                         "\"a\",\"b\",\"b\",\"a\"],\"jscom\":[false,false,false,false,false],\"linen\":[1," +
                                                         "1,1,1,1],\"lines\":[0,0,1,1,0],\"presv\":[false,false,false,false,false],\"token" +
                                                         "\":[\"<a>\",\"<b>\",\"<c/>\",\"</b>\",\"</a>\"],\"types\":[\"start\",\"start\"," +
@@ -2222,7 +2222,7 @@
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"filescr" +
                                                         "een\" mode:\"parse\"",
                                             name  : "Parse markup.",
-                                            verify: "{\"data\":{\"attrs\":[[],[],[],[],[]],\"begin\":[0,0,1,1,0],\"daddy\":[\"root\"," +
+                                            verify: "{\"data\":{\"attrs\":[{},{},{},{},{}],\"begin\":[0,0,1,1,0],\"daddy\":[\"root\"," +
                                                         "\"a\",\"b\",\"b\",\"a\"],\"jscom\":[false,false,false,false,false],\"linen\":[1," +
                                                         "1,1,1,1],\"lines\":[0,0,1,1,0],\"presv\":[false,false,false,false,false],\"token" +
                                                         "\":[\"<a>\",\"<b>\",\"<c/>\",\"</b>\",\"</a>\"],\"types\":[\"start\",\"start\"," +
@@ -3612,7 +3612,7 @@
                                         }, {
                                             check : "cat test/simulation/all/big/samples_correct/beautification_markup_comment.txt",
                                             name  : "check for a deeper file in a subdirectory operation",
-                                            verify: "{\"data\":{\"attrs\":[[],[],[],[],[],[]],\"begin\":[0,0,0,2,2,0],\"daddy\":[\"ro" +
+                                            verify: "{\"data\":{\"attrs\":[{},{},{},{},{},{}],\"begin\":[0,0,0,2,2,0],\"daddy\":[\"ro" +
                                                         "ot\",\"person\",\"person\",\"name\",\"name\",\"person\"],\"jscom\":[false,false," +
                                                         "false,false,false,false],\"linen\":[1,2,3,3,3,4],\"lines\":[0,1,1,0,0,1],\"presv" +
                                                         "\":[false,true,false,false,false,false],\"token\":[\"<person>\",\"<!-- comment -" +
@@ -3665,11 +3665,11 @@
                             if (output.indexOf("node api/node-local.js") === 0) {
                                 output = output + " crlf:\"true\"";
                             }
-                            if ((/^(rm\ (-\w+\ )*)/).test(output) === true) {
-                                output = output.replace(/^(rm\ (-\w+\ )*)/, "powershell.exe -nologo -noprofile -command \"rm ") + " -r -force\"";
+                            if ((/^(rm\u0020(-\w+\u0020)*)/).test(output) === true) {
+                                output = output.replace(/^(rm\u0020(-\w+\u0020)*)/, "powershell.exe -nologo -noprofile -command \"rm ") + " -r -force\"";
                             }
-                            output = output.replace(/^(cat\ )/, "type ");
-                            output = output.replace(/^(ls\ (-\w+\ )*)/, "dir /b ");
+                            output = output.replace(/^(cat\u0020)/, "type ");
+                            output = output.replace(/^(ls\u0020(-\w+\u0020)*)/, "dir /b ");
                         }
                         return output;
                     },
@@ -3899,9 +3899,9 @@
                                             }
                                         };
                                     stdout = stdout.replace(/(\s+)$/, "");
-                                    stdout = stdout.replace(/<strong>Execution\ time:<\/strong>\ <em>([0-9]+\ hours\ )?([0-9]+\ minutes\ )?[0-9]+(\.[0-9]+)?\ seconds\ <\/em>/g, "<strong>Execution time:</strong> <em>0</em>");
-                                    stdout = stdout.replace(/Executed\ in\ ([0-9]+\ hours?\ )?([0-9]+\ minutes?\ )?[0-9]+(\.[0-9]+)?\ seconds?/g, "Executed in");
-                                    stdout = stdout.replace(/\ \d+\ files?\./, " x files.");
+                                    stdout = stdout.replace(/<strong>Execution\u0020time:<\/strong>\u0020<em>([0-9]+\u0020hours\u0020)?([0-9]+\u0020minutes\u0020)?[0-9]+(\.[0-9]+)?\u0020seconds\u0020<\/em>/g, "<strong>Execution time:</strong> <em>0</em>");
+                                    stdout = stdout.replace(/Executed\u0020in\u0020([0-9]+\u0020hours?\u0020)?([0-9]+\u0020minutes?\u0020)?[0-9]+(\.[0-9]+)?\u0020seconds?/g, "Executed in");
+                                    stdout = stdout.replace(/\u0020\d+\u0020files?\./, " x files.");
                                     stdout = stdout.replace(/20\d{6}/, "20999999");
                                     //determine pass/fail status of a given test unit
                                     if (stdout.indexOf("Source file at ") > -1 && stdout.indexOf("is \u001B[31mempty\u001B[39m but the diff file is not.") > 0) {
@@ -3910,7 +3910,7 @@
                                         stdout = stdout.slice(0, stdout.indexOf("Diff file at") + 12) + " - " + stdout.slice(stdout.indexOf("is \u001B[31mempty\u001B[39m but the source file is not."));
                                     }
                                     if (stdout.indexOf("Pretty Diff found 0 differences.") < 0) {
-                                        stdout = stdout.replace(/Pretty\ Diff\ found\ \d+\ differences./, "Pretty Diff found x differences.");
+                                        stdout = stdout.replace(/Pretty\u0020Diff\u0020found\u0020\d+\u0020differences./, "Pretty Diff found x differences.");
                                     }
                                     if (typeof err === "string") {
                                         data.push("fail");

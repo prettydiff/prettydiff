@@ -233,7 +233,7 @@
                                 <a
                                     href="http://travelpn.qualtrics.com/SE/?SID=SV_802MeVVezJbOvVW"
                                     id="feedback"
-                                    onClick="feedback();return false;"
+                                    onclick="feedback();return false;"
                                     rel="nofollow"
                                     title="Feedback">Feedback</a>|</li>
                             <li class="last">
@@ -348,7 +348,7 @@
                     <div id="soc-wrapper">
                         <div class="soc-item">
                             <iframe
-                                allowTransparency="true"
+                                allowtransparency="true"
                                 frameborder="0"
                                 scrolling="no"
                                 src="http://www.facebook.com/plugins/like.php?href=http%3A%2F%2Fwww.facebook.com%2Ftravelocity&amp;send=false&amp;layout=button_count&amp;width=50&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;font&amp;height=21"
@@ -1459,7 +1459,7 @@
                                                         <span class="span-2 cb-best-date">
                                                             <label for="fo_fromdpm">Start:</label>
                                                             <select class="span-2 last" id="fo_fromdpm" name="departure_dt">
-                                                                <option selected value="Jan">Today</option>
+                                                                <option selected="selected" value="Jan">Today</option>
                                                                 <option value="Jan">Jan</option>
                                                                 <option value="Feb">Feb</option>
                                                                 <option value="Mar">Mar</option>
@@ -1540,7 +1540,7 @@
                                                                 <option value="Feb">Feb</option>
                                                                 <option value="Mar">Mar</option>
                                                                 <option value="Apr">Apr</option>
-                                                                <option selected value="May">May</option>
+                                                                <option selected="selected" value="May">May</option>
 
                                                                 <option value="Jun">Jun</option>
                                                                 <option value="Jul">Jul</option>

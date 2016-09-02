@@ -46,9 +46,9 @@
         <h1>
             <svg
                 height="2000.000000pt"
-                preserveAspectRatio="xMidYMid meet"
+                preserveaspectratio="xMidYMid meet"
                 version="1.0"
-                viewBox="0 0 2000.000000 2000.000000"
+                viewbox="0 0 2000.000000 2000.000000"
                 width="2000.000000pt"
                 xmlns="http://www.w3.org/2000/svg">
                 <g
