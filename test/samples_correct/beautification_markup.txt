@@ -85,17 +85,17 @@
 <a>
     <script src="asdf"></script>
 </a>
-<A>
-    <B>1</B>
+<a>
+    <b>1</b>
     <script1>
         b</script1>
     <script>
         q;
     </script>
-    <Script>
+    <script>
         123;
-    </Script>
-</A>
+    </script>
+</a>
 <a>
     <b first="<c:out qwer="rtyu" asdf="zxcv"/> werasdf">
         asdf

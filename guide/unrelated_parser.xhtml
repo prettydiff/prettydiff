@@ -438,9 +438,12 @@
                         <p>Pretty Diff uses two arrays to define structures in its parsers. This keeps
                             the approach to structure consistent between the different parsers and allows
                             descriptions of hierarchy without need for an AST. The Pretty Diff parsers use
-                            an array named
+                            arrays named
                             <strong>depth</strong>
-                            to describe the name of the current structure and an array named
+                            and
+                            <strong>daddy</strong>
+                            (in the case of markup) to describe the name of the current structure and an
+                            array named
                             <strong>begin</strong>
                             that defines the token index where this structure started. Common values, in C
                             based syntax languages, for the depth array include but are not limited to:

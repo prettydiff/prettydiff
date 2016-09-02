@@ -2,7 +2,14 @@
 
 ## v2.1.8
 
-* Fixed a TypeScript defect that left code with too much indentation.
+### Defect resolutions
+* Fixed #356 - massive C# parsing defect
+* Fixed #355 - ERB `<%= %>` tags should not wrap
+* Fixed #354 - ERB tag indentation
+* Fixed #352 - a TypeScript defect that left code with too much indentation.
+
+### Enhancement
+* Fixed #353 - Upgrading markup attribute parsing to parse values apart from value names.
 * Modified code in support of a JSLint enhancement.
 
 ## v2.1.7
