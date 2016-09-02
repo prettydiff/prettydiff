@@ -99,13 +99,16 @@
                                     <a href="#howto-lexer">Write a lexer</a>
                                 </li>
                                 <li>
-                                    <a href="#howto-useit">Use the parsed output</a>
-                                </li>
-                                <li>
                                     <a href="#howto-structure">Define structures</a>
                                 </li>
                                 <li>
-                                    <a href="#howto-extend">Extend the parser</a>
+                                    <a href="#howto-useit">Use the parsed output</a>
+                                </li>
+                                <li>
+                                    <a href="#howto-extend-theory">Extend the parser (in theory)</a>
+                                </li>
+                                <li>
+                                    <a href="#howto-extend-practice">Extend the parser (in practice)</a>
                                 </li>
                             </ol>
                         </li>
@@ -393,19 +396,6 @@
                         <p>Here is what the combined code looks like:</p>
                         <div class='beautify' data-prettydiff-ignore='true'><ol class='count'><li class='fold' title='folds from line 1 to line 33'>- 1</li><li>2</li><li>3</li><li class='fold' title='folds from line 4 to line 30'>- 4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>10</li><li>11</li><li class='fold' title='folds from line 12 to line 24'>- 12</li><li>13</li><li>14</li><li>15</li><li>16</li><li>17</li><li>18</li><li>19</li><li>20</li><li>21</li><li>22</li><li>23</li><li>24</li><li>25</li><li>26</li><li>27</li><li>28</li><li>29</li><li>30</li><li>31</li><li>32</li><li>33</li></ol><ol class='data'><li>var <em class='s0'>myParser</em> = function (<em class='s1'>options</em>) <em class='s1'>{</em><em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>var <em class='s1'>token</em> = [],<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>types</em> = [],<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>    <em class='s1'>parse</em> = function () <em class='s2'>{</em><em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>    var <em class='s2'>data</em>         = <em class='s1'>options</em><em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            .options<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            .input<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            .toString()<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            .split(""),<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        <em class='s2'>len</em>          = <em class='s2'>data</em>.length,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        <em class='s2'>a</em>            = 0,<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        <em class='s2'>commentBlock</em> = function () <em class='s3'>{</em><em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>        var <em class='s3'>comment</em> = [],<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>            <em class='s3'>b</em>       = 0;<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>        for (<em class='s3'>b</em> = 0; <em class='s3'>b</em> &lt; <em class='s2'>len</em>; <em class='s3'>b</em> += 1) {<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>            <em class='s3'>comment</em>.push(<em class='s2'>data</em>[<em class='s3'>b</em>]);<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>            if (<em class='s2'>data</em>[<em class='s3'>b</em>] === "/" &amp;&amp; <em class='s2'>data</em>[<em class='s3'>b</em> - 1] === "*") {<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>                break;<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>            }<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>        }<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>        <em class='s2'>a</em> = <em class='s3'>b</em>;<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>        <em class='s1'>token</em>.push(<em class='s3'>comment</em>.join(""));<em>&#xA;</em></li><li class='l3'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>        <em class='s1'>types</em>.push("comment-block");<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em><em class='l2'>    </em>    <em class='s3'>}</em>;<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>    for (<em class='s2'>a</em> = 0; <em class='s2'>a</em> &lt; <em class='s2'>len</em>; <em class='s2'>a</em> += 1) {<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        if (<em class='s2'>data</em>[<em class='s2'>a</em>] === "/" &amp;&amp; <em class='s2'>data</em>[<em class='s2'>a</em> + 1] === "*") {<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>            <em class='s2'>commentBlock</em>();<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>        }<em>&#xA;</em></li><li class='l2'><em class='l0'>    </em><em class='l1'>    </em>    }<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em><em class='l1'>    </em><em class='s2'>}</em>;<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em><em class='s1'>parse</em>();<em>&#xA;</em></li><li class='l1'><em class='l0'>    </em>return {token: <em class='s1'>token</em>, types: <em class='s1'>types</em>};<em>&#xA;</em></li><li class='l0'><em class='s1'>}</em>;<em>&#xA;</em></li></ol></div>
                     </div>
-                    <div class="segment" id="howto-useit">
-                        <h4>Use the parsed output</h4>
-                        <p>Once the parser completes the parallel arrays will be populated with data. It
-                            is important that these parallel arrays always have the same number of indexes
-                            and each index describes the data at that index of the token array. Knowing this
-                            can save a lot of effort debuggin failures later.</p>
-                        <p>Since the output is merely a couple of arrays the data can be easily iterated
-                            over. The data can also be examined by specific data types through examination
-                            of the types array. Pretty Diff includes several additional parallel arrays for
-                            describing qualities such as white space, markup attributes, markup parent
-                            element, JavaScript code structure, and more. These additional arrays provide
-                            data immediately without need for additional parsing steps.</p>
-                    </div>
                     <div class="segment" id="howto-structure">
                         <h4>Define structures</h4>
                         <p>In addition to describing tokens by data type it is also frequently necessary
@@ -445,9 +435,56 @@
                             additional parsing step. An example is that it may be desirable to identify
                             references, values, and their assignment with distinction which can vary in
                             syntax by the containing structure even within a single language.</p>
+                        <p>Pretty Diff uses two arrays to define structures in its parsers. This keeps
+                            the approach to structure consistent between the different parsers and allows
+                            descriptions of hierarchy without need for an AST. The Pretty Diff parsers use
+                            arrays named
+                            <strong>depth</strong>
+                            and
+                            <strong>daddy</strong>
+                            (in the case of markup) to describe the name of the current structure and an
+                            array named
+                            <strong>begin</strong>
+                            that defines the token index where this structure started. Common values, in C
+                            based syntax languages, for the depth array include but are not limited to:
+                            <em>array</em>,
+                            <em>function</em>,
+                            <em>method</em>,
+                            <em>class</em>,
+                            <em>map</em>,
+                            <em>object</em>,
+                            <em>for</em>,
+                            <em>if</em>,
+                            <em>switch</em>. In the markup parser the depth array values take the tag name
+                            of the parent element. From these arrays an AST or a DOM tree could be formed
+                            without additional parsing considerations.</p>
                     </div>
-                    <div class="segment" id="howto-extend">
-                        <h4>Extend the parser</h4>
+                    <div class="segment" id="howto-useit">
+                        <h4>Use the parsed output</h4>
+                        <p>Once the parser completes the parallel arrays will be populated with data. It
+                            is important that these parallel arrays always have the same number of indexes
+                            and each index describes the data at that index of the token array. Knowing this
+                            can save a lot of effort debugging failures later.</p>
+                        <p>Since the output is merely a couple of arrays the data can be easily iterated
+                            over. The data can also be examined by specific data types through examination
+                            of the types array. Pretty Diff includes several additional parallel arrays for
+                            describing qualities such as white space, markup attributes, markup parent
+                            element, JavaScript code structure, and more. These additional arrays provide
+                            data immediately without need for additional parsing steps.</p>
+                        <p>One use example is navigating data structures. The jspretty and markuppretty
+                            parsers both produce an array named
+                            <em>begin</em>. Use this data to walk up the code structures or walk up markup
+                            element hierarchy. The begin array stores the start index for a given code
+                            structure so,
+                            <em>begin[a]</em>, will return a number less than or equal to "a" indicating the
+                            start type for the current structure where "a" is the index of any parsed token.
+                            The number at
+                            <em>begin[begin[a] - 1]</em>
+                            would then contain the index for the next heigher structure start point. A small
+                            loop could traverse this data to create an AST or walk up the DOM.</p>
+                    </div>
+                    <div class="segment" id="howto-extend-theory">
+                        <h4>Extend the parser (in theory)</h4>
                         <p>A well written parser is extensible, which means additional supplimental
                             rules can be added later to allow new features at minimal collision with
                             existing features. Before a parser can be extensible it has to be sturdy and
@@ -483,6 +520,59 @@
                             fewest instructions possible. Fewer instructions means less code to maintain or
                             test (less developer time) and fewer things for the computer to evaluate
                             (performance).</p>
+                    </div>
+                    <div class="segment" id="howto-extend-theory">
+                        <h4>Extend the parser (in practice)</h4>
+                        <p>I recently extended Pretty Diff's JavaScript parser to support languages
+                            Java, C#, and TypeScript. This extension required some additional work in the
+                            beautifier, some additional structure descriptions, limiting use of automatic
+                            semicolon insertion, support for new operators, and type annotations (type
+                            generics). The big challenges were updating the beautifier to support new code
+                            structures not present in JavaScript and parsing the type generics. For the
+                            point of this discussion I will focus only upon adding the type generics
+                            feature.</p>
+                        <p>Type generics are angle brace delimited tokens similar in appearance to XML
+                            tags. Type generics may contain a reference, a comma separated list of
+                            references, and may contain a spread operator. They may also be nested so that
+                            one type generic token contains another. Unlike XML tags type generics do not
+                            contain attributes, end tags, or child nodes.</p>
+                        <p>The complexity in this enhancement is ensuring it does not cause regression.
+                            The JavaScript parser already provides support for the
+                            <em>&lt;</em>
+                            character as a less than operator and also as the start of an XML tag in the
+                            case of React JSX language. The Pretty Diff parsers also don't limit support of
+                            XML tags embedded within each other, which is required for the supported JSP
+                            template language and could cause additional conflict. This enhancement would
+                            allow a third and completely unrelated use for the less than character and it
+                            must be added in a way that does not break support for the existing two uses.</p>
+                        <p>This ehancement became easier when I realized that, aside from a TypeScript
+                            only edge case, type generics would never exist in the same contexts as JSX's
+                            XML tags. This reduced the complexity of the effort so that I only had to tell
+                            the difference between whether the less than character reperesents a less than
+                            operator or the start of a type generic token.</p>
+                        <p>At this point in the lexing process you know exactly where you are and you
+                            can look up the parsed tokens to see what has come before, but you don't know
+                            what comes next in the code yet. Keeping this in mind I chose to presume the
+                            token would be a type generic element opposed to a less than character until I
+                            found reason to believe otherwise. If I did find evidence to believe this could
+                            not be a type generic element I could easily return out of this logic and push a
+                            less than operator into the token array and appropriate descriptions into the
+                            other arrays because. This is especially simple since that operator is only one
+                            character. I determined inappropriate evidence would be a character reserved for
+                            operators or certain other syntax, a greater number of &gt; characters than &lt;
+                            characters.</p>
+                        <p>The case collision I hinted at earlier between TypeScript and React JSX in
+                            whether these elements immediately follow a
+                            <em>return</em>
+                            keyword. In TypeScript you can return a type generic element from a function. In
+                            React JSX you can return XML tags from a function. In this case I do not have
+                            enough contextual information to tell the difference between whether this should
+                            be an XML tag or a type generic element. To solve this problem I created a new
+                            option to pass into the parser. If the language is assumed to be (or chosen by
+                            the user) as TypeScript then an option named
+                            <em>typescript</em>
+                            is set to true, which prevents the parsing of XML tags from JavaScript like
+                            code.</p>
                     </div>
                 </div>
                 <div class="segment" id="enjoyment">

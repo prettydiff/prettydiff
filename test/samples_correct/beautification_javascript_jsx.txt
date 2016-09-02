@@ -44,7 +44,7 @@ var content = (
             line
             comment */
             //attr="test"
-            name={window.isloggedin
+            name={window.isLoggedIn
             ? window.name
             : ""} // end of line comment
         />
@@ -164,8 +164,8 @@ var TodoApp = React.createClass({
             <div>
                 <h3>TODO</h3>
                 <TodoList items={this.state.items}/>
-                <form onsubmit={this.handlesubmit}>
-                    <input onchange={this.onchange} value={this.state.text}/>
+                <form onSubmit={this.handleSubmit}>
+                    <input onChange={this.onChange} value={this.state.text}/>
                     <button>{"Add #" + (this.state.items.length + 1)}</button>
                 </form>
             </div>
@@ -194,14 +194,14 @@ var MarkdownEditor = React.createClass({
             <div className="MarkdownEditor">
                 <h3>Input</h3>
                 <textarea
-                    onchange={this.handlechange}
+                    onChange={this.handleChange}
                     ref="textarea"
-                    defaultvalue={this.state.value}/>
+                    defaultValue={this.state.value}/>
                 <h3>Output</h3>
                 <div
                     className="content"
-                    dangerouslysetinnerhtml={{
-                    __html: converter.makehtml(this.state.value)
+                    dangerouslySetInnerHTML={{
+                    __html: converter.makeHtml(this.state.value)
                 }}/>
             </div>
         );
