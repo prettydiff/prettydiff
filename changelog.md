@@ -1,5 +1,8 @@
 # Pretty Diff change log
 
+## v2.1.10
+* Fixes #360, incorrect markup parsing for multiple tag structures in a single JSX return
+
 ## v2.1.9
 * Better comment beautification
 * Language identification for some forms of C/C++ (not supported)

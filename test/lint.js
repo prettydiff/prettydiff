@@ -604,18 +604,20 @@
                                 jslintcomplete();
                             }
                         } else {
-                            if (ind === keys.length) {
-                                flag.apps = true;
-                            }
                             modules[appName].edition(modules[appName]);
                         }
                         if (ind === keys.length) {
                             if (today !== date) {
-                                fs.writeFile("today.js", "/*global module*/(function () {\"use strict\";var today=" + date + ";module.exports=today;}());", function taskrunner_lint_install_editions_writeToday(werr) {
+                                fs.writeFile("test/today.js", "/*global module*/(function () {\"use strict\";var today=" + date + ";module.exports=today;}());", function taskrunner_lint_install_editions_writeToday(werr) {
                                     if (werr !== null && werr !== undefined) {
                                         errout(werr);
                                     }
                                     flag.today = true;
+                                    if (cloned === true) {
+                                        console.log("Submodules downloaded.");
+                                    } else {
+                                        console.log("Submodules updated!");
+                                    }
                                     if (flag.fs === true && flag.apps === true) {
                                         lintrun();
                                     }
@@ -635,6 +637,12 @@
                                             if (stdouterd !== null) {
                                                 errout(stdouterd);
                                             }
+                                            console.log("Submodules downloaded.");
+                                            if (flag.fs === true && flag.today === true) {
+                                                lintrun();
+                                            } else {
+                                                flag.apps = true;
+                                            }
                                             return stdoutd;
                                         });
                                         return stdoutc;
@@ -644,18 +652,25 @@
                                         if (errpull !== null) {
                                             errout(errpull);
                                         }
-                                        if (stdouterpull !== null) {
+                                        if (stdouterpull !== null && stdouterpull.indexOf("From ") !== 0) {
                                             errout(stdouterpull);
                                         }
                                         console.log("Submodules updated!");
+                                        if (flag.fs === true && flag.today === true) {
+                                            lintrun();
+                                        } else {
+                                            flag.apps = true;
+                                        }
                                         return stdoutpull;
                                     });
                                 }
                             } else {
-                                flag.today = true;
-                            }
-                            if (flag.fs === true && flag.apps === true && flag.today === true) {
-                                lintrun();
+                                console.log("Running prior installed modules.");
+                                if (flag.fs === true && flag.apps === true) {
+                                    lintrun();
+                                } else {
+                                    flag.today = true;
+                                }
                             }
                         } else {
                             handler(ind);
@@ -688,10 +703,11 @@
                                         data
                                     ]);
                                     if (flag.files === true && flag.items === true) {
-                                        flag.fs = true;
                                         if (flag.apps === true && flag.today === true) {
                                             flag.files = false;
                                             lintrun();
+                                        } else {
+                                            flag.fs = true;
                                         }
                                     }
                                 });
@@ -725,10 +741,11 @@
                                                 } while (a < idLen);
                                                 if (ignoreDir === true) {
                                                     if (flag.files === true && flag.items === true) {
-                                                        flag.fs = true;
                                                         if (flag.apps === true && flag.today === true) {
                                                             flag.items = false;
                                                             lintrun();
+                                                        } else {
+                                                            flag.fs = true;
                                                         }
                                                     }
                                                 } else {
