@@ -410,7 +410,7 @@
                     },
                     modules         = {
                         jslint    : {
-                            dir    : "../JSLint",
+                            dir    : "JSLint",
                             edition: function taskrunner_lint_modules_jslint(obj) {
                                 console.log(obj.name + " version " + obj.app().edition + " is available.");
                             },
@@ -520,32 +520,22 @@
                             var mod = keys[ind];
                             fs.stat(modules[mod].dir, function taskrunner_lint_install_handler_stat(erstat, stats) {
                                 var clone = function taskrunner_lint_install_handler_stat_clone() {
-                                    console.log("Cloning " + modules[mod].name);
                                     child("git submodule add " + modules[mod].repo, function taskrunner_lint_install_handler_stat_clone_submodule(era, stdouta, stdoutera) {
                                         if (era !== null) {
                                             errout(era);
                                         }
-                                        if (stdoutera !== null) {
+                                        if (stdoutera !== null && stdoutera.indexOf("Cloning into '") !== 0) {
                                             errout(stdoutera);
                                         }
-                                        child("git clone " + modules[mod].repo, function taskrunner_lint_install_handler_stat_clone_submodule_gitclone(erb, stdoutb, stdouterb) {
-                                            if (erb !== null) {
-                                                errout(erb);
-                                            }
-                                            if (stdouterb !== null) {
-                                                errout(stdouterb);
-                                            }
-                                            ind += 1;
-                                            editions(mod, true);
-                                            return stdoutb;
-                                        });
+                                        ind += 1;
+                                        editions(mod, true);
                                         return stdouta;
                                     });
                                 };
-                                if (erstat !== null && erstat.toString() === "Error: ENOENT: no such file or directory, stat '" + modules[mod].dir + "'") {
-                                    return clone();
-                                }
                                 if (erstat !== null && erstat !== undefined) {
+                                    if (erstat.toString() === "Error: ENOENT: no such file or directory, stat '" + modules[mod].dir + "'") {
+                                        return clone();
+                                    }
                                     return errout(erstat);
                                 }
                                 if (stats.isDirectory() === true) {
@@ -570,40 +560,41 @@
                                         }
                                     });
                                 }
+                                clone();
                             });
                         };
                     editions = function taskrunner_lint_install_editions(appName, cloned) {
-                        var appFile = modules[appName].dir + path.sep + modules[appName].file,
+                        var appFile = __dirname.replace(/(test)$/, "") + modules[appName].dir + path.sep + modules[appName].file,
                             jslintcomplete = function taskrunner_lint_install_editions_jslintcomplete() {
                                 modules.jslint.app = require(appFile);
                                 modules.jslint.edition(modules.jslint);
                                 if (ind === keys.length) {
-                                    flag.apps = true;
+                                    if (flag.fs === true && flag.today === true) {
+                                        lintrun();
+                                    } else {
+                                        flag.apps = true;
+                                    }
                                 }
                             };
-                        modules[appName].app = require(appFile);
                         if (appName === "jslint") {
-                            if (today !== date) {
-                                fs.readFile(appFile, "utf8", function taskrunner_lint_install_editions_lintread(erread, data) {
-                                    if (erread !== null && erread !== undefined) {
-                                        errout(erread);
-                                    }
-                                    if (data.slice(data.length - 30).indexOf("\nmodule.exports = jslint;") < 0) {
-                                        data = data + "\nmodule.exports = jslint;";
-                                        fs.writeFile(appFile, data, "utf8", function taskrunner_lint_install_editions_lintread_lintwrite(erwrite) {
-                                            if (erwrite !== null && erwrite !== undefined) {
-                                                errout(erwrite);
-                                            }
-                                            jslintcomplete();
-                                        });
-                                    } else {
+                            fs.readFile(appFile, "utf8", function taskrunner_lint_install_editions_lintread(erread, data) {
+                                if (erread !== null && erread !== undefined) {
+                                    errout(erread);
+                                }
+                                if (data.indexOf("\nmodule.exports = jslint;") < 0) {
+                                    data = data.replace("/*node module.exports = jslint;*/", "\nmodule.exports = jslint;\n");
+                                    fs.writeFile(appFile, data, "utf8", function taskrunner_lint_install_editions_lintread_lintwrite(erwrite) {
+                                        if (erwrite !== null && erwrite !== undefined) {
+                                            errout(erwrite);
+                                        }
                                         jslintcomplete();
-                                    }
-                                });
-                            } else {
-                                jslintcomplete();
-                            }
+                                    });
+                                } else {
+                                    jslintcomplete();
+                                }
+                            });
                         } else {
+                            modules[appName].app = require(appFile);
                             modules[appName].edition(modules[appName]);
                         }
                         if (ind === keys.length) {
@@ -612,7 +603,6 @@
                                     if (werr !== null && werr !== undefined) {
                                         errout(werr);
                                     }
-                                    flag.today = true;
                                     if (cloned === true) {
                                         console.log("Submodules downloaded.");
                                     } else {
@@ -620,6 +610,8 @@
                                     }
                                     if (flag.fs === true && flag.apps === true) {
                                         lintrun();
+                                    } else {
+                                        today = true;
                                     }
                                 });
                                 if (cloned === true) {
@@ -634,7 +626,7 @@
                                             if (erd !== null) {
                                                 errout(erd);
                                             }
-                                            if (stdouterd !== null) {
+                                            if (stdouterd !== null && stdouterd.indexOf("From ") !== 0) {
                                                 errout(stdouterd);
                                             }
                                             console.log("Submodules downloaded.");
