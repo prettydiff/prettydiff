@@ -430,7 +430,7 @@
         options      : 160831, //options management
         prettydiff   : 160902, //this file
         safeSort     : 160816, //safeSort lib
-        version      : "2.1.8", //version number
+        version      : "2.1.9", //version number
         webtool      : 160827
     };
     global.prettydiff.edition.latest = (function edition_latest() {

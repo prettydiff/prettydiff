@@ -14,6 +14,7 @@
         startTime  = Date.now(),
         fs         = require("fs"),
         path       = require("path"),
+        child      = require("child_process").exec,
         humantime  = function taskrunner_humantime(finished) {
             var minuteString = "",
                 hourString   = "",
@@ -404,13 +405,22 @@
                         files: false,
                         fs   : false,
                         items: false,
-                        lint : false,
+                        apps : false,
                         today: false
                     },
-                    files           = [],
-                    jslint          = function taskrunner_declareJSLINT() {
-                        return;
+                    modules         = {
+                        jslint    : {
+                            dir    : "../JSLint",
+                            edition: function taskrunner_lint_modules_jslint(obj) {
+                                console.log(obj.name + " version " + obj.app().edition + " is available.");
+                            },
+                            file   : "jslint.js",
+                            name   : "JSLint",
+                            repo   : "https://github.com/douglascrockford/JSLint.git"
+                        }
                     },
+                    keys            = Object.keys(modules),
+                    files           = [],
                     lintrun         = function taskrunner_lint_lintrun() {
                         var lintit = function taskrunner_lint_lintrun_lintit(val, ind, arr) {
                             var result = {},
@@ -441,7 +451,7 @@
                                     console.log("");
                                 };
                             options.source = val[1];
-                            result         = jslint(prettydiff(options), {"for": true});
+                            result         = modules.jslint.app(prettydiff(options), {"for": true});
                             if (result.ok === true) {
                                 console.log(humantime(false) + "\u001B[32mLint is good for file " + (ind + 1) + ":\u001B[39m " + val[0]);
                                 if (ind === arr.length - 1) {
@@ -484,6 +494,9 @@
                         };
                         files.forEach(lintit);
                     };
+                keys.forEach(function taskrunner_lint_updateIgnores(mod) {
+                    ignoreDirectory.push(modules[mod].dir);
+                });
                 console.log("");
                 console.log("");
                 console.log("\u001B[36mBeautifying and Linting\u001B[39m");
@@ -498,144 +511,157 @@
                             ? "" + (dateobj.getMonth() + 1)
                             : "0" + (dateobj.getMonth() + 1),
                         date    = Number("" + dateobj.getFullYear() + month + day),
-                        today   = require("./today.js");
-                    fs.stat("JSLint", function taskrunner_lint_install_stat(erstat, stats) {
-                        var child     = require("child_process").exec,
-                            command   = "git submodule foreach git reset --hard origin/master",
-                            childtask = function taskrunner_lint_install_stat_childtask() {
-                                child(command, {
-                                    timeout: 30000
-                                }, function taskrunner_lint_install_stat_childtask_child(childerror, childstdout, childstderr) {
-                                    var cdupcallback = function taskrunner_lint_install_stat_childtask_child_cdupcallback() {
-                                            fs
-                                                .readFile("JSLint/jslint.js", "utf8", function taskrunner_lint_install_stat_childtask_child_cdupcallback_readFile(erread, data) {
-                                                    var moduleready = function taskrunner_lint_install_stat_childtask_child_cdupcallback_readFile_moduleready() {
-                                                        var todaystring = "/*global module*/(function () {\"use strict\";var today=" + date + ";module.exports=today;}());";
-                                                        jslint = require(process.cwd() + "/JSLint/jslint.js");
-                                                        fs.writeFile("test/today.js", todaystring, function taskrunner_lint_install_stat_childtask_child_cdupcallback_readFile_moduleready_writeFile(werr) {
-                                                            if (werr !== null && werr !== undefined) {
-                                                                errout(werr);
-                                                            }
-                                                            flag.today = true;
-                                                            if (flag.fs === true && flag.lint === true) {
-                                                                lintrun();
-                                                            }
-                                                        });
-                                                        console.log("\u001B[36mInstalled JSLint edition:\u001B[39m " + jslint().edition);
-                                                        flag.lint = true;
-                                                        if (flag.fs === true && flag.today === true) {
-                                                            lintrun();
-                                                        }
-                                                    };
-                                                    if (erread !== null && erread !== undefined) {
-                                                        return errout(erread);
-                                                    }
-                                                    // Only modify the jslint.js file once, so we have to check to see if it is
-                                                    // already modified
-                                                    if (data.slice(data.length - 30).indexOf("\nmodule.exports = jslint;") < 0) {
-                                                        data = data + "\nmodule.exports = jslint;";
-                                                        return fs.writeFile("JSLint/jslint.js", data, "utf8", function taskrunner_lint_install_stat_childtask_child_readFile_writeFile(erwrite) {
-                                                            if (erwrite !== null && erwrite !== undefined) {
-                                                                return errout(erwrite);
-                                                            }
-                                                            moduleready();
-                                                        });
-                                                    }
-                                                    moduleready();
-                                                });
-                                        },
-                                        errorhandle  = function taskrunner_lint_install_stat_childtask_child_errorhandle(errormsg, stderror, execution) {
-                                            if (errormsg !== null) {
-                                                if (stderror.indexOf("Could not resolve host: github.com") > 0) {
-                                                    return fs.stat("JSLint/jslint.js", function taskrunner_lint_install_stat_childtask_child_errorhandle_filestat(jerstat, jstats) {
-                                                        if (typeof jerstat === "string") {
-                                                            return errout(jerstat);
-                                                        }
-                                                        if (jstats.isFile() === true) {
-                                                            console.log("Could not connect to Github, but it looks like JSLint is installed.  Running pri" +
-                                                                    "or installed JSLint.");
-                                                            return cdupcallback();
-                                                        }
-                                                        console.log("Could not connect to Github, and JSLint does not appear to be installed.  Skippi" +
-                                                                "ng to next phase.");
-                                                        return next();
-                                                    });
-                                                }
-                                                return errout(errormsg);
-                                            }
-                                            if (typeof stderror === "string" && stderror.length > 0 && stderror.indexOf("Cloning into") < 0 && stderror.indexOf("From http") < 0) {
-                                                return errout(stderror);
-                                            }
-                                            execution();
-                                        },
-                                        childproc    = function taskrunner_lint_install_stat_childtask_child_childproc() {
-                                            child("git submodule foreach git pull origin master", {
-                                                timeout: 30000
-                                            }, function taskrunner_lint_install_stat_childtask_child_moduleinstall(erchild, stdout, stderr) {
-                                                errorhandle(erchild, stderr, cdupcallback);
-                                                return stdout;
-                                            });
-                                        };
-                                    errorhandle(childerror, childstderr, childproc);
-                                    return childstdout;
-                                });
-                            },
-                            absentfun = function taskrunner_lint_install_stat_absentfun() {
-                                // we only need to install once per day, so determine if JSLint has already
-                                // installed today
-                                if (today < date) {
-                                    console.log("Pulling latest JSLint...");
-                                    return childtask();
-                                }
-                                jslint = require(process.cwd() + "/JSLint/jslint.js");
-                                console.log("Running prior installed JSLint version " + jslint().edition + ".");
-                                flag.lint  = true;
-                                flag.today = true;
-                                if (flag.fs === true) {
-                                    lintrun();
-                                }
-                            },
-                            initfun   = function taskrunner_lint_install_stat_initfun() {
-                                child("git submodule init", function (initerr, initout, initstd) {
-                                    if (typeof initerr === "string") {
-                                        return errout(initerr);
-                                    }
-                                    if (typeof initstd === "string" && initstd.length > 0) {
-                                        return errout(initstd);
-                                    }
-                                    console.log("git submodule init");
-                                    child("git submodule update", function (suberr, subout, substd) {
-                                        if (typeof suberr === "string") {
-                                            return errout(suberr);
+                        ind     = 0,
+                        today   = require("./today.js"),
+                        editions = function taskrunner_lint_install_editionsInit() {
+                            return;
+                        },
+                        handler = function taskrunner_lint_install_handler() {
+                            var mod = keys[ind];
+                            fs.stat(modules[mod].dir, function taskrunner_lint_install_handler_stat(erstat, stats) {
+                                var clone = function taskrunner_lint_install_handler_stat_clone() {
+                                    console.log("Cloning " + modules[mod].name);
+                                    child("git submodule add " + modules[mod].repo, function taskrunner_lint_install_handler_stat_clone_submodule(era, stdouta, stdoutera) {
+                                        if (era !== null) {
+                                            errout(era);
                                         }
-                                        if (typeof substd === "string" && substd.length > 0 && substd.indexOf("Cloning into") < 0) {
-                                            return errout(substd);
+                                        if (stdoutera !== null) {
+                                            errout(stdoutera);
                                         }
-                                        console.log("git submodule update");
-                                        absentfun();
-                                        return subout;
+                                        child("git clone " + modules[mod].repo, function taskrunner_lint_install_handler_stat_clone_submodule_gitclone(erb, stdoutb, stdouterb) {
+                                            if (erb !== null) {
+                                                errout(erb);
+                                            }
+                                            if (stdouterb !== null) {
+                                                errout(stdouterb);
+                                            }
+                                            ind += 1;
+                                            editions(mod, true);
+                                            return stdoutb;
+                                        });
+                                        return stdouta;
                                     });
-                                    return initout;
-                                });
-                            };
-                        if (erstat !== null && erstat !== undefined) {
-                            return errout(erstat);
-                        }
-                        if (stats.isDirectory() === true) {
-                            return fs.readdir("JSLint", function (direrr, files) {
-                                if (typeof direrr === "string") {
-                                    return errout(direrr);
+                                };
+                                if (erstat !== null && erstat.toString() === "Error: ENOENT: no such file or directory, stat '" + modules[mod].dir + "'") {
+                                    return clone();
                                 }
-                                if (files.length < 1) {
-                                    return initfun();
+                                if (erstat !== null && erstat !== undefined) {
+                                    return errout(erstat);
                                 }
-                                return absentfun();
+                                if (stats.isDirectory() === true) {
+                                    return fs.readdir(modules[mod].dir, function taskrunner_lint_install_handler_stat_readdir(direrr, files) {
+                                        if (typeof direrr === "string") {
+                                            return errout(direrr);
+                                        }
+                                        ind += 1;
+                                        if (files.length < 1) {
+                                            child("rm -rf " + modules[mod].dir, function taskrunner_lint_install_handler_stat_readdir_clone(errp, stdoutp, stdouterp) {
+                                                if (errp !== null) {
+                                                    errout(errp);
+                                                }
+                                                if (stdouterp !== null) {
+                                                    errout(stdouterp);
+                                                }
+                                                clone();
+                                                return stdoutp;
+                                            });
+                                        } else {
+                                            editions(mod, false);
+                                        }
+                                    });
+                                }
                             });
+                        };
+                    editions = function taskrunner_lint_install_editions(appName, cloned) {
+                        var appFile = modules[appName].dir + path.sep + modules[appName].file,
+                            jslintcomplete = function taskrunner_lint_install_editions_jslintcomplete() {
+                                modules.jslint.app = require(appFile);
+                                modules.jslint.edition(modules.jslint);
+                                if (ind === keys.length) {
+                                    flag.apps = true;
+                                }
+                            };
+                        modules[appName].app = require(appFile);
+                        if (appName === "jslint") {
+                            if (today !== date) {
+                                fs.readFile(appFile, "utf8", function taskrunner_lint_install_editions_lintread(erread, data) {
+                                    if (erread !== null && erread !== undefined) {
+                                        errout(erread);
+                                    }
+                                    if (data.slice(data.length - 30).indexOf("\nmodule.exports = jslint;") < 0) {
+                                        data = data + "\nmodule.exports = jslint;";
+                                        fs.writeFile(appFile, data, "utf8", function taskrunner_lint_install_editions_lintread_lintwrite(erwrite) {
+                                            if (erwrite !== null && erwrite !== undefined) {
+                                                errout(erwrite);
+                                            }
+                                            jslintcomplete();
+                                        });
+                                    } else {
+                                        jslintcomplete();
+                                    }
+                                });
+                            } else {
+                                jslintcomplete();
+                            }
+                        } else {
+                            if (ind === keys.length) {
+                                flag.apps = true;
+                            }
+                            modules[appName].edition(modules[appName]);
                         }
-                        console.log("Cloning JSLint...");
-                        command = "git submodule add https://github.com/douglascrockford/JSLint.git";
-                        childtask();
-                    });
+                        if (ind === keys.length) {
+                            if (today !== date) {
+                                fs.writeFile("today.js", "/*global module*/(function () {\"use strict\";var today=" + date + ";module.exports=today;}());", function taskrunner_lint_install_editions_writeToday(werr) {
+                                    if (werr !== null && werr !== undefined) {
+                                        errout(werr);
+                                    }
+                                    flag.today = true;
+                                    if (flag.fs === true && flag.apps === true) {
+                                        lintrun();
+                                    }
+                                });
+                                if (cloned === true) {
+                                    child("git submodule init", function taskrunner_lint_install_editions_init(erc, stdoutc, stdouterc) {
+                                        if (erc !== null) {
+                                            errout(erc);
+                                        }
+                                        if (stdouterc !== null) {
+                                            errout(stdouterc);
+                                        }
+                                        child("git submodule update", function taskrunner_lint_install_editions_init_update(erd, stdoutd, stdouterd) {
+                                            if (erd !== null) {
+                                                errout(erd);
+                                            }
+                                            if (stdouterd !== null) {
+                                                errout(stdouterd);
+                                            }
+                                            return stdoutd;
+                                        });
+                                        return stdoutc;
+                                    });
+                                } else {
+                                    child("git submodule foreach git pull origin master", function taskrunner_lint_install_editions_pull(errpull, stdoutpull, stdouterpull) {
+                                        if (errpull !== null) {
+                                            errout(errpull);
+                                        }
+                                        if (stdouterpull !== null) {
+                                            errout(stdouterpull);
+                                        }
+                                        console.log("Submodules updated!");
+                                        return stdoutpull;
+                                    });
+                                }
+                            } else {
+                                flag.today = true;
+                            }
+                            if (flag.fs === true && flag.apps === true && flag.today === true) {
+                                lintrun();
+                            }
+                        } else {
+                            handler(ind);
+                        }
+                    };
+                    handler(0);
                 }());
                 (function taskrunner_lint_getFiles() {
                     var fc       = 0,
@@ -653,20 +679,17 @@
                                     if (ft === fc) {
                                         flag.files = true;
                                     }
-                                    if (path.sep === "\\") {
-                                        files.push([
-                                            filePath.slice(filePath.indexOf("\\prettydiff\\") + 14),
-                                            data
-                                        ]);
-                                    } else {
-                                        files.push([
-                                            filePath.slice(filePath.indexOf("/prettydiff/") + 12),
-                                            data
-                                        ]);
+                                    filePath = filePath.replace(process.cwd(), "");
+                                    if (filePath.charAt(0) === path.sep) {
+                                        filePath = filePath.slice(1);
                                     }
+                                    files.push([
+                                        filePath,
+                                        data
+                                    ]);
                                     if (flag.files === true && flag.items === true) {
                                         flag.fs = true;
-                                        if (flag.lint === true && flag.today === true) {
+                                        if (flag.apps === true && flag.today === true) {
                                             flag.files = false;
                                             lintrun();
                                         }
@@ -703,7 +726,7 @@
                                                 if (ignoreDir === true) {
                                                     if (flag.files === true && flag.items === true) {
                                                         flag.fs = true;
-                                                        if (flag.lint === true) {
+                                                        if (flag.apps === true && flag.today === true) {
                                                             flag.items = false;
                                                             lintrun();
                                                         }
@@ -3674,8 +3697,7 @@
                         return output;
                     },
                     shell     = function taskrunner_simulations_shell(testData) {
-                        var childExec = require("child_process").exec,
-                            tab       = (function taskrunner_simulations_shell_child_writeLine_tab() {
+                        var tab       = (function taskrunner_simulations_shell_child_writeLine_tab() {
                                 var a   = 0,
                                     b   = 0,
                                     str = "";
@@ -3686,9 +3708,9 @@
                                 }
                                 return str;
                             }()),
-                            child     = function taskrunner_simulations_shell_child(param) {
+                            childShell = function taskrunner_simulations_shell_childShell(param) {
                                 param.check = slashfix(param.check);
-                                childExec(param.check, {
+                                child(param.check, {
                                     timeout: 1200000
                                 }, function taskrunner_simulations_shell_child_childExec(err, stdout, stderr) {
                                     var failflag  = false,
@@ -3781,7 +3803,7 @@
                                                             if (units[depth][index].group !== undefined) {
                                                                 taskrunner_simulations_shell(units[depth][index]);
                                                             } else {
-                                                                taskrunner_simulations_shell_child(units[depth][index]);
+                                                                taskrunner_simulations_shell_childShell(units[depth][index]);
                                                             }
                                                         }
                                                     } else {
@@ -3834,20 +3856,20 @@
                                                                     if (err.indexOf("The directory is not empty.") > 0) {
                                                                         console.log("(err) Async error in Windows file system.  Trying one more time...");
                                                                         a -= 1;
-                                                                        return setTimeout(childExec(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
+                                                                        return setTimeout(child(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
                                                                     }
                                                                 } else if (typeof stderr === "string" && stderr !== "") {
                                                                     console.log(stderr);
                                                                     if (stderr.indexOf("The directory is not empty.") > 0) {
                                                                         console.log("(stderr) Async error in Windows file system.  Trying one more time...");
                                                                         a -= 1;
-                                                                        return setTimeout(childExec(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
+                                                                        return setTimeout(child(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
                                                                     }
                                                                 } else {
                                                                     if (stdout.indexOf("The directory s not empty.") > 0) {
                                                                         console.log("(stdout) Async error in Windows file system.  Trying one more time...");
                                                                         a -= 1;
-                                                                        return setTimeout(childExec(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
+                                                                        return setTimeout(child(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
                                                                     }
                                                                     if (a === len) {
                                                                         console.log(tab + "\u001B[36mTeardown\u001B[39m for group: \u001B[33m" + groupname[depth] + "\u001B[39m \u001B[32mcomplete\u001B[39m.");
@@ -3863,7 +3885,7 @@
                                                             } else {
                                                                 tasks[a] = slashfix(tasks[a]);
                                                                 console.log(tab + "  " + tasks[a]);
-                                                                childExec(tasks[a], execCallback);
+                                                                child(tasks[a], execCallback);
                                                             }
                                                         };
                                                     console.log("");
@@ -3963,7 +3985,7 @@
                                                     }
                                                     for (index[depth] = index[depth]; index[depth] < grouplen[depth]; index[depth] += 1) {
                                                         if (units[depth][index[depth]].group === undefined) {
-                                                            child(units[depth][index[depth]]);
+                                                            childShell(units[depth][index[depth]]);
                                                             if (units[depth][index[depth] + 1] !== undefined && units[depth][index[depth] + 1].group !== undefined) {
                                                                 break;
                                                             }
@@ -3988,7 +4010,7 @@
                                             fs.writeFile(echo.data.token.slice(3).join("").replace(/(x?;)$/, ""), echo.data.token[1].slice(1, echo.data.token[1].length - 1), buildstep);
                                         } else {
                                             tasks[a] = slashfix(tasks[a]);
-                                            childExec(tasks[a], buildstep);
+                                            child(tasks[a], buildstep);
                                         }
                                     };
                                 console.log("");
@@ -4017,7 +4039,7 @@
                             } else {
                                 for (index[depth] = index[depth]; index[depth] < grouplen[depth]; index[depth] += 1) {
                                     if (units[depth][index[depth]].group === undefined) {
-                                        child(units[depth][index[depth]]);
+                                        childShell(units[depth][index[depth]]);
                                         if (units[depth][index[depth] + 1] !== undefined && units[depth][index[depth] + 1].group !== undefined) {
                                             break;
                                         }
@@ -4026,7 +4048,7 @@
                             }
                         } else {
                             grouplen.push(tests.length);
-                            child(testData);
+                            childShell(testData);
                         }
                     };
                 console.log("");

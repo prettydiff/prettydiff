@@ -9877,11 +9877,12 @@
     var promiseWarningCache = {};
     var promiseWarning;
 
-    // Sandboxing Angular Expressions ------------------------------ Angular
-    // expressions are generally considered safe because these expressions only have
-    // direct access to $scope and locals. However, one can obtain the ability to
-    // execute arbitrary JS code by obtaining a reference to native JS functions
-    // such as the Function constructor.
+    // Sandboxing Angular Expressions
+    // ------------------------------
+    // Angular expressions are generally considered safe because these expressions
+    // only have direct access to $scope and locals. However, one can obtain the
+    // ability to execute arbitrary JS code by obtaining a reference to native JS
+    // functions such as the Function constructor.
     //
     // As an example, consider the following Angular expression:
     //
