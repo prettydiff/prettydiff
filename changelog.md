@@ -1,5 +1,9 @@
 # Pretty Diff change log
 
+## v2.1.9
+* Better comment beautification
+* Language identification for some forms of C/C++ (not supported)
+
 ## v2.1.8
 
 ### Defect resolutions
@@ -20,7 +24,6 @@
 
 ### Defect resolutions
 * Fixed a defect in the HTML instructional guides
->>>>>>> bumping version number for merge
 
 ## v2.1.5
 
