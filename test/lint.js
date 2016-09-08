@@ -640,14 +640,14 @@
                                     child("git submodule init", function taskrunner_lint_install_editions_init(erc, stdoutc, stdouterc) {
                                         if (erc !== null && erc !== "") {
                                             errout(erc);
-                                        }console.log("stdouterc ");
+                                        }console.log("stdouterc " + stdouterc);
                                         if (stdouterc !== null && stdouterc !== "") {
                                             errout(stdouterc);
                                         }
                                         child("git submodule update", function taskrunner_lint_install_editions_init_update(erd, stdoutd, stdouterd) {
                                             if (erd !== null && erd !== "") {
                                                 errout(erd);
-                                            }console.log("stdouterd ");
+                                            }console.log("stdouterd " + stdouterd);
                                             if (stdouterd !== null && stdouterd !== "" && stdouterd.indexOf("From ") !== 0) {
                                                 errout(stdouterd);
                                             }
