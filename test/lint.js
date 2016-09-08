@@ -525,7 +525,7 @@
                                             errout(era);
                                         }
                                         if (stdoutera !== null && stdoutera !== "" && stdoutera.indexOf("Cloning into '") < 0 && stdoutera.indexOf("already exists in the index") < 0) {
-                                            errout(stdoutera);
+                                            console.log("stdoutera " + stdoutera);errout(stdoutera);
                                         }
                                         ind += 1;
                                         editions(mod, true);
@@ -550,7 +550,7 @@
                                                     errout(errp);
                                                 }
                                                 if (stdouterp !== null && stdouterp !== "") {
-                                                    errout(stdouterp);
+                                                    console.log("stdouterp " + stdouterp);errout(stdouterp);
                                                 }
                                                 clone();
                                                 return stdoutp;
@@ -642,14 +642,14 @@
                                             errout(erc);
                                         }
                                         if (stdouterc !== null && stdouterc.indexOf("Cloning into '") < 0) {
-                                            errout(stdouterc);
+                                            console.log("stdouterc " + stdouterc);errout(stdouterc);
                                         }
                                         child("git submodule update", function taskrunner_lint_install_editions_init_update(erd, stdoutd, stdouterd) {
                                             if (erd !== null && erd !== "") {
                                                 errout(erd);
-                                            }console.log("stdouterd " + stdouterd);
+                                            }
                                             if (stdouterd !== null && stdouterd !== "" && stdouterd.indexOf("Cloning into '") < 0 && stdouterd.indexOf("From ") !== 0) {
-                                                errout(stdouterd);
+                                                console.log("stdouterd " + stdouterd);errout(stdouterd);
                                             }
                                             submod();
                                             if (flag.fs === true && flag.today === true) {
@@ -667,7 +667,7 @@
                                             errout(errpull);
                                         }
                                         if (stdouterpull !== null && stdouterpull !== "" && stdouterpull.indexOf("Cloning into '") < 0 && stdouterpull.indexOf("From ") !== 0) {
-                                            errout(stdouterpull);
+                                            console.log("stdouterpull " + stdouterpull);errout(stdouterpull);
                                         }
                                         submod();
                                         if (flag.fs === true && flag.today === true) {
