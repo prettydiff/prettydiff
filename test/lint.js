@@ -564,39 +564,41 @@
                             });
                         };
                     editions = function taskrunner_lint_install_editions(appName, cloned) {
-                        var appFile = __dirname.replace(/(test)$/, "") + modules[appName].dir + path.sep + modules[appName].file,
-                            jslintcomplete = function taskrunner_lint_install_editions_jslintcomplete() {
-                                modules.jslint.app = require(appFile);
-                                modules.jslint.edition(modules.jslint);
-                                if (ind === keys.length) {
-                                    if (flag.fs === true) {
-                                        lintrun();
-                                    } else {
-                                        flag.apps = true;
-                                    }
-                                }
-                            };
-                        if (appName === "jslint") {
-                            fs.readFile(appFile, "utf8", function taskrunner_lint_install_editions_lintread(erread, data) {
-                                if (erread !== null && erread !== undefined && erread !== "") {
-                                    errout(erread);
-                                }
-                                if (data.indexOf("\nmodule.exports = jslint;") < 0) {
-                                    data = data.replace("/*node module.exports = jslint;*/", "\nmodule.exports = jslint;\n");
-                                    fs.writeFile(appFile, data, "utf8", function taskrunner_lint_install_editions_lintread_lintwrite(erwrite) {
-                                        if (erwrite !== null && erwrite !== undefined && erwrite !== "") {
-                                            errout(erwrite);
+                        var submod = function taskrunner_lint_install_editions() {
+                            var appFile = __dirname.replace(/(test)$/, "") + modules[appName].dir + path.sep + modules[appName].file,
+                                jslintcomplete = function taskrunner_lint_install_editions_jslintcomplete() {
+                                    modules.jslint.app = require(appFile);
+                                    modules.jslint.edition(modules.jslint);
+                                    if (ind === keys.length) {
+                                        if (flag.fs === true) {
+                                            lintrun();
+                                        } else {
+                                            flag.apps = true;
                                         }
+                                    }
+                                };
+                            if (appName === "jslint") {
+                                fs.readFile(appFile, "utf8", function taskrunner_lint_install_editions_lintread(erread, data) {
+                                    if (erread !== null && erread !== undefined && erread !== "") {
+                                        errout(erread);
+                                    }
+                                    if (data.indexOf("\nmodule.exports = jslint;") < 0) {
+                                        data = data.replace("/*node module.exports = jslint;*/", "\nmodule.exports = jslint;\n");
+                                        fs.writeFile(appFile, data, "utf8", function taskrunner_lint_install_editions_lintread_lintwrite(erwrite) {
+                                            if (erwrite !== null && erwrite !== undefined && erwrite !== "") {
+                                                errout(erwrite);
+                                            }
+                                            jslintcomplete();
+                                        });
+                                    } else {
                                         jslintcomplete();
-                                    });
-                                } else {
-                                    jslintcomplete();
-                                }
-                            });
-                        } else {
-                            modules[appName].app = require(appFile);
-                            modules[appName].edition(modules[appName]);
-                        }
+                                    }
+                                });
+                            } else {
+                                modules[appName].app = require(appFile);
+                                modules[appName].edition(modules[appName]);
+                            }
+                        };
                         if (ind < keys.length) {
                             handler(ind);
                         } else {
@@ -633,6 +635,7 @@
                                             if (stdouterd !== null && stdouterd !== "" && stdouterd.indexOf("From ") !== 0) {
                                                 errout(stdouterd);
                                             }
+                                            submod();
                                             if (flag.today === true) {
                                                 console.log("Submodules downloaded.");
                                             }
@@ -653,6 +656,7 @@
                                         if (stdouterpull !== null && stdouterpull !== "" && stdouterpull.indexOf("From ") !== 0) {
                                             errout(stdouterpull);
                                         }
+                                        submod();
                                         if (flag.today === true) {
                                             console.log("Submodules updated!");
                                         }
