@@ -608,6 +608,7 @@
                                     } else {
                                         console.log("Submodules updated!");
                                     }
+                                    console.log("today " + flag.fs+" "+flag.apps);
                                     if (flag.fs === true && flag.apps === true) {
                                         lintrun();
                                     } else {
@@ -629,7 +630,9 @@
                                             if (stdouterd !== null && stdouterd.indexOf("From ") !== 0) {
                                                 errout(stdouterd);
                                             }
-                                            console.log("Submodules downloaded.");
+                                            if (flag.today === false) {
+                                                console.log("Submodules downloaded.");
+                                            }
                                             if (flag.fs === true && flag.today === true) {
                                                 lintrun();
                                             } else {
@@ -647,7 +650,10 @@
                                         if (stdouterpull !== null && stdouterpull.indexOf("From ") !== 0) {
                                             errout(stdouterpull);
                                         }
-                                        console.log("Submodules updated!");
+                                        if (flag.today === false) {
+                                            console.log("Submodules updated!");
+                                        }
+                                        console.log("noclone " + flag.fs+" "+flag.today);
                                         if (flag.fs === true && flag.today === true) {
                                             lintrun();
                                         } else {
