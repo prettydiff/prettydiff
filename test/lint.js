@@ -569,7 +569,15 @@
                                 jslintcomplete = function taskrunner_lint_install_editions_jslintcomplete() {
                                     modules.jslint.app = require(appFile);
                                     modules.jslint.edition(modules.jslint);
+                                    if (flag.today === true) {
+                                        if (cloned === true) {
+                                            console.log("Submodules downloaded.");
+                                        } else {
+                                            console.log("Submodules updated!");
+                                        }
+                                    }
                                     if (ind === keys.length) {
+                                        flag.today = true;
                                         if (flag.fs === true) {
                                             lintrun();
                                         } else {
@@ -597,6 +605,13 @@
                             } else {
                                 modules[appName].app = require(appFile);
                                 modules[appName].edition(modules[appName]);
+                                if (flag.today === true) {
+                                    if (cloned === true) {
+                                        console.log("Submodules downloaded.");
+                                    } else {
+                                        console.log("Submodules updated!");
+                                    }
+                                }
                             }
                         };
                         if (ind < keys.length) {
@@ -636,9 +651,6 @@
                                                 errout(stdouterd);
                                             }
                                             submod();
-                                            if (flag.today === true) {
-                                                console.log("Submodules downloaded.");
-                                            }
                                             if (flag.fs === true && flag.today === true) {
                                                 lintrun();
                                             } else {
@@ -657,9 +669,6 @@
                                             errout(stdouterpull);
                                         }
                                         submod();
-                                        if (flag.today === true) {
-                                            console.log("Submodules updated!");
-                                        }
                                         if (flag.fs === true && flag.today === true) {
                                             lintrun();
                                         } else {
