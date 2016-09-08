@@ -640,15 +640,15 @@
                                     child("git submodule init", function taskrunner_lint_install_editions_init(erc, stdoutc, stdouterc) {
                                         if (erc !== null && erc !== "") {
                                             errout(erc);
-                                        }console.log("stdouterc " + stdouterc);
-                                        if (stdouterc !== null && stdouterc !== "") {
+                                        }
+                                        if (stdouterc !== null && stdouterc.indexOf("Cloning into '") < 0) {
                                             errout(stdouterc);
                                         }
                                         child("git submodule update", function taskrunner_lint_install_editions_init_update(erd, stdoutd, stdouterd) {
                                             if (erd !== null && erd !== "") {
                                                 errout(erd);
                                             }console.log("stdouterd " + stdouterd);
-                                            if (stdouterd !== null && stdouterd !== "" && stdouterd.indexOf("From ") !== 0) {
+                                            if (stdouterd !== null && stdouterd !== "" && stdouterd.indexOf("Cloning into '") < 0 && stdouterd.indexOf("From ") !== 0) {
                                                 errout(stdouterd);
                                             }
                                             submod();
