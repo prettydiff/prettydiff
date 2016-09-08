@@ -564,9 +564,9 @@
                             });
                         };
                     editions = function taskrunner_lint_install_editions(appName, cloned) {
-                        var submod = function taskrunner_lint_install_editions() {
+                        var submod = function taskrunner_lint_install_editions_submod() {
                             var appFile = __dirname.replace(/(test)$/, "") + modules[appName].dir + path.sep + modules[appName].file,
-                                jslintcomplete = function taskrunner_lint_install_editions_jslintcomplete() {
+                                jslintcomplete = function taskrunner_lint_install_editions_submod_jslintcomplete() {
                                     modules.jslint.app = require(appFile);
                                     modules.jslint.edition(modules.jslint);
                                     if (flag.today === true) {
@@ -586,13 +586,13 @@
                                     }
                                 };
                             if (appName === "jslint") {
-                                fs.readFile(appFile, "utf8", function taskrunner_lint_install_editions_lintread(erread, data) {
+                                fs.readFile(appFile, "utf8", function taskrunner_lint_install_editions_submod_lintread(erread, data) {
                                     if (erread !== null && erread !== undefined && erread !== "") {
                                         errout(erread);
                                     }
                                     if (data.indexOf("\nmodule.exports = jslint;") < 0) {
                                         data = data.replace("/*node module.exports = jslint;*/", "\nmodule.exports = jslint;\n");
-                                        fs.writeFile(appFile, data, "utf8", function taskrunner_lint_install_editions_lintread_lintwrite(erwrite) {
+                                        fs.writeFile(appFile, data, "utf8", function taskrunner_lint_install_editions_submod_lintread_lintwrite(erwrite) {
                                             if (erwrite !== null && erwrite !== undefined && erwrite !== "") {
                                                 errout(erwrite);
                                             }
