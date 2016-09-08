@@ -666,7 +666,7 @@
                                         if (errpull !== null && errpull !== "") {
                                             errout(errpull);
                                         }
-                                        if (stdouterpull !== null && stdouterpull !== "" && stdouterpull.indexOf("From ") !== 0) {
+                                        if (stdouterpull !== null && stdouterpull !== "" && stdouterpull.indexOf("Cloning into '") < 0 && stdouterpull.indexOf("From ") !== 0) {
                                             errout(stdouterpull);
                                         }
                                         submod();
