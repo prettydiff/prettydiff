@@ -524,7 +524,7 @@
                                         if (era !== null && era !== "") {
                                             errout(era);
                                         }
-                                        if (stdoutera !== null && stdoutera !== "" && stdoutera.indexOf("Cloning into '") !== 0) {
+                                        if (stdoutera !== null && stdoutera !== "" && stdoutera.indexOf("Cloning into '") !== 0 && stdoutera.toString().indexOf("already exists in the index") < 0) {
                                             errout(stdoutera);
                                         }
                                         ind += 1;
