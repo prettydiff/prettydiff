@@ -603,12 +603,13 @@
                                     if (werr !== null && werr !== undefined) {
                                         errout(werr);
                                     }
-                                    if (cloned === true) {
-                                        console.log("Submodules downloaded.");
-                                    } else {
-                                        console.log("Submodules updated!");
+                                    if (flag.apps === false) {
+                                        if (cloned === true) {
+                                            console.log("Submodules downloaded.");
+                                        } else {
+                                            console.log("Submodules updated!");
+                                        }
                                     }
-                                    console.log("today " + flag.fs+" "+flag.apps);
                                     if (flag.fs === true && flag.apps === true) {
                                         lintrun();
                                     } else {
@@ -630,7 +631,7 @@
                                             if (stdouterd !== null && stdouterd.indexOf("From ") !== 0) {
                                                 errout(stdouterd);
                                             }
-                                            if (flag.today === false) {
+                                            if (flag.today === true) {
                                                 console.log("Submodules downloaded.");
                                             }
                                             if (flag.fs === true && flag.today === true) {
@@ -650,10 +651,9 @@
                                         if (stdouterpull !== null && stdouterpull.indexOf("From ") !== 0) {
                                             errout(stdouterpull);
                                         }
-                                        if (flag.today === false) {
+                                        if (flag.today === true) {
                                             console.log("Submodules updated!");
                                         }
-                                        console.log("noclone " + flag.fs+" "+flag.today);
                                         if (flag.fs === true && flag.today === true) {
                                             lintrun();
                                         } else {
@@ -701,6 +701,7 @@
                                         data
                                     ]);
                                     if (flag.files === true && flag.items === true) {
+                                        console.log("files1 " + flag.apps+" "+flag.today);
                                         if (flag.apps === true && flag.today === true) {
                                             flag.files = false;
                                             lintrun();
@@ -739,6 +740,7 @@
                                                 } while (a < idLen);
                                                 if (ignoreDir === true) {
                                                     if (flag.files === true && flag.items === true) {
+                                                        console.log("files2 " + flag.apps+" "+flag.today);
                                                         if (flag.apps === true && flag.today === true) {
                                                             flag.items = false;
                                                             lintrun();
