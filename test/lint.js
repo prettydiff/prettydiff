@@ -570,7 +570,7 @@
                                 modules.jslint.edition(modules.jslint);
                                 if (ind === keys.length) {
                                     console.log("test jslint " + flag.fs+" "+flag.today);
-                                    if (flag.fs === true && flag.today === true) {
+                                    if (flag.fs === true) {
                                         lintrun();
                                     } else {
                                         flag.apps = true;
@@ -706,7 +706,7 @@
                                         data
                                     ]);
                                     if (flag.files === true && flag.items === true) {
-                                        console.log("files1 " + flag.apps+" "+flag.today);
+                                        console.log("test files1 " + flag.apps+" "+flag.today);
                                         if (flag.apps === true && flag.today === true) {
                                             flag.files = false;
                                             lintrun();
@@ -745,7 +745,7 @@
                                                 } while (a < idLen);
                                                 if (ignoreDir === true) {
                                                     if (flag.files === true && flag.items === true) {
-                                                        console.log("files2 " + flag.apps+" "+flag.today);
+                                                        console.log("test files2 " + flag.apps+" "+flag.today);
                                                         if (flag.apps === true && flag.today === true) {
                                                             flag.items = false;
                                                             lintrun();
