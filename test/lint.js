@@ -569,6 +569,7 @@
                                 modules.jslint.app = require(appFile);
                                 modules.jslint.edition(modules.jslint);
                                 if (ind === keys.length) {
+                                    console.log("test jslint " + flag.fs+" "+flag.today);
                                     if (flag.fs === true && flag.today === true) {
                                         lintrun();
                                     } else {
@@ -610,6 +611,7 @@
                                             console.log("Submodules updated!");
                                         }
                                     }
+                                    console.log("test today " + flag.fs+" "+flag.today);
                                     if (flag.fs === true && flag.apps === true) {
                                         lintrun();
                                     } else {
@@ -634,6 +636,7 @@
                                             if (flag.today === true) {
                                                 console.log("Submodules downloaded.");
                                             }
+                                            console.log("test downloaded " + flag.fs+" "+flag.today);
                                             if (flag.fs === true && flag.today === true) {
                                                 lintrun();
                                             } else {
@@ -654,6 +657,7 @@
                                         if (flag.today === true) {
                                             console.log("Submodules updated!");
                                         }
+                                        console.log("test pull " + flag.fs+" "+flag.today);
                                         if (flag.fs === true && flag.today === true) {
                                             lintrun();
                                         } else {
@@ -664,6 +668,7 @@
                                 }
                             } else {
                                 console.log("Running prior installed modules.");
+                                console.log("test installed " + flag.fs+" "+flag.today);
                                 if (flag.fs === true && flag.apps === true) {
                                     lintrun();
                                 } else {
