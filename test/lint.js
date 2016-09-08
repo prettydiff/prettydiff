@@ -521,10 +521,10 @@
                             fs.stat(modules[mod].dir, function taskrunner_lint_install_handler_stat(erstat, stats) {
                                 var clone = function taskrunner_lint_install_handler_stat_clone() {
                                     child("git submodule add " + modules[mod].repo, function taskrunner_lint_install_handler_stat_clone_submodule(era, stdouta, stdoutera) {
-                                        if (era !== null && era !== "" && era.toString().indexOf("already exists in the index") < 0) {
+                                        if (era !== null && era !== "") {
                                             errout(era);
                                         }
-                                        if (stdoutera !== null && stdoutera !== "" && stdoutera.indexOf("Cloning into '") !== 0 && stdoutera.toString().indexOf("already exists in the index") < 0) {
+                                        if (stdoutera !== null && stdoutera !== "" && stdoutera.indexOf("Cloning into '") !== 0) {
                                             errout(stdoutera);
                                         }
                                         ind += 1;
@@ -597,7 +597,9 @@
                             modules[appName].app = require(appFile);
                             modules[appName].edition(modules[appName]);
                         }
-                        if (ind === keys.length) {
+                        if (ind < keys.length) {
+                            handler(ind);
+                        } else {
                             if (today !== date) {
                                 fs.writeFile("test/today.js", "/*global module*/(function () {\"use strict\";var today=" + date + ";module.exports=today;}());", function taskrunner_lint_install_editions_writeToday(werr) {
                                     if (werr !== null && werr !== undefined && werr !== "") {
@@ -670,8 +672,6 @@
                                     flag.today = true;
                                 }
                             }
-                        } else {
-                            handler(ind);
                         }
                     };
                     handler(0);
