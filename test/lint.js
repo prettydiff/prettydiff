@@ -405,8 +405,7 @@
                         files: false,
                         fs   : false,
                         items: false,
-                        apps : false,
-                        today: false
+                        apps : false
                     },
                     modules         = {
                         jslint    : {
@@ -569,15 +568,12 @@
                                 jslintcomplete = function taskrunner_lint_install_editions_submod_jslintcomplete() {
                                     modules.jslint.app = require(appFile);
                                     modules.jslint.edition(modules.jslint);
-                                    if (flag.today === true) {
-                                        if (cloned === true) {
-                                            console.log("Submodules downloaded.");
-                                        } else {
-                                            console.log("Submodules updated!");
-                                        }
+                                    if (cloned === true) {
+                                        console.log("Submodules downloaded.");
+                                    } else {
+                                        console.log("Submodules updated!");
                                     }
                                     if (ind === keys.length) {
-                                        flag.today = true;
                                         if (flag.fs === true) {
                                             lintrun();
                                         } else {
@@ -605,12 +601,10 @@
                             } else {
                                 modules[appName].app = require(appFile);
                                 modules[appName].edition(modules[appName]);
-                                if (flag.today === true) {
-                                    if (cloned === true) {
-                                        console.log("Submodules downloaded.");
-                                    } else {
-                                        console.log("Submodules updated!");
-                                    }
+                                if (cloned === true) {
+                                    console.log("Submodules downloaded.");
+                                } else {
+                                    console.log("Submodules updated!");
                                 }
                             }
                         };
@@ -652,7 +646,7 @@
                                                 errout(stdouterd);
                                             }
                                             submod();
-                                            if (flag.fs === true && flag.today === true) {
+                                            if (flag.fs === true) {
                                                 lintrun();
                                             } else {
                                                 flag.apps = true;
@@ -670,7 +664,7 @@
                                             errout(stdouterpull);
                                         }
                                         submod();
-                                        if (flag.fs === true && flag.today === true) {
+                                        if (flag.fs === true) {
                                             lintrun();
                                         } else {
                                             flag.apps = true;
@@ -682,8 +676,6 @@
                                 console.log("Running prior installed modules.");
                                 if (flag.fs === true && flag.apps === true) {
                                     lintrun();
-                                } else {
-                                    flag.today = true;
                                 }
                             }
                         }
@@ -715,7 +707,7 @@
                                         data
                                     ]);
                                     if (flag.files === true && flag.items === true) {
-                                        if (flag.apps === true && flag.today === true) {
+                                        if (flag.apps === true) {
                                             flag.files = false;
                                             lintrun();
                                         } else {
@@ -753,7 +745,7 @@
                                                 } while (a < idLen);
                                                 if (ignoreDir === true) {
                                                     if (flag.files === true && flag.items === true) {
-                                                        if (flag.apps === true && flag.today === true) {
+                                                        if (flag.apps === true) {
                                                             flag.items = false;
                                                             lintrun();
                                                         } else {
