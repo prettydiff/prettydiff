@@ -521,10 +521,10 @@
                             fs.stat(modules[mod].dir, function taskrunner_lint_install_handler_stat(erstat, stats) {
                                 var clone = function taskrunner_lint_install_handler_stat_clone() {
                                     child("git submodule add " + modules[mod].repo, function taskrunner_lint_install_handler_stat_clone_submodule(era, stdouta, stdoutera) {
-                                        if (era !== null && era !== "" && era.indexOf("already exists in the index") < 0) {
+                                        if (era !== null && era !== "" && era.toString().indexOf("already exists in the index") < 0) {
                                             errout(era);
                                         }
-                                        if (stdoutera !== null && stdoutera !== "" && stdoutera.indexOf("Cloning into '") !== 0 && stdoutera.toString().indexOf("already exists in the index") < 0) {
+                                        if (stdoutera !== null && stdoutera !== "" && stdoutera.indexOf("Cloning into '") !== 0 && stdoutera.indexOf("already exists in the index") < 0) {
                                             errout(stdoutera);
                                         }
                                         ind += 1;
