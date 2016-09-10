@@ -529,10 +529,10 @@
                                             errout(stdoutera);
                                         }
                                         child("git clone " + modules[mod].repo, function taskrunner_lint_install_handler_stat_clone_submodule_gitclone(erb, stdoutb, stdouterb) {
-                                            if (erb !== null) {
+                                            if (erb !== null && erb.toString(" already exists in the index") < 0) {
                                                 errout(erb);
                                             }
-                                            if (stdouterb !== null && stdouterb.indexOf("From ") < 0 && stdouterb.indexOf("Cloning into '") < 0) {
+                                            if (stdouterb !== null && stdouterb.indexOf("From ") < 0 && stdouterb.indexOf("Cloning into '") < 0 && stdouterb.indexOf(" already exists in the index") < 0) {
                                                 errout(stdouterb);
                                             }
                                             ind += 1;
