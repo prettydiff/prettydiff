@@ -540,6 +540,8 @@
                                                 editions(mod, true);
                                                 return stdoutb;
                                             });
+                                        } else {
+                                            editions(mod, false);
                                         }
                                         return stdouta;
                                     });
