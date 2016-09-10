@@ -528,7 +528,7 @@
                                         if (stdoutera !== null && stdoutera !== "" && stdoutera.indexOf("From ") < 0 && stdoutera.indexOf("Cloning into '") < 0 && stdoutera.indexOf(" already exists in the index") < 0) {
                                             errout(stdoutera);
                                         }
-                                        if (stats.isDirectory !== undefined && stats.isDirectory() === false) {
+                                        if (stats !== undefined && stats.isDirectory !== undefined && stats.isDirectory() === false) {
                                             child("git clone " + modules[mod].repo, function taskrunner_lint_install_handler_stat_clone_submodule_gitclone(erb, stdoutb, stdouterb) {
                                                 if (erb !== null && erb.toString(" already exists in the index") < 0) {
                                                     errout(erb);
