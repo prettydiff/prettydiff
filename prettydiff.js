@@ -422,11 +422,11 @@
         diffview     : 160902, //diffview lib
         documentation: 160828, //documentation.xhtml and various guide pages
         finalFile    : 160816, //HTML report generator
-        jspretty     : 160907, //jspretty lib
+        jspretty     : 160911, //jspretty lib
         language     : 160906, //language lib
         latest       : 0,
-        lint         : 160907, //unit test and lint automation as test/lint.js
-        markuppretty : 160907, //markuppretty lib
+        lint         : 160911, //unit test and lint automation as test/lint.js
+        markuppretty : 160911, //markuppretty lib
         options      : 160831, //options management
         prettydiff   : 160902, //this file
         safeSort     : 160816, //safeSort lib
