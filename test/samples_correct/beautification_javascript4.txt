@@ -27,8 +27,7 @@ function v() {
             }
         }
     }
-}
-{
+} {
     animate: function () {
         return a(function () {
             d

@@ -394,6 +394,7 @@
                         "ace",
                         "bin",
                         "coverage",
+                        "guide",
                         "ignore",
                         "JSLint",
                         "node_modules",
