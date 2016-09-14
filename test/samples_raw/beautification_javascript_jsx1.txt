@@ -1,0 +1,20 @@
+import s from './Dashboard.css';
+
+  render() {
+    return (
+      <h3>53<sup style={{fontSize: 20}}>%</sup></h3>
+                <p>Bounce Rate</p>
+    );
+}
+class MyComponent extends React.Component {
+    render() {
+        return (
+            <h1 style={{
+                margin: 0
+            }}>
+                Test
+            </h1>
+        );
+    }
+}
+export default withStyles(s)(Dashboard);

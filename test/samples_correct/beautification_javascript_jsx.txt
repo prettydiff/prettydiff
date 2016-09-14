@@ -45,8 +45,8 @@ var content = (
             comment */
             //attr="test"
             name={window.isLoggedIn
-            ? window.name
-            : ""} // end of line comment
+                ? window.name
+                : ""} // end of line comment
         />
     </Nav>
 );
@@ -201,8 +201,8 @@ var MarkdownEditor = React.createClass({
                 <div
                     className="content"
                     dangerouslySetInnerHTML={{
-                    __html: converter.makeHtml(this.state.value)
-                }}/>
+                        __html: converter.makeHtml(this.state.value)
+                    }}/>
             </div>
         );
     }
@@ -215,8 +215,8 @@ class MyComponent extends React.Component {
         var a = 1;
         return (
             <h1 style={{
-                margin: 0
-            }}>
+                    margin: 0
+                }}>
                 Test
             </h1>
         );

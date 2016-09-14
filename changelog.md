@@ -1,5 +1,15 @@
 # Pretty Diff change log
 
+## v2.1.10
+
+### Defect resolutions
+* Fixes #360, incorrect markup parsing for multiple tag structures in a single JSX return
+* Reverting code validation back to 2.1.8 version for stability
+
+### Enhancement
+* Fixes #362, providing support for Flow.js
+* Better TSX support
+
 ## v2.1.9
 * Better comment beautification
 * Language identification for some forms of C/C++ (not supported)
