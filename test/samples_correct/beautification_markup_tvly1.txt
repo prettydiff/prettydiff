@@ -5528,7 +5528,6 @@
         <!-- /TRAVELOCITY_cobrand.lib FOOTER -->
         <script type="text/javascript">
             // The following js comes from: http://i.travelpn.com/jQuery/1.5.1/jquery.min.js
-            // //
             /*!
  * jQuery JavaScript Library v1.5.1
  * http://jquery.com/
@@ -11036,8 +11035,8 @@
                 }),
                 a.jQuery = a.$ = d;
             })(window); // .
-            // *****END***** // The following js comes from:
-            // http://i.travelpn.com/jQuery-ui/1.8.6/ui/jquery.ui.core.min.js //
+            // *****END***** The following js comes from:
+            // http://i.travelpn.com/jQuery-ui/1.8.6/ui/jquery.ui.core.min.js
             /*!
  * jQuery UI 1.8.6
  *
@@ -11308,8 +11307,8 @@
                     });
                 }
             })(jQuery);
-            // . *****END***** // The following js comes from:
-            // http://i.travelpn.com/jQuery-ui/1.8.6/ui/jquery.ui.widget.min.js //
+            // . *****END***** The following js comes from:
+            // http://i.travelpn.com/jQuery-ui/1.8.6/ui/jquery.ui.widget.min.js
             /*!
  * jQuery UI Widget 1.8.6
  *
@@ -11513,8 +11512,8 @@
                     widgetName       : "widget"
                 };
             })(jQuery);
-            // . *****END***** // The following js comes from:
-            // http://i.travelpn.com/jQuery-ui/1.8.6/ui/jquery.ui.tabs.min.js //
+            // . *****END***** The following js comes from:
+            // http://i.travelpn.com/jQuery-ui/1.8.6/ui/jquery.ui.tabs.min.js
             /*
  * jQuery UI Tabs 1.8.6
  *
@@ -12201,8 +12200,8 @@
                     rotation: null
                 });
             })(jQuery);
-            // . *****END***** // The following js comes from:
-            // http://i.travelpn.com/js/fd_commons.js //
+            // . *****END***** The following js comes from:
+            // http://i.travelpn.com/js/fd_commons.js
             (function ($) {
                 $.fn.addPlacement = function (ads) {
                     jQuery(ads)
@@ -12909,9 +12908,9 @@
                         oScope.settings.defaultDataHandler = handler;
                     }
                 };
-            })(); // .// *****END***** //
+            })(); // .// *****END*****
 
-            // The following js comes from: http://i.travelpn.com/js/jquery_tvly.js //
+            // The following js comes from: http://i.travelpn.com/js/jquery_tvly.js
             (function ($) {
                 $.fn.tvly            = {};
                 $.tvly               = {
@@ -13170,8 +13169,8 @@
                     return _logger;
                 })();
             })(jQuery); // .
-            // *****END***** // The following js comes from:
-            // http://i.travelpn.com/js/jquery.cannonball-1.6.js //
+            // *****END***** The following js comes from:
+            // http://i.travelpn.com/js/jquery.cannonball-1.6.js
             if (!jQuery.tvly) {
                 jQuery.tvly = {};
             }
@@ -14960,8 +14959,8 @@
                 }
             };
             jQuery(document).trigger("cannonball:ready"); // .
-            // *****END***** // The following js comes from:
-            // http://i.travelpn.com/jquery/plug-ins/jquery.json2xml.min.js //
+            // *****END***** The following js comes from:
+            // http://i.travelpn.com/jquery/plug-ins/jquery.json2xml.min.js
             (function ($) {
                 $.json2xml = function (json, options) {
                     settings = {};
@@ -15067,8 +15066,8 @@
                     return xmlNode;
                 };
             })(jQuery); // .
-            // *****END***** // The following js comes from:
-            // http://i.travelpn.com/js/subscription_management.js //
+            // *****END***** The following js comes from:
+            // http://i.travelpn.com/js/subscription_management.js
             (function () {
                 jQuery(function () {
                     SubscriptionsConstants = {
@@ -16251,8 +16250,8 @@
                     }
                 };
             })(); // .
-            // *****END***** // The following js comes from:
-            // http://i.travelpn.com/js/homepage.js //
+            // *****END***** The following js comes from:
+            // http://i.travelpn.com/js/homepage.js
             AdvancedSearch                                  = {};
             AdvancedSearch.OneWaySearchConfig               = {
                 BasicSearchFiedls: {
@@ -16650,8 +16649,8 @@
                 },
                 sections      : ["tvl-hot-dest", "vac-dest-links", "intl-sites"]
             }; // .
-            // *****END***** // The following js comes from:
-            // http://i.travelpn.com/jquery/plug-ins/jquery.base64.js //
+            // *****END***** The following js comes from:
+            // http://i.travelpn.com/jquery/plug-ins/jquery.base64.js
             (function ($) {
                 var keyString = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
                 var uTF8Encode = function (string) {
@@ -16761,10 +16760,10 @@
                     }
                 });
             })(jQuery); // .
-            // *****END***** // The following js comes from:
-            // http://www.travelocity.com/ac-js-consolidator/0,6726,|TRAVELOCITY,00.js //
-            // The following js comes from:
-            // http://i.travelpn.com/jQuery-ui/1.8.6/ui/jquery.ui.mouse.min.js //
+            // *****END***** The following js comes from:
+            // http://www.travelocity.com/ac-js-consolidator/0,6726,|TRAVELOCITY,00.js The
+            // following js comes from:
+            // http://i.travelpn.com/jQuery-ui/1.8.6/ui/jquery.ui.mouse.min.js
             /*!
  * jQuery UI Mouse 1.8.6
  *
@@ -16888,8 +16887,8 @@
                     }
                 });
             })(jQuery);
-            // . *****END***** // The following js comes from:
-            // http://i.travelpn.com/jQuery-ui/1.8.6/ui/jquery.ui.position.min.js //
+            // . *****END***** The following js comes from:
+            // http://i.travelpn.com/jQuery-ui/1.8.6/ui/jquery.ui.position.min.js
             /*
  * jQuery UI Position 1.8.6
  *
@@ -17130,8 +17129,8 @@
                     };
                 }
             })(jQuery);
-            // . *****END***** // The following js comes from:
-            // http://i.travelpn.com/js/bgiframe.js //
+            // . *****END***** The following js comes from:
+            // http://i.travelpn.com/js/bgiframe.js
             (function ($) {
                 $.fn.bgIframe = $.fn.bgiframe = function (s) {
                     if ($.browser.msie && /6.0/.test(navigator.userAgent)) {
@@ -17169,8 +17168,8 @@
                     return this;
                 };
             })(jQuery); // .
-            // *****END***** // The following js comes from:
-            // http://i.travelpn.com/jQuery-ui/1.8.6/ui/jquery.ui.autocomplete.min.js //
+            // *****END***** The following js comes from:
+            // http://i.travelpn.com/jQuery-ui/1.8.6/ui/jquery.ui.autocomplete.min.js
             /*
  * jQuery UI Autocomplete 1.8.6
  *
@@ -17727,8 +17726,8 @@
                     }
                 });
             })(jQuery);
-            // . *****END***** // The following js comes from:
-            // http://i.travelpn.com/js/cookie.js //
+            // . *****END***** The following js comes from:
+            // http://i.travelpn.com/js/cookie.js
             jQuery.cookie            = function (name, value, options) {
                 if (typeof value != "undefined") {
                     options = options || {};
@@ -17794,8 +17793,8 @@
                 }
                 return (cookieEnabled);
             }; // .
-            // *****END***** // The following js comes from:
-            // http://i.travelpn.com/js/autocomplete.js //
+            // *****END***** The following js comes from:
+            // http://i.travelpn.com/js/autocomplete.js
             (function ($) {
                 jQuery._autocomplete               = function (config) {
                     try {
@@ -18265,7 +18264,7 @@
                     return distance + "";
                 };
             })(jQuery); // .
-            // *****END***** // . *****END***** //
+            // *****END***** . *****END*****
         </script>
 
         <script type="text/javascript">
