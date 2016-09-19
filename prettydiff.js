@@ -426,7 +426,7 @@
         language     : 160914, //language lib
         latest       : 0,
         lint         : 160914, //unit test and lint automation as test/lint.js
-        markuppretty : 160914, //markuppretty lib
+        markuppretty : 160918, //markuppretty lib
         options      : 160918, //options management
         prettydiff   : 160902, //this file
         safeSort     : 160816, //safeSort lib
