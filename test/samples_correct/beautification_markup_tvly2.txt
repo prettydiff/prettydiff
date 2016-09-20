@@ -373,7 +373,6 @@
             .text {
                 width: 380px;
             }
-
         </style>
         <link
             href="/static/publish/region_us/css/home.css?v=2"
@@ -3213,7 +3212,6 @@
                     .rvTabs {
                         background-color: #cecece !important;
                     }
-
                 </style>
 
 
@@ -3296,7 +3294,6 @@
                         span.offerline2 a {
                             color: #fff;
                         }
-
                     </style>
 
                     <div class="wrap">
