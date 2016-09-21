@@ -413,7 +413,7 @@
             ace: 160307
         },
         api          : {
-            dom      : 160902, //dom.js
+            dom      : 160921, //dom.js
             nodeLocal: 160816 //node-local.js
         },
         css          : 160814, //css files
@@ -422,15 +422,15 @@
         diffview     : 160902, //diffview lib
         documentation: 160828, //documentation.xhtml and various guide pages
         finalFile    : 160816, //HTML report generator
-        jspretty     : 160911, //jspretty lib
-        language     : 160906, //language lib
+        jspretty     : 160921, //jspretty lib
+        language     : 160921, //language lib
         latest       : 0,
-        lint         : 160911, //unit test and lint automation as test/lint.js
-        markuppretty : 160911, //markuppretty lib
-        options      : 160831, //options management
+        lint         : 160914, //unit test and lint automation as test/lint.js
+        markuppretty : 160921, //markuppretty lib
+        options      : 160921, //options management
         prettydiff   : 160902, //this file
         safeSort     : 160816, //safeSort lib
-        version      : "2.1.10", //version number
+        version      : "2.1.11", //version number
         webtool      : 160827
     };
     global.prettydiff.edition.latest = (function edition_latest() {

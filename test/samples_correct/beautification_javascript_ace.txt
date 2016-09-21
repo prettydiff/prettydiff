@@ -15371,7 +15371,7 @@ define("ace/virtual_renderer", [
                 n.theme && i.removeCssClass(n.container, n.theme.cssClass);
                 var s = "padding" in r
                     ? r.padding
-                    : "padding" in(n.theme || {})
+                    : "padding" in (n.theme || {})
                         ? 4
                         : n.$padding;
                 n.$padding && s != n.$padding && n.setPadding(s),
