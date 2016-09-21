@@ -413,7 +413,7 @@
             ace: 160307
         },
         api          : {
-            dom      : 160920, //dom.js
+            dom      : 160921, //dom.js
             nodeLocal: 160816 //node-local.js
         },
         css          : 160814, //css files
@@ -422,12 +422,12 @@
         diffview     : 160902, //diffview lib
         documentation: 160828, //documentation.xhtml and various guide pages
         finalFile    : 160816, //HTML report generator
-        jspretty     : 160920, //jspretty lib
-        language     : 160920, //language lib
+        jspretty     : 160921, //jspretty lib
+        language     : 160921, //language lib
         latest       : 0,
         lint         : 160914, //unit test and lint automation as test/lint.js
-        markuppretty : 160920, //markuppretty lib
-        options      : 160920, //options management
+        markuppretty : 160921, //markuppretty lib
+        options      : 160921, //options management
         prettydiff   : 160902, //this file
         safeSort     : 160816, //safeSort lib
         version      : "2.1.11", //version number
