@@ -1,0 +1,60 @@
+/*prettydiff.com bracepadding:true*/
+
+"use strict";
+
+const express = require( "express" );
+const ext = require( "../dbmodel" );
+const requireDir = require( "../requireDir" );
+const rest = require( "../lib/rest" );
+const CRUDAPI = require( "../lib/API" );
+const config = require( "../config" );
+const Log = config.LOG( "app:router" );
+
+const router = express.Router();
+
+const models = {};
+Object
+    .keys( ext )
+    .map( ( modelname ) => {
+        models[ modelname ] = ext[ modelname ]
+            .model
+            .source();
+    } );
+
+const myArr = [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f"
+];
+
+router.get( "/init", ( req, res ) => {
+    return res.json( {
+        result: {
+            API   : CRUDAPI,
+            models: models,
+            user  : req.user
+        }
+    } );
+} );
+
+Object
+    .keys( ext )
+    .map( modelname => {
+        let mRouter = express.Router();
+        ext[ modelname ].useRouter && ext[ modelname ].useRouter( mRouter, modelname );
+        rest( modelname, mRouter );
+        router.use( `/${ modelname }`, mRouter );
+    } );
+
+const routes = requireDir( "./router/routes" );
+
+Object
+    .keys( routes )
+    .map( ( route ) => {
+        router.use( `/${ route }`, routes[ route ] );
+    } );
+
+module.exports = router;

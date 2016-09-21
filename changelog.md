@@ -1,5 +1,14 @@
 # Pretty Diff change log
 
+## v2.1.11
+
+### Defect resolutions
+* Fixes #363, resolves several defects with option `bracepadding`
+* Fixes #365, catastrophic parsing flaw for Liquid HTML templates
+
+### Enhancement
+* Fixes #366, adding support for GoHTML template language
+
 ## v2.1.10
 
 ### Defect resolutions

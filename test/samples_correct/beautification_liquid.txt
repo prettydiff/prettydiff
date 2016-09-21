@@ -69,7 +69,6 @@
                     {% endcase %}
                 }
             }
-
         </style>
     {% endif %}
 </a>

@@ -43,7 +43,7 @@ object.bar = "bar";
 
 let coolRating: {
     [id: string]: number
-}          = {};
+} = {};
 coolRating["sam"] = 10; // Yes, it's a 0-10 scale.
 
 

@@ -1,0 +1,173 @@
+child("node biddle help 60", function biddle_test_help_60(er, stdout, stder) {
+    var help = "\n\u001b[4m\u001b[1m\u001b[31mbiddle\u001b[39m\u001b[0m\u001b[24m\n\u001b[3m" +
+            "\u001b[33mA package management application without a package\nmanagement service" +
+            ".\u001b[39m\u001b[0m\n\n\u001b[4m\u001b[1m\u001b[36mLicense\u001b[39m\u001b[0m" +
+            "\u001b[24m\n  MIT, (\u001b[36mhttps://opensource.org/licenses/MIT\u001b[39m)\n\n" +
+            "\u001b[4m\u001b[1m\u001b[36mVersion\u001b[39m\u001b[0m\u001b[24m\n  0.0.3\n\n" +
+            "\u001b[4m\u001b[1m\u001b[36mAbout\u001b[39m\u001b[0m\u001b[24m\n  This applicati" +
+            "on is a cross-OS solution to creating zip\n  files for distribution and fetching" +
+            " files via HTTP(S).\n  The project's goal is to provide a universal application" +
+            "\n  distribution utility that is language agnostic, operating\n  system independ" +
+            "ent, and platform independent.  The only\n  additional requirement for distribut" +
+            "ing application\n  packages is online storage on a web server.  This\n  applicat" +
+            "ion provides all the utilities to retrieve,\n  bundle, and unpackage application" +
+            "s.\n\n  biddle is inspired by the incredible awesomeness of\n  NPM, (\u001b[36mh" +
+            "ttp://npmjs.com\u001b[39m), but seeks to accomplish a few\n  additional goals:\n" +
+            "\n  \u001b[1m\u001b[31m*\u001b[39m\u001b[0m \u001b[3m\u001b[33mintegrity\u001b[3" +
+            "9m\u001b[0m - Downloaded packages will perform a\n    hash comparison before the" +
+            "y are unpackaged.  If the\n    hashes don't match the zip file will be saved in " +
+            "the\n    downloads directory awaiting a human touch.\n  \u001b[1m\u001b[31m*" +
+            "\u001b[39m\u001b[0m \u001b[3m\u001b[33mautonomy\u001b[39m\u001b[0m - There is no" +
+            " central authority here.\n    Host your own publications and manage them as you " +
+            "please\n    with any name you choose.\n  \u001b[1m\u001b[31m*\u001b[39m\u001b[0m" +
+            " \u001b[3m\u001b[33mmanagement\u001b[39m\u001b[0m - There is no dependency hell " +
+            "here.\n    Dependency management will not be automated, but a means\n    to mana" +
+            "ge and review the status of all\n    installed/published packages is provided.\n" +
+            "  \u001b[1m\u001b[31m*\u001b[39m\u001b[0m \u001b[3m\u001b[33mfreedom\u001b[39m" +
+            "\u001b[0m - biddle will work everywhere Node.js\n    runs.  It can be used with " +
+            "any application written in\n    any language whether binary or text.\n\n\u001b[4" +
+            "m\u001b[1m\u001b[36mProject Status\u001b[39m\u001b[0m\u001b[24m\n  \u001b[1mUnst" +
+            "able and in early developement.\u001b[0m\n\n  \u001b[1m\u001b[31m*\u001b[39m" +
+            "\u001b[0m command \u001b[1mget\u001b[0m is complete\n  \u001b[1m\u001b[31m*" +
+            "\u001b[39m\u001b[0m command \u001b[1mhash\u001b[0m is complete\n  \u001b[1m" +
+            "\u001b[31m*\u001b[39m\u001b[0m command \u001b[1mhelp\u001b[0m is complete\n  " +
+            "\u001b[1m\u001b[31m*\u001b[39m\u001b[0m command \u001b[1mlist\u001b[0m is comple" +
+            "te\n  \u001b[1m\u001b[31m*\u001b[39m\u001b[0m command \u001b[1mmarkdown\u001b[0m" +
+            " is complete\n  \u001b[1m\u001b[31m*\u001b[39m\u001b[0m command \u001b[1mpublish" +
+            "\u001b[0m is complete\n  \u001b[1m\u001b[31m*\u001b[39m\u001b[0m command \u001b[" +
+            "1munpublish\u001b[0m is complete\n  \u001b[1m\u001b[31m*\u001b[39m\u001b[0m comm" +
+            "and \u001b[1mzip\u001b[0m is complete\n  \u001b[1m\u001b[31m*\u001b[39m\u001b[0m" +
+            " command \u001b[1munzip\u001b[0m os complete\n  \u001b[1m\u001b[31m*\u001b[39m" +
+            "\u001b[0m add support for a \u001b[3m\u001b[33m.biddleignore\u001b[39m\u001b[0m " +
+            "file, this file\n    contain a list of items to not include in the published\n  " +
+            "  zip\n    \u001b[1m\u001b[31m-\u001b[39m\u001b[0m File is read\n    \u001b[1m" +
+            "\u001b[31m-\u001b[39m\u001b[0m Support and processing is not added yet\n    " +
+            "\u001b[1m\u001b[31m-\u001b[39m\u001b[0m Will not include support for comments or" +
+            "\n      wildcards in initial launch\n  \u001b[1m\u001b[31m*\u001b[39m\u001b[0m a" +
+            "dd support for \u001b[3m\u001b[33mvariants\u001b[39m\u001b[0m in package.json,\n" +
+            "      which allows named variants where each has a custom\n      ignore list\n  " +
+            "\u001b[1m\u001b[31m*\u001b[39m\u001b[0m Work on \u001b[1minstall\u001b[0m is " +
+            "\u001b[3m\u001b[33mblocked\u001b[39m\u001b[0m pending\n      configuration work" +
+            "\n    \u001b[1m\u001b[31m-\u001b[39m\u001b[0m Hash files must now become JSON st" +
+            "oring\n      hash, name, and version\n    \u001b[1m\u001b[31m-\u001b[39m\u001b[0" +
+            "m ZIP approach needs to be reevaluated...\n      details in next point\n  \u001b" +
+            "[1m\u001b[31m*\u001b[39m\u001b[0m Advanced configuration work is \u001b[3m\u001b" +
+            "[33munderway now\u001b[39m\u001b[0m.\n      Configuration details will go into t" +
+            "he package.json\n      file.\n    \u001b[1m\u001b[31m-\u001b[39m\u001b[0m I need" +
+            " to revise the approach to creating\n      ZIP files.  I cannot simply point to " +
+            "a directory and\n      zip it for security reasons.  Instead I will need to\n   " +
+            "   index the child items of the target directory for\n      addition to a ZIP fi" +
+            "le.  The reason has to do with\n      potential (malicious), naming collisions u" +
+            "niformity\n      violations.\n    \u001b[1m\u001b[31m-\u001b[39m\u001b[0m Allow " +
+            "restriction of named directories when\n      creating a zip so that production o" +
+            "nly packages don't\n      have dev dependencies, build systems, unit tests,\n   " +
+            "   systems files, and so forth\n    \u001b[1m\u001b[31m-\u001b[39m\u001b[0m Allo" +
+            "w definition of custom default\n      locations.\n  \u001b[1m\u001b[31m*\u001b[3" +
+            "9m\u001b[0m Work on \u001b[1mstatus\u001b[0m is not started.  This command\n    " +
+            "  will compare an installed application's version\n      against a published ver" +
+            "sion to determine if out of\n      date.\n    \u001b[1m\u001b[31m-\u001b[39m" +
+            "\u001b[0m Must allow an app name as an argument to\n      manually check that ap" +
+            "plication or \u001b[3m\u001b[33mall\u001b[39m\u001b[0m to check all\n      insta" +
+            "lled applications\n    \u001b[1m\u001b[31m-\u001b[39m\u001b[0m Status automation" +
+            " or intervals would be\n      nice... such as checking app versions once a week " +
+            "and\n      providing a message when out of date\n  \u001b[1m\u001b[31m*\u001b[39" +
+            "m\u001b[0m Work on \u001b[1muninstall\u001b[0m command is \u001b[3m\u001b[33mblo" +
+            "cked\u001b[39m\u001b[0m pending\n      completion of \u001b[1minstall\u001b[0m." +
+            "\n    \u001b[1m\u001b[31m-\u001b[39m\u001b[0m Must delete the application\n    " +
+            "\u001b[1m\u001b[31m-\u001b[39m\u001b[0m Must remove the application from the " +
+            "\u001b[1mlist\u001b[0m\n\n\u001b[4m\u001b[1m\u001b[36mSupported commands\u001b[3" +
+            "9m\u001b[0m\u001b[24m\n  Commands are the third command line argument, or second" +
+            "\n  if the optional \u001b[3m\u001b[33mnode\u001b[39m\u001b[0m argument is absen" +
+            "t.  Commands are\n  case insensitive, but values and local paths are case\n  sen" +
+            "sitive.  All local address are either absolute from the\n  root or relative from" +
+            " the current working directory.\n\n  \u001b[4m\u001b[1m\u001b[32mget\u001b[39m" +
+            "\u001b[0m\u001b[24m\n    Merely downloads the requested resource and saves\n    " +
+            "it as a file with the same filename. If the filename is\n    not provided in the" +
+            " URI the final directory up to the\n    domain name will become the filename, an" +
+            "d if for some\n    reason that doesn't work the default filename is\n    \u001b[" +
+            "3m\u001b[33mdownload.xxx\u001b[39m\u001b[0m.\n\n    Download a file to the defau" +
+            "lt location, which is\n    the provided \u001b[3m\u001b[33mdownloads\u001b[39m" +
+            "\u001b[0m directory.\n\n\u001b[32m    node biddle get http://google.com\u001b[39" +
+            "m\n\n    Download a file to an alternate location.\n\n\u001b[32m    node biddle " +
+            "get http://google.com ../mydirectory\u001b[39m\n\n  \u001b[4m\u001b[1m\u001b[32m" +
+            "hash\u001b[39m\u001b[0m\u001b[24m\n    Prints to console a SHA512 hash against a" +
+            " local\n    resource.\n\n\u001b[32m    node biddle hash downloads/myfile.zip" +
+            "\u001b[39m\n\n  \u001b[4m\u001b[1m\u001b[32mhelp\u001b[39m\u001b[0m\u001b[24m\n " +
+            "   Prints the readme.md file contents to console in a\n    human friendly way.\n" +
+            "\n    No command will still generate the readme data.\n\n\u001b[32m    node bidd" +
+            "le\u001b[39m\n\n    The default word wrapping is set to 100 characters.\n\n" +
+            "\u001b[32m    node biddle help\u001b[39m\n\n    Set a custom word wrap limit.\n" +
+            "\n\u001b[32m    node biddle help 80\u001b[39m\n\n  \u001b[4m\u001b[1m\u001b[32mi" +
+            "nstall\u001b[39m\u001b[0m\u001b[24m\n    (not written yet)\n    Downloads the re" +
+            "quested resource, but decompresses\n    and unpackages the zip before writing fi" +
+            "les to disk.\n\n  \u001b[4m\u001b[1m\u001b[32mlist\u001b[39m\u001b[0m\u001b[24m" +
+            "\n    Will list all installed and/or published\n    applications with their loca" +
+            "tions and latest versions.\n    It can take the optional argument \u001b[3m" +
+            "\u001b[33minstalled\u001b[39m\u001b[0m or \u001b[3m\u001b[33mpublished\u001b[39m" +
+            "\u001b[0m\n    to output a specific list or both lists are produced.\n\n    Only" +
+            " output the installed list.\n\n\u001b[32m    node biddle list installed\u001b[39" +
+            "m\n\n    Output both lists\n\n\u001b[32m    node biddle list\u001b[39m\n\n  " +
+            "\u001b[4m\u001b[1m\u001b[32mmarkdown\u001b[39m\u001b[0m\u001b[24m\n    Allows th" +
+            "e internal markdown parser used by the\n    \u001b[1mhelp\u001b[0m command to be" +
+            " supplied to a directed file to ease\n    reading of documentation directly from" +
+            " the command line.\n\n    The first argument after the command is the address\n " +
+            "   of the file to read.\n\n\u001b[32m    node biddle markdown applications/examp" +
+            "le/readme.md\u001b[39m\n\n    You can also specify a custom word wrap limit.  Th" +
+            "e\n    default is still 100.\n\n\u001b[32m    node biddle markdown applications/" +
+            "example/readme.md 80\u001b[39m\n\n  \u001b[4m\u001b[1m\u001b[32mpublish\u001b[39" +
+            "m\u001b[0m\u001b[24m\n    Writes a hash file and a zip file with a version\n    " +
+            "number to the publications directory or some other\n    specified location.  App" +
+            "lications are required to have a\n    file in their root directory named \u001b[" +
+            "3m\u001b[33mpackage.json\u001b[39m\u001b[0m with\n    properties: \u001b[3m" +
+            "\u001b[33mname\u001b[39m\u001b[0m and \u001b[3m\u001b[33mversion\u001b[39m\u001b" +
+            "[0m.\n\n    Create a zip in the default location:\n    ./publications/myapplicat" +
+            "ion\n\n\u001b[32m    node biddle publish ../myapplication\u001b[39m\n\n    Publi" +
+            "sh to a custom location:\n    ./myAlternateDirectory/myapplication\n\n\u001b[32m" +
+            "    node biddle publish ../myapplication myAlternateDirectory\u001b[39m\n\n    U" +
+            "se quotes if any argument contains spaces:\n\n\u001b[32m    node biddle publish " +
+            "\"c:\program files\myApplication\"\u001b[39m\n\n  \u001b[4m\u001b[1m\u001b[32mst" +
+            "atus\u001b[39m\u001b[0m\u001b[24m\n    (not written yet)\n    Will check whether" +
+            " an installed application is\n    behind the latest published version.  Automati" +
+            "on is\n    planned but still under consideration.\n\n  \u001b[4m\u001b[1m\u001b[" +
+            "32mtest\u001b[39m\u001b[0m\u001b[24m\n    (not written yet)\n    Run the unit te" +
+            "sts.\n\n  \u001b[4m\u001b[1m\u001b[32muninstall\u001b[39m\u001b[0m\u001b[24m\n  " +
+            "  (not written yet)\n    Will delete an installed application by name and\n    r" +
+            "emove the application from the installed list.\n\n  \u001b[4m\u001b[1m\u001b[32m" +
+            "unpublish\u001b[39m\u001b[0m\u001b[24m\n    Will delete a published application " +
+            "by name and\n    remove the application from the published list.  An\n    applic" +
+            "ation name is required and not the address to the\n    application.\n\n\u001b[32" +
+            "m    node biddle unpublish myApplication\u001b[39m\n\n  \u001b[4m\u001b[1m\u001b" +
+            "[32munzip\u001b[39m\u001b[0m\u001b[24m\n    Unzips a local zipped file.\n\n    U" +
+            "nzip to the default location, the supplied\n    \u001b[3m\u001b[33mdownloads" +
+            "\u001b[39m\u001b[0m directory.\n\n\u001b[32m    node biddle unzip myZipFile.zip" +
+            "\u001b[39m\n\n    Unzip to a specified location.\n\n\u001b[32m    node biddle un" +
+            "zip myZipFile.zip myDirectory\u001b[39m\n\n  \u001b[4m\u001b[1m\u001b[32mzip" +
+            "\u001b[39m\u001b[0m\u001b[24m\n    Zips local files or local directories into a " +
+            "zip\n    file.\n\n    Zip to the default location, the supplied \u001b[3m\u001b[" +
+            "33mdownloads\u001b[39m\u001b[0m\n    directory.\n\n\u001b[32m    node biddle zip" +
+            " ../myApplication\u001b[39m\n\n    Zip to a specified location.\n\n\u001b[32m   " +
+            " node biddle zip ../myApplication myCustom/Location/Directory\u001b[39m\n\n" +
+            "\u001b[4m\u001b[1m\u001b[36mDependencies\u001b[39m\u001b[0m\u001b[24m\n\n  " +
+            "\u001b[1m\u001b[31m*\u001b[39m\u001b[0m This application is written in JavaScrip" +
+            "t and\n    requires Node.js, (\u001b[36mhttps://nodejs.org/en/\u001b[39m), to ru" +
+            "n.\n  \u001b[1m\u001b[31m*\u001b[39m\u001b[0m This application makes use of zip " +
+            "and hash\n    utilities provided by the operating system.\n  \u001b[1m\u001b[31m" +
+            "*\u001b[39m\u001b[0m The \u001b[3m\u001b[33mtest\u001b[39m\u001b[0m command requ" +
+            "ires Pretty Diff,\n    (\u001b[36mhttps://github.com/prettydiff/prettydiff.git" +
+            "\u001b[39m), and\n    JSLint,\n    (\u001b[36mhttps://github.com/douglascrockfor" +
+            "d/JSLint.git\u001b[39m), as git\n    submodules from Github.\n";
+    if (er !== null) {
+        errout({error: er, name: "biddle_test_hash_60"});
+    }
+    if (stder !== null && stder !== "") {
+        errout({error: stder, name: "biddle_test_help_60"});
+    }
+    if (stdout !== help) {
+        diffFiles("biddle_test_help_60", stdout, hash);
+    }
+    console.log(humantime(false) + " \u001b[32mhelp 60 test passed.\u001b[39m");
+    flag["60"] = true;
+    if (flag["80"] === true && flag["120"] === true) {
+        next();
+    }
+});

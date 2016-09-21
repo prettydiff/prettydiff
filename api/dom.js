@@ -3871,9 +3871,9 @@ global.prettydiff.meta = {
                 api.compressedcss = (compressedcss !== null && compressedcss.checked === true);
                 api.conditional   = (conditional !== null && conditional.checked === true);
                 api.content       = (content !== null && content.checked !== false);
-                api.context       = (context !== null && context.value !== "" && isNaN(context.value) === false)
-                    ? Number(context.value)
-                    : "";
+                api.context       = (context !== null)
+                    ? context.value
+                    : -1;
                 api.diffcomments  = (comments === null || comments.checked === true);
                 if (api.diffcomments === false) {
                     api.comments = "nocomment";
