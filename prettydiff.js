@@ -303,7 +303,7 @@
                 finalFile.order[7] = options.color;
                 if (options.mode === "diff") {
                     options.vertical = false;
-                    options.jsscope  = false;
+                    options.jsscope  = "none";
                     options.preserve = 0;
                     if (options.diffcomments === false) {
                         options.comments = "nocomment";
