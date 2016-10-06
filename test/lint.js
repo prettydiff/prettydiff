@@ -495,7 +495,7 @@
                         day     = (dateobj.getDate() > 9)
                             ? "" + dateobj.getDate()
                             : "0" + dateobj.getDate(),
-                        month   = (dateobj.getMonth() > 9)
+                        month   = (dateobj.getMonth() > 8)
                             ? "" + (dateobj.getMonth() + 1)
                             : "0" + (dateobj.getMonth() + 1),
                         date    = Number("" + dateobj.getFullYear() + month + day),

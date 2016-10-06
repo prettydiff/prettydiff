@@ -4525,7 +4525,9 @@
                     var b;
                     if (r < 2) {
                         for (b in a) {
-                            j[b] = [j[b], a[b]];
+                            j[b] = [
+                                j[b], a[b]
+                            ];
                         }
                     } else {
                         b = a[u.status],
@@ -6493,7 +6495,9 @@ jQuery.cookie = function (name, value, options) {
                         a.plugins[e] = a.plugins[e] || [];
                         a
                             .plugins[e]
-                            .push([b, d[e]]);
+                            .push([
+                                b, d[e]
+                            ]);
                     }
                 },
                 call: function (a, b, d) {
@@ -8641,7 +8645,9 @@ jQuery.cookie = function (name, value, options) {
                 if (typeof a === "string" || typeof a === "object" && "0" in a) {
                     b = a.split
                         ? a.split(" ")
-                        : [a[0], a[1]];
+                        : [
+                            a[0], a[1]
+                        ];
                     if (b.length === 1) {
                         b[1] = b[0];
                     }
@@ -9883,7 +9889,9 @@ var jsUri = function () {
                     for (c = 0; c < d.length; c += 1) {
                         e = d[c],
                         f = e.split("="),
-                        b.push([f[0], f[1]]);
+                        b.push([
+                            f[0], f[1]
+                        ]);
                     }
                     return b;
                 },

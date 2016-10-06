@@ -3790,7 +3790,7 @@ global.prettydiff.meta = {
             api.mode = "minify";
         }
         if (pd.data.mode === "diff") {
-            api.jsscope = false;
+            api.jsscope = "none";
             (function dom__event_recycle_diff() {
                 var brace_stylec    = pd.id("dbracestyle-collapse"),
                     brace_stylee    = pd.id("dbracestyle-expand"),
