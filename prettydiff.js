@@ -303,7 +303,7 @@
                 finalFile.order[7] = options.color;
                 if (options.mode === "diff") {
                     options.vertical = false;
-                    options.jsscope  = false;
+                    options.jsscope  = "none";
                     options.preserve = 0;
                     if (options.diffcomments === false) {
                         options.comments = "nocomment";
@@ -413,24 +413,24 @@
             ace: 160307
         },
         api          : {
-            dom      : 160921, //dom.js
+            dom      : 161002, //dom.js
             nodeLocal: 160816 //node-local.js
         },
         css          : 160814, //css files
         csspretty    : 160902, //csspretty lib
         csvpretty    : 160816, //csvpretty lib
-        diffview     : 160902, //diffview lib
+        diffview     : 161002, //diffview lib
         documentation: 160828, //documentation.xhtml and various guide pages
         finalFile    : 160816, //HTML report generator
-        jspretty     : 160921, //jspretty lib
+        jspretty     : 161002, //jspretty lib
         language     : 160921, //language lib
         latest       : 0,
-        lint         : 160914, //unit test and lint automation as test/lint.js
-        markuppretty : 160921, //markuppretty lib
-        options      : 160921, //options management
-        prettydiff   : 160902, //this file
+        lint         : 161002, //unit test and lint automation as test/lint.js
+        markuppretty : 161002, //markuppretty lib
+        options      : 161002, //options management
+        prettydiff   : 161002, //this file
         safeSort     : 160816, //safeSort lib
-        version      : "2.1.11", //version number
+        version      : "2.1.12", //version number
         webtool      : 160827
     };
     global.prettydiff.edition.latest = (function edition_latest() {

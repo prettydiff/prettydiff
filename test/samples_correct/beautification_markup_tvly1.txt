@@ -10055,7 +10055,9 @@
                                 var b;
                                 if (r < 2) {
                                     for (b in a) {
-                                        j[b] = [j[b], a[b]];
+                                        j[b] = [
+                                            j[b], a[b]
+                                        ];
                                     }
                                 } else {
                                     b = a[u.status],
@@ -11293,7 +11295,9 @@
                                     a.plugins[e] = a.plugins[e] || [];
                                     a
                                         .plugins[e]
-                                        .push([b, d[e]]);
+                                        .push([
+                                            b, d[e]
+                                        ]);
                                 }
                             },
                             call: function (a, b, d) {
@@ -13502,7 +13506,7 @@
                         }
                         $(".cb-to-city,.cb-pick-location,.countryScope,.cb-country,.cb-co-discount,.cb-from" +
                                 "date, .cb-todate,.cb-state,.cb-car-type",
-                        __cb).trigger("change");
+                            __cb).trigger("change");
                     },
                     ready         : false
                 },
@@ -13992,7 +13996,7 @@
                         }
                         $(".cb-to-city,.cb-from-city,.cb-fromdate, .cb-todate,.cb-total-rooms,.cb-children," +
                                 ".cb-room-child-ages select",
-                        __cb).trigger("change");
+                            __cb).trigger("change");
                     },
                     ready     : false
                 },
@@ -14244,7 +14248,7 @@
                         }
                         $(".cb-to-city,.cb-from-city,.cb-fromdate, .cb-todate,.cb-state,.cb-car-type,.cb-ch" +
                                 "ildren,.cb-csa input,input[name='dateTypeSelect']:checked",
-                        __cb).trigger("change");
+                            __cb).trigger("change");
                     },
                     multiDestSearch  : function (event) {
                         var __cb = $("#cb-form-fo");
@@ -14587,7 +14591,7 @@
                         $(".cb-to-city,.cb-pick-location, .cb-co-discount,.cb-fromdate, .cb-todate,.cb-stat" +
                                 "e,.cb-country,.cb-car-type,.cb-total-rooms,.cb-children,.cb-room-child-ages sele" +
                                 "ct",
-                        __cb).trigger("change");
+                            __cb).trigger("change");
                     },
                     ready     : false
                 },
@@ -14751,7 +14755,7 @@
                             .fixLSC($(".cb-to-city", __cb), __cb);
                         $(".cb-state,.cb-country,.cb-to-city,.cb-fromdate, .cb-todate,.cb-total-rooms,.cb-c" +
                                 "hildren,.cb-room-child-ages select,.cb-ts-hotels",
-                        __cb).trigger("change");
+                            __cb).trigger("change");
                     },
                     ready                  : false,
                     searchGroup            : function (cb, form) {

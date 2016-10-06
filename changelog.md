@@ -1,5 +1,13 @@
 # Pretty Diff change log
 
+## v2.1.12
+
+### Defect resolutions
+* Fixes #370, JavaScript string wrapping defect
+* Fixes #372, edge case failure of JavaScript ASI
+* Fixes #373, fixes two Twig issues
+* Fixes a minor JavaScript indentation problem of method arguments following a long wrapped string
+
 ## v2.1.11
 
 ### Defect resolutions
