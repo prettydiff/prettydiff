@@ -1,5 +1,8 @@
 # Pretty Diff change log
 
+## v2.1.13
+* Fixing a minor incompatibility with JSLint
+
 ## v2.1.12
 
 ### Defect resolutions
