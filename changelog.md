@@ -1,6 +1,11 @@
 # Pretty Diff change log
 
+## v2.1.14
+
+* A string wrap adjustment in support of https://github.com/prettydiff/biddle and in conformance to JSLint
+
 ## v2.1.13
+
 * Fixing a minor incompatibility with JSLint
 
 ## v2.1.12

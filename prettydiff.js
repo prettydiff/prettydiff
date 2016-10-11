@@ -422,7 +422,7 @@
         diffview     : 161002, //diffview lib
         documentation: 160828, //documentation.xhtml and various guide pages
         finalFile    : 160816, //HTML report generator
-        jspretty     : 161006, //jspretty lib
+        jspretty     : 161011, //jspretty lib
         language     : 160921, //language lib
         latest       : 0,
         lint         : 161002, //unit test and lint automation as test/lint.js
@@ -430,7 +430,7 @@
         options      : 161002, //options management
         prettydiff   : 161002, //this file
         safeSort     : 160816, //safeSort lib
-        version      : "2.1.13", //version number
+        version      : "2.1.14", //version number
         webtool      : 160827
     };
     global.prettydiff.edition.latest = (function edition_latest() {
