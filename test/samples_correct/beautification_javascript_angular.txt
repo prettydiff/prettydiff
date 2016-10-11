@@ -1656,7 +1656,7 @@
                         throw $injectorMinErr("nomod", "Module '{0}' is not available! You either misspelled the module name or forgot t" +
                                 "o load it. If registering a module ensure that you specify the dependencies as t" +
                                 "he second argument.",
-                            name);
+                                name);
                     }
 
                     /** @type {!Array.<Array.<*>>} */
@@ -6470,7 +6470,7 @@
                                     default:
                                         throw $compileMinErr("iscp", "Invalid isolate scope definition for directive '{0}'. Definition: {... {1}: '{2}" +
                                                 "' ...}",
-                                            newIsolateScopeDirective.name, scopeName, definition);
+                                                newIsolateScopeDirective.name, scopeName, definition);
                                 }
                             });
                         }
@@ -8616,7 +8616,7 @@
                         throw $interpolateMinErr("noconcat", "Error while interpolating: {0}\nStrict Contextual Escaping disallows interpolati" +
                                 "ons that concatenate multiple expressions when a trusted value is required.  See" +
                                 " http://docs.angularjs.org/api/ng.$sce",
-                            text);
+                                text);
                     }
 
                     if (!mustHaveExpression || hasInterpolation) {
@@ -9915,7 +9915,7 @@
         if (name === "constructor") {
             throw $parseMinErr("isecfld", "Referencing 'constructor' field in Angular expressions is disallowed! Expression" +
                     ": {0}",
-                fullExpression);
+                    fullExpression);
         }
         return name;
     }
@@ -10797,7 +10797,7 @@
         throwError      : function (msg, token) {
             throw $parseMinErr("syntax", "Syntax Error: Token \'{0}\' {1} at column {2} of the expression [{3}] starting a" +
                     "t [{4}].",
-                token.text, msg, (token.index + 1), this.text, this.text.substring(token.index));
+                    token.text, msg, (token.index + 1), this.text, this.text.substring(token.index));
         },
 
         unary           : function () {
@@ -12366,7 +12366,7 @@
                                 clearPhase();
                                 throw $rootScopeMinErr("infdig", "{0} $digest() iterations reached. Aborting!\nWatchers fired in the last 5 iterat" +
                                         "ions: {1}",
-                                    TTL, toJson(watchLog));
+                                        TTL, toJson(watchLog));
                             }
 
                         } while (dirty || asyncQueue.length);
@@ -13360,7 +13360,7 @@
                     if (typeof trustedValue !== "string") {
                         throw $sceMinErr("itype", "Attempted to trust a non-string value in a content requiring a string: Context: " +
                                 "{0}",
-                            type);
+                                type);
                     }
                     return new Constructor(trustedValue);
                 }
@@ -20097,7 +20097,7 @@
                     if (!match) {
                         throw ngRepeatMinErr("iexp", "Expected expression in form of '_item_ in _collection_[ track by _id_]' but got " +
                                 "'{0}'.",
-                            expression);
+                                expression);
                     }
 
                     lhs        = match[1];
@@ -20129,7 +20129,7 @@
                     if (!match) {
                         throw ngRepeatMinErr("iidexp", "'_item_' in '_item_ in _collection_' should be an identifier or '(_key_, _value_" +
                                 ")' expression, but got '{0}'.",
-                            lhs);
+                                lhs);
                     }
                     valueIdentifier = match[3] || match[1];
                     keyIdentifier   = match[2];
@@ -20204,7 +20204,7 @@
                                 // This is a duplicate and we need to throw an error
                                 throw ngRepeatMinErr("dupes", "Duplicates in a repeater are not allowed. Use 'track by' expression to specify u" +
                                         "nique keys. Repeater: {0}, Duplicate key: {1}",
-                                    expression, trackById);
+                                        expression, trackById);
                             } else {
                                 // new never before seen block
                                 nextBlockOrder[index]   = {
@@ -21333,7 +21333,7 @@
                         if (!(match = optionsExp.match(NG_OPTIONS_REGEXP))) {
                             throw ngOptionsMinErr("iexp", "Expected expression in form of '_select_ (as _label_)? for (_key_,)?_value_ in _" +
                                     "collection_' but got '{0}'. Element: {1}",
-                                optionsExp, startingTag(selectElement));
+                                    optionsExp, startingTag(selectElement));
                         }
 
                         var displayFn         = $parse(match[2] || match[1]),
