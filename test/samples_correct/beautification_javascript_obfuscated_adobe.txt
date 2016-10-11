@@ -31145,7 +31145,7 @@ if (jQuery) {
             event.preventDefault();
             window.open("https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/Marketing/popup/OLCWhatIsPayPal" +
                     "-outside",
-                "olcwhatispaypal", "toolbar=0,status=0,width=400,height=350");
+                    "olcwhatispaypal", "toolbar=0,status=0,width=400,height=350");
         });
         if ($.browser.msie || $.browser.mozilla || window.opera) {
             $(".Bookmark-button")
@@ -35050,11 +35050,11 @@ if (jQuery) {
         if ($.string(signOutHREF).startsWith("http")) {
             setTimeout("window.location = 'http://www.adobe.com/cfusion/membership/logout.cfm?returnURL=" +
                     "' + encodeURIComponent(window.location.href)",
-                1000);
+                    1000);
         } else {
             setTimeout("window.location = '/cfusion/membership/logout.cfm?returnURL=' + encodeURICompone" +
                     "nt(window.location.href)",
-                1000);
+                    1000);
         }
     };
     adobe.fn.initGlobalNavAccessibility = function () {
