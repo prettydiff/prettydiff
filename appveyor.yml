@@ -1,26 +1,8 @@
-# Test against this version of Node.js
-environment:
-  matrix:
-  # node.js
-  - nodejs_version: "5.10.1"
-  - nodejs_version: "5.4.1"
-  - nodejs_version: "5.3"
-  - nodejs_version: "5.2"
-  - nodejs_version: "5.1"
-  - nodejs_version: "5.0"
-  - nodejs_version: "4.2"
-  - nodejs_version: "4.1"
-  - nodejs_version: "4.0"
-  - nodejs_version: "0.12"
-  - nodejs_version: "0.11"
-  - nodejs_version: "0.10"
-  # io.js
-  - nodejs_version: "1.0"
 
 # Install scripts. (runs after repo cloning)
 install:
   # Get the latest stable version of Node.js or io.js
-  - ps: Install-Product node $env:nodejs_version
+  - ps: Install-Product node 6
 
 # Post-install test scripts.
 test_script:
