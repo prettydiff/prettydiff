@@ -37,7 +37,16 @@
     "name"                : "prettydiff",
     "publication_variants": {
         "cli": {
-            "exclusions": ["ace", "api/dom.js", "changelog.md", "css", "documentation.xhtml", "guide", "index.xhtml", "test"]
+            "exclusions": [
+                "ace",
+                "api/dom.js",
+                "changelog.md",
+                "css",
+                "documentation.xhtml",
+                "guide",
+                "index.xhtml",
+                "test"
+            ]
         }
     },
     "repository"          : {
