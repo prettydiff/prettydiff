@@ -1,0 +1,43 @@
+{
+    "directories": {
+        "applications": "dependencies",
+        "downloads"   : "ignore",
+        "publications": "downloads"
+    },
+    "exclusions" : [
+        ".bithoundrc",
+        ".bower.json",
+        ".codeclimate.yml",
+        ".git",
+        ".gitignore",
+        ".gitmodules",
+        ".htaccess",
+        ".npmignore",
+        ".travis.yml",
+        "400.shtml",
+        "401.shtml",
+        "403.shtml",
+        "404.shtml",
+        "500.php",
+        "500.shtml",
+        "appveyor.yml",
+        "beta",
+        "biddle",
+        "bower.json",
+        "cgi-bin",
+        "humans.txt",
+        "ignore",
+        "images",
+        "inch.json",
+        "JSLint",
+        "labels.rdf",
+        "learning-javascript.xhtml",
+        "mnevfavicon.ico",
+        "node_modules",
+        "overview.xhtml",
+        "proxy.php",
+        "robots.txt",
+        "samples.xhtml",
+        "training.xhtml"
+    ]
+}

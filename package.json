@@ -1,17 +1,17 @@
 {
-    "author"     : {
+    "author"              : {
         "email": "info@prettydiff.com",
         "name" : "Austin Cheney",
         "url"  : "http://prettydiff.com/"
     },
-    "bin"        : "./bin/prettydiff",
-    "bugs"       : {
+    "bin"                 : "./bin/prettydiff",
+    "bugs"                : {
         "email": "info@prettydiff.com",
         "url"  : "https://github.com/prettydiff/prettydiff/issues"
     },
-    "description": "Language aware code comparison tool for several web based languages. It also beautifies, minifies, and a few other things.",
-    "homepage"   : "http://prettydiff.com/",
-    "keywords"   : [
+    "description"         : "Language aware code comparison tool for several web based languages. It also beautifies, minifies, and a few other things.",
+    "homepage"            : "http://prettydiff.com/",
+    "keywords"            : [
         "diff",
         "prettydiff",
         "pretty diff",
@@ -26,24 +26,40 @@
         "es6",
         "javascript"
     ],
-    "license"    : "SEE LICENSE IN license.txt",
-    "main"       : "prettydiff.js",
-    "maintainers": [
+    "license"             : "SEE LICENSE IN license.txt",
+    "main"                : "prettydiff.js",
+    "maintainers"         : [
         {
             "email": "info@prettydiff.com",
             "name" : "austincheney"
         }
     ],
-    "name"       : "prettydiff",
-    "repository" : {
+    "name"                : "prettydiff",
+    "publication_variants": {
+        "browser"     : {
+            "exclusions": ["api/node-local.js", "changelog.md", "favicon.ico", "test"]
+        },
+        "browserNoAce": {
+            "exclusions": ["ace", "api/node-local.js", "changelog.md", "favicon.ico", "test"]
+        },
+        "cli"         : {
+            "exclusions": [
+                "ace",
+                "api/dom.js",
+                "changelog.md",
+                "css",
+                "documentation.xhtml",
+                "favicon.ico",
+                "guide",
+                "index.xhtml",
+                "test"
+            ]
+        }
+    },
+    "repository"          : {
         "type": "git",
         "url" : "https://github.com/prettydiff/prettydiff"
     },
-    "variants"   : {
-        "cli"     : [
-            "ace", "guide", "images", "test"
-        ],
-        "complete": []
-    },
-    "version"    : "2.1.14"
+    "test"                : "node test/lint.js",
+    "version"             : "2.1.14"
 }
