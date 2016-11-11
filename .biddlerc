@@ -6,6 +6,7 @@
     },
     "exclusions" : [
         ".bithoundrc",
+        ".bower.json",
         ".codeclimate.yml",
         ".git",
         ".gitignore",
@@ -22,6 +23,7 @@
         "appveyor.yml",
         "beta",
         "biddle",
+        "bower.json",
         "cgi-bin",
         "humans.txt",
         "ignore",
