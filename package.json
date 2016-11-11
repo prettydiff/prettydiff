@@ -36,6 +36,23 @@
     ],
     "name"                : "prettydiff",
     "publication_variants": {
+        "browser": {
+            "exclusions": [
+                "api/node-local.js",
+                "changelog.md",
+                "favicon.ico",
+                "test"
+            ]
+        },
+        "browserNoAce": {
+            "exclusions": [
+                "ace",
+                "api/node-local.js",
+                "changelog.md",
+                "favicon.ico",
+                "test"
+            ]
+        },
         "cli": {
             "exclusions": [
                 "ace",
