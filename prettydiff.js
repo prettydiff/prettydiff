@@ -413,22 +413,22 @@
             ace: 160307
         },
         api          : {
-            dom      : 160831, //dom.js
+            dom      : 160902, //dom.js
             nodeLocal: 160816 //node-local.js
         },
         css          : 160814, //css files
-        csspretty    : 160831, //csspretty lib
+        csspretty    : 160902, //csspretty lib
         csvpretty    : 160816, //csvpretty lib
-        diffview     : 160831, //diffview lib
+        diffview     : 160902, //diffview lib
         documentation: 160828, //documentation.xhtml and various guide pages
         finalFile    : 160816, //HTML report generator
-        jspretty     : 160827, //jspretty lib
-        language     : 160831, //language lib
+        jspretty     : 160902, //jspretty lib
+        language     : 160902, //language lib
         latest       : 0,
         lint         : 160831, //unit test and lint automation as test/lint.js
-        markuppretty : 160831, //markuppretty lib
+        markuppretty : 160902, //markuppretty lib
         options      : 160831, //options management
-        prettydiff   : 160831, //this file
+        prettydiff   : 160902, //this file
         safeSort     : 160816, //safeSort lib
         version      : "2.1.8", //version number
         webtool      : 160827
