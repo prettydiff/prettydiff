@@ -113,3 +113,4 @@ ct(function(){
                 }
     }
 })
+var x = 2e+3 + 2;

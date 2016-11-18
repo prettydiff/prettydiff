@@ -1,3 +1,4 @@
+/*prettydiff.com noleadzero:true*/
 @carrier-logo-height: 33px;
 @carrier-logo-width: 44px;
 
@@ -150,11 +151,8 @@
             }
 
             .lt-ie8 & {
-                height     : @ie7-height;
-                line-height: @ie7-height;
-            }
-
-            .lt-ie8 & {
+                height        : @ie7-height;
+                line-height   : @ie7-height;
                 outline       : 0;
                 /* adjust padding to account for difference in presentation in IE7 */
                 padding-bottom: @ie7-offset-horizontal-bottom;
@@ -247,20 +245,20 @@
                     }
                 }
                 span.i-plus {
-                    font-size     : 0.5em;
-                    vertical-align: 0.5em;
+                    font-size     : .5em;
+                    vertical-align: .5em;
                 }
             }
             .costMetric {
                 color    : @color-neutral-md;
-                font-size: 0.85em;
+                font-size: .85em;
             }
 
             .money {
                 display    : block;
                 font-size  : 1.8em;
                 font-weight: bold;
-                line-height: 0.9;
+                line-height: .9;
             }
             .money-cents {
                 left    : -2000em;
@@ -276,9 +274,9 @@
                 background-color: @color-error;
                 color           : @color-neutral-md;
                 display         : inline-block;
-                font-size       : 0.9em;
+                font-size       : .9em;
                 line-height     : 1;
-                margin          : 0.25em 0 0.5em;
+                margin          : .25em 0 .5em;
             }
         }
         .showPaymentDiscountContent {
@@ -819,4 +817,21 @@
             }
         }
     };
+}
+.action,
+.file-actions .fileaction,
+.library-actions .libraryaction,
+.nav .fileaction {
+    background-image   : url("../images/page_white.png");
+    background-position: 2px 2px;
+    background-repeat  : no-repeat;
+    color              : #666;
+    display            : block;
+    float              : right;
+    height             : 18px;
+    margin-right       : 5px;
+    padding            : 1px 5px;
+    text-decoration    : none;
+    width              : 10px;
+    @include border-radius(.3em);
 }
