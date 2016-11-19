@@ -14,6 +14,7 @@
 #prettydiff.white .ace-canvas .ace_marker-layer .ace_selection,
 #prettydiff.white .ace_selection.ace_start{background:#def}
 #prettydiff.white .ace_marker-layer .ace_start{background:#f99}
+#prettydiff.white .ace-tm .ace_marker-layer .ace_selected-word{background:#ff9}
 #prettydiff.white .box{box-shadow:0 0.25em 0.5em #999}
 #prettydiff.white .box .body{background:#eee;border-color:#999}
 #prettydiff.white .unchecked{background:#ddd}
@@ -97,6 +98,7 @@
 #prettydiff.canvas .ace-tm .ace_marker-layer .ace_selection,
 #prettydiff.canvas .ace-canvas .ace_marker-layer .ace_selection,
 #prettydiff.canvas .ace_selection.ace_start{background:#ffe}
+#prettydiff.canvas .ace_selection.ace_start.ace_br15{background:#ff6}
 #prettydiff.canvas .unchecked{background:#eeeee8}
 #prettydiff.canvas #announcement em,
 #prettydiff.canvas #textareaTabKey em{color:#060}
@@ -152,9 +154,11 @@
 #prettydiff.shadow .resize:hover{background:#eef8ff;border-color:#006;color:#006}
 #prettydiff.shadow .ace_marker-layer .ace_start{background:#9f9}
 #prettydiff.shadow .ace_gutter{background:#666;border-color:#333;color:#ff0}
+#prettydiff.shadow .ace_selection.ace_start,
+#prettydiff.shadow .ace_selected-word{background:#990;color:#333}
 #prettydiff.shadow .ace-tm .ace_marker-layer .ace_selection,
 #prettydiff.shadow .ace-canvas .ace_marker-layer .ace_selection,
-#prettydiff.shadow .ace_selection.ace_start{background:#ffe}
+#prettydiff.shadow .ace_selection.ace_start.ace_br15{background:#666}
 #prettydiff.shadow .ace_comment{color:#ce9}
 #prettydiff.shadow .ace_variable{color:#cef}
 #prettydiff.shadow .ace_active-line{background:#333}
