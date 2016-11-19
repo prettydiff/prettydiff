@@ -41,3 +41,7 @@ to soon
 {% for i in 0..10 %}
 {{ cycle(fruits, i) }}
 {% endfor %}
+{% block body %}
+    {{ block('widget') }}
+    {{ parent() }}
+{% endblock %}
