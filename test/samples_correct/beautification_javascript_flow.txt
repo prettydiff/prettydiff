@@ -114,11 +114,11 @@ class AFoo {
     };
 }
 
-class BFoo {
+var x = class BFoo {
     foo() {
         return "foo from B";
     };
-}
+};
 
 (new AFoo: Fooable);
 (new BFoo: Fooable);
@@ -159,7 +159,7 @@ var numberInstance: GenericClass<number> = new GenericClass(0);
 var stringInstance: GenericClass<string> = new GenericClass("");
 
 
-function findMax<T>(arr: T[], compare : (a: T, b: T) => number) {
+function findMax<T>(arr: T[], compare: (a: T, b: T) => number) {
     var sorted = arr.sort(compare);
     return sorted[sorted.length - 1];
 };

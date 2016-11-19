@@ -104,9 +104,9 @@ class AFoo {
   foo() { return "foo from A" };
 }
 
-class BFoo {
+var x = class BFoo {
   foo() { return "foo from B" };
-}
+};
 
 (new AFoo: Fooable);
 (new BFoo: Fooable);
