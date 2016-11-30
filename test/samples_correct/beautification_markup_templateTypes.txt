@@ -60,9 +60,9 @@
 
 <div class="container">
     <% flash.each do | key, value | %>
-    <div <%= key %> class="alert alert-">
-        <%= value %>
-    </div>
+        <div <%= key %> class="alert alert-">
+            <%= value %>
+        </div>
     <% end %>
     <%= yield %>
 </div>
