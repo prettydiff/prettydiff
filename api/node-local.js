@@ -22,12 +22,16 @@ argument values should always be quoted.
 
 Examples:
 
-> node node-local.js source:"c:\mydirectory\myfile.js" readmethod:"file"
- diff:"c:\myotherfile.js"
-> node node-local.js source:"c:\mydirectory\myfile.js" mode:"beautify"
- readmethod:"file" output:"c:\output\otherfile.js"
-> node node-local.js source:"../package.json" mode:"beautify"
- readmethod:"filescreen"
+> node node-local.js source:"c:\mydirectory\myfile.js" readmethod:"file" diff:"c:\myotherfile.js"
+> node node-local.js source:"c:\mydirectory\myfile.js" mode:"beautify" readmethod:"file" output:"c:\output\otherfile.js"
+> node node-local.js source:"../package.json" mode:"beautify" readmethod:"filescreen"
+
+Manage with biddle
+
+> biddle install http://prettydiff.com/downloads/prettydiff/prettydiff_latest.zip
+> biddle global prettydiff
+> prettydiff source:"c:\mydirectory\myfile.js" readmethod:"file" diff:"c:\myotherfile.js"
+
 */
 //schema for global.prettydiff.meta
 //lang - array, language detection

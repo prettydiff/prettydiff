@@ -15,10 +15,7 @@
 
  Execute on command line with NodeJS:
 
-    prettydiff source:"c:\mydirectory\myfile.js" readmethod:"file" diff:"c:\myotherfile.js"
-
- Execute with WSH:
-    cscript prettydiff.wsf /source:"myFile.xml" /mode:"beautify"
+    node api/node-local.js source:"c:\mydirectory\myfile.js" readmethod:"file" diff:"c:\myotherfile.js"
 
  Execute from JavaScript:
     var global = {},
@@ -29,6 +26,10 @@
         },
         output = prettydiff(args);
 
+ Manage with biddle
+     biddle install http://prettydiff.com/downloads/prettydiff/prettydiff_latest.zip
+     biddle global prettydiff
+     prettydiff source:"c:\mydirectory\myfile.js" readmethod:"file" diff:"c:\myotherfile.js"
 
                 *******   license start   *******
  @source: http://prettydiff.com/prettydiff.js
