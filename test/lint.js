@@ -281,7 +281,7 @@
                             inchar      : " ",
                             insize      : 4,
                             lang        : "auto",
-                            methodchain : false,
+                            methodchain : "indent",
                             mode        : "beautify",
                             nocaseindent: false,
                             objsort     : "all",

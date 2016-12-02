@@ -13,7 +13,7 @@ interface EraseAction {
     numChars: number;
 }
 
-function updateText(currentText: string, action: AppendAction | EraseAction) {
+function updateText(currentText : string, action : AppendAction | EraseAction) {
     if (action.type === ActionType.Append) {
         // 'action' has type 'AppendAction'
         return currentText + action.text;

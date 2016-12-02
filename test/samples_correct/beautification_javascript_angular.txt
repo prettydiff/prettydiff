@@ -1415,11 +1415,10 @@
                 "$injector",
                 "$animate",
                 function (scope, element, compile, injector, animate) {
-                    scope
-                        .$apply(function () {
-                            element.data("$injector", injector);
-                            compile(element)(scope);
-                        });
+                    scope.$apply(function () {
+                        element.data("$injector", injector);
+                        compile(element)(scope);
+                    });
                 }
             ]);
             return injector;
@@ -2217,11 +2216,13 @@
  * @param name Name to normalize
  */
     function camelCase(name) {
-        return name.replace(SPECIAL_CHARS_REGEXP, function (_, separator, letter, offset) {
-            return offset
-                ? letter.toUpperCase()
-                : letter;
-        }).replace(MOZ_HACK_REGEXP, "Moz$1");
+        return name
+            .replace(SPECIAL_CHARS_REGEXP, function (_, separator, letter, offset) {
+                return offset
+                    ? letter.toUpperCase()
+                    : letter;
+            })
+            .replace(MOZ_HACK_REGEXP, "Moz$1");
     }
 
     ///////////////////////////////////////////// jQuery mutation patch
@@ -3189,10 +3190,9 @@
                         .replace(STRIP_COMMENTS, "");
                     argDecl = fnText.match(FN_ARGS);
                     forEach(argDecl[1].split(FN_ARG_SPLIT), function (arg) {
-                        arg
-                            .replace(FN_ARG, function (all, underscore, name) {
-                                $inject.push(name);
-                            });
+                        arg.replace(FN_ARG, function (all, underscore, name) {
+                            $inject.push(name);
+                        });
                     });
                 }
                 fn.$inject = $inject;
@@ -4027,12 +4027,11 @@
                 // does not scroll when user clicks on anchor link that is currently on (no url
                 // change, no $location.hash() change), browser native does scroll
                 if (autoScrollingEnabled) {
-                    $rootScope
-                        .$watch(function autoScrollWatch() {
-                            return $location.hash();
-                        }, function autoScrollWatchAction() {
-                            $rootScope.$evalAsync(scroll);
-                        });
+                    $rootScope.$watch(function autoScrollWatch() {
+                        return $location.hash();
+                    }, function autoScrollWatchAction() {
+                        $rootScope.$evalAsync(scroll);
+                    });
                 }
 
                 return scroll;
@@ -5873,7 +5872,8 @@
                         // underneath us.
                         directives = collectDirectives(nodeList[i], [], attrs, i === 0
                             ? maxPriority
-                            : undefined, ignoreDirective);
+                            : undefined,
+                        ignoreDirective);
 
                         nodeLinkFn = (directives.length)
                             ? applyDirectivesToNode(directives, nodeList[i], attrs, transcludeFn, $rootElement, null, [], [], previousCompileContext)
@@ -6418,7 +6418,9 @@
                                         attrs.$observe(attrName, function (value) {
                                             isolateScope[scopeName] = value;
                                         });
-                                        attrs.$$observers[attrName].$$scope = scope;
+                                        attrs
+                                            .$$observers[attrName]
+                                            .$$scope = scope;
                                         if (attrs[attrName]) {
                                             // If the attribute has been provided then we trigger an interpolation to ensure
                                             // the value is there for use in the link fn
@@ -6515,7 +6517,11 @@
                                 linkFn = preLinkFns[i];
                                 linkFn(linkFn.isolateScope
                                     ? isolateScope
-                                    : scope, $element, attrs, linkFn.require && getControllers(linkFn.require, $element, elementControllers), transcludeFn);
+                                    : scope,
+                                $element,
+                                attrs,
+                                linkFn.require && getControllers(linkFn.require, $element, elementControllers),
+                                transcludeFn);
                             } catch (e) {
                                 $exceptionHandler(e, startingTag($element));
                             }
@@ -6536,7 +6542,11 @@
                                 linkFn = postLinkFns[i];
                                 linkFn(linkFn.isolateScope
                                     ? isolateScope
-                                    : scope, $element, attrs, linkFn.require && getControllers(linkFn.require, $element, elementControllers), transcludeFn);
+                                    : scope,
+                                $element,
+                                attrs,
+                                linkFn.require && getControllers(linkFn.require, $element, elementControllers),
+                                transcludeFn);
                             } catch (e) {
                                 $exceptionHandler(e, startingTag($element));
                             }
@@ -6677,7 +6687,8 @@
 
                     $compileNode.empty();
 
-                    $http.get($sce.getTrustedResourceUrl(templateUrl), {cache: $templateCache})
+                    $http
+                        .get($sce.getTrustedResourceUrl(templateUrl), {cache: $templateCache})
                         .success(function (content) {
                             var compileNode,
                                 tempTemplateAttrs,
@@ -7929,18 +7940,16 @@
                     }
 
                     promise.success = function (fn) {
-                        promise
-                            .then(function (response) {
-                                fn(response.data, response.status, response.headers, config);
-                            });
+                        promise.then(function (response) {
+                            fn(response.data, response.status, response.headers, config);
+                        });
                         return promise;
                     };
 
                     promise.error   = function (fn) {
-                        promise
-                            .then(null, function (response) {
-                                fn(response.data, response.status, response.headers, config);
-                            });
+                        promise.then(null, function (response) {
+                            fn(response.data, response.status, response.headers, config);
+                        });
                         return promise;
                     };
 
@@ -8224,7 +8233,9 @@
                     function removePendingReq() {
                         var idx = indexOf($http.pendingRequests, config);
                         if (idx !== -1) {
-                            $http.pendingRequests.splice(idx, 1);
+                            $http
+                                .pendingRequests
+                                .splice(idx, 1);
                         }
                     }
                 }
@@ -9649,26 +9660,24 @@
                 }
 
                 // update $location when $browser url changes
-                $browser
-                    .onUrlChange(function (newUrl) {
-                        if ($location.absUrl() != newUrl) {
-                            $rootScope
-                                .$evalAsync(function () {
-                                    var oldUrl = $location.absUrl();
+                $browser.onUrlChange(function (newUrl) {
+                    if ($location.absUrl() != newUrl) {
+                        $rootScope.$evalAsync(function () {
+                            var oldUrl = $location.absUrl();
 
-                                    $location.$$parse(newUrl);
-                                    if ($rootScope.$broadcast("$locationChangeStart", newUrl, oldUrl).defaultPrevented) {
-                                        $location.$$parse(oldUrl);
-                                        $browser.url(oldUrl);
-                                    } else {
-                                        afterLocationChange(oldUrl);
-                                    }
-                                });
-                            if (!$rootScope.$$phase) {
-                                $rootScope.$digest();
+                            $location.$$parse(newUrl);
+                            if ($rootScope.$broadcast("$locationChangeStart", newUrl, oldUrl).defaultPrevented) {
+                                $location.$$parse(oldUrl);
+                                $browser.url(oldUrl);
+                            } else {
+                                afterLocationChange(oldUrl);
                             }
+                        });
+                        if (!$rootScope.$$phase) {
+                            $rootScope.$digest();
                         }
-                    });
+                    }
+                });
 
                 // update browser
                 var changeCounter = 0;
@@ -10842,10 +10851,9 @@
                 promiseWarning(fullExp);
                 if (!("$$v" in obj)) {
                     (function (promise) {
-                        promise
-                            .then(function (val) {
-                                promise.$$v = val;
-                            });
+                        promise.then(function (val) {
+                            promise.$$v = val;
+                        });
                     })(obj);
                 }
                 if (obj.$$v === undefined) {
@@ -11770,25 +11778,24 @@
             };
 
             nextTick(function () {
-                ref(value)
-                    .then(function (value) {
-                        if (done) {
-                            return;
-                        }
-                        done = true;
-                        result.resolve(ref(value).then(wrappedCallback, wrappedErrback, wrappedProgressback));
-                    }, function (reason) {
-                        if (done) {
-                            return;
-                        }
-                        done = true;
-                        result.resolve(wrappedErrback(reason));
-                    }, function (progress) {
-                        if (done) {
-                            return;
-                        }
-                        result.notify(wrappedProgressback(progress));
-                    });
+                ref(value).then(function (value) {
+                    if (done) {
+                        return;
+                    }
+                    done = true;
+                    result.resolve(ref(value).then(wrappedCallback, wrappedErrback, wrappedProgressback));
+                }, function (reason) {
+                    if (done) {
+                        return;
+                    }
+                    done = true;
+                    result.resolve(wrappedErrback(reason));
+                }, function (progress) {
+                    if (done) {
+                        return;
+                    }
+                    result.notify(wrappedProgressback(progress));
+                });
             });
 
             return result.promise;
@@ -12523,12 +12530,11 @@
                         // if we are outside of an $digest loop and this is the first time we are
                         // scheduling async task also schedule async auto-flush
                         if (!$rootScope.$$phase && !$rootScope.$$asyncQueue.length) {
-                            $browser
-                                .defer(function () {
-                                    if ($rootScope.$$asyncQueue.length) {
-                                        $rootScope.$digest();
-                                    }
-                                });
+                            $browser.defer(function () {
+                                if ($rootScope.$$asyncQueue.length) {
+                                    $rootScope.$digest();
+                                }
+                            });
                         }
 
                         this
@@ -14811,12 +14817,12 @@
                             if (typeof expression[path] == "undefined") {
                                 return;
                             }
-                            predicates
-                                .push(function (value) {
-                                    return search(path == "$"
-                                        ? value
-                                        : getter(value, path), expression[path]);
-                                });
+                            predicates.push(function (value) {
+                                return search(path == "$"
+                                    ? value
+                                    : getter(value, path),
+                                expression[path]);
+                            });
                         })(key);
                     }
                     break;
@@ -15078,9 +15084,11 @@
             ? "+"
             : "";
 
-        paddedZone += padNumber(Math[zone > 0
+        paddedZone += padNumber(Math[
+            zone > 0
                 ? "floor"
-                : "ceil"](zone / 60), 2) + padNumber(Math.abs(zone % 60), 2);
+                : "ceil"
+        ](zone / 60), 2) + padNumber(Math.abs(zone % 60), 2);
 
         return paddedZone;
     }
@@ -16001,10 +16009,9 @@
         ngAttributeAliasDirectives[normalized] = function () {
             return {
                 link    : function (scope, element, attr) {
-                    scope
-                        .$watch(attr[normalized], function ngBooleanAttrWatchAction(value) {
-                            attr.$set(attrName, !!value);
-                        });
+                    scope.$watch(attr[normalized], function ngBooleanAttrWatchAction(value) {
+                        attr.$set(attrName, !!value);
+                    });
                 },
                 priority: 100
             };
@@ -16020,22 +16027,21 @@
         ngAttributeAliasDirectives[normalized] = function () {
             return {
                 link    : function (scope, element, attr) {
-                    attr
-                        .$observe(normalized, function (value) {
-                            if (!value) {
-                                return;
-                            }
+                    attr.$observe(normalized, function (value) {
+                        if (!value) {
+                            return;
+                        }
 
-                            attr.$set(attrName, value);
+                        attr.$set(attrName, value);
 
-                            // on IE, if "ng:src" directive declaration is used and "src" attribute doesn't
-                            // exist then calling element.setAttribute('src', 'foo') doesn't do anything, so
-                            // we need to set the property as well to achieve the desired effect. we use
-                            // attr[attrName] value since $set can sanitize the url.
-                            if (msie) {
-                                element.prop(attrName, attr[attrName]);
-                            }
-                        });
+                        // on IE, if "ng:src" directive declaration is used and "src" attribute doesn't
+                        // exist then calling element.setAttribute('src', 'foo') doesn't do anything, so
+                        // we need to set the property as well to achieve the desired effect. we use
+                        // attr[attrName] value since $set can sanitize the url.
+                        if (msie) {
+                            element.prop(attrName, attr[attrName]);
+                        }
+                    });
                 },
                 priority: 99 // it needs to run after the attributes are interpolated
             };
@@ -16116,11 +16122,13 @@
             validationErrorKey = validationErrorKey
                 ? "-" + snake_case(validationErrorKey, "-")
                 : "";
-            element.removeClass((isValid
-                ? INVALID_CLASS
-                : VALID_CLASS) + validationErrorKey).addClass((isValid
-                ? VALID_CLASS
-                : INVALID_CLASS) + validationErrorKey);
+            element
+                .removeClass((isValid
+                    ? INVALID_CLASS
+                    : VALID_CLASS) + validationErrorKey)
+                .addClass((isValid
+                    ? VALID_CLASS
+                    : INVALID_CLASS) + validationErrorKey);
         }
 
         /**
@@ -16414,14 +16422,13 @@
                                     setter(scope, alias, controller, alias);
                                 }
                                 if (parentFormCtrl) {
-                                    formElement
-                                        .on("$destroy", function () {
-                                            parentFormCtrl.$removeControl(controller);
-                                            if (alias) {
-                                                setter(scope, alias, undefined, alias);
-                                            }
-                                            extend(controller, nullFormCtrl); //stop propagating child destruction handlers upwards
-                                        });
+                                    formElement.on("$destroy", function () {
+                                        parentFormCtrl.$removeControl(controller);
+                                        if (alias) {
+                                            setter(scope, alias, undefined, alias);
+                                        }
+                                        extend(controller, nullFormCtrl); //stop propagating child destruction handlers upwards
+                                    });
                                 }
                             }
                         };
@@ -16880,10 +16887,9 @@
                 if (scope.$$phase) {
                     ctrl.$setViewValue(value);
                 } else {
-                    scope
-                        .$apply(function () {
-                            ctrl.$setViewValue(value);
-                        });
+                    scope.$apply(function () {
+                        ctrl.$setViewValue(value);
+                    });
                 }
             }
         };
@@ -17096,15 +17102,13 @@
             element.attr("name", nextUid());
         }
 
-        element
-            .on("click", function () {
-                if (element[0].checked) {
-                    scope
-                        .$apply(function () {
-                            ctrl.$setViewValue(attr.value);
-                        });
-                }
-            });
+        element.on("click", function () {
+            if (element[0].checked) {
+                scope.$apply(function () {
+                    ctrl.$setViewValue(attr.value);
+                });
+            }
+        });
 
         ctrl.$render = function () {
             var value = attr.value;
@@ -17125,13 +17129,11 @@
             falseValue = false;
         }
 
-        element
-            .on("click", function () {
-                scope
-                    .$apply(function () {
-                        ctrl.$setViewValue(element[0].checked);
-                    });
+        element.on("click", function () {
+            scope.$apply(function () {
+                ctrl.$setViewValue(element[0].checked);
             });
+        });
 
         ctrl.$render  = function () {
             element[0].checked = ctrl.$viewValue;
@@ -17497,11 +17499,13 @@
                 validationErrorKey = validationErrorKey
                     ? "-" + snake_case(validationErrorKey, "-")
                     : "";
-                $element.removeClass((isValid
-                    ? INVALID_CLASS
-                    : VALID_CLASS) + validationErrorKey).addClass((isValid
-                    ? VALID_CLASS
-                    : INVALID_CLASS) + validationErrorKey);
+                $element
+                    .removeClass((isValid
+                        ? INVALID_CLASS
+                        : VALID_CLASS) + validationErrorKey)
+                    .addClass((isValid
+                        ? VALID_CLASS
+                        : INVALID_CLASS) + validationErrorKey);
             }
 
             /**
@@ -17967,10 +17971,9 @@
                     };
                 } else {
                     return function ngValueLink(scope, elm, attr) {
-                        scope
-                            .$watch(attr.ngValue, function valueWatchAction(value) {
-                                attr.$set("value", value);
-                            });
+                        scope.$watch(attr.ngValue, function valueWatchAction(value) {
+                            attr.$set("value", value);
+                        });
                     };
                 }
             },
@@ -18166,10 +18169,9 @@
                     return (parsed(scope) || "").toString();
                 }
 
-                scope
-                    .$watch(getStringValue, function ngBindHtmlWatchAction(value) {
-                        element.html($sce.getTrustedHtml(parsed(scope)) || "");
-                    });
+                scope.$watch(getStringValue, function ngBindHtmlWatchAction(value) {
+                    element.html($sce.getTrustedHtml(parsed(scope)) || "");
+                });
             };
         }
     ];
@@ -18189,17 +18191,16 @@
 
 
                     if (name !== "ngClass") {
-                        scope
-                            .$watch("$index", function ($index, old$index) {
-                                // jshint bitwise: false
-                                var mod = $index & 1;
-                                if (mod !== old$index & 1) {
-                                    var classes = flattenClasses(scope.$eval(attr[name]));
-                                    mod === selector
-                                        ? attr.$addClass(classes)
-                                        : attr.$removeClass(classes);
-                                }
-                            });
+                        scope.$watch("$index", function ($index, old$index) {
+                            // jshint bitwise: false
+                            var mod = $index & 1;
+                            if (mod !== old$index & 1) {
+                                var classes = flattenClasses(scope.$eval(attr[name]));
+                                mod === selector
+                                    ? attr.$addClass(classes)
+                                    : attr.$removeClass(classes);
+                            }
+                        });
                     }
 
 
@@ -18788,13 +18789,11 @@
                     compile: function ($element, attr) {
                         var fn = $parse(attr[directiveName]);
                         return function (scope, element, attr) {
-                            element
-                                .on(lowercase(name), function (event) {
-                                    scope
-                                        .$apply(function () {
-                                            fn(scope, {$event: event});
-                                        });
+                            element.on(lowercase(name), function (event) {
+                                scope.$apply(function () {
+                                    fn(scope, {$event: event});
                                 });
+                            });
                         };
                     }
                 };
@@ -20455,12 +20454,13 @@
         "$animate",
         function ($animate) {
             return function (scope, element, attr) {
-                scope
-                    .$watch(attr.ngShow, function ngShowWatchAction(value) {
-                        $animate[toBoolean(value)
-                                ? "removeClass"
-                                : "addClass"](element, "ng-hide");
-                    });
+                scope.$watch(attr.ngShow, function ngShowWatchAction(value) {
+                    $animate[
+                        toBoolean(value)
+                            ? "removeClass"
+                            : "addClass"
+                    ](element, "ng-hide");
+                });
             };
         }
     ];
@@ -20615,12 +20615,13 @@
         "$animate",
         function ($animate) {
             return function (scope, element, attr) {
-                scope
-                    .$watch(attr.ngHide, function ngHideWatchAction(value) {
-                        $animate[toBoolean(value)
-                                ? "addClass"
-                                : "removeClass"](element, "ng-hide");
-                    });
+                scope.$watch(attr.ngHide, function ngHideWatchAction(value) {
+                    $animate[
+                        toBoolean(value)
+                            ? "addClass"
+                            : "removeClass"
+                    ](element, "ng-hide");
+                });
             };
         }
     ];
@@ -20664,17 +20665,16 @@
    </example>
  */
     var ngStyleDirective = ngDirective(function (scope, element, attr) {
-        scope
-            .$watch(attr.ngStyle, function ngStyleWatchAction(newStyles, oldStyles) {
-                if (oldStyles && (newStyles !== oldStyles)) {
-                    forEach(oldStyles, function (val, style) {
-                        element.css(style, "");
-                    });
-                }
-                if (newStyles) {
-                    element.css(newStyles);
-                }
-            }, true);
+        scope.$watch(attr.ngStyle, function ngStyleWatchAction(newStyles, oldStyles) {
+            if (oldStyles && (newStyles !== oldStyles)) {
+                forEach(oldStyles, function (val, style) {
+                    element.css(style, "");
+                });
+            }
+            if (newStyles) {
+                element.css(newStyles);
+            }
+        }, true);
     });
 
     /**
@@ -20928,7 +20928,7 @@
             function ($element, $transclude) {
                 if (!$transclude) {
                     throw minErr("ngTransclude")("orphan", "Illegal use of ngTransclude directive in the template! No parent directive that " +
-                            "requires a transclusion found. Element: {0}",
+                        "requires a transclusion found. Element: {0}",
                     startingTag($element));
                 }
 
@@ -20941,11 +20941,10 @@
         ],
 
         link      : function ($scope, $element, $attrs, controller) {
-            controller
-                .$transclude(function (clone) {
-                    $element.empty();
-                    $element.append(clone);
-                });
+            controller.$transclude(function (clone) {
+                $element.empty();
+                $element.append(clone);
+            });
         }
     });
 
@@ -21285,13 +21284,12 @@
                         };
 
                         selectElement.on("change", function () {
-                            scope
-                                .$apply(function () {
-                                    if (unknownOption.parent()) {
-                                        unknownOption.remove();
-                                    }
-                                    ngModelCtrl.$setViewValue(selectElement.val());
-                                });
+                            scope.$apply(function () {
+                                if (unknownOption.parent()) {
+                                    unknownOption.remove();
+                                }
+                                ngModelCtrl.$setViewValue(selectElement.val());
+                            });
                         });
                     }
 
@@ -21314,16 +21312,15 @@
                         });
 
                         selectElement.on("change", function () {
-                            scope
-                                .$apply(function () {
-                                    var array = [];
-                                    forEach(selectElement.find("option"), function (option) {
-                                        if (option.selected) {
-                                            array.push(option.value);
-                                        }
-                                    });
-                                    ctrl.$setViewValue(array);
+                            scope.$apply(function () {
+                                var array = [];
+                                forEach(selectElement.find("option"), function (option) {
+                                    if (option.selected) {
+                                        array.push(option.value);
+                                    }
                                 });
+                                ctrl.$setViewValue(array);
+                            });
                         });
                     }
 
@@ -21379,72 +21376,71 @@
                         selectElement.empty();
 
                         selectElement.on("change", function () {
-                            scope
-                                .$apply(function () {
-                                    var optionGroup,
-                                        collection = valuesFn(scope) || [],
-                                        locals     = {},
-                                        key,
-                                        value,
-                                        optionElement,
-                                        index,
-                                        groupIndex,
-                                        length,
-                                        groupLength,
-                                        trackIndex;
+                            scope.$apply(function () {
+                                var optionGroup,
+                                    collection = valuesFn(scope) || [],
+                                    locals     = {},
+                                    key,
+                                    value,
+                                    optionElement,
+                                    index,
+                                    groupIndex,
+                                    length,
+                                    groupLength,
+                                    trackIndex;
 
-                                    if (multiple) {
-                                        value = [];
-                                        for (groupIndex = 0, groupLength = optionGroupsCache.length; groupIndex < groupLength; groupIndex += 1) {
-                                            // list of options for that group. (first item has the parent)
-                                            optionGroup = optionGroupsCache[groupIndex];
+                                if (multiple) {
+                                    value = [];
+                                    for (groupIndex = 0, groupLength = optionGroupsCache.length; groupIndex < groupLength; groupIndex += 1) {
+                                        // list of options for that group. (first item has the parent)
+                                        optionGroup = optionGroupsCache[groupIndex];
 
-                                            for (index = 1, length = optionGroup.length; index < length; index += 1) {
-                                                if ((optionElement = optionGroup[index].element)[0].selected) {
-                                                    key = optionElement.val();
-                                                    if (keyName) {
-                                                        locals[keyName] = key;
-                                                    }
-                                                    if (trackFn) {
-                                                        for (trackIndex = 0; trackIndex < collection.length; trackIndex += 1) {
-                                                            locals[valueName] = collection[trackIndex];
-                                                            if (trackFn(scope, locals) == key) {
-                                                                break;
-                                                            }
-                                                        }
-                                                    } else {
-                                                        locals[valueName] = collection[key];
-                                                    }
-                                                    value.push(valueFn(scope, locals));
-                                                }
-                                            }
-                                        }
-                                    } else {
-                                        key = selectElement.val();
-                                        if (key == "?") {
-                                            value = undefined;
-                                        } else if (key === "") {
-                                            value = null;
-                                        } else {
-                                            if (trackFn) {
-                                                for (trackIndex = 0; trackIndex < collection.length; trackIndex += 1) {
-                                                    locals[valueName] = collection[trackIndex];
-                                                    if (trackFn(scope, locals) == key) {
-                                                        value = valueFn(scope, locals);
-                                                        break;
-                                                    }
-                                                }
-                                            } else {
-                                                locals[valueName] = collection[key];
+                                        for (index = 1, length = optionGroup.length; index < length; index += 1) {
+                                            if ((optionElement = optionGroup[index].element)[0].selected) {
+                                                key = optionElement.val();
                                                 if (keyName) {
                                                     locals[keyName] = key;
                                                 }
-                                                value = valueFn(scope, locals);
+                                                if (trackFn) {
+                                                    for (trackIndex = 0; trackIndex < collection.length; trackIndex += 1) {
+                                                        locals[valueName] = collection[trackIndex];
+                                                        if (trackFn(scope, locals) == key) {
+                                                            break;
+                                                        }
+                                                    }
+                                                } else {
+                                                    locals[valueName] = collection[key];
+                                                }
+                                                value.push(valueFn(scope, locals));
                                             }
                                         }
                                     }
-                                    ctrl.$setViewValue(value);
-                                });
+                                } else {
+                                    key = selectElement.val();
+                                    if (key == "?") {
+                                        value = undefined;
+                                    } else if (key === "") {
+                                        value = null;
+                                    } else {
+                                        if (trackFn) {
+                                            for (trackIndex = 0; trackIndex < collection.length; trackIndex += 1) {
+                                                locals[valueName] = collection[trackIndex];
+                                                if (trackFn(scope, locals) == key) {
+                                                    value = valueFn(scope, locals);
+                                                    break;
+                                                }
+                                            }
+                                        } else {
+                                            locals[valueName] = collection[key];
+                                            if (keyName) {
+                                                locals[keyName] = key;
+                                            }
+                                            value = valueFn(scope, locals);
+                                        }
+                                    }
+                                }
+                                ctrl.$setViewValue(value);
+                            });
                         });
 
                         ctrl.$render = render;
@@ -21697,22 +21693,20 @@
                         }
 
                         if (interpolateFn) {
-                            scope
-                                .$watch(interpolateFn, function interpolateWatchAction(newVal, oldVal) {
-                                    attr.$set("value", newVal);
-                                    if (newVal !== oldVal) {
-                                        selectCtrl.removeOption(oldVal);
-                                    }
-                                    selectCtrl.addOption(newVal);
-                                });
+                            scope.$watch(interpolateFn, function interpolateWatchAction(newVal, oldVal) {
+                                attr.$set("value", newVal);
+                                if (newVal !== oldVal) {
+                                    selectCtrl.removeOption(oldVal);
+                                }
+                                selectCtrl.addOption(newVal);
+                            });
                         } else {
                             selectCtrl.addOption(attr.value);
                         }
 
-                        element
-                            .on("$destroy", function () {
-                                selectCtrl.removeOption(attr.value);
-                            });
+                        element.on("$destroy", function () {
+                            selectCtrl.removeOption(attr.value);
+                        });
                     };
                 },
                 priority: 100,

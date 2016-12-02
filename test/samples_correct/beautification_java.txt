@@ -311,7 +311,7 @@ public class IOOperations {
             stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             rs   = null;
 
-            for (Description tmpDescription: descriptions) {
+            for (Description tmpDescription : descriptions) {
                 String query = "UPDATE " + metaTableName + " SET tableName = '" + tmpDescription.getTableName() + "' , columnName = '" + tmpDescription.getColumnName() + "' , understandableName = N'" + tmpDescription.getUnderstandableName() + "' , description = N'" + tmpDescription.getDescription() + "' WHERE id = " + tmpDescription.getDescriptionID();
                 // System.out.println(query);
                 if (stmt.executeUpdate(query) == 0) {
@@ -375,7 +375,7 @@ public class IOOperations {
             stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             rs   = null;
 
-            for (Description tmpDescription: descriptions) {
+            for (Description tmpDescription : descriptions) {
                 String query = "DELETE FROM " + metaTableName + " WHERE ID = " + tmpDescription.getDescriptionID();
                 // System.out.println(query);
                 stmt.executeUpdate(query);
