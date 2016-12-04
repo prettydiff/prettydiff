@@ -43,10 +43,12 @@ var content = (
             /* multi
             line
             comment */
+
             //attr="test"
             name={window.isLoggedIn
                 ? window.name
-                : ""} // end of line comment
+                : ""}
+            // end of line comment
         />
     </Nav>
 );
