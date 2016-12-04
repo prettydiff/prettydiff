@@ -57,13 +57,17 @@ function (e) {
 }
 terator   = function () {
     (s
-        ? i[n
+        ? i[
+            n
                 ? "end"
-                : "start"]
+                : "start"
+        ]
         : e),
-    s.start && (s[r
+    s.start && (s[
+        r
             ? "end"
-            : "start"]);
+            : "start"
+    ]);
     var o = i
             ? i.start.row
             : 0,

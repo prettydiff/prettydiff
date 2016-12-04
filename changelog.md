@@ -1,5 +1,21 @@
 # Pretty Diff change log
 
+## v2.1.15
+
+### Defect resolutions
+* Fixes #374, multiple improvements to include better vertical alignment, better ternary indentation, better method-chain indentation, and several minor defect resolutions
+* Fixes #379, CSS quote convert defect
+* Fixes #380, defect with CSS option "noleadzero"
+* Fixes #383, minor ASI defect
+* Fixes #384, `{{block}}` treated as a start tag in Twig templates
+* Fixes #385, numbers of form 3e5+2 improperly broken on "+"
+* Fixes #388, improper line breaking on complex argument lists
+* Fixes #394, JSX broken on JS comments inside a markup tag that is a child of JavaScript embedded in a higher markup tag
+
+### Enhancements
+* Fixes #291, Prettydiff will now publish with biddle to http://prettydiff.com/downloads/prettydiff as an alternative to NPM
+* Fixes #355, ERB `<%=` tags will not break or wrap mid tag
+
 ## v2.1.14
 
 * A string wrap adjustment in support of https://github.com/prettydiff/biddle and in conformance to JSLint

@@ -30,18 +30,17 @@ function v() {
 } {
     animate: function () {
         return a(function () {
-            d
-                .each(a, function () {
-                    if (z) {
-                        u;
+            d.each(a, function () {
+                if (z) {
+                    u;
+                } else {
+                    if (i) {
+                        c;
                     } else {
-                        if (i) {
-                            c;
-                        } else {
-                            j;
-                        }
+                        j;
                     }
-                });
+                }
+            });
         });
     }
 };
@@ -161,3 +160,29 @@ ct(function () {
         }
     }
 });
+var x = 2e+3 + 2;
+function i() {
+    for (c) {
+        if (e) {
+            if (w) {
+                if (o) {
+                    var j;
+                } else {
+                    p;
+                }
+            }
+        }
+        q;
+    }
+}
+if (!c || !d.contains(g, b)) {
+    return c
+        ? {
+            top : c.top,
+            left: c.left
+        }
+        : {
+            left: 0,
+            top : 0
+        };
+}
