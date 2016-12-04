@@ -113,3 +113,19 @@ ct(function(){
                 }
     }
 })
+var x = 2e+3 + 2;
+function i(){
+    for(c){
+        if(e){
+            if(w)
+                if(o){
+                    var j;
+                } else p;
+        }
+        q
+    }
+}
+if(!c||!d.contains(g,b))
+    return c
+        ?{top:c.top,left:c.left}
+        :{top:0,left:0};

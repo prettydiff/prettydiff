@@ -361,7 +361,9 @@
             if (line.widgets) {
                 for (var i = 0; i < line.widgets.length; i += 1) {
                     if (line.widgets[i].height) {
-                        widgetsHeight += line.widgets[i].height;
+                        widgetsHeight += line
+                            .widgets[i]
+                            .height;
                     }
                 }
 
@@ -657,15 +659,13 @@
                 }
             });
             node.setAttribute("not-content", "true");
-        },
-        function (pos, axis) {
+        }, function (pos, axis) {
             if (axis == "horizontal") {
                 setScrollLeft(cm, pos);
             } else {
                 setScrollTop(cm, pos);
             }
-        },
-        cm);
+        }, cm);
         if (cm.display.scrollbars.addClass) {
             addClass(cm.display.wrapper, cm.display.scrollbars.addClass);
         }
@@ -1029,7 +1029,12 @@
     function updateWidgetHeight(line) {
         if (line.widgets) {
             for (var i = 0; i < line.widgets.length; i += 1) {
-                line.widgets[i].height = line.widgets[i].node.offsetHeight;
+                line
+                    .widgets[i]
+                    .height = line
+                    .widgets[i]
+                    .node
+                    .offsetHeight;
             }
         }
     }
@@ -1042,8 +1047,16 @@
             width = {};
         var gutterLeft = d.gutters.clientLeft;
         for (var n = d.gutters.firstChild, i = 0; n; n = n.nextSibling, i += 1) {
-            left[cm.options.gutters[i]]  = n.offsetLeft + n.clientLeft + gutterLeft;
-            width[cm.options.gutters[i]] = n.clientWidth;
+            left[
+                cm
+                    .options
+                    .gutters[i]
+            ] = n.offsetLeft + n.clientLeft + gutterLeft;
+            width[
+                cm
+                    .options
+                    .gutters[i]
+            ] = n.clientWidth;
         }
         return {fixedPos: compensateForHScroll(d), gutterLeft: left, gutterTotalWidth: d.gutters.offsetWidth, gutterWidth: width, wrapperWidth: d.wrapper.clientWidth};
     }
@@ -1129,7 +1142,10 @@
         if (lineView.node == lineView.text) {
             lineView.node = elt("div", null, null, "position: relative");
             if (lineView.text.parentNode) {
-                lineView.text.parentNode.replaceChild(lineView.node, lineView.text);
+                lineView
+                    .text
+                    .parentNode
+                    .replaceChild(lineView.node, lineView.text);
             }
             lineView
                 .node
@@ -1232,7 +1248,9 @@
             }
             if (markers) {
                 for (var k = 0; k < cm.options.gutters.length; k += 1) {
-                    var id    = cm.options.gutters[k],
+                    var id    = cm
+                            .options
+                            .gutters[k],
                         found = markers.hasOwnProperty(id) && markers[id];
                     if (found) {
                         gutterWrap.appendChild(elt("div", [found], "CodeMirror-gutter-elt", "left: " + dims.gutterLeft[id] + "px; width: " + dims.gutterWidth[id] + "px"));
@@ -1249,7 +1267,9 @@
         for (var node = lineView.node.firstChild, next; node; node = next) {
             var next = node.nextSibling;
             if (node.className == "CodeMirror-linewidget") {
-                lineView.node.removeChild(node);
+                lineView
+                    .node
+                    .removeChild(node);
             }
         }
         insertLineWidgets(lineView, dims);
@@ -1450,7 +1470,8 @@
                 }
                 ranges.splice(i -= 1, 2, new Range(inv
                     ? to
-                    : from, inv
+                    : from,
+                inv
                     ? from
                     : to));
             }
@@ -1589,7 +1610,8 @@
         setSelectionNoUndo(doc, sel, options);
         addSelectionToHistory(doc, doc.sel, doc.cm
             ? doc.cm.curOp.id
-            : NaN, options);
+            : NaN,
+        options);
     }
 
     function setSelectionNoUndo(doc, sel, options) {
@@ -1635,7 +1657,9 @@
             var newHead = skipAtomic(doc, range.head, bias, mayClear);
             if (out || newAnchor != range.anchor || newHead != range.head) {
                 if (!out) {
-                    out = sel.ranges.slice(0, i);
+                    out = sel
+                        .ranges
+                        .slice(0, i);
                 }
                 out[i] = new Range(newAnchor, newHead);
             }
@@ -1729,7 +1753,9 @@
         var selFragment = result.selection = document.createDocumentFragment();
 
         for (var i = 0; i < doc.sel.ranges.length; i += 1) {
-            var range = doc.sel.ranges[i];
+            var range = doc
+                .sel
+                .ranges[i];
             var collapsed = range.empty();
             if (collapsed || cm.options.showCursorWhenSelecting) {
                 drawSelectionCursor(cm, range, curFragment);
@@ -1818,7 +1844,8 @@
 
             iterateBidiSections(getOrder(lineObj), fromArg || 0, toArg == null
                 ? lineLen
-                : toArg, function (from, to, dir) {
+                : toArg,
+            function (from, to, dir) {
                 var leftPos = coords(from, "left"),
                     rightPos,
                     left,
@@ -1876,7 +1903,8 @@
                 : null).end;
             var rightStart = drawForLine(sTo.line, singleVLine
                 ? 0
-                : null, sTo.ch).start;
+                : null,
+            sTo.ch).start;
             if (singleVLine) {
                 if (leftEnd.top < rightStart.top - 2) {
                     add(leftEnd.right, leftEnd.top, null, leftEnd.bottom);
@@ -1917,7 +1945,10 @@
 
     function startWorker(cm, time) {
         if (cm.doc.mode.startState && cm.doc.frontier < cm.display.viewTo) {
-            cm.state.highlight.set(time, bind(highlightWorker, cm));
+            cm
+                .state
+                .highlight
+                .set(time, bind(highlightWorker, cm));
         }
     }
 
@@ -2017,15 +2048,14 @@
         } else {
             state = copyState(doc.mode, state);
         }
-        doc
-            .iter(pos, n, function (line) {
-                processLine(cm, line.text, state);
-                var save = pos == n - 1 || pos % 5 == 0 || pos >= display.viewFrom && pos < display.viewTo;
-                line.stateAfter = save
-                    ? copyState(doc.mode, state)
-                    : null;
-                pos             += 1;
-            });
+        doc.iter(pos, n, function (line) {
+            processLine(cm, line.text, state);
+            var save = pos == n - 1 || pos % 5 == 0 || pos >= display.viewFrom && pos < display.viewTo;
+            line.stateAfter = save
+                ? copyState(doc.mode, state)
+                : null;
+            pos             += 1;
+        });
         if (precise) {
             doc.frontier = pos;
         }
@@ -2103,12 +2133,27 @@
         }
         for (var i = 0; i < lineView.rest.length; i += 1) {
             if (lineView.rest[i] == line) {
-                return {cache: lineView.measure.caches[i], map: lineView.measure.maps[i]};
+                return {
+                    cache: lineView
+                        .measure
+                        .caches[i],
+                    map  : lineView
+                        .measure
+                        .maps[i]
+                };
             }
         }
         for (var i = 0; i < lineView.rest.length; i += 1) {
             if (lineNo(lineView.rest[i]) > lineN) {
-                return {before: true, cache: lineView.measure.caches[i], map: lineView.measure.maps[i]};
+                return {
+                    before: true,
+                    cache : lineView
+                        .measure
+                        .caches[i],
+                    map   : lineView
+                        .measure
+                        .maps[i]
+                };
             }
         }
     }
@@ -2135,7 +2180,9 @@
     // Find a line view that corresponds to the given line number.
     function findViewForLine(cm, lineN) {
         if (lineN >= cm.display.viewFrom && lineN < cm.display.viewTo) {
-            return cm.display.view[findViewIndex(cm, lineN)];
+            return cm
+                .display
+                .view[findViewIndex(cm, lineN)];
         }
         var ext = cm.display.externalMeasured;
         if (ext && lineN >= ext.lineN && lineN < ext.lineN + ext.size) {
@@ -2183,7 +2230,10 @@
             found = prepared.cache[key];
         } else {
             if (!prepared.rect) {
-                prepared.rect = prepared.view.text.getBoundingClientRect();
+                prepared.rect = prepared
+                    .view
+                    .text
+                    .getBoundingClientRect();
             }
             if (!prepared.hasHeights) {
                 ensureLineHeights(cm, prepared.view, prepared.rect);
@@ -2278,9 +2328,11 @@
                 } else if (ie && cm.options.lineWrapping) {
                     var rects = range(node, start, end).getClientRects();
                     if (rects.length) {
-                        rect = rects[bias == "right"
+                        rect = rects[
+                            bias == "right"
                                 ? rects.length - 1
-                                : 0];
+                                : 0
+                        ];
                     } else {
                         rect = nullRect;
                     }
@@ -2303,9 +2355,11 @@
             }
             var rects;
             if (cm.options.lineWrapping && (rects = node.getClientRects()).length > 1) {
-                rect = rects[bias == "right"
+                rect = rects[
+                    bias == "right"
                         ? rects.length - 1
-                        : 0];
+                        : 0
+                ];
             } else {
                 rect = node.getBoundingClientRect();
             }
@@ -2382,7 +2436,9 @@
             lineView.measure.heights = null;
             if (lineView.rest) {
                 for (var i = 0; i < lineView.rest.length; i += 1) {
-                    lineView.measure.caches[i] = {};
+                    lineView
+                        .measure
+                        .caches[i] = {};
                 }
             }
         }
@@ -2504,7 +2560,8 @@
         function get(ch, right) {
             var m = measureCharPrepared(cm, preparedMeasure, ch, right
                 ? "right"
-                : "left", varHeight);
+                : "left",
+            varHeight);
             if (right) {
                 m.left = m.right;
             } else {
@@ -2653,7 +2710,8 @@
                 }
                 var pos = PosWithInfo(lineNo, ch, ch == from
                     ? fromOutside
-                    : toOutside, xDiff < -1
+                    : toOutside,
+                xDiff < -1
                     ? -1
                     : xDiff > 1
                         ? 1
@@ -2796,7 +2854,10 @@
         } finally {
             operationGroup = null;
             for (var i = 0; i < group.ops.length; i += 1) {
-                group.ops[i].cm.curOp = null;
+                group
+                    .ops[i]
+                    .cm
+                    .curOp = null;
             }
             endOperations(group);
         }
@@ -3225,13 +3286,19 @@
             if (display.viewFrom > from) {
                 display.view = buildViewArray(cm, from, display.viewFrom).concat(display.view);
             } else if (display.viewFrom < from) {
-                display.view = display.view.slice(findViewIndex(cm, from));
+                display.view = display
+                    .view
+                    .slice(findViewIndex(cm, from));
             }
             display.viewFrom = from;
             if (display.viewTo < to) {
-                display.view = display.view.concat(buildViewArray(cm, display.viewTo, to));
+                display.view = display
+                    .view
+                    .concat(buildViewArray(cm, display.viewTo, to));
             } else if (display.viewTo > to) {
-                display.view = display.view.slice(0, findViewIndex(cm, to));
+                display.view = display
+                    .view
+                    .slice(0, findViewIndex(cm, to));
             }
         }
         display.viewTo = to;
@@ -3366,7 +3433,9 @@
 
         // Normal behavior is to insert the new text into every selection
         for (var i = doc.sel.ranges.length - 1; i >= 0; i -= 1) {
-            var range = doc.sel.ranges[i];
+            var range = doc
+                .sel
+                .ranges[i];
             var from = range.from(),
                 to   = range.to();
             // Handle deletion
@@ -3461,7 +3530,10 @@
 
     function focusInput(cm) {
         if (cm.options.readOnly != "nocursor" && (!mobile || activeElt() != cm.display.input)) {
-            cm.display.input.focus();
+            cm
+                .display
+                .input
+                .focus();
         }
     }
 
@@ -3605,7 +3677,12 @@
                 var text   = [],
                     ranges = [];
                 for (var i = 0; i < cm.doc.sel.ranges.length; i += 1) {
-                    var line = cm.doc.sel.ranges[i].head.line;
+                    var line = cm
+                        .doc
+                        .sel
+                        .ranges[i]
+                        .head
+                        .line;
                     var lineRange = {
                         anchor: Pos(line, 0),
                         head  : Pos(line + 1, 0)
@@ -3633,7 +3710,9 @@
         if (khtml) {
             on(d.sizer, "mouseup", function () {
                 if (activeElt() == d.input) {
-                    d.input.blur();
+                    d
+                        .input
+                        .blur();
                 }
                 focusInput(cm);
             });
@@ -3816,7 +3895,9 @@
         cm.state.draggingText = dragEnd;
         // IE's approach to draggable
         if (display.scroller.dragDrop) {
-            display.scroller.dragDrop();
+            display
+                .scroller
+                .dragDrop();
         }
         on(document, "mouseup", dragEnd);
         on(display.scroller, "drop", dragEnd);
@@ -4038,10 +4119,14 @@
         mY -= lineBox.top - display.viewOffset;
 
         for (var i = 0; i < cm.options.gutters.length; i += 1) {
-            var g = display.gutters.childNodes[i];
+            var g = display
+                .gutters
+                .childNodes[i];
             if (g && g.getBoundingClientRect().right >= mX) {
                 var line = lineAtHeight(cm.doc, mY);
-                var gutter = cm.options.gutters[i];
+                var gutter = cm
+                    .options
+                    .gutters[i];
                 signalfn(cm, type, cm, line, gutter, e);
                 return e_defaultPrevented(e);
             }
@@ -4160,7 +4245,9 @@
                 .dataTransfer
                 .setDragImage(img, 0, 0);
             if (presto) {
-                img.parentNode.removeChild(img);
+                img
+                    .parentNode
+                    .removeChild(img);
             }
         }
     }
@@ -4383,13 +4470,12 @@
             if (isModifierKey(name)) {
                 return "handled";
             }
-            stopSeq
-                .set(50, function () {
-                    if (cm.state.keySeq == seq) {
-                        cm.state.keySeq = null;
-                        resetInput(cm);
-                    }
-                });
+            stopSeq.set(50, function () {
+                if (cm.state.keySeq == seq) {
+                    cm.state.keySeq = null;
+                    resetInput(cm);
+                }
+            });
             name = seq + " " + name;
         }
         var result = lookupKeyForEditor(cm, name, handle);
@@ -4634,7 +4720,9 @@
             display.inputDiv.style.position = "relative";
             display.input.style.cssText     = oldCSS;
             if (ie && ie_version < 9) {
-                display.scrollbars.setScrollTop(display.scroller.scrollTop = scrollPos);
+                display
+                    .scrollbars
+                    .setScrollTop(display.scroller.scrollTop = scrollPos);
             }
             slowPoll(cm);
 
@@ -4711,7 +4799,9 @@
     function computeSelAfterChange(doc, change) {
         var out = [];
         for (var i = 0; i < doc.sel.ranges.length; i += 1) {
-            var range = doc.sel.ranges[i];
+            var range = doc
+                .sel
+                .ranges[i];
             out.push(new Range(adjustForChange(range.anchor, change), adjustForChange(range.head, change)));
         }
         return normalizeSelection(out, doc.sel.primIndex);
@@ -4738,11 +4828,14 @@
             oldPrev = change.to;
             newPrev = to;
             if (hint == "around") {
-                var range = doc.sel.ranges[i],
+                var range = doc
+                        .sel
+                        .ranges[i],
                     inv   = cmp(range.head, range.anchor) < 0;
                 out[i] = new Range(inv
                     ? to
-                    : from, inv
+                    : from,
+                inv
                     ? from
                     : to);
             } else {
@@ -4918,7 +5011,9 @@
                 : lst(source);
             makeChangeSingleDoc(doc, change, after, mergeOldSpans(doc, change));
             if (!i && doc.cm) {
-                doc.cm.scrollIntoView({from: change.from, to: changeEnd(change)});
+                doc
+                    .cm
+                    .scrollIntoView({from: change.from, to: changeEnd(change)});
             }
             var rebased = [];
 
@@ -5027,16 +5122,15 @@
         updateDoc(doc, change, spans, estimateHeight(cm));
 
         if (!cm.options.lineWrapping) {
-            doc
-                .iter(checkWidthStart, from.line + change.text.length, function (line) {
-                    var len = lineLength(line);
-                    if (len > display.maxLineLength) {
-                        display.maxLine        = line;
-                        display.maxLineLength  = len;
-                        display.maxLineChanged = true;
-                        recomputeMaxLength     = false;
-                    }
-                });
+            doc.iter(checkWidthStart, from.line + change.text.length, function (line) {
+                var len = lineLength(line);
+                if (len > display.maxLineLength) {
+                    display.maxLine        = line;
+                    display.maxLineLength  = len;
+                    display.maxLineChanged = true;
+                    recomputeMaxLength     = false;
+                }
+            });
             if (recomputeMaxLength) {
                 cm.curOp.updateMaxLine = true;
             }
@@ -5360,7 +5454,9 @@
             // Ensure that, if the cursor was in the whitespace at the start of the line, it
             // is moved to the end of that space.
             for (var i = 0; i < doc.sel.ranges.length; i += 1) {
-                var range = doc.sel.ranges[i];
+                var range = doc
+                    .sel
+                    .ranges[i];
                 if (range.head.line == n && range.head.ch < curSpaceString.length) {
                     var pos = Pos(n, curSpaceString.length);
                     replaceOneSelection(doc, i, new Range(pos, pos));
@@ -5553,9 +5649,13 @@
 
     codeMirror.prototype = {
         addKeyMap         : function (map, bottom) {
-            this.state.keyMaps[bottom
-                    ? "push"
-                    : "unshift"](getKeyMap(map));
+            this
+                .state
+                .keyMaps[
+                    bottom
+                        ? "push"
+                        : "unshift"
+                ](getKeyMap(map));
         },
 
         addLineWidget     : methodOp(function (handle, node, options) {
@@ -6053,7 +6153,10 @@
             }, sel_move);
             if (goals.length) {
                 for (var i = 0; i < doc.sel.ranges.length; i += 1) {
-                    doc.sel.ranges[i].goalColumn = goals[i];
+                    doc
+                        .sel
+                        .ranges[i]
+                        .goalColumn = goals[i];
                 }
             }
         }),
@@ -6410,7 +6513,10 @@
             codeMirror.defaults.mode = name;
         }
         if (arguments.length > 2) {
-            mode.dependencies = Array.prototype.slice.call(arguments, 2);
+            mode.dependencies = Array
+                .prototype
+                .slice
+                .call(arguments, 2);
         }
         modes[name] = mode;
     };
@@ -6627,10 +6733,7 @@
                     left: 0,
                     top : top
                 }, "div");
-                return {
-                    from: leftPos,
-                    to  : range.from()
-                };
+                return {from: leftPos, to: range.from()};
             });
         },
         delWrappedLineRight: function (cm) {
@@ -6642,10 +6745,7 @@
                     left: cm.display.lineDiv.offsetWidth + 100,
                     top : top
                 }, "div");
-                return {
-                    from: range.from(),
-                    to  : rightPos
-                };
+                return {from: range.from(), to: rightPos};
             });
         },
         goCharLeft         : function (cm) {
@@ -6676,71 +6776,65 @@
             cm.moveV(1, "line");
         },
         goLineEnd          : function (cm) {
-            cm
-                .extendSelectionsBy(function (range) {
-                    return lineEnd(cm, range.head.line);
-                }, {
-                    bias  : -1,
-                    origin: "+move"
-                });
+            cm.extendSelectionsBy(function (range) {
+                return lineEnd(cm, range.head.line);
+            }, {
+                bias  : -1,
+                origin: "+move"
+            });
         },
         goLineLeft         : function (cm) {
-            cm
-                .extendSelectionsBy(function (range) {
-                    var top = cm
-                        .charCoords(range.head, "div")
-                        .top + 5;
-                    return cm.coordsChar({
-                        left: 0,
-                        top : top
-                    }, "div");
-                }, sel_move);
+            cm.extendSelectionsBy(function (range) {
+                var top = cm
+                    .charCoords(range.head, "div")
+                    .top + 5;
+                return cm.coordsChar({
+                    left: 0,
+                    top : top
+                }, "div");
+            }, sel_move);
         },
         goLineLeftSmart    : function (cm) {
-            cm
-                .extendSelectionsBy(function (range) {
-                    var top = cm
-                        .charCoords(range.head, "div")
-                        .top + 5;
-                    var pos = cm.coordsChar({
-                        left: 0,
-                        top : top
-                    }, "div");
-                    if (pos.ch < cm.getLine(pos.line).search(/\S/)) {
-                        return lineStartSmart(cm, range.head);
-                    }
-                    return pos;
-                }, sel_move);
+            cm.extendSelectionsBy(function (range) {
+                var top = cm
+                    .charCoords(range.head, "div")
+                    .top + 5;
+                var pos = cm.coordsChar({
+                    left: 0,
+                    top : top
+                }, "div");
+                if (pos.ch < cm.getLine(pos.line).search(/\S/)) {
+                    return lineStartSmart(cm, range.head);
+                }
+                return pos;
+            }, sel_move);
         },
         goLineRight        : function (cm) {
-            cm
-                .extendSelectionsBy(function (range) {
-                    var top = cm
-                        .charCoords(range.head, "div")
-                        .top + 5;
-                    return cm.coordsChar({
-                        left: cm.display.lineDiv.offsetWidth + 100,
-                        top : top
-                    }, "div");
-                }, sel_move);
+            cm.extendSelectionsBy(function (range) {
+                var top = cm
+                    .charCoords(range.head, "div")
+                    .top + 5;
+                return cm.coordsChar({
+                    left: cm.display.lineDiv.offsetWidth + 100,
+                    top : top
+                }, "div");
+            }, sel_move);
         },
         goLineStart        : function (cm) {
-            cm
-                .extendSelectionsBy(function (range) {
-                    return lineStart(cm, range.head.line);
-                }, {
-                    bias  : 1,
-                    origin: "+move"
-                });
+            cm.extendSelectionsBy(function (range) {
+                return lineStart(cm, range.head.line);
+            }, {
+                bias  : 1,
+                origin: "+move"
+            });
         },
         goLineStartSmart   : function (cm) {
-            cm
-                .extendSelectionsBy(function (range) {
-                    return lineStartSmart(cm, range.head);
-                }, {
-                    bias  : 1,
-                    origin: "+move"
-                });
+            cm.extendSelectionsBy(function (range) {
+                return lineStartSmart(cm, range.head);
+            }, {
+                bias  : 1,
+                origin: "+move"
+            });
         },
         goLineUp           : function (cm) {
             cm.moveV(-1, "line");
@@ -6796,10 +6890,7 @@
                         };
                     }
                 } else {
-                    return {
-                        from: range.from(),
-                        to  : range.to()
-                    };
+                    return {from: range.from(), to: range.to()};
                 }
             });
         },
@@ -7412,7 +7503,9 @@
             endOperation(cm);
         }
         if (this.parent) {
-            this.parent.clear();
+            this
+                .parent
+                .clear();
         };
     }
 
@@ -7433,7 +7526,8 @@
             if (span.from != null) {
                 from = Pos(lineObj
                     ? line
-                    : lineNo(line), span.from);
+                    : lineNo(line),
+                span.from);
                 if (side == -1) {
                     return from;
                 }
@@ -7441,7 +7535,8 @@
             if (span.to != null) {
                 to = Pos(lineObj
                     ? line
-                    : lineNo(line), span.to);
+                    : lineNo(line),
+                span.to);
                 if (side == 1) {
                     return to;
                 }
@@ -7534,7 +7629,9 @@
             marker.collapsed  = true;
             marker.widgetNode = elt("span", [marker.replacedWith], "CodeMirror-widget");
             if (!options.handleMouseEvents) {
-                marker.widgetNode.setAttribute("cm-ignore-events", "true");
+                marker
+                    .widgetNode
+                    .setAttribute("cm-ignore-events", "true");
             }
             if (options.insertLeft) {
                 marker.widgetNode.insertLeft = true;
@@ -7567,7 +7664,8 @@
             }
             addMarkedSpan(line, new MarkedSpan(marker, curLine == from.line
                 ? from.ch
-                : null, curLine == to.line
+                : null,
+            curLine == to.line
                 ? to.ch
                 : null));
             curLine += 1;
@@ -7634,7 +7732,9 @@
         }
         this.explicitlyCleared = true;
         for (var i = 0; i < this.markers.length; i += 1) {
-            this.markers[i].clear();
+            this
+                .markers[i]
+                .clear();
         }
         signalLater(this, "clear");
     };
@@ -7784,7 +7884,8 @@
                         : span.from < endCh);
                     (nw || (nw = [])).push(new MarkedSpan(marker, startsBefore
                         ? null
-                        : span.from - endCh, span.to == null
+                        : span.from - endCh,
+                    span.to == null
                         ? null
                         : span.to - endCh));
                 }
@@ -7941,7 +8042,9 @@
         doc.iter(from.line, to.line + 1, function (line) {
             if (line.markedSpans) {
                 for (var i = 0; i < line.markedSpans.length; i += 1) {
-                    var mark = line.markedSpans[i].marker;
+                    var mark = line
+                        .markedSpans[i]
+                        .marker;
                     if (mark.readOnly && (!markers || indexOf(markers, mark) == -1)) {
                         (markers || (markers = [])).push(mark);
                     }
@@ -7992,7 +8095,9 @@
             return;
         }
         for (var i = 0; i < spans.length; i += 1) {
-            spans[i].marker.detachLine(line);
+            spans[i]
+                .marker
+                .detachLine(line);
         }
         line.markedSpans = null;
     }
@@ -8001,7 +8106,9 @@
             return;
         }
         for (var i = 0; i < spans.length; i += 1) {
-            spans[i].marker.attachLine(line);
+            spans[i]
+                .marker
+                .attachLine(line);
         }
         line.markedSpans = spans;
     }
@@ -8097,7 +8204,9 @@
     function visualLine(line) {
         var merged;
         while (merged = collapsedSpanAtStart(line)) {
-            line = merged.find(-1, true).line;
+            line = merged
+                .find(-1, true)
+                .line;
         }
         return line;
     }
@@ -8138,7 +8247,9 @@
             return lineN;
         }
         while (merged = collapsedSpanAtEnd(line)) {
-            line = merged.find(1, true).line;
+            line = merged
+                .find(1, true)
+                .line;
         }
         return lineNo(line) + 1;
     }
@@ -8360,14 +8471,18 @@
         }
         var inner = codeMirror.innerMode(mode, state);
         if (inner.mode.blankLine) {
-            return inner.mode.blankLine(inner.state);
+            return inner
+                .mode
+                .blankLine(inner.state);
         }
     }
 
     function readToken(mode, stream, state, inner) {
         for (var i = 0; i < 10; i += 1) {
             if (inner) {
-                inner[0] = codeMirror.innerMode(mode, state).mode;
+                inner[0] = codeMirror
+                    .innerMode(mode, state)
+                    .mode;
             }
             var style = mode.token(stream, state);
             if (stream.pos > stream.start) {
@@ -8479,7 +8594,9 @@
 
         // Run overlays, adjust style array.
         for (var o = 0; o < cm.state.overlays.length; o += 1) {
-            var overlay = cm.state.overlays[o],
+            var overlay = cm
+                    .state
+                    .overlays[o],
                 i       = 1,
                 at      = 0;
             runMode(cm, line.text, overlay.mode, true, function (end, style) {
@@ -8617,7 +8734,9 @@
 
             // Ensure at least a single node is present, for measuring.
             if (builder.map.length == 0) {
-                builder.map.push(0, 0, builder.content.appendChild(zeroWidthElement(cm.display.measure)));
+                builder
+                    .map
+                    .push(0, 0, builder.content.appendChild(zeroWidthElement(cm.display.measure)));
             }
 
             // Store the map and a cache object for the current logical line
@@ -8888,9 +9007,13 @@
                             : text;
                         builder.addToken(builder, tokenText, style
                             ? style + spanStyle
-                            : spanStyle, spanStartStyle, pos + tokenText.length == nextChange
+                            : spanStyle,
+                        spanStartStyle,
+                        pos + tokenText.length == nextChange
                             ? spanEndStyle
-                            : "", title, css);
+                            : "",
+                        title,
+                        css);
                     }
                     if (end >= upto) {
                         text = text.slice(upto - pos);
@@ -9177,8 +9300,10 @@
             if (this.size - n < 25 && (this.children.length > 1 || !(this.children[0] instanceof LeafChunk))) {
                 var lines = [];
                 this.collapse(lines);
-                this.children           = [new LeafChunk(lines)];
-                this.children[0].parent = this;
+                this.children = [new LeafChunk(lines)];
+                this
+                    .children[0]
+                    .parent   = this;
             }
         }
     };
@@ -9219,7 +9344,8 @@
         addLineClass            : docMethodOp(function (handle, where, cls) {
             return changeLine(this, handle, where == "gutter"
                 ? "gutter"
-                : "class", function (line) {
+                : "class",
+            function (line) {
                 var prop = where == "text"
                     ? "textClass"
                     : where == "background"
@@ -9455,10 +9581,9 @@
             if (coords.line < this.first || coords.ch < 0) {
                 return 0;
             }
-            this
-                .iter(this.first, coords.line, function (line) {
-                    index += line.text.length + 1;
-                });
+            this.iter(this.first, coords.line, function (line) {
+                index += line.text.length + 1;
+            });
             return index;
         },
 
@@ -9559,7 +9684,8 @@
         removeLineClass         : docMethodOp(function (handle, where, cls) {
             return changeLine(this, handle, where == "gutter"
                 ? "gutter"
-                : "class", function (line) {
+                : "class",
+            function (line) {
                 var prop = where == "text"
                     ? "textClass"
                     : where == "background"
@@ -10017,7 +10143,9 @@
                     .done
                     .shift();
                 if (!hist.done[0].ranges) {
-                    hist.done.shift();
+                    hist
+                        .done
+                        .shift();
                 }
             }
         }
@@ -10750,9 +10878,7 @@
     function zeroWidthElement(measure) {
         if (zwspSupported == null) {
             var test = elt("span", "\u200b");
-            removeChildrenAndAdd(measure, elt("span", [
-                test, document.createTextNode("x")
-            ]));
+            removeChildrenAndAdd(measure, elt("span", [test, document.createTextNode("x")]));
             if (measure.firstChild.offsetHeight != 0) {
                 zwspSupported = test.offsetWidth <= 1 && test.offsetHeight > 2 && !(ie && ie_version < 8);
             }
@@ -10784,32 +10910,32 @@
     var splitLines = codeMirror.splitLines = "\n\nb"
         .split(/\n/)
         .length != 3
-        ? function (string) {
-            var pos    = 0,
-                result = [],
-                l      = string.length;
-            while (pos <= l) {
-                var nl = string.indexOf("\n", pos);
-                if (nl == -1) {
-                    nl = string.length;
+            ? function (string) {
+                var pos    = 0,
+                    result = [],
+                    l      = string.length;
+                while (pos <= l) {
+                    var nl = string.indexOf("\n", pos);
+                    if (nl == -1) {
+                        nl = string.length;
+                    }
+                    var line = string.slice(pos, string.charAt(nl - 1) == "\r"
+                        ? nl - 1
+                        : nl);
+                    var rt = line.indexOf("\r");
+                    if (rt != -1) {
+                        result.push(line.slice(0, rt));
+                        pos += rt + 1;
+                    } else {
+                        result.push(line);
+                        pos = nl + 1;
+                    }
                 }
-                var line = string.slice(pos, string.charAt(nl - 1) == "\r"
-                    ? nl - 1
-                    : nl);
-                var rt = line.indexOf("\r");
-                if (rt != -1) {
-                    result.push(line.slice(0, rt));
-                    pos += rt + 1;
-                } else {
-                    result.push(line);
-                    pos = nl + 1;
-                }
+                return result;
             }
-            return result;
-        }
-        : function (string) {
-            return string.split(/\r\n?|\n/);
-        };
+            : function (string) {
+                return string.split(/\r\n?|\n/);
+            };
 
     var hasSelection = window.getSelection
         ? function (te) {
@@ -11001,7 +11127,8 @@
                 : lineRight(line);
         return Pos(lineN == null
             ? lineNo(line)
-            : lineN, ch);
+            : lineN,
+        ch);
     }
     function lineStartSmart(cm, pos) {
         var start = lineStart(cm, pos.line);
@@ -11078,7 +11205,8 @@
             part = bidi[pos];
         var target = moveInLine(line, start, part.level % 2
             ? -dir
-            : dir, byUnit);
+            : dir,
+        byUnit);
 
         for (;;) {
             if (target > part.from && target < part.to) {
@@ -11449,10 +11577,9 @@
         if (!state) {
             return;
         }
-        cm
-            .operation(function () {
-                updateFoldInfo(cm, vp.from, vp.to);
-            });
+        cm.operation(function () {
+            updateFoldInfo(cm, vp.from, vp.to);
+        });
         state.from = vp.from;
         state.to   = vp.to;
     }
@@ -11484,17 +11611,16 @@
             if (state.from == state.to || vp.from - state.to > 20 || state.from - vp.to > 20) {
                 updateInViewport(cm);
             } else {
-                cm
-                    .operation(function () {
-                        if (vp.from < state.from) {
-                            updateFoldInfo(cm, vp.from, state.from);
-                            state.from = vp.from;
-                        }
-                        if (vp.to > state.to) {
-                            updateFoldInfo(cm, state.to, vp.to);
-                            state.to = vp.to;
-                        }
-                    });
+                cm.operation(function () {
+                    if (vp.from < state.from) {
+                        updateFoldInfo(cm, vp.from, state.from);
+                        state.from = vp.from;
+                    }
+                    if (vp.to > state.to) {
+                        updateFoldInfo(cm, state.to, vp.to);
+                        state.to = vp.to;
+                    }
+                });
             }
         }, opts.updateViewportTimeSpan || 400);
     }
@@ -12056,25 +12182,24 @@
         }
     }
 
-    codeMirror
-        .registerHelper("fold", "xml", function (cm, start) {
-            var iter = new Iter(cm, start.line, 0);
-            for (;;) {
-                var openTag = toNextTag(iter),
-                    end;
-                if (!openTag || iter.line != start.line || !(end = toTagEnd(iter))) {
-                    return;
-                }
-                if (!openTag[1] && end != "selfClose") {
-                    var start = Pos(iter.line, iter.ch);
-                    var close = findMatchingClose(iter, openTag[2]);
-                    return close && {
-                        from: start,
-                        to  : close.from
-                    };
-                }
+    codeMirror.registerHelper("fold", "xml", function (cm, start) {
+        var iter = new Iter(cm, start.line, 0);
+        for (;;) {
+            var openTag = toNextTag(iter),
+                end;
+            if (!openTag || iter.line != start.line || !(end = toTagEnd(iter))) {
+                return;
             }
-        });
+            if (!openTag[1] && end != "selfClose") {
+                var start = Pos(iter.line, iter.ch);
+                var close = findMatchingClose(iter, openTag[2]);
+                return close && {
+                    from: start,
+                    to  : close.from
+                };
+            }
+        }
+    });
     codeMirror.findMatchingTag   = function (cm, pos, range) {
         var iter = new Iter(cm, pos.line, pos.ch, range);
         if (iter.text.indexOf(">") == -1 && iter.text.indexOf("<") == -1) {
@@ -12251,20 +12376,18 @@
         cm.foldCode(cm.getCursor(), null, "unfold");
     };
     codeMirror.commands.foldAll    = function (cm) {
-        cm
-            .operation(function () {
-                for (var i = cm.firstLine(), e = cm.lastLine(); i <= e; i += 1) {
-                    cm.foldCode(codeMirror.Pos(i, 0), null, "fold");
-                }
-            });
+        cm.operation(function () {
+            for (var i = cm.firstLine(), e = cm.lastLine(); i <= e; i += 1) {
+                cm.foldCode(codeMirror.Pos(i, 0), null, "fold");
+            }
+        });
     };
     codeMirror.commands.unfoldAll  = function (cm) {
-        cm
-            .operation(function () {
-                for (var i = cm.firstLine(), e = cm.lastLine(); i <= e; i += 1) {
-                    cm.foldCode(codeMirror.Pos(i, 0), null, "unfold");
-                }
-            });
+        cm.operation(function () {
+            for (var i = cm.firstLine(), e = cm.lastLine(); i <= e; i += 1) {
+                cm.foldCode(codeMirror.Pos(i, 0), null, "unfold");
+            }
+        });
     };
 
     codeMirror.registerHelper("fold", "combine", function () {
@@ -12312,10 +12435,9 @@
         return defaultOptions[name];
     }
 
-    codeMirror
-        .defineExtension("foldOption", function (options, name) {
-            return getOption(this, options, name);
-        });
+    codeMirror.defineExtension("foldOption", function (options, name) {
+        return getOption(this, options, name);
+    });
 });
 //matchtags.js
 (function (mod) {
@@ -12347,10 +12469,16 @@
 
     function clear(cm) {
         if (cm.state.tagHit) {
-            cm.state.tagHit.clear();
+            cm
+                .state
+                .tagHit
+                .clear();
         }
         if (cm.state.tagOther) {
-            cm.state.tagOther.clear();
+            cm
+                .state
+                .tagOther
+                .clear();
         }
         cm.state.tagHit = cm.state.tagOther = null;
     }
@@ -12417,28 +12545,27 @@
         mod(codeMirror);
     }
 })(function (codeMirror) {
-    codeMirror
-        .defineOption("showTrailingSpace", false, function (cm, val, prev) {
-            if (prev == codeMirror.Init) {
-                prev = false;
-            }
-            if (prev && !val) {
-                cm.removeOverlay("trailingspace");
-            } else if (!prev && val) {
-                cm.addOverlay({
-                    name : "trailingspace",
-                    token: function (stream) {
-                        for (var l = stream.string.length, i = l; i && /\s/.test(stream.string.charAt(i - 1)); i -= 1) {}
-                        if (i > stream.pos) {
-                            stream.pos = i;
-                            return null;
-                        }
-                        stream.pos = l;
-                        return "trailingspace";
+    codeMirror.defineOption("showTrailingSpace", false, function (cm, val, prev) {
+        if (prev == codeMirror.Init) {
+            prev = false;
+        }
+        if (prev && !val) {
+            cm.removeOverlay("trailingspace");
+        } else if (!prev && val) {
+            cm.addOverlay({
+                name : "trailingspace",
+                token: function (stream) {
+                    for (var l = stream.string.length, i = l; i && /\s/.test(stream.string.charAt(i - 1)); i -= 1) {}
+                    if (i > stream.pos) {
+                        stream.pos = i;
+                        return null;
                     }
-                });
-            }
-        });
+                    stream.pos = l;
+                    return "trailingspace";
+                }
+            });
+        }
+    });
 });
 //css.js
 (function (mod) {
@@ -14695,7 +14822,9 @@
         };
         function pass() {
             for (var i = arguments.length - 1; i >= 0; i -= 1) {
-                cx.cc.push(arguments[i]);
+                cx
+                    .cc
+                    .push(arguments[i]);
             }
         }
         function cont() {
@@ -14811,7 +14940,10 @@
             }
             if (type == "if") {
                 if (cx.state.lexical.info == "else" && cx.state.cc[cx.state.cc.length - 1] == poplex) {
-                    cx.state.cc.pop()();
+                    cx
+                        .state
+                        .cc
+                        .pop()();
                 }
                 return cont(pushlex("form"), expression, statement, poplex, maybeelse);
             }
@@ -14930,7 +15062,8 @@
             if (type == "=>") {
                 return cont(pushcontext, noComma
                     ? arrowBodyNoComma
-                    : arrowBody, popcontext);
+                    : arrowBody,
+                popcontext);
             }
             if (type == "operator") {
                 if (/\+\+|--/.test(value)) {
@@ -15053,7 +15186,9 @@
         }
         function contCommasep(what, end, info) {
             for (var i = 3; i < arguments.length; i += 1) {
-                cx.cc.push(arguments[i]);
+                cx
+                    .cc
+                    .push(arguments[i]);
             }
             return cont(pushlex(end, info), commasep(what, end), poplex);
         }
@@ -15571,16 +15706,18 @@
             // Kludge to work around the IE bug from issue #1193, where text input stops
             // going to the textare whever this fires.
             if (ie_lt8 && cm.state.focused) {
-                cm.display.input.focus();
+                cm
+                    .display
+                    .input
+                    .focus();
             }
 
             var clear = function () {
-                cm
-                    .operation(function () {
-                        for (var i = 0; i < marks.length; i += 1) {
-                            marks[i].clear();
-                        }
-                    });
+                cm.operation(function () {
+                    for (var i = 0; i < marks.length; i += 1) {
+                        marks[i].clear();
+                    }
+                });
             };
             if (autoclear) {
                 setTimeout(clear, 800);
@@ -15592,28 +15729,26 @@
 
     var currentlyHighlighted = null;
     function doMatchBrackets(cm) {
-        cm
-            .operation(function () {
-                if (currentlyHighlighted) {
-                    currentlyHighlighted();
-                    currentlyHighlighted = null;
-                }
-                currentlyHighlighted = matchBrackets(cm, false, cm.state.matchBrackets);
-            });
+        cm.operation(function () {
+            if (currentlyHighlighted) {
+                currentlyHighlighted();
+                currentlyHighlighted = null;
+            }
+            currentlyHighlighted = matchBrackets(cm, false, cm.state.matchBrackets);
+        });
     }
 
-    codeMirror
-        .defineOption("matchBrackets", false, function (cm, val, old) {
-            if (old && old != codeMirror.Init) {
-                cm.off("cursorActivity", doMatchBrackets);
-            }
-            if (val) {
-                cm.state.matchBrackets = typeof val == "object"
-                    ? val
-                    : {};
-                cm.on("cursorActivity", doMatchBrackets);
-            }
-        });
+    codeMirror.defineOption("matchBrackets", false, function (cm, val, old) {
+        if (old && old != codeMirror.Init) {
+            cm.off("cursorActivity", doMatchBrackets);
+        }
+        if (val) {
+            cm.state.matchBrackets = typeof val == "object"
+                ? val
+                : {};
+            cm.on("cursorActivity", doMatchBrackets);
+        }
+    });
 
     codeMirror.defineExtension("matchBrackets", function () {
         matchBrackets(this, true);
@@ -16066,7 +16201,9 @@
                 }
                 if (state.tokenize != inTag && state.tokenize != inText) {
                     return fullLine
-                        ? fullLine.match(/^(\s*)/)[0].length
+                        ? fullLine
+                            .match(/^(\s*)/)[0]
+                            .length
                         : 0;
                 }
                 // Indent the starts of attribute names.

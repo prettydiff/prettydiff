@@ -15,10 +15,7 @@
 
  Execute on command line with NodeJS:
 
-    prettydiff source:"c:\mydirectory\myfile.js" readmethod:"file" diff:"c:\myotherfile.js"
-
- Execute with WSH:
-    cscript prettydiff.wsf /source:"myFile.xml" /mode:"beautify"
+    node api/node-local.js source:"c:\mydirectory\myfile.js" readmethod:"file" diff:"c:\myotherfile.js"
 
  Execute from JavaScript:
     var global = {},
@@ -29,6 +26,10 @@
         },
         output = prettydiff(args);
 
+ Manage with biddle
+     biddle install http://prettydiff.com/downloads/prettydiff/prettydiff_latest.zip
+     biddle global prettydiff
+     prettydiff source:"c:\mydirectory\myfile.js" readmethod:"file" diff:"c:\myotherfile.js"
 
                 *******   license start   *******
  @source: http://prettydiff.com/prettydiff.js
@@ -416,22 +417,22 @@
             dom      : 161002, //dom.js
             nodeLocal: 160816 //node-local.js
         },
-        css          : 160814, //css files
-        csspretty    : 160902, //csspretty lib
+        css          : 161204, //css files
+        csspretty    : 161204, //csspretty lib
         csvpretty    : 160816, //csvpretty lib
         diffview     : 161002, //diffview lib
-        documentation: 160828, //documentation.xhtml and various guide pages
+        documentation: 161204, //documentation.xhtml and various guide pages
         finalFile    : 160816, //HTML report generator
-        jspretty     : 161011, //jspretty lib
-        language     : 160921, //language lib
+        jspretty     : 161204, //jspretty lib
+        language     : 161204, //language lib
         latest       : 0,
-        lint         : 161002, //unit test and lint automation as test/lint.js
-        markuppretty : 161002, //markuppretty lib
+        lint         : 161204, //unit test and lint automation as test/lint.js
+        markuppretty : 161204, //markuppretty lib
         options      : 161002, //options management
         prettydiff   : 161002, //this file
         safeSort     : 160816, //safeSort lib
-        version      : "2.1.14", //version number
-        webtool      : 160827
+        version      : "2.1.15", //version number
+        webtool      : 161204
     };
     global.prettydiff.edition.latest = (function edition_latest() {
         return Math.max(global.prettydiff.edition.css, global.prettydiff.edition.csspretty, global.prettydiff.edition.csvpretty, global.prettydiff.edition.diffview, global.prettydiff.edition.documentation, global.prettydiff.edition.finalFile, global.prettydiff.edition.jspretty, global.prettydiff.edition.language, global.prettydiff.edition.markuppretty, global.prettydiff.edition.options, global.prettydiff.edition.prettydiff, global.prettydiff.edition.webtool, global.prettydiff.edition.api.dom, global.prettydiff.edition.api.nodeLocal);

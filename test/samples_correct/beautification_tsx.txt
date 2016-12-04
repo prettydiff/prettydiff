@@ -74,9 +74,8 @@ declare namespace JSX {
 
 var a = <div>
     {
-        ["foo", "bar"]
-            .map(function (i) {
-                return <span>{i / 2}</span>;
-            });
+        ["foo", "bar"].map(function (i) {
+            return <span>{i / 2}</span>;
+        });
     }
 </div>

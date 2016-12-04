@@ -171,7 +171,9 @@ define("ace/lib/regexp", [
             }));
             if (this._xregexp && this._xregexp.captureNames) {
                 for (var f = 1; f < t.length; f += 1) {
-                    n = this._xregexp.captureNames[f - 1],
+                    n = this
+                        ._xregexp
+                        .captureNames[f - 1],
                     n && (t[n] = t[f]);
                 }
             }
@@ -300,7 +302,9 @@ define("ace/lib/es5-shim", [
                     i = u.call(arguments, 2),
                     s = i.length;
                 if (e === n) {
-                    s && this.push.apply(this, i);
+                    s && this
+                        .push
+                        .apply(this, i);
                 } else {
                     var o = Math.min(t, n - e),
                         a = e + o,
@@ -318,7 +322,9 @@ define("ace/lib/es5-shim", [
                     }
                     if (s && e === c) {
                         this.length = c,
-                        this.push.apply(this, i);
+                        this
+                            .push
+                            .apply(this, i);
                     } else {
                         this.length = c + s;
                         for (h = 0; h < s; h += 1) {
@@ -666,8 +672,7 @@ define("ace/lib/es5-shim", [
         return t;
     });
     try {
-        Object
-            .freeze(function () {});
+        Object.freeze(function () {});
     } catch (k) {
         Object.freeze = function (t) {
             return function (n) {
@@ -846,7 +851,10 @@ define("ace/lib/dom", [
             ? (o = s.createStyleSheet(), o.cssText = n, i && (o.owningElement.id = i))
             : (o = s.createElementNS
                 ? s.createElementNS(r, "style")
-                : s.createElement("style"), o.appendChild(s.createTextNode(n)), i && (o.id = i), t.getDocumentHead(s).appendChild(o));
+                : s.createElement("style"),
+            o.appendChild(s.createTextNode(n)),
+            i && (o.id = i),
+            t.getDocumentHead(s).appendChild(o));
     },
     t.importCssStylsheet = function (e, n) {
         if (n.createStyleSheet) {
@@ -896,16 +904,14 @@ define("ace/lib/dom", [
         return;
     }
     window.pageYOffset !== undefined
-        ? (t.getPageScrollTop = function () {
+        ? (t.getPageScrollTop  = function () {
             return window.pageYOffset;
-        },
-        t.getPageScrollLeft   = function () {
+        }, t.getPageScrollLeft = function () {
             return window.pageXOffset;
         })
-        : (t.getPageScrollTop = function () {
+        : (t.getPageScrollTop  = function () {
             return document.body.scrollTop;
-        },
-        t.getPageScrollLeft   = function () {
+        }, t.getPageScrollLeft = function () {
             return document.body.scrollLeft;
         }),
     window.getComputedStyle
@@ -930,14 +936,12 @@ define("ace/lib/dom", [
     "textContent" in document.documentElement
         ? (t.setInnerText = function (e, t) {
             e.textContent = t;
-        },
-        t.getInnerText    = function (e) {
+        }, t.getInnerText = function (e) {
             return e.textContent;
         })
         : (t.setInnerText = function (e, t) {
             e.innerText = t;
-        },
-        t.getInnerText    = function (e) {
+        }, t.getInnerText = function (e) {
             return e.innerText;
         }),
     t.getParentWindow     = function (e) {
@@ -1096,11 +1100,15 @@ define("ace/lib/keys", [
                 t,
                 n;
             for (n in e.FUNCTION_KEYS) {
-                t = e.FUNCTION_KEYS[n].toLowerCase(),
+                t    = e
+                    .FUNCTION_KEYS[n]
+                    .toLowerCase(),
                 e[t] = parseInt(n, 10);
             }
             for (n in e.PRINTABLE_KEYS) {
-                t = e.PRINTABLE_KEYS[n].toLowerCase(),
+                t    = e
+                    .PRINTABLE_KEYS[n]
+                    .toLowerCase(),
                 e[t] = parseInt(n, 10);
             }
             return r.mixin(e, e.MODIFIER_KEYS),
@@ -1113,9 +1121,11 @@ define("ace/lib/keys", [
             function () {
                 var t = ["cmd", "ctrl", "alt", "shift"];
                 for (var n = Math.pow(2, t.length); n -= 1;) {
-                    e.KEY_MODS[n] = t.filter(function (t) {
-                        return n & e.KEY_MODS[t];
-                    }).join("-") + "-";
+                    e.KEY_MODS[n] = t
+                        .filter(function (t) {
+                            return n & e.KEY_MODS[t];
+                        })
+                        .join("-") + "-";
                 }
             }(),
             e.KEY_MODS[0]  = "",
@@ -1156,8 +1166,8 @@ define("ace/lib/useragent", [
     t.isIE       = navigator.appName == "Microsoft Internet Explorer" || navigator
         .appName
         .indexOf("MSAppHost") >= 0
-        ? parseFloat((i.match(/(?:MSIE |Trident\/[0-9]+[\.0-9]+;.*rv:)([0-9]+[\.0-9]+)/) || [])[1])
-        : parseFloat((i.match(/(?:Trident\/[0-9]+[\.0-9]+;.*rv:)([0-9]+[\.0-9]+)/) || [])[1]),
+            ? parseFloat((i.match(/(?:MSIE |Trident\/[0-9]+[\.0-9]+;.*rv:)([0-9]+[\.0-9]+)/) || [])[1])
+            : parseFloat((i.match(/(?:Trident\/[0-9]+[\.0-9]+;.*rv:)([0-9]+[\.0-9]+)/) || [])[1]),
     t.isOldIE    = t.isIE && t.isIE < 9,
     t.isGecko    = t.isMozilla = (window.Controllers || window.controllers) && window.navigator.product === "Gecko",
     t.isOldGecko = t.isGecko && parseInt((i.match(/rv\:(\d+)/) || [])[1], 10) < 4,
@@ -1695,11 +1705,10 @@ define("ace/keyboard/textinput", [
             try {
                 var v = document.activeElement === n;
             } catch (m) {}
-            r
-                .addListener(n, "blur", function (e) {
-                    t.onBlur(e),
-                    v = !1;
-                }),
+            r.addListener(n, "blur", function (e) {
+                t.onBlur(e),
+                v = !1;
+            }),
             r.addListener(n, "focus", function (e) {
                 v = !0,
                 t.onFocus(e),
@@ -1746,8 +1755,7 @@ define("ace/keyboard/textinput", [
                 n.moveStart("character", e),
                 n.moveEnd("character", t),
                 n.select();
-            },
-            E                    = function (e) {
+            }, E                                                              = function (e) {
                 try {
                     var t = e
                         .ownerDocument
@@ -1822,7 +1830,9 @@ define("ace/keyboard/textinput", [
                                 ? e = e.substr(2)
                                 : e.charAt(0) == f.charAt(0)
                                     ? e = e.substr(1)
-                                    : e.charAt(e.length - 1) == f.charAt(0) && (e = e.slice(0, -1)), e.charAt(e.length - 1) == f.charAt(0) && (e = e.slice(0, -1)), e && t.onTextInput(e)),
+                                    : e.charAt(e.length - 1) == f.charAt(0) && (e = e.slice(0, -1)),
+                            e.charAt(e.length - 1) == f.charAt(0) && (e = e.slice(0, -1)),
+                            e && t.onTextInput(e)),
                     L && (L = !1);
                 },
                 O = function (e) {
@@ -1853,7 +1863,8 @@ define("ace/keyboard/textinput", [
                     M(e, s)
                         ? (i
                             ? t.onCut()
-                            : t.onCopy(), r.preventDefault(e))
+                            : t.onCopy(),
+                        r.preventDefault(e))
                         : (l = !0, n.value = s, n.select(), setTimeout(function () {
                             l = !1,
                             w(),
@@ -2149,12 +2160,12 @@ define("ace/mouse/default_handlers", [
             this
                 .mousedownEvent
                 .getShiftKey()
-                ? n
-                    .selection
-                    .selectToPosition(e)
-                : t || n
-                    .selection
-                    .moveToPosition(e),
+                    ? n
+                        .selection
+                        .selectToPosition(e)
+                    : t || n
+                        .selection
+                        .moveToPosition(e),
             t || this.select(),
             n.renderer.scroller.setCapture && n
                 .renderer
@@ -2299,7 +2310,9 @@ define("ace/mouse/default_handlers", [
                     .isScrollableBy(e.wheelX * e.speed, e.wheelY * e.speed);
             if (i || n < 200) {
                 return this.$lastScrollTime = t,
-                r.renderer.scrollBy(e.wheelX * e.speed, e.wheelY * e.speed),
+                r
+                    .renderer
+                    .scrollBy(e.wheelX * e.speed, e.wheelY * e.speed),
                 e.stop();
             }
         },
@@ -2312,7 +2325,9 @@ define("ace/mouse/default_handlers", [
                     .isScrollableBy(e.wheelX * e.speed, e.wheelY * e.speed);
             if (i || n < 200) {
                 return this.$lastScrollTime = t,
-                r.renderer.scrollBy(e.wheelX * e.speed, e.wheelY * e.speed),
+                r
+                    .renderer
+                    .scrollBy(e.wheelX * e.speed, e.wheelY * e.speed),
                 e.stop();
             }
         };
@@ -2429,11 +2444,13 @@ define("ace/mouse/default_gutter_handler", [
             if (e.$tooltipFollowsMouse) {
                 h(u);
             } else {
-                var p = n.$cells[
-                        t
-                            .session
-                            .documentToScreenRow(r, 0)
-                    ].element,
+                var p = n
+                        .$cells[
+                            t
+                                .session
+                                .documentToScreenRow(r, 0)
+                        ]
+                        .element,
                     d = p.getBoundingClientRect(),
                     v = i
                         .getElement()
@@ -3116,9 +3133,11 @@ define("ace/lib/event_emitter", [
         this._eventRegistry = this._eventRegistry || {};
         var r = this._eventRegistry[e];
         return r || (r = this._eventRegistry[e] = []),
-        r.indexOf(t) == -1 && r[n
+        r.indexOf(t) == -1 && r[
+            n
                 ? "unshift"
-                : "push"](t),
+                : "push"
+        ](t),
         t;
     },
     r.off                  = r.removeListener = r.removeEventListener = function (e, t) {
@@ -3588,15 +3607,15 @@ define("ace/mouse/fold_handler", [
 ], function (e, t, n) {
     "use strict";
     function r(e) {
-        e
-            .on("click", function (t) {
-                var n = t.getDocumentPosition(),
-                    r = e.session,
-                    i = r.getFoldAt(n.row, n.column, 1);
-                i && (t.getAccelKey()
-                    ? r.removeFold(i)
-                    : r.expandFold(i), t.stop());
-            }),
+        e.on("click", function (t) {
+            var n = t.getDocumentPosition(),
+                r = e.session,
+                i = r.getFoldAt(n.row, n.column, 1);
+            i && (t.getAccelKey()
+                ? r.removeFold(i)
+                : r.expandFold(i),
+            t.stop());
+        }),
         e.on("gutterclick", function (t) {
             var n = e
                 .renderer
@@ -4080,16 +4099,14 @@ define("ace/selection", [
             e.call(this);
         },
         this.selectTo                 = function (e, t) {
-            this
-                .$moveSelection(function () {
-                    this.moveCursorTo(e, t);
-                });
+            this.$moveSelection(function () {
+                this.moveCursorTo(e, t);
+            });
         },
         this.selectToPosition         = function (e) {
-            this
-                .$moveSelection(function () {
-                    this.moveCursorToPosition(e);
-                });
+            this.$moveSelection(function () {
+                this.moveCursorToPosition(e);
+            });
         },
         this.moveTo                   = function (e, t) {
             this.clearSelection(),
@@ -4194,8 +4211,8 @@ define("ace/selection", [
                     .slice(e.column - n, e.column)
                     .split(" ")
                     .length - 1 == n
-                    ? this.moveCursorBy(0, -n)
-                    : this.moveCursorBy(0, -1);
+                        ? this.moveCursorBy(0, -n)
+                        : this.moveCursorBy(0, -1);
             }
         },
         this.moveCursorRight          = function () {
@@ -4206,7 +4223,9 @@ define("ace/selection", [
             if (t = this.session.getFoldAt(e.row, e.column, 1)) {
                 this.moveCursorTo(t.end.row, t.end.column);
             } else if (this.lead.column == this.doc.getLine(this.lead.row).length) {
-                this.lead.row < this.doc.getLength() - 1 && this.moveCursorTo(this.lead.row + 1, 0);
+                this.lead.row < this
+                    .doc
+                    .getLength() - 1 && this.moveCursorTo(this.lead.row + 1, 0);
             } else {
                 var n = this
                         .session
@@ -4220,8 +4239,8 @@ define("ace/selection", [
                     .slice(e.column, e.column + n)
                     .split(" ")
                     .length - 1 == n
-                    ? this.moveCursorBy(0, n)
-                    : this.moveCursorBy(0, 1);
+                        ? this.moveCursorBy(0, n)
+                        : this.moveCursorBy(0, 1);
             }
         },
         this.moveCursorLineStart      = function () {
@@ -4448,7 +4467,9 @@ define("ace/selection", [
             var r = this
                 .session
                 .screenToDocumentPosition(n.row + e, n.column);
-            e !== 0 && t === 0 && r.row === this.lead.row && r.column === this.lead.column && this.session.lineWidgets && this.session.lineWidgets[r.row] && r.row++,
+            e !== 0 && t === 0 && r.row === this.lead.row && r.column === this.lead.column && this.session.lineWidgets && this
+                .session
+                .lineWidgets[r.row] && r.row++,
             this.moveCursorTo(r.row, r.column + t, t === 0);
         },
         this.moveCursorToPosition     = function (e) {
@@ -4510,11 +4531,13 @@ define("ace/selection", [
         },
         this.toJSON                   = function () {
             if (this.rangeCount) {
-                var e = this.ranges.map(function (e) {
-                    var t = e.clone();
-                    return t.isBackwards = e.cursor == e.start,
-                    t;
-                });
+                var e = this
+                    .ranges
+                    .map(function (e) {
+                        var t = e.clone();
+                        return t.isBackwards = e.cursor == e.start,
+                        t;
+                    });
             } else {
                 var e = this.getRange();
                 e.isBackwards = this.isBackwards();
@@ -4542,7 +4565,9 @@ define("ace/selection", [
                 return !1;
             }
             if (!e.length || !this.ranges) {
-                return this.getRange().isEqual(e);
+                return this
+                    .getRange()
+                    .isEqual(e);
             }
             for (var t = this.ranges.length; t -= 1;) {
                 if (!this.ranges[t].isEqual(e[t])) {
@@ -4601,7 +4626,8 @@ define("ace/tokenizer", [
                         ? l = f.regex.replace(/\\([0-9]+)/g, function (e, t) {
                             return "\\" + (parseInt(t, 10) + i + 1);
                         })
-                        : (c = 1, l = this.removeCapturingGroups(f.regex)), !f.splitRegex && typeof f.token != "string" && u.push(f)),
+                        : (c = 1, l = this.removeCapturingGroups(f.regex)),
+                    !f.splitRegex && typeof f.token != "string" && u.push(f)),
                     s[i] = a,
                     i    += c,
                     r.push(l),
@@ -4736,7 +4762,13 @@ define("ace/tokenizer", [
                         : p = d.token,
                     d.next && (typeof d.next == "string"
                         ? r = d.next
-                        : r = d.next(r, n), s = this.states[r], s || (this.reportError("state doesn't exist", r), r = "start", s = this.states[r]), o = this.matchMappings[r], l = m, u = this.regExps[r], u.lastIndex = m);
+                        : r = d.next(r, n),
+                    s = this.states[r],
+                    s || (this.reportError("state doesn't exist", r), r = "start", s = this.states[r]),
+                    o = this.matchMappings[r],
+                    l = m,
+                    u = this.regExps[r],
+                    u.lastIndex = m);
                     break;
                 }
                 if (v) {
@@ -4822,8 +4854,12 @@ define("ace/mode/text_highlight_rules", [
                     var s = r[i];
                     if (s.next || s.onMatch) {
                         typeof s.next != "string"
-                            ? s.nextState && s.nextState.indexOf(t) !== 0 && (s.nextState = t + s.nextState)
-                            : s.next.indexOf(t) !== 0 && (s.next = t + s.next);
+                            ? s.nextState && s
+                                .nextState
+                                .indexOf(t) !== 0 && (s.nextState = t + s.nextState)
+                            : s
+                                .next
+                                .indexOf(t) !== 0 && (s.next = t + s.next);
                     }
                 }
                 this.$rules[t + n] = r;
@@ -4848,9 +4884,11 @@ define("ace/mode/text_highlight_rules", [
             }
             this.addRules(o, t);
             if (n) {
-                var f = Array.prototype[s
+                var f = Array.prototype[
+                    s
                         ? "push"
-                        : "unshift"];
+                        : "unshift"
+                ];
                 for (var u = 0; u < i.length; u += 1) {
                     f.apply(this.$rules[i[u]], r.deepCopy(n));
                 }
@@ -4898,7 +4936,9 @@ define("ace/mode/text_highlight_rules", [
                     if (a.rules) {
                         for (var c in a.rules) {
                             r[c]
-                                ? r[c].push && r[c].push.apply(r[c], a.rules[c])
+                                ? r[c].push && r[c]
+                                    .push
+                                    .apply(r[c], a.rules[c])
                                 : r[c] = a.rules[c];
                         }
                     }
@@ -5420,10 +5460,7 @@ define("ace/token_iterator", [
             return n;
         },
         this.getCurrentTokenPosition = function () {
-            return {
-                column: this.getCurrentTokenColumn(),
-                row   : this.$row
-            };
+            return {column: this.getCurrentTokenColumn(), row: this.$row};
         };
     }).call(r.prototype),
     t.TokenIterator = r;
@@ -5514,7 +5551,10 @@ define("ace/mode/text", [
                     };
             } else {
                 if (Array.isArray(this.lineCommentStart)) {
-                    var p = this.lineCommentStart.map(u.escapeRegExp).join("|"),
+                    var p = this
+                            .lineCommentStart
+                            .map(u.escapeRegExp)
+                            .join("|"),
                         c = this.lineCommentStart[0];
                 } else {
                     var p = u.escapeRegExp(this.lineCommentStart),
@@ -5911,10 +5951,10 @@ define("ace/anchor", [
             return e >= this
                 .document
                 .getLength()
-                ? (n.row = Math.max(0, this.document.getLength() - 1), n.column = this.document.getLine(n.row).length)
-                : e < 0
-                    ? (n.row = 0, n.column = 0)
-                    : (n.row = e, n.column = Math.min(this.document.getLine(n.row).length, Math.max(0, t))),
+                    ? (n.row = Math.max(0, this.document.getLength() - 1), n.column = this.document.getLine(n.row).length)
+                    : e < 0
+                        ? (n.row = 0, n.column = 0)
+                        : (n.row = e, n.column = Math.min(this.document.getLine(n.row).length, Math.max(0, t))),
             t < 0 && (n.column = 0),
             n;
         };
@@ -5971,14 +6011,14 @@ define("ace/document", [
         "aaa"
             .split(/a/)
             .length === 0
-            ? this.$split             = function (e) {
-                return e
-                    .replace(/\r\n|\r/g, "\n")
-                    .split("\n");
-            }
-            : this.$split             = function (e) {
-                return e.split(/\r\n|\r|\n/);
-            },
+                ? this.$split         = function (e) {
+                    return e
+                        .replace(/\r\n|\r/g, "\n")
+                        .split("\n");
+                }
+                : this.$split         = function (e) {
+                    return e.split(/\r\n|\r|\n/);
+                },
         this.$detectNewLine           = function (e) {
             var t = e.match(/^.*?(\r\n|\r|\n)/m);
             this.$autoNewLine = t
@@ -6172,12 +6212,7 @@ define("ace/document", [
                 l = this
                     .$lines
                     .slice(e, t + 1);
-            return this.applyDelta({
-                action: "remove",
-                end   : f.end,
-                lines : this.getLinesForRange(f),
-                start : f.start
-            }),
+            return this.applyDelta({action: "remove", end: f.end, lines: this.getLinesForRange(f), start: f.start}),
             l;
         },
         this.removeNewLine            = function (e) {
@@ -6383,8 +6418,12 @@ define("ace/background_tokenizer", [
             if (n === 0) {
                 this.lines[t] = null;
             } else if (e.action == "remove") {
-                this.lines.splice(t, n + 1, null),
-                this.states.splice(t, n + 1, null);
+                this
+                    .lines
+                    .splice(t, n + 1, null),
+                this
+                    .states
+                    .splice(t, n + 1, null);
             } else {
                 var r = Array(n + 1);
                 r.unshift(t, 1),
@@ -6523,12 +6562,14 @@ define("ace/edit_session/fold_line", [
                 this
                     .range
                     .compareEnd(e.start.row, e.start.column) > 0
-                    ? (this.end.row = e.end.row, this.end.column = e.end.column)
-                    : this
-                        .range
-                        .compareStart(e.end.row, e.end.column) < 0 && (this.start.row = e.start.row, this.start.column = e.start.column);
+                        ? (this.end.row = e.end.row, this.end.column = e.end.column)
+                        : this
+                            .range
+                            .compareStart(e.end.row, e.end.column) < 0 && (this.start.row = e.start.row, this.start.column = e.start.column);
             } else if (e.start.row == this.end.row) {
-                this.folds.push(e),
+                this
+                    .folds
+                    .push(e),
                 this.end.row    = e.end.row,
                 this.end.column = e.end.column;
             } else {
@@ -6597,7 +6638,9 @@ define("ace/edit_session/fold_line", [
             if (r) {
                 i = r.fold;
                 if (r.kind == "inside" && i.start.column != t && i.start.row != e) {
-                    window.console && window.console.log(e, t, i);
+                    window.console && window
+                        .console
+                        .log(e, t, i);
                 } else if (i.start.row == e) {
                     s = this.folds;
                     var o = s.indexOf(i);
@@ -6723,14 +6766,18 @@ define("ace/range_list", [
         this.addList        = function (e) {
             var t = [];
             for (var n = e.length; n -= 1;) {
-                t.push.call(t, this.add(e[n]));
+                t
+                    .push
+                    .call(t, this.add(e[n]));
             }
             return t;
         },
         this.substractPoint = function (e) {
             var t = this.pointIndex(e);
             if (t >= 0) {
-                return this.ranges.splice(t, 1);
+                return this
+                    .ranges
+                    .splice(t, 1);
             }
         },
         this.merge          = function () {
@@ -7221,10 +7268,9 @@ define("ace/edit_session/folding", [
             throw new Error("The range has to be at least 2 characters width");
         },
         this.addFolds                   = function (e) {
-            e
-                .forEach(function (e) {
-                    this.addFold(e);
-                }, this);
+            e.forEach(function (e) {
+                this.addFold(e);
+            }, this);
         },
         this.removeFold                 = function (e) {
             var t = e.foldLine,
@@ -7265,10 +7311,9 @@ define("ace/edit_session/folding", [
             for (var n = 0; n < e.length; n += 1) {
                 t.push(e[n]);
             }
-            t
-                .forEach(function (e) {
-                    this.removeFold(e);
-                }, this),
+            t.forEach(function (e) {
+                this.removeFold(e);
+            }, this),
             this.$modified = !0;
         },
         this.expandFold                 = function (e) {
@@ -7283,10 +7328,9 @@ define("ace/edit_session/folding", [
             e.subFolds = [];
         },
         this.expandFolds                = function (e) {
-            e
-                .forEach(function (e) {
-                    this.expandFold(e);
-                }, this);
+            e.forEach(function (e) {
+                this.expandFold(e);
+            }, this);
         },
         this.unfold                     = function (e, t) {
             var n,
@@ -7294,11 +7338,11 @@ define("ace/edit_session/folding", [
             e == null
                 ? (n = new r(0, 0, this.getLength(), 0), t = !0)
                 : typeof e == "number"
-                    ? n = new r(e, 0, e, this.getLine(e).length)
+                    ? n     = new r(e, 0, e, this.getLine(e).length)
                     : "row" in e
                         ? n = r.fromPoints(e, e)
                         : n = e,
-            i       = this.getFoldsInRangeList(n);
+            i               = this.getFoldsInRangeList(n);
             if (t) {
                 this.removeFolds(i);
             } else {
@@ -7399,7 +7443,8 @@ define("ace/edit_session/folding", [
                     }))
                         ? (n.comparePoint(i) == 1
                             ? n.end = i
-                            : n.start = i, n.start.column++)
+                            : n.start = i,
+                        n.start.column++)
                         : n = this.getCommentFoldRange(s.row, s.column) || n;
             } else {
                 var o = this.getFoldsInRange(n);
@@ -7572,7 +7617,8 @@ define("ace/edit_session/folding", [
                     : 1,
                 s = this.getFoldAt(e, i === -1
                     ? 0
-                    : r.length, i);
+                    : r.length,
+                i);
             if (s) {
                 t.children || t.all
                     ? this.removeFold(s)
@@ -7600,7 +7646,8 @@ define("ace/edit_session/folding", [
                 t.children
                     ? (f = o
                         ? o.end.row
-                        : this.getLength(), this.foldAll(e + 1, f, t.all
+                        : this.getLength(),
+                    this.foldAll(e + 1, f, t.all
                         ? 1e4
                         : 0))
                     : o && (t.all && (o.collapseChildren = 1e4), this.addFold("...", o));
@@ -7633,7 +7680,9 @@ define("ace/edit_session/folding", [
             if (n === 0) {
                 this.foldWidgets[t] = null;
             } else if (e.action == "remove") {
-                this.foldWidgets.splice(t, n + 1, null);
+                this
+                    .foldWidgets
+                    .splice(t, n + 1, null);
             } else {
                 var r = Array(n + 1);
                 r.unshift(t, 1),
@@ -7966,7 +8015,9 @@ define("ace/edit_session", [
                 i = 0;
             if (t == null) {
                 s = n.length - 1,
-                i = this.getLine(e).length;
+                i = this
+                    .getLine(e)
+                    .length;
             } else {
                 for (var s = 0; s < n.length; s += 1) {
                     i += n[s].value.length;
@@ -8518,10 +8569,12 @@ define("ace/edit_session", [
         this.indentRows                  = function (e, t, n) {
             n = n.replace(/\t/g, this.getTabString());
             for (var r = e; r <= t; r += 1) {
-                this.doc.insertInLine({
-                    column: 0,
-                    row   : r
-                }, n);
+                this
+                    .doc
+                    .insertInLine({
+                        column: 0,
+                        row   : r
+                    }, n);
             }
         },
         this.outdentRows                 = function (e) {
@@ -8698,9 +8751,11 @@ define("ace/edit_session", [
             this.$updating = !0;
             if (u != 0) {
                 if (n === "remove") {
-                    this[t
+                    this[
+                        t
                             ? "$wrapData"
-                            : "$rowLengthCache"].splice(s, u);
+                            : "$rowLengthCache"
+                    ].splice(s, u);
                     var f = this.$foldData;
                     a = this.getFoldsInRange(e),
                     this.removeFolds(a);
@@ -8957,18 +9012,24 @@ define("ace/edit_session", [
         this.lineWidgets                      = null,
         this.getRowLength                     = function (e) {
             if (this.lineWidgets) {
-                var t = this.lineWidgets[e] && this.lineWidgets[e].rowCount || 0;
+                var t = this.lineWidgets[e] && this
+                    .lineWidgets[e]
+                    .rowCount || 0;
             } else {
                 t = 0;
             }
             return !this.$useWrapMode || !this.$wrapData[e]
                 ? 1 + t
-                : this.$wrapData[e].length + 1 + t;
+                : this
+                    .$wrapData[e]
+                    .length + 1 + t;
         },
         this.getRowLineCount                  = function (e) {
             return !this.$useWrapMode || !this.$wrapData[e]
                 ? 1
-                : this.$wrapData[e].length + 1;
+                : this
+                    .$wrapData[e]
+                    .length + 1;
         },
         this.getRowWrapIndent                 = function (e) {
             if (this.$useWrapMode) {
@@ -9273,8 +9334,8 @@ define("ace/edit_session", [
                         : this
                             .getWrapLimitRange()
                             .min
-                            ? this.$wrap
-                            : "free"
+                                ? this.$wrap
+                                : "free"
                     : "off";
             },
             handlesSet: !0,
@@ -9387,8 +9448,12 @@ define("ace/search", [
                     }
                     var p = i[c],
                         d = i[c + a - 1],
-                        v = p.length - p.match(u[0])[0].length,
-                        m = d.match(u[a - 1])[0].length;
+                        v = p.length - p
+                            .match(u[0])[0]
+                            .length,
+                        m = d
+                            .match(u[a - 1])[0]
+                            .length;
                     if (l && l.end.row === c && l.end.column > v) {
                         continue;
                     }
@@ -9418,7 +9483,7 @@ define("ace/search", [
                 o = o.slice(g, h + 1);
                 for (g = 0, h = o.length; g < h; g += 1) {
                     o[g].start.row += n.start.row,
-                    o[g].end.row += n.start.row;
+                    o[g].end.row   += n.start.row;
                 }
             }
             return o;
@@ -9468,7 +9533,9 @@ define("ace/search", [
                                 return;
                             }
                         }
-                        var l = t.match(n[o - 1])[0].length,
+                        var l = t
+                                .match(n[o - 1])[0]
+                                .length,
                             c = new s(r, a, r + o - 1, l);
                         n.offset == 1
                             ? (c.start.row--, c.start.column = Number.MAX_VALUE)
@@ -9551,13 +9618,17 @@ define("ace/search", [
                 i = t.range,
                 s = t.start;
             s || (s = i
-                ? i[n
+                ? i[
+                    n
                         ? "end"
-                        : "start"]
+                        : "start"
+                ]
                 : e.selection.getRange()),
-            s.start && (s = s[r != n
+            s.start && (s = s[
+                r != n
                     ? "end"
-                    : "start"]);
+                    : "start"
+            ]);
             var o = i
                     ? i.start.row
                     : 0,
@@ -9768,16 +9839,15 @@ define("ace/keyboard/hash_handler", [
                 n = t.pop(),
                 i = r[n];
             if (r.FUNCTION_KEYS[i]) {
-                n = r.FUNCTION_KEYS[i].toLowerCase();
+                n = r
+                    .FUNCTION_KEYS[i]
+                    .toLowerCase();
             } else {
                 if (!t.length) {
                     return {hashId: -1, key: n};
                 }
                 if (t.length == 1 && t[0] == "shift") {
-                    return {
-                        hashId: -1,
-                        key   : n.toUpperCase()
-                    }
+                    return {hashId: -1, key: n.toUpperCase()}
                 }
             }
             var s = 0;
@@ -9937,21 +10007,19 @@ define("ace/commands/default_commands", [
         {
             bindKey : o("Ctrl-,", "Command-,"),
             exec    : function (e) {
-                i
-                    .loadModule("ace/ext/settings_menu", function (t) {
-                        t.init(e),
-                        e.showSettingsMenu();
-                    });
+                i.loadModule("ace/ext/settings_menu", function (t) {
+                    t.init(e),
+                    e.showSettingsMenu();
+                });
             },
             name    : "showSettingsMenu",
             readOnly: !0
         }, {
             bindKey       : o("Alt-E", "Ctrl-E"),
             exec          : function (e) {
-                i
-                    .loadModule("ace/ext/error_marker", function (t) {
-                        t.showErrorMarker(e, 1);
-                    });
+                i.loadModule("ace/ext/error_marker", function (t) {
+                    t.showErrorMarker(e, 1);
+                });
             },
             name          : "goToNextError",
             readOnly      : !0,
@@ -9959,10 +10027,9 @@ define("ace/commands/default_commands", [
         }, {
             bindKey       : o("Alt-Shift-E", "Ctrl-Shift-E"),
             exec          : function (e) {
-                i
-                    .loadModule("ace/ext/error_marker", function (t) {
-                        t.showErrorMarker(e, -1);
-                    });
+                i.loadModule("ace/ext/error_marker", function (t) {
+                    t.showErrorMarker(e, -1);
+                });
             },
             name          : "goToPreviousError",
             readOnly      : !0,
@@ -10090,10 +10157,10 @@ define("ace/commands/default_commands", [
                 e
                     .selection
                     .isEmpty()
-                    ? e
-                        .selection
-                        .selectWord()
-                    : e.findNext();
+                        ? e
+                            .selection
+                            .selectWord()
+                        : e.findNext();
             },
             name    : "selectOrFindNext",
             readOnly: !0
@@ -10103,20 +10170,19 @@ define("ace/commands/default_commands", [
                 e
                     .selection
                     .isEmpty()
-                    ? e
-                        .selection
-                        .selectWord()
-                    : e.findPrevious();
+                        ? e
+                            .selection
+                            .selectWord()
+                        : e.findPrevious();
             },
             name    : "selectOrFindPrevious",
             readOnly: !0
         }, {
             bindKey : o("Ctrl-F", "Command-F"),
             exec    : function (e) {
-                i
-                    .loadModule("ace/ext/searchbox", function (t) {
-                        t.Search(e);
-                    });
+                i.loadModule("ace/ext/searchbox", function (t) {
+                    t.Search(e);
+                });
             },
             name    : "find",
             readOnly: !0
@@ -10544,10 +10610,9 @@ define("ace/commands/default_commands", [
         }, {
             bindKey: o("Ctrl-H", "Command-Option-F"),
             exec   : function (e) {
-                i
-                    .loadModule("ace/ext/searchbox", function (t) {
-                        t.Search(e, !0);
-                    });
+                i.loadModule("ace/ext/searchbox", function (t) {
+                    t.Search(e, !0);
+                });
             },
             name   : "replace"
         }, {
@@ -10799,7 +10864,8 @@ define("ace/commands/default_commands", [
                     ? (e.selection.moveCursorTo(n.row, n.column), e.selection.selectTo(n.row, n.column + a))
                     : (o = e.session.doc.getLine(n.row).length > o
                         ? o + 1
-                        : o, e.selection.moveCursorTo(n.row, o));
+                        : o,
+                    e.selection.moveCursorTo(n.row, o));
             },
             multiSelectAction: "forEach",
             name             : "joinlines",
@@ -10889,7 +10955,8 @@ define("ace/editor", [
             this.renderer          = e,
             this.commands          = new v(o.isMac
                 ? "mac"
-                : "win", m),
+                : "win",
+            m),
             this.textInput         = new u(e.getTextAreaContainer(), this),
             this.renderer.textarea = this
                 .textInput
@@ -11197,7 +11264,9 @@ define("ace/editor", [
                 if (n) {
                     var r = new p(n.row, n.column, n.row, n.column + 1);
                 } else if (t.$mode.getMatching) {
-                    var r = t.$mode.getMatching(e.session);
+                    var r = t
+                        .$mode
+                        .getMatching(e.session);
                 }
                 r && (t.$bracketHighlight = t.addMarker(r, "ace_bracket", "text"));
             }, 50);
@@ -11238,8 +11307,8 @@ define("ace/editor", [
                         i && i.value === s && i
                             .type
                             .indexOf("tag-name") !== -1 && (u.value === "<"
-                            ? o++
-                            : u.value === "</" && o--);
+                                ? o++
+                                : u.value === "</" && o--);
                     } while (i && o >= 0);
                 } else {
                     do {
@@ -11248,8 +11317,8 @@ define("ace/editor", [
                         i && i.value === s && i
                             .type
                             .indexOf("tag-name") !== -1 && (u.value === "<"
-                            ? o++
-                            : u.value === "</" && o--);
+                                ? o++
+                                : u.value === "</" && o--);
                     } while (u && o <= 0);
                     r.stepForward();
                 }
@@ -11504,7 +11573,9 @@ define("ace/editor", [
                 var n = t.split(/\r\n|\r|\n/),
                     r = this.selection.rangeList.ranges;
                 if (n.length > r.length || n.length < 2 || !n[1]) {
-                    return this.commands.exec("insertstring", this, t);
+                    return this
+                        .commands
+                        .exec("insertstring", this, t);
                 }
                 for (var i = r.length; i -= 1;) {
                     var s = r[i];
@@ -11718,8 +11789,8 @@ define("ace/editor", [
             this
                 .selection
                 .isEmpty() && (e == "left"
-                ? this.selection.selectLeft()
-                : this.selection.selectRight());
+                    ? this.selection.selectLeft()
+                    : this.selection.selectRight());
             var t = this.getSelectionRange();
             if (this.getBehavioursEnabled()) {
                 var n = this.session,
@@ -11909,14 +11980,13 @@ define("ace/editor", [
             for (i = e.first; i <= e.last; i += 1) {
                 n.push(t.getLine(i));
             }
-            n
-                .sort(function (e, t) {
-                    return e.toLowerCase() < t.toLowerCase()
-                        ? -1
-                        : e.toLowerCase() > t.toLowerCase()
-                            ? 1
-                            : 0;
-                });
+            n.sort(function (e, t) {
+                return e.toLowerCase() < t.toLowerCase()
+                    ? -1
+                    : e.toLowerCase() > t.toLowerCase()
+                        ? 1
+                        : 0;
+            });
             var r = new p(0, 0, 0, 0);
             for (var i = e.first; i <= e.last; i += 1) {
                 var s = t.getLine(i);
@@ -11985,10 +12055,10 @@ define("ace/editor", [
                     var o = s
                             .value
                             .indexOf(".") >= 0
-                            ? s.start + s
-                                .value
-                                .indexOf(".") + 1
-                            : s.end,
+                                ? s.start + s
+                                    .value
+                                    .indexOf(".") + 1
+                                : s.end,
                         u = s.start + s.value.length - o,
                         a = parseFloat(s.value);
                     a       *= Math.pow(10, u),
@@ -12303,8 +12373,9 @@ define("ace/editor", [
                     s && s
                         .type
                         .indexOf("tag-name") !== -1 && (isNaN(a[s.value]) && (a[s.value] = 0), i.value === "<"
-                        ? a[s.value]++
-                        : i.value === "</" && a[s.value]--, a[s.value] === -1 && (o = "tag", u = !0));
+                            ? a[s.value]++
+                            : i.value === "</" && a[s.value]--,
+                    a[s.value] === -1 && (o = "tag", u = !0));
                 }
                 u || (i = s, s = r.stepForward(), f = 0);
             } while (s && !u);
@@ -12321,7 +12392,9 @@ define("ace/editor", [
                     h = new p(r.getCurrentTokenRow(), r.getCurrentTokenColumn() + f - 1, r.getCurrentTokenRow(), r.getCurrentTokenColumn() + f - 1),
                     d = h.start;
                     if (t || d.row === n.row && Math.abs(d.column - n.column) < 2) {
-                        h = this.session.getBracketRange(d);
+                        h = this
+                            .session
+                            .getBracketRange(d);
                     }
                 }
             } else if (o === "tag") {
@@ -12337,7 +12410,8 @@ define("ace/editor", [
                         i = r.stepBackward(),
                         i && (i.type.indexOf("tag-close") !== -1 && h.setEnd(r.getCurrentTokenRow(), r.getCurrentTokenColumn() + 1), s.value === v && s.type.indexOf("tag-name") !== -1 && (i.value === "<"
                             ? a[v]++
-                            : i.value === "</" && a[v]--, a[v] === 0 && (u = !0)));
+                            : i.value === "</" && a[v]--,
+                        a[v] === 0 && (u = !0)));
                     } while (i && !u);
                 }
                 s && s
@@ -12413,7 +12487,9 @@ define("ace/editor", [
             } else {
                 e = e || 1;
                 while (e--) {
-                    this.selection.moveCursorLeft();
+                    this
+                        .selection
+                        .moveCursorLeft();
                 }
             }
             this.clearSelection();
@@ -12427,7 +12503,9 @@ define("ace/editor", [
             } else {
                 e = e || 1;
                 while (e--) {
-                    this.selection.moveCursorRight();
+                    this
+                        .selection
+                        .moveCursorRight();
                 }
             }
             this.clearSelection();
@@ -12643,12 +12721,12 @@ define("ace/editor", [
                                 o = e.layerConfig,
                                 u = s.top - o.offset;
                             s.top >= 0 && u + t.top < 0
-                                ? r = !0
+                                ? r     = !0
                                 : s.top < o.height && s.top + t.top + o.lineHeight > window.innerHeight
                                     ? r = !1
                                     : r = null,
                             r != null && (i.style.top = u + "px", i.style.left = s.left + "px", i.style.height = o.lineHeight + "px", i.scrollIntoView(r)),
-                            r       = t = null;
+                            r           = t = null;
                         }
                     });
             this.setAutoScrollEditorIntoView = function (e) {
@@ -12945,7 +13023,9 @@ define("ace/layer/gutter", [
                 n = e.end.row - t;
             if (n !== 0) {
                 if (e.action == "remove") {
-                    this.$annotations.splice(t, n + 1, null);
+                    this
+                        .$annotations
+                        .splice(t, n + 1, null);
                 } else {
                     var r = [n + 1];
                     r.unshift(t, 1),
@@ -12979,8 +13059,12 @@ define("ace/layer/gutter", [
                     : Infinity);
                 if (v > i) {
                     while (this.$cells.length > d + 1) {
-                        p = this.$cells.pop(),
-                        this.element.removeChild(p.element);
+                        p = this
+                            .$cells
+                            .pop(),
+                        this
+                            .element
+                            .removeChild(p.element);
                     }
                     break;
                 }
@@ -13168,14 +13252,14 @@ define("ace/layer/marker", [
                 p = u.getScreenLastRowColumn(l),
                 d = new r(l, n.start.column, l, h);
             for (; l <= f; l += 1) {
-                d.start.row = d.end.row = l,
+                d.start.row    = d.end.row = l,
                 d.start.column = l == a
                     ? n.start.column
                     : u.getRowWrapIndent(l),
-                d.end.column = p,
-                c = h,
-                h = p,
-                p = l + 1 < f
+                d.end.column   = p,
+                c              = h,
+                h              = p,
+                p              = l + 1 < f
                     ? u.getScreenLastRowColumn(l + 1)
                     : l == f
                         ? 0
@@ -13184,7 +13268,8 @@ define("ace/layer/marker", [
                     ? " ace_start"
                     : "") + " ace_br" + e(l == a || l == a + 1 && n.start.column, c<h, h> p, l == f), s, l == f
                     ? 0
-                    : 1, o);
+                    : 1,
+                o);
             }
         },
         this.drawMultiLineMarker  = function (e, t, n, r, i) {
@@ -13209,7 +13294,20 @@ define("ace/layer/marker", [
                 : 8);
             e.push("<div class='", n, l
                 ? " ace_br" + l
-                : "", "' style='", "height:", o, "px;", "right:0;", "top:", u, "px;", "left:", s, "px;", i, "'></div>");
+                : "",
+            "' style='",
+            "height:",
+            o,
+            "px;",
+            "right:0;",
+            "top:",
+            u,
+            "px;",
+            "left:",
+            s,
+            "px;",
+            i,
+            "'></div>");
         },
         this.drawSingleLineMarker = function (e, t, n, r, i, s) {
             var o = r.lineHeight,
@@ -13270,8 +13368,8 @@ define("ace/layer/text", [
                 .session
                 .doc
                 .getNewLineCharacter() == "\n"
-                ? this.EOL_CHAR_LF
-                : this.EOL_CHAR_CRLF;
+                    ? this.EOL_CHAR_LF
+                    : this.EOL_CHAR_CRLF;
             if (this.EOL_CHAR != e) {
                 return this.EOL_CHAR = e,
                 !0;
@@ -13460,7 +13558,9 @@ define("ace/layer/text", [
                 if (this.$useLineGroups()) {
                     a.className = "ace_line_group",
                     r.appendChild(a),
-                    a.style.height = e.lineHeight * this.session.getRowLength(s) + "px";
+                    a.style.height = e.lineHeight * this
+                        .session
+                        .getRowLength(s) + "px";
                 } else {
                     while (a.firstChild) {
                         r.appendChild(a.firstChild);
@@ -13633,7 +13733,8 @@ define("ace/layer/text", [
             }
             this.showInvisibles && (r && (t = r.end.row), e.push("<span class='ace_invisible ace_invisible_eol'>", t == this.session.getLength() - 1
                 ? this.EOF_CHAR
-                : this.EOL_CHAR, "</span>")),
+                : this.EOL_CHAR,
+            "</span>")),
             n || e.push("</div>");
         },
         this.$getFoldLineTokens     = function (e, t) {
@@ -14623,14 +14724,14 @@ define("ace/virtual_renderer", [
             this
                 .session
                 .getUseWrapMode() && this.adjustWrapLimit()
-                ? this
-                    .$loop
-                    .schedule(this.CHANGE_FULL)
-                : this.$size.$dirty
                     ? this
                         .$loop
                         .schedule(this.CHANGE_FULL)
-                    : (this.$computeLayerConfig(), this.$loop.schedule(this.CHANGE_MARKER));
+                    : this.$size.$dirty
+                        ? this
+                            .$loop
+                            .schedule(this.CHANGE_FULL)
+                        : (this.$computeLayerConfig(), this.$loop.schedule(this.CHANGE_MARKER));
         },
         this.adjustWrapLimit            = function () {
             var e = this.$size.scrollerWidth - this.$padding * 2,
@@ -15745,12 +15846,12 @@ define("ace/worker/worker_client", [
             e.length > 50 && e.length > this
                 .$doc
                 .getLength() >> 1
-                ? this.call("setValue", [
-                    this
-                        .$doc
-                        .getValue()
-                ])
-                : this.emit("change", {data: e});
+                    ? this.call("setValue", [
+                        this
+                            .$doc
+                            .getValue()
+                    ])
+                    : this.emit("change", {data: e});
         },
         this.$workerBlob      = function (e) {
             var t = "importScripts('" + i.qualifyURL(e) + "');";
@@ -15858,8 +15959,8 @@ define("ace/placeholder", [
                 .$undoStack || e
                 .getUndoManager()
                 .$undostack || {
-                length: -1
-            };
+                    length: -1
+                };
             this.$undoStackDepth = u.length,
             this.setup(),
             e
@@ -15921,7 +16022,9 @@ define("ace/placeholder", [
             }
             this.othersActive = !1;
             for (var e = 0; e < this.others.length; e += 1) {
-                this.session.removeMarker(this.others[e].markerId);
+                this
+                    .session
+                    .removeMarker(this.others[e].markerId);
             }
         },
         this.onUpdate         = function (e) {
@@ -15994,7 +16097,9 @@ define("ace/placeholder", [
                     .pos
                     ._emit("change", {value: this.pos});
                 for (var s = 0; s < this.others.length; s += 1) {
-                    this.others[s]._emit("change", {value: this.others[s]});
+                    this
+                        .others[s]
+                        ._emit("change", {value: this.others[s]});
                 }
             }
             this.$updating = !1;
@@ -16027,7 +16132,9 @@ define("ace/placeholder", [
                 .pos
                 .detach();
             for (var e = 0; e < this.others.length; e += 1) {
-                this.others[e].detach();
+                this
+                    .others[e]
+                    .detach();
             }
             this
                 .session
@@ -16138,7 +16245,8 @@ define("ace/mouse/multi_select_handler", [
                     ? c.substractPoint(e.cursor)
                     : (o
                         ? c.substractPoint(x.cursor)
-                        : x && (l.removeSelectionMarker(x), c.addRange(x)), c.addRange(e)),
+                        : x && (l.removeSelectionMarker(x), c.addRange(x)),
+                    c.addRange(e)),
                 l.$blockScrolling--,
                 l.inVirtualSelectionMode = !1;
             });
@@ -16457,7 +16565,9 @@ define("ace/multi_select", [
                     .rangeList
                     .add(e);
                 if (this.rangeList.ranges.length != 2) {
-                    return this.rangeList.removeAll(),
+                    return this
+                        .rangeList
+                        .removeAll(),
                     t || this.fromOrientedRange(e);
                 }
                 this
@@ -16874,7 +16984,9 @@ define("ace/multi_select", [
         },
         this.$checkMultiselectChange = function (e, t) {
             if (this.inMultiSelectMode && !this.inVirtualSelectionMode) {
-                var n = this.multiSelect.ranges[0];
+                var n = this
+                    .multiSelect
+                    .ranges[0];
                 if (this.multiSelect.isEmpty() && t == this.multiSelect.anchor) {
                     return;
                 }
@@ -16895,12 +17007,12 @@ define("ace/multi_select", [
                 var r = this
                     .selection
                     .isEmpty()
-                    ? this
-                        .selection
-                        .getWordRange()
-                    : this
-                        .selection
-                        .getRange();
+                        ? this
+                            .selection
+                            .getWordRange()
+                        : this
+                            .selection
+                            .getRange();
                 t.needle = this
                     .session
                     .getTextRange(r);
@@ -16939,10 +17051,14 @@ define("ace/multi_select", [
                 .session
                 .screenToDocumentPosition(s.row + e, s.column);
             if (!n.isEmpty()) {
-                var u = this.session.documentToScreenPosition(r
-                        ? n.end
-                        : n.start),
-                    a = this.session.screenToDocumentPosition(u.row + e, u.column);
+                var u = this
+                        .session
+                        .documentToScreenPosition(r
+                            ? n.end
+                            : n.start),
+                    a = this
+                        .session
+                        .screenToDocumentPosition(u.row + e, u.column);
             } else {
                 var a = o;
             }
@@ -16955,7 +17071,9 @@ define("ace/multi_select", [
             }
             f.desiredColumn = s.column;
             if (!this.selection.inMultiSelectMode) {
-                this.selection.addRange(n);
+                this
+                    .selection
+                    .addRange(n);
             } else if (t) {
                 var l = n.cursor;
             }
@@ -17017,7 +17135,12 @@ define("ace/multi_select", [
                 u = h(r, o, e);
             u && (u.cursor = e == -1
                 ? u.start
-                : u.end, this.$blockScrolling += 1, this.session.unfold(u), this.multiSelect.addRange(u), this.$blockScrolling -= 1, this.renderer.scrollCursorIntoView(null, .5)),
+                : u.end,
+            this.$blockScrolling += 1,
+            this.session.unfold(u),
+            this.multiSelect.addRange(u),
+            this.$blockScrolling -= 1,
+            this.renderer.scrollCursorIntoView(null, .5)),
             t && this
                 .multiSelect
                 .substractPoint(s.cursor);
@@ -17073,10 +17196,9 @@ define("ace/multi_select", [
                     .selection
                     .setRange(o);
             } else {
-                s
-                    .forEach(function (e) {
-                        t.substractPoint(e.cursor);
-                    });
+                s.forEach(function (e) {
+                    t.substractPoint(e.cursor);
+                });
                 var d = 0,
                     v = Infinity,
                     m = n.map(function (t) {
@@ -17134,20 +17256,22 @@ define("ace/multi_select", [
                 i,
                 s,
                 o;
-            return e.map(function (e) {
-                var t = e.match(/(\s*)(.*?)(\s*)([=:].*)/);
-                return t
-                    ? i == null
-                        ? (i = t[1].length, s = t[2].length, o = t[3].length, t)
-                        : (i + s + o != t[1].length + t[2].length + t[3].length && (r = !1), i != t[1].length && (n = !1), i > t[1].length && (i = t[1].length), s < t[2].length && (s = t[2].length), o > t[3].length && (o = t[3].length), t)
-                    : [e];
-            }).map(t
-                ? f
-                : n
-                    ? r
-                        ? l
-                        : f
-                    : c);
+            return e
+                .map(function (e) {
+                    var t = e.match(/(\s*)(.*?)(\s*)([=:].*)/);
+                    return t
+                        ? i == null
+                            ? (i = t[1].length, s = t[2].length, o = t[3].length, t)
+                            : (i + s + o != t[1].length + t[2].length + t[3].length && (r = !1), i != t[1].length && (n = !1), i > t[1].length && (i = t[1].length), s < t[2].length && (s = t[2].length), o > t[3].length && (o = t[3].length), t)
+                        : [e];
+                })
+                .map(t
+                    ? f
+                    : n
+                        ? r
+                            ? l
+                            : f
+                        : c);
         };
     }).call(d.prototype),
     t.onSessionChange = function (e) {
@@ -17194,12 +17318,12 @@ define("ace/mode/folding/fold_mode", [
             return this
                 .foldingStartMarker
                 .test(r)
-                ? "start"
-                : t == "markbeginend" && this.foldingStopMarker && this
-                    .foldingStopMarker
-                    .test(r)
-                    ? "end"
-                    : "";
+                    ? "start"
+                    : t == "markbeginend" && this.foldingStopMarker && this
+                        .foldingStopMarker
+                        .test(r)
+                            ? "end"
+                            : "";
         },
         this.getFoldWidgetRange  = function (e, t, n) {
             return null;
@@ -17343,11 +17467,15 @@ define("ace/line_widgets", [
         this.getRowLength           = function (e) {
             var t;
             return this.lineWidgets
-                ? t = this.lineWidgets[e] && this.lineWidgets[e].rowCount || 0
+                ? t = this.lineWidgets[e] && this
+                    .lineWidgets[e]
+                    .rowCount || 0
                 : t = 0,
             !this.$useWrapMode || !this.$wrapData[e]
                 ? 1 + t
-                : this.$wrapData[e].length + 1 + t;
+                : this
+                    .$wrapData[e]
+                    .length + 1 + t;
         },
         this.$getWidgetScreenLength = function () {
             var e = 0;
@@ -17431,7 +17559,9 @@ define("ace/line_widgets", [
                     .session
                     .getLength()
             ]),
-            this.session.lineWidgets[e.row] = e;
+            this
+                .session
+                .lineWidgets[e.row] = e;
             var t = this.editor.renderer;
             return e.html && !e.el && (e.el = i.createElement("div"), e.el.innerHTML = e.html),
             e.el && (i.addCssClass(e.el, "ace_lineWidgetContainer"), e.el.style.position = "absolute", e.el.style.zIndex = 5, t.container.appendChild(e.el), e._inDocument = !0),
@@ -17613,9 +17743,11 @@ define("ace/ext/error_marker", [
         var a = [];
         t = u.row;
         do {
-            a[n < 0
+            a[
+                n < 0
                     ? "unshift"
-                    : "push"](u),
+                    : "push"
+            ](u),
             u = r[i += n];
         } while (u && u.row == t);
         return a.length && a;
@@ -17640,7 +17772,10 @@ define("ace/ext/error_marker", [
                 ? c.pos.sc
                 : c.column) || 0,
             s.row    = c.row,
-            l        = e.renderer.$gutterLayer.$annotations[s.row];
+            l        = e
+                .renderer
+                .$gutterLayer
+                .$annotations[s.row];
         } else {
             if (a) {
                 return;
@@ -17683,7 +17818,9 @@ define("ace/ext/error_marker", [
         p.appendChild(i.createElement("div"));
         var m = function (e, t, n) {
             if (t === 0 && (n === "esc" || n === "return")) {
-                return h.destroy(), {command: "null"}
+                return h.destroy(), {
+                    command: "null"
+                }
             }
         };
         h.destroy = function () {
@@ -17820,18 +17957,17 @@ define("ace/ace", [
     t.UndoManager       = u;
 });
 (function () {
-    window
-        .require(["ace/ace"], function (a) {
-            a && a
-                .config
-                .init(true);
-            if (!window.ace) {
-                window.ace = a;
+    window.require(["ace/ace"], function (a) {
+        a && a
+            .config
+            .init(true);
+        if (!window.ace) {
+            window.ace = a;
+        }
+        for (var key in a) {
+            if (a.hasOwnProperty(key)) {
+                window.ace[key] = a[key];
             }
-            for (var key in a) {
-                if (a.hasOwnProperty(key)) {
-                    window.ace[key] = a[key];
-                }
-            }
-        });
+        }
+    });
 })();

@@ -434,10 +434,9 @@
             var header_feedBackUrl = "////www.travelocity.com/p/info-other/feedback.htm";
             $LAB.queueScript("/minify/header-bundle-min-2176243423.js?v=release-2014-02-r1-2874-962065-1");
             if (typeof $LAB !== "undefined" && typeof $LAB.queueWait == "function") {
-                $LAB
-                    .queueWait(function () {
-                        addScratchpadBadge();
-                    });
+                $LAB.queueWait(function () {
+                    addScratchpadBadge();
+                });
             }
         </script>
 
@@ -773,18 +772,20 @@
                 <script>
                     (function (w) {
                         var useAlternateUrl = (true && window.location.hostname && window.location.hostname === "www.travelocity.com");
-                        w.expads                       = w.expads || {};
-                        w.expads.slots                 = w.expads.slots || {};
-                        w.expads.slots["ad_WALLPAPER"] = {
-                            comptest   : "",
-                            location   : "HOME",
-                            placement  : "WALLPAPER",
-                            size       : "280X645",
-                            sublocation: "SEARCH",
-                            url        : useAlternateUrl
-                                ? "//shop.travelocity.com/js.ng/"
-                                : "/js.ng/"
-                        };
+                        w.expads                   = w.expads || {};
+                        w.expads.slots             = w.expads.slots || {};
+                        w
+                            .expads
+                            .slots["ad_WALLPAPER"] = {
+                                comptest   : "",
+                                location   : "HOME",
+                                placement  : "WALLPAPER",
+                                size       : "280X645",
+                                sublocation: "SEARCH",
+                                url        : useAlternateUrl
+                                    ? "//shop.travelocity.com/js.ng/"
+                                    : "/js.ng/"
+                            };
                     })(window);
                 </script>
             </div>
@@ -2362,7 +2363,9 @@
                                                         [
                                                             "beforeShow", "windowResize"
                                                         ],
-                                                        [27, -31]
+                                                        [
+                                                            27, -31
+                                                        ]
                                                     ],
                                                     visible: false,
                                                     width  : "416px",
@@ -2566,7 +2569,7 @@
                     cx.exp.widgetlibrary.search.common.container.timer;
                     cx.exp.widgetlibrary.search.common.container.wizardType          = "";
                     cx.exp.widgetlibrary.search.common.container.wizardObj           = null;
-                    cx.exp.widgetlibrary.search.common.container.cacheWizardContent  = new Object();
+                    cx.exp.widgetlibrary.search.common.container.cacheWizardContent  = {};
                     cx.exp.widgetlibrary.search.common.container.historyObject       = null;
                     cx.exp.widgetlibrary.search.common.container.radioButtons        = YAHOO
                         .util
@@ -2635,13 +2638,17 @@
 
                     cx.exp.widgetlibrary.search.common.dropdown.changeSelectedDestination = function (selectElement) {
                         var index = selectElement.selectedIndex;
-                        var selectedDestValue = selectElement.options[index].value;
+                        var selectedDestValue = selectElement
+                            .options[index]
+                            .value;
                         if (selectedDestValue == "others") {
                             // TODO drop down here is where the popup window for other POSs should live
                             window.open("http://www.expedia.com", "otherPOSs", "height=100,width=400,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=" +
                                     "no,location=no,status=no");
 
-                            selectElement.options[0].selected = true;
+                            selectElement
+                                .options[0]
+                                .selected = true;
                         }
                     };
 
@@ -2670,15 +2677,19 @@
                         if (index == null || index == -1) {
                             index = 0;
                         }
-                        var selectedOriginValue = selectElement.options[index].value;
+                        var selectedOriginValue = selectElement
+                            .options[index]
+                            .value;
 
                         if (selectedOriginValue == "others") {
                             // TODO drop down here is where the popup window for other POSs should live
                             window.open("http://www.expedia.com", "otherPOSs", "height=100,width=400,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=" +
                                     "no,location=no,status=no");
 
-                            selectElement.options[0].selected = true;
-                            selectedOriginValue               = "";
+                            selectElement
+                                .options[0]
+                                .selected       = true;
+                            selectedOriginValue = "";
                         }
 
                         var randomnumber = Math.floor(Math.random() * 11000000000);
@@ -2755,7 +2766,7 @@
                                     .JSON
                                     .parse(response.responseText)
                                     .response;
-                                var content = new Object();
+                                var content = {};
 
                                 // update the html in the relevant elements to that returned from the web
                                 // service.
@@ -3050,7 +3061,7 @@
                     cx.exp.widgetlibrary.search.common.container.subscribeAllEvents       = function () {
                         var namespace = cx.exp.widgetlibrary.search.common.container,
                             radioButton;
-                        var content = new Object();
+                        var content = {};
                         var defaultLob = "flightOnly";
                         //initial the selectedRadioButton (will be run once)
                         cx.exp.widgetlibrary.search.common.container.selectedRadioButton = defaultLob;
@@ -3155,15 +3166,13 @@
                     try {
                         if (window.jQuery) {
                             if (jQuery("#hot-only:checked").length > 0) {
-                                jQuery(window)
-                                    .load(function () {
-                                        loadHotelSRScripts(3000);
-                                    });
+                                jQuery(window).load(function () {
+                                    loadHotelSRScripts(3000);
+                                });
                             } else {
-                                jQuery("body")
-                                    .delegate("#hot-only", "change", function () {
-                                        loadHotelSRScripts(500);
-                                    });
+                                jQuery("body").delegate("#hot-only", "change", function () {
+                                    loadHotelSRScripts(500);
+                                });
                             }
                         }
                     } catch (e) {}
@@ -3243,7 +3252,9 @@
                                     .getTime()
                                     .toString();
                                 datePart              = datePart.substring(datePart.length - 8);
-                                randomPart            = Math.floor((Math.random() * 1e8)).toString();
+                                randomPart            = Math
+                                    .floor((Math.random() * 1e8))
+                                    .toString();
                                 window.globalAdTileId = datePart + randomPart;
                             }
                             url   += "&tile=" + window.globalAdTileId;
@@ -3329,7 +3340,9 @@
                                                         .getTime()
                                                         .toString();
                                                     datePart              = datePart.substring(datePart.length - 8);
-                                                    randomPart            = Math.floor((Math.random() * 1e8)).toString();
+                                                    randomPart            = Math
+                                                        .floor((Math.random() * 1e8))
+                                                        .toString();
                                                     window.globalAdTileId = datePart + randomPart;
                                                 }
                                                 url   += "&tile=" + window.globalAdTileId;
@@ -3418,18 +3431,20 @@
                             <script>
                                 (function (w) {
                                     var useAlternateUrl = (true && window.location.hostname && window.location.hostname === "www.travelocity.com");
-                                    w.expads                        = w.expads || {};
-                                    w.expads.slots                  = w.expads.slots || {};
-                                    w.expads.slots["ad_CENTERTOP1"] = {
-                                        comptest   : "",
-                                        location   : "HOME",
-                                        placement  : "CENTERTOP1",
-                                        size       : "146X146",
-                                        sublocation: "SEARCH",
-                                        url        : useAlternateUrl
-                                            ? "//shop.travelocity.com/js.ng/"
-                                            : "/js.ng/"
-                                    };
+                                    w.expads                    = w.expads || {};
+                                    w.expads.slots              = w.expads.slots || {};
+                                    w
+                                        .expads
+                                        .slots["ad_CENTERTOP1"] = {
+                                            comptest   : "",
+                                            location   : "HOME",
+                                            placement  : "CENTERTOP1",
+                                            size       : "146X146",
+                                            sublocation: "SEARCH",
+                                            url        : useAlternateUrl
+                                                ? "//shop.travelocity.com/js.ng/"
+                                                : "/js.ng/"
+                                        };
                                 })(window);
                             </script>
                         </div>
@@ -3442,18 +3457,20 @@
                             <script>
                                 (function (w) {
                                     var useAlternateUrl = (true && window.location.hostname && window.location.hostname === "www.travelocity.com");
-                                    w.expads                        = w.expads || {};
-                                    w.expads.slots                  = w.expads.slots || {};
-                                    w.expads.slots["ad_CENTERTOP2"] = {
-                                        comptest   : "",
-                                        location   : "HOME",
-                                        placement  : "CENTERTOP2",
-                                        size       : "146X146",
-                                        sublocation: "SEARCH",
-                                        url        : useAlternateUrl
-                                            ? "//shop.travelocity.com/js.ng/"
-                                            : "/js.ng/"
-                                    };
+                                    w.expads                    = w.expads || {};
+                                    w.expads.slots              = w.expads.slots || {};
+                                    w
+                                        .expads
+                                        .slots["ad_CENTERTOP2"] = {
+                                            comptest   : "",
+                                            location   : "HOME",
+                                            placement  : "CENTERTOP2",
+                                            size       : "146X146",
+                                            sublocation: "SEARCH",
+                                            url        : useAlternateUrl
+                                                ? "//shop.travelocity.com/js.ng/"
+                                                : "/js.ng/"
+                                        };
                                 })(window);
                             </script>
                         </div>
@@ -3466,18 +3483,20 @@
                             <script>
                                 (function (w) {
                                     var useAlternateUrl = (true && window.location.hostname && window.location.hostname === "www.travelocity.com");
-                                    w.expads                        = w.expads || {};
-                                    w.expads.slots                  = w.expads.slots || {};
-                                    w.expads.slots["ad_CENTERTOP3"] = {
-                                        comptest   : "",
-                                        location   : "HOME",
-                                        placement  : "CENTERTOP3",
-                                        size       : "146X146",
-                                        sublocation: "SEARCH",
-                                        url        : useAlternateUrl
-                                            ? "//shop.travelocity.com/js.ng/"
-                                            : "/js.ng/"
-                                    };
+                                    w.expads                    = w.expads || {};
+                                    w.expads.slots              = w.expads.slots || {};
+                                    w
+                                        .expads
+                                        .slots["ad_CENTERTOP3"] = {
+                                            comptest   : "",
+                                            location   : "HOME",
+                                            placement  : "CENTERTOP3",
+                                            size       : "146X146",
+                                            sublocation: "SEARCH",
+                                            url        : useAlternateUrl
+                                                ? "//shop.travelocity.com/js.ng/"
+                                                : "/js.ng/"
+                                        };
                                 })(window);
                             </script>
                         </div>
@@ -3910,27 +3929,27 @@
                     dataType: "script",
                     url     : "/minify/de-min-3706002713.js?v=release-2014-02-r1-2874-962065-1"
                 };
-                $.when($.ajax(options), $.Deferred(function (deferred) {
-                    w.expads           = w.expads || {};
-                    w.expads.targeting = {
-                        "activity": "ff43ffe3-f243-472d-a963-477dec20da08",
-                        "EAPID"   : "0",
-                        "EMAIL"   : false,
-                        "ip"      : "10.186.108.6",
-                        "LANGID"  : 1033,
-                        "SECURE"  : false,
-                        "TPID"    : "80001",
-                        "USERTYPE": ["SHOPPER"]
-                    };
-                    $(deferred.resolve);
-                }))
+                $
+                    .when($.ajax(options), $.Deferred(function (deferred) {
+                        w.expads           = w.expads || {};
+                        w.expads.targeting = {
+                            "activity": "ff43ffe3-f243-472d-a963-477dec20da08",
+                            "EAPID"   : "0",
+                            "EMAIL"   : false,
+                            "ip"      : "10.186.108.6",
+                            "LANGID"  : 1033,
+                            "SECURE"  : false,
+                            "TPID"    : "80001",
+                            "USERTYPE": ["SHOPPER"]
+                        };
+                        $(deferred.resolve);
+                    }))
                     .done(function () {
-                        $(document)
-                            .ready(function () {
-                                w
-                                    .expads
-                                    .initialize();
-                            });
+                        $(document).ready(function () {
+                            w
+                                .expads
+                                .initialize();
+                        });
                     });
             })(window);
         </script>
@@ -4250,7 +4269,7 @@
             // We only want to log s_BrandEAPID for a select group of tpid/eapid pairs.
             // Enter the pair below and set the value to the logged eapid s_BrandEAPID
             // table, lookup is 'expedia<Tpid>-<EAPID>'
-            s_BrandEAPIDTable                     = new Object();
+            s_BrandEAPIDTable                     = {};
             s_BrandEAPIDTable["expedia30035-327"] = "327";
             s_BrandEAPIDTable["expedia30036-392"] = "392";
             s_BrandEAPIDTable["expedia30009-314"] = "314";
@@ -4388,7 +4407,9 @@
             <!--
             var s_code = s_exp.t();
             if (s_code) {
-                document.getElementById("sCodeDiv").innerHTML = s_code;
+                document
+                    .getElementById("sCodeDiv")
+                    .innerHTML = s_code;
             }
 
             //-->
