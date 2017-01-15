@@ -70,10 +70,12 @@ public class IOOperations {
             int id;
             String columnName, tableName, understandableName, description;
 
-            String selectFromMetaDescriptions  = "SELECT id, tableName, columnName, understandableName, description FROM " + metaTableName;
+            String selectFromMetaDescriptions  = "SELECT id, tableName, columnName, understandableName, description FROM " +
+                    metaTableName;
 
-            String createDescriptionTableQuery = "CREATE TABLE " + metaTableName + " (id INTEGER not NULL,  tableName VARCHAR(255),  columnName VARCHAR(255),  under" +
-                    "standableName NVARCHAR(255),  description NVARCHAR(255),  PRIMARY KEY ( id ))";
+            String createDescriptionTableQuery = "CREATE TABLE " + metaTableName + " (id INTEGER not NULL,  tableName VARCHAR(25" +
+                    "5),  columnName VARCHAR(255),  understandableName NVARCHAR(255),  description " +
+                    "NVARCHAR(255),  PRIMARY KEY ( id ))";
 
             // System.out.println(query);
 
@@ -159,8 +161,9 @@ public class IOOperations {
             stmt = conn.createStatement();
             String columnName, tableName;
 
-            String findAllTablesAndColumnsQuery = "SELECT o.Name, c.Name FROM sys.columns c JOIN sys.objects o ON o.object_id = c.o" +
-                                                     "bject_id WHERE o.type = 'U'"/* + "ORDER BY o.Name " */;
+            String findAllTablesAndColumnsQuery = "SELECT o.Name, c.Name FROM sys.columns c JOIN sys.objects o ON o.object_id = c" +
+                    ".object_id WHERE o.type = 'U'"
+            /* + "ORDER BY o.Name " */;
 
             rs                                  = stmt.executeQuery(findAllTablesAndColumnsQuery);
             ArrayList<String> columnsOfTable    = null;
@@ -312,10 +315,16 @@ public class IOOperations {
             rs   = null;
 
             for (Description tmpDescription : descriptions) {
-                String query = "UPDATE " + metaTableName + " SET tableName = '" + tmpDescription.getTableName() + "' , columnName = '" + tmpDescription.getColumnName() + "' , understandableName = N'" + tmpDescription.getUnderstandableName() + "' , description = N'" + tmpDescription.getDescription() + "' WHERE id = " + tmpDescription.getDescriptionID();
+                String query = "UPDATE " + metaTableName + " SET tableName = '" + tmpDescription.getTableName() +
+                        "' , columnName = '" + tmpDescription.getColumnName() + "' , understandableName" +
+                        " = N'" + tmpDescription.getUnderstandableName() + "' , description = N'" +
+                        tmpDescription.getDescription() + "' WHERE id = " + tmpDescription.getDescriptionID();
                 // System.out.println(query);
                 if (stmt.executeUpdate(query) == 0) {
-                    query = "INSERT INTO " + metaTableName + " VALUES (" + tmpDescription.getDescriptionID() + " , '" + tmpDescription.getTableName() + "' , '" + tmpDescription.getColumnName() + "' , N'" + tmpDescription.getUnderstandableName() + "' , N'" + tmpDescription.getDescription() + "')";
+                    query = "INSERT INTO " + metaTableName + " VALUES (" + tmpDescription.getDescriptionID() +
+                            " , '" + tmpDescription.getTableName() + "' , '" + tmpDescription.getColumnName() +
+                            "' , N'" + tmpDescription.getUnderstandableName() + "' , N'" + tmpDescription.getDescription() +
+                            "')";
                     System
                         .out
                         .println(stmt.executeUpdate(query));

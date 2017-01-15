@@ -65,12 +65,12 @@ var callableFoo: number = callable.foo; // 123
 
 
 function greatestCommonDivisor(a : number, b : number): number {
-    if(!b) {
+    if (!b) {
         return a;
     }
 
     return greatestCommonDivisor(b, a % b);
-};
+}
 
 // Annotations included for example purposes only.
 [1, 2, 3].map((num : number) : number => num * 2);
@@ -96,7 +96,7 @@ class MyClass {
     }
     bar(): string {
         return this.foo;
-    };
+    }
 }
 
 var myInstance: MyClass = new MyClass("foo");

@@ -475,11 +475,11 @@
                             inchar      : " ",
                             insize      : 4,
                             lang        : "javascript",
-                            methodchain : false,
+                            methodchain : "chain",
                             mode        : "beautify",
                             nocaseindent: false,
                             objsort     : "all",
-                            preserve    : true,
+                            preserve    : 1,
                             styleguide  : "jslint",
                             wrap        : 80
                         };
@@ -730,7 +730,7 @@
                     .readFile("package.json", "utf8", function taskrunner_packagejson_readFile(err, data) {
                         var prettydata = "",
                             globalmeta = "{\"difflines\":0,\"difftotal\":0,\"error\":\"\",\"insize\":xxx,\"lang\":[\"json" +
-                                    "\",\"javascript\",\"JSON\"],\"outsize\":xxx,\"time\":\"0.000 seconds\"}",
+                                    "\",\"json\",\"JSON\"],\"outsize\":xxx,\"time\":\"0.000 seconds\"}",
                             strmeta    = "";
                         if (err !== null && err !== undefined) {
                             errout("Cannot read package.json");

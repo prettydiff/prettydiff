@@ -52,7 +52,7 @@ if (typeof jQuery == "undefined") {
                 return this.prevObject || this.constructor(null);
             },
             eq         : function (i) {
-                i =+ i;
+                i = +i;
                 return i === -1
                     ? this.slice(i)
                     : this.slice(i, i + 1);
@@ -1001,7 +1001,8 @@ if (typeof jQuery == "undefined") {
                     return;
                 }
                 container               = document.createElement("div");
-                container.style.cssText = "visibility:hidden;border:0;width:0;height:0;position:static;top:0;margin-top:1px";
+                container.style.cssText = "visibility:hidden;border:0;width:0;height:0;position:static;top:0;margin-top:1" +
+                        "px";
                 body.insertBefore(container, body.firstChild);
                 div = document.createElement("div");
                 container.appendChild(div);
@@ -1013,9 +1014,9 @@ if (typeof jQuery == "undefined") {
                 tds[1].style.display                     = "none";
                 support.reliableHiddenOffsets            = isSupported && (tds[0].offsetHeight === 0);
                 div.innerHTML                            = "";
-                div.style.cssText                        = "box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box;p" +
-                                                              "adding:1px;border:1px;display:block;width:4px;margin-top:1%;position:absolute;to" +
-                                                              "p:1%;";
+                div.style.cssText                        = "box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box" +
+                        ";padding:1px;border:1px;display:block;width:4px;margin-top:1%;position:absolut" +
+                        "e;top:1%;";
                 support.boxSizing                        = (div.offsetWidth === 4);
                 support.doesNotIncludeMarginInBodyOffset = (body.offsetTop !== 1);
                 if (window.getComputedStyle) {
@@ -1275,8 +1276,8 @@ if (typeof jQuery == "undefined") {
                                 ? false
                                 : data === "null"
                                     ? null
-                                    : + data + "" === data
-                                        ? + data
+                                    : +data + "" === data
+                                        ? +data
                                         : rbrace.test(data)
                                             ? jQuery.parseJSON(data)
                                             : data;
@@ -2255,12 +2256,12 @@ if (typeof jQuery == "undefined") {
                     }
                     return event;
                 },
-                props : ("button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX " +
-                        "creenY toElement").split(" ")
+                props : ("button buttons clientX clientY fromElement offsetX offsetY pageX pageY screenX" +
+                        " screenY toElement").split(" ")
             },
-            props      : ("attrChange attrName relatedNode srcElement altKey bubbles cancelable ctrlKey cu" +
-                    "rrentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view whic" +
-                    "h").split(" "),
+            props      : ("attrChange attrName relatedNode srcElement altKey bubbles cancelable ctrlKey c" +
+                    "urrentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view w" +
+                    "hich").split(" "),
             remove     : function (elem, types, handler, selector, mappedTypes) {
                 var t,
                     tns,
@@ -2301,7 +2302,8 @@ if (typeof jQuery == "undefined") {
                     eventType  = events[type] || [];
                     origCount  = eventType.length;
                     namespaces = namespaces
-                        ? new RegExp("(^|\\.)" + namespaces.split(".").sort().join("\\.(?:.*\\.|)") + "(\\.|$)")
+                        ? new RegExp("(^|\\.)" + namespaces.split(".").sort().join("\\.(?:.*\\.|)") +
+                                "(\\.|$)")
                         : null;
                     for (j = 0; j < eventType.length; j += 1) {
                         handleObj = eventType[j];
@@ -2865,9 +2867,9 @@ if (typeof jQuery == "undefined") {
                         : this.off(types, selector || "**", fn);
                 }
             });
-        jQuery.each(("blur focus focusin focusout load resize scroll unload click dblclick mousedown m" +
-                "ouseup mousemove mouseover mouseout mouseenter mouseleave change select submit k" +
-                "eydown keypress keyup error contextmenu").split(" "), function (i, name) {
+        jQuery.each(("blur focus focusin focusout load resize scroll unload click dblclick mousedown" +
+                " mouseup mousemove mouseover mouseout mouseenter mouseleave change select subm" +
+                "it keydown keypress keyup error contextmenu").split(" "), function (i, name) {
             jQuery.fn[name] = function (data, fn) {
                 if (fn == null) {
                     fn   = data;
@@ -2941,12 +2943,18 @@ if (typeof jQuery == "undefined") {
                 characterEncoding       = "(?:\\\\.|[-\\w]|[^\\x00-\\xa0])+",
                 identifier              = characterEncoding.replace("w", "w#"),
                 operators               = "([*^$|!~]?=)",
-                attributes              = "\\[" + whitespace + "*(" + characterEncoding + ")" + whitespace + "*(?:" + operators + whitespace + "*(?:(['\"])((?:\\\\.|[^\\\\])*?)\\3|(" + identifier + ")|)|)" + whitespace + "*\\]",
-                pseudos                 = ":(" + characterEncoding + ")(?:\\((?:(['\"])((?:\\\\.|[^\\\\])*?)\\2|([^()[\\]]*|(?:(?:" + attributes + ")|[^:]|\\\\.)*|.*))\\)|)",
-                pos                     = ":(even|odd|eq|gt|lt|nth|first|last)(?:\\(" + whitespace + "*((?:-\\d)?\\d*)" + whitespace + "*\\)|)(?=[^-]|$)",
-                rtrim                   = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$", "g"),
+                attributes              = "\\[" + whitespace + "*(" + characterEncoding + ")" + whitespace + "*(?:" +
+                        operators + whitespace + "*(?:(['\"])((?:\\\\.|[^\\\\])*?)\\3|(" + identifier +
+                        ")|)|)" + whitespace + "*\\]",
+                pseudos                 = ":(" + characterEncoding + ")(?:\\((?:(['\"])((?:\\\\.|[^\\\\])*?)\\2|([^()[\\]" +
+                        "]*|(?:(?:" + attributes + ")|[^:]|\\\\.)*|.*))\\)|)",
+                pos                     = ":(even|odd|eq|gt|lt|nth|first|last)(?:\\(" + whitespace + "*((?:-\\d)?\\d*)" +
+                        whitespace + "*\\)|)(?=[^-]|$)",
+                rtrim                   = new RegExp("^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace +
+                        "+$", "g"),
                 rcomma                  = new RegExp("^" + whitespace + "*," + whitespace + "*"),
-                rcombinators            = new RegExp("^" + whitespace + "*([\\x20\\t\\r\\n\\f>+~])" + whitespace + "*"),
+                rcombinators            = new RegExp("^" + whitespace + "*([\\x20\\t\\r\\n\\f>+~])" +
+                        whitespace + "*"),
                 rpseudo                 = new RegExp(pseudos),
                 rquickExpr              = /^(?:#([\w\-]+)|(\w+)|\.([\w\-]+))$/,
                 rnot                    = /^:not/,
@@ -2957,7 +2965,9 @@ if (typeof jQuery == "undefined") {
                 rbackslash              = /\\(?!\\)/g,
                 matchExpr               = {
                     "ATTR"        : new RegExp("^" + attributes),
-                    "CHILD"       : new RegExp("^:(only|nth|first|last)-child(?:\\(" + whitespace + "*(even|odd|(([+-]|)(\\d*)n|)" + whitespace + "*(?:([+-]|)" + whitespace + "*(\\d+)|))" + whitespace + "*\\)|)", "i"),
+                    "CHILD"       : new RegExp("^:(only|nth|first|last)-child(?:\\(" + whitespace + "*(eve" +
+                            "n|odd|(([+-]|)(\\d*)n|)" + whitespace + "*(?:([+-]|)" + whitespace + "*(\\d+)|" +
+                            "))" + whitespace + "*\\)|)", "i"),
                     "CLASS"       : new RegExp("^\\.(" + characterEncoding + ")"),
                     "ID"          : new RegExp("^#(" + characterEncoding + ")"),
                     "NAME"        : new RegExp("^\\[name=['\"]?(" + characterEncoding + ")['\"]?\\]"),
@@ -3101,7 +3111,7 @@ if (typeof jQuery == "undefined") {
             }
             function createPositionalPseudo(fn) {
                 return markFunction(function (argument) {
-                    argument =+ argument;
+                    argument = +argument;
                     return markFunction(function (seed, matches) {
                         var j,
                             matchIndexes = fn([], seed.length, argument),
@@ -3279,7 +3289,8 @@ if (typeof jQuery == "undefined") {
                     "CLASS" : function (className) {
                         var pattern = classCache[expando][className];
                         if (!pattern) {
-                            pattern = classCache(className, new RegExp("(^|" + whitespace + ")" + className + "(" + whitespace + "|$)"));
+                            pattern = classCache(className, new RegExp("(^|" + whitespace + ")" + className +
+                                    "(" + whitespace + "|$)"));
                         }
                         return function (elem) {
                             return pattern.test(elem.className || (typeof elem.getAttribute !== strundefined && elem.getAttribute("class")) || "");
@@ -3301,7 +3312,8 @@ if (typeof jQuery == "undefined") {
                         },
                     "PSEUDO": function (pseudo, argument) {
                         var args,
-                            fn = Expr.pseudos[pseudo] || Expr.setFilters[pseudo.toLowerCase()] || Sizzle.error("unsupported pseudo: " + pseudo);
+                            fn = Expr.pseudos[pseudo] || Expr.setFilters[pseudo.toLowerCase()] || Sizzle.error("unsupported pseudo: " +
+                                    pseudo);
                         if (fn[expando]) {
                             return fn(argument);
                         }
@@ -3411,10 +3423,10 @@ if (typeof jQuery == "undefined") {
                             if (!match[2]) {
                                 Sizzle.error(match[0]);
                             }
-                            match[3] =+ (match[3]
+                            match[3] = +(match[3]
                                 ? match[4] + (match[5] || 1)
                                 : 2 * (match[2] === "even" || match[2] === "odd"));
-                            match[4] =+ ((match[6] + match[7]) || match[2] === "odd");
+                            match[4] = +((match[6] + match[7]) || match[2] === "odd");
                         } else if (match[2]) {
                             Sizzle.error(match[0]);
                         }
@@ -4072,7 +4084,8 @@ if (typeof jQuery == "undefined") {
                     assert(function (div) {
                         div.innerHTML = "<select><option selected=''></option></select>";
                         if (!div.querySelectorAll("[selected]").length) {
-                            rbuggyQSA.push("\\[" + whitespace + "*(?:checked|disabled|ismap|multiple|readonly|selected|value)");
+                            rbuggyQSA.push("\\[" + whitespace + "*(?:checked|disabled|ismap|multiple|readon" +
+                                    "ly|selected|value)");
                         }
                         if (!div.querySelectorAll(":checked").length) {
                             rbuggyQSA.push(":checked");
@@ -4433,8 +4446,8 @@ if (typeof jQuery == "undefined") {
             }
             return safeFrag;
         }
-        var nodeNames          = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figcaption|figure|foot" +
-                               "er|header|hgroup|mark|meter|nav|output|progress|section|summary|time|video",
+        var nodeNames          = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figcaption|figure|fo" +
+                    "oter|header|hgroup|mark|meter|nav|output|progress|section|summary|time|video",
             rinlinejQuery      = / jQuery\d+="(?:null|\d+)"/g,
             rleadingWhitespace = /^\s+/,
             rxhtmlTag          = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/gi,
@@ -5059,7 +5072,8 @@ if (typeof jQuery == "undefined") {
                     destElements,
                     i,
                     clone;
-                if (jQuery.support.html5Clone || jQuery.isXMLDoc(elem) || !rnoshimcache.test("<" + elem.nodeName + ">")) {
+                if (jQuery.support.html5Clone || jQuery.isXMLDoc(elem) || !rnoshimcache.test("<" +
+                        elem.nodeName + ">")) {
                     clone = elem.cloneNode(true);
                 } else {
                     fragmentDiv.innerHTML = elem.outerHTML;
@@ -6373,8 +6387,8 @@ if (typeof jQuery == "undefined") {
         });
         jQuery.ajaxSetup({
             accepts   : {
-                script: "text/javascript, application/javascript, application/ecmascript, application/x-e" +
-                        "cmascript"
+                script: "text/javascript, application/javascript, application/ecmascript, application/x" +
+                        "-ecmascript"
             },
             contents  : {
                 script: /javascript|ecmascript/
@@ -6582,11 +6596,11 @@ if (typeof jQuery == "undefined") {
                             tween         = this.createTween(prop, value),
                             parts         = rfxnum.exec(value),
                             target        = tween.cur(),
-                            start         =+ target || 0,
+                            start         = +target || 0,
                             scale         = 1,
                             maxIterations = 20;
                         if (parts) {
-                            end  =+ parts[2];
+                            end  = +parts[2];
                             unit = parts[3] || (jQuery.cssNumber[prop]
                                 ? ""
                                 : "px");
@@ -7447,14 +7461,16 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         scrollParent = this
                             .parents()
                             .filter(function () {
-                                return (/(relative|absolute|fixed)/).test($.css(this, "position")) && (/(auto|scroll)/).test($.css(this, "overflow") + $.css(this, "overflow-y") + $.css(this, "overflow-x"));
+                                return (/(relative|absolute|fixed)/).test($.css(this, "position")) && (/(auto|scroll)/).test($.css(this, "overflow") +
+                                        $.css(this, "overflow-y") + $.css(this, "overflow-x"));
                             })
                             .eq(0);
                     } else {
                         scrollParent = this
                             .parents()
                             .filter(function () {
-                                return (/(auto|scroll)/).test($.css(this, "overflow") + $.css(this, "overflow-y") + $.css(this, "overflow-x"));
+                                return (/(auto|scroll)/).test($.css(this, "overflow") + $.css(this, "overflow-y") +
+                                        $.css(this, "overflow-x"));
                             })
                             .eq(0);
                     }
@@ -7819,10 +7835,12 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         var methodValue,
                             instance = $.data(this, fullName);
                         if (!instance) {
-                            return $.error("cannot call methods on " + name + " prior to initialization; attempted to call method '" + options + "'");
+                            return $.error("cannot call methods on " + name + " prior to initialization; at" +
+                                    "tempted to call method '" + options + "'");
                         }
                         if (!$.isFunction(instance[options]) || options.charAt(0) === "_") {
-                            return $.error("no such method '" + options + "' for " + name + " widget instance");
+                            return $.error("no such method '" + options + "' for " + name + " widget instan" +
+                                    "ce");
                         }
                         methodValue = instance[options].apply(instance, args);
                         if (methodValue !== instance && methodValue !== undefined) {
@@ -8271,8 +8289,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 }
                 if ($.isArray(obj)) {
                     obj = {
-                        left: + obj[0],
-                        top : + obj[1] || 0
+                        left: +obj[0],
+                        top : +obj[1] || 0
                     };
                 }
                 if ("left" in obj) {
@@ -10969,8 +10987,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 }
                 if ($.isArray(obj)) {
                     obj = {
-                        left: + obj[0],
-                        top : + obj[1] || 0
+                        left: +obj[0],
+                        top : +obj[1] || 0
                     };
                 }
                 if ("left" in obj) {
@@ -11566,7 +11584,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     b             = t + item.height,
                     dyClick       = this.offset.click.top,
                     dxClick       = this.offset.click.left,
-                    isOverElement = (y1 + dyClick) > t && (y1 + dyClick) < b && (x1 + dxClick) > l && (x1 + dxClick) < r;
+                    isOverElement = (y1 + dyClick) > t && (y1 + dyClick) < b && (x1 + dxClick) > l && (x1 +
+                            dxClick) < r;
                 if (this.options.tolerance === "pointer" || this.options.forcePointerForContainers || (this.options.tolerance !== "pointer" && this.helperProportions[
                     this.floating
                         ? "width"
@@ -11582,8 +11601,10 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 }
             },
             _intersectsWithPointer     : function (item) {
-                var isOverElementHeight = (this.options.axis === "x") || isOverAxis(this.positionAbs.top + this.offset.click.top, item.top, item.height),
-                    isOverElementWidth  = (this.options.axis === "y") || isOverAxis(this.positionAbs.left + this.offset.click.left, item.left, item.width),
+                var isOverElementHeight = (this.options.axis === "x") || isOverAxis(this.positionAbs.top +
+                            this.offset.click.top, item.top, item.height),
+                    isOverElementWidth  = (this.options.axis === "y") || isOverAxis(this.positionAbs.left +
+                            this.offset.click.left, item.left, item.width),
                     isOverElement       = isOverElementHeight && isOverElementWidth,
                     verticalDirection   = this._getDragVerticalDirection(),
                     horizontalDirection = this._getDragHorizontalDirection();
@@ -11599,8 +11620,10 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         : 1));
             },
             _intersectsWithSides       : function (item) {
-                var isOverBottomHalf    = isOverAxis(this.positionAbs.top + this.offset.click.top, item.top + (item.height / 2), item.height),
-                    isOverRightHalf     = isOverAxis(this.positionAbs.left + this.offset.click.left, item.left + (item.width / 2), item.width),
+                var isOverBottomHalf    = isOverAxis(this.positionAbs.top + this.offset.click.top, item.top +
+                            (item.height / 2), item.height),
+                    isOverRightHalf     = isOverAxis(this.positionAbs.left + this.offset.click.left, item.left +
+                            (item.width / 2), item.width),
                     verticalDirection   = this._getDragVerticalDirection(),
                     horizontalDirection = this._getDragHorizontalDirection();
                 if (this.floating && horizontalDirection) {
@@ -11823,7 +11846,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         .find("body");
                     this.storedCursor = body.css("cursor");
                     body.css("cursor", o.cursor);
-                    this.storedStylesheet = $("<style>*{ cursor: " + o.cursor + " !important; }</style>").appendTo(body);
+                    this.storedStylesheet = $("<style>*{ cursor: " + o.cursor + " !important; }</st" +
+                            "yle>").appendTo(body);
                 }
                 if (o.opacity) {
                     if (this.helper.css("opacity")) {
@@ -12273,8 +12297,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             effect: {}
         };
         (function (jQuery, undefined) {
-            var stepHooks     = "backgroundColor borderBottomColor borderLeftColor borderRightColor borderTopColo" +
-                              "r color columnRuleColor outlineColor textDecorationColor textEmphasisColor",
+            var stepHooks     = "backgroundColor borderBottomColor borderLeftColor borderRightColor borderTopCo" +
+                        "lor color columnRuleColor outlineColor textDecorationColor textEmphasisColor",
                 rplusequals   = /^([\-+])=\s*(\d+\.?\d*)/,
                 stringParsers = [
                     {
@@ -13506,8 +13530,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     .removeAttr("role");
                 this
                     .headers
-                    .removeClass("ui-accordion-header ui-accordion-header-active ui-helper-reset ui-state-default " +
-                            "ui-corner-all ui-state-active ui-state-disabled ui-corner-top")
+                    .removeClass("ui-accordion-header ui-accordion-header-active ui-helper-reset ui-state-defaul" +
+                            "t ui-corner-all ui-state-active ui-state-disabled ui-corner-top")
                     .removeAttr("role")
                     .removeAttr("aria-selected")
                     .removeAttr("aria-controls")
@@ -13526,8 +13550,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     .removeAttr("aria-expanded")
                     .removeAttr("aria-hidden")
                     .removeAttr("aria-labelledby")
-                    .removeClass("ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content ui-accor" +
-                            "dion-content-active ui-state-disabled")
+                    .removeClass("ui-helper-reset ui-widget-content ui-corner-bottom ui-accordion-content ui-acc" +
+                            "ordion-content-active ui-state-disabled")
                     .each(function () {
                         if (/^ui-accordion/.test(this.id)) {
                             this.removeAttribute("id");
@@ -14462,8 +14486,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             clickDragged,
             baseClasses      = "ui-button ui-widget ui-state-default ui-corner-all",
             stateClasses     = "ui-state-hover ui-state-active ",
-            typeClasses      = "ui-button-icons-only ui-button-icon-only ui-button-text-icons ui-button-text-ico" +
-                                  "n-primary ui-button-text-icon-secondary ui-button-text-only",
+            typeClasses      = "ui-button-icons-only ui-button-icon-only ui-button-text-icons ui-button-text-i" +
+                    "con-primary ui-button-text-icon-secondary ui-button-text-only",
             formResetHandler = function () {
                 var buttons = $(this).find(":ui-button");
                 setTimeout(function () {
@@ -14752,10 +14776,12 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                                 : "-secondary")));
                     }
                     if (icons.primary) {
-                        buttonElement.prepend("<span class='ui-button-icon-primary ui-icon " + icons.primary + "'></span>");
+                        buttonElement.prepend("<span class='ui-button-icon-primary ui-icon " + icons.primary +
+                                "'></span>");
                     }
                     if (icons.secondary) {
-                        buttonElement.append("<span class='ui-button-icon-secondary ui-icon " + icons.secondary + "'></span>");
+                        buttonElement.append("<span class='ui-button-icon-secondary ui-icon " + icons.secondary +
+                                "'></span>");
                     }
                     if (!this.options.text) {
                         buttonClasses.push(multipleIcons
@@ -14873,8 +14899,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 this._super(key, value);
             },
             options   : {
-                items: "button, input[type=button], input[type=submit], input[type=reset], input[type=ch" +
-                        "eckbox], input[type=radio], a, :data(ui-button)"
+                items: "button, input[type=button], input[type=submit], input[type=reset], input[type=" +
+                        "checkbox], input[type=radio], a, :data(ui-button)"
             },
             refresh   : function () {
                 var rtl = this
@@ -15040,8 +15066,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 yearRange             : "c-10:c+10"
             };
             $.extend(this._defaults, this.regional[""]);
-            this.dpDiv = bindHover($("<div id='" + this._mainDivId + "' class='ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-" +
-                    "all'></div>"));
+            this.dpDiv = bindHover($("<div id='" + this._mainDivId + "' class='ui-datepicke" +
+                    "r ui-widget ui-widget-content ui-helper-clearfix ui-corner-all'></div>"));
         }
         $.extend(Datepicker.prototype, {
             _adjustDate             : function (id, offset, period) {
@@ -15157,7 +15183,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         .remove();
                 }
                 if (appendText) {
-                    inst.append = $("<span class='" + this._appendClass + "'>" + appendText + "</span>");
+                    inst.append = $("<span class='" + this._appendClass + "'>" + appendText + "</sp" +
+                            "an>");
                     input[
                         isRTL
                             ? "before"
@@ -15263,7 +15290,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     inst    = $
                         .datepicker
                         ._getInst($target[0]);
-                if ((($target[0].id !== $.datepicker._mainDivId && $target.parents("#" + $.datepicker._mainDivId).length === 0 && !$target.hasClass($.datepicker.markerClassName) && !$target.closest("." + $.datepicker._triggerClass).length && $.datepicker._datepickerShowing && !($.datepicker._inDialog && $.blockUI))) || ($target.hasClass($.datepicker.markerClassName) && $.datepicker._curInst !== inst)) {
+                if ((($target[0].id !== $.datepicker._mainDivId && $target.parents("#" + $.datepicker._mainDivId).length === 0 && !$target.hasClass($.datepicker.markerClassName) && !$target.closest("." +
+                        $.datepicker._triggerClass).length && $.datepicker._datepickerShowing && !($.datepicker._inDialog && $.blockUI))) || ($target.hasClass($.datepicker.markerClassName) && $.datepicker._curInst !== inst)) {
                     $
                         .datepicker
                         ._hideDatepicker();
@@ -15446,7 +15474,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 if (!inst) {
                     this.uuid         += 1;
                     id                = "dp" + this.uuid;
-                    this._dialogInput = $("<input type='text' id='" + id + "' style='position: absolute; top: -100px; width: 0px;'/>");
+                    this._dialogInput = $("<input type='text' id='" + id + "' style='position: abso" +
+                            "lute; top: -100px; width: 0px;'/>");
                     this
                         ._dialogInput
                         .keydown(this._doKeyDown);
@@ -15552,7 +15581,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             handled = false;
                             break;
                         case 13:
-                            sel = $("td." + $.datepicker._dayOverClass + ":not(." + $.datepicker._currentClass + ")", inst.dpDiv);
+                            sel = $("td." + $.datepicker._dayOverClass + ":not(." + $.datepicker._currentClass +
+                                    ")", inst.dpDiv);
                             if (sel[0]) {
                                 $
                                     .datepicker
@@ -15590,8 +15620,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             $
                                 .datepicker
                                 ._adjustDate(event.target, (event.ctrlKey
-                                    ? + $.datepicker._get(inst, "stepBigMonths")
-                                    : + $.datepicker._get(inst, "stepMonths")), "M");
+                                    ? +$.datepicker._get(inst, "stepBigMonths")
+                                    : +$.datepicker._get(inst, "stepMonths")), "M");
                             break;
                         case 35:
                             if (event.ctrlKey || event.metaKey) {
@@ -15647,8 +15677,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                                 $
                                     .datepicker
                                     ._adjustDate(event.target, (event.ctrlKey
-                                        ? + $.datepicker._get(inst, "stepBigMonths")
-                                        : + $.datepicker._get(inst, "stepMonths")), "M");
+                                        ? +$.datepicker._get(inst, "stepBigMonths")
+                                        : +$.datepicker._get(inst, "stepMonths")), "M");
                             }
                             break;
                         case 40:
@@ -15862,27 +15892,30 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     ? prevText
                     : this.formatDate(prevText, this._daylightSavingAdjust(new Date(drawYear, drawMonth - stepMonths, 1)), this._getFormatConfig(inst)));
                 prev              = (this._canAdjustMonth(inst, -1, drawYear, drawMonth)
-                    ? "<a class='ui-datepicker-prev ui-corner-all' data-handler='prev' data-event='clic" +
-                        "k' title='" + prevText + "'><span class='ui-icon ui-icon-circle-triangle-" + (isRTL
-                            ? "e"
-                            : "w") + "'>" + prevText + "</span></a>"
+                    ? "<a class='ui-datepicker-prev ui-corner-all' data-handler='prev' data-event='cl" +
+                            "ick' title='" + prevText + "'><span class='ui-icon ui-icon-circle-triangle-" + (isRTL
+                        ? "e"
+                        : "w") + "'>" + prevText + "</span></a>"
                     : (hideIfNoPrevNext
                         ? ""
-                        : "<a class='ui-datepicker-prev ui-corner-all ui-state-disabled' title='" + prevText + "'><span class='ui-icon ui-icon-circle-triangle-" + (isRTL
+                        : "<a class='ui-datepicker-prev ui-corner-all ui-state-disabled' title='" +
+                                prevText + "'><span class='ui-icon ui-icon-circle-triangle-" + (isRTL
                             ? "e"
                             : "w") + "'>" + prevText + "</span></a>"));
                 nextText          = this._get(inst, "nextText");
                 nextText          = (!navigationAsDateFormat
                     ? nextText
-                    : this.formatDate(nextText, this._daylightSavingAdjust(new Date(drawYear, drawMonth + stepMonths, 1)), this._getFormatConfig(inst)));
+                    : this.formatDate(nextText, this._daylightSavingAdjust(new Date(drawYear, drawMonth +
+                            stepMonths, 1)), this._getFormatConfig(inst)));
                 next              = (this._canAdjustMonth(inst, + 1, drawYear, drawMonth)
-                    ? "<a class='ui-datepicker-next ui-corner-all' data-handler='next' data-event='clic" +
-                        "k' title='" + nextText + "'><span class='ui-icon ui-icon-circle-triangle-" + (isRTL
-                            ? "w"
-                            : "e") + "'>" + nextText + "</span></a>"
+                    ? "<a class='ui-datepicker-next ui-corner-all' data-handler='next' data-event='cl" +
+                            "ick' title='" + nextText + "'><span class='ui-icon ui-icon-circle-triangle-" + (isRTL
+                        ? "w"
+                        : "e") + "'>" + nextText + "</span></a>"
                     : (hideIfNoPrevNext
                         ? ""
-                        : "<a class='ui-datepicker-next ui-corner-all ui-state-disabled' title='" + nextText + "'><span class='ui-icon ui-icon-circle-triangle-" + (isRTL
+                        : "<a class='ui-datepicker-next ui-corner-all ui-state-disabled' title='" +
+                                nextText + "'><span class='ui-icon ui-icon-circle-triangle-" + (isRTL
                             ? "w"
                             : "e") + "'>" + nextText + "</span></a>"));
                 currentText       = this._get(inst, "currentText");
@@ -15893,15 +15926,17 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     ? currentText
                     : this.formatDate(currentText, gotoDate, this._getFormatConfig(inst)));
                 controls          = (!inst.inline
-                    ? "<button type='button' class='ui-datepicker-close ui-state-default ui-priority-pr" +
-                        "imary ui-corner-all' data-handler='hide' data-event='click'>" + this._get(inst, "closeText") + "</button>"
+                    ? "<button type='button' class='ui-datepicker-close ui-state-default ui-priority-" +
+                            "primary ui-corner-all' data-handler='hide' data-event='click'>" + this._get(inst, "closeText") +
+                            "</button>"
                     : "");
                 buttonPanel       = (showButtonPanel)
                     ? "<div class='ui-datepicker-buttonpane ui-widget-content'>" + (isRTL
                         ? controls
                         : "") + (this._isInRange(inst, gotoDate)
-                        ? "<button type='button' class='ui-datepicker-current ui-state-default ui-priority-" +
-                            "secondary ui-corner-all' data-handler='today' data-event='click'>" + currentText + "</button>"
+                        ? "<button type='button' class='ui-datepicker-current ui-state-default ui-priorit" +
+                                "y-secondary ui-corner-all' data-handler='today' data-event='click'>" +
+                                currentText + "</button>"
                         : "") + (isRTL
                         ? ""
                         : controls) + "</div>"
@@ -15952,7 +15987,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             }
                             calender += "'>";
                         }
-                        calender += "<div class='ui-datepicker-header ui-widget-header ui-helper-clearfix" + cornerClass + "'>" + (/all|left/.test(cornerClass) && row === 0
+                        calender += "<div class='ui-datepicker-header ui-widget-header ui-helper-clearfix" +
+                                cornerClass + "'>" + (/all|left/.test(cornerClass) && row === 0
                             ? (isRTL
                                 ? next
                                 : prev)
@@ -15960,7 +15996,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             ? (isRTL
                                 ? prev
                                 : next)
-                            : "") + this._generateMonthYearHeader(inst, drawMonth, drawYear, minDate, maxDate, row > 0 || col > 0, monthNames, monthNamesShort) + "</div><table class='ui-datepicker-calendar'><thead><tr>";
+                            : "") + this._generateMonthYearHeader(inst, drawMonth, drawYear, minDate, maxDate, row > 0 || col > 0, monthNames, monthNamesShort) +
+                                "</div><table class='ui-datepicker-calendar'><thead><tr>";
                         thead    = (showWeek
                             ? "<th class='ui-datepicker-week-col'>" + this._get(inst, "weekHeader") + "</th>"
                             : "");
@@ -15968,7 +16005,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             day   = (dow + firstDay) % 7;
                             thead += "<th" + ((dow + firstDay + 6) % 7 >= 5
                                 ? " class='ui-datepicker-week-end'"
-                                : "") + "><span title='" + dayNames[day] + "'>" + dayNamesMin[day] + "</span></th>";
+                                : "") + "><span title='" + dayNames[day] + "'>" + dayNamesMin[day] + "</span></" +
+                                    "th>";
                         }
                         calender    += thead + "</tr></thead><tbody>";
                         daysInMonth = this._getDaysInMonth(drawYear, drawMonth);
@@ -15988,7 +16026,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             calender += "<tr>";
                             tbody    = (!showWeek
                                 ? ""
-                                : "<td class='ui-datepicker-week-col'>" + this._get(inst, "calculateWeek")(printDate) + "</td>");
+                                : "<td class='ui-datepicker-week-col'>" + this._get(inst, "calculateWeek")(printDate) +
+                                        "</td>");
                             for (dow = 0; dow < 7; dow += 1) {
                                 daySettings  = (beforeShowDay
                                     ? beforeShowDay.apply((inst.input
@@ -16015,7 +16054,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                                     ? " title='" + daySettings[2].replace(/'/g, "&#39;") + "'"
                                     : "") + (unselectable
                                     ? ""
-                                    : " data-handler='selectDay' data-event='click' data-month='" + printDate.getMonth() + "' data-year='" + printDate.getFullYear() + "'") + ">" + (otherMonth && !showOtherMonths
+                                    : " data-handler='selectDay' data-event='click' data-month='" + printDate.getMonth() +
+                                            "' data-year='" + printDate.getFullYear() + "'") + ">" + (otherMonth && !showOtherMonths
                                     ? "&#xa0;"
                                     : (unselectable
                                         ? "<span class='ui-state-default'>" + printDate.getDate() + "</span>"
@@ -16068,8 +16108,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 } else {
                     inMinYear = (minDate && minDate.getFullYear() === drawYear);
                     inMaxYear = (maxDate && maxDate.getFullYear() === drawYear);
-                    monthHtml += "<select class='ui-datepicker-month' data-handler='selectMonth' data-event='chang" +
-                                   "e'>";
+                    monthHtml += "<select class='ui-datepicker-month' data-handler='selectMonth' data-event='cha" +
+                            "nge'>";
                     for (month = 0; month < 12; month += 1) {
                         if ((!inMinYear || month >= minDate.getMonth()) && (!inMaxYear || month <= maxDate.getMonth())) {
                             monthHtml += "<option value='" + month + "'" + (month === drawMonth
@@ -16111,8 +16151,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         endYear        = (maxDate
                             ? Math.min(endYear, maxDate.getFullYear())
                             : endYear);
-                        inst.yearshtml += "<select class='ui-datepicker-year' data-handler='selectYear' data-event='change'" +
-                                            ">";
+                        inst.yearshtml += "<select class='ui-datepicker-year' data-handler='selectYear' data-event='chang" +
+                                "e'>";
                         for (; year <= endYear; year += 1) {
                             inst.yearshtml += "<option value='" + year + "'" + (year === drawYear
                                 ? " selected='selected'"
@@ -16337,8 +16377,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 return {
                     dpDiv        : (!inline
                         ? this.dpDiv
-                        : bindHover($("<div class='" + this._inlineClass + " ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all'></d" +
-                                "iv>"))),
+                        : bindHover($("<div class='" + this._inlineClass + " ui-datepicker ui-widget ui" +
+                                "-widget-content ui-helper-clearfix ui-corner-all'></div>"))),
                     drawMonth    : 0,
                     drawYear     : 0,
                     id           : id,
@@ -17401,7 +17441,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             },
             _createWrapper   : function () {
                 this.uiDialog = $("<div>")
-                    .addClass("ui-dialog ui-widget ui-widget-content ui-corner-all ui-front " + this.options.dialogClass)
+                    .addClass("ui-dialog ui-widget ui-widget-content ui-corner-all ui-front " +
+                            this.options.dialogClass)
                     .hide()
                     .attr({role: "dialog", tabIndex: -1})
                     .appendTo(this._appendTo());
@@ -17893,7 +17934,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             $.each([
                                 "left", "top"
                             ], function (i, offsetPosition) {
-                                if (+ myAt[i] === myAt[i]) {
+                                if (+myAt[i] === myAt[i]) {
                                     offset[i] = myAt[i];
                                     myAt[i]   = offsetPosition;
                                 }
@@ -19768,8 +19809,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 }
                 var w1,
                     w2,
-                    div      = $("<div style='display:block;width:50px;height:50px;overflow:hidden;'><div style='h" +
-                            "eight:100px;width:auto;'></div></div>"),
+                    div      = $("<div style='display:block;width:50px;height:50px;overflow:hidden;'><div style=" +
+                            "'height:100px;width:auto;'></div></div>"),
                     innerDiv = div.children()[0];
                 $("body").append(div);
                 w1 = innerDiv.offsetWidth;
@@ -20311,7 +20352,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 this._mouseInit();
                 this
                     .element
-                    .addClass("ui-slider ui-slider-" + this.orientation + " ui-widget ui-widget-content ui-corner-all");
+                    .addClass("ui-slider ui-slider-" + this.orientation + " ui-widget ui-widget-con" +
+                            "tent ui-corner-all");
                 this._refresh();
                 this._setOption("disabled", this.options.disabled);
                 this._animateOff = false;
@@ -20390,8 +20432,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     .remove();
                 this
                     .element
-                    .removeClass("ui-slider ui-slider-horizontal ui-slider-vertical ui-widget ui-widget-content ui" +
-                            "-corner-all");
+                    .removeClass("ui-slider ui-slider-horizontal ui-slider-vertical ui-widget ui-widget-content " +
+                            "ui-corner-all");
                 this._mouseDestroy();
             },
             _detectOrientation : function () {
@@ -21027,8 +21069,10 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 return value;
             },
             _buttonHtml      : function () {
-                return "<a class='ui-spinner-button ui-spinner-up ui-corner-tr'><span class='ui-icon " + this.options.icons.up + "'>&#9650;</span></a><a class='ui-spinner-button ui-spinner-down ui-corner-br'><s" +
-                        "pan class='ui-icon " + this.options.icons.down + "'>&#9660;</span></a>";
+                return "<a class='ui-spinner-button ui-spinner-up ui-corner-tr'><span class='ui-icon " +
+                        this.options.icons.up + "'>&#9650;</span></a><a class='ui-spinner-button ui-spi" +
+                        "nner-down ui-corner-br'><span class='ui-icon " + this.options.icons.down + "'>" +
+                        "&#9660;</span></a>";
             },
             _create          : function () {
                 this._setOption("max", this.options.max);
@@ -21230,7 +21274,7 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 if (typeof val === "string" && val !== "") {
                     val = window.Globalize && this.options.numberFormat
                         ? Globalize.parseFloat(val, 10, this.options.culture)
-                        : + val;
+                        : +val;
                 }
                 return val === "" || isNaN(val)
                     ? null
@@ -21529,8 +21573,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             $(this).remove();
                         } else {
                             $(this)
-                                .removeClass("ui-state-default ui-state-active ui-state-disabled ui-corner-top ui-corner-botto" +
-                                        "m ui-widget-content ui-tabs-active ui-tabs-panel")
+                                .removeClass("ui-state-default ui-state-active ui-state-disabled ui-corner-top ui-corner-bot" +
+                                        "tom ui-widget-content ui-tabs-active ui-tabs-panel")
                                 .removeAttr("tabIndex")
                                 .removeAttr("aria-live")
                                 .removeAttr("aria-busy")
@@ -22807,7 +22851,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         env.$elts.paginationBtns = env
                             .$elts
                             .paginationBtns
-                            .add($("<span class='UIHide'><a role='button'>" + env.params.tabLabel(env.$elts.paginationBtns.length + 1) + "</a></span>").data("firstStep", i));
+                            .add($("<span class='UIHide'><a role='button'>" + env.params.tabLabel(env.$elts.paginationBtns.length +
+                                    1) + "</a></span>").data("firstStep", i));
                         pageTotal                = env.$elts.paginationBtns.length;
                     }
                 });
@@ -22821,8 +22866,10 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         env.$elts.paginationBtns = env
                             .$elts
                             .paginationBtns
-                            .add($("<span><span class='LayoutHItem TextStrong LayoutSmallGutterLeft'>" + env.params.tabLabel(env.$elts.paginationBtns.length + 1) + "</span><span class='LayoutHItem LayoutSmallGutterLeft'>of</span><span class='Lay" +
-                                    "outHItem TextStrong LayoutSmallGutterLeft'>" + pageTotal + "</span></span>").data("firstStep", i));
+                            .add($("<span><span class='LayoutHItem TextStrong LayoutSmallGutterLeft'>" + env.params.tabLabel(env.$elts.paginationBtns.length +
+                                    1) + "</span><span class='LayoutHItem LayoutSmallGutterLeft'>of</span><span cla" +
+                                    "ss='LayoutHItem TextStrong LayoutSmallGutterLeft'>" + pageTotal + "</span></sp" +
+                                    "an>").data("firstStep", i));
                     }
                 });
         } else {
@@ -22835,7 +22882,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         env.$elts.paginationBtns = env
                             .$elts
                             .paginationBtns
-                            .add($("<a role='button'><span>" + env.params.tabLabel(env.$elts.paginationBtns.length + 1) + "</span></a>").data("firstStep", i));
+                            .add($("<a role='button'><span>" + env.params.tabLabel(env.$elts.paginationBtns.length +
+                                    1) + "</span></a>").data("firstStep", i));
                     }
                 });
         }
@@ -23437,7 +23485,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     : opts.items.visible + 1;
                 if (minimum > itms.total) {
                     e.stopImmediatePropagation();
-                    return debug(conf, "Not enough items (" + itms.total + " total, " + minimum + " needed): Not scrolling.");
+                    return debug(conf, "Not enough items (" + itms.total + " total, " + minimum +
+                            " needed): Not scrolling.");
                 }
                 var v = [
                         obj, num, clb, que
@@ -25256,7 +25305,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             $wrp      = (conf.wrapper == "parent")
                 ? $cfs.parent()
                 : $cfs
-                    .wrap("<" + conf.wrapper.element + " class='" + conf.wrapper.classname + "' />")
+                    .wrap("<" + conf.wrapper.element + " class='" + conf.wrapper.classname +
+                            "' />")
                     .parent();
         conf.selector     = $cfs.selector;
         conf.serialNumber = $.fn.caroSlider.serialNumber++;
@@ -25531,7 +25581,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
         if (t == "show" || t == "hide") {
             var f = t;
         } else if (minimum > t) {
-            debug(c, "Not enough items (" + t + " total, " + minimum + " needed): Hiding navigation.");
+            debug(c, "Not enough items (" + t + " total, " + minimum + " needed): Hiding na" +
+                    "vigation.");
             var f = "hide";
         } else {
             var f = "show";
@@ -26618,7 +26669,8 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
         return new Date().getTime();
     }
     function deprecated(o, n) {
-        debug(true, o + " is DEPRECATED, support for it will be removed. Use " + n + " instead.");
+        debug(true, o + " is DEPRECATED, support for it will be removed. Use " + n + " " +
+                "instead.");
     }
     function debug(d, m) {
         if (!is_undefined(window.console) && !is_undefined(window.console.log)) {
@@ -27109,8 +27161,10 @@ if (typeof jQuery != "undefined" && typeof $.jcarousel == "undefined") {
                         ? e[0]
                         : e;
                     var old = !this.options.vertical
-                        ? (el.offsetWidth || $jc.intval(this.options.itemFallbackDimension)) + $jc.margin(el, "marginLeft") + $jc.margin(el, "marginRight")
-                        : (el.offsetHeight || $jc.intval(this.options.itemFallbackDimension)) + $jc.margin(el, "marginTop") + $jc.margin(el, "marginBottom");
+                        ? (el.offsetWidth || $jc.intval(this.options.itemFallbackDimension)) + $jc.margin(el, "marginLeft") +
+                                $jc.margin(el, "marginRight")
+                        : (el.offsetHeight || $jc.intval(this.options.itemFallbackDimension)) + $jc.margin(el, "marginTop") +
+                                $jc.margin(el, "marginBottom");
                     if (d == null || old == d) {
                         return old;
                     }
@@ -27298,8 +27352,8 @@ if (typeof jQuery != "undefined" && typeof $.jcarousel == "undefined") {
                         c = e;
                         d = this.dimension(e);
                         if (d === 0) {
-                            throw new Error("jCarousel: No width/height set for items. This will cause an infinite loop. Abor" +
-                                    "ting...");
+                            throw new Error("jCarousel: No width/height set for items. This will cause an infinite loop. Ab" +
+                                    "orting...");
                         }
                         if (this.options.wrap != "circular" && this.options.size !== null && j > this.options.size) {
                             cache.push(e);
@@ -27871,11 +27925,13 @@ $(document).ready(function () {
             $options,
             effect        = settings.effect,
             effectSpeed   = settings.effectSpeed,
-            $optList      = $("<ul class='" + settings.optionListName + "' style='display:none;'></ul>");
+            $optList      = $("<ul class='" + settings.optionListName + "' style='display:none;'" +
+                    "></ul>");
         listWidth = $dropdown.width();
         $dropdown
             .hide()
-            .after("<div class='" + settings.containerName + "' style='position:relative;'></div>");
+            .after("<div class='" + settings.containerName + "' style='position:relative;'>" +
+                    "</div>");
         if (defaultOption && defaultOption !== "") {
             selectedLabel = defaultOption;
         } else {
@@ -27885,7 +27941,8 @@ $(document).ready(function () {
                 .find("option:eq(0)")
                 .text();
         }
-        $toggleLink = $("<a href='#' class='" + settings.toggleBtnName + "'>" + selectedLabel + "</a>");
+        $toggleLink = $("<a href='#' class='" + settings.toggleBtnName + "'>" +
+                selectedLabel + "</a>");
         $container  = $dropdown.next("div." + settings.containerName);
         $container.append($toggleLink);
         $optList.append(BuildOptionList($dropdown, settings));
@@ -28070,7 +28127,8 @@ $(document).ready(function () {
             optList = $list.find("option,optgroup");
         }
         if (settings.defaultOption && settings.defaultOption !== "") {
-            listItem += "<li class='" + settings.optionName + "'><a href='#'>" + settings.defaultOption + "</a></li>";
+            listItem += "<li class='" + settings.optionName + "'><a href='#'>" + settings.defaultOption +
+                    "</a></li>";
         }
         for (i = 0; i < optList.length; i += 1) {
             $curItem = $(optList[i]);
@@ -28078,9 +28136,11 @@ $(document).ready(function () {
                 isSelected = "selected";
             }
             if ($curItem.is("option")) {
-                listItem += "<li class='" + settings.optionName + "'><a class='" + isSelected + "' href='#' rel='" + $curItem.attr("value") + "'>" + $curItem.text() + "</a></li>";
+                listItem += "<li class='" + settings.optionName + "'><a class='" + isSelected + "' href='#'" +
+                        " rel='" + $curItem.attr("value") + "'>" + $curItem.text() + "</a></li>";
             } else {
-                listItem += "<li class='" + settings.optionGroupName + "'><span class='CPodSelectLinkArrow'></span>" + $curItem.attr("label") + "</li>";
+                listItem += "<li class='" + settings.optionGroupName + "'><span class='CPodSelectLinkArrow'" +
+                        "></span>" + $curItem.attr("label") + "</li>";
             }
             isSelected = "";
         }
@@ -28549,7 +28609,8 @@ if (jQuery) {
                         disableSelection(control);
                     } else {
                         var label = $("<span class='selectBox-label' />"),
-                            arrow = $("<span class='selectBox-arrow'><span class='selectBox-arrow-icon'></span></span>");
+                            arrow = $("<span class='selectBox-arrow'><span class='selectBox-arrow-icon'></span></span" +
+                                    ">");
                         label
                             .attr("id", "selectBox-label-" + control.attr("id"))
                             .attr("class", getLabelClass(select))
@@ -28661,8 +28722,10 @@ if (jQuery) {
                                     }
                                 } else {
                                     i += 1;
-                                    var optgroup = $("<li id='selectBox-optgroup-" + i + "' class='selectBox-optgroup' role='presentation' />")
-                                        .append("<span id='selectBox-optgroup-" + i + "-label'>" + $(this).attr("label") + "</span>")
+                                    var optgroup = $("<li id='selectBox-optgroup-" + i + "' class='selectBox-optgro" +
+                                            "up' role='presentation' />")
+                                        .append("<span id='selectBox-optgroup-" + i + "-la" +
+                                                "bel'>" + $(this).attr("label") + "</span>")
                                         .append("<ul aria-labelledby='selectBox-optgroup-" + i + "-label'></ul>");
                                     options.append(optgroup);
                                     options = _getOptions($(this), options);
@@ -29013,7 +29076,8 @@ if (jQuery) {
                         options.css("max-height", options.data("max-height"));
                         newCSSPosition.bottom = control.outerHeight();
                     } else {
-                        var outsideBottomViewport = Math.abs((menuOffsetTop + controlOuterHeight + menuHeight) - (windowHeight + windowScrollTop)),
+                        var outsideBottomViewport = Math.abs((menuOffsetTop + controlOuterHeight +
+                                    menuHeight) - (windowHeight + windowScrollTop)),
                             outsideTopViewport    = Math.abs((controlOffsetTop - windowScrollTop) - menuHeight);
                         if (outsideBottomViewport < outsideTopViewport) {
                             options.css("max-height", options.data("max-height") - outsideBottomViewport - (controlOuterHeight / 2));
@@ -30566,8 +30630,8 @@ if (jQuery) {
         });
     });
     (function ($, c, b) {
-        $.map(("click dblclick mousemove mousedown mouseup mouseover mouseout touchstart touche" +
-                "d touchmove change select submit keydown keypress keyup").split(" "), function (d) {
+        $.map(("click dblclick mousemove mousedown mouseup mouseover mouseout touchstart touch" +
+                "end touchmove change select submit keydown keypress keyup").split(" "), function (d) {
             a(d);
         });
         a("focusin", "focus" + b);
@@ -30707,10 +30771,10 @@ if (jQuery) {
             }
             function wrapper() {
                 var that    = this,
-                    elapsed =+ new Date() - last_exec,
+                    elapsed = +new Date() - last_exec,
                     args    = arguments;
                 function exec() {
-                    last_exec =+ new Date();
+                    last_exec = +new Date();
                     callback.apply(that, args);
                 };
                 function clear() {
@@ -30991,7 +31055,8 @@ if (jQuery) {
                 };
                 this.succ           = function (s) {
                     s        = this.s(s);
-                    this.str = s.slice(0, s.length - 1) + String.fromCharCode(s.charCodeAt(s.length - 1) + 1);
+                    this.str = s.slice(0, s.length - 1) + String.fromCharCode(s.charCodeAt(s.length - 1) +
+                            1);
                     return this;
                 };
                 this.times          = function (count, s) {
@@ -31148,8 +31213,8 @@ if (jQuery) {
                         return false;
                     })
                     .wrapInner("<div class='TreeListFloat' />")
-                    .prepend("<div class='TreeListArrow'><span class='ui-widget ui-widget-content ui-icon ui-i" +
-                            "con-triangle-1-e'></span></div>")
+                    .prepend("<div class='TreeListArrow'><span class='ui-widget ui-widget-content ui-icon ui" +
+                            "-icon-triangle-1-e'></span></div>")
                     .wrapInner("<div class='LayoutBreakAfter TreeListPad' />")
                     .end()
                     .children("dd")
@@ -31338,7 +31403,8 @@ if (jQuery) {
                 }
                 var bitLyApi = "http://api.bit.ly/v3/shorten?";
                 var bitLyFormat = "xml";
-                var bitLyURL = bitLyApi + "login=" + bitLyLogin + "&apiKey=" + bitLyApiKey + "&longUrl=" + encodeURIComponent(PageToolsUrl) + "&format=" + bitLyFormat;
+                var bitLyURL = bitLyApi + "login=" + bitLyLogin + "&apiKey=" + bitLyApiKey + "&longUrl=" +
+                        encodeURIComponent(PageToolsUrl) + "&format=" + bitLyFormat;
                 $.ajax({
                     async      : false,
                     contentType: "application/x-www-form-urlencoded",
@@ -31361,37 +31427,44 @@ if (jQuery) {
             event.preventDefault();
             bitLy();
             if (bitLySuccess) {
-                window.open("http://www.facebook.com/sharer.php?u=" + bitLyShortURL + "&t=" + encodeURIComponent(PageToolsTitle), "sharer", "toolbar=0,status=0,width=626,height=436");
+                window.open("http://www.facebook.com/sharer.php?u=" + bitLyShortURL + "&t=" +
+                        encodeURIComponent(PageToolsTitle), "sharer", "toolbar=0,status=0,width=626,height=436");
             } else {
-                window.open("http://www.facebook.com/sharer.php?u=" + encodeURIComponent(PageToolsUrl) + "&t=" + encodeURIComponent(PageToolsTitle), "sharer", "toolbar=0,status=0,width=626,height=436");
+                window.open("http://www.facebook.com/sharer.php?u=" + encodeURIComponent(PageToolsUrl) +
+                        "&t=" + encodeURIComponent(PageToolsTitle), "sharer", "toolbar=0,status=0,width=626,height=436");
             }
         });
         $(".Twitter-button").click(function (event) {
             event.preventDefault();
             bitLy();
             if (bitLySuccess) {
-                window.open("http://twitter.com/share?text=" + encodeURIComponent(PageToolsTitle) + "&url=" + bitLyShortURL + "&data-counturl=" + encodeURIComponent(PageToolsUrl), "sharer", "toolbar=0,status=0,width=775,height=436");
+                window.open("http://twitter.com/share?text=" + encodeURIComponent(PageToolsTitle) +
+                        "&url=" + bitLyShortURL + "&data-counturl=" + encodeURIComponent(PageToolsUrl), "sharer", "toolbar=0,status=0,width=775,height=436");
             } else {
-                window.open("http://twitter.com/share?text=" + encodeURIComponent(PageToolsTitle) + "&url=" + encodeURIComponent(PageToolsUrl), "sharer", "toolbar=0,status=0,width=775,height=436");
+                window.open("http://twitter.com/share?text=" + encodeURIComponent(PageToolsTitle) +
+                        "&url=" + encodeURIComponent(PageToolsUrl), "sharer", "toolbar=0,status=0,width=775,height=436");
             }
         });
         $(".LinkedIn-button").click(function (event) {
             event.preventDefault();
             bitLy();
             if (bitLySuccess) {
-                window.open("http://www.linkedin.com/shareArticle?mini=true&url=" + bitLyShortURL + "&title=" + encodeURIComponent(PageToolsTitle), "sharer", "toolbar=0,status=0,width=626,height=436");
+                window.open("http://www.linkedin.com/shareArticle?mini=true&url=" + bitLyShortURL +
+                        "&title=" + encodeURIComponent(PageToolsTitle), "sharer", "toolbar=0,status=0,width=626,height=436");
             } else {
-                window.open("http://www.linkedin.com/shareArticle?mini=true&url=" + encodeURIComponent(PageToolsUrl) + "&title=" + encodeURIComponent(PageToolsTitle), "sharer", "toolbar=0,status=0,width=626,height=436");
+                window.open("http://www.linkedin.com/shareArticle?mini=true&url=" +
+                        encodeURIComponent(PageToolsUrl) + "&title=" + encodeURIComponent(PageToolsTitle), "sharer", "toolbar=0,status=0,width=626,height=436");
             }
         });
         $(".Weibo-button").click(function (event) {
             event.preventDefault();
-            window.open("http://service.weibo.com/share/share.php?url=" + encodeURIComponent(PageToolsUrl) + "&title=" + encodeURIComponent(PageToolsTitle), "sharer", "toolbar=0,status=0,width=626,height=436");
+            window.open("http://service.weibo.com/share/share.php?url=" + encodeURIComponent(PageToolsUrl) +
+                    "&title=" + encodeURIComponent(PageToolsTitle), "sharer", "toolbar=0,status=0,width=626,height=436");
         });
         $(".PayPal-button").click(function (event) {
             event.preventDefault();
-            window.open("https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/Marketing/popup/OLCWhatIsPayPal" +
-                    "-outside",
+            window.open("https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/Marketing/popup/OLCWhatIsPayP" +
+                    "al-outside",
                     "olcwhatispaypal", "toolbar=0,status=0,width=400,height=350");
         });
         if ($.browser.msie || $.browser.mozilla || window.opera) {
@@ -32672,7 +32745,8 @@ if (jQuery) {
                             par += "<param name='" + j + "' value='" + parObj[j] + "' />";
                         }
                     }
-                    el.outerHTML              = "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000'" + att + ">" + par + "</object>";
+                    el.outerHTML              = "<object classid='clsid:D27CDB6E-AE6D-11cf-96B8-444553540000'" + att + ">" + par +
+                            "</object>";
                     objIdArr[objIdArr.length] = attObj.id;
                     r                         = getElementById(attObj.id);
                 } else {
@@ -33302,11 +33376,13 @@ if (jQuery) {
             var dispatcher = adobe.vrbl("reflowDispatcher");
             if (dispatcher) {
                 if (dispatcher.hasLayoutEvent("phone") && dispatcher.getLayoutEvent("phone").active) {
-                    $(this.targetID + " LayoutSlimGrid-1 input, " + this.targetID + " LayoutSlimGrid-1-2 input").each(function () {
+                    $(this.targetID + " LayoutSlimGrid-1 input, " + this.targetID + " LayoutSlimGri" +
+                            "d-1-2 input").each(function () {
                         $(this).css("maxWidth", "349px");
                     });
                 } else {
-                    $(this.targetID + " LayoutSlimGrid-1 input, " + this.targetID + " LayoutSlimGrid-1-2 input").each(function () {
+                    $(this.targetID + " LayoutSlimGrid-1 input, " + this.targetID + " LayoutSlimGri" +
+                            "d-1-2 input").each(function () {
                         $(this).css("maxWidth", "");
                     });
                 }
@@ -33320,25 +33396,32 @@ if (jQuery) {
             $(this.targetID + " p.note").each(function () {
                 $(this).addClass("LayoutRow LayoutBreakAfter LayoutCellSides");
             });
-            $(this.targetID + " div.dropdownlist label, " + this.targetID + " div.textfield label, " + this.targetID + " div.textarea label").each(function () {
-                $(this).wrap("<div class='LayoutGrid-1 LayoutSlimGrid-1-2'><div class='LayoutCellLeft LayoutSm" +
-                        "allRow'></div></div>");
+            $(this.targetID + " div.dropdownlist label, " + this.targetID + " div.textfield" +
+                    " label, " + this.targetID + " div.textarea label").each(function () {
+                $(this).wrap("<div class='LayoutGrid-1 LayoutSlimGrid-1-2'><div class='LayoutCellLeft Layout" +
+                        "SmallRow'></div></div>");
             });
-            $(this.targetID + " div.dropdownlist input[type=text], " + this.targetID + " div.dropdownlist select, " + this.targetID + " div.dropdownlist textarea, " + this.targetID + " div.textfield input[type=text], " + this.targetID + " div.textfield select, " + this.targetID + " div.textfield textarea, " + this.targetID + " div.textarea textarea").each(function () {
+            $(this.targetID + " div.dropdownlist input[type=text], " + this.targetID + " di" +
+                    "v.dropdownlist select, " + this.targetID + " div.dropdownlist textarea, " + this.targetID +
+                    " div.textfield input[type=text], " + this.targetID + " div.textfield select, " +
+                    this.targetID + " div.textfield textarea, " + this.targetID + " div.textarea te" +
+                    "xtarea").each(function () {
                 $(this).wrap("<div class='LayoutGrid-2-3 LayoutSlimGrid-1-2' />");
             });
-            $(this.targetID + " div.checkbox label, " + this.targetID + " div.checkboxlist label").each(function () {
-                $(this).wrap("<div class='LayoutGrid-2-3 LayoutSlimGrid-2'><div class='LayoutCellRight LayoutS" +
-                        "mallRow'></div></div>");
+            $(this.targetID + " div.checkbox label, " + this.targetID + " div.checkboxlist " +
+                    "label").each(function () {
+                $(this).wrap("<div class='LayoutGrid-2-3 LayoutSlimGrid-2'><div class='LayoutCellRight Layou" +
+                        "tSmallRow'></div></div>");
             });
-            $(this.targetID + " div.row input[type=text], " + this.targetID + " div.row textarea").each(function () {
+            $(this.targetID + " div.row input[type=text], " + this.targetID + " div.row tex" +
+                    "tarea").each(function () {
                 $(this).addClass("FormInputFull LayoutSmallRow");
             });
             $(this.targetID + " div.row input[type=checkbox]").each(function () {
                 $(this)
                     .addClass("LayoutGutter")
-                    .wrap("<div class='LayoutGrid-1 LayoutSlimGrid-1'><div class='LayoutBreakAfter'><div cl" +
-                            "ass='LayoutRight LayoutSmallRow'></div></div></div>");
+                    .wrap("<div class='LayoutGrid-1 LayoutSlimGrid-1'><div class='LayoutBreakAfter'><div " +
+                            "class='LayoutRight LayoutSmallRow'></div></div></div>");
             });
             $(this.targetID + " div.legal h1").each(function () {
                 $(this).addClass("LayoutCellSides");
@@ -33346,8 +33429,8 @@ if (jQuery) {
             $(this.targetID + " div.row input[type=submit]").each(function () {
                 $(this)
                     .addClass("Button ButtonYellow")
-                    .wrap("<div class='LayoutGrid-1-3 LayoutSlimGrid-1-2 LayoutH'><div class='LayoutHItemRi" +
-                            "ght'></div></div>");
+                    .wrap("<div class='LayoutGrid-1-3 LayoutSlimGrid-1-2 LayoutH'><div class='LayoutHItem" +
+                            "Right'></div></div>");
             });
             $(this.targetID + " div.errorSummary").wrap("<div class='LayoutHidden LayoutZero' />");
             $(this.targetID + " .errorMessage, " + this.targetID + " span.required").each(function () {
@@ -34029,7 +34112,8 @@ if (jQuery) {
             .http
             .cdnprefix();
         if ($(window).width() > 640) {
-            $.getScript(cdnPrefix + "/include/script/jquery/plugins/OnDemand/jquery.colorbox.js", function (data, textStatus) {
+            $.getScript(cdnPrefix + "/include/script/jquery/plugins/OnDemand/jquery.colorbo" +
+                    "x.js", function (data, textStatus) {
                 if (textStatus == "success") {
                     target.colorbox();
                 }
@@ -34053,7 +34137,8 @@ if (jQuery) {
             $("<div id='" + special + "' class='LayoutHidden LayoutZero'>").appendTo(body);
             specialObj = $("#" + special);
             if (debug) {
-                console.log("'special' object not found, creating it: " + special + ": " + specialObj);
+                console.log("'special' object not found, creating it: " + special + ": " +
+                        specialObj);
             }
         }
         if (method == null || method == "" || cookie == null || cookie == "") {
@@ -34200,9 +34285,9 @@ if (jQuery) {
                 adobeGetCookie(cookieItem);
             } else {
                 var noCookies = $("#" + target + "NoCookies");
-                status = "There was a problem testing cookies. Either you've disabled this ability, or you" +
-                        "r browser doesn't seem to support cookies. Please enable cookies and refresh you" +
-                        "r browser, or update your browser.";
+                status = "There was a problem testing cookies. Either you've disabled this ability, or y" +
+                        "our browser doesn't seem to support cookies. Please enable cookies and refresh" +
+                        " your browser, or update your browser.";
                 if (noCookies.length == 0) {
                     $("<div id='" + noCookies + "' class='LayoutRow LayoutHItem TextWarning'>")
                         .appendTo(targetDiv)
@@ -34259,13 +34344,13 @@ if (jQuery) {
                 if (findCookieType == "image") {
                     specialObj.empty();
                     if (debug) {
-                        console.log(value + " looked like an 'image' type. Removing it from the DOM. Checking 'specialObj's h" +
-                                "tml: " + specialObj.html());
+                        console.log(value + " looked like an 'image' type. Removing it from the DOM. Ch" +
+                                "ecking 'specialObj's html: " + specialObj.html());
                     }
                 } else if (findCookieType == "address") {
                     if (debug) {
-                        console.log("Cookie is a URL. Not much we can do here except hope this URL is an actual API t" +
-                                "o delete the cookie.");
+                        console.log("Cookie is a URL. Not much we can do here except hope this URL is an actual API" +
+                                " to delete the cookie.");
                     }
                 } else {
                     $
@@ -34561,7 +34646,8 @@ if (jQuery) {
                     script.onload             = onload;
                     head.insertBefore(script, head.firstChild);
                 }
-                appendScript(URL_SCHEME + "://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js", function () {
+                appendScript(URL_SCHEME + "://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery" +
+                        ".min.js", function () {
                     appendScript(CDN_URL + "pub1.js", function () {
                         BAPW.i(link, {
                             ocid: 414,
@@ -34571,7 +34657,8 @@ if (jQuery) {
                 });
             });
             pixel           = d.createElement("img");
-            pixel.src       = URL_SCHEME + "://l.betrad.com/pub/p.gif?pid=" + page_id + "&ocid=414&ii=1&r=" + Math.random();
+            pixel.src       = URL_SCHEME + "://l.betrad.com/pub/p.gif?pid=" + page_id + "&ocid=414&ii=1&r=" +
+                    Math.random();
             pixel.height    = "1";
             pixel.width     = "1";
             pixel.className = "SiteFooterEvidonPixel";
@@ -34701,7 +34788,8 @@ if (jQuery) {
         }
     };
     $.getURLParameter                    = function (name) {
-        return decodeURIComponent((location.search.match(RegExp("[?&]" + name + "=([^&]*)")) || [, ""])[1]);
+        return decodeURIComponent((location.search.match(RegExp("[?&]" + name + "=([^&]" +
+                "*)")) || [, ""])[1]);
     };
     adobe.fn.initGeorouting              = function () {
         if (($("#Georouting").length) && !($.cookies.get("georouting_presented")) && ($(window).width() > 750)) {
@@ -35229,11 +35317,11 @@ if (jQuery) {
     };
     adobe.fn.gnavGetIMSInfo             = function () {
         var adobe_host = window.location.hostname,
-            confURL    = "https://www.adobe.com/svcs/configurations/clients/adobedotcomIMS/client_aliases/" +
-                       "adobedotcom?landscape=" + adobe_host;
+            confURL    = "https://www.adobe.com/svcs/configurations/clients/adobedotcomIMS/client_aliase" +
+                    "s/adobedotcom?landscape=" + adobe_host;
         if (($.string(adobe_host).include("stage")) || ($.string(adobe_host).include("dev")) || ($.string(adobe_host).include("qa"))) {
-            var confURL = "/svcs/configurations/clients/adobedotcomIMS/client_aliases/adobedotcom?landscape" +
-                    "=" + adobe_host;
+            var confURL = "/svcs/configurations/clients/adobedotcomIMS/client_aliases/adobedotcom?landsca" +
+                    "pe=" + adobe_host;
         }
         $
             .ajax({dataType: "jsonp", url: confURL})
@@ -35346,12 +35434,12 @@ if (jQuery) {
         s_adobe.tl(this, "o", "adobe.com:GlobalNav:SignOut");
         var signOutHREF = $("#shSignOutLink").attr("href");
         if ($.string(signOutHREF).startsWith("http")) {
-            setTimeout("window.location = 'http://www.adobe.com/cfusion/membership/logout.cfm?returnURL=" +
-                    "' + encodeURIComponent(window.location.href)",
+            setTimeout("window.location = 'http://www.adobe.com/cfusion/membership/logout.cfm?returnUR" +
+                    "L=' + encodeURIComponent(window.location.href)",
                     1000);
         } else {
-            setTimeout("window.location = '/cfusion/membership/logout.cfm?returnURL=' + encodeURICompone" +
-                    "nt(window.location.href)",
+            setTimeout("window.location = '/cfusion/membership/logout.cfm?returnURL=' + encodeURICompo" +
+                    "nent(window.location.href)",
                     1000);
         }
     };
@@ -36701,7 +36789,8 @@ if (jQuery) {
                         textToInsert[i++] = "<tr>";
                         textToInsert[i++] = "<th class='TableCell TableNumber'>" + date + "</th>";
                         textToInsert[i++] = "<td>";
-                        textToInsert[i++] = "<a target='_blank' href='" + item.link + "'>" + cuttext(item.title, max) + "</a>";
+                        textToInsert[i++] = "<a target='_blank' href='" + item.link + "'>" + cuttext(item.title, max) + "</" +
+                                "a>";
                         textToInsert[i++] = "</td>";
                         textToInsert[i++] = "</tr>";
                     }
@@ -36724,7 +36813,8 @@ if (jQuery) {
         var scrollbar = $("#" + e + " .ui-slider-bar").slider({
             slide: function (event, ui) {
                 if (scrollContent.width() > scrollPane.width()) {
-                    scrollContent.css("margin-left", Math.round(ui.value / 100 * (scrollPane.width() - scrollContent.width())) + "px");
+                    scrollContent.css("margin-left", Math.round(ui.value / 100 * (scrollPane.width() - scrollContent.width())) +
+                            "px");
                 } else {
                     scrollContent.css("margin-left", 0);
                 }
@@ -36766,7 +36856,8 @@ if (jQuery) {
             var showing = scrollContent.width() + parseInt(scrollContent.css("margin-left"), 10);
             var gap = scrollPane.width() - showing;
             if (gap > 0) {
-                scrollContent.css("margin-left", parseInt(scrollContent.css("margin-left"), 10) + gap);
+                scrollContent.css("margin-left", parseInt(scrollContent.css("margin-left"), 10) +
+                        gap);
             }
         }
         $(window).resize(function () {
@@ -36957,7 +37048,8 @@ if (jQuery) {
                                 modal.dialog("option", "height", combinedYObjects);
                                 modal.dialog("open");
                             } else if ($("#" + config.target + " object").length != 0) {
-                                combinedXObjects = (parseInt($("#" + config.target + " object").attr("width")) + marginWidth) - 20;
+                                combinedXObjects = (parseInt($("#" + config.target + " object").attr("width")) +
+                                        marginWidth) - 20;
                                 combinedYObjects = parseInt($("#" + config.target + " object").attr("height")) + marginHeight + 8;
                                 modalLaunch(combinedXObjects, combinedYObjects);
                             } else {
@@ -37273,7 +37365,8 @@ if (jQuery) {
         if (typeof d === "undefined") {
             d = new Date();
         };
-        var dt = s(d.getMonth() + 1, 2) + "/" + s(d.getDate(), 2) + "/" + d.getFullYear() + " " + s(d.getHours(), 2) + ":" + s(d.getMinutes(), 2) + ":" + s(d.getSeconds(), 2);
+        var dt = s(d.getMonth() + 1, 2) + "/" + s(d.getDate(), 2) + "/" + d.getFullYear() + " " +
+                s(d.getHours(), 2) + ":" + s(d.getMinutes(), 2) + ":" + s(d.getSeconds(), 2);
         if (stockDatePod != null && stockDatePod != "undefined") {
             stockDatePod
                 .find("div.StockQuoteDate")
@@ -38252,11 +38345,13 @@ if (jQuery) {
                 wrapper       : "div class='LayoutRow'"
             };
             $
-                .getScript(cdnPrefix + "/include/script/jquery/plugins/OnDemand/jquery.validate.js")
+                .getScript(cdnPrefix + "/include/script/jquery/plugins/OnDemand/jquery.validat" +
+                        "e.js")
                 .done(function () {
                     if (meta) {
                         $
-                            .getScript(cdnPrefix + "/include/script/jquery/plugins/OnDemand/jquery.metadata.js")
+                            .getScript(cdnPrefix + "/include/script/jquery/plugins/OnDemand/jquery.metadat" +
+                                    "a.js")
                             .done(function () {
                                 attr = (attr == null)
                                     ? "data-validate"
@@ -38434,9 +38529,10 @@ if (jQuery) {
                             .find(".TabsMobile")
                             .show();
                     } else {
-                        $(tabLink).prepend("<a name='" + tabLink + "'></a><div class='LayoutBreakAfter TabsMobile'><h2 class='LayoutRow TextH3 Layou" +
-                                "tHItem'>" + tabText + "</h2><div class='LayoutHItemRight LayoutRow'><a href='#" + target + "'>To the top<span class='LayoutSmallGutterLeft Icon IconSmallerTop'></span></a><" +
-                                "/div></div>");
+                        $(tabLink).prepend("<a name='" + tabLink + "'></a><div class='LayoutBreakAfter " +
+                                "TabsMobile'><h2 class='LayoutRow TextH3 LayoutHItem'>" + tabText + "</h2><div " +
+                                "class='LayoutHItemRight LayoutRow'><a href='#" + target + "'>To the top<span c" +
+                                "lass='LayoutSmallGutterLeft Icon IconSmallerTop'></span></a></div></div>");
                     }
                 }
             }
@@ -38690,7 +38786,8 @@ if (jQuery) {
                 printPrices(cachedItem, countryCode, productPath, productName, vollversion, cartButtonId, priceType, taxInclude);
             } else {
                 var priceData = {
-                    data         : "method=getCategoryPricesByCountry&countryCode=" + newCC + "&categoryPath=" + productPath + "&marketSegment=" + marketSegment + "&uc=1",
+                    data         : "method=getCategoryPricesByCountry&countryCode=" + newCC + "&categoryPath=" +
+                            productPath + "&marketSegment=" + marketSegment + "&uc=1",
                     dataType     : "jsonp",
                     error        : function (xRequest, textStatus, errorThrown) {
                         $(".CPodUpgrade").hide();
@@ -38904,12 +39001,15 @@ if (jQuery) {
             }
             if (dOrigPrice != null && dOrigPrice != "undefined" && dOrigPrice != "") {
                 var origPriceObj = {
-                    "text": "<div><span class=\"TextStrikeThrough\"><span class=\"CPodCurrency \">" + symbol + "</span><span class=\"" + priceClass + " \">" + getDollarPriceHTML(dOrigPrice, priceObj.dollarDelim) + "</span><span>" + cOrigPrice + "</span></span></div>"
+                    "text": "<div><span class=\"TextStrikeThrough\"><span class=\"CPodCurrency \">" + symbol +
+                            "</span><span class=\"" + priceClass + " \">" + getDollarPriceHTML(dOrigPrice, priceObj.dollarDelim) +
+                            "</span><span>" + cOrigPrice + "</span></span></div>"
                 };
             }
             var tempObj = {
                 "CC"   : cPrice,
-                "DDDD" : "<span class=\"" + priceClass + "\">" + getDollarPriceHTML(dPrice, priceObj.dollarDelim) + "</span>",
+                "DDDD" : "<span class=\"" + priceClass + "\">" + getDollarPriceHTML(dPrice, priceObj.dollarDelim) +
+                        "</span>",
                 "sp"   : "",
                 "SYM"  : "<span class=\"CPodCurrency\">" + symbol + "</span>",
                 "TXLAB": ""
@@ -38939,8 +39039,8 @@ if (jQuery) {
         window.document.title = title;
     }
     function popVerisign() {
-        var urlstr = "https://seal.verisign.com/splash?form_file=fdf/splash.fdf&dn=WWW.ADOBE.COM&lang=" +
-                "en";
+        var urlstr = "https://seal.verisign.com/splash?form_file=fdf/splash.fdf&dn=WWW.ADOBE.COM&lan" +
+                "g=en";
         var optionsstr = "toolbar=0,location=0,directories=0,status=1,menubar=1,scrollbars=1,resizable=1";
         openPopUpWindow(urlstr, "540", "450", optionsstr, "verisignWin");
     }
@@ -38966,7 +39066,8 @@ if (jQuery) {
         name        = (typeof namestr == "undefined")
             ? "_blank"
             : namestr;
-        newWindow   = window.open(url, name, "width=" + width + ",height=" + height + "," + options);
+        newWindow   = window.open(url, name, "width=" + width + ",height=" + height + "," +
+                options);
         if (newWindow) {
             newWindow.focus();
         } else {
@@ -38987,8 +39088,8 @@ if (jQuery) {
                     .src = downloadURL;
             }
         } else {
-            downloadWindow = window.open(downloadURL, "_blank", "directories=0,location=0,menubar=0,resizable=0,scrollbars=0,status=1,toolbar=0,w" +
-                    "idth=800,height=600");
+            downloadWindow = window.open(downloadURL, "_blank", "directories=0,location=0,menubar=0,resizable=0,scrollbars=0,status=1,toolbar=0" +
+                    ",width=800,height=600");
         }
     }
     function setStoreCookie(cookie_name, value) {

@@ -18,8 +18,8 @@
                         b.setAttribute("type", "hidden");
                         b.setAttribute("name", "configId");
                         b.setAttribute("value", "S21949757");
-                        a.setAttribute("action", "http://www.travelocity.com/trips/interstitial/searchHotelsInternal/?configId=S21" +
-                                "949757");
+                        a.setAttribute("action", "http://www.travelocity.com/trips/interstitial/searchHotelsInternal/?configId=S" +
+                                "21949757");
                         a.insertBefore(b, a.firstChild);
                         testsubmitxxx = function () {
                             var a      = document.getElementById("cb-form-ho"),
@@ -5884,7 +5884,8 @@
                         r = [],
                         s = d._data(this, "events");
                     if (a.liveFired !== this && s && s.live && !a.target.disabled && (!a.button || a.type !== "click")) {
-                        a.namespace && (n = new RegExp("(^|\\.)" + a.namespace.split(".").join("\\.(?:.*\\.)?") + "(\\.|$)")),
+                        a.namespace && (n = new RegExp("(^|\\.)" + a.namespace.split(".").join("\\.(?:.*\\.)?") +
+                                "(\\.|$)")),
                         a.liveFired = this;
                         var t = s
                             .live
@@ -6516,7 +6517,8 @@
                                     ? (e = new DOMParser, c = e.parseFromString(b, "text/xml"))
                                     : (c = new ActiveXObject("Microsoft.XMLDOM"), c.async = "false", c.loadXML(b)),
                                 e = c.documentElement,
-                                (!e || !e.nodeName || e.nodeName === "parsererror") && d.error("Invalid XML: " + b);
+                                (!e || !e.nodeName || e.nodeName === "parsererror") && d.error("Invalid XML: " +
+                                        b);
                                 return c;
                             },
                             proxy        : function (a, c, e) {
@@ -6652,8 +6654,8 @@
                     d.support = {};
                     var b = c.createElement("div");
                     b.style.display = "none",
-                    b.innerHTML     = "   <link/><table></table><a href='/a' style='color:red;float:left;opacity:.55;'>" +
-                                         "a</a><input type='checkbox'/>";
+                    b.innerHTML     = "   <link/><table></table><a href='/a' style='color:red;float:left;opacity:.55;" +
+                            "'>a</a><input type='checkbox'/>";
                     var e = b.getElementsByTagName("*"),
                         f = b.getElementsByTagName("a")[0],
                         g = c.createElement("select"),
@@ -6734,8 +6736,8 @@
                                 b.appendChild(a),
                                 d.boxModel = d.support.boxModel = a.offsetWidth === 2,
                                 "zoom" in a.style && (a.style.display = "inline", a.style.zoom = 1, d.support.inlineBlockNeedsLayout = a.offsetWidth === 2, a.style.display = "", a.innerHTML = "<div style='width:4px;'></div>", d.support.shrinkWrapBlocks = a.offsetWidth !== 2),
-                                a.innerHTML = "<table><tr><td style='padding:0;border:0;display:none'></td><td>t</td></tr></tab" +
-                                        "le>";
+                                a.innerHTML = "<table><tr><td style='padding:0;border:0;display:none'></td><td>t</td></tr></t" +
+                                        "able>";
                                 var e = a.getElementsByTagName("td");
                                 d.support.reliableHiddenOffsets = e[0].offsetHeight === 0,
                                 e[0].style.display              = "",
@@ -7385,7 +7387,8 @@
                         e               = c
                             .type
                             .indexOf(".") < 0 && !c.exclusive,
-                        e || (g = c.type.split("."), c.type = g.shift(), j = g.slice(0).sort(), h = new RegExp("(^|\\.)" + j.join("\\.(?:.*\\.)?") + "(\\.|$)")),
+                        e || (g = c.type.split("."), c.type = g.shift(), j = g.slice(0).sort(), h = new RegExp("(^|\\.)" +
+                                j.join("\\.(?:.*\\.)?") + "(\\.|$)")),
                         c.namespace     = c.namespace || j.join("."),
                         i               = d._data(this, "events"),
                         f               = (i || {})[c.type];
@@ -7409,11 +7412,11 @@
                         }
                         return c.result;
                     },
-                    props  : ("altKey attrChange attrName bubbles button cancelable charCode clientX clientY c" +
-                            "trlKey currentTarget data detail eventPhase fromElement handler keyCode layerX l" +
-                            "ayerY metaKey newValue offsetX offsetY pageX pageY prevValue relatedNode related" +
-                            "Target screenX screenY shiftKey srcElement target toElement view wheelDelta whic" +
-                            "h").split(" "),
+                    props  : ("altKey attrChange attrName bubbles button cancelable charCode clientX clientY " +
+                            "ctrlKey currentTarget data detail eventPhase fromElement handler keyCode layer" +
+                            "X layerY metaKey newValue offsetX offsetY pageX pageY prevValue relatedNode re" +
+                            "latedTarget screenX screenY shiftKey srcElement target toElement view wheelDel" +
+                            "ta which").split(" "),
                     proxy  : d.proxy,
                     remove : function (a, c, e, f) {
                         if (a.nodeType !== 3 && a.nodeType !== 8) {
@@ -7451,7 +7454,8 @@
                                 q = null,
                                 l = h.indexOf(".") < 0,
                                 m = [],
-                                l || (m = h.split("."), h = m.shift(), n = new RegExp("(^|\\.)" + d.map(m.slice(0).sort(), u).join("\\.(?:.*\\.)?") + "(\\.|$)")),
+                                l || (m = h.split("."), h = m.shift(), n = new RegExp("(^|\\.)" + d.map(m.slice(0).sort(), u).join("\\.(?:.*\\.)?") +
+                                        "(\\.|$)")),
                                 p = t[h];
                                 if (!p) {
                                     continue;
@@ -7963,9 +7967,9 @@
                         return this;
                     };
                 }),
-                d.each(("blur focus focusin focusout load resize scroll unload click dblclick mousedown " +
-                        "mouseup mousemove mouseover mouseout mouseenter mouseleave change select submit " +
-                        "keydown keypress keyup error").split(" "), function (a, b) {
+                d.each(("blur focus focusin focusout load resize scroll unload click dblclick mousedown" +
+                        " mouseup mousemove mouseover mouseout mouseenter mouseleave change select subm" +
+                        "it keydown keypress keyup error").split(" "), function (a, b) {
                     d.fn[b] = function (a, c) {
                         c == null && (c = a, a = null);
                         return arguments.length > 0
@@ -10305,8 +10309,8 @@
                 }),
                 d.ajaxSetup({
                     accepts   : {
-                        script: "text/javascript, application/javascript, application/ecmascript, application/x-e" +
-                                "cmascript"
+                        script: "text/javascript, application/javascript, application/ecmascript, application/x" +
+                                "-ecmascript"
                     },
                     contents  : {
                         script: /javascript|ecmascript/
@@ -10507,7 +10511,8 @@
                                                 l = i[3] || (d.cssNumber[c]
                                                     ? ""
                                                     : "px");
-                                            l !== "px" && (d.style(h, c, (k || 1) + l), j = (k || 1) / f.cur() * j, d.style(h, c, j + l)),
+                                            l !== "px" && (d.style(h, c, (k || 1) + l), j = (k || 1) / f.cur() * j, d.style(h, c, j +
+                                                    l)),
                                             i[1] && (k = (i[1] === "-="
                                                 ? -1
                                                 : 1) * k + j),
@@ -10927,10 +10932,10 @@
                             g,
                             h,
                             i = parseFloat(d.css(a, "marginTop")) || 0,
-                            j = "<div style='position:absolute;top:0;left:0;margin:0;border:5px solid #000;paddin" +
-                              "g:0;width:1px;height:1px;'><div></div></div><table style='position:absolute;top:" +
-                              "0;left:0;margin:0;border:5px solid #000;padding:0;width:1px;height:1px;' cellpad" +
-                              "ding='0' cellspacing='0'><tr><td></td></tr></table>";
+                            j = "<div style='position:absolute;top:0;left:0;margin:0;border:5px solid #000;padd" +
+                                    "ing:0;width:1px;height:1px;'><div></div></div><table style='position:absolute;" +
+                                    "top:0;left:0;margin:0;border:5px solid #000;padding:0;width:1px;height:1px;' c" +
+                                    "ellpadding='0' cellspacing='0'><tr><td></td></tr></table>";
                         d.extend(b.style, {
                             border    : 0,
                             height    : "1px",
@@ -11213,13 +11218,15 @@
                                     ? this
                                         .parents()
                                         .filter(function () {
-                                            return /(relative|absolute|fixed)/.test(c.curCSS(this, "position", 1)) && /(auto|scroll)/.test(c.curCSS(this, "overflow", 1) + c.curCSS(this, "overflow-y", 1) + c.curCSS(this, "overflow-x", 1));
+                                            return /(relative|absolute|fixed)/.test(c.curCSS(this, "position", 1)) && /(auto|scroll)/.test(c.curCSS(this, "overflow", 1) +
+                                                    c.curCSS(this, "overflow-y", 1) + c.curCSS(this, "overflow-x", 1));
                                         })
                                         .eq(0)
                                     : this
                                         .parents()
                                         .filter(function () {
-                                            return /(auto|scroll)/.test(c.curCSS(this, "overflow", 1) + c.curCSS(this, "overflow-y", 1) + c.curCSS(this, "overflow-x", 1));
+                                            return /(auto|scroll)/.test(c.curCSS(this, "overflow", 1) + c.curCSS(this, "overflow-y", 1) +
+                                                    c.curCSS(this, "overflow-x", 1));
                                         })
                                         .eq(0);
                                 return /fixed/.test(this.css("position")) || !a.length
@@ -12081,9 +12088,9 @@
                             .each(function () {
                                 d.data(this, "destroy.tabs")
                                     ? d(this).remove()
-                                    : d(this).removeClass("ui-state-default ui-corner-top ui-tabs-selected ui-state-active ui-state-hover u" +
-                                            "i-state-focus ui-state-disabled ui-tabs-panel ui-widget-content ui-corner-bottom" +
-                                            " ui-tabs-hide");
+                                    : d(this).removeClass("ui-state-default ui-corner-top ui-tabs-selected ui-state-active ui-state-hover" +
+                                            " ui-state-focus ui-state-disabled ui-tabs-panel ui-widget-content ui-corner-bo" +
+                                            "ttom ui-tabs-hide");
                             });
                         b.cookie && this._cookie(null, b.cookie);
                         return this;
@@ -12301,8 +12308,8 @@
                 $.fn.addPlacement = function (ads) {
                     jQuery(ads).each(function () {
                         var ad   = this,
-                            elem = "<iframe scrolling='no' frameborder='0' bordercolor='#000000' vspace='0' hspace='" +
-                                 "0' marginheight='0' marginwidth='0'></iframe>";
+                            elem = "<iframe scrolling='no' frameborder='0' bordercolor='#000000' vspace='0' hspace" +
+                                    "='0' marginheight='0' marginwidth='0'></iframe>";
                         if (ad.selector) {
                             var e = jQuery(elem);
                             if (e != null) {
@@ -12635,7 +12642,8 @@
                             url_parameters.toMonth = to.month;
                             url_parameters.toYear  = to.year;
                         }
-                    })(parseDate(jQuery("#" + prefix + "-fromdate").val()), parseDate(jQuery("#" + prefix + "-todate").val()));
+                    })(parseDate(jQuery("#" + prefix + "-fromdate").val()), parseDate(jQuery("#" +
+                            prefix + "-todate").val()));
                     (function (from, to) {
                         if (from !== "") {
                             url_parameters.startTime = from;
@@ -12643,11 +12651,14 @@
                         if (to !== "") {
                             url_parameters.endTime = to;
                         }
-                    })(parseTime(jQuery("#" + prefix + "-fromtime").val()), parseTime(jQuery("#" + prefix + "-totime").val()));
+                    })(parseTime(jQuery("#" + prefix + "-fromtime").val()), parseTime(jQuery("#" +
+                            prefix + "-totime").val()));
                     url_parameters.noOfRooms  = jQuery("select[id$='totalrooms']:visible", o_form).val();
                     url_parameters.noOfAdults = (function () {
                         var _c = 0;
-                        jQuery("select[id^='" + prefix + "-adult']:visible,select[id^='" + prefix + "-minor']:visible,select[id^='" + prefix + "-child']:visible,select[id^='" + prefix + "-senior']:visible", "#cb-form-" + prefix).each(function (e, ex) {
+                        jQuery("select[id^='" + prefix + "-adult']:visible,select[id^='" + prefix + "-m" +
+                                "inor']:visible,select[id^='" + prefix + "-child']:visible,select[id^='" + prefix +
+                                "-senior']:visible", "#cb-form-" + prefix).each(function (e, ex) {
                             _c += ~~ (1 * jQuery(this).val());
                         });
                         return (_c <= 6
@@ -12770,12 +12781,12 @@
                         }
                         if ((service == "TRAVELOCITY" && prefix != "co") || (service == "TCYCA" && prefix == "ho") || (service == "TCYCA" && prefix == "fo")) {
                             var popunder = "/popWindow2.html";
-                            winfeatures = "left=150,top=200,width=300,height=600,scrollbars=0,resizable=0,toolbar=0,locatio" +
-                                    "n=0,menubar=0,status=1,directories=0";
+                            winfeatures = "left=150,top=200,width=300,height=600,scrollbars=0,resizable=0,toolbar=0,locat" +
+                                    "ion=0,menubar=0,status=1,directories=0";
                         } else {
                             popunder    = "/popWindow";
-                            winfeatures = "left='150',top='200',width='500',height='250',scrollbars='0',resizable='0',toolb" +
-                                             "ar='0',location='0',menubar='0',status='1',directories='0'";
+                            winfeatures = "left='150',top='200',width='500',height='250',scrollbars='0',resizable='0',too" +
+                                    "lbar='0',location='0',menubar='0',status='1',directories='0'";
                         }
                         urladditions_parameters.service = service;
                         urladditions_parameters.oneway  = url_parameters.oneway;
@@ -12836,8 +12847,8 @@
                         var maxfw = _fareWatcher.settings.maxfw;
                         var f = 1;
                         var fwtable = jQuery(document.createElement("table")).attr("id", "farewatcher-table");
-                        jQuery("<tr><th>Trips</th><th class='price-right'>Flights Starting at</th><th class='pri" +
-                                "ce-right'>Hotels Starting at</th></tr>").appendTo(fwtable);
+                        jQuery("<tr><th>Trips</th><th class='price-right'>Flights Starting at</th><th class='p" +
+                                "rice-right'>Hotels Starting at</th></tr>").appendTo(fwtable);
                         jQuery(data)
                             .find("origin")
                             .each(function () {
@@ -12860,15 +12871,20 @@
                                 var months = _fareWatcher.settings.months;
                                 var cMonth = months[cDate.getMonth()];
                                 var nMonth = months[cDate.getMonth() + 1];
-                                var htmlBuffer = "<td><span>" + OrigName + " (" + OrigCode + ") to " + DestName + " (" + DestCode + ")</span></td>";
+                                var htmlBuffer = "<td><span>" + OrigName + " (" + OrigCode + ") to " + DestName + " (" + DestCode +
+                                        ")</span></td>";
                                 for (var j = 0; j < ddata.length; j += 1) {
                                     var itemHtml = "";
                                     var aURL = [
-                                        _fareWatcher.settings.domain + "/mystuff/SearchFareWatcher.do?goingTo=" + DestCode + "&leavingFrom=" + OrigCode + "&departure_dt=" + cMonth + "&arrival_dt=" + nMonth + "&airFareAmount=" + ddata[j],
+                                        _fareWatcher.settings.domain + "/mystuff/SearchFareWatcher.do?goingTo=" +
+                                                DestCode + "&leavingFrom=" + OrigCode + "&departure_dt=" + cMonth + "&arrival_d" +
+                                                "t=" + nMonth + "&airFareAmount=" + ddata[j],
                                         _fareWatcher.settings.domain + "/hotel/HotelCobrand.do?city=" + DestCode,
-                                        _fareWatcher.settings.domain + "/trips/InitialSearch.do?leavingFrom=" + OrigCode + "&goingTo=" + DestCode
+                                        _fareWatcher.settings.domain + "/trips/InitialSearch.do?leavingFrom=" + OrigCode +
+                                                "&goingTo=" + DestCode
                                     ];
-                                    var searchFlightsURL = _fareWatcher.settings.domain + "/flights/InitialSearch.do?goingTo=" + DestCode + "&leavingFrom=" + OrigCode;
+                                    var searchFlightsURL = _fareWatcher.settings.domain + "/flights/InitialSearch.do?goingTo=" + DestCode +
+                                            "&leavingFrom=" + OrigCode;
                                     var whatLob = _fareWatcher
                                         .settings
                                         .dtags_lob[j];
@@ -12877,14 +12893,17 @@
                                         if ((/flights/i).test(whatLob)) {
                                             p_meta = "+ <small>RT</small>";
                                         }
-                                        htmlBuffer += "<td class='price-right'><span class='price-right'><a href='" + aURL[j] + "'>" + cData + "" + ddata[j] + " " + p_meta + "</a></span></td>";
+                                        htmlBuffer += "<td class='price-right'><span class='price-right'><a href='" + aURL[j] + "'>" +
+                                                cData + "" + ddata[j] + " " + p_meta + "</a></span></td>";
                                     } else {
                                         var href = "";
                                         whatLob = whatLob.replace(/from/i, "");
                                         if ((/flights/i).test(whatLob)) {
-                                            htmlBuffer += "<td class='price-right'><span class='price-right'><a href='" + searchFlightsURL + "'>Search " + whatLob + "</a></span></td>";
+                                            htmlBuffer += "<td class='price-right'><span class='price-right'><a href='" + searchFlightsURL +
+                                                    "'>Search " + whatLob + "</a></span></td>";
                                         } else {
-                                            htmlBuffer += "<td class='price-right'><span class='price-right'><a href='" + aURL[j] + "'>Search " + whatLob + "</a></span></td>";
+                                            htmlBuffer += "<td class='price-right'><span class='price-right'><a href='" + aURL[j] + "'>Se" +
+                                                    "arch " + whatLob + "</a></span></td>";
                                         }
                                     }
                                 }
@@ -13592,8 +13611,8 @@
                                 .bindEvents(cb);
                             cb.cars.ready = true;
                         }
-                        $(".cb-to-city,.cb-pick-location,.countryScope,.cb-country,.cb-co-discount,.cb-from" +
-                                "date, .cb-todate,.cb-state,.cb-car-type",
+                        $(".cb-to-city,.cb-pick-location,.countryScope,.cb-country,.cb-co-discount,.cb-fr" +
+                                "omdate, .cb-todate,.cb-state,.cb-car-type",
                                 __cb).trigger("change");
                     },
                     ready         : false
@@ -14085,8 +14104,8 @@
                                 .bindEvents(cb);
                             cb.flighthotel.ready = true;
                         }
-                        $(".cb-to-city,.cb-from-city,.cb-fromdate, .cb-todate,.cb-total-rooms,.cb-children," +
-                                ".cb-room-child-ages select",
+                        $(".cb-to-city,.cb-from-city,.cb-fromdate, .cb-todate,.cb-total-rooms,.cb-childre" +
+                                "n,.cb-room-child-ages select",
                                 __cb).trigger("change");
                     },
                     ready     : false
@@ -14339,8 +14358,8 @@
                                 $("input[name='flightType']", __cb).attr("value", "roundtrip");
                                 __cb.removeClass("form-fow");
                         }
-                        $(".cb-to-city,.cb-from-city,.cb-fromdate, .cb-todate,.cb-state,.cb-car-type,.cb-ch" +
-                                "ildren,.cb-csa input,input[name='dateTypeSelect']:checked",
+                        $(".cb-to-city,.cb-from-city,.cb-fromdate, .cb-todate,.cb-state,.cb-car-type,.cb-" +
+                                "children,.cb-csa input,input[name='dateTypeSelect']:checked",
                                 __cb).trigger("change");
                     },
                     multiDestSearch  : function (event) {
@@ -14467,11 +14486,13 @@
                             _gaq.push(["_setCustomVar", 7, "Origin", from, 3]);
                             _gaq.push(["_setCustomVar", 8, "Destination", to, 3]);
                             _gaq.push([
-                                "_setCustomVar", 9, "Duration", fromDate + "|" + toDate + "|" + fromTime + "|" + toTime,
+                                "_setCustomVar", 9, "Duration", fromDate + "|" + toDate + "|" + fromTime + "|" +
+                                        toTime,
                                 3
                             ]);
                             _gaq.push([
-                                "_setCustomVar", 10, "HowManyRms-Travelers", "rm" + totalRooms + "|Adult" + adults + "|Minor" + children + "|Senior" + seniors,
+                                "_setCustomVar", 10, "HowManyRms-Travelers", "rm" + totalRooms + "|Adult" +
+                                        adults + "|Minor" + children + "|Senior" + seniors,
                                 3
                             ]);
                             _gaq.push([
@@ -14484,11 +14505,13 @@
                             _gaq.push(["_setCustomVar", 7, "Origin", from, 3]);
                             _gaq.push(["_setCustomVar", 8, "Destination", to, 3]);
                             _gaq.push([
-                                "_setCustomVar", 9, "Duration", fromDate + "|" + toDate + "|" + fromTime + "|" + toTime,
+                                "_setCustomVar", 9, "Duration", fromDate + "|" + toDate + "|" + fromTime + "|" +
+                                        toTime,
                                 3
                             ]);
                             _gaq.push([
-                                "_setCustomVar", 10, "HowManyRms-Travelers", "rm" + totalRooms + "|Adult" + adults + "|Minor" + children + "|Senior" + seniors,
+                                "_setCustomVar", 10, "HowManyRms-Travelers", "rm" + totalRooms + "|Adult" +
+                                        adults + "|Minor" + children + "|Senior" + seniors,
                                 3
                             ]);
                             _gaq.push([
@@ -14500,13 +14523,15 @@
                             _gaq.push(["_setCustomVar", 6, "SearchType", "Hotel_only", 3]);
                             _gaq.push(["_setCustomVar", 8, "Destination", to, 3]);
                             _gaq.push([
-                                "_setCustomVar", 9, "Duration", fromDate + "|" + toDate + "|" + fromTime + "|" + toTime,
+                                "_setCustomVar", 9, "Duration", fromDate + "|" + toDate + "|" + fromTime + "|" +
+                                        toTime,
                                 3
                             ]);
                             var roomNo = jQuery("#ho-totalrooms").val();
                             var roomDetails = "";
                             for (var x = 1; x <= roomNo; x += 1) {
-                                roomDetails += "rm" + x + "|" + jQuery("input#ho-adults" + x).val() + "|" + jQuery("input#ho-minors" + x).val();
+                                roomDetails += "rm" + x + "|" + jQuery("input#ho-adults" + x).val() + "|" + jQuery("input#ho-minors" +
+                                        x).val();
                             }
                             _gaq.push(["_setCustomVar", 11, "HowMany-Rms", roomDetails, 3]);
                             var topSecret = (jQuery("#ho-top-secret").val())
@@ -14522,13 +14547,15 @@
                             _gaq.push(["_setCustomVar", 6, "SearchType", "Hotel+Car", 3]);
                             _gaq.push(["_setCustomVar", 8, "Destination", to, 3]);
                             _gaq.push([
-                                "_setCustomVar", 9, "Duration", fromDate + "|" + toDate + "|" + fromTime + "|" + toTime,
+                                "_setCustomVar", 9, "Duration", fromDate + "|" + toDate + "|" + fromTime + "|" +
+                                        toTime,
                                 3
                             ]);
                             var roomNo = jQuery("#hcx-totalrooms").val();
                             var roomDetails = "";
                             for (var x = 1; x <= roomNo; x += 1) {
-                                roomDetails += "rm" + x + "|" + jQuery("input#hcx-adults" + x).val() + "|" + jQuery("input#hcx-minors" + x).val() + "|";
+                                roomDetails += "rm" + x + "|" + jQuery("input#hcx-adults" + x).val() + "|" + jQuery("input#hcx-minors" +
+                                        x).val() + "|";
                             }
                             _gaq.push(["_setCustomVar", 11, "HowMany-Rms", roomDetails, 3]);
                             _gaq.push([
@@ -14541,11 +14568,13 @@
                             _gaq.push(["_setCustomVar", 7, "Origin", from, 3]);
                             _gaq.push(["_setCustomVar", 8, "Destination", to, 3]);
                             _gaq.push([
-                                "_setCustomVar", 9, "Duration", fromDate + "|" + toDate + "|" + fromTime + "|" + toTime,
+                                "_setCustomVar", 9, "Duration", fromDate + "|" + toDate + "|" + fromTime + "|" +
+                                        toTime,
                                 3
                             ]);
                             _gaq.push([
-                                "_setCustomVar", 12, "HowMany-Flight_only", "Adult" + adults + "|Minor" + children + "|Senior" + seniors,
+                                "_setCustomVar", 12, "HowMany-Flight_only", "Adult" + adults + "|Minor" +
+                                        children + "|Senior" + seniors,
                                 3
                             ]);
                             var tripType = jQuery("form#cb-form-fo input:radio[name='subnav']:checked").val();
@@ -14568,7 +14597,8 @@
                                 3
                             ]);
                             _gaq.push([
-                                "_setCustomVar", 9, "Duration", fromDate + "|" + toDate + "|" + fromTime + "|" + toTime,
+                                "_setCustomVar", 9, "Duration", fromDate + "|" + toDate + "|" + fromTime + "|" +
+                                        toTime,
                                 3
                             ]);
                             _gaq.push([
@@ -14583,7 +14613,8 @@
                         case "cro":
                             _gaq.push(["_setCustomVar", 6, "SearchType", "Cruise", 3]);
                             _gaq.push([
-                                "_setCustomVar", 8, to + "|" + jQuery("#cruiseLength").val() + "|" + jQuery("#cru-datemonth").val() + "|" + jQuery("#cro-cruiseline").val(),
+                                "_setCustomVar", 8, to + "|" + jQuery("#cruiseLength").val() + "|" + jQuery("#cru-datemonth").val() +
+                                        "|" + jQuery("#cro-cruiseline").val(),
                                 3
                             ]);
                             var senior = (jQuery("form#form-cro input:checkbox[name='srRt']").attr("checked"))
@@ -14596,7 +14627,8 @@
                                 ? "Cruised"
                                 : "";
                             _gaq.push([
-                                "_setCustomVar", 14, "Cruise:AddInfo, AA|" + senior + "|" + military + "|" + cruised,
+                                "_setCustomVar", 14, "Cruise:AddInfo, AA|" + senior + "|" + military + "|" +
+                                        cruised,
                                 3
                             ]);
                             _gaq.push([
@@ -14687,9 +14719,9 @@
                         cb
                             .hotels
                             .fixLSC($(".cb-to-city", __cb), __cb);
-                        $(".cb-to-city,.cb-pick-location, .cb-co-discount,.cb-fromdate, .cb-todate,.cb-stat" +
-                                "e,.cb-country,.cb-car-type,.cb-total-rooms,.cb-children,.cb-room-child-ages sele" +
-                                "ct",
+                        $(".cb-to-city,.cb-pick-location, .cb-co-discount,.cb-fromdate, .cb-todate,.cb-st" +
+                                "ate,.cb-country,.cb-car-type,.cb-total-rooms,.cb-children,.cb-room-child-ages " +
+                                "select",
                                 __cb).trigger("change");
                     },
                     ready     : false
@@ -14858,8 +14890,8 @@
                         cb
                             .hotels
                             .fixLSC($(".cb-to-city", __cb), __cb);
-                        $(".cb-state,.cb-country,.cb-to-city,.cb-fromdate, .cb-todate,.cb-total-rooms,.cb-c" +
-                                "hildren,.cb-room-child-ages select,.cb-ts-hotels",
+                        $(".cb-state,.cb-country,.cb-to-city,.cb-fromdate, .cb-todate,.cb-total-rooms,.cb" +
+                                "-children,.cb-room-child-ages select,.cb-ts-hotels",
                                 __cb).trigger("change");
                     },
                     ready                  : false,
@@ -14871,7 +14903,8 @@
                         _ci = $(".cb-fromdate", form).val();
                         _co = $(".cb-todate", form).val();
                         _c  = $(".cb-to-city", form).val();
-                        window.open(_url + "?Checkin=" + _ci + "&Checkout=" + _co + "&City=" + _c + "&Rooms=5", "searchGroupSite");
+                        window.open(_url + "?Checkin=" + _ci + "&Checkout=" + _co + "&City=" + _c + "&R" +
+                                "ooms=5", "searchGroupSite");
                     },
                     setTopSecretDestination: function (event) {
                         var __cb = $("." + event.data.cb.options.currentView),
@@ -14951,9 +14984,9 @@
                             e_cardate            : "*The drop-off date is before the pick-up date.",
                             e_char               : "*The city or airport code can only contain letters.",
                             e_child              : "*Please enter the age of each child.",
-                            e_child_unaccompanied: "*All minors must be age 15 or older or traveling with at least one adult (18 - 6" +
-                                                      "4 years) or one senior (65+ years). Please revise your traveler age criteria and" +
-                                                      " try your search again.",
+                            e_child_unaccompanied: "*All minors must be age 15 or older or traveling with at least one adult (18 -" +
+                                    " 64 years) or one senior (65+ years). Please revise your traveler age criteria" +
+                                    " and try your search again.",
                             e_date               : "*The arrival date is before the departure date.",
                             e_date_range_hot     : "*Your requested dates are more than 30 days apart.",
                             e_date_range_vac     : "*Your requested dates are more than 26 days apart.",
@@ -15102,7 +15135,8 @@
                             var propertyName = getPropertyName(parentPath, key);
                             if ($.inArray(propertyPath, settings.ignore) == -1) {
                                 if ($.isArray(json[key])) {
-                                    children += createNodeFromArray(json[key], propertyName, propertyPath + ".", depth + 1, suffix);
+                                    children += createNodeFromArray(json[key], propertyName, propertyPath + ".", depth +
+                                            1, suffix);
                                 } else if (typeof(json[key]) === "object") {
                                     children += convertToXml(json[key], propertyName, propertyPath + ".", depth + 1);
                                 } else {
@@ -15153,7 +15187,8 @@
                                     var textSuffix = (settings.formatTextNodes)
                                         ? suffix + getIndent(depth)
                                         : "";
-                                    xmlNode += getIndent(depth) + "<" + name + ">" + textPrefix + source[index] + textSuffix + "</" + name + ">" + suffix;
+                                    xmlNode += getIndent(depth) + "<" + name + ">" + textPrefix + source[index] + textSuffix +
+                                            "</" + name + ">" + suffix;
                                 }
                             } else {
                                 xmlNode += convertToXml(source[index], name, path, depth);
@@ -15171,7 +15206,8 @@
                     var textSuffix = (settings.formatTextNodes)
                         ? suffix + getIndent(parentDepth + 1)
                         : "";
-                    var xmlNode = getIndent(parentDepth + 1) + "<" + name + ">" + textPrefix + text + textSuffix + "</" + name + ">" + suffix;
+                    var xmlNode = getIndent(parentDepth + 1) + "<" + name + ">" + textPrefix + text + textSuffix +
+                            "</" + name + ">" + suffix;
                     return xmlNode;
                 };
             })(jQuery); // .
@@ -15481,7 +15517,8 @@
                                                 this.displayMsg(this.oPopupComponents.sErrorDetailsModule, oe.e_detail_badmail.value);
                                             } else {
                                                 this.displayMsg(this.oPopupComponents.sErrorModule, oe.e_msg_invalid_information.value);
-                                                this.displayMsg(this.oPopupComponents.sErrorDetailsModule, oe.e_msg_to_do.value + oe[field_error].value);
+                                                this.displayMsg(this.oPopupComponents.sErrorDetailsModule, oe.e_msg_to_do.value +
+                                                        oe[field_error].value);
                                             }
                                         }
                                         break;
@@ -15886,7 +15923,8 @@
                                     break;
                             }
                             var onSubmit = function (e) {
-                                if ((oScope.sState == module_states.HP_WIDGET || oScope.sState == module_states.SA_WIDGET) && !(jQuery("#" + oScope.oWidgetComponents.sSignupModuleSubscribeMail).attr("value").match(/[A-Za-z0-9._+\-]+/))) {
+                                if ((oScope.sState == module_states.HP_WIDGET || oScope.sState == module_states.SA_WIDGET) && !(jQuery("#" +
+                                        oScope.oWidgetComponents.sSignupModuleSubscribeMail).attr("value").match(/[A-Za-z0-9._+\-]+/))) {
                                     return;
                                 }
                                 jQuery(e.data.oForm).trigger("eDataValidate");
@@ -16014,21 +16052,25 @@
                                             switch (oSubscriptionResponse.Message) {
                                                 case Subscriptions.SINGLE_MATCH_RESPONSE:
                                                     jQuery(oScope.oForm).trigger("TrackSingleMatch");
-                                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX + "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.SINGLE_MATCH);
+                                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
+                                                            "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.SINGLE_MATCH);
                                                     jQuery(oScope.oForm).trigger("SingleMatch");
                                                     break;
                                                 case Subscriptions.MULTI_MATCH_RESPONSE:
-                                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX + "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.MULTI_MATCH);
+                                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
+                                                            "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.MULTI_MATCH);
                                                     jQuery(oScope.oForm).trigger("TrackMultiMatch");
                                                     jQuery(oScope.oForm).trigger("MultiMatch");
                                                     break;
                                                 case Subscriptions.NEW_ACCOUNT_RESPONSE:
-                                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX + "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.NEW_ACCOUNT);
+                                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
+                                                            "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.NEW_ACCOUNT);
                                                     jQuery(oScope.oForm).trigger("TrackNewAccount");
                                                     jQuery(oScope.oForm).trigger("NewAccount");
                                                     break;
                                                 case Subscriptions.EXISTING_ACCOUNT_RESPONSE:
-                                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX + "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.EXISTING_ACCOUNT);
+                                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
+                                                            "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.EXISTING_ACCOUNT);
                                                     jQuery(oScope.oForm).trigger("TrackExistingAccount");
                                                     jQuery(oScope.oForm).trigger("ExistingAccount");
                                                     break;
@@ -16037,19 +16079,23 @@
                                             if (oSubscriptionResponse.Status == Subscriptions.FAILURE_RESPONSE) {
                                                 switch (oSubscriptionResponse.Message) {
                                                     case Subscriptions.INVALID_PARAMETERS_RESPONSE:
-                                                        vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX + "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.INVALID_PARAMETERS);
+                                                        vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
+                                                                "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.INVALID_PARAMETERS);
                                                         jQuery(oScope.oForm).trigger("InvalidParameters");
                                                         break;
                                                     case Subscriptions.MISSING_PARAMETERS_RESPONSE:
-                                                        vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX + "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.MISSING_PARAMETERS);
+                                                        vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
+                                                                "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.MISSING_PARAMETERS);
                                                         jQuery(oScope.oForm).trigger("MissingRequiredParameters");
                                                         break;
                                                     case Subscriptions.COMUNICATION_ERROR_RESPONSE:
-                                                        vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX + "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.COMUNICATION_ERROR_RESPONSE);
+                                                        vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
+                                                                "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.COMUNICATION_ERROR_RESPONSE);
                                                         jQuery(oScope.oForm).trigger("SubscriptionFailure");
                                                         break;
                                                     case Subscriptions.EXISTING_ACCOUNT_RESPONSE:
-                                                        vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX + "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.EXISTING_ACCOUNT);
+                                                        vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
+                                                                "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.EXISTING_ACCOUNT);
                                                         jQuery(oScope.oForm).trigger("ExistingAccount");
                                                         break;
                                                 }
@@ -16066,7 +16112,8 @@
                                     jQuery(oScope.oForm).trigger("TrackNoMatch");
                                     popup.showWindow();
                                     jQuery(oScope.oForm).trigger("NoMatch");
-                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX + "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.NO_MATCH);
+                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
+                                            "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.NO_MATCH);
                                     oScope.emptyWidgetFields();
                                 }
                                 return false;
@@ -16166,8 +16213,9 @@
                                     sXmlRequest += "<Retry>1</Retry>";
                                 }
                             }
-                            sXmlRequest = "<?xml version='1.0' encoding='UTF-8'?><SubscriptionRequest xsi:noNamespaceSchema" +
-                                    "Location='subMgmt.xsd' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>" + sXmlRequest + "</SubscriptionRequest>";
+                            sXmlRequest = "<?xml version='1.0' encoding='UTF-8'?><SubscriptionRequest xsi:noNamespaceSche" +
+                                    "maLocation='subMgmt.xsd' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'" +
+                                    ">" + sXmlRequest + "</SubscriptionRequest>";
                             return sXmlRequest;
                         },
                         validateFormData        : function () {
@@ -16279,7 +16327,8 @@
                                 case module_states.SIGNUP:
                                     fields = [
                                         this.oPopupComponents.sSignupModuleMail + "|Email",
-                                        this.oPopupComponents.sSignupModuleMail + ";" + this.oPopupComponents.sSignupModuleMailConfirm + "|EmailMatch",
+                                        this.oPopupComponents.sSignupModuleMail + ";" + this.oPopupComponents.sSignupModuleMailConfirm +
+                                                "|EmailMatch",
                                         this.oPopupComponents.sSignupModuleName + "|Name",
                                         this.oPopupComponents.sSignupModuleLastName + "|LastName",
                                         this.oPopupComponents.sSignupModuleZipCode + "|ZipCode"
@@ -16459,19 +16508,23 @@
                             var flexMode = jQuery("#" + oScope.oConfig.SearchModeFields[1] + ":checked").length == 1
                                 ? true
                                 : false;
-                            var plusMinusDatesMode = jQuery("#" + oScope.oConfig.SearchModeFields[2] + ":checked").length == 1
+                            var plusMinusDatesMode = jQuery("#" + oScope.oConfig.SearchModeFields[2] + ":ch" +
+                                    "ecked").length == 1
                                 ? true
                                 : false;
                             if (exactMode) {
-                                var clause_edates = jQuery("#" + oScope.oConfig.SearchModeFields[0]).attr("name") + "=" + jQuery("#" + oScope.oConfig.SearchModeFields[0]).attr("value");
+                                var clause_edates = jQuery("#" + oScope.oConfig.SearchModeFields[0]).attr("name") + "=" + jQuery("#" +
+                                        oScope.oConfig.SearchModeFields[0]).attr("value");
                                 query_buffer.push(clause_edates);
                             } else {
                                 if (flexMode) {
-                                    var clause_flex_dates = jQuery("#" + oScope.oConfig.SearchModeFields[1]).attr("name") + "=" + jQuery("#" + oScope.oConfig.SearchModeFields[1]).attr("value");
+                                    var clause_flex_dates = jQuery("#" + oScope.oConfig.SearchModeFields[1]).attr("name") + "=" + jQuery("#" +
+                                            oScope.oConfig.SearchModeFields[1]).attr("value");
                                     query_buffer.push(clause_flex_dates);
                                 } else {
                                     if (plusMinusDatesMode) {
-                                        var clause_flex_dates = jQuery("#" + oScope.oConfig.SearchModeFields[2]).attr("name") + "=" + jQuery("#" + oScope.oConfig.SearchModeFields[2]).attr("value");
+                                        var clause_flex_dates = jQuery("#" + oScope.oConfig.SearchModeFields[2]).attr("name") + "=" + jQuery("#" +
+                                                oScope.oConfig.SearchModeFields[2]).attr("value");
                                         query_buffer.push(clause_flex_dates);
                                     }
                                 }
@@ -16487,7 +16540,8 @@
                                 }
                                 if (field.match(/departure_dt|arrival_dt/)) {
                                     var clause_basic_search = field_name + "=" + jQuery(oScope.oSearchForm)
-                                        .find("select[name=" + oScope.oConfig.BasicSearchFiedls[field] + "]")
+                                        .find("select[name=" +
+                                                oScope.oConfig.BasicSearchFiedls[field] + "]")
                                         .attr("value");
                                 } else {
                                     var clause_basic_search = field_name + "=" + jQuery("#" + oScope.oConfig.BasicSearchFiedls[field]).attr("value");
@@ -16568,8 +16622,8 @@
                 } else {
                     popHeight = h;
                 }
-                winParams = "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resiza" +
-                        "ble=yes,width=" + w + ",height=" + popHeight;
+                winParams = "toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=yes,resi" +
+                        "zable=yes,width=" + w + ",height=" + popHeight;
                 if (isChrome) {
                     newwin = window.open(url, winName, winParams);
                     newwin.blur();
@@ -16648,11 +16702,15 @@
                                 newLI.attr("class", dclass[j]);
                                 var newA = jQuery(document.createElement("a"));
                                 var aURL = [
-                                    tvly.travelDomain + "/mystuff/SearchFareWatcher.do?goingTo=" + DestCode + "&leavingFrom=" + OrigCode + "&departure_dt=" + cMonth + "&arrival_dt=" + nMonth + "&airFareAmount=" + ddata[j],
+                                    tvly.travelDomain + "/mystuff/SearchFareWatcher.do?goingTo=" + DestCode + "&lea" +
+                                            "vingFrom=" + OrigCode + "&departure_dt=" + cMonth + "&arrival_dt=" + nMonth +
+                                            "&airFareAmount=" + ddata[j],
                                     tvly.travelDomain + "/hotel/HotelCobrand.do?city=" + DestCode,
-                                    tvly.travelDomain + "/trips/InitialSearch.do?leavingFrom=" + OrigCode + "&goingTo=" + DestCode
+                                    tvly.travelDomain + "/trips/InitialSearch.do?leavingFrom=" + OrigCode + "&going" +
+                                            "To=" + DestCode
                                 ];
-                                var searchFlightsURL = tvly.travelDomain + "/flights/InitialSearch.do?goingTo=" + DestCode + "&leavingFrom=" + OrigCode;
+                                var searchFlightsURL = tvly.travelDomain + "/flights/InitialSearch.do?goingTo=" + DestCode + "&leaving" +
+                                        "From=" + OrigCode;
                                 var whatLob = dtags[j].replace(" from ", "");
                                 if (ddata[j] != "-1") {
                                     newLI.append(dtags[j]);
@@ -16669,7 +16727,8 @@
                                 newLI.append(newA);
                                 jQuery(tripInfo).append(newLI);
                             }
-                            jQuery(tripTitle).html(OrigName + " (" + OrigCode + ") to " + DestName + " (" + DestCode + ")");
+                            jQuery(tripTitle).html(OrigName + " (" + OrigCode + ") to " + DestName + " (" +
+                                    DestCode + ")");
                             fwcont.append(tripTitle);
                             fwcont.append(tripInfo);
                             if (f >= maxfw) {
@@ -16692,14 +16751,15 @@
                         });
                     } else {
                         $("fwheadline").innerHTML = "Track Deals with FareWatcher Plus<sup>SM</sup>";
-                        $("fwintro").innerHTML = "Start watching your favorite destinations with FareWatcher Plus<sup>SM</sup> tod" +
-                                "ay.";
+                        $("fwintro").innerHTML = "Start watching your favorite destinations with FareWatcher Plus<sup>SM</sup> t" +
+                                "oday.";
                         $("fw-fare-info-link").innerHTML = "Learn More";
                         $("fw-fare-info-link").href = "http://svc.travelocity.com/info/info_popup/0,,TRAVELOCITY:EN|FW_LEGAL,00.html";
                         YEvt.addListener("fw-fare-info-link", "click", function () {
                             launchWindow(this.href, 400, 300);
                         });
-                        $("fw-button-img").setAttribute("src", tvly.assetDomain + "/images/i/homepage/fw_login_button.gif");
+                        $("fw-button-img").setAttribute("src", tvly.assetDomain + "/images/i/homepage/f" +
+                                "w_login_button.gif");
                         $("fw-button-img").setAttribute("alt", "Create Your Own List");
                         noneBlock("fwoptions!1", "fwintro!1");
                     }
@@ -16867,7 +16927,8 @@
                                     enc4 = 64;
                                 }
                             }
-                            output = output + keyString.charAt(enc1) + keyString.charAt(enc2) + keyString.charAt(enc3) + keyString.charAt(enc4);
+                            output = output + keyString.charAt(enc1) + keyString.charAt(enc2) + keyString.charAt(enc3) +
+                                    keyString.charAt(enc4);
                         }
                         return output;
                     }
@@ -17263,13 +17324,15 @@
                                     ? n + "px"
                                     : n;
                             },
-                            html = "<iframe class='bgiframe'frameborder='0'tabindex='-1'src='" + s.src + "'style='display:block;position:absolute;z-index:-1;" + (s.opacity !== false
+                            html = "<iframe class='bgiframe'frameborder='0'tabindex='-1'src='" + s.src + "'style='" +
+                                    "display:block;position:absolute;z-index:-1;" + (s.opacity !== false
                                 ? "filter:Alpha(Opacity='0');"
                                 : "") + "top:" + (s.top == "auto"
-                                ? "expression(((parseInt(this.parentNode.currentStyle.borderTopWidth)||0)*-1)+'px')"
+                                ? "expression(((parseInt(this.parentNode.currentStyle.borderTopWidth)||0)*-1)+'px" +
+                                        "')"
                                 : prop(s.top)) + ";left:" + (s.left == "auto"
-                                ? "expression(((parseInt(this.parentNode.currentStyle.borderLeftWidth)||0)*-1)+'px'" +
-                                    ")"
+                                ? "expression(((parseInt(this.parentNode.currentStyle.borderLeftWidth)||0)*-1)+'p" +
+                                        "x')"
                                 : prop(s.left)) + ";width:" + (s.width == "auto"
                                 ? "expression(this.parentNode.offsetWidth+'px')"
                                 : prop(s.width)) + ";height:" + (s.height == "auto"
@@ -18207,7 +18270,8 @@
                                 .split(re),
                             result        = item
                                 .value
-                                .replace(re, "<span class='highlightCharacters'>" + item.value.substring(matchPosition, matchPosition + this.term.length) + "</span>");
+                                .replace(re, "<span class='highlightCharacters'>" + item.value.substring(matchPosition, matchPosition +
+                                        this.term.length) + "</span>");
                         return $("<li></li>")
                             .addClass((config.displayIcons === true)
                                 ? "autocomplete-lob-icon"
@@ -18228,7 +18292,8 @@
                                 .split(re),
                             result        = item
                                 .value
-                                .replace(re, "<span class='highlightCharacters'>" + item.value.substring(matchPosition, matchPosition + this.term.length) + "</span>");
+                                .replace(re, "<span class='highlightCharacters'>" + item.value.substring(matchPosition, matchPosition +
+                                        this.term.length) + "</span>");
                         return $("<li></li>")
                             .addClass((item.type === "ARP")
                                 ? "airline"
@@ -18440,15 +18505,15 @@
                     JSID       : "",
                     maxRetries : 10,
                     servicetag : "TRAVELOCITY",
-                    serviceUrl : "http://www.travelocity.com/servicegateway/globaltrips-shopping-svcs/subscription" +
-                                    "-management-1.0/services/SubscriptionService/Subscribe",
+                    serviceUrl : "http://www.travelocity.com/servicegateway/globaltrips-shopping-svcs/subscripti" +
+                            "on-management-1.0/services/SubscriptionService/Subscribe",
                     SID        : "T000V00000X806241813008610115010671183",
                     state      : "HomePageWidget",
                     sVSTrackUrl: "http://travel.travelocity.com/___waseq.img",
                     terms_link : {
                         height: 400,
-                        url   : "http://www.travelocity.com/info/info_popup/0,,TRAVELOCITY:EN|TERMS_WINDOW,00.htm" +
-                                   "l",
+                        url   : "http://www.travelocity.com/info/info_popup/0,,TRAVELOCITY:EN|TERMS_WINDOW,00.h" +
+                                "tml",
                         width : 500
                     }
                 };
@@ -18571,19 +18636,21 @@
                         switch (elementId) {
                             case "ho-to":
                                 _gaq.push([
-                                    "_trackEvent", "ac:HP", "ac:HP|hotel_only|DestinationAutoFill", gaDestination + "|" + item.listpos + "|" + typedDestination
+                                    "_trackEvent", "ac:HP", "ac:HP|hotel_only|DestinationAutoFill", gaDestination +
+                                            "|" + item.listpos + "|" + typedDestination
                                 ]);
                                 break;
                             case "hcx-to":
                                 _gaq.push([
-                                    "_trackEvent", "ac:HP", "ac:HP|hotel+car|DestinationAutoFill", gaDestination + "|" + item.listpos + "|" + typedDestination
+                                    "_trackEvent", "ac:HP", "ac:HP|hotel+car|DestinationAutoFill", gaDestination +
+                                            "|" + item.listpos + "|" + typedDestination
                                 ]);
                                 break;
                         }
                     },
                     source                    : "gls",
-                    url                       : "/servicegateway/shopping-svcs/global-location-svc-autocomplete-1.0/services/auto" +
-                                                   "complete"
+                    url                       : "/servicegateway/shopping-svcs/global-location-svc-autocomplete-1.0/services/au" +
+                            "tocomplete"
                 };
 
                 jQuery._autocomplete(jQuery.extend({}, AutoCompleteOptions, {elementId: "ho-to"}));
@@ -18632,9 +18699,9 @@
                     {
                         attrs   : {
                             height: 250,
-                            src   : "http://dm.travelocity.com/html.ng/site=travelocity&cobrand=TRAVELOCITY&adsize=30" +
-                                       "0x250&area=homepage&tile=106119156132734&transactionID=901011327342356&random=06" +
-                                       "1190761327342?",
+                            src   : "http://dm.travelocity.com/html.ng/site=travelocity&cobrand=TRAVELOCITY&adsize=" +
+                                    "300x250&area=homepage&tile=106119156132734&transactionID=901011327342356&rando" +
+                                    "m=061190761327342?",
                             title : "Adversitement",
                             width : 300
                         },
@@ -18642,9 +18709,9 @@
                     }, {
                         attrs   : {
                             height: 296,
-                            src   : "http://dm.travelocity.com/html.ng/site=travelocity&cobrand=TRAVELOCITY&adsize=34" +
-                                       "2x296&area=homepage&tile=106119156132734&transactionID=901011327342356&random=06" +
-                                       "1190761327342?",
+                            src   : "http://dm.travelocity.com/html.ng/site=travelocity&cobrand=TRAVELOCITY&adsize=" +
+                                    "342x296&area=homepage&tile=106119156132734&transactionID=901011327342356&rando" +
+                                    "m=061190761327342?",
                             title : "Adversitement",
                             width : 342
                         },
@@ -18652,9 +18719,9 @@
                     }, {
                         attrs   : {
                             height: 90,
-                            src   : "http://dm.travelocity.com/html.ng/site=travelocity&cobrand=TRAVELOCITY&adsize=72" +
-                                       "8x90&area=homepage&tile=106119156132734&transactionID=901011327342356&random=061" +
-                                       "190761327342?",
+                            src   : "http://dm.travelocity.com/html.ng/site=travelocity&cobrand=TRAVELOCITY&adsize=" +
+                                    "728x90&area=homepage&tile=106119156132734&transactionID=901011327342356&random" +
+                                    "=061190761327342?",
                             title : "Adversitement",
                             width : 728
                         },
