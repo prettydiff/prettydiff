@@ -5,6 +5,7 @@
 (function taskrunner() {
     "use strict";
     var order      = [
+            "moduleInstall",
             "lint", //        - run jslint on all unexcluded files in the repo
             "packagejson", // - beautify the package.json file and compare it to itself
             "coreunits", //   - run a variety of files through the application and compare the result to a known good file
