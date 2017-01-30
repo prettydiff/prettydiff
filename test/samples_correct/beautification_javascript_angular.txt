@@ -1652,9 +1652,9 @@
                 }
                 return ensure(modules, name, function () {
                     if (!requires) {
-                        throw $injectorMinErr("nomod", "Module '{0}' is not available! You either misspelled the module name or forgot t" +
-                                "o load it. If registering a module ensure that you specify the dependencies as t" +
-                                "he second argument.",
+                        throw $injectorMinErr("nomod", "Module '{0}' is not available! You either misspelled the module name or forgot" +
+                                " to load it. If registering a module ensure that you specify the dependencies " +
+                                "as the second argument.",
                                 name);
                     }
 
@@ -2279,8 +2279,8 @@
         }
         if (!(this instanceof JQLite)) {
             if (isString(element) && element.charAt(0) != "<") {
-                throw jqLiteMinErr("nosel", "Looking up elements via selectors is not supported by jqLite! See: http://docs.a" +
-                        "ngularjs.org/api/angular.element");
+                throw jqLiteMinErr("nosel", "Looking up elements via selectors is not supported by jqLite! See: http://docs" +
+                        ".angularjs.org/api/angular.element");
             }
             return new JQLite(element);
         }
@@ -2403,13 +2403,15 @@
         if (!element.getAttribute) {
             return false;
         }
-        return ((" " + (element.getAttribute("class") || "") + " ").replace(/[\n\t]/g, " ").indexOf(" " + selector + " ") > -1);
+        return ((" " + (element.getAttribute("class") || "") + " ").replace(/[\n\t]/g, " ").indexOf(" " +
+                selector + " ") > -1);
     }
 
     function jqLiteRemoveClass(element, cssClasses) {
         if (cssClasses && element.setAttribute) {
             forEach(cssClasses.split(" "), function (cssClass) {
-                element.setAttribute("class", trim((" " + (element.getAttribute("class") || "") + " ").replace(/[\n\t]/g, " ").replace(" " + trim(cssClass) + " ", " ")));
+                element.setAttribute("class", trim((" " + (element.getAttribute("class") || "") +
+                        " ").replace(/[\n\t]/g, " ").replace(" " + trim(cssClass) + " ", " ")));
             });
         }
     }
@@ -4597,14 +4599,16 @@
                     rawDocument.cookie = escape(name) + "=;path=" + cookiePath + ";expires=Thu, 01 Jan 1970 00:00:00 GMT";
                 } else {
                     if (isString(value)) {
-                        cookieLength = (rawDocument.cookie = escape(name) + "=" + escape(value) + ";path=" + cookiePath).length + 1;
+                        cookieLength = (rawDocument.cookie = escape(name) + "=" + escape(value) + ";path=" + cookiePath).length +
+                                1;
 
                         // per http://www.ietf.org/rfc/rfc2109.txt browser must allow at minimum:
                         // - 300 cookies
                         // - 20 cookies per unique domain
                         // - 4096 bytes per cookie
                         if (cookieLength > 4096) {
-                            $log.warn("Cookie '" + name + "' possibly not set or overflowed because it was too large (" + cookieLength + " > 4096 bytes)!");
+                            $log.warn("Cookie '" + name + "' possibly not set or overflowed because it was " +
+                                    "too large (" + cookieLength + " > 4096 bytes)!");
                         }
                     }
                 }
@@ -6198,7 +6202,8 @@
                                 hasElementTranscludeDirective = true;
                                 terminalPriority              = directive.priority;
                                 $template                     = groupScan(compileNode, attrStart, attrEnd);
-                                $compileNode                  = templateAttrs.$$element = jqLite(document.createComment(" " + directiveName + ": " + templateAttrs[directiveName] + " "));
+                                $compileNode                  = templateAttrs.$$element = jqLite(document.createComment(" " +
+                                        directiveName + ": " + templateAttrs[directiveName] + " "));
                                 compileNode                   = $compileNode[0];
                                 replaceWith(jqCollection, jqLite(sliceArgs($template)), compileNode);
 
@@ -6470,8 +6475,8 @@
                                         break;
 
                                     default:
-                                        throw $compileMinErr("iscp", "Invalid isolate scope definition for directive '{0}'. Definition: {... {1}: '{2}" +
-                                                "' ...}",
+                                        throw $compileMinErr("iscp", "Invalid isolate scope definition for directive '{0}'. Definition: {... {1}: '{" +
+                                                "2}' ...}",
                                                 newIsolateScopeDirective.name, scopeName, definition);
                                 }
                             });
@@ -6845,8 +6850,8 @@
                                     var $$observers = (attr.$$observers || (attr.$$observers = {}));
 
                                     if (EVENT_HANDLER_ATTR_REGEXP.test(name)) {
-                                        throw $compileMinErr("nodomevents", "Interpolations for HTML DOM event attributes are disallowed.  Please use the ng-" +
-                                                " versions (such as ng-click instead of onclick) instead.");
+                                        throw $compileMinErr("nodomevents", "Interpolations for HTML DOM event attributes are disallowed.  Please use the n" +
+                                                "g- versions (such as ng-click instead of onclick) instead.");
                                     }
 
                                     // we need to interpolate again, in case the attribute value has been updated
@@ -7125,7 +7130,9 @@
 
                     if (identifier) {
                         if (!(locals && typeof locals.$scope == "object")) {
-                            throw minErr("$controller")("noscp", "Cannot export controller '{0}' as '{1}'! No $scope object provided via `locals`.", constructor || expression.name, identifier);
+                            throw minErr("$controller")("noscp", "Cannot export controller '{0}' as '{1}'! No $scope object provided via `locals" +
+                                    "`.",
+                            constructor || expression.name, identifier);
                         }
 
                         locals.$scope[identifier] = instance;
@@ -8323,7 +8330,8 @@
                     callbacks[callbackId].data = data;
                 };
 
-                var jsonpDone = jsonpReq(url.replace("JSON_CALLBACK", "angular.callbacks." + callbackId), function () {
+                var jsonpDone = jsonpReq(url.replace("JSON_CALLBACK", "angular.callbacks." +
+                        callbackId), function () {
                     if (callbacks[callbackId].data) {
                         completeRequest(callback, 200, callbacks[callbackId].data);
                     } else {
@@ -8597,7 +8605,8 @@
                         concat           = [];
 
                     while (index < length) {
-                        if (((startIndex = text.indexOf(startSymbol, index)) != -1) && ((endIndex = text.indexOf(endSymbol, startIndex + startSymbolLength)) != -1)) {
+                        if (((startIndex = text.indexOf(startSymbol, index)) != -1) && ((endIndex = text.indexOf(endSymbol, startIndex +
+                                startSymbolLength)) != -1)) {
                             (index != startIndex) && parts.push(text.substring(index, startIndex));
                             parts.push(fn = $parse(exp = text.substring(startIndex + startSymbolLength, endIndex)));
                             fn.exp           = exp;
@@ -8624,9 +8633,9 @@
                     // obvious that you bound the value to some user controlled value.  This helps
                     // reduce the load when auditing for XSS issues.
                     if (trustedContext && parts.length > 1) {
-                        throw $interpolateMinErr("noconcat", "Error while interpolating: {0}\nStrict Contextual Escaping disallows interpolati" +
-                                "ons that concatenate multiple expressions when a trusted value is required.  See" +
-                                " http://docs.angularjs.org/api/ng.$sce",
+                        throw $interpolateMinErr("noconcat", "Error while interpolating: {0}\nStrict Contextual Escaping disallows interpola" +
+                                "tions that concatenate multiple expressions when a trusted value is required. " +
+                                " See http://docs.angularjs.org/api/ng.$sce",
                                 text);
                     }
 
@@ -8917,8 +8926,8 @@
                     medium    : "MMM d, y h:mm:ss a",
                     mediumDate: "MMM d, y",
                     mediumTime: "h:mm:ss a",
-                    MONTH     : "January,February,March,April,May,June,July,August,September,October,November,Dec" +
-                                   "ember".split(","),
+                    MONTH     : ("January,February,March,April,May,June,July,August,September,October,November,D" +
+                            "ecember").split(","),
                     short     : "M/d/yy h:mm a",
                     shortDate : "M/d/yy",
                     SHORTDAY  : "Sun,Mon,Tue,Wed,Thu,Fri,Sat".split(","),
@@ -9415,8 +9424,8 @@
                     } else if (isObject(search)) {
                         this.$$search = search;
                     } else {
-                        throw $locationMinErr("isrcharg", "The first argument of the `$location#search()` call must be a string or an objec" +
-                                "t.");
+                        throw $locationMinErr("isrcharg", "The first argument of the `$location#search()` call must be a string or an obj" +
+                                "ect.");
                     }
                     break;
                 default:
@@ -9922,8 +9931,8 @@
 
     function ensureSafeMemberName(name, fullExpression) {
         if (name === "constructor") {
-            throw $parseMinErr("isecfld", "Referencing 'constructor' field in Angular expressions is disallowed! Expression" +
-                    ": {0}",
+            throw $parseMinErr("isecfld", "Referencing 'constructor' field in Angular expressions is disallowed! Expressi" +
+                    "on: {0}",
                     fullExpression);
         }
         return name;
@@ -10414,7 +10423,8 @@
             var token;
             if ((token = this.expect("="))) {
                 if (!left.assign) {
-                    this.throwError("implies assignment but [" + this.text.substring(0, token.index) + "] can not be assigned to", token);
+                    this.throwError("implies assignment but [" + this.text.substring(0, token.index) +
+                            "] can not be assigned to", token);
                 }
                 right = this.ternary();
                 return function (scope, locals) {
@@ -10804,8 +10814,8 @@
         },
 
         throwError      : function (msg, token) {
-            throw $parseMinErr("syntax", "Syntax Error: Token \'{0}\' {1} at column {2} of the expression [{3}] starting a" +
-                    "t [{4}].",
+            throw $parseMinErr("syntax", "Syntax Error: Token \'{0}\' {1} at column {2} of the expression [{3}] starting" +
+                    " at [{4}].",
                     token.text, msg, (token.index + 1), this.text, this.text.substring(token.index));
         },
 
@@ -11101,8 +11111,9 @@
                     ? "s"
                     // but if we are first then we check locals first, and if so read it first
                     : "((k&&k.hasOwnProperty('" + key + "'))?k:s)") + "['" + key + "'];\n" + (options.unwrapPromises
-                    ? "if (s && s.then) {\n pw('" + fullExp.replace(/(["\r\n])/g, "\\$1") + "');\n if (!('$$v' in s)) {\n p=s;\n p.$$v = undefined;\n p.then(function(v) {p.$" +
-                            "$v=v;});\n}\n s=s.$$v\n}\n"
+                    ? "if (s && s.then) {\n pw('" + fullExp.replace(/(["\r\n])/g, "\\$1") + "');\n if" +
+                            " (!('$$v' in s)) {\n p=s;\n p.$$v = undefined;\n p.then(function(v) {p.$$v=v;}" +
+                            ");\n}\n s=s.$$v\n}\n"
                     : "");
             });
             code += "return s;";
@@ -11283,7 +11294,8 @@
                         return;
                     }
                     promiseWarningCache[fullExp] = true;
-                    $log.warn("[$parse] Promise found in the expression `" + fullExp + "`. Automatic unwrapping of promises in Angular expressions is deprecated.");
+                    $log.warn("[$parse] Promise found in the expression `" + fullExp + "`. Automati" +
+                            "c unwrapping of promises in Angular expressions is deprecated.");
                 };
 
                 return function (exp) {
@@ -12371,8 +12383,8 @@
 
                             if ((dirty || asyncQueue.length) && !(ttl--)) {
                                 clearPhase();
-                                throw $rootScopeMinErr("infdig", "{0} $digest() iterations reached. Aborting!\nWatchers fired in the last 5 iterat" +
-                                        "ions: {1}",
+                                throw $rootScopeMinErr("infdig", "{0} $digest() iterations reached. Aborting!\nWatchers fired in the last 5 iter" +
+                                        "ations: {1}",
                                         TTL, toJson(watchLog));
                             }
 
@@ -13364,8 +13376,8 @@
                     // avoid trusting mutable objects, we ensure here that the value passed in is
                     // actually a string.
                     if (typeof trustedValue !== "string") {
-                        throw $sceMinErr("itype", "Attempted to trust a non-string value in a content requiring a string: Context: " +
-                                "{0}",
+                        throw $sceMinErr("itype", "Attempted to trust a non-string value in a content requiring a string: Context" +
+                                ": {0}",
                                 type);
                     }
                     return new Constructor(trustedValue);
@@ -13431,7 +13443,9 @@
                         if (isResourceUrlAllowedByPolicy(maybeTrusted)) {
                             return maybeTrusted;
                         } else {
-                            throw $sceMinErr("insecurl", "Blocked loading resource from url not allowed by $sceDelegate policy.  URL: {0}", maybeTrusted.toString());
+                            throw $sceMinErr("insecurl", "Blocked loading resource from url not allowed by $sceDelegate policy.  URL: {0" +
+                                    "}",
+                                    maybeTrusted.toString());
                         }
                     } else if (type === SCE_CONTEXTS.HTML) {
                         return htmlSanitizer(maybeTrusted);
@@ -13802,10 +13816,10 @@
                 // Prereq: Ensure that we're not running in IE8 quirks mode.  In that mode, IE
                 // allows the "expression(javascript expression)" syntax which is insecure.
                 if (enabled && $sniffer.msie && $sniffer.msieDocumentMode < 8) {
-                    throw $sceMinErr("iequirks", "Strict Contextual Escaping does not support Internet Explorer version < 9 in qui" +
-                            "rks mode.  You can fix this by adding the text <!doctype html> to the top of you" +
-                            "r HTML document.  See http://docs.angularjs.org/api/ng.$sce for more information" +
-                            ".");
+                    throw $sceMinErr("iequirks", "Strict Contextual Escaping does not support Internet Explorer version < 9 in q" +
+                            "uirks mode.  You can fix this by adding the text <!doctype html> to the top of" +
+                            " your HTML document.  See http://docs.angularjs.org/api/ng.$sce for more infor" +
+                            "mation.");
                 }
 
                 var sce = copy(SCE_CONTEXTS);
@@ -18779,8 +18793,8 @@
  * Events that are handled via these handler are always configured not to propagate further.
  */
     var ngEventDirectives = {};
-    forEach(("click dblclick mousedown mouseup mouseover mouseout mousemove mouseenter mousel" +
-            "ave keydown keyup keypress submit focus blur copy cut paste").split(" "), function (name) {
+    forEach(("click dblclick mousedown mouseup mouseover mouseout mousemove mouseenter mouse" +
+            "leave keydown keyup keypress submit focus blur copy cut paste").split(" "), function (name) {
         var directiveName = directiveNormalize("ng-" + name);
         ngEventDirectives[directiveName] = [
             "$parse",
@@ -19849,7 +19863,8 @@
                         }
                     });
                     forEach(whens, function (expression, key) {
-                        whensExpFns[key] = $interpolate(expression.replace(BRACE, startSymbol + numberExp + "-" + offset + endSymbol));
+                        whensExpFns[key] = $interpolate(expression.replace(BRACE, startSymbol + numberExp +
+                                "-" + offset + endSymbol));
                     });
 
                     scope.$watch(function ngPluralizeWatch() {
@@ -20094,8 +20109,8 @@
                         };
 
                     if (!match) {
-                        throw ngRepeatMinErr("iexp", "Expected expression in form of '_item_ in _collection_[ track by _id_]' but got " +
-                                "'{0}'.",
+                        throw ngRepeatMinErr("iexp", "Expected expression in form of '_item_ in _collection_[ track by _id_]' but go" +
+                                "t '{0}'.",
                                 expression);
                     }
 
@@ -20126,8 +20141,8 @@
 
                     match = lhs.match(/^(?:([\$\w]+)|\(([\$\w]+)\s*,\s*([\$\w]+)\))$/);
                     if (!match) {
-                        throw ngRepeatMinErr("iidexp", "'_item_' in '_item_ in _collection_' should be an identifier or '(_key_, _value_" +
-                                ")' expression, but got '{0}'.",
+                        throw ngRepeatMinErr("iidexp", "'_item_' in '_item_ in _collection_' should be an identifier or '(_key_, _valu" +
+                                "e_)' expression, but got '{0}'.",
                                 lhs);
                     }
                     valueIdentifier = match[3] || match[1];
@@ -20201,8 +20216,8 @@
                                     }
                                 });
                                 // This is a duplicate and we need to throw an error
-                                throw ngRepeatMinErr("dupes", "Duplicates in a repeater are not allowed. Use 'track by' expression to specify u" +
-                                        "nique keys. Repeater: {0}, Duplicate key: {1}",
+                                throw ngRepeatMinErr("dupes", "Duplicates in a repeater are not allowed. Use 'track by' expression to specify" +
+                                        " unique keys. Repeater: {0}, Duplicate key: {1}",
                                         expression, trackById);
                             } else {
                                 // new never before seen block
@@ -20275,7 +20290,8 @@
 
                             if (!block.scope) {
                                 $transclude(childScope, function (clone) {
-                                    clone[clone.length++] = document.createComment(" end ngRepeat: " + expression + " ");
+                                    clone[clone.length++] = document.createComment(" end ngRepeat: " + expression +
+                                            " ");
                                     $animate.enter(clone, null, jqLite(previousNode));
                                     previousNode           = clone;
                                     block.scope            = childScope;
@@ -20927,8 +20943,8 @@
             "$transclude",
             function ($element, $transclude) {
                 if (!$transclude) {
-                    throw minErr("ngTransclude")("orphan", "Illegal use of ngTransclude directive in the template! No parent directive that " +
-                        "requires a transclusion found. Element: {0}",
+                    throw minErr("ngTransclude")("orphan", "Illegal use of ngTransclude directive in the template! No parent directive tha" +
+                            "t requires a transclusion found. Element: {0}",
                     startingTag($element));
                 }
 
@@ -21328,8 +21344,8 @@
                         var match;
 
                         if (!(match = optionsExp.match(NG_OPTIONS_REGEXP))) {
-                            throw ngOptionsMinErr("iexp", "Expected expression in form of '_select_ (as _label_)? for (_key_,)?_value_ in _" +
-                                    "collection_' but got '{0}'. Element: {1}",
+                            throw ngOptionsMinErr("iexp", "Expected expression in form of '_select_ (as _label_)? for (_key_,)?_value_ in" +
+                                    " _collection_' but got '{0}'. Element: {1}",
                                     optionsExp, startingTag(selectElement));
                         }
 
@@ -21732,6 +21748,6 @@
 !angular.$$csp() && angular
     .element(document)
     .find("head")
-    .prepend("<style type='text/css'>@charset 'UTF-8';[ng\\:cloak],[ng-cloak],[data-ng-cloak]," +
-            "[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\\:form{d" +
-            "isplay:block;}</style>");
+    .prepend("<style type='text/css'>@charset 'UTF-8';[ng\\:cloak],[ng-cloak],[data-ng-cloak" +
+            "],[x-ng-cloak],.ng-cloak,.x-ng-cloak,.ng-hide{display:none !important;}ng\\:fo" +
+            "rm{display:block;}</style>");

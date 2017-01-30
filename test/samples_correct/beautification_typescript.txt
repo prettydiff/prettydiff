@@ -6,7 +6,7 @@ function combinor<T>(...rest : T[]): T {
     const strs = combinor<string>("one", "two");
 
     const nums = combinor<number>(1, 2);
-};
+}
 
 function asdf() {
     export interface Drawable {

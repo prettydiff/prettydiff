@@ -1,0 +1,21 @@
+{{define "css"}}
+{{with .Get "CSS"}}{{end}}
+{{end}} {{* Work Fine*}}
+{{define "body"}}
+{{.Get "User" | hello}}
+{{with .Get "User"}}
+{{.Title}}
+{{end}}
+{{$conf:=.Get "Ctx"}}
+{{$conf.Get "template"}}
+{{-end}}
+{{define "kooter"}}
+Footer Of The Index.tpl
+{{- end}}
+{{define "footer"}}
+Footer Of The Index.tpl
+{{end -}}
+
+{{define "zooter"}}
+Footer Of The Index.tpl
+{{end-}}

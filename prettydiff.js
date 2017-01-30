@@ -395,7 +395,7 @@
                         if (options.mode === "analysis" || (options.mode === "parse" && options.parseFormat === "htmltable")) {
                             finalFile.order[10]  = apidiffout;
                             apioutput = finalFile.order.join("");
-                        } else if (options.mode === "beautify" && options.jsscope !== "none" && options.lang === "javascript") {
+                        } else if (options.mode === "beautify" && options.jsscope !== "none" && (options.lang === "javascript" || options.lang === "json")) {
                             finalFile.order[10]  = apidiffout;
                             finalFile.order[12]  = finalFile.script.beautify;
                             apioutput = finalFile.order.join("");

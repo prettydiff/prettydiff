@@ -413,8 +413,8 @@
             }
         </style>
         <script>
-            window.jQuery || document.write("<script src='//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js'><\/scri" +
-                    "pt>");
+            window.jQuery || document.write("<script src='//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js'><\/sc" +
+                    "ript>");
         </script>
         <script
             src="/minify/new-header-dropdown-min-2551923448.js?v=release-2014-02-r1-2874-962065-1"></script>
@@ -2620,7 +2620,8 @@
                                 }
                             } catch (e) {
                                 if (window.console && console.log) {
-                                    console.log("There was a problem updating the destination options! exception: " + e);
+                                    console.log("There was a problem updating the destination options! exception: " +
+                                            e);
                                 }
                             }
                         },
@@ -2643,8 +2644,8 @@
                             .value;
                         if (selectedDestValue == "others") {
                             // TODO drop down here is where the popup window for other POSs should live
-                            window.open("http://www.expedia.com", "otherPOSs", "height=100,width=400,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=" +
-                                    "no,location=no,status=no");
+                            window.open("http://www.expedia.com", "otherPOSs", "height=100,width=400,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizabl" +
+                                    "e=no,location=no,status=no");
 
                             selectElement
                                 .options[0]
@@ -2683,8 +2684,8 @@
 
                         if (selectedOriginValue == "others") {
                             // TODO drop down here is where the popup window for other POSs should live
-                            window.open("http://www.expedia.com", "otherPOSs", "height=100,width=400,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizable=" +
-                                    "no,location=no,status=no");
+                            window.open("http://www.expedia.com", "otherPOSs", "height=100,width=400,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizabl" +
+                                    "e=no,location=no,status=no");
 
                             selectElement
                                 .options[0]
@@ -2694,12 +2695,13 @@
 
                         var randomnumber = Math.floor(Math.random() * 11000000000);
                         var sUrl = "/ws/SearchWizardWebService/v1/populateDestination?type=" + namespace.wizardType;
-                        sUrl = sUrl + "&factory=com.expedia.e3.cx.expedia.widgetlibrary.search.common.impl.searchWizard" +
-                                "ContentHelper.home";
+                        sUrl = sUrl + "&factory=com.expedia.e3.cx.expedia.widgetlibrary.search.common.impl.sea" +
+                                "rchWizardContentHelper.home";
                         sUrl = sUrl + "&response=json&rand=" + randomnumber;
 
                         // for drop down
-                        sUrl = sUrl + "&isDropDownOnBool=false&selectedOrigin=" + selectedOriginValue + "&isOriginGroupByCountry=false&isDestGroupByCountry=false&isTopCitiesOnBool=false";
+                        sUrl = sUrl + "&isDropDownOnBool=false&selectedOrigin=" + selectedOriginValue + "&isOr" +
+                                "iginGroupByCountry=false&isDestGroupByCountry=false&isTopCitiesOnBool=false";
                         var dropDownIsPackage = document.getElementById("dropDown_isPackage");
                         if (dropDownIsPackage != null) {
                             var dropDownIsPackageValue = dropDownIsPackage.value;
@@ -2797,7 +2799,8 @@
 
                                 // Let's start up the wizard by calling it's initializer function (note the
                                 // naming convention wizardType+'Fn')
-                                eval("namespace.wizardObj = " + response.argument.wizardType + "Fn(namespace.historyObject);");
+                                eval("namespace.wizardObj = " + response.argument.wizardType + "Fn(namespace.hi" +
+                                        "storyObject);");
 
                                 // for dropdown, initial the destination based on the current origin/initial
                                 // origin to empty(default hint)
@@ -3022,7 +3025,8 @@
                             // Note: the wizard's JavaScript code has been already parsed, no need to eval()
                             // the script tag contents again Let's start up the wizard by calling it's
                             // initializer function (note the naming convention wizardType+'Fn')
-                            eval("namespace.wizardObj = " + namespace.wizardType + "Fn(namespace.historyObject);");
+                            eval("namespace.wizardObj = " + namespace.wizardType + "Fn(namespace.historyObj" +
+                                    "ect);");
                             // for dropdown, initial the destination based on the current origin/initial
                             // origin to empty(default hint)
                             cx
@@ -3045,13 +3049,13 @@
                         namespace.showError(false);
                         var randomnumber = Math.floor(Math.random() * 11000000000);
                         var sUrl = "/ws/SearchWizardWebService/v1/handleRequest?type=" + namespace.wizardType;
-                        sUrl = sUrl + "&factory=com.expedia.e3.cx.expedia.widgetlibrary.search.common.impl.searchWizard" +
-                                "ContentHelper.home";
+                        sUrl = sUrl + "&factory=com.expedia.e3.cx.expedia.widgetlibrary.search.common.impl.sea" +
+                                "rchWizardContentHelper.home";
                         sUrl = sUrl + "&response=json&rand=" + randomnumber;
 
                         // for drop down
-                        sUrl = sUrl + "&isDropDownOnBool=false&isOriginGroupByCountry=false&isDestGroupByCountry=false&" +
-                                "isTopCitiesOnBool=false&isPackage=false&isAddtionalOff=false";
+                        sUrl = sUrl + "&isDropDownOnBool=false&isOriginGroupByCountry=false&isDestGroupByCount" +
+                                "ry=false&isTopCitiesOnBool=false&isPackage=false&isAddtionalOff=false";
 
                         namespace
                             .AjaxObject
@@ -3095,7 +3099,8 @@
                                 // Default wizard needs to be shown - already rendered on the page Let's start
                                 // up the wizard by calling it's initializer function (note the naming
                                 // convention wizardType+'Fn')
-                                eval("namespace.wizardObj = " + namespace.historyObject.lob + "Fn(namespace.historyObject);");
+                                eval("namespace.wizardObj = " + namespace.historyObject.lob + "Fn(namespace.his" +
+                                        "toryObject);");
 
                                 // for dropdown, initial the destination based on the current origin/initial
                                 // origin to empty(default hint)
@@ -3241,12 +3246,12 @@
                         if (e) {
                             var useAlternateUrl = (true && window.location.hostname && window.location.hostname === "www.travelocity.com");
                             var url = useAlternateUrl
-                                ? "//shop.travelocity.com/html.cms/TPID=80001&EAPID=0&activity=ff43ffe3-f243-472d-a" +
-                                    "963-477dec20da08&LANGID=1033&SECURE=0&ip=10.186.108.6&USERTYPE=SHOPPER&EMAIL=NO&" +
-                                        "PLACEMENT=CXHOMECORE&LOCATION=HOME&SUBLOCATION=SEARCH&ADSIZE=416X268"
-                                : "/html.cms/TPID=80001&EAPID=0&activity=ff43ffe3-f243-472d-a963-477dec20da08&LANGI" +
-                                    "D=1033&SECURE=0&ip=10.186.108.6&USERTYPE=SHOPPER&EMAIL=NO&PLACEMENT=CXHOMECORE&L" +
-                                        "OCATION=HOME&SUBLOCATION=SEARCH&ADSIZE=416X268";
+                                ? "//shop.travelocity.com/html.cms/TPID=80001&EAPID=0&activity=ff43ffe3-f243-472d" +
+                                        "-a963-477dec20da08&LANGID=1033&SECURE=0&ip=10.186.108.6&USERTYPE=SHOPPER&EMAIL" +
+                                        "=NO&PLACEMENT=CXHOMECORE&LOCATION=HOME&SUBLOCATION=SEARCH&ADSIZE=416X268"
+                                : "/html.cms/TPID=80001&EAPID=0&activity=ff43ffe3-f243-472d-a963-477dec20da08&LAN" +
+                                        "GID=1033&SECURE=0&ip=10.186.108.6&USERTYPE=SHOPPER&EMAIL=NO&PLACEMENT=CXHOMECO" +
+                                        "RE&LOCATION=HOME&SUBLOCATION=SEARCH&ADSIZE=416X268";
                             if (typeof globalAdTileId == "undefined") {
                                 datePart              = new Date()
                                     .getTime()
@@ -3329,12 +3334,12 @@
                                             if (e) {
                                                 var useAlternateUrl = (true && window.location.hostname && window.location.hostname === "www.travelocity.com");
                                                 var url = useAlternateUrl
-                                                    ? "//shop.travelocity.com/html.cms/TPID=80001&EAPID=0&activity=ff43ffe3-f243-472d-a" +
-                                                        "963-477dec20da08&LANGID=1033&SECURE=0&ip=10.186.108.6&USERTYPE=SHOPPER&EMAIL=NO&" +
-                                                            "PLACEMENT=CXHOMECORE_1&LOCATION=HOME&SUBLOCATION=SEARCH&ADSIZE=416X224"
-                                                    : "/html.cms/TPID=80001&EAPID=0&activity=ff43ffe3-f243-472d-a963-477dec20da08&LANGI" +
-                                                        "D=1033&SECURE=0&ip=10.186.108.6&USERTYPE=SHOPPER&EMAIL=NO&PLACEMENT=CXHOMECORE_1" +
-                                                            "&LOCATION=HOME&SUBLOCATION=SEARCH&ADSIZE=416X224";
+                                                    ? "//shop.travelocity.com/html.cms/TPID=80001&EAPID=0&activity=ff43ffe3-f243-472d" +
+                                                            "-a963-477dec20da08&LANGID=1033&SECURE=0&ip=10.186.108.6&USERTYPE=SHOPPER&EMAIL" +
+                                                            "=NO&PLACEMENT=CXHOMECORE_1&LOCATION=HOME&SUBLOCATION=SEARCH&ADSIZE=416X224"
+                                                    : "/html.cms/TPID=80001&EAPID=0&activity=ff43ffe3-f243-472d-a963-477dec20da08&LAN" +
+                                                            "GID=1033&SECURE=0&ip=10.186.108.6&USERTYPE=SHOPPER&EMAIL=NO&PLACEMENT=CXHOMECO" +
+                                                            "RE_1&LOCATION=HOME&SUBLOCATION=SEARCH&ADSIZE=416X224";
                                                 if (typeof globalAdTileId == "undefined") {
                                                     datePart              = new Date()
                                                         .getTime()
@@ -3960,8 +3965,8 @@
         <!-- 0 ms -->
 
         <script>
-            window.jQuery || document.write("<script src='//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js'><\/scri" +
-                    "pt>");
+            window.jQuery || document.write("<script src='//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js'><\/sc" +
+                    "ript>");
         </script>
 
         <script

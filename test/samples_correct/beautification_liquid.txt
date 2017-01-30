@@ -57,13 +57,9 @@
                     {% case %}
                         x {
                             color: Red;
-                        }
-                    {% when %}
-                        y {
+                        } {% when %} y {
                             color: blue;
-                        }
-                    {% when %}
-                        f {
+                        } {% when %} f {
                             color: yellow;
                         }
                     {% endcase %}
