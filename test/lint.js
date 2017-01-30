@@ -777,31 +777,42 @@
                     });
                 },
                 pull   = function taskrunner_moduleInstall_editions_pull() {
-                    child("git submodule foreach git pull origin master", function taskrunner_moduleInstall_editions_pull_child(errpull, stdoutpull, stdouterpull) {
-                        if (errpull !== null) {
-                            console.log(errpull);
-                            if (errpull.toString().indexOf("fatal: no submodule mapping found in .gitmodules for path ") > 0) {
-                                console.log("No access to GitHub or .gitmodules is corrupt. Proceeding assuming submodules we" +
-                                        "re previously installed.");
-                                flag.apps = true;
-                                return keys.forEach(each);
+                    child("git stash", {
+                        cwd: "JSLint"
+                    }, function taskrunner_moduleInstall_editions_pull_stash(errstash, stdoutstash, stdouterstash) {
+                        if (errstash !== null) {
+                            return errout(errstash);
+                        }
+                        if (stdouterstash !== null && stdouterstash !== "") {
+                            return errout(stdouterstash);
+                        }
+                        child("git submodule foreach git pull origin master", function taskrunner_moduleInstall_editions_pull_stash_pullit(errpull, stdoutpull, stdouterpull) {
+                            if (errpull !== null) {
+                                console.log(errpull);
+                                if (errpull.toString().indexOf("fatal: no submodule mapping found in .gitmodules for path ") > 0) {
+                                    console.log("No access to GitHub or .gitmodules is corrupt. Proceeding assuming submodules we" +
+                                            "re previously installed.");
+                                    flag.apps = true;
+                                    return keys.forEach(each);
+                                }
+                                errout(errpull);
                             }
-                            errout(errpull);
-                        }
-                        if (stdouterpull !== null && stdouterpull !== "" && stdouterpull.indexOf("Cloning into '") < 0 && stdouterpull.indexOf("From ") < 0 && stdouterpull.indexOf("fatal: no submodule mapping found in .gitmodules for path ") < 0) {
-                            errout(stdouterpull);
-                        }
-                        if (flag.today === false) {
-                            console.log("Submodules checked for updates.");
-                        }
-                        keys.forEach(each);
-                        return stdoutpull;
+                            if (stdouterpull !== null && stdouterpull !== "" && stdouterpull.indexOf("Cloning into '") < 0 && stdouterpull.indexOf("From ") < 0 && stdouterpull.indexOf("fatal: no submodule mapping found in .gitmodules for path ") < 0) {
+                                errout(stdouterpull);
+                            }
+                            if (flag.today === false) {
+                                console.log("Submodules checked for updates.");
+                            }
+                            keys.forEach(each);
+                            return stdoutpull;
+                        });
+                        return stdoutstash;
                     });
                 };
             if (ind === keys.length) {
                 if (today !== date) {
                     child("git checkout jslint.js", {
-                        cwd: abspath + "JSLint"
+                        cwd: "JSLint"
                     }, function taskrunner_moduleInstall_editions_checkoutJSLint(erjsl, stdoutjsl, stdouterjsl) {
                         if (erjsl !== null) {
                             errout(erjsl);
