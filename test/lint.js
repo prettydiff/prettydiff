@@ -940,7 +940,7 @@
                         "echo \"\" > test/simulation/testd1.txt"
                     ],
                     group   : "api simulation - node-local.js",
-                    teardown: ["rm -rf test/simulation"],
+                    teardown: ["rm -rf test/simulation", "rm -rf JSLint"],
                     units   : [
                         {
                             group: "readmethod: screen",
