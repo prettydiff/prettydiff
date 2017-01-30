@@ -418,20 +418,20 @@
             nodeLocal: 160816 //node-local.js
         },
         css          : 161204, //css files
-        csspretty    : 161204, //csspretty lib
+        csspretty    : 170129, //csspretty lib
         csvpretty    : 160816, //csvpretty lib
         diffview     : 161002, //diffview lib
         documentation: 161204, //documentation.xhtml and various guide pages
         finalFile    : 160816, //HTML report generator
-        jspretty     : 161204, //jspretty lib
-        language     : 161204, //language lib
+        jspretty     : 170129, //jspretty lib
+        language     : 170129, //language lib
         latest       : 0,
-        lint         : 161204, //unit test and lint automation as test/lint.js
-        markuppretty : 161204, //markuppretty lib
+        lint         : 170129, //unit test and lint automation as test/lint.js
+        markuppretty : 170129, //markuppretty lib
         options      : 161002, //options management
-        prettydiff   : 161002, //this file
+        prettydiff   : 170129, //this file
         safeSort     : 160816, //safeSort lib
-        version      : "2.1.15", //version number
+        version      : "2.1.16", //version number
         webtool      : 161204
     };
     global.prettydiff.edition.latest = (function edition_latest() {

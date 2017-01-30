@@ -1,5 +1,21 @@
 # Pretty Diff change log
 
+## v2.1.16
+
+### Defects
+* Fixes #392, problems with vertical alignment
+* Fixes #396, biddle application is now working properly
+* Fixes #398, JSX disruption due to comments
+* Fixes #399, SCSS @else properly recognized as an else template tag
+* Fixes #401, a minor TypeScript flaw with missing indentation
+* Fixes #402, defect with code getting dropped if a template tag wraps as markup
+* Fixes #403, {{end -}} was not properly recognized as an end tag
+* Fixes #407, some extra hardiness for Rust language conventions
+
+### Enhancements
+* Fixes #393, JSON code is no longer polluted with JavaScript specific parsing enhancements
+* Fixes #405, stronger wrapping when strings and non-strings are mixed
+
 ## v2.1.15
 
 ### Defect resolutions
