@@ -801,7 +801,7 @@
             if (ind === keys.length) {
                 if (today !== date) {
                     child("git checkout jslint.js", {
-                        cwd: "JSLint"
+                        cwd: abspath + "JSLint"
                     }, function taskrunner_moduleInstall_editions_checkoutJSLint(erjsl, stdoutjsl, stdouterjsl) {
                         if (erjsl !== null) {
                             errout(erjsl);
