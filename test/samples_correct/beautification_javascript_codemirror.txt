@@ -205,7 +205,8 @@
         d.sizerWidth   = null;
         // Behavior of elts with overflow: auto and padding is inconsistent across
         // browsers. This is used to ensure the scrollable area is big enough.
-        d.heightForcer = elt("div", null, null, "position: absolute; height: " + scrollerGap + "px; width: 1px;");
+        d.heightForcer = elt("div", null, null, "position: absolute; height: " +
+                scrollerGap + "px; width: 1px;");
         // Will contain the gutters, if any.
         d.gutters      = elt("div", null, "CodeMirror-gutters");
         d.lineGutter   = null;
@@ -415,7 +416,8 @@
         removeChildren(gutters);
         for (var i = 0; i < specs.length; i += 1) {
             var gutterClass = specs[i];
-            var gElt = gutters.appendChild(elt("div", null, "CodeMirror-gutter " + gutterClass));
+            var gElt = gutters.appendChild(elt("div", null, "CodeMirror-gutter " +
+                    gutterClass));
             if (gutterClass == "CodeMirror-linenumbers") {
                 cm.display.lineGutter = gElt;
                 gElt.style.width      = (cm.display.lineNumWidth || 1) + "px";
@@ -1237,14 +1239,17 @@
         var markers = lineView.line.gutterMarkers;
         if (cm.options.lineNumbers || markers) {
             var wrap = ensureLineWrapped(lineView);
-            var gutterWrap = lineView.gutter = wrap.insertBefore(elt("div", null, "CodeMirror-gutter-wrapper", "left: " + (cm.options.fixedGutter
+            var gutterWrap = lineView.gutter = wrap.insertBefore(elt("div", null, "CodeMirror-gutter-wrapper", "left: " +
+                    (cm.options.fixedGutter
                 ? dims.fixedPos
                 : -dims.gutterTotalWidth) + "px; width: " + dims.gutterTotalWidth + "px"), lineView.text);
             if (lineView.line.gutterClass) {
                 gutterWrap.className += " " + lineView.line.gutterClass;
             }
             if (cm.options.lineNumbers && (!markers || !markers["CodeMirror-linenumbers"])) {
-                lineView.lineNumber = gutterWrap.appendChild(elt("div", lineNumberFor(cm.options, lineN), "CodeMirror-linenumber CodeMirror-gutter-elt", "left: " + dims.gutterLeft["CodeMirror-linenumbers"] + "px; width: " + cm.display.lineNumInnerWidth + "px"));
+                lineView.lineNumber = gutterWrap.appendChild(elt("div", lineNumberFor(cm.options, lineN), "CodeMirror-linenumber CodeMirror-gutter-elt", "left: " +
+                        dims.gutterLeft["CodeMirror-linenumbers"] + "px; width: " + cm.display.lineNumInnerWidth +
+                        "px"));
             }
             if (markers) {
                 for (var k = 0; k < cm.options.gutters.length; k += 1) {
@@ -1253,7 +1258,8 @@
                             .gutters[k],
                         found = markers.hasOwnProperty(id) && markers[id];
                     if (found) {
-                        gutterWrap.appendChild(elt("div", [found], "CodeMirror-gutter-elt", "left: " + dims.gutterLeft[id] + "px; width: " + dims.gutterWidth[id] + "px"));
+                        gutterWrap.appendChild(elt("div", [found], "CodeMirror-gutter-elt", "left: " +
+                                dims.gutterLeft[id] + "px; width: " + dims.gutterWidth[id] + "px"));
                     }
                 }
             }
@@ -1828,7 +1834,8 @@
             }
             top    = Math.round(top);
             bottom = Math.round(bottom);
-            fragment.appendChild(elt("div", null, "CodeMirror-selected", "position: absolute; left: " + left + "px; top: " + top + "px; width: " + (width == null
+            fragment.appendChild(elt("div", null, "CodeMirror-selected", "position: absolute; left: " +
+                    left + "px; top: " + top + "px; width: " + (width == null
                 ? rightSide - left
                 : width) + "px; height: " + (bottom - top) + "px"));
         }
@@ -1991,7 +1998,7 @@
                     : null;
             }
             ++doc.frontier;
-            if (+ new Date > end) {
+            if (+new Date > end) {
                 startWorker(cm, cm.options.workDelay);
                 return true;
             }
@@ -2318,7 +2325,8 @@
                 while (start && isExtendingChar(prepared.line.text.charAt(mStart + start))) {
                     --start;
                 }
-                while (mStart + end < mEnd && isExtendingChar(prepared.line.text.charAt(mStart + end))) {
+                while (mStart + end < mEnd && isExtendingChar(prepared.line.text.charAt(mStart +
+                        end))) {
                     ++end;
                 }
                 if (ie && ie_version < 9 && start == 0 && end == mEnd - mStart) {
@@ -2918,7 +2926,8 @@
         if (display.maxLineChanged && !cm.options.lineWrapping) {
             op.adjustWidthTo          = measureChar(cm, display.maxLine, display.maxLine.text.length).left + 3;
             cm.display.sizerWidth     = op.adjustWidthTo;
-            op.barMeasure.scrollWidth = Math.max(display.scroller.clientWidth, display.sizer.offsetLeft + op.adjustWidthTo + scrollGap(cm) + cm.display.barWidth);
+            op.barMeasure.scrollWidth = Math.max(display.scroller.clientWidth, display.sizer.offsetLeft +
+                    op.adjustWidthTo + scrollGap(cm) + cm.display.barWidth);
             op.maxScrollLeft          = Math.max(0, display.sizer.offsetLeft + op.adjustWidthTo - displayWidth(cm));
         }
 
@@ -3964,7 +3973,8 @@
                 scroll: false
             });
         } else if (ranges.length > 1 && ranges[ourIndex].empty() && type == "single") {
-            setSelection(doc, normalizeSelection(ranges.slice(0, ourIndex).concat(ranges.slice(ourIndex + 1)), 0));
+            setSelection(doc, normalizeSelection(ranges.slice(0, ourIndex).concat(ranges.slice(ourIndex +
+                    1)), 0));
             startSel = doc.sel;
         } else {
             replaceOneSelection(doc, ourIndex, ourRange, sel_mouse);
@@ -4215,7 +4225,7 @@
     }
 
     function onDragStart(cm, e) {
-        if (ie && (!cm.state.draggingText || + new Date - lastDrop < 100)) {
+        if (ie && (!cm.state.draggingText || +new Date - lastDrop < 100)) {
             e_stop(e);
             return;
         }
@@ -4413,7 +4423,8 @@
                     if (!sample) {
                         return;
                     }
-                    wheelPixelsPerUnit = (wheelPixelsPerUnit * wheelSamples + sample) / (wheelSamples + 1);
+                    wheelPixelsPerUnit = (wheelPixelsPerUnit * wheelSamples + sample) / (wheelSamples +
+                            1);
                     wheelSamples       += 1;
                 }, 200);
             } else {
@@ -4677,10 +4688,11 @@
 
         var oldCSS = display.input.style.cssText;
         display.inputDiv.style.position = "absolute";
-        display.input.style.cssText     = "position: fixed; width: 30px; height: 30px; top: " + (e.clientY - 5) + "px; left: " + (e.clientX - 5) + "px; z-index: 1000; background: " + (ie
+        display.input.style.cssText     = "position: fixed; width: 30px; height: 30px; top: " + (e.clientY - 5) + "px; le" +
+                "ft: " + (e.clientX - 5) + "px; z-index: 1000; background: " + (ie
             ? "rgba(255, 255, 255, .05)"
-            : "transparent") + "; outline: none; border-width: 0; outline: none; overflow: hidden; opacity: .05;" +
-                " filter: alpha(opacity=5);";
+            : "transparent") + "; outline: none; border-width: 0; outline: none; overflow: " +
+                "hidden; opacity: .05; filter: alpha(opacity=5);";
         if (webkit) {
             var oldScrollY = window.scrollY; // Work around Chrome issue (#2712)
         }
@@ -5036,7 +5048,8 @@
         }
         doc.first += distance;
         doc.sel   = new Selection(map(doc.sel.ranges, function (range) {
-            return new Range(Pos(range.anchor.line + distance, range.anchor.ch), Pos(range.head.line + distance, range.head.ch));
+            return new Range(Pos(range.anchor.line + distance, range.anchor.ch), Pos(range.head.line +
+                    distance, range.head.ch));
         }), doc.sel.primIndex);
         if (doc.cm) {
             regChange(doc.cm, doc.first, doc.first - distance, distance);
@@ -5209,7 +5222,9 @@
             doScroll = false;
         }
         if (doScroll != null && !phantom) {
-            var scrollNode = elt("div", "\u200b", null, "position: absolute; top: " + (coords.top - display.viewOffset - paddingTop(cm.display)) + "px; height: " + (coords.bottom - coords.top + scrollGap(cm) + display.barHeight) + "px; left: " + coords.left + "px; width: 2px;");
+            var scrollNode = elt("div", "\u200b", null, "position: absolute; top: " + (coords.top - display.viewOffset - paddingTop(cm.display)) +
+                    "px; height: " + (coords.bottom - coords.top + scrollGap(cm) + display.barHeight) +
+                    "px; left: " + coords.left + "px; width: 2px;");
             cm
                 .display
                 .lineSpace
@@ -5235,7 +5250,8 @@
             var endCoords = !end || end == pos
                 ? coords
                 : cursorCoords(cm, end);
-            var scrollPos = calculateScrollPos(cm, Math.min(coords.left, endCoords.left), Math.min(coords.top, endCoords.top) - margin, Math.max(coords.left, endCoords.left), Math.max(coords.bottom, endCoords.bottom) + margin);
+            var scrollPos = calculateScrollPos(cm, Math.min(coords.left, endCoords.left), Math.min(coords.top, endCoords.top) - margin, Math.max(coords.left, endCoords.left), Math.max(coords.bottom, endCoords.bottom) +
+                    margin);
             var startTop  = cm.doc.scrollTop,
                 startLeft = cm.doc.scrollLeft;
             if (scrollPos.scrollTop != null) {
@@ -5373,7 +5389,8 @@
             cm.curOp.scrollToPos = null;
             var from = estimateCoords(cm, range.from),
                 to   = estimateCoords(cm, range.to);
-            var sPos = calculateScrollPos(cm, Math.min(from.left, to.left), Math.min(from.top, to.top) - range.margin, Math.max(from.right, to.right), Math.max(from.bottom, to.bottom) + range.margin);
+            var sPos = calculateScrollPos(cm, Math.min(from.left, to.left), Math.min(from.top, to.top) - range.margin, Math.max(from.right, to.right), Math.max(from.bottom, to.bottom) +
+                    range.margin);
             cm.scrollTo(sPos.scrollLeft, sPos.scrollTop);
         }
     }
@@ -6236,7 +6253,8 @@
                 resolveScrollToPos(this);
                 this.curOp.scrollToPos = range;
             } else {
-                var sPos = calculateScrollPos(this, Math.min(range.from.left, range.to.left), Math.min(range.from.top, range.to.top) - range.margin, Math.max(range.from.right, range.to.right), Math.max(range.from.bottom, range.to.bottom) + range.margin);
+                var sPos = calculateScrollPos(this, Math.min(range.from.left, range.to.left), Math.min(range.from.top, range.to.top) - range.margin, Math.max(range.from.right, range.to.right), Math.max(range.from.bottom, range.to.bottom) +
+                        range.margin);
                 this.scrollTo(sPos.scrollLeft, sPos.scrollTop);
             }
         }),
@@ -11269,14 +11287,15 @@
     // occur visually.
     var bidiOrdering = (function () {
         // Character types for codepoints 0 to 0xff
-        var lowTypes = "bbbbbbbbbtstwsbbbbbbbbbbbbbbssstwNN%%%NNNNNN,N,N1111111111NNNNNNNLLLLLLLLLLLLLLL" +
-                "LLLLLLLLLLLNNNNNNLLLLLLLLLLLLLLLLLLLLLLLLLLNNNNbbbbbbsbbbbbbbbbbbbbbbbbbbbbbbbbb" +
-                ",N%%%%NNNNLNNNNN%%11NLNNN1LNNNNNLLLLLLLLLLLLLLLLLLLLLLLNLLLLLLLLLLLLLLLLLLLLLLLL" +
-                "LLLLLLLN";
+        var lowTypes = "bbbbbbbbbtstwsbbbbbbbbbbbbbbssstwNN%%%NNNNNN,N,N1111111111NNNNNNNLLLLLLLLLLLLL" +
+                "LLLLLLLLLLLLLNNNNNNLLLLLLLLLLLLLLLLLLLLLLLLLLNNNNbbbbbbsbbbbbbbbbbbbbbbbbbbbbb" +
+                "bbbb,N%%%%NNNNLNNNNN%%11NLNNN1LNNNNNLLLLLLLLLLLLLLLLLLLLLLLNLLLLLLLLLLLLLLLLLL" +
+                "LLLLLLLLLLLLLN";
         // Character types for codepoints 0x600 to 0x6ff
-        var arabicTypes = "rrrrrrrrrrrr,rNNmmmmmmrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrmmmmm" +
-                "mmmmmmmmmrrrrrrrnnnnnnnnnn%nnrrrmrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr" +
-                "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrmmmmmmmmmmmmmmmmmmmNmmmm";
+        var arabicTypes = "rrrrrrrrrrrr,rNNmmmmmmrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrmmm" +
+                "mmmmmmmmmmmrrrrrrrnnnnnnnnnn%nnrrrmrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr" +
+                "rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrmmmmmmmmmmmmmmmmmmmN" +
+                "mmmm";
         function charType(code) {
             if (code <= 0xf7) {
                 return lowTypes.charAt(code);
@@ -11961,9 +11980,9 @@
         return a.line - b.line || a.ch - b.ch;
     }
 
-    var nameStartChar = "A-Z_a-z\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u02FF\\u0370-\\u037D\\u037F-\\u1F" +
-            "FF\\u200C-\\u200D\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDCF\\u" +
-            "FDF0-\\uFFFD";
+    var nameStartChar = "A-Z_a-z\\u00C0-\\u00D6\\u00D8-\\u00F6\\u00F8-\\u02FF\\u0370-\\u037D\\u037F-\\u" +
+            "1FFF\\u200C-\\u200D\\u2070-\\u218F\\u2C00-\\u2FEF\\u3001-\\uD7FF\\uF900-\\uFDC" +
+            "F\\uFDF0-\\uFFFD";
     var nameChar = nameStartChar + "\-\:\.0-9\\u00B7\\u0300-\\u036F\\u203F-\\u2040";
     var xmlTagStart = new RegExp("<(/?)([" + nameStartChar + "][" + nameChar + "]*)", "g");
 

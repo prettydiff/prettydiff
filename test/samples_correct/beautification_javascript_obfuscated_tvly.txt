@@ -354,7 +354,8 @@
             r = [],
             s = d._data(this, "events");
         if (a.liveFired !== this && s && s.live && !a.target.disabled && (!a.button || a.type !== "click")) {
-            a.namespace && (n = new RegExp("(^|\\.)" + a.namespace.split(".").join("\\.(?:.*\\.)?") + "(\\.|$)")),
+            a.namespace && (n = new RegExp("(^|\\.)" + a.namespace.split(".").join("\\.(?:.*\\.)?") +
+                    "(\\.|$)")),
             a.liveFired = this;
             var t = s
                 .live
@@ -986,7 +987,8 @@
                         ? (e = new DOMParser, c = e.parseFromString(b, "text/xml"))
                         : (c = new ActiveXObject("Microsoft.XMLDOM"), c.async = "false", c.loadXML(b)),
                     e = c.documentElement,
-                    (!e || !e.nodeName || e.nodeName === "parsererror") && d.error("Invalid XML: " + b);
+                    (!e || !e.nodeName || e.nodeName === "parsererror") && d.error("Invalid XML: " +
+                            b);
                     return c;
                 },
                 proxy        : function (a, c, e) {
@@ -1122,8 +1124,8 @@
         d.support = {};
         var b = c.createElement("div");
         b.style.display = "none",
-        b.innerHTML     = "   <link/><table></table><a href='/a' style='color:red;float:left;opacity:.55;'>" +
-                             "a</a><input type='checkbox'/>";
+        b.innerHTML     = "   <link/><table></table><a href='/a' style='color:red;float:left;opacity:.55;" +
+                "'>a</a><input type='checkbox'/>";
         var e = b.getElementsByTagName("*"),
             f = b.getElementsByTagName("a")[0],
             g = c.createElement("select"),
@@ -1204,8 +1206,8 @@
                     b.appendChild(a),
                     d.boxModel = d.support.boxModel = a.offsetWidth === 2,
                     "zoom" in a.style && (a.style.display = "inline", a.style.zoom = 1, d.support.inlineBlockNeedsLayout = a.offsetWidth === 2, a.style.display = "", a.innerHTML = "<div style='width:4px;'></div>", d.support.shrinkWrapBlocks = a.offsetWidth !== 2),
-                    a.innerHTML = "<table><tr><td style='padding:0;border:0;display:none'></td><td>t</td></tr></tab" +
-                            "le>";
+                    a.innerHTML = "<table><tr><td style='padding:0;border:0;display:none'></td><td>t</td></tr></t" +
+                            "able>";
                     var e = a.getElementsByTagName("td");
                     d.support.reliableHiddenOffsets = e[0].offsetHeight === 0,
                     e[0].style.display              = "",
@@ -1855,7 +1857,8 @@
             e               = c
                 .type
                 .indexOf(".") < 0 && !c.exclusive,
-            e || (g = c.type.split("."), c.type = g.shift(), j = g.slice(0).sort(), h = new RegExp("(^|\\.)" + j.join("\\.(?:.*\\.)?") + "(\\.|$)")),
+            e || (g = c.type.split("."), c.type = g.shift(), j = g.slice(0).sort(), h = new RegExp("(^|\\.)" +
+                    j.join("\\.(?:.*\\.)?") + "(\\.|$)")),
             c.namespace     = c.namespace || j.join("."),
             i               = d._data(this, "events"),
             f               = (i || {})[c.type];
@@ -1879,11 +1882,11 @@
             }
             return c.result;
         },
-        props  : ("altKey attrChange attrName bubbles button cancelable charCode clientX clientY c" +
-                "trlKey currentTarget data detail eventPhase fromElement handler keyCode layerX l" +
-                "ayerY metaKey newValue offsetX offsetY pageX pageY prevValue relatedNode related" +
-                "Target screenX screenY shiftKey srcElement target toElement view wheelDelta whic" +
-                "h").split(" "),
+        props  : ("altKey attrChange attrName bubbles button cancelable charCode clientX clientY " +
+                "ctrlKey currentTarget data detail eventPhase fromElement handler keyCode layer" +
+                "X layerY metaKey newValue offsetX offsetY pageX pageY prevValue relatedNode re" +
+                "latedTarget screenX screenY shiftKey srcElement target toElement view wheelDel" +
+                "ta which").split(" "),
         proxy  : d.proxy,
         remove : function (a, c, e, f) {
             if (a.nodeType !== 3 && a.nodeType !== 8) {
@@ -1921,7 +1924,8 @@
                     q = null,
                     l = h.indexOf(".") < 0,
                     m = [],
-                    l || (m = h.split("."), h = m.shift(), n = new RegExp("(^|\\.)" + d.map(m.slice(0).sort(), u).join("\\.(?:.*\\.)?") + "(\\.|$)")),
+                    l || (m = h.split("."), h = m.shift(), n = new RegExp("(^|\\.)" + d.map(m.slice(0).sort(), u).join("\\.(?:.*\\.)?") +
+                            "(\\.|$)")),
                     p = t[h];
                     if (!p) {
                         continue;
@@ -2433,9 +2437,9 @@
             return this;
         };
     }),
-    d.each(("blur focus focusin focusout load resize scroll unload click dblclick mousedown " +
-            "mouseup mousemove mouseover mouseout mouseenter mouseleave change select submit " +
-            "keydown keypress keyup error").split(" "), function (a, b) {
+    d.each(("blur focus focusin focusout load resize scroll unload click dblclick mousedown" +
+            " mouseup mousemove mouseover mouseout mouseenter mouseleave change select subm" +
+            "it keydown keypress keyup error").split(" "), function (a, b) {
         d.fn[b] = function (a, c) {
             c == null && (c = a, a = null);
             return arguments.length > 0
@@ -4775,8 +4779,8 @@
     }),
     d.ajaxSetup({
         accepts   : {
-            script: "text/javascript, application/javascript, application/ecmascript, application/x-e" +
-                    "cmascript"
+            script: "text/javascript, application/javascript, application/ecmascript, application/x" +
+                    "-ecmascript"
         },
         contents  : {
             script: /javascript|ecmascript/
@@ -4977,7 +4981,8 @@
                                     l = i[3] || (d.cssNumber[c]
                                         ? ""
                                         : "px");
-                                l !== "px" && (d.style(h, c, (k || 1) + l), j = (k || 1) / f.cur() * j, d.style(h, c, j + l)),
+                                l !== "px" && (d.style(h, c, (k || 1) + l), j = (k || 1) / f.cur() * j, d.style(h, c, j +
+                                        l)),
                                 i[1] && (k = (i[1] === "-="
                                     ? -1
                                     : 1) * k + j),
@@ -5397,10 +5402,10 @@
                 g,
                 h,
                 i = parseFloat(d.css(a, "marginTop")) || 0,
-                j = "<div style='position:absolute;top:0;left:0;margin:0;border:5px solid #000;paddin" +
-                  "g:0;width:1px;height:1px;'><div></div></div><table style='position:absolute;top:" +
-                  "0;left:0;margin:0;border:5px solid #000;padding:0;width:1px;height:1px;' cellpad" +
-                  "ding='0' cellspacing='0'><tr><td></td></tr></table>";
+                j = "<div style='position:absolute;top:0;left:0;margin:0;border:5px solid #000;padd" +
+                        "ing:0;width:1px;height:1px;'><div></div></div><table style='position:absolute;" +
+                        "top:0;left:0;margin:0;border:5px solid #000;padding:0;width:1px;height:1px;' c" +
+                        "ellpadding='0' cellspacing='0'><tr><td></td></tr></table>";
             d.extend(b.style, {
                 border    : 0,
                 height    : "1px",
@@ -5860,7 +5865,8 @@
                 ? a.map(f, function (a) {
                     return typeof a === "string"
                         ? e.key
-                            ? a.replace(/(<\w+)(?=[\s>])(?![^>]*_tmplitem)([^>]*)/g, "$1 " + d + "='" + e.key + "' $2")
+                            ? a.replace(/(<\w+)(?=[\s>])(?![^>]*_tmplitem)([^>]*)/g, "$1 " + d + "='" + e.key +
+                                    "' $2")
                             : a
                         : j(a, e, a._ctnt);
                 })
@@ -5889,7 +5895,8 @@
         return a.makeArray(b.childNodes);
     }
     function o(b) {
-        return new Function("jQuery", "$item", "var $=jQuery,call,__=[],$data=$item.data;with($data){__.push('" + a.trim(b).replace(/([\\'])/g, "\\$1").replace(/[\r\t\n]/g, " ").replace(/\$\{([^\}]*)\}/g, "{{= $1}}").replace(/\{\{(\/?)(\w+|.)(?:\(((?:[^\}]|\}(?!\}))*?)?\))?(?:\s+(.*?)?)?(\(((?:[^\}]|\}(?!\}))*?)\))?\s*\}\}/g, function (m, l, k, g, b, c, d) {
+        return new Function("jQuery", "$item", "var $=jQuery,call,__=[],$data=$item.data;with($data){__.push('" +
+                a.trim(b).replace(/([\\'])/g, "\\$1").replace(/[\r\t\n]/g, " ").replace(/\$\{([^\}]*)\}/g, "{{= $1}}").replace(/\{\{(\/?)(\w+|.)(?:\(((?:[^\}]|\}(?!\}))*?)?\))?(?:\s+(.*?)?)?(\(((?:[^\}]|\}(?!\}))*?)\))?\s*\}\}/g, function (m, l, k, g, b, c, d) {
             var j = a
                     .tmpl
                     .tag[k],
@@ -6318,7 +6325,8 @@ jQuery.cookie = function (name, value, options) {
                 } else if (isNaN(chr3)) {
                     enc4 = 64;
                 }
-                output = output + keyString.charAt(enc1) + keyString.charAt(enc2) + keyString.charAt(enc3) + keyString.charAt(enc4);
+                output = output + keyString.charAt(enc1) + keyString.charAt(enc2) + keyString.charAt(enc3) +
+                        keyString.charAt(enc4);
             }
             return output;
         }
@@ -6418,13 +6426,15 @@ jQuery.cookie = function (name, value, options) {
                         ? this
                             .parents()
                             .filter(function () {
-                                return /(relative|absolute|fixed)/.test(c.curCSS(this, "position", 1)) && /(auto|scroll)/.test(c.curCSS(this, "overflow", 1) + c.curCSS(this, "overflow-y", 1) + c.curCSS(this, "overflow-x", 1));
+                                return /(relative|absolute|fixed)/.test(c.curCSS(this, "position", 1)) && /(auto|scroll)/.test(c.curCSS(this, "overflow", 1) +
+                                        c.curCSS(this, "overflow-y", 1) + c.curCSS(this, "overflow-x", 1));
                             })
                             .eq(0)
                         : this
                             .parents()
                             .filter(function () {
-                                return /(auto|scroll)/.test(c.curCSS(this, "overflow", 1) + c.curCSS(this, "overflow-y", 1) + c.curCSS(this, "overflow-x", 1));
+                                return /(auto|scroll)/.test(c.curCSS(this, "overflow", 1) + c.curCSS(this, "overflow-y", 1) +
+                                        c.curCSS(this, "overflow-x", 1));
                             })
                             .eq(0);
                     return /fixed/.test(this.css("position")) || !a.length
@@ -6951,8 +6961,8 @@ jQuery.cookie = function (name, value, options) {
             }
             if (d.isArray(a)) {
                 a = {
-                    left: + a[0],
-                    top : + a[1] || 0
+                    left: +a[0],
+                    top : +a[1] || 0
                 };
             }
             if ("left" in a) {
@@ -8306,9 +8316,9 @@ jQuery.cookie = function (name, value, options) {
                 .each(function () {
                     d.data(this, "destroy.tabs")
                         ? d(this).remove()
-                        : d(this).removeClass("ui-state-default ui-corner-top ui-tabs-selected ui-state-active ui-state-hover u" +
-                                "i-state-focus ui-state-disabled ui-tabs-panel ui-widget-content ui-corner-bottom" +
-                                " ui-tabs-hide");
+                        : d(this).removeClass("ui-state-default ui-corner-top ui-tabs-selected ui-state-active ui-state-hover" +
+                                " ui-state-focus ui-state-disabled ui-tabs-panel ui-widget-content ui-corner-bo" +
+                                "ttom ui-tabs-hide");
                 });
             b.cookie && this._cookie(null, b.cookie);
             return this;
@@ -8793,7 +8803,7 @@ jQuery.cookie = function (name, value, options) {
                     c.each([
                         "left", "top"
                     ], function (g, f) {
-                        if (+ b[g] === b[g]) {
+                        if (+b[g] === b[g]) {
                             d[g] = b[g];
                             b[g] = f;
                         }
@@ -9286,7 +9296,7 @@ jQuery.cookie = function (name, value, options) {
             g;
         d && a
             ._d
-            .setTime(+ a + d * c),
+            .setTime(+a + d * c),
         e && a.date(a.date() + e * c),
         f && (g = a.date(), a.date(1).month(a.month() + f * c).date(Math.min(g, a.daysInMonth())));
     }
@@ -9463,7 +9473,7 @@ jQuery.cookie = function (name, value, options) {
         switch (a) {
             case "M":
             case "MM":
-                d[1] =~~ b - 1;
+                d[1] = ~~b - 1;
                 break;
             case "MMM":
             case "MMMM":
@@ -9478,16 +9488,16 @@ jQuery.cookie = function (name, value, options) {
             case "DD":
             case "DDD":
             case "DDDD":
-                d[2] =~~ b;
+                d[2] = ~~b;
                 break;
             case "YY":
-                b    =~~ b,
+                b    = ~~b,
                 d[0] = b + (b > 70
                     ? 1900
                     : 2e3);
                 break;
             case "YYYY":
-                d[0] =~~ Math.abs(b);
+                d[0] = ~~Math.abs(b);
                 break;
             case "a":
             case "A":
@@ -9497,31 +9507,31 @@ jQuery.cookie = function (name, value, options) {
             case "HH":
             case "h":
             case "hh":
-                d[3] =~~ b;
+                d[3] = ~~b;
                 break;
             case "m":
             case "mm":
-                d[4] =~~ b;
+                d[4] = ~~b;
                 break;
             case "s":
             case "ss":
-                d[5] =~~ b;
+                d[5] = ~~b;
                 break;
             case "S":
-                d[6] =~~ b * 100;
+                d[6] = ~~b * 100;
                 break;
             case "SS":
-                d[6] =~~ b * 10;
+                d[6] = ~~b * 10;
                 break;
             case "SSS":
-                d[6] =~~ b;
+                d[6] = ~~b;
                 break;
             case "Z":
             case "ZZ":
                 e.isUTC = !0,
                 f       = (b + "").match(z),
-                f && f[1] && (e.tzh =~~ f[1]),
-                f && f[2] && (e.tzm =~~ f[2]),
+                f && f[1] && (e.tzh = ~~f[1]),
+                f && f[2] && (e.tzm = ~~f[2]),
                 f && f[0] === "+" && (e.tzh = -e.tzh, e.tzm = -e.tzm)
         }
     }
@@ -9647,8 +9657,8 @@ jQuery.cookie = function (name, value, options) {
         g = {},
         h = "en",
         i = typeof module != "undefined",
-        j = ("months|monthsShort|monthsParse|weekdays|weekdaysShort|longDateFormat|calendar|r" +
-                "lativeTime|ordinal|meridiem").split("|"),
+        j = ("months|monthsShort|monthsParse|weekdays|weekdaysShort|longDateFormat|calendar|" +
+                "relativeTime|ordinal|meridiem").split("|"),
         k = /^\/?Date\((\-?\d+)/i,
         l = /(\[[^\[]*\])|(\\)?(Mo|MM?M?M?|Do|DDDo|DD?D?D?|dddd?|do?|w[o|w]?|YYYY|YY|a|A|hh?|HH?|mm?|ss?|SS?S?|zz?|ZZ?|LT|LL?L?L?)/g,
         m = /([0-9a-zA-Z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)/gi,
@@ -9695,7 +9705,7 @@ jQuery.cookie = function (name, value, options) {
             g,
             h;
         return c.isMoment(d)
-            ? (f = new a(+ d._d), h = d._isUTC)
+            ? (f = new a(+d._d), h = d._isUTC)
             : e
                 ? I(e)
                     ? f = P(d, e)
@@ -9703,7 +9713,7 @@ jQuery.cookie = function (name, value, options) {
                 : (g = k.exec(d), f = d === b
                     ? new a
                     : g
-                        ? new a(+ g[1])
+                        ? new a(+g[1])
                         : d instanceof a
                             ? d
                             : I(d)
@@ -9785,8 +9795,8 @@ jQuery.cookie = function (name, value, options) {
             LT  : "h:mm A"
         },
         meridiem      : !1,
-        months        : ("January_February_March_April_May_June_July_August_September_October_November_De" +
-                "ember").split("_"),
+        months        : ("January_February_March_April_May_June_July_August_September_October_November_D" +
+                "ecember").split("_"),
         monthsShort   : "Jan_Feb_Mar_Apr_May_Jun_Jul_Aug_Sep_Oct_Nov_Dec".split("_"),
         ordinal       : function (a) {
             var b = a % 10;
@@ -9827,7 +9837,7 @@ jQuery.cookie = function (name, value, options) {
     c.fn         = D.prototype = {
         add        : function (a, b) {
             var d = b
-                ? c.duration(+ b, a)
+                ? c.duration(+b, a)
                 : c.duration(a);
             return H(this, d, 1),
             this;
@@ -9945,7 +9955,7 @@ jQuery.cookie = function (name, value, options) {
         },
         subtract   : function (a, b) {
             var d = b
-                ? c.duration(+ b, a)
+                ? c.duration(+b, a)
                 : c.duration(a);
             return H(this, d, -1),
             this;
@@ -9959,7 +9969,7 @@ jQuery.cookie = function (name, value, options) {
                 .toString();
         },
         unix       : function () {
-            return Math.floor(+ this._d / 1e3);
+            return Math.floor(+this._d / 1e3);
         },
         utc        : function () {
             return this._isUTC = !0,
@@ -9982,7 +9992,7 @@ jQuery.cookie = function (name, value, options) {
     T("year", "FullYear"),
     c.duration.fn = F.prototype = {
         humanize: function (a) {
-            var b =+ this,
+            var b = +this,
                 d = c.relativeTime,
                 e = S(b, !a);
             return a && (e = (b <= 0
@@ -10682,13 +10692,15 @@ tvly.Activator.setupCustomOnloadFunction = function () {
                 top    : "auto",
                 width  : "auto"
             }, d);
-            var c = "<iframe class='bgiframe'frameborder='0'tabindex='-1'src='" + d.src + "'style='display:block;position:absolute;z-index:-1;" + (d.opacity !== false
+            var c = "<iframe class='bgiframe'frameborder='0'tabindex='-1'src='" + d.src + "'style='" +
+                    "display:block;position:absolute;z-index:-1;" + (d.opacity !== false
                 ? "filter:Alpha(Opacity='0');"
                 : "") + "top:" + (d.top == "auto"
-                ? "expression(((parseInt(this.parentNode.currentStyle.borderTopWidth)||0)*-1)+'px')"
+                ? "expression(((parseInt(this.parentNode.currentStyle.borderTopWidth)||0)*-1)+'px" +
+                        "')"
                 : b(d.top)) + ";left:" + (d.left == "auto"
-                ? "expression(((parseInt(this.parentNode.currentStyle.borderLeftWidth)||0)*-1)+'px'" +
-                    ")"
+                ? "expression(((parseInt(this.parentNode.currentStyle.borderLeftWidth)||0)*-1)+'p" +
+                        "x')"
                 : b(d.left)) + ";width:" + (d.width == "auto"
                 ? "expression(this.parentNode.offsetWidth+'px')"
                 : b(d.width)) + ";height:" + (d.height == "auto"
@@ -11556,7 +11568,8 @@ tvly.Activator.setupCustomOnloadFunction = function () {
                     .split(g),
                 c = h
                     .value
-                    .replace(g, "<span class='highlightCharacters'>" + h.value.substring(d, d + this.term.length) + "</span>");
+                    .replace(g, "<span class='highlightCharacters'>" + h.value.substring(d, d + this.term.length) +
+                            "</span>");
             return a("<li></li>")
                 .addClass((b.displayIcons === true)
                     ? "autocomplete-lob-icon"
@@ -11577,7 +11590,8 @@ tvly.Activator.setupCustomOnloadFunction = function () {
                     .split(g),
                 c = h
                     .value
-                    .replace(g, "<span class='highlightCharacters'>" + h.value.substring(d, d + this.term.length) + "</span>");
+                    .replace(g, "<span class='highlightCharacters'>" + h.value.substring(d, d + this.term.length) +
+                            "</span>");
             return a("<li></li>")
                 .addClass((h.type === "ARP")
                     ? "airline"
