@@ -9,6 +9,8 @@ Try it online at [http://prettydiff.com/](http://prettydiff.com/).
 
 ## Summary
 
+[Download](http://prettydiff.com/downloads/prettydiff) with [biddle](https://github.com/prettydiff/biddle)
+
 Language aware code comparison tool for several web based languages. It also beautifies, minifies, and a few other things.
 
 ## Benefits - see [overview page](http://prettydiff.com/overview.xhtml) for more details
