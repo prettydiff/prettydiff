@@ -15,7 +15,7 @@ Language aware code comparison tool for several web based languages. It also bea
 
 ## Benefits - see [overview page](http://prettydiff.com/overview.xhtml) for more details
 
-* ES6 / JS2015 ready
+* ES6 / ES2015 ready
 * [React JSX format support](http://prettydiff.com/guide/react_jsx.xhtml)
 * LESS, SCSS (Sass), and CSS support
 * Separate support for XML and HTML
