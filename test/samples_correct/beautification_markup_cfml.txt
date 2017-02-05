@@ -158,7 +158,10 @@
                 for (; n lte length; n = n + 1) {
                     ch  = mid(str, n, 1);
 
-                    crc = bitAnd(bitXor(bitShlN(crc, 8), Crc16Tab[1 + bitAnd(bitXor(bitShrN(crc, 8), asc(ch)), 255)]), 65535);
+                    crc = bitAnd(
+                        bitXor(bitShlN(crc, 8), Crc16Tab[1 + bitAnd(bitXor(bitShrN(crc, 8), asc(ch)), 255)]),
+                        65535
+                    );
                 }
                 return formatBaseN(crc, 16);
 

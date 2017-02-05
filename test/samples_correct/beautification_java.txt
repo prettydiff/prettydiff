@@ -221,7 +221,10 @@ public class IOOperations {
         }
     }
 
-    private void insertIntoMap(Description tmpDescription, HashMap<String, ArrayList<String>> tablesAndColumns) {
+    private void insertIntoMap(
+        Description tmpDescription,
+        HashMap<String, ArrayList<String>> tablesAndColumns
+    ) {
         if (!tablesAndColumns.containsKey(tmpDescription.getTableName())) {
             ArrayList<String> columns = new ArrayList<String>();
             columns.add(tmpDescription.getColumnName());

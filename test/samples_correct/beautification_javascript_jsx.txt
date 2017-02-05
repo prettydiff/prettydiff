@@ -95,9 +95,7 @@ var Timer = React.createClass({
         return {secondsElapsed: 0};
     },
     render              : function () {
-        return (
-            <div>Seconds Elapsed: {this.state.secondsElapsed}</div>
-        );
+        return (<div>Seconds Elapsed: {this.state.secondsElapsed}</div>);
     },
     tick                : function () {
         this.setState({
@@ -119,9 +117,7 @@ var Timer = React.createClass({
         return {secondsElapsed: 0};
     },
     render              : function () {
-        return (
-            <div>Seconds Elapsed: {this.state.secondsElapsed}</div>
-        );
+        return (<div>Seconds Elapsed: {this.state.secondsElapsed}</div>);
     },
     tick                : function () {
         this.setState({
@@ -215,20 +211,16 @@ import React from "react";
 class MyComponent extends React.Component {
     render() {
         var a = 1;
-        return (
-            <h1 style={{
-                    margin: 0
-                }}>
-                Test
-            </h1>
-        );
+        return (<h1 style={{
+                margin: 0
+            }}>
+            Test
+        </h1>);
     }
 }
-export const Welcome = ({name}) => (
-    <div>
-        Hello, {name}.
-    </div>
-);
+export const Welcome = ({name}) => (<div>
+    Hello, {name}.
+</div>);
 ReactDOM.render(
     <Voting hasVoted="Trainspotting" winner="Trainspotting" pair={pair}/>,
     document.getElementById("app"),

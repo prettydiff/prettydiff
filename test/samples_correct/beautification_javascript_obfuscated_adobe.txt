@@ -166,7 +166,11 @@ if (typeof jQuery == "undefined") {
                 return this.length;
             },
             slice      : function () {
-                return this.pushStack(core_slice.apply(this, arguments), "slice", core_slice.call(arguments).join(","));
+                return this.pushStack(
+                    core_slice.apply(this, arguments),
+                    "slice",
+                    core_slice.call(arguments).join(",")
+                );
             },
             sort       : [].sort,
             splice     : [].splice,
@@ -615,9 +619,12 @@ if (typeof jQuery == "undefined") {
             }
             return readyList.promise(obj);
         };
-        jQuery.each("Boolean Number String Function Array Date RegExp Object".split(" "), function (i, name) {
-            class2type["[object " + name + "]"] = name.toLowerCase();
-        });
+        jQuery.each(
+            "Boolean Number String Function Array Date RegExp Object".split(" "),
+            function (i, name) {
+                class2type["[object " + name + "]"] = name.toLowerCase();
+            }
+        );
         rootjQuery = jQuery(document);
         var optionsCache = {};
         function createOptions(options) {
@@ -2867,29 +2874,32 @@ if (typeof jQuery == "undefined") {
                         : this.off(types, selector || "**", fn);
                 }
             });
-        jQuery.each(("blur focus focusin focusout load resize scroll unload click dblclick mousedown" +
-                " mouseup mousemove mouseover mouseout mouseenter mouseleave change select subm" +
-                "it keydown keypress keyup error contextmenu").split(" "), function (i, name) {
-            jQuery.fn[name] = function (data, fn) {
-                if (fn == null) {
-                    fn   = data;
-                    data = null;
+        jQuery.each(
+            ("blur focus focusin focusout load resize scroll unload click dblclick mousedown" +
+                    " mouseup mousemove mouseover mouseout mouseenter mouseleave change select subm" +
+                    "it keydown keypress keyup error contextmenu").split(" "),
+            function (i, name) {
+                jQuery.fn[name] = function (data, fn) {
+                    if (fn == null) {
+                        fn   = data;
+                        data = null;
+                    }
+                    return arguments.length > 0
+                        ? this.on(name, null, data, fn)
+                        : this.trigger(name);
+                };
+                if (rkeyEvent.test(name)) {
+                    jQuery
+                        .event
+                        .fixHooks[name] = jQuery.event.keyHooks;
                 }
-                return arguments.length > 0
-                    ? this.on(name, null, data, fn)
-                    : this.trigger(name);
-            };
-            if (rkeyEvent.test(name)) {
-                jQuery
-                    .event
-                    .fixHooks[name] = jQuery.event.keyHooks;
+                if (rmouseEvent.test(name)) {
+                    jQuery
+                        .event
+                        .fixHooks[name] = jQuery.event.mouseHooks;
+                }
             }
-            if (rmouseEvent.test(name)) {
-                jQuery
-                    .event
-                    .fixHooks[name] = jQuery.event.mouseHooks;
-            }
-        });
+        );
         (function (window, undefined) {
             var cachedruns,
                 assertGetIdNotName,
@@ -2965,9 +2975,12 @@ if (typeof jQuery == "undefined") {
                 rbackslash              = /\\(?!\\)/g,
                 matchExpr               = {
                     "ATTR"        : new RegExp("^" + attributes),
-                    "CHILD"       : new RegExp("^:(only|nth|first|last)-child(?:\\(" + whitespace + "*(eve" +
-                            "n|odd|(([+-]|)(\\d*)n|)" + whitespace + "*(?:([+-]|)" + whitespace + "*(\\d+)|" +
-                            "))" + whitespace + "*\\)|)", "i"),
+                    "CHILD"       : new RegExp(
+                        "^:(only|nth|first|last)-child(?:\\(" + whitespace + "*(eve" +
+                                "n|odd|(([+-]|)(\\d*)n|)" + whitespace + "*(?:([+-]|)" + whitespace + "*(\\d+)|" +
+                                "))" + whitespace + "*\\)|)",
+                        "i"
+                    ),
                     "CLASS"       : new RegExp("^\\.(" + characterEncoding + ")"),
                     "ID"          : new RegExp("^#(" + characterEncoding + ")"),
                     "NAME"        : new RegExp("^\\[name=['\"]?(" + characterEncoding + ")['\"]?\\]"),
@@ -3917,7 +3930,14 @@ if (typeof jQuery == "undefined") {
                                     break;
                                 }
                             }
-                            return setMatcher(i > 1 && elementMatcher(matchers), i > 1 && tokens.slice(0, i - 1).join("").replace(rtrim, "$1"), matcher, i < j && matcherFromTokens(tokens.slice(i, j)), j < len && matcherFromTokens((tokens = tokens.slice(j))), j < len && tokens.join(""));
+                            return setMatcher(
+                                i > 1 && elementMatcher(matchers),
+                                i > 1 && tokens.slice(0, i - 1).join("").replace(rtrim, "$1"),
+                                matcher,
+                                i < j && matcherFromTokens(tokens.slice(i, j)),
+                                j < len && matcherFromTokens((tokens = tokens.slice(j))),
+                                j < len && tokens.join("")
+                            );
                         }
                         matchers.push(matcher);
                     }
@@ -4054,7 +4074,11 @@ if (typeof jQuery == "undefined") {
                                 break;
                             }
                             if ((find = Expr.find[type])) {
-                                if ((seed = find(token.matches[0].replace(rbackslash, ""), rsibling.test(tokens[0].type) && context.parentNode || context, xml))) {
+                                if ((seed = find(
+                                    token.matches[0].replace(rbackslash, ""),
+                                    rsibling.test(tokens[0].type) && context.parentNode || context,
+                                    xml
+                                ))) {
                                     tokens.splice(i, 1);
                                     selector = seed.length && tokens.join("");
                                     if (!selector) {
@@ -5532,7 +5556,12 @@ if (typeof jQuery == "undefined") {
                 },
                 set: function (elem, value, extra) {
                     return setPositiveNumber(elem, value, extra
-                        ? augmentWidthOrHeight(elem, name, extra, jQuery.support.boxSizing && jQuery.css(elem, "boxSizing") === "border-box")
+                        ? augmentWidthOrHeight(
+                            elem,
+                            name,
+                            extra,
+                            jQuery.support.boxSizing && jQuery.css(elem, "boxSizing") === "border-box"
+                        )
                         : 0);
                 }
             };
@@ -5861,11 +5890,14 @@ if (typeof jQuery == "undefined") {
                 });
             return this;
         };
-        jQuery.each("ajaxStart ajaxStop ajaxComplete ajaxError ajaxSuccess ajaxSend".split(" "), function (i, o) {
-            jQuery.fn[o] = function (f) {
-                return this.on(o, f);
-            };
-        });
+        jQuery.each(
+            "ajaxStart ajaxStop ajaxComplete ajaxError ajaxSuccess ajaxSend".split(" "),
+            function (i, o) {
+                jQuery.fn[o] = function (f) {
+                    return this.on(o, f);
+                };
+            }
+        );
         jQuery.each([
             "get", "post"
         ], function (i, method) {
@@ -6671,7 +6703,13 @@ if (typeof jQuery == "undefined") {
                 },
                 animation    = deferred.promise({
                     createTween       : function (prop, end, easing) {
-                        var tween = jQuery.Tween(elem, animation.opts, prop, end, animation.opts.specialEasing[prop] || animation.opts.easing);
+                        var tween = jQuery.Tween(
+                            elem,
+                            animation.opts,
+                            prop,
+                            end,
+                            animation.opts.specialEasing[prop] || animation.opts.easing
+                        );
                         animation
                             .tweens
                             .push(tween);
@@ -7377,7 +7415,13 @@ if (typeof jQuery == "undefined") {
                         }
                         if (elem.nodeType === 9) {
                             doc = elem.documentElement;
-                            return Math.max(elem.body["scroll" + name], doc["scroll" + name], elem.body["offset" + name], doc["offset" + name], doc["client" + name]);
+                            return Math.max(
+                                elem.body["scroll" + name],
+                                doc["scroll" + name],
+                                elem.body["offset" + name],
+                                doc["offset" + name],
+                                doc["client" + name]
+                            );
                         }
                         return value === undefined
                             ? jQuery.css(elem, type, value, extra)
@@ -7780,7 +7824,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             if (existingConstructor) {
                 $.each(existingConstructor._childConstructors, function (i, child) {
                     var childPrototype = child.prototype;
-                    $.widget(childPrototype.namespace + "." + childPrototype.widgetName, constructor, child._proto);
+                    $.widget(
+                        childPrototype.namespace + "." + childPrototype.widgetName,
+                        constructor,
+                        child._proto
+                    );
                 });
                 delete existingConstructor._childConstructors;
             } else {
@@ -8180,7 +8228,10 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 }
             },
             _mouseDistanceMet: function (event) {
-                return (Math.max(Math.abs(this._mouseDownEvent.pageX - event.pageX), Math.abs(this._mouseDownEvent.pageY - event.pageY)) >= this.options.distance);
+                return (Math.max(
+                    Math.abs(this._mouseDownEvent.pageX - event.pageX),
+                    Math.abs(this._mouseDownEvent.pageY - event.pageY)
+                ) >= this.options.distance);
             },
             _mouseDown       : function (event) {
                 if (mouseHandled) {
@@ -11221,7 +11272,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         if (this.items[j].item[0] === this.currentItem[0]) {
                             continue;
                         }
-                        if (floating && !isOverAxis(this.positionAbs.top + this.offset.click.top, this.items[j].top, this.items[j].height)) {
+                        if (floating && !isOverAxis(
+                            this.positionAbs.top + this.offset.click.top,
+                            this.items[j].top,
+                            this.items[j].height
+                        )) {
                             continue;
                         }
                         cur        = this
@@ -15409,7 +15464,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         try {
                             return $
                                 .datepicker
-                                .parseDate($.datepicker._get(inst, "dateFormat"), offset, $.datepicker._getFormatConfig(inst));
+                                .parseDate(
+                                    $.datepicker._get(inst, "dateFormat"),
+                                    offset,
+                                    $.datepicker._getFormatConfig(inst)
+                                );
                         } catch (e) {}
                         var date    = (offset.toLowerCase().match(/^c/)
                                 ? $.datepicker._getDate(inst)
@@ -15873,7 +15932,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     drawYear  -= 1;
                 }
                 if (maxDate) {
-                    maxDraw = this._daylightSavingAdjust(new Date(maxDate.getFullYear(), maxDate.getMonth() - (numMonths[0] * numMonths[1]) + 1, maxDate.getDate()));
+                    maxDraw = this._daylightSavingAdjust(new Date(
+                        maxDate.getFullYear(),
+                        maxDate.getMonth() - (numMonths[0] * numMonths[1]) + 1,
+                        maxDate.getDate()
+                    ));
                     maxDraw = (minDate && maxDraw < minDate
                         ? minDate
                         : maxDraw);
@@ -15890,7 +15953,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 prevText          = this._get(inst, "prevText");
                 prevText          = (!navigationAsDateFormat
                     ? prevText
-                    : this.formatDate(prevText, this._daylightSavingAdjust(new Date(drawYear, drawMonth - stepMonths, 1)), this._getFormatConfig(inst)));
+                    : this.formatDate(
+                        prevText,
+                        this._daylightSavingAdjust(new Date(drawYear, drawMonth - stepMonths, 1)),
+                        this._getFormatConfig(inst)
+                    ));
                 prev              = (this._canAdjustMonth(inst, -1, drawYear, drawMonth)
                     ? "<a class='ui-datepicker-prev ui-corner-all' data-handler='prev' data-event='cl" +
                             "ick' title='" + prevText + "'><span class='ui-icon ui-icon-circle-triangle-" + (isRTL
@@ -15996,8 +16063,16 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             ? (isRTL
                                 ? prev
                                 : next)
-                            : "") + this._generateMonthYearHeader(inst, drawMonth, drawYear, minDate, maxDate, row > 0 || col > 0, monthNames, monthNamesShort) +
-                                "</div><table class='ui-datepicker-calendar'><thead><tr>";
+                            : "") + this._generateMonthYearHeader(
+                            inst,
+                            drawMonth,
+                            drawYear,
+                            minDate,
+                            maxDate,
+                            row > 0 || col > 0,
+                            monthNames,
+                            monthNamesShort
+                        ) + "</div><table class='ui-datepicker-calendar'><thead><tr>";
                         thead    = (showWeek
                             ? "<th class='ui-datepicker-week-col'>" + this._get(inst, "weekHeader") + "</th>"
                             : "");
@@ -16089,7 +16164,16 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 inst._keyEvent = false;
                 return html;
             },
-            _generateMonthYearHeader: function (inst, drawMonth, drawYear, minDate, maxDate, secondary, monthNames, monthNamesShort) {
+            _generateMonthYearHeader: function (
+                inst,
+                drawMonth,
+                drawYear,
+                minDate,
+                maxDate,
+                secondary,
+                monthNames,
+                monthNamesShort
+            ) {
                 var inMinYear,
                     inMaxYear,
                     month,
@@ -16885,7 +16969,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                                     output += formatName("D", date.getDay(), dayNamesShort, dayNames);
                                     break;
                                 case "o":
-                                    output += formatNumber("o", Math.round((new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000), 3);
+                                    output += formatNumber(
+                                        "o",
+                                        Math.round((new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime() - new Date(date.getFullYear(), 0, 0).getTime()) / 86400000),
+                                        3
+                                    );
                                     break;
                                 case "m":
                                     output += formatNumber("m", date.getMonth() + 1, 2);
@@ -23628,10 +23716,20 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 }
                 opts.items.visibleConf.old = opts.items.visible;
                 if (opts.items.visibleConf.variable) {
-                    var vI = cf_getItemsAdjust(gn_getVisibleItemsNext(a_itm, opts, itms.total - nI), opts, opts.items.visibleConf.adjust, $tt0);
+                    var vI = cf_getItemsAdjust(
+                        gn_getVisibleItemsNext(a_itm, opts, itms.total - nI),
+                        opts,
+                        opts.items.visibleConf.adjust,
+                        $tt0
+                    );
                     if (opts.items.visible + nI <= vI && nI < itms.total) {
                         nI += 1;
-                        vI = cf_getItemsAdjust(gn_getVisibleItemsNext(a_itm, opts, itms.total - nI), opts, opts.items.visibleConf.adjust, $tt0);
+                        vI = cf_getItemsAdjust(
+                            gn_getVisibleItemsNext(a_itm, opts, itms.total - nI),
+                            opts,
+                            opts.items.visibleConf.adjust,
+                            $tt0
+                        );
                     }
                     opts.items.visible = vI;
                 } else if (opts.items.filter != "*") {
@@ -24069,10 +24167,20 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 }
                 opts.items.visibleConf.old = opts.items.visible;
                 if (opts.items.visibleConf.variable) {
-                    var vI = cf_getItemsAdjust(gn_getVisibleItemsNextTestCircular(a_itm, opts, nI, lastItemNr), opts, opts.items.visibleConf.adjust, $tt0);
+                    var vI = cf_getItemsAdjust(
+                        gn_getVisibleItemsNextTestCircular(a_itm, opts, nI, lastItemNr),
+                        opts,
+                        opts.items.visibleConf.adjust,
+                        $tt0
+                    );
                     while (opts.items.visible - nI >= vI && nI < itms.total) {
                         nI += 1;
-                        vI = cf_getItemsAdjust(gn_getVisibleItemsNextTestCircular(a_itm, opts, nI, lastItemNr), opts, opts.items.visibleConf.adjust, $tt0);
+                        vI = cf_getItemsAdjust(
+                            gn_getVisibleItemsNextTestCircular(a_itm, opts, nI, lastItemNr),
+                            opts,
+                            opts.items.visibleConf.adjust,
+                            $tt0
+                        );
                     }
                     opts.items.visible = vI;
                 } else if (opts.items.filter != "*") {
@@ -24269,7 +24377,10 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             var i_cur_l = $cfs
                                 .children()
                                 .eq(opts.items.visible - 1);
-                            i_cur_l.css(opts.d["marginRight"], i_cur_l.data("_cfs_origCssMargin") + opts.padding[opts.d[1]]);
+                            i_cur_l.css(
+                                opts.d["marginRight"],
+                                i_cur_l.data("_cfs_origCssMargin") + opts.padding[opts.d[1]]
+                            );
                         }
                         l_itm.css(opts.d["marginRight"], l_itm.data("_cfs_origCssMargin"));
                     }
@@ -24785,17 +24896,20 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 }
                 return $i;
             });
-            $cfs.bind(cf_e("isPaused", conf) + " " + cf_e("isStopped", conf) + " " + cf_e("isScrolling", conf), function (e, fn) {
-                e.stopPropagation();
-                var eType = e
-                        .type
-                        .slice(conf.events.prefix.length),
-                    value = crsl[eType];
-                if (is_function(fn)) {
-                    fn.call($tt0, value);
+            $cfs.bind(
+                cf_e("isPaused", conf) + " " + cf_e("isStopped", conf) + " " + cf_e("isScrolling", conf),
+                function (e, fn) {
+                    e.stopPropagation();
+                    var eType = e
+                            .type
+                            .slice(conf.events.prefix.length),
+                        value = crsl[eType];
+                    if (is_function(fn)) {
+                        fn.call($tt0, value);
+                    }
+                    return value;
                 }
-                return value;
-            });
+            );
             $cfs.bind(cf_e("configuration", conf), function (e, a, b, c) {
                 e.stopPropagation();
                 var reInit = false;
@@ -27249,8 +27363,24 @@ if (typeof jQuery != "undefined" && typeof $.jcarousel == "undefined") {
                         this.callback("itemLastInCallback", evt, state, this.last);
                         this.callback("itemLastOutCallback", evt, state, this.prevLast);
                     }
-                    this.callback("itemVisibleInCallback", evt, state, this.first, this.last, this.prevFirst, this.prevLast);
-                    this.callback("itemVisibleOutCallback", evt, state, this.prevFirst, this.prevLast, this.first, this.last);
+                    this.callback(
+                        "itemVisibleInCallback",
+                        evt,
+                        state,
+                        this.first,
+                        this.last,
+                        this.prevFirst,
+                        this.prevLast
+                    );
+                    this.callback(
+                        "itemVisibleOutCallback",
+                        evt,
+                        state,
+                        this.prevFirst,
+                        this.prevLast,
+                        this.first,
+                        this.last
+                    );
                 },
                 pauseAuto : function () {
                     if (this.timer === null) {
@@ -29080,9 +29210,15 @@ if (jQuery) {
                                     menuHeight) - (windowHeight + windowScrollTop)),
                             outsideTopViewport    = Math.abs((controlOffsetTop - windowScrollTop) - menuHeight);
                         if (outsideBottomViewport < outsideTopViewport) {
-                            options.css("max-height", options.data("max-height") - outsideBottomViewport - (controlOuterHeight / 2));
+                            options.css(
+                                "max-height",
+                                options.data("max-height") - outsideBottomViewport - (controlOuterHeight / 2)
+                            );
                         } else {
-                            options.css("max-height", options.data("max-height") - outsideTopViewport - (controlOuterHeight / 2));
+                            options.css(
+                                "max-height",
+                                options.data("max-height") - outsideTopViewport - (controlOuterHeight / 2)
+                            );
                             newCSSPosition.bottom = control.outerHeight();
                         }
                     }
@@ -30351,7 +30487,15 @@ if (jQuery) {
                 if (options.swipeStatus) {
                     ret = options
                         .swipeStatus
-                        .call($element, event, phase, direction || null, distance || 0, duration || 0, fingerCount);
+                        .call(
+                            $element,
+                            event,
+                            phase,
+                            direction || null,
+                            distance || 0,
+                            duration || 0,
+                            fingerCount
+                        );
                 }
                 if (phase === PHASE_CANCEL) {
                     if (options.click && (fingerCount === 1 || !SUPPORTS_TOUCH) && (isNaN(distance) || distance === 0)) {
@@ -30630,10 +30774,13 @@ if (jQuery) {
         });
     });
     (function ($, c, b) {
-        $.map(("click dblclick mousemove mousedown mouseup mouseover mouseout touchstart touch" +
-                "end touchmove change select submit keydown keypress keyup").split(" "), function (d) {
-            a(d);
-        });
+        $.map(
+            ("click dblclick mousemove mousedown mouseup mouseover mouseout touchstart touch" +
+                    "end touchmove change select submit keydown keypress keyup").split(" "),
+            function (d) {
+                a(d);
+            }
+        );
         a("focusin", "focus" + b);
         a("focusout", "blur" + b);
         $.addOutsideEvent = a;
@@ -31427,45 +31574,76 @@ if (jQuery) {
             event.preventDefault();
             bitLy();
             if (bitLySuccess) {
-                window.open("http://www.facebook.com/sharer.php?u=" + bitLyShortURL + "&t=" +
-                        encodeURIComponent(PageToolsTitle), "sharer", "toolbar=0,status=0,width=626,height=436");
+                window.open(
+                    "http://www.facebook.com/sharer.php?u=" + bitLyShortURL + "&t=" +
+                            encodeURIComponent(PageToolsTitle),
+                    "sharer",
+                    "toolbar=0,status=0,width=626,height=436"
+                );
             } else {
-                window.open("http://www.facebook.com/sharer.php?u=" + encodeURIComponent(PageToolsUrl) +
-                        "&t=" + encodeURIComponent(PageToolsTitle), "sharer", "toolbar=0,status=0,width=626,height=436");
+                window.open(
+                    "http://www.facebook.com/sharer.php?u=" + encodeURIComponent(PageToolsUrl) +
+                            "&t=" + encodeURIComponent(PageToolsTitle),
+                    "sharer",
+                    "toolbar=0,status=0,width=626,height=436"
+                );
             }
         });
         $(".Twitter-button").click(function (event) {
             event.preventDefault();
             bitLy();
             if (bitLySuccess) {
-                window.open("http://twitter.com/share?text=" + encodeURIComponent(PageToolsTitle) +
-                        "&url=" + bitLyShortURL + "&data-counturl=" + encodeURIComponent(PageToolsUrl), "sharer", "toolbar=0,status=0,width=775,height=436");
+                window.open(
+                    "http://twitter.com/share?text=" + encodeURIComponent(PageToolsTitle) +
+                            "&url=" + bitLyShortURL + "&data-counturl=" + encodeURIComponent(PageToolsUrl),
+                    "sharer",
+                    "toolbar=0,status=0,width=775,height=436"
+                );
             } else {
-                window.open("http://twitter.com/share?text=" + encodeURIComponent(PageToolsTitle) +
-                        "&url=" + encodeURIComponent(PageToolsUrl), "sharer", "toolbar=0,status=0,width=775,height=436");
+                window.open(
+                    "http://twitter.com/share?text=" + encodeURIComponent(PageToolsTitle) +
+                            "&url=" + encodeURIComponent(PageToolsUrl),
+                    "sharer",
+                    "toolbar=0,status=0,width=775,height=436"
+                );
             }
         });
         $(".LinkedIn-button").click(function (event) {
             event.preventDefault();
             bitLy();
             if (bitLySuccess) {
-                window.open("http://www.linkedin.com/shareArticle?mini=true&url=" + bitLyShortURL +
-                        "&title=" + encodeURIComponent(PageToolsTitle), "sharer", "toolbar=0,status=0,width=626,height=436");
+                window.open(
+                    "http://www.linkedin.com/shareArticle?mini=true&url=" + bitLyShortURL +
+                            "&title=" + encodeURIComponent(PageToolsTitle),
+                    "sharer",
+                    "toolbar=0,status=0,width=626,height=436"
+                );
             } else {
-                window.open("http://www.linkedin.com/shareArticle?mini=true&url=" +
-                        encodeURIComponent(PageToolsUrl) + "&title=" + encodeURIComponent(PageToolsTitle), "sharer", "toolbar=0,status=0,width=626,height=436");
+                window.open(
+                    "http://www.linkedin.com/shareArticle?mini=true&url=" +
+                            encodeURIComponent(PageToolsUrl) + "&title=" + encodeURIComponent(PageToolsTitle),
+                    "sharer",
+                    "toolbar=0,status=0,width=626,height=436"
+                );
             }
         });
         $(".Weibo-button").click(function (event) {
             event.preventDefault();
-            window.open("http://service.weibo.com/share/share.php?url=" + encodeURIComponent(PageToolsUrl) +
-                    "&title=" + encodeURIComponent(PageToolsTitle), "sharer", "toolbar=0,status=0,width=626,height=436");
+            window.open(
+                "http://service.weibo.com/share/share.php?url=" + encodeURIComponent(PageToolsUrl) +
+                        "&title=" + encodeURIComponent(PageToolsTitle),
+                "sharer",
+                "toolbar=0,status=0,width=626,height=436"
+            );
         });
         $(".PayPal-button").click(function (event) {
             event.preventDefault();
-            window.open("https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/Marketing/popup/OLCWhatIsPayP" +
-                    "al-outside",
-                    "olcwhatispaypal", "toolbar=0,status=0,width=400,height=350");
+            window.open(
+                "https://www.paypal.com/us/cgi-bin/webscr?cmd=xpt/Marketing/popup/OLCWhatIsPayP" +
+                        "al-outside",
+                "olcwhatispaypal",
+                "toolbar=0,status=0,width=400,height=350"
+            );
         });
         if ($.browser.msie || $.browser.mozilla || window.opera) {
             $(".Bookmark-button").click(function (event) {
@@ -32928,7 +33106,18 @@ if (jQuery) {
                     return undefined;
                 }
             },
-            embedSWF              : function (swfUrlStr, replaceElemIdStr, widthStr, heightStr, swfVersionStr, xiSwfUrlStr, flashvarsObj, parObj, attObj, callbackFn) {
+            embedSWF              : function (
+                swfUrlStr,
+                replaceElemIdStr,
+                widthStr,
+                heightStr,
+                swfVersionStr,
+                xiSwfUrlStr,
+                flashvarsObj,
+                parObj,
+                attObj,
+                callbackFn
+            ) {
                 var callbackObj = {
                     id     : replaceElemIdStr,
                     success: false
@@ -33060,7 +33249,18 @@ if (jQuery) {
             ua                    : ua
         };
     }();
-    swfobject.replaceSWF = function (swfUrlStr, replaceElemIdStr, widthStr, heightStr, swfVersionStr, xiSwfUrlStr, flashvarsObj, parObj, attObj, callbackFn) {
+    swfobject.replaceSWF = function (
+        swfUrlStr,
+        replaceElemIdStr,
+        widthStr,
+        heightStr,
+        swfVersionStr,
+        xiSwfUrlStr,
+        flashvarsObj,
+        parObj,
+        attObj,
+        callbackFn
+    ) {
         var el = document.getElementById(replaceElemIdStr);
         if (el.nodeName == "OBJECT" || el.nodeName == "EMBED") {
             var parent = el.parentNode;
@@ -33069,7 +33269,18 @@ if (jQuery) {
                 .appendChild(document.createElement("div"))
                 .setAttribute("id", replaceElemIdStr);
         }
-        swfobject.embedSWF(swfUrlStr, replaceElemIdStr, widthStr, heightStr, swfVersionStr, xiSwfUrlStr, flashvarsObj, parObj, attObj, callbackFn);
+        swfobject.embedSWF(
+            swfUrlStr,
+            replaceElemIdStr,
+            widthStr,
+            heightStr,
+            swfVersionStr,
+            xiSwfUrlStr,
+            flashvarsObj,
+            parObj,
+            attObj,
+            callbackFn
+        );
     };
     function setSWFDimensions(objID, width, height) {
         if (objID && width && height) {
@@ -34416,7 +34627,17 @@ if (jQuery) {
             options = $.extend({}, getDefaults(), options);
             if (!supportsTouch && options.defaultType == "flash") {
                 if (options.flash) {
-                    swfobject.embedSWF(options.flash, id, options.width, options.height, flashVersion, expressInstall, $.extend(options.flashVars, getDeepLink(id)), options.flashParams, options.flashAttrs);
+                    swfobject.embedSWF(
+                        options.flash,
+                        id,
+                        options.width,
+                        options.height,
+                        flashVersion,
+                        expressInstall,
+                        $.extend(options.flashVars, getDeepLink(id)),
+                        options.flashParams,
+                        options.flashAttrs
+                    );
                 }
             } else {
                 $("#" + id)
@@ -35434,13 +35655,17 @@ if (jQuery) {
         s_adobe.tl(this, "o", "adobe.com:GlobalNav:SignOut");
         var signOutHREF = $("#shSignOutLink").attr("href");
         if ($.string(signOutHREF).startsWith("http")) {
-            setTimeout("window.location = 'http://www.adobe.com/cfusion/membership/logout.cfm?returnUR" +
-                    "L=' + encodeURIComponent(window.location.href)",
-                    1000);
+            setTimeout(
+                "window.location = 'http://www.adobe.com/cfusion/membership/logout.cfm?returnUR" +
+                        "L=' + encodeURIComponent(window.location.href)",
+                1000
+            );
         } else {
-            setTimeout("window.location = '/cfusion/membership/logout.cfm?returnURL=' + encodeURICompo" +
-                    "nent(window.location.href)",
-                    1000);
+            setTimeout(
+                "window.location = '/cfusion/membership/logout.cfm?returnURL=' + encodeURICompo" +
+                        "nent(window.location.href)",
+                1000
+            );
         }
     };
     adobe.fn.initGlobalNavAccessibility = function () {
@@ -36265,9 +36490,15 @@ if (jQuery) {
                             clearToolTip();
                             flagKeyboardNavigation(false);
                             if (siteHeaderDropdownLink) {
-                                if (hasClass(siteHeaderDropPanels[siteHeaderDropdownLink["data-index"]], "SiteHeaderDropPanelHidden")) {
+                                if (hasClass(
+                                    siteHeaderDropPanels[siteHeaderDropdownLink["data-index"]],
+                                    "SiteHeaderDropPanelHidden"
+                                )) {
                                     addClass(siteHeaderDropdownLink, "SiteHeaderBarItemOpen");
-                                    removeClass(siteHeaderDropPanels[siteHeaderDropdownLink["data-index"]], "SiteHeaderDropPanelHidden");
+                                    removeClass(
+                                        siteHeaderDropPanels[siteHeaderDropdownLink["data-index"]],
+                                        "SiteHeaderDropPanelHidden"
+                                    );
                                     siteHeaderDropPanels[siteHeaderDropdownLink["data-index"]].setAttribute("aria-hidden", "false");
                                     setLinkTabIndexes(siteHeaderDropPanels[siteHeaderDropdownLink["data-index"]], "0");
                                     node = siteHeaderDropdownLink.getElementsByTagName("A")[0];
@@ -36339,7 +36570,10 @@ if (jQuery) {
                 var node;
                 flagEscKey = escKey;
                 removeClass(siteHeaderDropdownLink, "SiteHeaderBarItemOpen");
-                addClass(siteHeaderDropPanels[siteHeaderDropdownLink["data-index"]], "SiteHeaderDropPanelHidden");
+                addClass(
+                    siteHeaderDropPanels[siteHeaderDropdownLink["data-index"]],
+                    "SiteHeaderDropPanelHidden"
+                );
                 siteHeaderDropPanels[siteHeaderDropdownLink["data-index"]].setAttribute("aria-hidden", "true");
                 setLinkTabIndexes(siteHeaderDropPanels[siteHeaderDropdownLink["data-index"]], "-1");
                 node = siteHeaderDropdownLink.getElementsByTagName("A")[0];
@@ -36362,7 +36596,10 @@ if (jQuery) {
                 event.preventDefault();
                 event = event || window.event;
                 var scope = event.target;
-                if (scope && scope.parentNode && hasClass(scope.parentNode, "SiteHeaderDropdownLink") && hasClass(siteHeaderDropPanels[scope.parentNode["data-index"]], "SiteHeaderDropPanelHidden")) {
+                if (scope && scope.parentNode && hasClass(scope.parentNode, "SiteHeaderDropdownLink") && hasClass(
+                    siteHeaderDropPanels[scope.parentNode["data-index"]],
+                    "SiteHeaderDropPanelHidden"
+                )) {
                     clearToolTip();
                     if (scope.parentNode === siteHeaderDropdownLinks[0]) {
                         if (tooltipStringOpenLink) {
@@ -36376,7 +36613,10 @@ if (jQuery) {
                     }
                     scope.setAttribute("aria-expanded", "true");
                     addClass(scope.parentNode, "SiteHeaderBarItemOpen");
-                    removeClass(siteHeaderDropPanels[scope.parentNode["data-index"]], "SiteHeaderDropPanelHidden");
+                    removeClass(
+                        siteHeaderDropPanels[scope.parentNode["data-index"]],
+                        "SiteHeaderDropPanelHidden"
+                    );
                     siteHeaderDropPanels[scope.parentNode["data-index"]].setAttribute("aria-hidden", "false");
                     setLinkTabIndexes(siteHeaderDropPanels[scope.parentNode["data-index"]], "0");
                     flagKeyboardNavigation(true);
@@ -36389,15 +36629,24 @@ if (jQuery) {
                         if (hasClass(scope, "SiteHeaderIconNewWindowNoWrap")) {
                             window.open(event.target.parentNode.href, (event.target.parentNode.target || "_self"));
                         } else if (hasClass(scope, "SiteHeaderIconNewWindow")) {
-                            window.open(event.target.parentNode.parentNode.href, (event.target.parentNode.parentNode.target || "_self"));
+                            window.open(
+                                event.target.parentNode.parentNode.href,
+                                (event.target.parentNode.parentNode.target || "_self")
+                            );
                         } else {
                             window.open(event.target.href, (event.target.target || "_self"));
                         }
                     } else {
                         if (hasClass(event.srcElement, "SiteHeaderIconNewWindowNoWrap")) {
-                            window.open(event.srcElement.parentNode.href, (event.srcElement.parentNode.target || "_self"));
+                            window.open(
+                                event.srcElement.parentNode.href,
+                                (event.srcElement.parentNode.target || "_self")
+                            );
                         } else if (hasClass(event.srcElement, "SiteHeaderIconNewWindow")) {
-                            window.open(event.srcElement.parentNode.parentNode.href, (event.srcElement.parentNode.parentNode.target || "_self"));
+                            window.open(
+                                event.srcElement.parentNode.parentNode.href,
+                                (event.srcElement.parentNode.parentNode.target || "_self")
+                            );
                         } else {
                             window.open(event.srcElement.href, (event.srcElement.target || "_self"));
                         }
@@ -36813,8 +37062,11 @@ if (jQuery) {
         var scrollbar = $("#" + e + " .ui-slider-bar").slider({
             slide: function (event, ui) {
                 if (scrollContent.width() > scrollPane.width()) {
-                    scrollContent.css("margin-left", Math.round(ui.value / 100 * (scrollPane.width() - scrollContent.width())) +
-                            "px");
+                    scrollContent.css(
+                        "margin-left",
+                        Math.round(ui.value / 100 * (scrollPane.width() - scrollContent.width())) +
+                                "px"
+                    );
                 } else {
                     scrollContent.css("margin-left", 0);
                 }
@@ -37023,7 +37275,17 @@ if (jQuery) {
                     "class": "ui-dialog-content ui-widget-content",
                     "name" : "ui-dialog-content ui-widget-content"
                 };
-                swfobject.embedSWF("http://images.tv.adobe.com/cdn/swf/player.swf", config.target, config.width, config.height, "9.0.0", "expressInstall.swf", flashvars, params, id);
+                swfobject.embedSWF(
+                    "http://images.tv.adobe.com/cdn/swf/player.swf",
+                    config.target,
+                    config.width,
+                    config.height,
+                    "9.0.0",
+                    "expressInstall.swf",
+                    flashvars,
+                    params,
+                    id
+                );
             }
             function openModal() {
                 modal.load(config.href, function (response, status) {
@@ -37664,11 +37926,22 @@ if (jQuery) {
                         height      : 535,
                         modal       : true,
                         open        : function () {
-                            swfobject.replaceSWF(_this.contextPath + "/swf/store/flex/StatelessStore.swf", _this.f_id, "850", "535", _this.requiredFlashVersion, "", vars, params, attrs, function (event) {
-                                if (event.success) {
-                                    _this.flashObject = document.getElementById(_this.f_id);
+                            swfobject.replaceSWF(
+                                _this.contextPath + "/swf/store/flex/StatelessStore.swf",
+                                _this.f_id,
+                                "850",
+                                "535",
+                                _this.requiredFlashVersion,
+                                "",
+                                vars,
+                                params,
+                                attrs,
+                                function (event) {
+                                    if (event.success) {
+                                        _this.flashObject = document.getElementById(_this.f_id);
+                                    }
                                 }
-                            });
+                            );
                         },
                         resizable   : false,
                         width       : 850
@@ -38704,7 +38977,17 @@ if (jQuery) {
                 var relValue = placeHolder.attributes.rel.value;
                 var relArray = relValue.split("|");
                 if (relArray.length == 7) {
-                    displayPrices(relArray[LOCALE], relArray[CATEGORY_PATH], placeHolder, null, relArray[STORE_URL], relArray[CART_BUTTON_ID], relArray[PRODUCT_NAME], relArray[PRICE_TYPE], relArray[TAX_INCLUDE]);
+                    displayPrices(
+                        relArray[LOCALE],
+                        relArray[CATEGORY_PATH],
+                        placeHolder,
+                        null,
+                        relArray[STORE_URL],
+                        relArray[CART_BUTTON_ID],
+                        relArray[PRODUCT_NAME],
+                        relArray[PRICE_TYPE],
+                        relArray[TAX_INCLUDE]
+                    );
                 }
             }
         });
@@ -38772,7 +39055,17 @@ if (jQuery) {
             }
             return mktSegment;
         };
-        this.displayPrices                 = function (countryCode, productPath, vollversion, upgrade, storeUrl, cartButtonId, productName, priceType, taxInclude) {
+        this.displayPrices                 = function (
+            countryCode,
+            productPath,
+            vollversion,
+            upgrade,
+            storeUrl,
+            cartButtonId,
+            productName,
+            priceType,
+            taxInclude
+        ) {
             var newCC = countryCode.substring(countryCode.indexOf("_") + 1, countryCode.length);
             var marketSegment = getMarketSegment();
             if (marketSegment === "EDU" && productPath.indexOf("STE") === -1) {
@@ -38783,7 +39076,16 @@ if (jQuery) {
                 .jCacher
                 .get(key);
             if (cachedItem) {
-                printPrices(cachedItem, countryCode, productPath, productName, vollversion, cartButtonId, priceType, taxInclude);
+                printPrices(
+                    cachedItem,
+                    countryCode,
+                    productPath,
+                    productName,
+                    vollversion,
+                    cartButtonId,
+                    priceType,
+                    taxInclude
+                );
             } else {
                 var priceData = {
                     data         : "method=getCategoryPricesByCountry&countryCode=" + newCC + "&categoryPath=" +
@@ -38795,7 +39097,16 @@ if (jQuery) {
                     jsonp        : "callback",
                     jsonpCallback: "getData" + cartButtonId.replace(/-/g, ""),
                     success      : function (prices) {
-                        printPrices(prices, countryCode, productPath, productName, vollversion, cartButtonId, priceType, taxInclude);
+                        printPrices(
+                            prices,
+                            countryCode,
+                            productPath,
+                            productName,
+                            vollversion,
+                            cartButtonId,
+                            priceType,
+                            taxInclude
+                        );
                     },
                     timeout      : REQUEST_TIMEOUT,
                     url          : storeUrl + "/cfusion/store/services/stateless/jsonshoppingservice.cfc"
@@ -38805,7 +39116,16 @@ if (jQuery) {
                 } catch (ex) {}
             }
         };
-        this.printPrices                   = function (prices, countryCode, productPath, productName, vollversion, cartButtonId, priceType, taxInclude) {
+        this.printPrices                   = function (
+            prices,
+            countryCode,
+            productPath,
+            productName,
+            vollversion,
+            cartButtonId,
+            priceType,
+            taxInclude
+        ) {
             var marketSegment = getMarketSegment();
             var isUpgrade = true;
             var displayPriceType = "UPGRADE";
@@ -38922,10 +39242,18 @@ if (jQuery) {
                                 ? getPriceCent(getRawPrice(prices[i], prices[i].ORIGINALPRICEWITHTAX), lowestItem.centDelim)
                                 : "",
                             dollarAmtTaxExc: prices[i].ORIGINALPRICEWITHOUTTAX != ""
-                                ? getPriceDollar(getRawPrice(prices[i], prices[i].ORIGINALPRICEWITHOUTTAX), lowestItem.dollarDelim, lowestItem.centDelim)
+                                ? getPriceDollar(
+                                    getRawPrice(prices[i], prices[i].ORIGINALPRICEWITHOUTTAX),
+                                    lowestItem.dollarDelim,
+                                    lowestItem.centDelim
+                                )
                                 : "",
                             dollarAmtTaxInc: prices[i].ORIGINALPRICEWITHTAX != ""
-                                ? getPriceDollar(getRawPrice(prices[i], prices[i].ORIGINALPRICEWITHTAX), lowestItem.dollarDelim, lowestItem.centDelim)
+                                ? getPriceDollar(
+                                    getRawPrice(prices[i], prices[i].ORIGINALPRICEWITHTAX),
+                                    lowestItem.dollarDelim,
+                                    lowestItem.centDelim
+                                )
                                 : ""
                         };
                         origAndLowestPrice = {
@@ -38961,10 +39289,18 @@ if (jQuery) {
                         ? getPriceCent(getRawPrice(prices[i], prices[i].ORIGINALPRICEWITHTAX), lowestItem.centDelim)
                         : "",
                     dollarAmtTaxExc: prices[i].ORIGINALPRICEWITHOUTTAX != ""
-                        ? getPriceDollar(getRawPrice(prices[i], prices[i].ORIGINALPRICEWITHOUTTAX), lowestItem.dollarDelim, lowestItem.centDelim)
+                        ? getPriceDollar(
+                            getRawPrice(prices[i], prices[i].ORIGINALPRICEWITHOUTTAX),
+                            lowestItem.dollarDelim,
+                            lowestItem.centDelim
+                        )
                         : "",
                     dollarAmtTaxInc: prices[i].ORIGINALPRICEWITHTAX != ""
-                        ? getPriceDollar(getRawPrice(prices[i], prices[i].ORIGINALPRICEWITHTAX), lowestItem.dollarDelim, lowestItem.centDelim)
+                        ? getPriceDollar(
+                            getRawPrice(prices[i], prices[i].ORIGINALPRICEWITHTAX),
+                            lowestItem.dollarDelim,
+                            lowestItem.centDelim
+                        )
                         : ""
                 };
                 origAndLowestPrice = {
@@ -39088,8 +39424,12 @@ if (jQuery) {
                     .src = downloadURL;
             }
         } else {
-            downloadWindow = window.open(downloadURL, "_blank", "directories=0,location=0,menubar=0,resizable=0,scrollbars=0,status=1,toolbar=0" +
-                    ",width=800,height=600");
+            downloadWindow = window.open(
+                downloadURL,
+                "_blank",
+                "directories=0,location=0,menubar=0,resizable=0,scrollbars=0,status=1,toolbar=0" +
+                        ",width=800,height=600"
+            );
         }
     }
     function setStoreCookie(cookie_name, value) {

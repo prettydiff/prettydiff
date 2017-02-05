@@ -18,8 +18,11 @@
                         b.setAttribute("type", "hidden");
                         b.setAttribute("name", "configId");
                         b.setAttribute("value", "S21949757");
-                        a.setAttribute("action", "http://www.travelocity.com/trips/interstitial/searchHotelsInternal/?configId=S" +
-                                "21949757");
+                        a.setAttribute(
+                            "action",
+                            "http://www.travelocity.com/trips/interstitial/searchHotelsInternal/?configId=S" +
+                                    "21949757"
+                        );
                         a.insertBefore(b, a.firstChild);
                         testsubmitxxx = function () {
                             var a      = document.getElementById("cb-form-ho"),
@@ -6629,9 +6632,12 @@
                             }
                         }),
                         y = d._Deferred(),
-                        d.each("Boolean Number String Function Array Date RegExp Object".split(" "), function (a, b) {
-                            H["[object " + b + "]"] = b.toLowerCase();
-                        }),
+                        d.each(
+                            "Boolean Number String Function Array Date RegExp Object".split(" "),
+                            function (a, b) {
+                                H["[object " + b + "]"] = b.toLowerCase();
+                            }
+                        ),
                         w = d.uaMatch(v),
                         w.browser && (d.browser[w.browser] = !0, d.browser.version = w.version),
                         d.browser.webkit && (d.browser.safari = !0),
@@ -6735,7 +6741,14 @@
                                 a.style.width = a.style.paddingLeft = "1px",
                                 b.appendChild(a),
                                 d.boxModel = d.support.boxModel = a.offsetWidth === 2,
-                                "zoom" in a.style && (a.style.display = "inline", a.style.zoom = 1, d.support.inlineBlockNeedsLayout = a.offsetWidth === 2, a.style.display = "", a.innerHTML = "<div style='width:4px;'></div>", d.support.shrinkWrapBlocks = a.offsetWidth !== 2),
+                                "zoom" in a.style && (
+                                    a.style.display                  = "inline",
+                                    a.style.zoom                     = 1,
+                                    d.support.inlineBlockNeedsLayout = a.offsetWidth === 2,
+                                    a.style.display                  = "",
+                                    a.innerHTML                      = "<div style='width:4px;'></div>",
+                                    d.support.shrinkWrapBlocks       = a.offsetWidth !== 2
+                                ),
                                 a.innerHTML = "<table><tr><td style='padding:0;border:0;display:none'></td><td>t</td></tr></t" +
                                         "able>";
                                 var e = a.getElementsByTagName("td");
@@ -7213,9 +7226,12 @@
                                 j && (j.selectedIndex, j.parentNode && j.parentNode.selectedIndex);
                             }
                             if ((c in a || a[c] !== b) && g && !i) {
-                                h && (c === "type" && l.test(a.nodeName) && a.parentNode && d.error("type property can't be changed"), e === null
-                                    ? a.nodeType === 1 && a.removeAttribute(c)
-                                    : a[c] = e);
+                                h && (
+                                    c === "type" && l.test(a.nodeName) && a.parentNode && d.error("type property can't be changed"),
+                                    e === null
+                                        ? a.nodeType === 1 && a.removeAttribute(c)
+                                        : a[c] = e
+                                );
                                 if (d.nodeName(a, "form") && a.getAttributeNode(c)) {
                                     return a
                                         .getAttributeNode(c)
@@ -7387,8 +7403,13 @@
                         e               = c
                             .type
                             .indexOf(".") < 0 && !c.exclusive,
-                        e || (g = c.type.split("."), c.type = g.shift(), j = g.slice(0).sort(), h = new RegExp("(^|\\.)" +
-                                j.join("\\.(?:.*\\.)?") + "(\\.|$)")),
+                        e || (
+                            g      = c.type.split("."),
+                            c.type = g.shift(),
+                            j      = g.slice(0).sort(),
+                            h      = new RegExp("(^|\\.)" +
+                                    j.join("\\.(?:.*\\.)?") + "(\\.|$)")
+                        ),
                         c.namespace     = c.namespace || j.join("."),
                         i               = d._data(this, "events"),
                         f               = (i || {})[c.type];
@@ -7454,8 +7475,12 @@
                                 q = null,
                                 l = h.indexOf(".") < 0,
                                 m = [],
-                                l || (m = h.split("."), h = m.shift(), n = new RegExp("(^|\\.)" + d.map(m.slice(0).sort(), u).join("\\.(?:.*\\.)?") +
-                                        "(\\.|$)")),
+                                l || (
+                                    m = h.split("."),
+                                    h = m.shift(),
+                                    n = new RegExp("(^|\\.)" + d.map(m.slice(0).sort(), u).join("\\.(?:.*\\.)?") +
+                                            "(\\.|$)")
+                                ),
                                 p = t[h];
                                 if (!p) {
                                     continue;
@@ -7607,9 +7632,13 @@
                         return new d.Event(a);
                     }
                     a && a.type
-                        ? (this.originalEvent = a, this.type = a.type, this.isDefaultPrevented = a.defaultPrevented || a.returnValue === !1 || a.getPreventDefault && a.getPreventDefault()
-                            ? w
-                            : v)
+                        ? (
+                            this.originalEvent      = a,
+                            this.type               = a.type,
+                            this.isDefaultPrevented = a.defaultPrevented || a.returnValue === !1 || a.getPreventDefault && a.getPreventDefault()
+                                ? w
+                                : v
+                        )
                         : this.type = a,
                     this.timeStamp  = d.now(),
                     this[d.expando] = !0;
@@ -7967,17 +7996,20 @@
                         return this;
                     };
                 }),
-                d.each(("blur focus focusin focusout load resize scroll unload click dblclick mousedown" +
-                        " mouseup mousemove mouseover mouseout mouseenter mouseleave change select subm" +
-                        "it keydown keypress keyup error").split(" "), function (a, b) {
-                    d.fn[b] = function (a, c) {
-                        c == null && (c = a, a = null);
-                        return arguments.length > 0
-                            ? this.bind(b, a, c)
-                            : this.trigger(b);
-                    },
-                    d.attrFn && (d.attrFn[b] = !0);
-                }),
+                d.each(
+                    ("blur focus focusin focusout load resize scroll unload click dblclick mousedown" +
+                            " mouseup mousemove mouseover mouseout mouseenter mouseleave change select subm" +
+                            "it keydown keypress keyup error").split(" "),
+                    function (a, b) {
+                        d.fn[b] = function (a, c) {
+                            c == null && (c = a, a = null);
+                            return arguments.length > 0
+                                ? this.bind(b, a, c)
+                                : this.trigger(b);
+                        },
+                        d.attrFn && (d.attrFn[b] = !0);
+                    }
+                ),
                 function () {
                     function u(a, b, c, d, e, f) {
                         for (var g = 0, h = d.length; g < h; g += 1) {
@@ -9561,10 +9593,13 @@
                                 !f || !d.nodeName(g[h], "script") || g[h].type && g[h]
                                     .type
                                     .toLowerCase() !== "text/javascript"
-                                        ? (g[h].nodeType === 1 && g.splice.apply(g, [
-                                            h + 1,
-                                            0
-                                        ].concat(d.makeArray(g[h].getElementsByTagName("script")))), e.appendChild(g[h]))
+                                        ? (
+                                            g[h].nodeType === 1 && g.splice.apply(g, [
+                                                h + 1,
+                                                0
+                                            ].concat(d.makeArray(g[h].getElementsByTagName("script")))),
+                                            e.appendChild(g[h])
+                                        )
                                         : f.push(g[h].parentNode
                                             ? g[h].parentNode.removeChild(g[h])
                                             : g[h]);
@@ -9952,11 +9987,14 @@
                                 .get();
                         }
                     }),
-                d.each("ajaxStart ajaxStop ajaxComplete ajaxError ajaxSuccess ajaxSend".split(" "), function (a, b) {
-                    d.fn[b] = function (a) {
-                        return this.bind(b, a);
-                    };
-                }),
+                d.each(
+                    "ajaxStart ajaxStop ajaxComplete ajaxError ajaxSuccess ajaxSend".split(" "),
+                    function (a, b) {
+                        d.fn[b] = function (a) {
+                            return this.bind(b, a);
+                        };
+                    }
+                ),
                 d.each([
                     "get", "post"
                 ], function (a, c) {
@@ -10119,11 +10157,14 @@
                             .trim(e.dataType || "*")
                             .toLowerCase()
                             .split(bB),
-                        e.crossDomain || (q = bF.exec(e.url.toLowerCase()), e.crossDomain = q && (q[1] != bK[1] || q[2] != bK[2] || (q[3] || (q[1] === "http:"
-                            ? 80
-                            : 443)) != (bK[3] || (bK[1] === "http:"
-                            ? 80
-                            : 443)))),
+                        e.crossDomain || (
+                            q             = bF.exec(e.url.toLowerCase()),
+                            e.crossDomain = q && (q[1] != bK[1] || q[2] != bK[2] || (q[3] || (q[1] === "http:"
+                                ? 80
+                                : 443)) != (bK[3] || (bK[1] === "http:"
+                                ? 80
+                                : 443)))
+                        ),
                         e.data && e.processData && typeof e.data !== "string" && (e.data = d.param(e.data, e.traditional)),
                         bN(bH, e, c, u);
                         if (r === 2) {
@@ -10157,7 +10198,11 @@
                         if (e.data && e.hasContent && e.contentType !== !1 || c.contentType) {
                             l["Content-Type"] = e.contentType;
                         }
-                        e.ifModified && (k = k || e.url, d.lastModified[k] && (l["If-Modified-Since"] = d.lastModified[k]), d.etag[k] && (l["If-None-Match"] = d.etag[k])),
+                        e.ifModified && (
+                            k = k || e.url,
+                            d.lastModified[k] && (l["If-Modified-Since"] = d.lastModified[k]),
+                            d.etag[k] && (l["If-None-Match"] = d.etag[k])
+                        ),
                         l.Accept     = e.dataTypes[0] && e.accepts[e.dataTypes[0]]
                             ? e.accepts[e.dataTypes[0]] + (e.dataTypes[0] !== "*"
                                 ? ", */*; q=0.01"
@@ -10290,9 +10335,12 @@
                                 a[h] = i,
                                 g && d.isFunction(i) && a[h](g[0]);
                             };
-                        b.jsonp !== !1 && (j = j.replace(bS, l), b.url === j && (f && (k = k.replace(bS, l)), b.data === k && (j += (/\?/.test(j)
-                            ? "&"
-                            : "?") + b.jsonp + "=" + h))),
+                        b.jsonp !== !1 && (
+                            j = j.replace(bS, l),
+                            b.url === j && (f && (k = k.replace(bS, l)), b.data === k && (j += (/\?/.test(j)
+                                ? "&"
+                                : "?") + b.jsonp + "=" + h))
+                        ),
                         b.url  = j,
                         b.data = k,
                         a[h]   = function (a) {
@@ -10903,7 +10951,13 @@
                                 : b.currentStyle,
                             l -= b.scrollTop,
                             m -= b.scrollLeft,
-                            b === e && (l += b.offsetTop, m += b.offsetLeft, d.offset.doesNotAddBorder && (!d.offset.doesAddBorderForTableAndCells || !ce.test(b.nodeName)) && (l += parseFloat(c.borderTopWidth) || 0, m += parseFloat(c.borderLeftWidth) || 0), f = e, e = b.offsetParent),
+                            b === e && (
+                                l += b.offsetTop,
+                                m += b.offsetLeft,
+                                d.offset.doesNotAddBorder && (!d.offset.doesAddBorderForTableAndCells || !ce.test(b.nodeName)) && (l += parseFloat(c.borderTopWidth) || 0, m += parseFloat(c.borderLeftWidth) || 0),
+                                f = e,
+                                e = b.offsetParent
+                            ),
                             d.offset.subtractsBorderForOverflowNotVisible && c.overflow !== "visible" && (l += parseFloat(c.borderTopWidth) || 0, m += parseFloat(c.borderLeftWidth) || 0),
                             k = c;
                         }
@@ -10911,7 +10965,10 @@
                             l += i.offsetTop,
                             m += i.offsetLeft;
                         }
-                        d.offset.supportsFixedPosition && k.position === "fixed" && (l += Math.max(h.scrollTop, i.scrollTop), m += Math.max(h.scrollLeft, i.scrollLeft));
+                        d.offset.supportsFixedPosition && k.position === "fixed" && (
+                            l += Math.max(h.scrollTop, i.scrollTop),
+                            m += Math.max(h.scrollLeft, i.scrollLeft)
+                        );
                         return {left: m, top: l};
                     },
                 d.offset          = {
@@ -10921,7 +10978,10 @@
                         d
                             .offset
                             .initialize(),
-                        d.offset.doesNotIncludeMarginInBodyOffset && (b += parseFloat(d.css(a, "marginTop")) || 0, c += parseFloat(d.css(a, "marginLeft")) || 0);
+                        d.offset.doesNotIncludeMarginInBodyOffset && (
+                            b += parseFloat(d.css(a, "marginTop")) || 0,
+                            c += parseFloat(d.css(a, "marginLeft")) || 0
+                        );
                         return {left: c, top: b};
                     },
                     initialize: function () {
@@ -11106,7 +11166,13 @@
                                 .body["client" + c] || g;
                         }
                         if (f.nodeType === 9) {
-                            return Math.max(f.documentElement["client" + c], f.body["scroll" + c], f.documentElement["scroll" + c], f.body["offset" + c], f.documentElement["offset" + c]);
+                            return Math.max(
+                                f.documentElement["client" + c],
+                                f.body["scroll" + c],
+                                f.documentElement["scroll" + c],
+                                f.body["offset" + c],
+                                f.documentElement["offset" + c]
+                            );
                         }
                         if (a === b) {
                             var h = d.css(f, e),
@@ -11803,7 +11869,11 @@
                                 a
                                     .element
                                     .queue("tabs", function () {
-                                        a._trigger("show", null, a._ui(a.anchors[c.selected], d(a._sanitizeSelector(a.anchors[c.selected].hash))));
+                                        a._trigger(
+                                            "show",
+                                            null,
+                                            a._ui(a.anchors[c.selected], d(a._sanitizeSelector(a.anchors[c.selected].hash)))
+                                        );
                                     });
                                 this.load(c.selected);
                             }
@@ -12425,8 +12495,16 @@
                         }
                         jQuery.extend(true, oScope.settings, config);
                         oScope.trigger_element       = jQuery(oScope.settings.trigger_element_selector, oScope.settings.container_selector).get(0);
-                        oScope.description_container = jQuery(oScope.settings.description_container_selector, oScope.settings.container_selector).get(0);
-                        oScope.collapsibleModule     = new Collapsible(oScope.description_container, oScope.trigger_element, oScope.settings.initial_state, oScope.settings.callback);
+                        oScope.description_container = jQuery(
+                            oScope.settings.description_container_selector,
+                            oScope.settings.container_selector
+                        ).get(0);
+                        oScope.collapsibleModule     = new Collapsible(
+                            oScope.description_container,
+                            oScope.trigger_element,
+                            oScope.settings.initial_state,
+                            oScope.settings.callback
+                        );
                         if (oScope.settings.display_noorgie) {
                             jQuery(oScope.trigger_element).toggleClass("toggle-out");
                         }
@@ -12656,9 +12734,12 @@
                     url_parameters.noOfRooms  = jQuery("select[id$='totalrooms']:visible", o_form).val();
                     url_parameters.noOfAdults = (function () {
                         var _c = 0;
-                        jQuery("select[id^='" + prefix + "-adult']:visible,select[id^='" + prefix + "-m" +
-                                "inor']:visible,select[id^='" + prefix + "-child']:visible,select[id^='" + prefix +
-                                "-senior']:visible", "#cb-form-" + prefix).each(function (e, ex) {
+                        jQuery(
+                            "select[id^='" + prefix + "-adult']:visible,select[id^='" + prefix + "-m" +
+                                    "inor']:visible,select[id^='" + prefix + "-child']:visible,select[id^='" + prefix +
+                                    "-senior']:visible",
+                            "#cb-form-" + prefix
+                        ).each(function (e, ex) {
                             _c += ~~ (1 * jQuery(this).val());
                         });
                         return (_c <= 6
@@ -12941,7 +13022,11 @@
                                 jQuery(_fareWatcher.settings.fare_info_link_selector).attr("href", _fareWatcher.settings.fare_info_link_href);
                                 jQuery(_fareWatcher.settings.fare_info_link_selector).bind("click", function (e) {
                                     e.preventDefault();
-                                    launchWindow(this.href, _fareWatcher.settings.popups_pref.width, _fareWatcher.settings.popups_pref.height);
+                                    launchWindow(
+                                        this.href,
+                                        _fareWatcher.settings.popups_pref.width,
+                                        _fareWatcher.settings.popups_pref.height
+                                    );
                                 });
                             }
                         }
@@ -12955,7 +13040,11 @@
                         }
                         jQuery(oScope.settings.popups_pref.link_selector).bind("click", function (e) {
                             e.preventDefault();
-                            launchWindow(this.href, oScope.settings.popups_pref.width, oScope.settings.popups_pref.height);
+                            launchWindow(
+                                this.href,
+                                oScope.settings.popups_pref.width,
+                                oScope.settings.popups_pref.height
+                            );
                         });
                     },
                     settings          : {
@@ -13228,7 +13317,11 @@
                             }
                             this
                                 ._logdev
-                                .write(format_message(format_severity(severity), new Date(), progname, message), file, line);
+                                .write(
+                                    format_message(format_severity(severity), new Date(), progname, message),
+                                    file,
+                                    line
+                                );
                             return true;
                         },
                         debug          : function (progname, file, line) {
@@ -13611,9 +13704,11 @@
                                 .bindEvents(cb);
                             cb.cars.ready = true;
                         }
-                        $(".cb-to-city,.cb-pick-location,.countryScope,.cb-country,.cb-co-discount,.cb-fr" +
-                                "omdate, .cb-todate,.cb-state,.cb-car-type",
-                                __cb).trigger("change");
+                        $(
+                            ".cb-to-city,.cb-pick-location,.countryScope,.cb-country,.cb-co-discount,.cb-fr" +
+                                    "omdate, .cb-todate,.cb-state,.cb-car-type",
+                            __cb
+                        ).trigger("change");
                     },
                     ready         : false
                 },
@@ -13937,7 +14032,10 @@
                                 if (jQuery("#nav-pd").attr("checked")) {
                                     e = cb
                                         .checkForm
-                                        .checkLength($("#act-destinations", form).val(), "Please select a destination from the drop down below.");
+                                        .checkLength(
+                                            $("#act-destinations", form).val(),
+                                            "Please select a destination from the drop down below."
+                                        );
                                     if (e != -1) {
                                         return cb.showError(e, $("#act-destinations", form));
                                     }
@@ -14104,9 +14202,11 @@
                                 .bindEvents(cb);
                             cb.flighthotel.ready = true;
                         }
-                        $(".cb-to-city,.cb-from-city,.cb-fromdate, .cb-todate,.cb-total-rooms,.cb-childre" +
-                                "n,.cb-room-child-ages select",
-                                __cb).trigger("change");
+                        $(
+                            ".cb-to-city,.cb-from-city,.cb-fromdate, .cb-todate,.cb-total-rooms,.cb-childre" +
+                                    "n,.cb-room-child-ages select",
+                            __cb
+                        ).trigger("change");
                     },
                     ready     : false
                 },
@@ -14358,9 +14458,11 @@
                                 $("input[name='flightType']", __cb).attr("value", "roundtrip");
                                 __cb.removeClass("form-fow");
                         }
-                        $(".cb-to-city,.cb-from-city,.cb-fromdate, .cb-todate,.cb-state,.cb-car-type,.cb-" +
-                                "children,.cb-csa input,input[name='dateTypeSelect']:checked",
-                                __cb).trigger("change");
+                        $(
+                            ".cb-to-city,.cb-from-city,.cb-fromdate, .cb-todate,.cb-state,.cb-car-type,.cb-" +
+                                    "children,.cb-csa input,input[name='dateTypeSelect']:checked",
+                            __cb
+                        ).trigger("change");
                     },
                     multiDestSearch  : function (event) {
                         var __cb = $("#cb-form-fo");
@@ -14719,10 +14821,12 @@
                         cb
                             .hotels
                             .fixLSC($(".cb-to-city", __cb), __cb);
-                        $(".cb-to-city,.cb-pick-location, .cb-co-discount,.cb-fromdate, .cb-todate,.cb-st" +
-                                "ate,.cb-country,.cb-car-type,.cb-total-rooms,.cb-children,.cb-room-child-ages " +
-                                "select",
-                                __cb).trigger("change");
+                        $(
+                            ".cb-to-city,.cb-pick-location, .cb-co-discount,.cb-fromdate, .cb-todate,.cb-st" +
+                                    "ate,.cb-country,.cb-car-type,.cb-total-rooms,.cb-children,.cb-room-child-ages " +
+                                    "select",
+                            __cb
+                        ).trigger("change");
                     },
                     ready     : false
                 },
@@ -14890,9 +14994,11 @@
                         cb
                             .hotels
                             .fixLSC($(".cb-to-city", __cb), __cb);
-                        $(".cb-state,.cb-country,.cb-to-city,.cb-fromdate, .cb-todate,.cb-total-rooms,.cb" +
-                                "-children,.cb-room-child-ages select,.cb-ts-hotels",
-                                __cb).trigger("change");
+                        $(
+                            ".cb-state,.cb-country,.cb-to-city,.cb-fromdate, .cb-todate,.cb-total-rooms,.cb" +
+                                    "-children,.cb-room-child-ages select,.cb-ts-hotels",
+                            __cb
+                        ).trigger("change");
                     },
                     ready                  : false,
                     searchGroup            : function (cb, form) {
@@ -15475,23 +15581,42 @@
                                 var oe = jQuery("#" + this.oPopupComponents.sErrorMessagesModule).get(0);
                                 switch (this.sState) {
                                     case module_states.SA_WIDGET:
-                                        this.hide(this.oWidgetComponents.sSignupModuleSubscribeImage, this.oWidgetComponents.sSignupModuleSubscribeText);
+                                        this.hide(
+                                            this.oWidgetComponents.sSignupModuleSubscribeImage,
+                                            this.oWidgetComponents.sSignupModuleSubscribeText
+                                        );
                                         if (field_error === this.oValidationErrorCodes.sBadMail) {
                                             this.show(this.oWidgetComponents.sSignupModuleBadMail);
-                                            this.hide(this.oWidgetComponents.sSignupModuleLongMail, this.oWidgetComponents.sSignupModuleComError);
+                                            this.hide(
+                                                this.oWidgetComponents.sSignupModuleLongMail,
+                                                this.oWidgetComponents.sSignupModuleComError
+                                            );
                                         } else {
                                             this.show(this.oWidgetComponents.sSignupModuleLongMail);
-                                            this.hide(this.oWidgetComponents.sSignupModuleBadMail, this.oWidgetComponents.sSignupModuleComError);
+                                            this.hide(
+                                                this.oWidgetComponents.sSignupModuleBadMail,
+                                                this.oWidgetComponents.sSignupModuleComError
+                                            );
                                         }
                                         break;
                                     case module_states.HP_WIDGET:
-                                        this.hide(this.oWidgetComponents.sSignupModuleSubscribeImage, this.oWidgetComponents.sSignupModuleSubscribeText, this.oWidgetComponents.sExistingAccountModule);
+                                        this.hide(
+                                            this.oWidgetComponents.sSignupModuleSubscribeImage,
+                                            this.oWidgetComponents.sSignupModuleSubscribeText,
+                                            this.oWidgetComponents.sExistingAccountModule
+                                        );
                                         if (field_error === this.oValidationErrorCodes.sBadMail) {
                                             this.show(this.oWidgetComponents.sSignupModuleBadMail);
-                                            this.hide(this.oWidgetComponents.sSignupModuleLongMail, this.oWidgetComponents.sSignupModuleComError);
+                                            this.hide(
+                                                this.oWidgetComponents.sSignupModuleLongMail,
+                                                this.oWidgetComponents.sSignupModuleComError
+                                            );
                                         } else {
                                             this.show(this.oWidgetComponents.sSignupModuleLongMail);
-                                            this.hide(this.oWidgetComponents.sSignupModuleBadMail, this.oWidgetComponents.sSignupModuleComError);
+                                            this.hide(
+                                                this.oWidgetComponents.sSignupModuleBadMail,
+                                                this.oWidgetComponents.sSignupModuleComError
+                                            );
                                         }
                                         switch (field_error) {
                                             case this.oValidationErrorCodes.sBadMail:
@@ -15504,10 +15629,23 @@
                                         }
                                         break;
                                     case module_states.SIGNUP:
-                                        this.show(this.oPopupComponents.sSignupModule, this.oPopupComponents.sGoodMail, this.oPopupComponents.sErrorModule, this.oPopupComponents.sErrorDetailsModule);
-                                        this.hide(this.oPopupComponents.sExistingAccountModule, this.oPopupComponents.sMultiMatchModule, this.oPopupComponents.sIntroTextModule, this.oPopupComponents.sAlertModule);
+                                        this.show(
+                                            this.oPopupComponents.sSignupModule,
+                                            this.oPopupComponents.sGoodMail,
+                                            this.oPopupComponents.sErrorModule,
+                                            this.oPopupComponents.sErrorDetailsModule
+                                        );
+                                        this.hide(
+                                            this.oPopupComponents.sExistingAccountModule,
+                                            this.oPopupComponents.sMultiMatchModule,
+                                            this.oPopupComponents.sIntroTextModule,
+                                            this.oPopupComponents.sAlertModule
+                                        );
                                         if (field_error === this.oValidationErrorCodes.sSignupError) {
-                                            this.hide(this.oPopupComponents.sSignupModuleAutoMail, this.oPopupComponents.sErrorDetailsModule);
+                                            this.hide(
+                                                this.oPopupComponents.sSignupModuleAutoMail,
+                                                this.oPopupComponents.sErrorDetailsModule
+                                            );
                                             this.show(this.oPopupComponents.sSignupModuleMail);
                                             this.displayMsg(this.oPopupComponents.sErrorModule, oe[field_error].value);
                                             this.iRetries += 1;
@@ -15529,12 +15667,24 @@
                                 jQuery(this.oForm).trigger("eDataCollect");
                                 switch (this.sState) {
                                     case module_states.SA_WIDGET:
-                                        this.show(this.oWidgetComponents.sSignupModuleSubscribeText, this.oWidgetComponents.sSignupModuleSubscribeImage);
-                                        this.hide(this.oWidgetComponents.sSignupModuleBadMail, this.oWidgetComponents.sSignupModuleLongMail, this.oWidgetComponents.sSignupModuleComError);
+                                        this.show(
+                                            this.oWidgetComponents.sSignupModuleSubscribeText,
+                                            this.oWidgetComponents.sSignupModuleSubscribeImage
+                                        );
+                                        this.hide(
+                                            this.oWidgetComponents.sSignupModuleBadMail,
+                                            this.oWidgetComponents.sSignupModuleLongMail,
+                                            this.oWidgetComponents.sSignupModuleComError
+                                        );
                                         break;
                                     case module_states.HP_WIDGET:
                                         this.show(this.oWidgetComponents.sSignupModuleSubscribeText);
-                                        this.hide(this.oWidgetComponents.sSignupModuleBadMail, this.oWidgetComponents.sSignupModuleLongMail, this.oWidgetComponents.sSignupModuleComError, this.oWidgetComponents.sExistingAccountModule);
+                                        this.hide(
+                                            this.oWidgetComponents.sSignupModuleBadMail,
+                                            this.oWidgetComponents.sSignupModuleLongMail,
+                                            this.oWidgetComponents.sSignupModuleComError,
+                                            this.oWidgetComponents.sExistingAccountModule
+                                        );
                                         break;
                                 }
                             },
@@ -15561,7 +15711,14 @@
                                         this.show(this.oWidgetComponents.sNoMatchModule);
                                         break;
                                     case module_states.SIGNUP:
-                                        this.hide(this.oPopupComponents.sSignupModule, this.oPopupComponents.sGoodMail, this.oPopupComponents.sErrorModule, this.oPopupComponents.sErrorDetailsModule, this.oPopupComponents.sAlertModule, this.oPopupComponents.sIntroTextModule);
+                                        this.hide(
+                                            this.oPopupComponents.sSignupModule,
+                                            this.oPopupComponents.sGoodMail,
+                                            this.oPopupComponents.sErrorModule,
+                                            this.oPopupComponents.sErrorDetailsModule,
+                                            this.oPopupComponents.sAlertModule,
+                                            this.oPopupComponents.sIntroTextModule
+                                        );
                                         this.show(this.oPopupComponents.sNoMatchModule);
                                         break;
                                 }
@@ -15583,7 +15740,10 @@
                             onMultiMatch               : function () {
                                 switch (this.sState) {
                                     case module_states.HP_WIDGET:
-                                        this.hide(this.oWidgetComponents.sSignupModule, this.oWidgetComponents.sExistingAccountModule);
+                                        this.hide(
+                                            this.oWidgetComponents.sSignupModule,
+                                            this.oWidgetComponents.sExistingAccountModule
+                                        );
                                         this.show(this.oWidgetComponents.sSingleMatchModule);
                                         break;
                                     case module_states.SA_WIDGET:
@@ -15593,7 +15753,16 @@
                                     case module_states.SIGNUP:
                                         $(this.oPopupComponents.sNewAccountModuleMail).innerHTML = this.oFormData.Email + ".<br><br>";
                                         this.show(this.oPopupComponents.sExistingAccountModule);
-                                        this.hide(this.oPopupComponents.sSignupModule, this.oPopupComponents.sGoodMail, this.oPopupComponents.sErrorModule, this.oPopupComponents.sErrorDetailsModule, this.oPopupComponents.sAlertModule, this.oPopupComponents.sIntroTextModule, this.oPopupComponents.sNewAccountModuleMail, this.oPopupComponents.sNewAccountModuleMailLabel);
+                                        this.hide(
+                                            this.oPopupComponents.sSignupModule,
+                                            this.oPopupComponents.sGoodMail,
+                                            this.oPopupComponents.sErrorModule,
+                                            this.oPopupComponents.sErrorDetailsModule,
+                                            this.oPopupComponents.sAlertModule,
+                                            this.oPopupComponents.sIntroTextModule,
+                                            this.oPopupComponents.sNewAccountModuleMail,
+                                            this.oPopupComponents.sNewAccountModuleMailLabel
+                                        );
                                         break;
                                 }
                             },
@@ -15602,14 +15771,31 @@
                                     case module_states.SIGNUP:
                                         $(this.oPopupComponents.sNewAccountModuleMail).innerHTML = this.oFormData.Email + ".<br><br>";
                                         this.show(this.oPopupComponents.sNewAccountModule);
-                                        this.hide(this.oPopupComponents.sSignupModule, this.oPopupComponents.sGoodMail, this.oPopupComponents.sErrorModule, this.oPopupComponents.sErrorDetailsModule, this.oPopupComponents.sAlertModule, this.oPopupComponents.sIntroTextModule);
+                                        this.hide(
+                                            this.oPopupComponents.sSignupModule,
+                                            this.oPopupComponents.sGoodMail,
+                                            this.oPopupComponents.sErrorModule,
+                                            this.oPopupComponents.sErrorDetailsModule,
+                                            this.oPopupComponents.sAlertModule,
+                                            this.oPopupComponents.sIntroTextModule
+                                        );
                                         break;
                                 }
                             },
                             onNoMatch                  : function () {
                                 switch (this.sState) {
                                     case module_states.SIGNUP:
-                                        this.hide(this.oPopupComponents.sSignupModule, this.oPopupComponents.sGoodMail, this.oPopupComponents.sErrorModule, this.oPopupComponents.sErrorDetailsModule, this.oPopupComponents.sAlertModule, this.oPopupComponents.sIntroTextModule, this.oPopupComponents.sExistingAccountModule, this.oPopupComponents.sNewAccountModule, this.oPopupComponents.sMultiMatchModule);
+                                        this.hide(
+                                            this.oPopupComponents.sSignupModule,
+                                            this.oPopupComponents.sGoodMail,
+                                            this.oPopupComponents.sErrorModule,
+                                            this.oPopupComponents.sErrorDetailsModule,
+                                            this.oPopupComponents.sAlertModule,
+                                            this.oPopupComponents.sIntroTextModule,
+                                            this.oPopupComponents.sExistingAccountModule,
+                                            this.oPopupComponents.sNewAccountModule,
+                                            this.oPopupComponents.sMultiMatchModule
+                                        );
                                         this.show(this.oPopupComponents.sNoMatchModule);
                                         break;
                                     case module_states.HP_WIDGET:
@@ -15635,26 +15821,58 @@
                                     case module_states.SIGNUP:
                                         $(this.oPopupComponents.sNewAccountModuleMail).innerHTML = this.oFormData.Email;
                                         this.show(this.oPopupComponents.sExistingAccountModule);
-                                        this.hide(this.oPopupComponents.sSignupModule, this.oPopupComponents.sGoodMail, this.oPopupComponents.sErrorModule, this.oPopupComponents.sErrorDetailsModule, this.oPopupComponents.sAlertModule, this.oPopupComponents.sIntroTextModule);
+                                        this.hide(
+                                            this.oPopupComponents.sSignupModule,
+                                            this.oPopupComponents.sGoodMail,
+                                            this.oPopupComponents.sErrorModule,
+                                            this.oPopupComponents.sErrorDetailsModule,
+                                            this.oPopupComponents.sAlertModule,
+                                            this.oPopupComponents.sIntroTextModule
+                                        );
                                         break;
                                 }
                             },
                             onSubscriptionFailure      : function () {
                                 switch (this.sState) {
                                     case module_states.HP_WIDGET:
-                                        this.show(this.oWidgetComponents.sSignupModuleComError, this.oWidgetComponents.sSignupModuleSubscribeText);
-                                        this.hide(this.oWidgetComponents.sSignupModuleBadMail, this.oWidgetComponents.sSignupModuleSubscribeImage, this.oWidgetComponents.sLongMail, this.oWidgetComponents.sExistingAccountModule);
+                                        this.show(
+                                            this.oWidgetComponents.sSignupModuleComError,
+                                            this.oWidgetComponents.sSignupModuleSubscribeText
+                                        );
+                                        this.hide(
+                                            this.oWidgetComponents.sSignupModuleBadMail,
+                                            this.oWidgetComponents.sSignupModuleSubscribeImage,
+                                            this.oWidgetComponents.sLongMail,
+                                            this.oWidgetComponents.sExistingAccountModule
+                                        );
                                         jQuery("#" + this.oWidgetComponents.sSignupModule).addClass("try-again");
                                         break;
                                     case module_states.SA_WIDGET:
-                                        this.show(this.oWidgetComponents.sSignupModuleSubscribeImage, this.oWidgetComponents.sSignupModuleSubscribeText, this.oWidgetComponents.sSignupModuleComError);
+                                        this.show(
+                                            this.oWidgetComponents.sSignupModuleSubscribeImage,
+                                            this.oWidgetComponents.sSignupModuleSubscribeText,
+                                            this.oWidgetComponents.sSignupModuleComError
+                                        );
                                         this.hide(this.oWidgetComponents.sSignupModuleBadMail, this.oWidgetComponents.sLongMail);
                                         break;
                                     case module_states.SIGNUP:
                                         var oe = $(this.oPopupComponents.sErrorMessagesModule);
-                                        this.show(this.oPopupComponents.sSignupModule, this.oPopupComponents.sGoodMail, this.oPopupComponents.sErrorModule, this.oPopupComponents.sErrorDetailsModule);
-                                        this.hide(this.oPopupComponents.sExistingAccountModule, this.oPopupComponents.sMultiMatchModule, this.oPopupComponents.sIntroTextModule, this.oPopupComponents.sAlertModule);
-                                        this.displayMsg(this.oPopupComponents.sErrorModule, oe[this.oValidationErrorCodes.sComunicationError].value);
+                                        this.show(
+                                            this.oPopupComponents.sSignupModule,
+                                            this.oPopupComponents.sGoodMail,
+                                            this.oPopupComponents.sErrorModule,
+                                            this.oPopupComponents.sErrorDetailsModule
+                                        );
+                                        this.hide(
+                                            this.oPopupComponents.sExistingAccountModule,
+                                            this.oPopupComponents.sMultiMatchModule,
+                                            this.oPopupComponents.sIntroTextModule,
+                                            this.oPopupComponents.sAlertModule
+                                        );
+                                        this.displayMsg(
+                                            this.oPopupComponents.sErrorModule,
+                                            oe[this.oValidationErrorCodes.sComunicationError].value
+                                        );
                                         break;
                                 }
                             },
@@ -15747,16 +15965,35 @@
                             switch (this.sState) {
                                 case module_states.SIGNUP:
                                     this.displayMsg(this.oPopupComponents.sIntroTextModule, oe.i_txt_signup.value);
-                                    this.hide(this.oPopupComponents.sMultiMatchModule, this.oPopupComponents.sNewAccountModule, this.oPopupComponents.sNewAccountModule, this.oPopupComponents.sExistingAccountModule, this.oPopupComponents.sErrorModule, this.oPopupComponents.sErrorDetailsModule, this.oPopupComponents.sAlertModule);
-                                    this.show(this.oPopupComponents.sSignupModule, this.oPopupComponents.sGoodMail, this.oPopupComponents.sIntroTextModule);
+                                    this.hide(
+                                        this.oPopupComponents.sMultiMatchModule,
+                                        this.oPopupComponents.sNewAccountModule,
+                                        this.oPopupComponents.sNewAccountModule,
+                                        this.oPopupComponents.sExistingAccountModule,
+                                        this.oPopupComponents.sErrorModule,
+                                        this.oPopupComponents.sErrorDetailsModule,
+                                        this.oPopupComponents.sAlertModule
+                                    );
+                                    this.show(
+                                        this.oPopupComponents.sSignupModule,
+                                        this.oPopupComponents.sGoodMail,
+                                        this.oPopupComponents.sIntroTextModule
+                                    );
                                     break;
                                 case module_states.HP_WIDGET:
                                     this.show(this.oWidgetComponents.sSignupModule);
-                                    this.hide(this.oWidgetComponents.sSingleMatchModule, this.oWidgetComponents.sNoMatchModule, this.oWidgetComponents.sExistingAccountModule);
+                                    this.hide(
+                                        this.oWidgetComponents.sSingleMatchModule,
+                                        this.oWidgetComponents.sNoMatchModule,
+                                        this.oWidgetComponents.sExistingAccountModule
+                                    );
                                     break;
                                 case module_states.SA_WIDGET:
                                     this.show(this.oWidgetComponents.sSignupModule);
-                                    this.hide(this.oWidgetComponents.sSingleMatchModule, this.oWidgetComponents.sNoMatchModule);
+                                    this.hide(
+                                        this.oWidgetComponents.sSingleMatchModule,
+                                        this.oWidgetComponents.sNoMatchModule
+                                    );
                                     break;
                             }
                         },
@@ -16052,25 +16289,37 @@
                                             switch (oSubscriptionResponse.Message) {
                                                 case Subscriptions.SINGLE_MATCH_RESPONSE:
                                                     jQuery(oScope.oForm).trigger("TrackSingleMatch");
-                                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
-                                                            "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.SINGLE_MATCH);
+                                                    vsTrackClick(
+                                                        oSubscriptionRequest.sVSTrackUrl,
+                                                        Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
+                                                                "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.SINGLE_MATCH
+                                                    );
                                                     jQuery(oScope.oForm).trigger("SingleMatch");
                                                     break;
                                                 case Subscriptions.MULTI_MATCH_RESPONSE:
-                                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
-                                                            "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.MULTI_MATCH);
+                                                    vsTrackClick(
+                                                        oSubscriptionRequest.sVSTrackUrl,
+                                                        Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
+                                                                "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.MULTI_MATCH
+                                                    );
                                                     jQuery(oScope.oForm).trigger("TrackMultiMatch");
                                                     jQuery(oScope.oForm).trigger("MultiMatch");
                                                     break;
                                                 case Subscriptions.NEW_ACCOUNT_RESPONSE:
-                                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
-                                                            "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.NEW_ACCOUNT);
+                                                    vsTrackClick(
+                                                        oSubscriptionRequest.sVSTrackUrl,
+                                                        Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
+                                                                "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.NEW_ACCOUNT
+                                                    );
                                                     jQuery(oScope.oForm).trigger("TrackNewAccount");
                                                     jQuery(oScope.oForm).trigger("NewAccount");
                                                     break;
                                                 case Subscriptions.EXISTING_ACCOUNT_RESPONSE:
-                                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
-                                                            "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.EXISTING_ACCOUNT);
+                                                    vsTrackClick(
+                                                        oSubscriptionRequest.sVSTrackUrl,
+                                                        Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
+                                                                "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.EXISTING_ACCOUNT
+                                                    );
                                                     jQuery(oScope.oForm).trigger("TrackExistingAccount");
                                                     jQuery(oScope.oForm).trigger("ExistingAccount");
                                                     break;
@@ -16079,23 +16328,35 @@
                                             if (oSubscriptionResponse.Status == Subscriptions.FAILURE_RESPONSE) {
                                                 switch (oSubscriptionResponse.Message) {
                                                     case Subscriptions.INVALID_PARAMETERS_RESPONSE:
-                                                        vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
-                                                                "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.INVALID_PARAMETERS);
+                                                        vsTrackClick(
+                                                            oSubscriptionRequest.sVSTrackUrl,
+                                                            Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
+                                                                    "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.INVALID_PARAMETERS
+                                                        );
                                                         jQuery(oScope.oForm).trigger("InvalidParameters");
                                                         break;
                                                     case Subscriptions.MISSING_PARAMETERS_RESPONSE:
-                                                        vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
-                                                                "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.MISSING_PARAMETERS);
+                                                        vsTrackClick(
+                                                            oSubscriptionRequest.sVSTrackUrl,
+                                                            Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
+                                                                    "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.MISSING_PARAMETERS
+                                                        );
                                                         jQuery(oScope.oForm).trigger("MissingRequiredParameters");
                                                         break;
                                                     case Subscriptions.COMUNICATION_ERROR_RESPONSE:
-                                                        vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
-                                                                "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.COMUNICATION_ERROR_RESPONSE);
+                                                        vsTrackClick(
+                                                            oSubscriptionRequest.sVSTrackUrl,
+                                                            Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
+                                                                    "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.COMUNICATION_ERROR_RESPONSE
+                                                        );
                                                         jQuery(oScope.oForm).trigger("SubscriptionFailure");
                                                         break;
                                                     case Subscriptions.EXISTING_ACCOUNT_RESPONSE:
-                                                        vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
-                                                                "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.EXISTING_ACCOUNT);
+                                                        vsTrackClick(
+                                                            oSubscriptionRequest.sVSTrackUrl,
+                                                            Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
+                                                                    "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.EXISTING_ACCOUNT
+                                                        );
                                                         jQuery(oScope.oForm).trigger("ExistingAccount");
                                                         break;
                                                 }
@@ -16112,8 +16373,11 @@
                                     jQuery(oScope.oForm).trigger("TrackNoMatch");
                                     popup.showWindow();
                                     jQuery(oScope.oForm).trigger("NoMatch");
-                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
-                                            "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.NO_MATCH);
+                                    vsTrackClick(
+                                        oSubscriptionRequest.sVSTrackUrl,
+                                        Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
+                                                "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.NO_MATCH
+                                    );
                                     oScope.emptyWidgetFields();
                                 }
                                 return false;
@@ -16964,7 +17228,10 @@
                             .unbind("." + this.widgetName);
                     },
                     _mouseDistanceMet: function (a) {
-                        return Math.max(Math.abs(this._mouseDownEvent.pageX - a.pageX), Math.abs(this._mouseDownEvent.pageY - a.pageY)) >= this.options.distance;
+                        return Math.max(
+                            Math.abs(this._mouseDownEvent.pageX - a.pageX),
+                            Math.abs(this._mouseDownEvent.pageY - a.pageY)
+                        ) >= this.options.distance;
                     },
                     _mouseDown       : function (a) {
                         a.originalEvent = a.originalEvent || {};
@@ -18197,7 +18464,12 @@
                                             CountryName      : $("CountryName", this).text(),
                                             Distance         : jQuery
                                                 ._autocomplete
-                                                .getDistance(config.userLatitude, config.userLongitude, $("Latitude", this).text(), $("Longitude", this).text()),
+                                                .getDistance(
+                                                    config.userLatitude,
+                                                    config.userLongitude,
+                                                    $("Latitude", this).text(),
+                                                    $("Longitude", this).text()
+                                                ),
                                             Latitude         : $("Latitude", this).text(),
                                             LocationCode     : ($("LocationCode", this).length)
                                                 ? $("LocationCode", this).text()
@@ -18270,8 +18542,11 @@
                                 .split(re),
                             result        = item
                                 .value
-                                .replace(re, "<span class='highlightCharacters'>" + item.value.substring(matchPosition, matchPosition +
-                                        this.term.length) + "</span>");
+                                .replace(
+                                    re,
+                                    "<span class='highlightCharacters'>" + item.value.substring(matchPosition, matchPosition +
+                                            this.term.length) + "</span>"
+                                );
                         return $("<li></li>")
                             .addClass((config.displayIcons === true)
                                 ? "autocomplete-lob-icon"
@@ -18292,8 +18567,11 @@
                                 .split(re),
                             result        = item
                                 .value
-                                .replace(re, "<span class='highlightCharacters'>" + item.value.substring(matchPosition, matchPosition +
-                                        this.term.length) + "</span>");
+                                .replace(
+                                    re,
+                                    "<span class='highlightCharacters'>" + item.value.substring(matchPosition, matchPosition +
+                                            this.term.length) + "</span>"
+                                );
                         return $("<li></li>")
                             .addClass((item.type === "ARP")
                                 ? "airline"

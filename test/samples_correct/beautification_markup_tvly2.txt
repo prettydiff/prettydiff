@@ -2309,7 +2309,11 @@
                                             typeaheadD.SelectionLogPath = "http://suggest.expedia.com/hint/es/v1/acclick";
                                             typeaheadD.itemClickedEvent = function (typeahead) {
                                                 if (typeahead && typeahead.On) {
-                                                    tlaSelector.selectedTypeAhead("uw_flight_destination_input", "hidden_tla_uw_flight_destination_input", typeahead);
+                                                    tlaSelector.selectedTypeAhead(
+                                                        "uw_flight_destination_input",
+                                                        "hidden_tla_uw_flight_destination_input",
+                                                        typeahead
+                                                    );
                                                 }
                                             };
                                             TA.setup(typeaheadD);
@@ -2381,19 +2385,43 @@
                                             YAHOO
                                                 .util
                                                 .Event
-                                                .addListener("uw_flight_airline_tt_link", "click", cx.exp.search.flight.tooltipChgState, "changeable", true);
+                                                .addListener(
+                                                    "uw_flight_airline_tt_link",
+                                                    "click",
+                                                    cx.exp.search.flight.tooltipChgState,
+                                                    "changeable",
+                                                    true
+                                                );
                                             YAHOO
                                                 .util
                                                 .Event
-                                                .addListener("uw_flight_airline_tt_close", "click", cx.exp.search.flight.tooltipChgState, "close", true);
+                                                .addListener(
+                                                    "uw_flight_airline_tt_close",
+                                                    "click",
+                                                    cx.exp.search.flight.tooltipChgState,
+                                                    "close",
+                                                    true
+                                                );
                                             YAHOO
                                                 .util
                                                 .Event
-                                                .addListener("uw_flight_airline_tt", "click", cx.exp.search.flight.tooltipChgState, "open", true);
+                                                .addListener(
+                                                    "uw_flight_airline_tt",
+                                                    "click",
+                                                    cx.exp.search.flight.tooltipChgState,
+                                                    "open",
+                                                    true
+                                                );
                                             YAHOO
                                                 .util
                                                 .Event
-                                                .addListener(document.body, "click", cx.exp.search.flight.tooltipChgState, "closeByBody", true);
+                                                .addListener(
+                                                    document.body,
+                                                    "click",
+                                                    cx.exp.search.flight.tooltipChgState,
+                                                    "closeByBody",
+                                                    true
+                                                );
                                             //toolTip
 
                                             newModel = new cx
@@ -2644,8 +2672,12 @@
                             .value;
                         if (selectedDestValue == "others") {
                             // TODO drop down here is where the popup window for other POSs should live
-                            window.open("http://www.expedia.com", "otherPOSs", "height=100,width=400,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizabl" +
-                                    "e=no,location=no,status=no");
+                            window.open(
+                                "http://www.expedia.com",
+                                "otherPOSs",
+                                "height=100,width=400,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizabl" +
+                                        "e=no,location=no,status=no"
+                            );
 
                             selectElement
                                 .options[0]
@@ -2684,8 +2716,12 @@
 
                         if (selectedOriginValue == "others") {
                             // TODO drop down here is where the popup window for other POSs should live
-                            window.open("http://www.expedia.com", "otherPOSs", "height=100,width=400,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizabl" +
-                                    "e=no,location=no,status=no");
+                            window.open(
+                                "http://www.expedia.com",
+                                "otherPOSs",
+                                "height=100,width=400,top=0,left=0,toolbar=no,menubar=no,scrollbars=no,resizabl" +
+                                        "e=no,location=no,status=no"
+                            );
 
                             selectElement
                                 .options[0]
