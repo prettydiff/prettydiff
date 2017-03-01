@@ -81,7 +81,7 @@ async function getFriendNames(friendIDs : Promise<number[]>, getFriendName : (id
     return names;
 }
 
-function * infinity(): Generator<number, void, void> {
+function* infinity(): Generator<number, void, void> {
     var n = 0;
     while (true) {
         yield n += 1;
