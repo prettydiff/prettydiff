@@ -209,7 +209,9 @@ define("ace/lib/es5-shim", [
         return e = +e,
         e !== e
             ? e = 0
-            : e !== 0 && e !== 1 / 0 && e !== -1 / 0 && (e = (e > 0 || -1) * Math.floor(Math.abs(e))),
+            : e !== 0 && e !== 1 / 0 && e !== -1 / 0 && (
+                e = (e > 0 || -1) * Math.floor(Math.abs(e))
+            ),
         e;
     }
     function B(e) {
@@ -254,7 +256,11 @@ define("ace/lib/es5-shim", [
                 }
                 return n.apply(t, i.concat(u.call(arguments)));
             };
-        return n.prototype && (r.prototype = n.prototype, s.prototype = new r, r.prototype = null),
+        return n.prototype && (
+            r.prototype = n.prototype,
+            s.prototype = new r,
+            r.prototype = null
+        ),
         s;
     });
     var i = Function.prototype.call,
@@ -611,7 +617,9 @@ define("ace/lib/es5-shim", [
                 r = b();
             } else {
                 if (typeof t != "object") {
-                    throw new TypeError("typeof prototype[" + typeof t + "] != 'object'");
+                    throw new TypeError(
+                        "typeof prototype[" + typeof t + "] != 'object'"
+                    );
                 }
                 var i = function () {};
                 i.prototype = t,
@@ -877,12 +885,16 @@ define("ace/lib/dom", [
         }
     },
     t.getInnerWidth      = function (e) {
-        return parseInt(t.computedStyle(e, "paddingLeft"), 10) + parseInt(t.computedStyle(e, "paddingRight"), 10) +
-                e.clientWidth;
+        return parseInt(t.computedStyle(e, "paddingLeft"), 10) + parseInt(
+            t.computedStyle(e, "paddingRight"),
+            10
+        ) + e.clientWidth;
     },
     t.getInnerHeight     = function (e) {
-        return parseInt(t.computedStyle(e, "paddingTop"), 10) + parseInt(t.computedStyle(e, "paddingBottom"), 10) +
-                e.clientHeight;
+        return parseInt(t.computedStyle(e, "paddingTop"), 10) + parseInt(
+            t.computedStyle(e, "paddingBottom"),
+            10
+        ) + e.clientHeight;
     },
     t.scrollbarWidth     = function (e) {
         var n = t.createElement("ace_inner");
@@ -1176,8 +1188,12 @@ define("ace/lib/useragent", [
     t.isIE       = navigator.appName == "Microsoft Internet Explorer" || navigator
         .appName
         .indexOf("MSAppHost") >= 0
-            ? parseFloat((i.match(/(?:MSIE |Trident\/[0-9]+[\.0-9]+;.*rv:)([0-9]+[\.0-9]+)/) || [])[1])
-            : parseFloat((i.match(/(?:Trident\/[0-9]+[\.0-9]+;.*rv:)([0-9]+[\.0-9]+)/) || [])[1]),
+            ? parseFloat(
+                (i.match(/(?:MSIE |Trident\/[0-9]+[\.0-9]+;.*rv:)([0-9]+[\.0-9]+)/) || [])[1]
+            )
+            : parseFloat(
+                (i.match(/(?:Trident\/[0-9]+[\.0-9]+;.*rv:)([0-9]+[\.0-9]+)/) || [])[1]
+            ),
     t.isOldIE    = t.isIE && t.isIE < 9,
     t.isGecko    = t.isMozilla = (window.Controllers || window.controllers) && window.navigator.product === "Gecko",
     t.isOldGecko = t.isGecko && parseInt((i.match(/rv\:(\d+)/) || [])[1], 10) < 4,
@@ -1451,7 +1467,10 @@ define("ace/lib/event", [
                 t;
             }),
             r(e, "keypress", function (e) {
-                a && (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey) && (t.stopEvent(e), a = null);
+                a && (e.ctrlKey || e.altKey || e.shiftKey || e.metaKey) && (
+                    t.stopEvent(e),
+                    a = null
+                );
             }),
             r(e, "keyup", function (e) {
                 u[e.keyCode] = null;
@@ -1470,7 +1489,9 @@ define("ace/lib/event", [
             n.postMessage(r, "*");
         };
     }
-    t.nextFrame       = typeof window == "object" && (window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame || window.oRequestAnimationFrame),
+    t.nextFrame       = typeof window == "object" && (
+        window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame || window.oRequestAnimationFrame
+    ),
     t.nextFrame
         ? t.nextFrame = t
             .nextFrame
@@ -1691,7 +1712,10 @@ define("ace/keyboard/textinput", [
                 clearTimeout(q),
                 q = setTimeout(function () {
                     p && (n.style.cssText = p, p = ""),
-                    t.renderer.$keepTextAreaAtCursor == null && (t.renderer.$keepTextAreaAtCursor = !0, t.renderer.$moveTextAreaToCursor());
+                    t.renderer.$keepTextAreaAtCursor == null && (
+                        t.renderer.$keepTextAreaAtCursor = !0,
+                        t.renderer.$moveTextAreaToCursor()
+                    );
                 }, i.isOldIE
                     ? 200
                     : 0);
@@ -1759,23 +1783,26 @@ define("ace/keyboard/textinput", [
             var E = function (e) {
                 return e.selectionStart === 0 && e.selectionEnd === e.value.length;
             };
-            !n.setSelectionRange && n.createTextRange && (n.setSelectionRange = function (e, t) {
-                var n = this.createTextRange();
-                n.collapse(!0),
-                n.moveStart("character", e),
-                n.moveEnd("character", t),
-                n.select();
-            }, E                                                              = function (e) {
-                try {
-                    var t = e
-                        .ownerDocument
-                        .selection
-                        .createRange();
-                } catch (n) {}
-                return !t || t.parentElement() != e
-                    ? !1
-                    : t.text == e.value;
-            });
+            !n.setSelectionRange && n.createTextRange && (
+                n.setSelectionRange = function (e, t) {
+                    var n = this.createTextRange();
+                    n.collapse(!0),
+                    n.moveStart("character", e),
+                    n.moveEnd("character", t),
+                    n.select();
+                },
+                E                   = function (e) {
+                    try {
+                        var t = e
+                            .ownerDocument
+                            .selection
+                            .createRange();
+                    } catch (n) {}
+                    return !t || t.parentElement() != e
+                        ? !1
+                        : t.text == e.value;
+                }
+            );
             if (i.isOldIE) {
                 var S = !1,
                     x = function (e) {
@@ -1904,21 +1931,25 @@ define("ace/keyboard/textinput", [
             r.addListener(n, "cut", D),
             r.addListener(n, "copy", P),
             r.addListener(n, "paste", H),
-            (!("oncut" in n) || !("oncopy" in n) || !("onpaste" in n)) && r.addListener(e, "keydown", function (e) {
-                if (i.isMac && !e.metaKey || !e.ctrlKey) {
-                    return;
+            (!("oncut" in n) || !("oncopy" in n) || !("onpaste" in n)) && r.addListener(
+                e,
+                "keydown",
+                function (e) {
+                    if (i.isMac && !e.metaKey || !e.ctrlKey) {
+                        return;
+                    }
+                    switch (e.keyCode) {
+                        case 67:
+                            P(e);
+                            break;
+                        case 86:
+                            H(e);
+                            break;
+                        case 88:
+                            D(e);
+                    }
                 }
-                switch (e.keyCode) {
-                    case 67:
-                        P(e);
-                        break;
-                    case 86:
-                        H(e);
-                        break;
-                    case 88:
-                        D(e);
-                }
-            });
+            );
             var B = function (e) {
                     if (h || !t.onCompositionStart || t.$readOnly) {
                         return;
@@ -1929,7 +1960,11 @@ define("ace/keyboard/textinput", [
                     t.on("mousedown", F),
                     t
                         .selection
-                        .isEmpty() || (t.insert(""), t.session.markUndoGroup(), t.selection.clearSelection()),
+                        .isEmpty() || (
+                            t.insert(""),
+                            t.session.markUndoGroup(),
+                            t.selection.clearSelection()
+                        ),
                     t
                         .session
                         .markUndoGroup();
@@ -2031,9 +2066,11 @@ define("ace/keyboard/textinput", [
                 p || (p = n.style.cssText),
                 n.style.cssText = (o
                     ? "z-index:100000;"
-                    : "") + "height:" + n.style.height + ";" + (i.isIE
-                    ? "opacity:0.1;"
-                    : "");
+                    : "") + "height:" + n.style.height + ";" + (
+                    i.isIE
+                        ? "opacity:0.1;"
+                        : ""
+                );
                 var u = t
                         .container
                         .getBoundingClientRect(),
@@ -2278,7 +2315,9 @@ define("ace/mouse/default_handlers", [
         this.focusWait         = function () {
             var e = a(this.mousedownEvent.x, this.mousedownEvent.y, this.x, this.y),
                 t = Date.now();
-            (e > o || t - this.mousedownEvent.time > this.$focusTimout) && this.startSelect(this.mousedownEvent.getDocumentPosition());
+            (e > o || t - this.mousedownEvent.time > this.$focusTimout) && this.startSelect(
+                this.mousedownEvent.getDocumentPosition()
+            );
         },
         this.onDoubleClick     = function (e) {
             var t = e.getDocumentPosition(),
@@ -2287,7 +2326,10 @@ define("ace/mouse/default_handlers", [
                 i = r.getBracketRange(t);
             i
                 ? (i.isEmpty() && (i.start.column--, i.end.column++), this.setState("select"))
-                : (i = n.selection.getWordRange(t.row, t.column), this.setState("selectByWords")),
+                : (
+                    i = n.selection.getWordRange(t.row, t.column),
+                    this.setState("selectByWords")
+                ),
             this.$clickSelection = i,
             this.select();
         },
@@ -2800,7 +2842,9 @@ define("ace/mouse/dragdrop_handler", [
         var t = e.editor,
             n = r.createElement("img");
         n.src = "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==",
-        s.isOpera && (n.style.cssText = "width:1px;height:1px;position:fixed;top:0;left:0;z-index:2147483647;opacity:0;");
+        s.isOpera && (
+            n.style.cssText = "width:1px;height:1px;position:fixed;top:0;left:0;z-index:2147483647;opacity:0;"
+        );
         var f = ["dragWait", "dragWaitEnd", "startDrag", "dragReadyEnd", "onMouseDrag"];
         f.forEach(function (t) {
             e[t] = this[t];
@@ -2998,7 +3042,10 @@ define("ace/mouse/dragdrop_handler", [
             }
             if (this.state === "dragWait") {
                 var n = l(this.mousedownEvent.x, this.mousedownEvent.y, this.x, this.y);
-                n > 0 && (t.draggable = !1, this.startSelect(this.mousedownEvent.getDocumentPosition()));
+                n > 0 && (
+                    t.draggable = !1,
+                    this.startSelect(this.mousedownEvent.getDocumentPosition())
+                );
             }
         },
         this.onMouseDown  = function (e) {
@@ -3316,7 +3363,9 @@ define("ace/config", [
                 var y = v[m];
                 y
                     .name
-                    .indexOf("data-ace-") === 0 && (i[l(y.name.replace(/^data-ace-/, ""))] = y.value);
+                    .indexOf("data-ace-") === 0 && (
+                        i[l(y.name.replace(/^data-ace-/, ""))] = y.value
+                    );
             }
             var b = d.match(/^(.*)\/ace(\-\w+)?\.js(\?|$)/);
             b && (s = b[1]);
@@ -3481,7 +3530,10 @@ define("ace/mouse/mouse_handler", [
                     r.addListener(e.renderer.scrollBarH.element, "mousedown", n)
                 )
             ),
-            r.addMouseWheelListener(e.container, this.onMouseWheel.bind(this, "mousewheel")),
+            r.addMouseWheelListener(
+                e.container,
+                this.onMouseWheel.bind(this, "mousewheel")
+            ),
             r.addTouchMoveListener(e.container, this.onTouchMove.bind(this, "touchmove"));
             var f = e.renderer.$gutter;
             r.addListener(f, "mousedown", this.onMouseEvent.bind(this, "guttermousedown")),
@@ -3571,7 +3623,10 @@ define("ace/mouse/mouse_handler", [
                     f(),
                     s[s.state + "End"] && s[s.state + "End"](e),
                     s.state = "",
-                    n.$keepTextAreaAtCursor == null && (n.$keepTextAreaAtCursor = !0, n.$moveTextAreaToCursor()),
+                    n.$keepTextAreaAtCursor == null && (
+                        n.$keepTextAreaAtCursor = !0,
+                        n.$moveTextAreaToCursor()
+                    ),
                     s.isMousePressed      = !1,
                     s.$onCaptureMouseMove = s.releaseMouse = null,
                     e && s.onMouseEvent("mouseup", e);
@@ -3772,7 +3827,9 @@ define("ace/keyboard/keybinding", [
                 s.command == "null"
                     ? o = !0
                     : o = u.exec(s.command, this.$editor, s.args, r),
-                o && r && e != -1 && s.passEvent != 1 && s.command.passEvent != 1 && i.stopEvent(r);
+                o && r && e != -1 && s.passEvent != 1 && s.command.passEvent != 1 && i.stopEvent(
+                    r
+                );
                 if (o) {
                     break;
                 }
@@ -3815,8 +3872,8 @@ define("ace/range", [
             return this.start.row === e.start.row && this.end.row === e.end.row && this.start.column === e.start.column && this.end.column === e.end.column;
         },
         this.toString      = function () {
-            return "Range: [" + this.start.row + "/" + this.start.column + "] -> [" + this.end.row +
-                    "/" + this.end.column + "]";
+            return "Range: [" + this.start.row + "/" + this.start.column + "] -> [" +
+                    this.end.row + "/" + this.end.column + "]";
         },
         this.contains      = function (e, t) {
             return this.compare(e, t) == 0;
@@ -4033,7 +4090,9 @@ define("ace/selection", [
                 .on("change", function (e) {
                     t._emit("changeCursor"),
                     t.$isEmpty || t._emit("changeSelection"),
-                    !t.$keepDesiredColumnOnChange && e.old.column != e.value.column && (t.$desiredColumn = null);
+                    !t.$keepDesiredColumnOnChange && e.old.column != e.value.column && (
+                        t.$desiredColumn = null
+                    );
                 }),
             this
                 .selectionAnchor
@@ -4291,7 +4350,9 @@ define("ace/selection", [
                     .session
                     .getDisplayLine(e, null, r.row, r.column),
                 s = i.match(/^\s*/);
-            s[0].length != t && !this.session.$useEmacsStyleLineStart && (r.column += s[0].length),
+            s[0].length != t && !this.session.$useEmacsStyleLineStart && (
+                r.column += s[0].length
+            ),
             this.moveCursorToPosition(r);
         },
         this.moveCursorLineEnd        = function () {
@@ -4665,7 +4726,9 @@ define("ace/tokenizer", [
                     c > 1 && (
                         /\\\d/.test(f.regex)
                             ? l = f.regex.replace(/\\([0-9]+)/g, function (e, t) {
-                                return "\\" + (parseInt(t, 10) + i + 1);
+                                return "\\" + (
+                                    parseInt(t, 10) + i + 1
+                                );
                             })
                             : (c = 1, l = this.removeCapturingGroups(f.regex)),
                         !f.splitRegex && typeof f.token != "string" && u.push(f)
@@ -4754,7 +4817,9 @@ define("ace/tokenizer", [
                                 : s && (n++, s.length != 1 && (i.stack = n, i.start = a)),
                     e;
                 }),
-                i.end != null && /^\)*$/.test(e.substr(i.end)) && (e = e.substring(0, i.start) + e.substr(i.end));
+                i.end != null && /^\)*$/.test(e.substr(i.end)) && (
+                    e = e.substring(0, i.start) + e.substr(i.end)
+                );
             }
             return new RegExp(e, (t || "").replace("g", ""));
         },
@@ -4959,17 +5024,27 @@ define("ace/mode/text_highlight_rules", [
                 o.processed = !0;
                 for (var u = 0; u < o.length; u += 1) {
                     var a = o[u];
-                    !a.regex && a.start && (a.regex = a.start, a.next || (a.next = []), a.next.push({
-                        defaultToken: a.token
-                    }, {
-                        next : "pop",
-                        regex: a.end || a.start,
-                        token: a.token + ".end"
-                    }), a.token = a.token + ".start", a.push = !0);
+                    !a.regex && a.start && (
+                        a.regex = a.start,
+                        a.next || (a.next = []),
+                        a.next.push({
+                            defaultToken: a.token
+                        }, {
+                            next : "pop",
+                            regex: a.end || a.start,
+                            token: a.token + ".end"
+                        }),
+                        a.token = a.token + ".start",
+                        a.push  = !0
+                    );
                     var f = a.next || a.push;
                     if (f && Array.isArray(f)) {
                         var l = a.stateName;
-                        l || (l = a.token, typeof l != "string" && (l = l[0] || ""), r[l] && (l += n++)),
+                        l || (
+                            l = a.token,
+                            typeof l != "string" && (l = l[0] || ""),
+                            r[l] && (l += n++)
+                        ),
                         r[l]   = f,
                         a.next = l,
                         i(l);
@@ -5547,10 +5622,16 @@ define("ace/mode/text", [
             this.$behaviour     = new s;
         };
     (function () {
-        this.tokenRe             = new RegExp("^[" + o.packages.L + o.packages.Mn + o.packages.Mc + o.packages.Nd +
-                o.packages.Pc + "\\$_]+", "g"),
-        this.nonTokenRe          = new RegExp("^(?:[^" + o.packages.L + o.packages.Mn + o.packages.Mc +
-                o.packages.Nd + o.packages.Pc + "\\$_]|\\s])+", "g"),
+        this.tokenRe             = new RegExp(
+            "^[" + o.packages.L + o.packages.Mn + o.packages.Mc + o.packages.Nd + o.packages.Pc +
+                    "\\$_]+",
+            "g"
+        ),
+        this.nonTokenRe          = new RegExp(
+            "^(?:[^" + o.packages.L + o.packages.Mn + o.packages.Mc + o.packages.Nd + o.packages.Pc +
+                    "\\$_]|\\s])+",
+            "g"
+        ),
         this.getTokenizer        = function () {
             return this.$tokenizer || (
                 this.$highlightRules = this.$highlightRules || new this.HighlightRules,
@@ -5863,18 +5944,27 @@ define("ace/apply_delta", [
         return t.row >= 0 && t.row < e.length && t.column >= 0 && t.column <= e[t.row].length;
     }
     function s(e, t) {
-        t.action != "insert" && t.action != "remove" && r(t, "delta.action must be 'insert' or 'remove'"),
+        t.action != "insert" && t.action != "remove" && r(
+            t,
+            "delta.action must be 'insert' or 'remove'"
+        ),
         t.lines instanceof Array || r(t, "delta.lines must be an Array"),
         (!t.start || !t.end) && r(t, "delta.start/end must be an present");
         var n = t.start;
         i(e, t.start) || r(t, "delta.start must be contained in document");
         var s = t.end;
-        t.action == "remove" && !i(e, s) && r(t, "delta.end must contained in document for 'remove' actions");
+        t.action == "remove" && !i(e, s) && r(
+            t,
+            "delta.end must contained in document for 'remove' actions"
+        );
         var o = s.row - n.row,
             u = s.column - (o == 0
                 ? n.column
                 : 0);
-        (o != t.lines.length - 1 || t.lines[o].length != u) && r(t, "delta.range must match delta lines");
+        (o != t.lines.length - 1 || t.lines[o].length != u) && r(
+            t,
+            "delta.range must match delta lines"
+        );
     }
     t.applyDelta = function (e, t, n) {
         var r = t.start.row,
@@ -6155,18 +6245,24 @@ define("ace/document", [
             return t;
         },
         this.insertLines              = function (e, t) {
-            return console.warn("Use of document.insertLines is deprecated. Use the insertFullLines method inst" +
-                    "ead."),
+            return console.warn(
+                "Use of document.insertLines is deprecated. Use the insertFullLines method inst" +
+                "ead."
+            ),
             this.insertFullLines(e, t);
         },
         this.removeLines              = function (e, t) {
-            return console.warn("Use of document.removeLines is deprecated. Use the removeFullLines method inst" +
-                    "ead."),
+            return console.warn(
+                "Use of document.removeLines is deprecated. Use the removeFullLines method inst" +
+                "ead."
+            ),
             this.removeFullLines(e, t);
         },
         this.insertNewLine            = function (e) {
-            return console.warn("Use of document.insertNewLine is deprecated. Use insertMergedLines(position, [" +
-                    "'', '']) instead."),
+            return console.warn(
+                "Use of document.insertNewLine is deprecated. Use insertMergedLines(position, [" +
+                "'', '']) instead."
+            ),
             this.insertMergedLines(e, ["", ""]);
         },
         this.insert                   = function (e, t) {
@@ -6283,7 +6379,9 @@ define("ace/document", [
                 l = this
                     .$lines
                     .slice(e, t + 1);
-            return this.applyDelta({action: "remove", end: f.end, lines: this.getLinesForRange(f), start: f.start}),
+            return this.applyDelta(
+                {action: "remove", end: f.end, lines: this.getLinesForRange(f), start: f.start}
+            ),
             l;
         },
         this.removeNewLine            = function (e) {
@@ -6645,7 +6743,10 @@ define("ace/edit_session/fold_line", [
                         ? (this.end.row = e.end.row, this.end.column = e.end.column)
                         : this
                             .range
-                            .compareStart(e.end.row, e.end.column) < 0 && (this.start.row = e.start.row, this.start.column = e.start.column);
+                            .compareStart(e.end.row, e.end.column) < 0 && (
+                                this.start.row    = e.start.row,
+                                this.start.column = e.start.column
+                            );
             } else if (e.start.row == this.end.row) {
                 this
                     .folds
@@ -6654,7 +6755,9 @@ define("ace/edit_session/fold_line", [
                 this.end.column = e.end.column;
             } else {
                 if (e.end.row != this.start.row) {
-                    throw new Error("Trying to add fold to FoldRow that doesn't have a matching row");
+                    throw new Error(
+                        "Trying to add fold to FoldRow that doesn't have a matching row"
+                    );
                 }
                 this
                     .folds
@@ -6962,12 +7065,16 @@ define("ace/range_list", [
                 if (l.start.row > r) {
                     break;
                 }
-                l.start.row == r && l.start.column >= t.column && (l.start.column != t.column || !this.$insertRight) && (l.start.column += o, l.start.row += s);
+                l.start.row == r && l.start.column >= t.column && (
+                    l.start.column != t.column || !this.$insertRight
+                ) && (l.start.column += o, l.start.row += s);
                 if (l.end.row == r && l.end.column >= t.column) {
                     if (l.end.column == t.column && this.$insertRight) {
                         continue;
                     }
-                    l.end.column == t.column && o > 0 && a < f - 1 && l.end.column > l.start.column && l.end.column == u[a + 1].start.column && (l.end.column -= o),
+                    l.end.column == t.column && o > 0 && a < f - 1 && l.end.column > l.start.column && l.end.column == u[a + 1].start.column && (
+                        l.end.column -= o
+                    ),
                     l.end.column += o,
                     l.end.row    += s;
                 }
@@ -7055,7 +7162,9 @@ define("ace/edit_session/fold", [
                 return;
             }
             if (!this.range.containsRange(e)) {
-                throw new Error("A fold can't intersect already existing fold" + e.range + this.range);
+                throw new Error(
+                    "A fold can't intersect already existing fold" + e.range + this.range
+                );
             }
             a(e, this.start);
             var t = e.start.row,
@@ -7086,7 +7195,9 @@ define("ace/edit_session/fold", [
             }
             var u = this.subFolds[o];
             if (i == 0) {
-                throw new Error("A fold can't intersect already existing fold" + e.range + this.range);
+                throw new Error(
+                    "A fold can't intersect already existing fold" + e.range + this.range
+                );
             }
             var f = this
                 .subFolds
@@ -7404,7 +7515,11 @@ define("ace/edit_session/folding", [
                     e.restoreRange(t),
                     this.addFold(t);
                 }, this),
-            e.collapseChildren > 0 && this.foldAll(e.start.row + 1, e.end.row, e.collapseChildren - 1),
+            e.collapseChildren > 0 && this.foldAll(
+                e.start.row + 1,
+                e.end.row,
+                e.collapseChildren - 1
+            ),
             e.subFolds = [];
         },
         this.expandFolds                = function (e) {
@@ -7610,8 +7725,10 @@ define("ace/edit_session/folding", [
         this.$foldStyle                 = "markbegin",
         this.setFoldStyle               = function (e) {
             if (!this.$foldStyles[e]) {
-                throw new Error("invalid fold style: " + e + "[" + Object.keys(this.$foldStyles).join(", ") +
-                        "]");
+                throw new Error(
+                    "invalid fold style: " + e + "[" + Object.keys(this.$foldStyles).join(", ") +
+                    "]"
+                );
             }
             if (this.$foldStyle == e) {
                 return;
@@ -7857,8 +7974,10 @@ define("ace/edit_session/bracket_match", [
             if (!u) {
                 return;
             }
-            n || (n = new RegExp("(\\.?" + u.type.replace(".", "\\.").replace("rparen", ".paren").replace(/\b(?:end)\b/, "(?:start|begin|end)") +
-                    ")+"));
+            n || (n = new RegExp(
+                "(\\.?" + u.type.replace(".", "\\.").replace("rparen", ".paren").replace(/\b(?:end)\b/, "(?:start|begin|end)") +
+                ")+"
+            ));
             var a = t.column - o.getCurrentTokenColumn() - 2,
                 f = u.value;
             for (;;) {
@@ -7897,8 +8016,10 @@ define("ace/edit_session/bracket_match", [
             if (!u) {
                 return;
             }
-            n || (n = new RegExp("(\\.?" + u.type.replace(".", "\\.").replace("lparen", ".paren").replace(/\b(?:start|begin)\b/, "(?:start|begin|end)") +
-                    ")+"));
+            n || (n = new RegExp(
+                "(\\.?" + u.type.replace(".", "\\.").replace("lparen", ".paren").replace(/\b(?:start|begin)\b/, "(?:start|begin|end)") +
+                ")+"
+            ));
             var a = t.column - o.getCurrentTokenColumn();
             for (;;) {
                 var f = u.value,
@@ -8132,8 +8253,14 @@ define("ace/edit_session", [
                     t
                         .$informUndoManager
                         .cancel(),
-                    t.$deltasFold.length && (t.$deltas.push({deltas: t.$deltasFold, group: "fold"}), t.$deltasFold = []),
-                    t.$deltasDoc.length && (t.$deltas.push({deltas: t.$deltasDoc, group: "doc"}), t.$deltasDoc = []),
+                    t.$deltasFold.length && (
+                        t.$deltas.push({deltas: t.$deltasFold, group: "fold"}),
+                        t.$deltasFold = []
+                    ),
+                    t.$deltasDoc.length && (
+                        t.$deltas.push({deltas: t.$deltasDoc, group: "doc"}),
+                        t.$deltasDoc = []
+                    ),
                     t.$deltas.length > 0 && e.execute({
                         action: "aceupdate",
                         args  : [
@@ -8384,7 +8511,11 @@ define("ace/edit_session", [
                 }
                 this.$modes[r] && !n
                     ? this.$onChangeMode(this.$modes[r])
-                    : e && e.Mode && (e = new e.Mode(n), n || (this.$modes[r] = e, e.$id = r), this.$onChangeMode(e)),
+                    : e && e.Mode && (
+                        e = new e.Mode(n),
+                        n || (this.$modes[r] = e, e.$id = r),
+                        this.$onChangeMode(e)
+                    ),
                 t && t();
             }.bind(this)),
             this.$mode || this.$onChangeMode(this.$modes["ace/mode/text"], !0);
@@ -8564,7 +8695,10 @@ define("ace/edit_session", [
             for (var r = e.length - 1; r != -1; r -= 1) {
                 var i = e[r];
                 i.group == "doc"
-                    ? (this.doc.revertDeltas(i.deltas), n = this.$getUndoSelection(i.deltas, !0, n))
+                    ? (
+                        this.doc.revertDeltas(i.deltas),
+                        n = this.$getUndoSelection(i.deltas, !0, n)
+                    )
                     : i
                         .deltas
                         .forEach(function (e) {
@@ -8585,7 +8719,10 @@ define("ace/edit_session", [
             var n = null;
             for (var r = 0; r < e.length; r += 1) {
                 var i = e[r];
-                i.group == "doc" && (this.doc.applyDeltas(i.deltas), n = this.$getUndoSelection(i.deltas, !1, n));
+                i.group == "doc" && (
+                    this.doc.applyDeltas(i.deltas),
+                    n = this.$getUndoSelection(i.deltas, !1, n)
+                );
             }
             return this.$fromUndo = !1,
             n && this.$undoSelect && !t && this
@@ -8923,7 +9060,9 @@ define("ace/edit_session", [
             }
             return t && this.$wrapData.length != this
                 .doc
-                .getLength() && console.error("doc.getLength() and $wrapData.length have to be the same!"),
+                .getLength() && console.error(
+                    "doc.getLength() and $wrapData.length have to be the same!"
+                ),
             this.$updating = !1,
             t
                 ? this.$updateWrapData(s, o)
@@ -8966,7 +9105,11 @@ define("ace/edit_session", [
                         s[f.start.row] = this.$computeWrapSplits(a, o, i),
                         l              = f.end.row + 1
                     )
-                    : (a = this.$getDisplayTokens(r[l]), s[l] = this.$computeWrapSplits(a, o, i), l++);
+                    : (
+                        a    = this.$getDisplayTokens(r[l]),
+                        s[l] = this.$computeWrapSplits(a, o, i),
+                        l++
+                    );
             }
         };
         var e = 1,
@@ -9250,7 +9393,11 @@ define("ace/edit_session", [
                 if (m) {
                     var g = Math.floor(e - o);
                     s = m[g],
-                    g > 0 && m.length && (v = m.indent, i = m[g - 1] || m[m.length - 1], n = n.substring(i));
+                    g > 0 && m.length && (
+                        v = m.indent,
+                        i = m[g - 1] || m[m.length - 1],
+                        n = n.substring(i)
+                    );
                 }
             }
             return i += this.$getStringScreenWidth(n, t - v)[1],
@@ -9376,7 +9523,10 @@ define("ace/edit_session", [
         },
         this.$setFontMetrics                  = function (e) {},
         this.destroy                          = function () {
-            this.bgTokenizer && (this.bgTokenizer.setDocument(null), this.bgTokenizer = null),
+            this.bgTokenizer && (
+                this.bgTokenizer.setDocument(null),
+                this.bgTokenizer = null
+            ),
             this.$stopWorker();
         };
     }).call(p.prototype),
@@ -9858,7 +10008,10 @@ define("ace/keyboard/hash_handler", [
             }
         },
         this.bindKey              = function (e, t, n) {
-            typeof e == "object" && (n == undefined && (n = e.position), e = e[this.platform]);
+            typeof e == "object" && (
+                n == undefined && (n = e.position),
+                e = e[this.platform]
+            );
             if (!e) {
                 return;
             }
@@ -9979,8 +10132,9 @@ define("ace/keyboard/hash_handler", [
             for (var o = t.length; o -= 1;) {
                 var u = r.KEY_MODS[t[o]];
                 if (u == null) {
-                    return typeof console != "undefined" && console.error("invalid modifier " + t[o] +
-                            " in " + e),
+                    return typeof console != "undefined" && console.error(
+                        "invalid modifier " + t[o] + " in " + e
+                    ),
                     !1;
                 }
                 s |= u;
@@ -9994,7 +10148,10 @@ define("ace/keyboard/hash_handler", [
         this.handleKeyboard       = function (e, t, n, r) {
             var i = s[t] + n,
                 o = this.commandKeyBinding[i];
-            e.$keyChain && (e.$keyChain += " " + i, o = this.commandKeyBinding[e.$keyChain] || o);
+            e.$keyChain && (
+                e.$keyChain += " " + i,
+                o           = this.commandKeyBinding[e.$keyChain] || o
+            );
             if (o) {
                 if (o == "chainKeys" || o[o.length - 1] == "chainKeys") {
                     return e.$keyChain = e.$keyChain || i, {command: "null"};
@@ -10801,7 +10958,10 @@ define("ace/commands/default_commands", [
             name             : "del",
             scrollIntoView   : "cursor"
         }, {
-            bindKey          : o("Shift-Backspace|Backspace", "Ctrl-Backspace|Shift-Backspace|Backspace|Ctrl-H"),
+            bindKey          : o(
+                "Shift-Backspace|Backspace",
+                "Ctrl-Backspace|Shift-Backspace|Backspace|Ctrl-H"
+            ),
             exec             : function (e) {
                 e.remove("left");
             },
@@ -10998,8 +11158,10 @@ define("ace/commands/default_commands", [
                     .doc
                     .replace(new s(n.row, 0, i.row + 2, 0), f),
                 a > 0
-                    ? (e.selection.moveCursorTo(n.row, n.column), e.selection.selectTo(n.row, n.column +
-                            a))
+                    ? (
+                        e.selection.moveCursorTo(n.row, n.column),
+                        e.selection.selectTo(n.row, n.column + a)
+                    )
                     : (o = e.session.doc.getLine(n.row).length > o
                         ? o + 1
                         : o,
@@ -11028,10 +11190,16 @@ define("ace/commands/default_commands", [
                         .getRange()
                 ]);
                 for (var o = 0; o < r.length; o += 1) {
-                    o == r.length - 1 && (r[o].end.row !== t || r[o].end.column !== n) && i.push(new s(r[o].end.row, r[o].end.column, t, n)),
+                    o == r.length - 1 && (r[o].end.row !== t || r[o].end.column !== n) && i.push(
+                        new s(r[o].end.row, r[o].end.column, t, n)
+                    ),
                     o === 0
-                        ? (r[o].start.row !== 0 || r[o].start.column !== 0) && i.push(new s(0, 0, r[o].start.row, r[o].start.column))
-                        : i.push(new s(r[o - 1].end.row, r[o - 1].end.column, r[o].start.row, r[o].start.column));
+                        ? (r[o].start.row !== 0 || r[o].start.column !== 0) && i.push(
+                            new s(0, 0, r[o].start.row, r[o].start.column)
+                        )
+                        : i.push(
+                            new s(r[o - 1].end.row, r[o - 1].end.column, r[o].start.row, r[o].start.column)
+                        );
                 }
                 e.exitMultiSelectMode(),
                 e.clearSelection();
@@ -11233,7 +11401,9 @@ define("ace/editor", [
             } else {
                 r = r && n.indexOf(e.command.name) !== -1;
             }
-            this.$mergeUndoDeltas != "always" && Date.now() - this.sequenceStartTime > 2e3 && (r = !1),
+            this.$mergeUndoDeltas != "always" && Date.now() - this.sequenceStartTime > 2e3 && (
+                r = !1
+            ),
             r
                 ? this.session.mergeUndoDeltas = !0
                 : n.indexOf(e.command.name) !== -1 && (this.sequenceStartTime = Date.now());
@@ -11427,7 +11597,10 @@ define("ace/editor", [
                 .unsetStyle(e);
         },
         this.getFontSize                  = function () {
-            return this.getOption("fontSize") || i.computedStyle(this.container, "fontSize");
+            return this.getOption("fontSize") || i.computedStyle(
+                this.container,
+                "fontSize"
+            );
         },
         this.setFontSize                  = function (e) {
             this.setOption("fontSize", e);
@@ -11518,8 +11691,13 @@ define("ace/editor", [
                 var a = r.getCurrentTokenRow(),
                     f = r.getCurrentTokenColumn(),
                     l = new p(a, f, a, f + i.value.length);
-                t.$tagHighlight && l.compareRange(t.$backMarkers[t.$tagHighlight].range) !== 0 && (t.removeMarker(t.$tagHighlight), t.$tagHighlight = null),
-                l && !t.$tagHighlight && (t.$tagHighlight = t.addMarker(l, "ace_bracket", "text"));
+                t.$tagHighlight && l.compareRange(t.$backMarkers[t.$tagHighlight].range) !== 0 && (
+                    t.removeMarker(t.$tagHighlight),
+                    t.$tagHighlight = null
+                ),
+                l && !t.$tagHighlight && (
+                    t.$tagHighlight = t.addMarker(l, "ace_bracket", "text")
+                );
             }, 50);
         },
         this.focus                        = function () {
@@ -11834,8 +12012,7 @@ define("ace/editor", [
                 h = n.insert(i, e);
             s && s.selection && (s.selection.length == 2
                 ? this.selection.setSelectionRange(new p(i.row, f + s.selection[0], i.row, f + s.selection[1]))
-                : this.selection.setSelectionRange(new p(i.row + s.selection[0], s.selection[1], i.row +
-                        s.selection[2], s.selection[3])));
+                : this.selection.setSelectionRange(new p(i.row + s.selection[0], s.selection[1], i.row + s.selection[2], s.selection[3])));
             if (n.getDocument().isNewLine(e)) {
                 var d = r.getNextLineIndent(l, u.slice(0, i.column), n.getTabString());
                 n.insert({
@@ -12053,7 +12230,10 @@ define("ace/editor", [
                 .selection
                 .selectLineEnd();
             var e = this.getSelectionRange();
-            e.start.column == e.end.column && e.start.row == e.end.row && (e.end.column = 0, e.end.row++),
+            e.start.column == e.end.column && e.start.row == e.end.row && (
+                e.end.column = 0,
+                e.end.row++
+            ),
             this
                 .session
                 .remove(e),
@@ -12062,7 +12242,10 @@ define("ace/editor", [
         this.splitLine                    = function () {
             this
                 .selection
-                .isEmpty() || (this.session.remove(this.getSelectionRange()), this.clearSelection());
+                .isEmpty() || (
+                    this.session.remove(this.getSelectionRange()),
+                    this.clearSelection()
+                );
             var e = this.getCursorPosition();
             this.insert("\n"),
             this.moveCursorToPosition(e);
@@ -12444,7 +12627,10 @@ define("ace/editor", [
                     .$moveSelection(function () {
                         this.moveCursorBy(i, 0);
                     })
-                : t === !1 && (this.selection.moveCursorBy(i, 0), this.selection.clearSelection()),
+                : t === !1 && (
+                    this.selection.moveCursorBy(i, 0),
+                    this.selection.clearSelection()
+                ),
             this.$blockScrolling -= 1;
             var s = n.scrollTop;
             n.scrollBy(0, i * r.lineHeight),
@@ -12573,10 +12759,13 @@ define("ace/editor", [
                 } else {
                     s && s
                         .type
-                        .indexOf("tag-name") !== -1 && (isNaN(a[s.value]) && (a[s.value] = 0), i.value === "<"
-                            ? a[s.value]++
-                            : i.value === "</" && a[s.value]--,
-                    a[s.value] === -1 && (o = "tag", u = !0));
+                        .indexOf("tag-name") !== -1 && (
+                            isNaN(a[s.value]) && (a[s.value] = 0),
+                            i.value === "<"
+                                ? a[s.value]++
+                                : i.value === "</" && a[s.value]--,
+                            a[s.value] === -1 && (o = "tag", u = !0)
+                        );
                 }
                 u || (i = s, s = r.stepForward(), f = 0);
             } while (s && !u);
@@ -12620,8 +12809,7 @@ define("ace/editor", [
                         s = i,
                         i = r.stepBackward(),
                         i && (
-                            i.type.indexOf("tag-close") !== -1 && h.setEnd(r.getCurrentTokenRow(), r.getCurrentTokenColumn() +
-                                    1),
+                            i.type.indexOf("tag-close") !== -1 && h.setEnd(r.getCurrentTokenRow(), r.getCurrentTokenColumn() + 1),
                             s.value === v && s.type.indexOf("tag-name") !== -1 && (i.value === "<"
                                 ? a[v]++
                                 : i.value === "</" && a[v]--,
@@ -12631,7 +12819,10 @@ define("ace/editor", [
                 }
                 s && s
                     .type
-                    .indexOf("tag-name") && (d = h.start, d.row == n.row && Math.abs(d.column - n.column) < 2 && (d = h.end));
+                    .indexOf("tag-name") && (
+                        d = h.start,
+                        d.row == n.row && Math.abs(d.column - n.column) < 2 && (d = h.end)
+                    );
             }
             d = h && h.cursor || d,
             d && (e
@@ -12825,10 +13016,14 @@ define("ace/editor", [
             var i = this
                 .selection
                 .getRange();
-            t.needle == null && (e = this.session.getTextRange(i) || this.$search.$options.needle, e || (
-                i = this.session.getWordRange(i.start.row, i.start.column),
-                e = this.session.getTextRange(i)
-            ), this.$search.set({needle: e})),
+            t.needle == null && (
+                e = this.session.getTextRange(i) || this.$search.$options.needle,
+                e || (
+                    i = this.session.getWordRange(i.start.row, i.start.column),
+                    e = this.session.getTextRange(i)
+                ),
+                this.$search.set({needle: e})
+            ),
             this
                 .$search
                 .set(t),
@@ -13118,7 +13313,10 @@ define("ace/undomanager", [
         this.execute            = function (e) {
             var t = e.args[0];
             this.$doc         = e.args[1],
-            e.merge && this.hasUndo() && (this.dirtyCounter--, t = this.$undoStack.pop().concat(t)),
+            e.merge && this.hasUndo() && (
+                this.dirtyCounter--,
+                t = this.$undoStack.pop().concat(t)
+            ),
             this
                 .$undoStack
                 .push(t),
@@ -13212,13 +13410,17 @@ define("ace/layer/gutter", [
             e && e.on("change", this.$updateAnnotations);
         },
         this.addGutterDecoration    = function (e, t) {
-            window.console && console.warn && console.warn("deprecated use session.addGutterDecoration"),
+            window.console && console.warn && console.warn(
+                "deprecated use session.addGutterDecoration"
+            ),
             this
                 .session
                 .addGutterDecoration(e, t);
         },
         this.removeGutterDecoration = function (e, t) {
-            window.console && console.warn && console.warn("deprecated use session.removeGutterDecoration"),
+            window.console && console.warn && console.warn(
+                "deprecated use session.removeGutterDecoration"
+            ),
             this
                 .session
                 .removeGutterDecoration(e, t);
@@ -13327,7 +13529,10 @@ define("ace/layer/gutter", [
                     y == null && (y = u[v] = t.getFoldWidget(v));
                 }
                 if (y) {
-                    p.foldWidget || (p.foldWidget = r.createElement("span"), p.element.appendChild(p.foldWidget));
+                    p.foldWidget || (
+                        p.foldWidget = r.createElement("span"),
+                        p.element.appendChild(p.foldWidget)
+                    );
                     var m = "ace_fold-widget ace_" + y;
                     y == "start" && v == o && v < s.end.row
                         ? m += " ace_closed"
@@ -13756,8 +13961,10 @@ define("ace/layer/text", [
             var t = this.$tabStrings = [0];
             for (var n = 1; n < e + 1; n += 1) {
                 this.showInvisibles
-                    ? t.push("<span class='ace_invisible ace_invisible_tab'>" + s.stringRepeat(this.TAB_CHAR, n) +
-                            "</span>")
+                    ? t.push(
+                        "<span class='ace_invisible ace_invisible_tab'>" + s.stringRepeat(this.TAB_CHAR, n) +
+                        "</span>"
+                    )
                     : t.push(s.stringRepeat(" ", n));
             }
             if (this.displayIndentGuides) {
@@ -13780,7 +13987,9 @@ define("ace/layer/text", [
             }
         },
         this.updateLines            = function (e, t, n) {
-            (this.config.lastRow != e.lastRow || this.config.firstRow != e.firstRow) && this.scrollLines(e),
+            (this.config.lastRow != e.lastRow || this.config.firstRow != e.firstRow) && this.scrollLines(
+                e
+            ),
             this.config = e;
             var r = Math.max(t, e.firstRow),
                 i = Math.min(n, e.lastRow),
@@ -13838,12 +14047,20 @@ define("ace/layer/text", [
             }
             var n = this.element;
             if (t.firstRow < e.firstRow) {
-                for (var r = this.session.getFoldedRowCount(t.firstRow, e.firstRow - 1); r > 0; r -= 1) {
+                for (
+                    var r = this.session.getFoldedRowCount(t.firstRow, e.firstRow - 1);
+                    r > 0;
+                    r -= 1
+                ) {
                     n.removeChild(n.firstChild);
                 }
             }
             if (t.lastRow > e.lastRow) {
-                for (var r = this.session.getFoldedRowCount(e.lastRow + 1, t.lastRow); r > 0; r -= 1) {
+                for (
+                    var r = this.session.getFoldedRowCount(e.lastRow + 1, t.lastRow);
+                    r > 0;
+                    r -= 1
+                ) {
                     n.removeChild(n.lastChild);
                 }
             }
@@ -13941,8 +14158,10 @@ define("ace/layer/text", [
                 u = function (e, n, r, o, u) {
                     if (n) {
                         return i.showInvisibles
-                            ? "<span class='ace_invisible ace_invisible_space'>" + s.stringRepeat(i.SPACE_CHAR, e.length) +
-                                    "</span>"
+                            ? "<span class='ace_invisible ace_invisible_space'>" + s.stringRepeat(
+                                i.SPACE_CHAR,
+                                e.length
+                            ) + "</span>"
                             : e;
                     }
                     if (e == "&") {
@@ -13972,8 +14191,7 @@ define("ace/layer/text", [
                         "<span class='" + f + "' style='width:" + i.config.characterWidth * 2 + "px'>" + l + "</span>";
                     }
                     return r
-                        ? "<span class='ace_invisible ace_invisible_space ace_invalid'>" + i.SPACE_CHAR +
-                                "</span>"
+                        ? "<span class='ace_invisible ace_invisible_space ace_invalid'>" + i.SPACE_CHAR + "</span>"
                         : (
                             t += 1,
                             "<span class='ace_cjk' style='width:" + i.config.characterWidth * 2 + "px'>" + e + "</span>"
@@ -13985,7 +14203,9 @@ define("ace/layer/text", [
                         .type
                         .replace(/\./g, " ace_"),
                     l = "";
-                n.type == "fold" && (l = " style='width:" + n.value.length * this.config.characterWidth + "px;' "),
+                n.type == "fold" && (
+                    l = " style='width:" + n.value.length * this.config.characterWidth + "px;' "
+                ),
                 e.push("<span class='", f, "'", l, ">", a, "</span>");
             } else {
                 e.push(a);
@@ -14369,7 +14589,8 @@ define("ace/scrollbar", [
         u.call(this, e),
         this.scrollTop         = 0,
         t.$scrollbarWidth      = this.width = i.scrollbarWidth(e.ownerDocument),
-        this.inner.style.width = this.element.style.width = (this.width || 15) + 5 + "px";
+        this.inner.style.width = this.element.style.width = (this.width || 15) + 5 +
+                "px";
     };
     r.inherits(a, u),
     function () {
@@ -14396,7 +14617,10 @@ define("ace/scrollbar", [
             this.inner.style.height = e + "px";
         },
         this.setScrollTop    = function (e) {
-            this.scrollTop != e && (this.skipEvent = !0, this.scrollTop = this.element.scrollTop = e);
+            this.scrollTop != e && (
+                this.skipEvent                          = !0,
+                this.scrollTop                          = this.element.scrollTop = e
+            );
         };
     }.call(a.prototype);
     var f = function (e, t) {
@@ -14430,7 +14654,10 @@ define("ace/scrollbar", [
             this.inner.style.width = e + "px";
         },
         this.setScrollLeft  = function (e) {
-            this.scrollLeft != e && (this.skipEvent = !0, this.scrollLeft = this.element.scrollLeft = e);
+            this.scrollLeft != e && (
+                this.skipEvent                            = !0,
+                this.scrollLeft                           = this.element.scrollLeft = e
+            );
         };
     }.call(f.prototype),
     t.ScrollBar  = a,
@@ -14567,7 +14794,10 @@ define("ace/layer/font_metrics", [
         this.setPolling            = function (e) {
             e
                 ? this.$pollSizeChanges()
-                : this.$pollSizeChangesTimer && (clearInterval(this.$pollSizeChangesTimer), this.$pollSizeChangesTimer = 0);
+                : this.$pollSizeChangesTimer && (
+                    clearInterval(this.$pollSizeChangesTimer),
+                    this.$pollSizeChangesTimer = 0
+                );
         },
         this.$measureSizes         = function () {
             if (a === 50) {
@@ -14605,7 +14835,9 @@ define("ace/layer/font_metrics", [
         },
         this.getCharacterWidth     = function (e) {
             var t = this.charSizes[e];
-            return t === undefined && (this.charSizes[e] = this.$measureCharWidth(e) / this.$characterSize.width),
+            return t === undefined && (
+                this.charSizes[e] = this.$measureCharWidth(e) / this.$characterSize.width
+            ),
             t;
         },
         this.destroy               = function () {
@@ -14899,7 +15131,10 @@ define("ace/virtual_renderer", [
             top   : 0,
             v     : 0
         },
-        this.$loop        = new p(this.$renderChanges.bind(this), this.container.ownerDocument.defaultView),
+        this.$loop        = new p(
+            this.$renderChanges.bind(this),
+            this.container.ownerDocument.defaultView
+        ),
         this
             .$loop
             .schedule(this.CHANGE_FULL),
@@ -14940,7 +15175,9 @@ define("ace/virtual_renderer", [
                 .doc
                 .off("changeNewLineMode", this.onChangeNewLineMode),
             this.session = e,
-            e && this.scrollMargin.top && e.getScrollTop() <= 0 && e.setScrollTop(-this.scrollMargin.top),
+            e && this.scrollMargin.top && e.getScrollTop() <= 0 && e.setScrollTop(
+                -this.scrollMargin.top
+            ),
             this
                 .$cursorLayer
                 .setSession(e),
@@ -15107,7 +15344,9 @@ define("ace/virtual_renderer", [
             var e = this.$showGutter
                 ? this.$gutter.offsetWidth
                 : 0;
-            e != this.gutterWidth && (this.$changes |= this.$updateCachedSize(!0, e, this.$size.width, this.$size.height)),
+            e != this.gutterWidth && (
+                this.$changes |= this.$updateCachedSize(!0, e, this.$size.width, this.$size.height)
+            ),
             this
                 .session
                 .getUseWrapMode() && this.adjustWrapLimit()
@@ -15266,7 +15505,9 @@ define("ace/virtual_renderer", [
                 : 1);
         },
         this.getLastFullyVisibleRow     = function () {
-            var e = Math.floor((this.layerConfig.height + this.layerConfig.offset) / this.layerConfig.lineHeight);
+            var e = Math.floor(
+                (this.layerConfig.height + this.layerConfig.offset) / this.layerConfig.lineHeight
+            );
             return this.layerConfig.firstRow - 1 + e;
         },
         this.getLastVisibleRow          = function () {
@@ -15334,7 +15575,9 @@ define("ace/virtual_renderer", [
         this.$updateScrollBarH          = function () {
             this
                 .scrollBarH
-                .setScrollWidth(this.layerConfig.width + 2 * this.$padding + this.scrollMargin.h),
+                .setScrollWidth(
+                    this.layerConfig.width + 2 * this.$padding + this.scrollMargin.h
+                ),
             this
                 .scrollBarH
                 .setScrollLeft(this.scrollLeft + this.scrollMargin.left);
@@ -15365,7 +15608,11 @@ define("ace/virtual_renderer", [
                 e |= this.$computeLayerConfig();
                 if (n.firstRow != this.layerConfig.firstRow && n.firstRowScreen == this.layerConfig.firstRowScreen) {
                     var r = this.scrollTop + (n.firstRow - this.layerConfig.firstRow) * this.lineHeight;
-                    r > 0 && (this.scrollTop = r, e |= this.CHANGE_SCROLL, e |= this.$computeLayerConfig());
+                    r > 0 && (
+                        this.scrollTop = r,
+                        e              |= this.CHANGE_SCROLL,
+                        e              |= this.$computeLayerConfig()
+                    );
                 }
                 n = this.layerConfig,
                 this.$updateScrollBarV(),
@@ -15476,7 +15723,9 @@ define("ace/virtual_renderer", [
                     .getScreenLength(),
                 i = r * this.lineHeight,
                 s = this.$getLongestLine(),
-                o = !n && (this.$hScrollBarAlwaysVisible || t.scrollerWidth - s - 2 * this.$padding < 0),
+                o = !n && (
+                    this.$hScrollBarAlwaysVisible || t.scrollerWidth - s - 2 * this.$padding < 0
+                ),
                 u = this.$horizScroll !== o;
             u && (this.$horizScroll = o, this.scrollBarH.setVisible(o));
             var a = this.$vScroll;
@@ -15490,11 +15739,17 @@ define("ace/virtual_renderer", [
             var h = this.scrollMargin;
             this
                 .session
-                .setScrollTop(Math.max(-h.top, Math.min(this.scrollTop, i - t.scrollerHeight + h.bottom))),
+                .setScrollTop(
+                    Math.max(-h.top, Math.min(this.scrollTop, i - t.scrollerHeight + h.bottom))
+                ),
             this
                 .session
-                .setScrollLeft(Math.max(-h.left, Math.min(this.scrollLeft, s + 2 * this.$padding - t.scrollerWidth + h.right)));
-            var p = !n && (this.$vScrollBarAlwaysVisible || t.scrollerHeight - i + c < 0 || this.scrollTop > h.top),
+                .setScrollLeft(
+                    Math.max(-h.left, Math.min(this.scrollLeft, s + 2 * this.$padding - t.scrollerWidth + h.right))
+                );
+            var p = !n && (
+                    this.$vScrollBarAlwaysVisible || t.scrollerHeight - i + c < 0 || this.scrollTop > h.top
+                ),
                 d = a !== p;
             d && (this.$vScroll = p, this.scrollBarV.setVisible(p));
             var v = Math.ceil(l / this.lineHeight) - 1,
@@ -15649,8 +15904,12 @@ define("ace/virtual_renderer", [
                     s === 0 && (s = -this.scrollMargin.top),
                     this.session.setScrollTop(s)
                 )
-                : a + this.$size.scrollerHeight - u < s + this.lineHeight && (t && (s += t * this.$size.scrollerHeight), this.session.setScrollTop(s +
-                        this.lineHeight - this.$size.scrollerHeight));
+                : a + this.$size.scrollerHeight - u < s + this.lineHeight && (
+                    t && (s += t * this.$size.scrollerHeight),
+                    this.session.setScrollTop(
+                        s + this.lineHeight - this.$size.scrollerHeight
+                    )
+                );
             var f = this.scrollLeft;
             f > i
                 ? (
@@ -15679,7 +15938,10 @@ define("ace/virtual_renderer", [
             return this.scrollTop / this.lineHeight;
         },
         this.getScrollBottomRow         = function () {
-            return Math.max(0, Math.floor((this.scrollTop + this.$size.scrollerHeight) / this.lineHeight) - 1);
+            return Math.max(
+                0,
+                Math.floor((this.scrollTop + this.$size.scrollerHeight) / this.lineHeight) - 1
+            );
         },
         this.scrollToRow                = function (e) {
             this
@@ -15764,7 +16026,10 @@ define("ace/virtual_renderer", [
             }, 10);
         },
         this.scrollToY                  = function (e) {
-            this.scrollTop !== e && (this.$loop.schedule(this.CHANGE_SCROLL), this.scrollTop = e);
+            this.scrollTop !== e && (
+                this.$loop.schedule(this.CHANGE_SCROLL),
+                this.scrollTop = e
+            );
         },
         this.scrollToX                  = function (e) {
             this.scrollLeft !== e && (this.scrollLeft = e),
@@ -15821,7 +16086,9 @@ define("ace/virtual_renderer", [
             var n = this
                     .scroller
                     .getBoundingClientRect(),
-                r = Math.round((e + this.scrollLeft - n.left - this.$padding) / this.characterWidth),
+                r = Math.round(
+                    (e + this.scrollLeft - n.left - this.$padding) / this.characterWidth
+                ),
                 i = (t + this.scrollTop - n.top) / this.lineHeight;
             return this
                 .session
@@ -16390,13 +16657,22 @@ define("ace/placeholder", [
                 .selection
                 .toSingleRange(),
             this.pos             = t.createAnchor(i.row, i.column),
-            this.markerId        = n.addMarker(new r(i.row, i.column, i.row, i.column + this.length), this.mainClass, null, !1),
+            this.markerId        = n.addMarker(
+                new r(i.row, i.column, i.row, i.column + this.length),
+                this.mainClass,
+                null,
+                !1
+            ),
             this
                 .pos
                 .on("change", function (t) {
                     n.removeMarker(e.markerId),
-                    e.markerId = n.addMarker(new r(t.value.row, t.value.column, t.value.row, t.value.column +
-                            e.length), e.mainClass, null, !1);
+                    e.markerId = n.addMarker(
+                        new r(t.value.row, t.value.column, t.value.row, t.value.column + e.length),
+                        e.mainClass,
+                        null,
+                        !1
+                    );
                 }),
             this.others = [],
             this
@@ -16419,11 +16695,20 @@ define("ace/placeholder", [
             this
                 .others
                 .forEach(function (n) {
-                    n.markerId = e.addMarker(new r(n.row, n.column, n.row, n.column + t.length), t.othersClass, null, !1),
+                    n.markerId = e.addMarker(
+                        new r(n.row, n.column, n.row, n.column + t.length),
+                        t.othersClass,
+                        null,
+                        !1
+                    ),
                     n.on("change", function (i) {
                         e.removeMarker(n.markerId),
-                        n.markerId = e.addMarker(new r(i.value.row, i.value.column, i.value.row, i.value.column +
-                                t.length), t.othersClass, null, !1);
+                        n.markerId = e.addMarker(
+                            new r(i.value.row, i.value.column, i.value.row, i.value.column + t.length),
+                            t.othersClass,
+                            null,
+                            !1
+                        );
                     });
                 });
         },
@@ -16497,12 +16782,18 @@ define("ace/placeholder", [
                                 r.setPosition(i.row, i.column);
                             }
                         }.bind(this), 0)
-                        : t.start.column === this.pos.column && e.action === "remove" && setTimeout(function () {
-                            for (var e = 0; e < this.others.length; e += 1) {
-                                var r = this.others[e];
-                                r.row === t.start.row && t.start.column < r.column && r.setPosition(r.row, r.column - n);
-                            }
-                        }.bind(this), 0);
+                        : t.start.column === this.pos.column && e.action === "remove" && setTimeout(
+                            function () {
+                                for (var e = 0; e < this.others.length; e += 1) {
+                                    var r = this.others[e];
+                                    r.row === t.start.row && t.start.column < r.column && r.setPosition(
+                                        r.row,
+                                        r.column - n
+                                    );
+                                }
+                            }.bind(this),
+                            0
+                        );
                 }
                 this
                     .pos
@@ -16554,7 +16845,9 @@ define("ace/placeholder", [
         },
         this.cancel           = function () {
             if (this.$undoStackDepth === -1) {
-                throw Error("Canceling placeholders only supported with undo manager attached to session.");
+                throw Error(
+                    "Canceling placeholders only supported with undo manager attached to session."
+                );
             }
             var e = this
                     .session
@@ -16684,7 +16977,9 @@ define("ace/mouse/multi_select_handler", [
                         .scrollCursorIntoView(),
                     l.removeSelectionMarkers(C),
                     C = c.rectangularRangeBlock(E, w),
-                    l.$mouseHandler.$clickSelection && C.length == 1 && C[0].isEmpty() && (C[0] = l.$mouseHandler.$clickSelection.clone()),
+                    l.$mouseHandler.$clickSelection && C.length == 1 && C[0].isEmpty() && (
+                        C[0] = l.$mouseHandler.$clickSelection.clone()
+                    ),
                     C.forEach(l.addSelectionMarker, l),
                     l.updateSelectionMarkers(),
                     l.$blockScrolling -= 1;
@@ -17419,7 +17714,9 @@ define("ace/multi_select", [
                         ? n.end
                         : n.start
                     : n.cursor;
-                (r.row != t.row || this.session.$clipPositionToDocument(r.row, r.column).column != t.column) && this
+                (
+                    r.row != t.row || this.session.$clipPositionToDocument(r.row, r.column).column != t.column
+                ) && this
                     .multiSelect
                     .toSingleRange(this.multiSelect.toOrientedRange());
             }
@@ -17732,9 +18029,11 @@ define("ace/multi_select", [
             t.multiSelect.lead.on("change", this.$checkMultiselectChange),
             t.multiSelect.anchor.on("change", this.$checkMultiselectChange)
         ),
-        t && this.inMultiSelectMode != t.selection.inMultiSelectMode && (t.selection.inMultiSelectMode
-            ? this.$onMultiSelect()
-            : this.$onSingleSelect());
+        t && this.inMultiSelectMode != t.selection.inMultiSelectMode && (
+            t.selection.inMultiSelectMode
+                ? this.$onMultiSelect()
+                : this.$onSingleSelect()
+        );
     },
     t.MultiSelect     = m,
     e("./config").defineOptions(d.prototype, "editor", {
@@ -17977,7 +18276,10 @@ define("ace/line_widgets", [
                 .off("afterRender", this.renderWidgets);
             var n = this.session.lineWidgets;
             n && n.forEach(function (e) {
-                e && e.el && e.el.parentNode && (e._inDocument = !1, e.el.parentNode.removeChild(e.el));
+                e && e.el && e.el.parentNode && (
+                    e._inDocument = !1,
+                    e.el.parentNode.removeChild(e.el)
+                );
             });
         },
         this.updateOnChange         = function (e) {
@@ -18025,7 +18327,10 @@ define("ace/line_widgets", [
                 .session
                 .lineWidgets[e.row] = e;
             var t = this.editor.renderer;
-            return e.html && !e.el && (e.el = i.createElement("div"), e.el.innerHTML = e.html),
+            return e.html && !e.el && (
+                e.el           = i.createElement("div"),
+                e.el.innerHTML = e.html
+            ),
             e.el && (
                 i.addCssClass(e.el, "ace_lineWidgetContainer"),
                 e.el.style.position = "absolute",
@@ -18095,7 +18400,10 @@ define("ace/line_widgets", [
                 var o = n[s];
                 o._inDocument || (o._inDocument = !0, t.container.appendChild(o.el)),
                 o.h = o.el.offsetHeight,
-                o.fixedWidth || (o.w = o.el.offsetWidth, o.screenWidth = Math.ceil(o.w / r.characterWidth));
+                o.fixedWidth || (
+                    o.w           = o.el.offsetWidth,
+                    o.screenWidth = Math.ceil(o.w / r.characterWidth)
+                );
                 var u = o.h / r.lineHeight;
                 o.coverLine && (u -= this.session.getRowLineCount(o.row), u < 0 && (u = 0)),
                 o.rowCount != u && (o.rowCount = u, o.row < i && (i = o.row));

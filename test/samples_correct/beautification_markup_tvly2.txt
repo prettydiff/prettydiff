@@ -48,7 +48,10 @@
             var DPDisplay = exp.core.date.datePickerDisplay = exp
                 .core
                 .date
-                .DatePickerDisplay("CalFrame", "/static/default/default/html/calendar/v3.0.0/calendar.html");
+                .DatePickerDisplay(
+                    "CalFrame",
+                    "/static/default/default/html/calendar/v3.0.0/calendar.html"
+                );
             exp
                 .core
                 .date
@@ -413,8 +416,10 @@
             }
         </style>
         <script>
-            window.jQuery || document.write("<script src='//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js'><\/sc" +
-                    "ript>");
+            window.jQuery || document.write(
+                "<script src='//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js'><\/sc" +
+                "ript>"
+            );
         </script>
         <script
             src="/minify/new-header-dropdown-min-2551923448.js?v=release-2014-02-r1-2874-962065-1"></script>
@@ -432,7 +437,9 @@
 
         <script>
             var header_feedBackUrl = "////www.travelocity.com/p/info-other/feedback.htm";
-            $LAB.queueScript("/minify/header-bundle-min-2176243423.js?v=release-2014-02-r1-2874-962065-1");
+            $LAB.queueScript(
+                "/minify/header-bundle-min-2176243423.js?v=release-2014-02-r1-2874-962065-1"
+            );
             if (typeof $LAB !== "undefined" && typeof $LAB.queueWait == "function") {
                 $LAB.queueWait(function () {
                     addScratchpadBadge();
@@ -771,7 +778,9 @@
                     style="overflow:hidden;height:645px;width:280px;margin-left:auto;margin-right:auto;"></div>
                 <script>
                     (function (w) {
-                        var useAlternateUrl = (true && window.location.hostname && window.location.hostname === "www.travelocity.com");
+                        var useAlternateUrl = (
+                            true && window.location.hostname && window.location.hostname === "www.travelocity.com"
+                        );
                         w.expads                   = w.expads || {};
                         w.expads.slots             = w.expads.slots || {};
                         w
@@ -2290,7 +2299,11 @@
                                             typeaheadO.SelectionLogPath = "http://suggest.expedia.com/hint/es/v1/acclick";
                                             typeaheadO.itemClickedEvent = function (typeahead) {
                                                 if (typeahead && typeahead.On) {
-                                                    tlaSelector.selectedTypeAhead("uw_flight_origin_input", "hidden_tla_uw_flight_origin_input", typeahead);
+                                                    tlaSelector.selectedTypeAhead(
+                                                        "uw_flight_origin_input",
+                                                        "hidden_tla_uw_flight_origin_input",
+                                                        typeahead
+                                                    );
                                                 }
                                             };
                                             TA.setup(typeaheadO);
@@ -2528,7 +2541,10 @@
                                                 .exp
                                                 .search
                                                 .common
-                                                .replaceAction("fltWizFrm", cx.exp.widgetlibrary.search.common.container.requestURI);
+                                                .replaceAction(
+                                                    "fltWizFrm",
+                                                    cx.exp.widgetlibrary.search.common.container.requestURI
+                                                );
                                             return cx
                                                 .exp
                                                 .search
@@ -2621,7 +2637,9 @@
                                     .parse(response.responseText)
                                     .response;
                                 var dropDownDestinationId = document.getElementById("dropDown_destinationId");
-                                var destinationSelectElement = document.getElementById(dropDownDestinationId.value);
+                                var destinationSelectElement = document.getElementById(
+                                    dropDownDestinationId.value
+                                );
                                 var browser = navigator.appName;
                                 if (browser == "Microsoft Internet Explorer") {
                                     var optionHTML = responseObject.destinationList;
@@ -2648,8 +2666,9 @@
                                 }
                             } catch (e) {
                                 if (window.console && console.log) {
-                                    console.log("There was a problem updating the destination options! exception: " +
-                                            e);
+                                    console.log(
+                                        "There was a problem updating the destination options! exception: " + e
+                                    );
                                 }
                             }
                         },
@@ -2661,11 +2680,18 @@
                             YAHOO
                                 .util
                                 .Connect
-                                .asyncRequest("GET", url, cx.exp.widgetlibrary.search.common.dropdown.Callback, null);
+                                .asyncRequest(
+                                    "GET",
+                                    url,
+                                    cx.exp.widgetlibrary.search.common.dropdown.Callback,
+                                    null
+                                );
                         }
                     };
 
-                    cx.exp.widgetlibrary.search.common.dropdown.changeSelectedDestination = function (selectElement) {
+                    cx.exp.widgetlibrary.search.common.dropdown.changeSelectedDestination = function (
+                        selectElement
+                    ) {
                         var index = selectElement.selectedIndex;
                         var selectedDestValue = selectElement
                             .options[index]
@@ -2703,7 +2729,9 @@
 
                     };
 
-                    cx.exp.widgetlibrary.search.common.dropdown.changeSelectedOrigin      = function (selectElement) {
+                    cx.exp.widgetlibrary.search.common.dropdown.changeSelectedOrigin      = function (
+                        selectElement
+                    ) {
 
                         var namespace = cx.exp.widgetlibrary.search.common.container;
                         var index = selectElement.selectedIndex;
@@ -2730,14 +2758,16 @@
                         }
 
                         var randomnumber = Math.floor(Math.random() * 11000000000);
-                        var sUrl = "/ws/SearchWizardWebService/v1/populateDestination?type=" + namespace.wizardType;
-                        sUrl = sUrl + "&factory=com.expedia.e3.cx.expedia.widgetlibrary.search.common.impl.sea" +
-                                "rchWizardContentHelper.home";
+                        var sUrl = "/ws/SearchWizardWebService/v1/populateDestination?type=" +
+                                namespace.wizardType;
+                        sUrl = sUrl + "&factory=com.expedia.e3.cx.expedia.widgetlibrary.search.common.i" +
+                                "mpl.searchWizardContentHelper.home";
                         sUrl = sUrl + "&response=json&rand=" + randomnumber;
 
                         // for drop down
-                        sUrl = sUrl + "&isDropDownOnBool=false&selectedOrigin=" + selectedOriginValue + "&isOr" +
-                                "iginGroupByCountry=false&isDestGroupByCountry=false&isTopCitiesOnBool=false";
+                        sUrl = sUrl + "&isDropDownOnBool=false&selectedOrigin=" +
+                                selectedOriginValue + "&isOriginGroupByCountry=false&isDestGroupByCountry=false" +
+                                "&isTopCitiesOnBool=false";
                         var dropDownIsPackage = document.getElementById("dropDown_isPackage");
                         if (dropDownIsPackage != null) {
                             var dropDownIsPackageValue = dropDownIsPackage.value;
@@ -2768,7 +2798,9 @@
 
 
                     //enable/disable state of LOB selector radio buttons
-                    cx.exp.widgetlibrary.search.common.container.disableRadioButtons      = function (state) {
+                    cx.exp.widgetlibrary.search.common.container.disableRadioButtons      = function (
+                        state
+                    ) {
                         var radioButtons = cx.exp.widgetlibrary.search.common.container.radioButtons;
                         for (var i = 0; i < radioButtons.length; i += 1) {
                             if (state === true) { //disabling
@@ -2835,8 +2867,10 @@
 
                                 // Let's start up the wizard by calling it's initializer function (note the
                                 // naming convention wizardType+'Fn')
-                                eval("namespace.wizardObj = " + response.argument.wizardType + "Fn(namespace.hi" +
-                                        "storyObject);");
+                                eval(
+                                    "namespace.wizardObj = " + response.argument.wizardType + "Fn(namespace.history" +
+                                    "Object);"
+                                );
 
                                 // for dropdown, initial the destination based on the current origin/initial
                                 // origin to empty(default hint)
@@ -2881,7 +2915,12 @@
                             YAHOO
                                 .util
                                 .Connect
-                                .asyncRequest("GET", url, cx.exp.widgetlibrary.search.common.container.Callback, null);
+                                .asyncRequest(
+                                    "GET",
+                                    url,
+                                    cx.exp.widgetlibrary.search.common.container.Callback,
+                                    null
+                                );
                         }
                     };
 
@@ -2933,7 +2972,9 @@
                         }
                     };
 
-                    cx.exp.widgetlibrary.search.common.dropdown.hideOrShowCallCenter      = function (wizardType) {
+                    cx.exp.widgetlibrary.search.common.dropdown.hideOrShowCallCenter      = function (
+                        wizardType
+                    ) {
                         if (false) {
                             if ($("#cx_cs_small").length) {
                                 if (wizardType == "flightOnly") {
@@ -2946,7 +2987,9 @@
                     };
 
 
-                    cx.exp.widgetlibrary.search.common.dropdown.hideOrShowBPG             = function (wizardType) {
+                    cx.exp.widgetlibrary.search.common.dropdown.hideOrShowBPG             = function (
+                        wizardType
+                    ) {
                         if ($("#lowerMerchContainer").length) {
                             if (wizardType == "flightOnly" && false) {
                                 $("#lowerMerchContainer").css("display", "none");
@@ -3061,8 +3104,10 @@
                             // Note: the wizard's JavaScript code has been already parsed, no need to eval()
                             // the script tag contents again Let's start up the wizard by calling it's
                             // initializer function (note the naming convention wizardType+'Fn')
-                            eval("namespace.wizardObj = " + namespace.wizardType + "Fn(namespace.historyObj" +
-                                    "ect);");
+                            eval(
+                                "namespace.wizardObj = " + namespace.wizardType +
+                                "Fn(namespace.historyObject);"
+                            );
                             // for dropdown, initial the destination based on the current origin/initial
                             // origin to empty(default hint)
                             cx
@@ -3084,14 +3129,15 @@
                         }
                         namespace.showError(false);
                         var randomnumber = Math.floor(Math.random() * 11000000000);
-                        var sUrl = "/ws/SearchWizardWebService/v1/handleRequest?type=" + namespace.wizardType;
-                        sUrl = sUrl + "&factory=com.expedia.e3.cx.expedia.widgetlibrary.search.common.impl.sea" +
-                                "rchWizardContentHelper.home";
+                        var sUrl = "/ws/SearchWizardWebService/v1/handleRequest?type=" +
+                                namespace.wizardType;
+                        sUrl = sUrl + "&factory=com.expedia.e3.cx.expedia.widgetlibrary.search.common.i" +
+                                "mpl.searchWizardContentHelper.home";
                         sUrl = sUrl + "&response=json&rand=" + randomnumber;
 
                         // for drop down
-                        sUrl = sUrl + "&isDropDownOnBool=false&isOriginGroupByCountry=false&isDestGroupByCount" +
-                                "ry=false&isTopCitiesOnBool=false&isPackage=false&isAddtionalOff=false";
+                        sUrl = sUrl + "&isDropDownOnBool=false&isOriginGroupByCountry=false&isDestGroup" +
+                                "ByCountry=false&isTopCitiesOnBool=false&isPackage=false&isAddtionalOff=false";
 
                         namespace
                             .AjaxObject
@@ -3135,8 +3181,10 @@
                                 // Default wizard needs to be shown - already rendered on the page Let's start
                                 // up the wizard by calling it's initializer function (note the naming
                                 // convention wizardType+'Fn')
-                                eval("namespace.wizardObj = " + namespace.historyObject.lob + "Fn(namespace.his" +
-                                        "toryObject);");
+                                eval(
+                                    "namespace.wizardObj = " + namespace.historyObject.lob + "Fn(namespace.historyO" +
+                                    "bject);"
+                                );
 
                                 // for dropdown, initial the destination based on the current origin/initial
                                 // origin to empty(default hint)
@@ -3220,10 +3268,14 @@
                     function loadHotelSRScripts(delay) {
                         setTimeout(function () {
                             try {
-                                jQuery.ajax({async: true, cache: true, dataType: "text", url: "/minify/hotelSearch.css-min-1759673176.css?v=release-2014-02-r1-2874-962065-1"});
+                                jQuery.ajax(
+                                    {async: true, cache: true, dataType: "text", url: "/minify/hotelSearch.css-min-1759673176.css?v=release-2014-02-r1-2874-962065-1"}
+                                );
                             } catch (e) {}
                             try {
-                                jQuery.ajax({async: true, cache: true, dataType: "text", url: "/minify/hotelSearch.js-min-729500602.js?v=release-2014-02-r1-2874-962065-1"});
+                                jQuery.ajax(
+                                    {async: true, cache: true, dataType: "text", url: "/minify/hotelSearch.js-min-729500602.js?v=release-2014-02-r1-2874-962065-1"}
+                                );
                             } catch (e) {}
                         }, delay);
                     }
@@ -3280,7 +3332,9 @@
                     (function () {
                         var e = document.getElementById("ad_CXHOMECORE");
                         if (e) {
-                            var useAlternateUrl = (true && window.location.hostname && window.location.hostname === "www.travelocity.com");
+                            var useAlternateUrl = (
+                                true && window.location.hostname && window.location.hostname === "www.travelocity.com"
+                            );
                             var url = useAlternateUrl
                                 ? "//shop.travelocity.com/html.cms/TPID=80001&EAPID=0&activity=ff43ffe3-f243-472d" +
                                         "-a963-477dec20da08&LANGID=1033&SECURE=0&ip=10.186.108.6&USERTYPE=SHOPPER&EMAIL" +
@@ -3368,7 +3422,9 @@
                                         (function () {
                                             var e = document.getElementById("ad_CXHOMECORE_1");
                                             if (e) {
-                                                var useAlternateUrl = (true && window.location.hostname && window.location.hostname === "www.travelocity.com");
+                                                var useAlternateUrl = (
+                                                    true && window.location.hostname && window.location.hostname === "www.travelocity.com"
+                                                );
                                                 var url = useAlternateUrl
                                                     ? "//shop.travelocity.com/html.cms/TPID=80001&EAPID=0&activity=ff43ffe3-f243-472d" +
                                                             "-a963-477dec20da08&LANGID=1033&SECURE=0&ip=10.186.108.6&USERTYPE=SHOPPER&EMAIL" +
@@ -3471,7 +3527,9 @@
                                 style="overflow:hidden;height:146px;width:146px;margin-left:auto;margin-right:auto;"></div>
                             <script>
                                 (function (w) {
-                                    var useAlternateUrl = (true && window.location.hostname && window.location.hostname === "www.travelocity.com");
+                                    var useAlternateUrl = (
+                                        true && window.location.hostname && window.location.hostname === "www.travelocity.com"
+                                    );
                                     w.expads                    = w.expads || {};
                                     w.expads.slots              = w.expads.slots || {};
                                     w
@@ -3497,7 +3555,9 @@
                                 style="overflow:hidden;height:146px;width:146px;margin-left:auto;margin-right:auto;"></div>
                             <script>
                                 (function (w) {
-                                    var useAlternateUrl = (true && window.location.hostname && window.location.hostname === "www.travelocity.com");
+                                    var useAlternateUrl = (
+                                        true && window.location.hostname && window.location.hostname === "www.travelocity.com"
+                                    );
                                     w.expads                    = w.expads || {};
                                     w.expads.slots              = w.expads.slots || {};
                                     w
@@ -3523,7 +3583,9 @@
                                 style="overflow:hidden;height:146px;width:146px;margin-left:auto;margin-right:auto;"></div>
                             <script>
                                 (function (w) {
-                                    var useAlternateUrl = (true && window.location.hostname && window.location.hostname === "www.travelocity.com");
+                                    var useAlternateUrl = (
+                                        true && window.location.hostname && window.location.hostname === "www.travelocity.com"
+                                    );
                                     w.expads                    = w.expads || {};
                                     w.expads.slots              = w.expads.slots || {};
                                     w
@@ -4001,8 +4063,10 @@
         <!-- 0 ms -->
 
         <script>
-            window.jQuery || document.write("<script src='//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js'><\/sc" +
-                    "ript>");
+            window.jQuery || document.write(
+                "<script src='//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js'><\/sc" +
+                "ript>"
+            );
         </script>
 
         <script
@@ -4497,7 +4561,11 @@
                         scr.setAttribute("async", "true");
                         scr.type = "text/javascript";
                         scr.src  = host + "/j/roundtrip.js";
-                        ((document.getElementsByTagName("head") || [null])[0] || document.getElementsByTagName("script")[0].parentNode).appendChild(scr);
+                        (
+                            (document.getElementsByTagName("head") || [null])[0] || document.getElementsByTagName(
+                                "script"
+                            )[0].parentNode
+                        ).appendChild(scr);
                     });
                 })
                 .runQueue();
