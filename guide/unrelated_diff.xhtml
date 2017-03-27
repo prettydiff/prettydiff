@@ -76,7 +76,7 @@
                 <div>
                     <h2>Understanding how to compare</h2>
                     <div class="segment">
-                        <h3>It is more about equality</h3>
+                        <h3>It is more about the equality than the differences</h3>
                         <p>A good diff algorithm will attempt to identify as much equality as possible.  Everything else qualifies as differences.  The metric for quality and precision is a smaller count of captured differences.  The smaller this number the better, presuming differences aren't escaping undetected.</p>
                         <p>False negatives, which is allowing differences through without detection, is really bad.  This is absolute failure in a diff algorithm.  False positives, which is identifying more differences than there actually are is also bad, but a false positive is much better than a false negative.  This means it is safer to report more differences than are actually present, which is why a higher number of reported differences is less precise.  Maximum precision is reporting differences without any false negatives or false positives.</p>
                         <p>One way to achieve higher precision is to first capture as much equality as possible.  For everything else that is left over prioritize unique items first and report these items as differences.  Finally determine the next bit of equality or uniqueness and everything in between is either a change, an insertion, or a deletion.</p>
@@ -213,7 +213,7 @@
 <span>}</span></code>
                         <p>It must be noted that most of the these child functions do contain their own loops, but these loops are not duplicates.  The primary parent loop, the so called third and final loop, is adjusted forward by the distance these smaller loops increment so that there is no repetition or lose of execution speed.</p>
                     </div>
-                    <div class="segemnt">
+                    <div class="segment">
                         <h3>The <em>fix</em> function</h3>
                         <p>We can see from the child function code that arrays are generated which appear to be the format described as the child arrays of the output.  Instead of pushing this data to the output array directly instead we are passing it through a function named <em>fix</em> which serves as a sort of quality control filter.  This function checks for things like:</p>
                         <ul>
@@ -221,6 +221,7 @@
                             <li>An insertion immediately following a deletion, or vise versa, which should likely be a replacement</li>
                             <li>Whether false positives generated from replacements immediately following an insertion or deletion can be eliminated</li>
                         </ul>
+                        <p>The general idea is to only accept a child array of the output as an argument and the make a decision after comparing it against the previous child array of the output.  Aside from two narrow edge cases there is no analysis of the original data.  Think of it like an appeals court in that no new evidence is allowed, because only the laws under scrutiny.</p>
                         <p>The code for the fix function is as follows:</p>
                         <code>fix   = function diffview__opcodes_fix(code) {
 <span>&nbsp;&nbsp;&nbsp;&nbsp;var prior = codes[codes.length - 1],</span>

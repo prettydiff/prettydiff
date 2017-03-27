@@ -3,13 +3,10 @@
 /*jshint laxbreak: true*/
 /*jslint for: true, this: true*/
 /***********************************************************************
- This is written by Austin Cheney on 3 Mar 2009. Anybody may use this
- code without permission so long as this comment exists verbatim in each
- instance of its use.
-
- http: //mailmarkup.org/
- http: //prettydiff.com/
-
+ This is written by Austin Cheney on 3 Mar 2009.
+ 
+ Please see the license.txt file associated with the Pretty Diff
+ application for license information.
  ***********************************************************************/
 global.prettydiff.meta = {
     error: "",
