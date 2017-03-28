@@ -169,7 +169,9 @@ child("node biddle help 60", function biddle_test_help_60(er, stdout, stder) {
     if (stdout !== help) {
         diffFiles("biddle_test_help_60", stdout, hash);
     }
-    console.log(humantime(false) + " \u001b[32mhelp 60 test passed.\u001b[39m");
+    console.log(
+        humantime(false) + " \u001b[32mhelp 60 test passed.\u001b[39m"
+    );
     flag["60"] = true;
     if (flag["80"] === true && flag["120"] === true) {
         next();

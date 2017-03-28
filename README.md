@@ -15,7 +15,7 @@ Language aware code comparison tool for several web based languages. It also bea
 
 ## Benefits - see [overview page](http://prettydiff.com/overview.xhtml) for more details
 
-* ES6 / JS2015 ready
+* ES6 / ES2015 ready
 * [React JSX format support](http://prettydiff.com/guide/react_jsx.xhtml)
 * LESS, SCSS (Sass), and CSS support
 * Separate support for XML and HTML
@@ -44,40 +44,52 @@ A Node.js command line utility is provided by api/node-local.js.  This file can 
 
 Add this code to your application
 
-    var prettydiff = require("prettydiff"),
-        args       = {
-            source: "asdf",
-            diff  : "asdd",
-            lang  : "text"
-        },
-        output     = prettydiff(args);
+```javascript
+var prettydiff = require("prettydiff"),
+    args       = {
+        source: "asdf",
+        diff  : "asdd",
+        lang  : "text"
+    },
+    output     = prettydiff(args);
+```
 
 #### Execute from the command line
 
 Run in windows
 
-    node api/node-local.js source:"c:\myDirectory" readmethod:"subdirectory" diff:"c:\myOtherDirectory"
+```shell
+node api/node-local.js source:"c:\myDirectory" readmethod:"subdirectory" diff:"c:\myOtherDirectory"
+```
 
 Run in Linux and OSX
 
-    node api/node-local.js source:"myDirectory" mode:"beautify" readmethod:"subdirectory" output:"path/to/outputDirectory"
+```shell
+node api/node-local.js source:"myDirectory" mode:"beautify" readmethod:"subdirectory" output:"path/to/outputDirectory"
+```
 
 To see a *man* page provide no arguments or these: help, man, manual
 
-    node api/node-local.js h
-    node api/node-local.js help
-    node api/node-local.js man
-    node api/node-local.js manual
+```shell
+node api/node-local.js h
+node api/node-local.js help
+node api/node-local.js man
+node api/node-local.js manual
+```
 
 To see only the version number supply only *v* or *version* as an argument:
 
-    node api/node-local.js v
-    node api/node-local.js version
+```shell
+node api/node-local.js v
+node api/node-local.js version
+```
 
 To see a list of current settings on the console supply *list* as an argument:
 
-    node api/node-local.js l
-    node api/node-local.js list
+```shell
+node api/node-local.js l
+node api/node-local.js list
+```
 
 #### Set configurations with a **.prettydiffrc** file.
 
@@ -91,63 +103,46 @@ Please feel free to use index.xhtml file to supplement dom.js.  Otherwise, dom.j
 
 To run Pretty Diff using dom.js include the following two script tags and bind the global.prettydiff.pd.recycle() function to the executing event.  Please refer to index.xhtml for an HTML example and documentation.xhtml for option and execution information.
 
-    <script src="lib/global.js" type="application/javascript"></script>
-    <script src="lib/language.js" type="application/javascript"></script>
-    <script src="lib/options.js" type="application/javascript"></script>
-    <script src="lib/finalFile.js" type="application/javascript"></script>
-    <script src="lib/safeSort.js" type="application/javascript"></script>
-    <script src="ace/ace.js" type="application/javascript"></script> **(optional)**
-    <script src="api/dom.js" type="application/javascript"></script>
-    <script src="lib/csspretty.js" type="application/javascript"></script>
-    <script src="lib/csvpretty.js" type="application/javascript"></script>
-    <script src="lib/diffview.js" type="application/javascript"></script>
-    <script src="lib/jspretty.js" type="application/javascript"></script>
-    <script src="lib/markuppretty.js" type="application/javascript"></script>
-    <script src="prettydiff.js" type="application/javascript"></script>
+```html
+<script src="lib/global.js" type="application/javascript"></script>
+<script src="lib/language.js" type="application/javascript"></script>
+<script src="lib/options.js" type="application/javascript"></script>
+<script src="lib/finalFile.js" type="application/javascript"></script>
+<script src="lib/safeSort.js" type="application/javascript"></script>
+<script src="ace/ace.js" type="application/javascript"></script> **(optional)**
+<script src="api/dom.js" type="application/javascript"></script>
+<script src="lib/csspretty.js" type="application/javascript"></script>
+<script src="lib/csvpretty.js" type="application/javascript"></script>
+<script src="lib/diffview.js" type="application/javascript"></script>
+<script src="lib/jspretty.js" type="application/javascript"></script>
+<script src="lib/markuppretty.js" type="application/javascript"></script>
+<script src="prettydiff.js" type="application/javascript"></script>
+```
 
 ### Execute with vanilla JS
 
-    var global = {},
-        args   = {
-            source: "asdf",
-            diff  : "asdd",
-            lang  : "text"
-        },
-        output = prettydiff(args);
+```javascript
+var global = {},
+    args   = {
+        source: "asdf",
+        diff  : "asdd",
+        lang  : "text"
+    },
+    output = prettydiff(args);
+```
 
 ### Run Pretty Diff in [Atom](https://atom.io/) code editor with the [atom-beautify](https://atom.io/packages/atom-beautify) package.
 
 ### Run the unit tests
 
-    cd prettydiff
-    node test/lint.js
+```shell
+cd prettydiff
+node test/lint.js
+```
 
 ## License:
 
- **@source** http://prettydiff.com/prettydiff.js
-
- **@documentation** English: http://prettydiff.com/documentation.xhtml
-
- **@licstart** The following is the entire license notice for Pretty Diff.
-
- This code may not be used or redistributed unless the following
- conditions are met:
-
-* Prettydiff created by Austin Cheney originally on 3 Mar 2009. http://prettydiff.com/
-* The use of diffview.js and prettydiff.js must contain the following copyright:
-* Copyright (c) 2007, Snowtide Informatics Systems, Inc. All rights reserved.
-  - Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
-  - Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
-  - Neither the name of the Snowtide Informatics Systems nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
-  - used as diffview function http://prettydiff.com/lib/diffview.js
-* The code mentioned above has significantly expanded documentation in each of the respective function's external JS file as linked from the documentation page: http://prettydiff.com/documentation.xhtml
-* In addition to the previously stated requirements any use of any component, aside from directly using the full files in their entirety, must restate the license mentioned at the top of each concerned file.
-
- If each and all these conditions are met use, extension, alteration,
- and redistribution of Pretty Diff and its required assets is unlimited
- and free without author permission.
-
- **@licend** The above is the entire license notice for Pretty Diff.
+This project is mostly written by and managed by Austin Cheney and licensed under CC0 as of version 2.1.17.  Please see license.txt for license langauge.
 
 ## Acknowledgements
 

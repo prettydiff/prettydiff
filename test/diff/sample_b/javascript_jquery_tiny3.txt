@@ -1,0 +1,56 @@
+if (typeof jQuery == "undefined") {
+    (function (window, undefined) {
+        jQuery
+            .fn
+            .extend({});
+        jQuery
+            .each([
+                "height", "width"
+            ], function (i, name) {
+                jQuery.cssHooks[name] = {
+                    set: function (elem, value, extra) {
+                        return setPositiveNumber(elem, value, extra
+                            ? augmentWidthOrHeight(elem, name, extra, jQuery.support.boxSizing && jQuery.css(elem, "boxSizing") === "border-box")
+                            : 0);
+                    }
+                };
+            });
+        if (!jQuery.support.opacity) {
+            jQuery.cssHooks.opacity = {
+                set: function (elem, value) {
+                    if (value >= 1 && jQuery.trim(filter.replace(ralpha, "")) === "" && style.removeAttribute) {
+                        style.removeAttribute("filter");
+                    }
+asdf;
+                }
+            };
+        }
+        function createTweens(animation, props) {
+            jQuery
+                .each(props, function (prop, value) {
+                    for (; index < length; index += 1) {
+                        if (collection[index].call(animation, prop, value)) {
+                            return;
+                        }
+                    }
+                });
+        }
+        function defaultPrefilter(elem, props, opts) {
+            if (length) {
+                for (index = 0; index < length; index += 1) {
+                    tween      = anim.createTween(prop, hidden
+                        ? dataShow[prop]
+                        : 0);
+                }
+            }
+        }
+        jQuery.each([
+            "toggle", "show", "hide"
+        ], function (i, name) {
+            var cssFn = jQuery.fn[name];
+        });
+        jQuery
+            .fn
+            .extend({});
+    })(window);
+}

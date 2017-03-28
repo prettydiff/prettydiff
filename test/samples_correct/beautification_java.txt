@@ -50,7 +50,9 @@ public class IOOperations {
         connectionsFile = new File(connectionsFilePath);
     }
 
-    public void getInitialDescriptionsFromDB(HashMap<String, ArrayList<String>> tablesAndColumns) {
+    public void getInitialDescriptionsFromDB(
+        HashMap<String, ArrayList<String>> tablesAndColumns
+    ) {
 
         Connection conn        = null;
         Statement stmt         = null;
@@ -73,9 +75,9 @@ public class IOOperations {
             String selectFromMetaDescriptions  = "SELECT id, tableName, columnName, understandableName, description FROM " +
                     metaTableName;
 
-            String createDescriptionTableQuery = "CREATE TABLE " + metaTableName + " (id INTEGER not NULL,  tableName VARCHAR(25" +
-                    "5),  columnName VARCHAR(255),  understandableName NVARCHAR(255),  description " +
-                    "NVARCHAR(255),  PRIMARY KEY ( id ))";
+            String createDescriptionTableQuery = "CREATE TABLE " + metaTableName + " (id IN" +
+                    "TEGER not NULL,  tableName VARCHAR(255),  columnName VARCHAR(255),  understand" +
+                    "ableName NVARCHAR(255),  description NVARCHAR(255),  PRIMARY KEY ( id ))";
 
             // System.out.println(query);
 
@@ -98,7 +100,13 @@ public class IOOperations {
                         ? ""
                         : rs.getString(5);
 
-                    Description tmpDescription = new Description(id, tableName, columnName, understandableName, description);
+                    Description tmpDescription = new Description(
+                        id,
+                        tableName,
+                        columnName,
+                        understandableName,
+                        description
+                    );
 
                     tmpDescription.setDescriptionID(id);
 
@@ -143,7 +151,10 @@ public class IOOperations {
         }
     }
 
-    public void loadAllColumnsFromDB(HashMap<String, ArrayList<String>> tablesAndColumns, boolean addToAll) {
+    public void loadAllColumnsFromDB(
+        HashMap<String, ArrayList<String>> tablesAndColumns,
+        boolean addToAll
+    ) {
 
         Connection conn        = null;
         Statement stmt         = null;
@@ -221,7 +232,10 @@ public class IOOperations {
         }
     }
 
-    private void insertIntoMap(Description tmpDescription, HashMap<String, ArrayList<String>> tablesAndColumns) {
+    private void insertIntoMap(
+        Description tmpDescription,
+        HashMap<String, ArrayList<String>> tablesAndColumns
+    ) {
         if (!tablesAndColumns.containsKey(tmpDescription.getTableName())) {
             ArrayList<String> columns = new ArrayList<String>();
             columns.add(tmpDescription.getColumnName());
@@ -311,20 +325,24 @@ public class IOOperations {
 
         try {
             conn = ds.getConnection();
-            stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            stmt = conn.createStatement(
+                ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE
+            );
             rs   = null;
 
             for (Description tmpDescription : descriptions) {
-                String query = "UPDATE " + metaTableName + " SET tableName = '" + tmpDescription.getTableName() +
-                        "' , columnName = '" + tmpDescription.getColumnName() + "' , understandableName" +
-                        " = N'" + tmpDescription.getUnderstandableName() + "' , description = N'" +
+                String query = "UPDATE " + metaTableName + " SET tableName = '" +
+                        tmpDescription.getTableName() + "' , columnName = '" +
+                        tmpDescription.getColumnName() + "' , understandableName = N'" +
+                        tmpDescription.getUnderstandableName() + "' , description = N'" +
                         tmpDescription.getDescription() + "' WHERE id = " + tmpDescription.getDescriptionID();
                 // System.out.println(query);
                 if (stmt.executeUpdate(query) == 0) {
-                    query = "INSERT INTO " + metaTableName + " VALUES (" + tmpDescription.getDescriptionID() +
-                            " , '" + tmpDescription.getTableName() + "' , '" + tmpDescription.getColumnName() +
-                            "' , N'" + tmpDescription.getUnderstandableName() + "' , N'" + tmpDescription.getDescription() +
-                            "')";
+                    query = "INSERT INTO " + metaTableName + " VALUES (" +
+                            tmpDescription.getDescriptionID() + " , '" + tmpDescription.getTableName() + "'" +
+                            " , '" + tmpDescription.getColumnName() + "' , N'" + tmpDescription.getUnderstandableName() +
+                            "' , N'" + tmpDescription.getDescription() + "')";
                     System
                         .out
                         .println(stmt.executeUpdate(query));
@@ -381,11 +399,15 @@ public class IOOperations {
 
         try {
             conn = ds.getConnection();
-            stmt = conn.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+            stmt = conn.createStatement(
+                ResultSet.TYPE_SCROLL_SENSITIVE,
+                ResultSet.CONCUR_UPDATABLE
+            );
             rs   = null;
 
             for (Description tmpDescription : descriptions) {
-                String query = "DELETE FROM " + metaTableName + " WHERE ID = " + tmpDescription.getDescriptionID();
+                String query = "DELETE FROM " + metaTableName + " WHERE ID = " +
+                        tmpDescription.getDescriptionID();
                 // System.out.println(query);
                 stmt.executeUpdate(query);
             }
@@ -425,7 +447,9 @@ public class IOOperations {
             Unmarshaller um                 = context.createUnmarshaller();
 
             // Reading XML from the file and unmarshalling.
-            DBConnectionListWrapper wrapper = (DBConnectionListWrapper)um.unmarshal(connectionsFile);
+            DBConnectionListWrapper wrapper = (DBConnectionListWrapper)um.unmarshal(
+                connectionsFile
+            );
 
             mainApp
                 .getConnectionData()
@@ -437,7 +461,12 @@ public class IOOperations {
             // Save the file path to the registry. setPersonFilePath(file);
 
         } catch (Exception e) { // catches ANY exception
-            showException(e, "Error", "Could not save data to file!", connectionsFile.getPath());
+            showException(
+                e,
+                "Error",
+                "Could not save data to file!",
+                connectionsFile.getPath()
+            );
         }
     }
 
@@ -456,11 +485,21 @@ public class IOOperations {
 
             // Save the file path to the registry. setPersonFilePath(file);
         } catch (Exception e) { // catches ANY exception
-            showException(e, "Error", "Could not save data to file!", connectionsFile.getPath());
+            showException(
+                e,
+                "Error",
+                "Could not save data to file!",
+                connectionsFile.getPath()
+            );
         }
     }
 
-    public void showException(Exception e, String title, String body, String content) {
+    public void showException(
+        Exception e,
+        String title,
+        String body,
+        String content
+    ) {
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle(title);
         alert.setHeaderText(body);

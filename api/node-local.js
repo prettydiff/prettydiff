@@ -2,12 +2,10 @@
 /*jshint laxbreak: true*/
 /*jslint node: true*/
 /***********************************************************************
- node-local is written by Austin Cheney on 6 Nov 2012.  Anybody may use
- this code without permission so long as this comment exists verbatim in
- each instance of its use.
+ node-local is written by Austin Cheney on 6 Nov 2012.
 
- http://mailmarkup.org/
- http://prettydiff.com/
+ Please see the license.txt file associated with the Pretty Diff
+ application for license information.
  **********************************************************************/
 /*
 

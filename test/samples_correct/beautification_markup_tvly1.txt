@@ -9,7 +9,9 @@
             var domain  = "prod",
                 testxxx = function () {
                     "use strict";
-                    var a = document.getElementById("cb-form-co") || document.getElementById("expert"),
+                    var a = document.getElementById("cb-form-co") || document.getElementById(
+                            "expert"
+                        ),
                         b,
                         testsubmitxxx;
                     if (a !== null && typeof a === "object") {
@@ -18,8 +20,11 @@
                         b.setAttribute("type", "hidden");
                         b.setAttribute("name", "configId");
                         b.setAttribute("value", "S21949757");
-                        a.setAttribute("action", "http://www.travelocity.com/trips/interstitial/searchHotelsInternal/?configId=S" +
-                                "21949757");
+                        a.setAttribute(
+                            "action",
+                            "http://www.travelocity.com/trips/interstitial/searchHotelsInternal/?configId=S" +
+                                    "21949757"
+                        );
                         a.insertBefore(b, a.firstChild);
                         testsubmitxxx = function () {
                             var a      = document.getElementById("cb-form-ho"),
@@ -5683,9 +5688,11 @@
                         d.each(b, function (b, f) {
                             c || bq.test(a)
                                 ? e(a, f)
-                                : bO(a + "[" + (typeof f === "object" || d.isArray(f)
-                                    ? b
-                                    : "") + "]", f, c, e);
+                                : bO(a + "[" + (
+                                    typeof f === "object" || d.isArray(f)
+                                        ? b
+                                        : ""
+                                ) + "]", f, c, e);
                         });
                     } else if (c || b == null || typeof b !== "object") {
                         e(a, b);
@@ -5828,7 +5835,9 @@
                 }
                 function Y(a, b) {
                     return d.nodeName(a, "table")
-                        ? a.getElementsByTagName("tbody")[0] || a.appendChild(a.ownerDocument.createElement("tbody"))
+                        ? a.getElementsByTagName("tbody")[0] || a.appendChild(
+                            a.ownerDocument.createElement("tbody")
+                        )
                         : a;
                 }
                 function O(a, b, c) {
@@ -5884,8 +5893,9 @@
                         r = [],
                         s = d._data(this, "events");
                     if (a.liveFired !== this && s && s.live && !a.target.disabled && (!a.button || a.type !== "click")) {
-                        a.namespace && (n = new RegExp("(^|\\.)" + a.namespace.split(".").join("\\.(?:.*\\.)?") +
-                                "(\\.|$)")),
+                        a.namespace && (n = new RegExp(
+                            "(^|\\.)" + a.namespace.split(".").join("\\.(?:.*\\.)?") + "(\\.|$)"
+                        )),
                         a.liveFired = this;
                         var t = s
                             .live
@@ -6158,7 +6168,11 @@
                                 return this.length;
                             },
                             slice      : function () {
-                                return this.pushStack(E.apply(this, arguments), "slice", E.call(arguments).join(","));
+                                return this.pushStack(
+                                    E.apply(this, arguments),
+                                    "slice",
+                                    E.call(arguments).join(",")
+                                );
                             },
                             sort       : [].sort,
                             splice     : [].splice,
@@ -6452,7 +6466,9 @@
                                 var c = b || [];
                                 if (a != null) {
                                     var e = d.type(a);
-                                    a.length == null || e === "string" || e === "function" || e === "regexp" || d.isWindow(a)
+                                    a.length == null || e === "string" || e === "function" || e === "regexp" || d.isWindow(
+                                        a
+                                    )
                                         ? D.call(c, a)
                                         : d.merge(c, a);
                                 }
@@ -6517,8 +6533,9 @@
                                     ? (e = new DOMParser, c = e.parseFromString(b, "text/xml"))
                                     : (c = new ActiveXObject("Microsoft.XMLDOM"), c.async = "false", c.loadXML(b)),
                                 e = c.documentElement,
-                                (!e || !e.nodeName || e.nodeName === "parsererror") && d.error("Invalid XML: " +
-                                        b);
+                                (!e || !e.nodeName || e.nodeName === "parsererror") && d.error(
+                                    "Invalid XML: " + b
+                                );
                                 return c;
                             },
                             proxy        : function (a, c, e) {
@@ -6590,7 +6607,9 @@
                             },
                             uaMatch      : function (a) {
                                 a = a.toLowerCase();
-                                var b = r.exec(a) || s.exec(a) || t.exec(a) || a.indexOf("compatible") < 0 && u.exec(a) || [];
+                                var b = r.exec(a) || s.exec(a) || t.exec(a) || a.indexOf("compatible") < 0 && u.exec(
+                                    a
+                                ) || [];
                                 return {
                                     browser: b[1] || "",
                                     version: b[2] || "0"
@@ -6629,9 +6648,12 @@
                             }
                         }),
                         y = d._Deferred(),
-                        d.each("Boolean Number String Function Array Date RegExp Object".split(" "), function (a, b) {
-                            H["[object " + b + "]"] = b.toLowerCase();
-                        }),
+                        d.each(
+                            "Boolean Number String Function Array Date RegExp Object".split(" "),
+                            function (a, b) {
+                                H["[object " + b + "]"] = b.toLowerCase();
+                            }
+                        ),
                         w = d.uaMatch(v),
                         w.browser && (d.browser[w.browser] = !0, d.browser.version = w.version),
                         d.browser.webkit && (d.browser.safari = !0),
@@ -6646,7 +6668,10 @@
                                 d.ready();
                             }
                             : c.attachEvent && (A = function () {
-                                c.readyState === "complete" && (c.detachEvent("onreadystatechange", A), d.ready());
+                                c.readyState === "complete" && (
+                                    c.detachEvent("onreadystatechange", A),
+                                    d.ready()
+                                );
                             });
                         return d;
                     }();
@@ -6715,10 +6740,13 @@
                         } catch (k) {
                             d.support.deleteExpando = !1;
                         }
-                        !b.addEventListener && b.attachEvent && b.fireEvent && (b.attachEvent("onclick", function l() {
-                            d.support.noCloneEvent = !1,
-                            b.detachEvent("onclick", l);
-                        }), b.cloneNode(!0).fireEvent("onclick")),
+                        !b.addEventListener && b.attachEvent && b.fireEvent && (
+                            b.attachEvent("onclick", function l() {
+                                d.support.noCloneEvent = !1,
+                                b.detachEvent("onclick", l);
+                            }),
+                            b.cloneNode(!0).fireEvent("onclick")
+                        ),
                         b           = c.createElement("div"),
                         b.innerHTML = "<input type='radio' name='radiotest' checked='checked'/>";
                         var m = c.createDocumentFragment();
@@ -6735,7 +6763,14 @@
                                 a.style.width = a.style.paddingLeft = "1px",
                                 b.appendChild(a),
                                 d.boxModel = d.support.boxModel = a.offsetWidth === 2,
-                                "zoom" in a.style && (a.style.display = "inline", a.style.zoom = 1, d.support.inlineBlockNeedsLayout = a.offsetWidth === 2, a.style.display = "", a.innerHTML = "<div style='width:4px;'></div>", d.support.shrinkWrapBlocks = a.offsetWidth !== 2),
+                                "zoom" in a.style && (
+                                    a.style.display                  = "inline",
+                                    a.style.zoom                     = 1,
+                                    d.support.inlineBlockNeedsLayout = a.offsetWidth === 2,
+                                    a.style.display                  = "",
+                                    a.innerHTML                      = "<div style='width:4px;'></div>",
+                                    d.support.shrinkWrapBlocks       = a.offsetWidth !== 2
+                                ),
                                 a.innerHTML = "<table><tr><td style='padding:0;border:0;display:none'></td><td>t</td></tr></t" +
                                         "able>";
                                 var e = a.getElementsByTagName("td");
@@ -6821,7 +6856,9 @@
                                 : i;
                         }
                     },
-                    expando   : "jQuery" + (d.fn.jquery + Math.random()).replace(/\D/g, ""),
+                    expando   : "jQuery" + (
+                        d.fn.jquery + Math.random()
+                    ).replace(/\D/g, ""),
                     hasData   : function (a) {
                         a = a.nodeType
                             ? d.cache[a[d.expando]]
@@ -7213,9 +7250,12 @@
                                 j && (j.selectedIndex, j.parentNode && j.parentNode.selectedIndex);
                             }
                             if ((c in a || a[c] !== b) && g && !i) {
-                                h && (c === "type" && l.test(a.nodeName) && a.parentNode && d.error("type property can't be changed"), e === null
-                                    ? a.nodeType === 1 && a.removeAttribute(c)
-                                    : a[c] = e);
+                                h && (
+                                    c === "type" && l.test(a.nodeName) && a.parentNode && d.error("type property can't be changed"),
+                                    e === null
+                                        ? a.nodeType === 1 && a.removeAttribute(c)
+                                        : a[c] = e
+                                );
                                 if (d.nodeName(a, "form") && a.getAttributeNode(c)) {
                                     return a
                                         .getAttributeNode(c)
@@ -7348,18 +7388,26 @@
                         }
                         a.target || (a.target = a.srcElement || c),
                         a.target.nodeType === 3 && (a.target = a.target.parentNode),
-                        !a.relatedTarget && a.fromElement && (a.relatedTarget = a.fromElement === a.target
-                            ? a.toElement
-                            : a.fromElement);
+                        !a.relatedTarget && a.fromElement && (
+                            a.relatedTarget = a.fromElement === a.target
+                                ? a.toElement
+                                : a.fromElement
+                        );
                         if (a.pageX == null && a.clientX != null) {
                             var h = c.documentElement,
                                 i = c.body;
-                            a.pageX = a.clientX + (h && h.scrollLeft || i && i.scrollLeft || 0) - (h && h.clientLeft || i && i.clientLeft || 0),
-                            a.pageY = a.clientY + (h && h.scrollTop || i && i.scrollTop || 0) - (h && h.clientTop || i && i.clientTop || 0);
+                            a.pageX = a.clientX + (h && h.scrollLeft || i && i.scrollLeft || 0) - (
+                                h && h.clientLeft || i && i.clientLeft || 0
+                            ),
+                            a.pageY = a.clientY + (h && h.scrollTop || i && i.scrollTop || 0) - (
+                                h && h.clientTop || i && i.clientTop || 0
+                            );
                         }
-                        a.which == null && (a.charCode != null || a.keyCode != null) && (a.which = a.charCode != null
-                            ? a.charCode
-                            : a.keyCode),
+                        a.which == null && (a.charCode != null || a.keyCode != null) && (
+                            a.which = a.charCode != null
+                                ? a.charCode
+                                : a.keyCode
+                        ),
                         !a.metaKey && a.ctrlKey && (a.metaKey = a.ctrlKey),
                         !a.which && a.button !== b && (a.which = a.button & 1
                             ? 1
@@ -7387,8 +7435,14 @@
                         e               = c
                             .type
                             .indexOf(".") < 0 && !c.exclusive,
-                        e || (g = c.type.split("."), c.type = g.shift(), j = g.slice(0).sort(), h = new RegExp("(^|\\.)" +
-                                j.join("\\.(?:.*\\.)?") + "(\\.|$)")),
+                        e || (
+                            g      = c.type.split("."),
+                            c.type = g.shift(),
+                            j      = g.slice(0).sort(),
+                            h      = new RegExp(
+                                "(^|\\.)" + j.join("\\.(?:.*\\.)?") + "(\\.|$)"
+                            )
+                        ),
                         c.namespace     = c.namespace || j.join("."),
                         i               = d._data(this, "events"),
                         f               = (i || {})[c.type];
@@ -7403,7 +7457,10 @@
                                     var o = n
                                         .handler
                                         .apply(this, k);
-                                    o !== b && (c.result = o, o === !1 && (c.preventDefault(), c.stopPropagation()));
+                                    o !== b && (
+                                        c.result = o,
+                                        o === !1 && (c.preventDefault(), c.stopPropagation())
+                                    );
                                     if (c.isImmediatePropagationStopped()) {
                                         break;
                                     }
@@ -7412,11 +7469,13 @@
                         }
                         return c.result;
                     },
-                    props  : ("altKey attrChange attrName bubbles button cancelable charCode clientX clientY " +
-                            "ctrlKey currentTarget data detail eventPhase fromElement handler keyCode layer" +
-                            "X layerY metaKey newValue offsetX offsetY pageX pageY prevValue relatedNode re" +
-                            "latedTarget screenX screenY shiftKey srcElement target toElement view wheelDel" +
-                            "ta which").split(" "),
+                    props  : (
+                        "altKey attrChange attrName bubbles button cancelable charCode clientX clientY " +
+                        "ctrlKey currentTarget data detail eventPhase fromElement handler keyCode layer" +
+                        "X layerY metaKey newValue offsetX offsetY pageX pageY prevValue relatedNode re" +
+                        "latedTarget screenX screenY shiftKey srcElement target toElement view wheelDel" +
+                        "ta which"
+                    ).split(" "),
                     proxy  : d.proxy,
                     remove : function (a, c, e, f) {
                         if (a.nodeType !== 3 && a.nodeType !== 8) {
@@ -7454,8 +7513,9 @@
                                 q = null,
                                 l = h.indexOf(".") < 0,
                                 m = [],
-                                l || (m = h.split("."), h = m.shift(), n = new RegExp("(^|\\.)" + d.map(m.slice(0).sort(), u).join("\\.(?:.*\\.)?") +
-                                        "(\\.|$)")),
+                                l || (m = h.split("."), h = m.shift(), n = new RegExp(
+                                    "(^|\\.)" + d.map(m.slice(0).sort(), u).join("\\.(?:.*\\.)?") + "(\\.|$)"
+                                )),
                                 p = t[h];
                                 if (!p) {
                                     continue;
@@ -7567,7 +7627,10 @@
                                 e
                                     .nodeName
                                     .toLowerCase()
-                            ] || e["on" + f] && e["on" + f].apply(e, c) === !1 && (a.result = !1, a.preventDefault());
+                            ] || e["on" + f] && e["on" + f].apply(e, c) === !1 && (
+                                a.result = !1,
+                                a.preventDefault()
+                            );
                         } catch (j) {}
                         if (!a.isPropagationStopped() && i) {
                             d
@@ -7587,7 +7650,12 @@
                                     .toLowerCase()
                             ])) {
                                 try {
-                                    l[m] && (k = l["on" + m], k && (l["on" + m] = null), d.event.triggered = !0, l[m]());
+                                    l[m] && (
+                                        k                 = l["on" + m],
+                                        k && (l["on" + m] = null),
+                                        d.event.triggered = !0,
+                                        l[m]()
+                                    );
                                 } catch (q) {}
                                 k && (l["on" + m] = k),
                                 d.event.triggered = !1;
@@ -7607,9 +7675,13 @@
                         return new d.Event(a);
                     }
                     a && a.type
-                        ? (this.originalEvent = a, this.type = a.type, this.isDefaultPrevented = a.defaultPrevented || a.returnValue === !1 || a.getPreventDefault && a.getPreventDefault()
-                            ? w
-                            : v)
+                        ? (
+                            this.originalEvent      = a,
+                            this.type               = a.type,
+                            this.isDefaultPrevented = a.defaultPrevented || a.returnValue === !1 || a.getPreventDefault && a.getPreventDefault()
+                                ? w
+                                : v
+                        )
                         : this.type = a,
                     this.timeStamp  = d.now(),
                     this[d.expando] = !0;
@@ -7759,13 +7831,18 @@
                             click           : function (a) {
                                 var b = a.target,
                                     c = b.type;
-                                (c === "radio" || c === "checkbox" || b.nodeName.toLowerCase() === "select") && B.call(this, a);
+                                (c === "radio" || c === "checkbox" || b.nodeName.toLowerCase() === "select") && B.call(
+                                    this,
+                                    a
+                                );
                             },
                             focusout        : B,
                             keydown         : function (a) {
                                 var b = a.target,
                                     c = b.type;
-                                (a.keyCode === 13 && b.nodeName.toLowerCase() !== "textarea" || a.keyCode === 32 && (c === "checkbox" || c === "radio") || c === "select-multiple") && B.call(this, a);
+                                (
+                                    a.keyCode === 13 && b.nodeName.toLowerCase() !== "textarea" || a.keyCode === 32 && (c === "checkbox" || c === "radio") || c === "select-multiple"
+                                ) && B.call(this, a);
                             }
                         },
                         setup   : function (a, b) {
@@ -7967,17 +8044,22 @@
                         return this;
                     };
                 }),
-                d.each(("blur focus focusin focusout load resize scroll unload click dblclick mousedown" +
+                d.each(
+                    (
+                        "blur focus focusin focusout load resize scroll unload click dblclick mousedown" +
                         " mouseup mousemove mouseover mouseout mouseenter mouseleave change select subm" +
-                        "it keydown keypress keyup error").split(" "), function (a, b) {
-                    d.fn[b] = function (a, c) {
-                        c == null && (c = a, a = null);
-                        return arguments.length > 0
-                            ? this.bind(b, a, c)
-                            : this.trigger(b);
-                    },
-                    d.attrFn && (d.attrFn[b] = !0);
-                }),
+                        "it keydown keypress keyup error"
+                    ).split(" "),
+                    function (a, b) {
+                        d.fn[b] = function (a, c) {
+                            c == null && (c = a, a = null);
+                            return arguments.length > 0
+                                ? this.bind(b, a, c)
+                                : this.trigger(b);
+                        },
+                        d.attrFn && (d.attrFn[b] = !0);
+                    }
+                ),
                 function () {
                     function u(a, b, c, d, e, f) {
                         for (var g = 0, h = d.length; g < h; g += 1) {
@@ -8104,10 +8186,13 @@
                                         expr: x.pop(),
                                         set : p(g)
                                     }
-                                    : k.find(x.pop(), x.length === 1 && (x[0] === "~" || x[0] === "+") && d.parentNode
-                                        ? d.parentNode
-                                        : d,
-                                    w),
+                                    : k.find(
+                                        x.pop(),
+                                        x.length === 1 && (x[0] === "~" || x[0] === "+") && d.parentNode
+                                            ? d.parentNode
+                                            : d,
+                                        w
+                                    ),
                                 j       = q.expr
                                     ? k.filter(q.expr, q.set)
                                     : q.set,
@@ -8133,7 +8218,9 @@
                             if (u) {
                                 if (d && d.nodeType === 1) {
                                     for (t = 0; n[t] != null; t += 1) {
-                                        n[t] && (n[t] === !0 || n[t].nodeType === 1 && k.contains(d, n[t])) && e.push(j[t]);
+                                        n[t] && (n[t] === !0 || n[t].nodeType === 1 && k.contains(d, n[t])) && e.push(
+                                            j[t]
+                                        );
                                     }
                                 }
                             }
@@ -8350,7 +8437,9 @@
                                     }
                                 },
                                 CLASS : function (a, b) {
-                                    return (" " + (a.className || a.getAttribute("class")) + " ").indexOf(b) > -1;
+                                    return (" " + (
+                                        a.className || a.getAttribute("class")
+                                    ) + " ").indexOf(b) > -1;
                                 },
                                 ID    : function (a, b) {
                                     return a.nodeType === 1 && a.getAttribute("id") === b;
@@ -8500,7 +8589,9 @@
                                     if (a[1] === "nth") {
                                         a[2] || k.error(a[0]),
                                         a[2] = a[2].replace(/^\+|\s*/g, "");
-                                        var b = /(-?)(\d*)(?:n([+\-]?\d*))?/.exec(a[2] === "even" && "2n" || a[2] === "odd" && "2n+1" || !/\D/.test(a[2]) && "0n+" + a[2] || a[2]);
+                                        var b = /(-?)(\d*)(?:n([+\-]?\d*))?/.exec(
+                                            a[2] === "even" && "2n" || a[2] === "odd" && "2n+1" || !/\D/.test(a[2]) && "0n+" + a[2] || a[2]
+                                        );
                                         a[2] = b[1] + (b[2] || 1) - 0,
                                         a[3] = b[3] - 0;
                                     } else {
@@ -8515,9 +8606,11 @@
                                         return a;
                                     }
                                     for (var g = 0, h; (h = b[g]) != null; g += 1) {
-                                        h && (e ^ (h.className && (" " + h.className + " ").replace(/[\t\n\r]/g, " ").indexOf(a) >= 0)
-                                            ? c || d.push(h)
-                                            : c && (b[g] = !1));
+                                        h && (
+                                            e ^ (h.className && (" " + h.className + " ").replace(/[\t\n\r]/g, " ").indexOf(a) >= 0)
+                                                ? c || d.push(h)
+                                                : c && (b[g] = !1)
+                                        );
                                     }
                                     return !1;
                                 },
@@ -8640,11 +8733,17 @@
                         },
                         m = l.match.POS,
                         n = function (a, b) {
-                            return "\\" + (b - 0 + 1);
+                            return "\\" + (
+                                b - 0 + 1
+                            );
                         };
                     for (var o in l.match) {
-                        l.match[o]     = new RegExp(l.match[o].source + /(?![^\[]*\])(?![^\(]*\))/.source),
-                        l.leftMatch[o] = new RegExp(/(^(?:.|\r|\n)*?)/.source + l.match[o].source.replace(/\\(\d+)/g, n));
+                        l.match[o]     = new RegExp(
+                            l.match[o].source + /(?![^\[]*\])(?![^\(]*\))/.source
+                        ),
+                        l.leftMatch[o] = new RegExp(
+                            /(^(?:.|\r|\n)*?)/.source + l.match[o].source.replace(/\\(\d+)/g, n)
+                        );
                     }
                     var p = function (a, b) {
                         a = Array
@@ -8769,7 +8868,9 @@
                     },
                     function () {
                         var a = c.createElement("div"),
-                            d = "script" + (new Date).getTime(),
+                            d = "script" + (
+                                new Date
+                            ).getTime(),
                             e = c.documentElement;
                         a.innerHTML = "<a name='" + d + "'/>",
                         e.insertBefore(a, e.firstChild),
@@ -8778,7 +8879,9 @@
                                 var e = c.getElementById(a[1]);
                                 return e
                                     ? e.id === a[1] || typeof e.getAttributeNode !== "undefined" && e
-                                        .getAttributeNode("id")
+                                        .getAttributeNode(
+                                            "id"
+                                        )
                                         .nodeValue === a[1]
                                             ? [e]
                                             : b
@@ -9358,7 +9461,10 @@
                                 a = a.replace(R, "<$1></$2>");
                                 try {
                                     for (var c = 0, e = this.length; c < e; c += 1) {
-                                        this[c].nodeType === 1 && (d.cleanData(this[c].getElementsByTagName("*")), this[c].innerHTML = a);
+                                        this[c].nodeType === 1 && (
+                                            d.cleanData(this[c].getElementsByTagName("*")),
+                                            this[c].innerHTML = a
+                                        );
                                     }
                                 } catch (f) {
                                     this
@@ -9376,7 +9482,10 @@
                         remove     : function (a, b) {
                             for (var c = 0, e; (e = this[c]) != null; c += 1) {
                                 if (!a || d.filter(a, [e]).length) {
-                                    !b && e.nodeType === 1 && (d.cleanData(e.getElementsByTagName("*")), d.cleanData([e])),
+                                    !b && e.nodeType === 1 && (
+                                        d.cleanData(e.getElementsByTagName("*")),
+                                        d.cleanData([e])
+                                    ),
                                     e.parentNode && e
                                         .parentNode
                                         .removeChild(e);
@@ -9479,7 +9588,13 @@
                         i = b && b[0]
                             ? b[0].ownerDocument || b[0]
                             : c;
-                    a.length === 1 && typeof a[0] === "string" && a[0].length < 512 && i === c && a[0].charAt(0) === "<" && !V.test(a[0]) && (d.support.checkClone || !W.test(a[0])) && (g = !0, h = d.fragments[a[0]], h && (h !== 1 && (f = h))),
+                    a.length === 1 && typeof a[0] === "string" && a[0].length < 512 && i === c && a[0].charAt(
+                        0
+                    ) === "<" && !V.test(a[0]) && (d.support.checkClone || !W.test(a[0])) && (
+                        g = !0,
+                        h = d.fragments[a[0]],
+                        h && (h !== 1 && (f = h))
+                    ),
                     f || (f = i.createDocumentFragment(), d.clean(a, i, f, e)),
                     g && (d.fragments[a[0]] = h
                         ? f
@@ -9515,7 +9630,9 @@
                 d.extend({
                     clean    : function (a, b, e, f) {
                         b = b || c,
-                        typeof b.createElement === "undefined" && (b = b.ownerDocument || b[0] && b[0].ownerDocument || c);
+                        typeof b.createElement === "undefined" && (
+                            b = b.ownerDocument || b[0] && b[0].ownerDocument || c
+                        );
                         var g = [];
                         for (var h = 0, i; (i = a[h]) != null; h += 1) {
                             typeof i === "number" && (i += "");
@@ -9546,7 +9663,10 @@
                                                 .removeChild(o[p]);
                                         }
                                     }
-                                    !d.support.leadingWhitespace && Q.test(i) && m.insertBefore(b.createTextNode(Q.exec(i)[0]), m.firstChild),
+                                    !d.support.leadingWhitespace && Q.test(i) && m.insertBefore(
+                                        b.createTextNode(Q.exec(i)[0]),
+                                        m.firstChild
+                                    ),
                                     i = m.childNodes;
                                 }
                             } else {
@@ -9561,10 +9681,13 @@
                                 !f || !d.nodeName(g[h], "script") || g[h].type && g[h]
                                     .type
                                     .toLowerCase() !== "text/javascript"
-                                        ? (g[h].nodeType === 1 && g.splice.apply(g, [
-                                            h + 1,
-                                            0
-                                        ].concat(d.makeArray(g[h].getElementsByTagName("script")))), e.appendChild(g[h]))
+                                        ? (
+                                            g[h].nodeType === 1 && g.splice.apply(g, [
+                                                h + 1,
+                                                0
+                                            ].concat(d.makeArray(g[h].getElementsByTagName("script")))),
+                                            e.appendChild(g[h])
+                                        )
                                         : f.push(g[h].parentNode
                                             ? g[h].parentNode.removeChild(g[h])
                                             : g[h]);
@@ -9821,7 +9944,9 @@
                     }
                     if (h = g.getComputedStyle(a, null)) {
                         f = h.getPropertyValue(e),
-                        f === "" && !d.contains(a.ownerDocument.documentElement, a) && (f = d.style(a, e));
+                        f === "" && !d.contains(a.ownerDocument.documentElement, a) && (
+                            f = d.style(a, e)
+                        );
                     }
                     return f;
                 }),
@@ -9830,12 +9955,16 @@
                         d = a.currentStyle && a.currentStyle[b],
                         e = a.runtimeStyle && a.runtimeStyle[b],
                         f = a.style;
-                    !bf.test(d) && bg.test(d) && (c = f.left, e && (a.runtimeStyle.left = a.currentStyle.left), f.left = b === "fontSize"
-                        ? "1em"
-                        : d || 0,
-                    d = f.pixelLeft + "px",
-                    f.left = c,
-                    e && (a.runtimeStyle.left = e));
+                    !bf.test(d) && bg.test(d) && (
+                        c      = f.left,
+                        e && (a.runtimeStyle.left = a.currentStyle.left),
+                        f.left = b === "fontSize"
+                            ? "1em"
+                            : d || 0,
+                        d      = f.pixelLeft + "px",
+                        f.left = c,
+                        e && (a.runtimeStyle.left = e)
+                    );
                     return d === ""
                         ? "auto"
                         : d;
@@ -9844,7 +9973,9 @@
                 d.expr && d.expr.filters && (d.expr.filters.hidden = function (a) {
                     var b = a.offsetWidth,
                         c = a.offsetHeight;
-                    return b === 0 && c === 0 || !d.support.reliableHiddenOffsets && (a.style.display || d.css(a, "display")) === "none";
+                    return b === 0 && c === 0 || !d.support.reliableHiddenOffsets && (
+                        a.style.display || d.css(a, "display")
+                    ) === "none";
                 }, d.expr.filters.visible                          = function (a) {
                     return !d
                         .expr
@@ -9931,7 +10062,9 @@
                                         : this;
                                 })
                                 .filter(function () {
-                                    return this.name && !this.disabled && (this.checked || bA.test(this.nodeName) || bu.test(this.type));
+                                    return this.name && !this.disabled && (
+                                        this.checked || bA.test(this.nodeName) || bu.test(this.type)
+                                    );
                                 })
                                 .map(function (a, b) {
                                     var c = d(this).val();
@@ -9952,11 +10085,14 @@
                                 .get();
                         }
                     }),
-                d.each("ajaxStart ajaxStop ajaxComplete ajaxError ajaxSuccess ajaxSend".split(" "), function (a, b) {
-                    d.fn[b] = function (a) {
-                        return this.bind(b, a);
-                    };
-                }),
+                d.each(
+                    "ajaxStart ajaxStop ajaxComplete ajaxError ajaxSuccess ajaxSend".split(" "),
+                    function (a, b) {
+                        d.fn[b] = function (a) {
+                            return this.bind(b, a);
+                        };
+                    }
+                ),
                 d.each([
                     "get", "post"
                 ], function (a, c) {
@@ -10020,15 +10156,20 @@
                                     : h.rejectWith(f, [u, c, v]),
                                 u.statusCode(j),
                                 j            = b,
-                                s && g.trigger("ajax" + (q
-                                    ? "Success"
-                                    : "Error"), [
+                                s && g.trigger("ajax" + (
+                                    q
+                                        ? "Success"
+                                        : "Error"
+                                ), [
                                     u, e, q
                                         ? t
                                         : v
                                 ]),
                                 i.resolveWith(f, [u, c]),
-                                s && (g.trigger("ajaxComplete", [u, e]), --d.active || d.event.trigger("ajaxStop"));
+                                s && (
+                                    g.trigger("ajaxComplete", [u, e]),
+                                    --d.active || d.event.trigger("ajaxStop")
+                                );
                             }
                         }
                         typeof a === "object" && (c = a, a = b),
@@ -10119,12 +10260,17 @@
                             .trim(e.dataType || "*")
                             .toLowerCase()
                             .split(bB),
-                        e.crossDomain || (q = bF.exec(e.url.toLowerCase()), e.crossDomain = q && (q[1] != bK[1] || q[2] != bK[2] || (q[3] || (q[1] === "http:"
-                            ? 80
-                            : 443)) != (bK[3] || (bK[1] === "http:"
-                            ? 80
-                            : 443)))),
-                        e.data && e.processData && typeof e.data !== "string" && (e.data = d.param(e.data, e.traditional)),
+                        e.crossDomain || (
+                            q             = bF.exec(e.url.toLowerCase()),
+                            e.crossDomain = q && (q[1] != bK[1] || q[2] != bK[2] || (q[3] || (q[1] === "http:"
+                                ? 80
+                                : 443)) != (bK[3] || (bK[1] === "http:"
+                                ? 80
+                                : 443)))
+                        ),
+                        e.data && e.processData && typeof e.data !== "string" && (
+                            e.data = d.param(e.data, e.traditional)
+                        ),
                         bN(bH, e, c, u);
                         if (r === 2) {
                             return !1;
@@ -10157,7 +10303,11 @@
                         if (e.data && e.hasContent && e.contentType !== !1 || c.contentType) {
                             l["Content-Type"] = e.contentType;
                         }
-                        e.ifModified && (k = k || e.url, d.lastModified[k] && (l["If-Modified-Since"] = d.lastModified[k]), d.etag[k] && (l["If-None-Match"] = d.etag[k])),
+                        e.ifModified && (
+                            k = k || e.url,
+                            d.lastModified[k] && (l["If-Modified-Since"] = d.lastModified[k]),
+                            d.etag[k] && (l["If-None-Match"] = d.etag[k])
+                        ),
                         l.Accept     = e.dataTypes[0] && e.accepts[e.dataTypes[0]]
                             ? e.accepts[e.dataTypes[0]] + (e.dataTypes[0] !== "*"
                                 ? ", */*; q=0.01"
@@ -10290,9 +10440,12 @@
                                 a[h] = i,
                                 g && d.isFunction(i) && a[h](g[0]);
                             };
-                        b.jsonp !== !1 && (j = j.replace(bS, l), b.url === j && (f && (k = k.replace(bS, l)), b.data === k && (j += (/\?/.test(j)
-                            ? "&"
-                            : "?") + b.jsonp + "=" + h))),
+                        b.jsonp !== !1 && (
+                            j = j.replace(bS, l),
+                            b.url === j && (f && (k = k.replace(bS, l)), b.data === k && (j += (/\?/.test(j)
+                                ? "&"
+                                : "?") + b.jsonp + "=" + h))
+                        ),
                         b.url  = j,
                         b.data = k,
                         a[h]   = function (a) {
@@ -10386,7 +10539,9 @@
                                     }
                                 }
                                 a.mimeType && g.overrideMimeType && g.overrideMimeType(a.mimeType),
-                                (!a.crossDomain || a.hasContent) && !e["X-Requested-With"] && (e["X-Requested-With"] = "XMLHttpRequest");
+                                (!a.crossDomain || a.hasContent) && !e["X-Requested-With"] && (
+                                    e["X-Requested-With"] = "XMLHttpRequest"
+                                );
                                 try {
                                     for (i in e) {
                                         g.setRequestHeader(i, e[i]);
@@ -10489,7 +10644,10 @@
                                             }
                                         }
                                     }
-                                    d.isArray(a[c]) && ((b.specialEasing = b.specialEasing || {})[c] = a[c][1], a[c] = a[c][0]);
+                                    d.isArray(a[c]) && (
+                                        (b.specialEasing = b.specialEasing || {})[c] = a[c][1],
+                                        a[c]                                         = a[c][0]
+                                    );
                                 }
                                 b.overflow != null && (this.style.overflow = "hidden"),
                                 b.curAnim = d.extend({}, a),
@@ -10511,8 +10669,11 @@
                                                 l = i[3] || (d.cssNumber[c]
                                                     ? ""
                                                     : "px");
-                                            l !== "px" && (d.style(h, c, (k || 1) + l), j = (k || 1) / f.cur() * j, d.style(h, c, j +
-                                                    l)),
+                                            l !== "px" && (
+                                                d.style(h, c, (k || 1) + l),
+                                                j = (k || 1) / f.cur() * j,
+                                                d.style(h, c, j + l)
+                                            ),
                                             i[1] && (k = (i[1] === "-="
                                                 ? -1
                                                 : 1) * k + j),
@@ -10541,7 +10702,11 @@
                             }
                             for (var e = 0, f = this.length; e < f; e += 1) {
                                 var g = d.css(this[e], "display");
-                                g !== "none" && !d._data(this[e], "olddisplay") && d._data(this[e], "olddisplay", g);
+                                g !== "none" && !d._data(this[e], "olddisplay") && d._data(
+                                    this[e],
+                                    "olddisplay",
+                                    g
+                                );
                             }
                             for (e = 0; e < f; e += 1) {
                                 this[e].style.display = "none";
@@ -10558,7 +10723,11 @@
                                 e = this[g],
                                 f = e.style.display,
                                 !d._data(e, "olddisplay") && f === "none" && (f = e.style.display = ""),
-                                f === "" && d.css(e, "display") === "none" && d._data(e, "olddisplay", cd(e.nodeName));
+                                f === "" && d.css(e, "display") === "none" && d._data(
+                                    e,
+                                    "olddisplay",
+                                    cd(e.nodeName)
+                                );
                             }
                             for (g = 0; g < h; g += 1) {
                                 e = this[g],
@@ -10903,15 +11072,27 @@
                                 : b.currentStyle,
                             l -= b.scrollTop,
                             m -= b.scrollLeft,
-                            b === e && (l += b.offsetTop, m += b.offsetLeft, d.offset.doesNotAddBorder && (!d.offset.doesAddBorderForTableAndCells || !ce.test(b.nodeName)) && (l += parseFloat(c.borderTopWidth) || 0, m += parseFloat(c.borderLeftWidth) || 0), f = e, e = b.offsetParent),
-                            d.offset.subtractsBorderForOverflowNotVisible && c.overflow !== "visible" && (l += parseFloat(c.borderTopWidth) || 0, m += parseFloat(c.borderLeftWidth) || 0),
+                            b === e && (
+                                l += b.offsetTop,
+                                m += b.offsetLeft,
+                                d.offset.doesNotAddBorder && (!d.offset.doesAddBorderForTableAndCells || !ce.test(b.nodeName)) && (l += parseFloat(c.borderTopWidth) || 0, m += parseFloat(c.borderLeftWidth) || 0),
+                                f = e,
+                                e = b.offsetParent
+                            ),
+                            d.offset.subtractsBorderForOverflowNotVisible && c.overflow !== "visible" && (
+                                l += parseFloat(c.borderTopWidth) || 0,
+                                m += parseFloat(c.borderLeftWidth) || 0
+                            ),
                             k = c;
                         }
                         if (k.position === "relative" || k.position === "static") {
                             l += i.offsetTop,
                             m += i.offsetLeft;
                         }
-                        d.offset.supportsFixedPosition && k.position === "fixed" && (l += Math.max(h.scrollTop, i.scrollTop), m += Math.max(h.scrollLeft, i.scrollLeft));
+                        d.offset.supportsFixedPosition && k.position === "fixed" && (
+                            l += Math.max(h.scrollTop, i.scrollTop),
+                            m += Math.max(h.scrollLeft, i.scrollLeft)
+                        );
                         return {left: m, top: l};
                     },
                 d.offset          = {
@@ -10921,7 +11102,10 @@
                         d
                             .offset
                             .initialize(),
-                        d.offset.doesNotIncludeMarginInBodyOffset && (b += parseFloat(d.css(a, "marginTop")) || 0, c += parseFloat(d.css(a, "marginLeft")) || 0);
+                        d.offset.doesNotIncludeMarginInBodyOffset && (
+                            b += parseFloat(d.css(a, "marginTop")) || 0,
+                            c += parseFloat(d.css(a, "marginLeft")) || 0
+                        );
                         return {left: c, top: b};
                     },
                     initialize: function () {
@@ -11106,7 +11290,13 @@
                                 .body["client" + c] || g;
                         }
                         if (f.nodeType === 9) {
-                            return Math.max(f.documentElement["client" + c], f.body["scroll" + c], f.documentElement["scroll" + c], f.body["offset" + c], f.documentElement["offset" + c]);
+                            return Math.max(
+                                f.documentElement["client" + c],
+                                f.body["scroll" + c],
+                                f.documentElement["scroll" + c],
+                                f.body["offset" + c],
+                                f.documentElement["offset" + c]
+                            );
                         }
                         if (a === b) {
                             var h = d.css(f, e),
@@ -11214,19 +11404,23 @@
                             },
                             scrollParent    : function () {
                                 var a;
-                                a = c.browser.msie && /(static|relative)/.test(this.css("position")) || /absolute/.test(this.css("position"))
+                                a = c.browser.msie && /(static|relative)/.test(this.css("position")) || /absolute/.test(
+                                    this.css("position")
+                                )
                                     ? this
                                         .parents()
                                         .filter(function () {
-                                            return /(relative|absolute|fixed)/.test(c.curCSS(this, "position", 1)) && /(auto|scroll)/.test(c.curCSS(this, "overflow", 1) +
-                                                    c.curCSS(this, "overflow-y", 1) + c.curCSS(this, "overflow-x", 1));
+                                            return /(relative|absolute|fixed)/.test(c.curCSS(this, "position", 1)) && /(auto|scroll)/.test(
+                                                c.curCSS(this, "overflow", 1) + c.curCSS(this, "overflow-y", 1) + c.curCSS(this, "overflow-x", 1)
+                                            );
                                         })
                                         .eq(0)
                                     : this
                                         .parents()
                                         .filter(function () {
-                                            return /(auto|scroll)/.test(c.curCSS(this, "overflow", 1) + c.curCSS(this, "overflow-y", 1) +
-                                                    c.curCSS(this, "overflow-x", 1));
+                                            return /(auto|scroll)/.test(
+                                                c.curCSS(this, "overflow", 1) + c.curCSS(this, "overflow-y", 1) + c.curCSS(this, "overflow-x", 1)
+                                            );
                                         })
                                         .eq(0);
                                 return /fixed/.test(this.css("position")) || !a.length
@@ -11566,7 +11760,9 @@
                         this
                             .element
                             .trigger(c, d);
-                        return !(b.isFunction(e) && e.call(this.element[0], c, d) === false || c.isDefaultPrevented());
+                        return !(
+                            b.isFunction(e) && e.call(this.element[0], c, d) === false || c.isDefaultPrevented()
+                        );
                     },
                     destroy          : function () {
                         this
@@ -11577,7 +11773,9 @@
                             .widget()
                             .unbind("." + this.widgetName)
                             .removeAttr("aria-disabled")
-                            .removeClass(this.widgetBaseClass + "-disabled ui-state-disabled");
+                            .removeClass(
+                                this.widgetBaseClass + "-disabled ui-state-disabled"
+                            );
                     },
                     disable          : function () {
                         return this._setOption("disabled", true);
@@ -11649,7 +11847,9 @@
                             });
                     },
                     _cookie          : function () {
-                        var b = this.cookie || (this.cookie = this.options.cookie.name || "ui-tabs-" + w());
+                        var b = this.cookie || (
+                            this.cookie = this.options.cookie.name || "ui-tabs-" + w()
+                        );
                         return d
                             .cookie
                             .apply(null, [b].concat(d.makeArray(arguments)));
@@ -11745,7 +11945,9 @@
                                 .addClass("ui-tabs ui-widget ui-widget-content ui-corner-all");
                             this
                                 .list
-                                .addClass("ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all");
+                                .addClass(
+                                    "ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all"
+                                );
                             this
                                 .lis
                                 .addClass("ui-state-default ui-corner-top");
@@ -11779,11 +11981,13 @@
                                 ? c.selected
                                 : 0;
                             c.disabled = d
-                                .unique(c.disabled.concat(d.map(this.lis.filter(".ui-state-disabled"), function (g) {
-                                    return a
-                                        .lis
-                                        .index(g);
-                                })))
+                                .unique(
+                                    c.disabled.concat(d.map(this.lis.filter(".ui-state-disabled"), function (g) {
+                                        return a
+                                            .lis
+                                            .index(g);
+                                    }))
+                                )
                                 .sort();
                             d.inArray(c.selected, c.disabled) != -1 && c
                                 .disabled
@@ -11803,7 +12007,11 @@
                                 a
                                     .element
                                     .queue("tabs", function () {
-                                        a._trigger("show", null, a._ui(a.anchors[c.selected], d(a._sanitizeSelector(a.anchors[c.selected].hash))));
+                                        a._trigger(
+                                            "show",
+                                            null,
+                                            a._ui(a.anchors[c.selected], d(a._sanitizeSelector(a.anchors[c.selected].hash)))
+                                        );
                                     });
                                 this.load(c.selected);
                             }
@@ -12062,11 +12270,15 @@
                         this
                             .element
                             .unbind(".tabs")
-                            .removeClass("ui-tabs ui-widget ui-widget-content ui-corner-all ui-tabs-collapsible")
+                            .removeClass(
+                                "ui-tabs ui-widget ui-widget-content ui-corner-all ui-tabs-collapsible"
+                            )
                             .removeData("tabs");
                         this
                             .list
-                            .removeClass("ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all");
+                            .removeClass(
+                                "ui-tabs-nav ui-helper-reset ui-helper-clearfix ui-widget-header ui-corner-all"
+                            );
                         this
                             .anchors
                             .each(function () {
@@ -12088,9 +12300,11 @@
                             .each(function () {
                                 d.data(this, "destroy.tabs")
                                     ? d(this).remove()
-                                    : d(this).removeClass("ui-state-default ui-corner-top ui-tabs-selected ui-state-active ui-state-hover" +
-                                            " ui-state-focus ui-state-disabled ui-tabs-panel ui-widget-content ui-corner-bo" +
-                                            "ttom ui-tabs-hide");
+                                    : d(this).removeClass(
+                                        "ui-state-default ui-corner-top ui-tabs-selected ui-state-active ui-state-hover" +
+                                        " ui-state-focus ui-state-disabled ui-tabs-panel ui-widget-content ui-corner-bo" +
+                                        "ttom ui-tabs-hide"
+                                    );
                             });
                         b.cookie && this._cookie(null, b.cookie);
                         return this;
@@ -12412,7 +12626,10 @@
                         }
                         if (oScope.settings.display_noorgie) {
                             oScope.settings.callback.fn = function () {
-                                var element = jQuery(oScope.settings.trigger_element_selector, oScope.settings.container_selector);
+                                var element = jQuery(
+                                    oScope.settings.trigger_element_selector,
+                                    oScope.settings.container_selector
+                                );
                                 element.toggleClass("toggle-in toggle-out");
                                 var innerHtml = element.html();
                                 if (element.hasClass("toggle-in")) {
@@ -12424,9 +12641,20 @@
                             jQuery(oScope.trigger_element).toggleClass("toggle-out");
                         }
                         jQuery.extend(true, oScope.settings, config);
-                        oScope.trigger_element       = jQuery(oScope.settings.trigger_element_selector, oScope.settings.container_selector).get(0);
-                        oScope.description_container = jQuery(oScope.settings.description_container_selector, oScope.settings.container_selector).get(0);
-                        oScope.collapsibleModule     = new Collapsible(oScope.description_container, oScope.trigger_element, oScope.settings.initial_state, oScope.settings.callback);
+                        oScope.trigger_element       = jQuery(
+                            oScope.settings.trigger_element_selector,
+                            oScope.settings.container_selector
+                        ).get(0);
+                        oScope.description_container = jQuery(
+                            oScope.settings.description_container_selector,
+                            oScope.settings.container_selector
+                        ).get(0);
+                        oScope.collapsibleModule     = new Collapsible(
+                            oScope.description_container,
+                            oScope.trigger_element,
+                            oScope.settings.initial_state,
+                            oScope.settings.callback
+                        );
                         if (oScope.settings.display_noorgie) {
                             jQuery(oScope.trigger_element).toggleClass("toggle-out");
                         }
@@ -12446,7 +12674,8 @@
                     nDays = 1;
                 }
                 expire.setTime(today.getTime() + 24 * 60 * 60 * 1000 * nDays);
-                document.cookie = cookieName + "=" + escape(cookieValue) + ";expires=" + expire.toGMTString();
+                document.cookie = cookieName + "=" + escape(cookieValue) + ";expires=" +
+                        expire.toGMTString();
             }
             function GetCookie(Name) {
                 var search = Name + "=";
@@ -12642,8 +12871,9 @@
                             url_parameters.toMonth = to.month;
                             url_parameters.toYear  = to.year;
                         }
-                    })(parseDate(jQuery("#" + prefix + "-fromdate").val()), parseDate(jQuery("#" +
-                            prefix + "-todate").val()));
+                    })(parseDate(jQuery("#" + prefix + "-fromdate").val()), parseDate(jQuery(
+                        "#" + prefix + "-todate"
+                    ).val()));
                     (function (from, to) {
                         if (from !== "") {
                             url_parameters.startTime = from;
@@ -12651,14 +12881,18 @@
                         if (to !== "") {
                             url_parameters.endTime = to;
                         }
-                    })(parseTime(jQuery("#" + prefix + "-fromtime").val()), parseTime(jQuery("#" +
-                            prefix + "-totime").val()));
+                    })(parseTime(jQuery("#" + prefix + "-fromtime").val()), parseTime(jQuery(
+                        "#" + prefix + "-totime"
+                    ).val()));
                     url_parameters.noOfRooms  = jQuery("select[id$='totalrooms']:visible", o_form).val();
                     url_parameters.noOfAdults = (function () {
                         var _c = 0;
-                        jQuery("select[id^='" + prefix + "-adult']:visible,select[id^='" + prefix + "-m" +
-                                "inor']:visible,select[id^='" + prefix + "-child']:visible,select[id^='" + prefix +
-                                "-senior']:visible", "#cb-form-" + prefix).each(function (e, ex) {
+                        jQuery(
+                            "select[id^='" + prefix + "-adult']:visible,select[id^='" + prefix + "-minor']:" +
+                                    "visible,select[id^='" + prefix + "-child']:visible,select[id^='" + prefix + "-" +
+                                    "senior']:visible",
+                            "#cb-form-" + prefix
+                        ).each(function (e, ex) {
                             _c += ~~ (1 * jQuery(this).val());
                         });
                         return (_c <= 6
@@ -12829,7 +13063,11 @@
                         })();
                         win2 = {
                             init: function () {
-                                win2.win = window.open(popunder + urlString + "&" + urladditions, "adWindow", winfeatures);
+                                win2.win = window.open(
+                                    popunder + urlString + "&" + urladditions,
+                                    "adWindow",
+                                    winfeatures
+                                );
                                 self.blur();
                                 win2.win.screenX = 150;
                                 win2.win.screenY = 200;
@@ -12846,9 +13084,14 @@
                         var fwcont = jQuery(_fareWatcher.settings.content_container_selector);
                         var maxfw = _fareWatcher.settings.maxfw;
                         var f = 1;
-                        var fwtable = jQuery(document.createElement("table")).attr("id", "farewatcher-table");
-                        jQuery("<tr><th>Trips</th><th class='price-right'>Flights Starting at</th><th class='p" +
-                                "rice-right'>Hotels Starting at</th></tr>").appendTo(fwtable);
+                        var fwtable = jQuery(document.createElement("table")).attr(
+                            "id",
+                            "farewatcher-table"
+                        );
+                        jQuery(
+                            "<tr><th>Trips</th><th class='price-right'>Flights Starting at</th><th class='p" +
+                            "rice-right'>Hotels Starting at</th></tr>"
+                        ).appendTo(fwtable);
                         jQuery(data)
                             .find("origin")
                             .each(function () {
@@ -12871,8 +13114,8 @@
                                 var months = _fareWatcher.settings.months;
                                 var cMonth = months[cDate.getMonth()];
                                 var nMonth = months[cDate.getMonth() + 1];
-                                var htmlBuffer = "<td><span>" + OrigName + " (" + OrigCode + ") to " + DestName + " (" + DestCode +
-                                        ")</span></td>";
+                                var htmlBuffer = "<td><span>" + OrigName + " (" + OrigCode + ") to " +
+                                        DestName + " (" + DestCode + ")</span></td>";
                                 for (var j = 0; j < ddata.length; j += 1) {
                                     var itemHtml = "";
                                     var aURL = [
@@ -12880,11 +13123,11 @@
                                                 DestCode + "&leavingFrom=" + OrigCode + "&departure_dt=" + cMonth + "&arrival_d" +
                                                 "t=" + nMonth + "&airFareAmount=" + ddata[j],
                                         _fareWatcher.settings.domain + "/hotel/HotelCobrand.do?city=" + DestCode,
-                                        _fareWatcher.settings.domain + "/trips/InitialSearch.do?leavingFrom=" + OrigCode +
-                                                "&goingTo=" + DestCode
+                                        _fareWatcher.settings.domain + "/trips/InitialSearch.do?leavingFrom=" +
+                                                OrigCode + "&goingTo=" + DestCode
                                     ];
-                                    var searchFlightsURL = _fareWatcher.settings.domain + "/flights/InitialSearch.do?goingTo=" + DestCode +
-                                            "&leavingFrom=" + OrigCode;
+                                    var searchFlightsURL = _fareWatcher.settings.domain + "/flights/InitialSearch.d" +
+                                            "o?goingTo=" + DestCode + "&leavingFrom=" + OrigCode;
                                     var whatLob = _fareWatcher
                                         .settings
                                         .dtags_lob[j];
@@ -12893,14 +13136,14 @@
                                         if ((/flights/i).test(whatLob)) {
                                             p_meta = "+ <small>RT</small>";
                                         }
-                                        htmlBuffer += "<td class='price-right'><span class='price-right'><a href='" + aURL[j] + "'>" +
-                                                cData + "" + ddata[j] + " " + p_meta + "</a></span></td>";
+                                        htmlBuffer += "<td class='price-right'><span class='price-right'><a href='" + aURL[j] +
+                                                "'>" + cData + "" + ddata[j] + " " + p_meta + "</a></span></td>";
                                     } else {
                                         var href = "";
                                         whatLob = whatLob.replace(/from/i, "");
                                         if ((/flights/i).test(whatLob)) {
-                                            htmlBuffer += "<td class='price-right'><span class='price-right'><a href='" + searchFlightsURL +
-                                                    "'>Search " + whatLob + "</a></span></td>";
+                                            htmlBuffer += "<td class='price-right'><span class='price-right'><a href='" +
+                                                    searchFlightsURL + "'>Search " + whatLob + "</a></span></td>";
                                         } else {
                                             htmlBuffer += "<td class='price-right'><span class='price-right'><a href='" + aURL[j] + "'>Se" +
                                                     "arch " + whatLob + "</a></span></td>";
@@ -12926,36 +13169,68 @@
                         if (typeof(isDef) === "undefined") {
                             var isDef = 0;
                         }
-                        jQuery(_fareWatcher.settings.headline_selector).html(_fareWatcher.settings.headline_default_text);
-                        jQuery(_fareWatcher.settings.intro_selector).html(_fareWatcher.settings.intro_text);
+                        jQuery(_fareWatcher.settings.headline_selector).html(
+                            _fareWatcher.settings.headline_default_text
+                        );
+                        jQuery(_fareWatcher.settings.intro_selector).html(
+                            _fareWatcher.settings.intro_text
+                        );
                         if (isDef == 0 && (jQuery(data).find("origin").length < 1)) {} else {
                             if (isDef != 1 && (jQuery(data).find("origin").length >= 1)) {
-                                jQuery(_fareWatcher.settings.headline_selector).html(_fareWatcher.settings.headline_text);
+                                jQuery(_fareWatcher.settings.headline_selector).html(
+                                    _fareWatcher.settings.headline_text
+                                );
                                 jQuery(_fareWatcher.settings.logged_in_actions_selector).removeClass("hide");
                                 jQuery(_fareWatcher.settings.not_logged_in_actions_selector).addClass("hide");
                                 jQuery(_fareWatcher.settings.intro_selector).html("");
                             } else {
-                                jQuery(_fareWatcher.settings.headline_selector).html(_fareWatcher.settings.headline_default_text);
-                                jQuery(_fareWatcher.settings.intro_selector).html(_fareWatcher.settings.intro_text);
-                                jQuery(_fareWatcher.settings.fare_info_link_selector).html(_fareWatcher.settings.fare_info_link_text);
-                                jQuery(_fareWatcher.settings.fare_info_link_selector).attr("href", _fareWatcher.settings.fare_info_link_href);
-                                jQuery(_fareWatcher.settings.fare_info_link_selector).bind("click", function (e) {
-                                    e.preventDefault();
-                                    launchWindow(this.href, _fareWatcher.settings.popups_pref.width, _fareWatcher.settings.popups_pref.height);
-                                });
+                                jQuery(_fareWatcher.settings.headline_selector).html(
+                                    _fareWatcher.settings.headline_default_text
+                                );
+                                jQuery(_fareWatcher.settings.intro_selector).html(
+                                    _fareWatcher.settings.intro_text
+                                );
+                                jQuery(_fareWatcher.settings.fare_info_link_selector).html(
+                                    _fareWatcher.settings.fare_info_link_text
+                                );
+                                jQuery(_fareWatcher.settings.fare_info_link_selector).attr(
+                                    "href",
+                                    _fareWatcher.settings.fare_info_link_href
+                                );
+                                jQuery(_fareWatcher.settings.fare_info_link_selector).bind(
+                                    "click",
+                                    function (e) {
+                                        e.preventDefault();
+                                        launchWindow(
+                                            this.href,
+                                            _fareWatcher.settings.popups_pref.width,
+                                            _fareWatcher.settings.popups_pref.height
+                                        );
+                                    }
+                                );
                             }
                         }
                     },
                     init              : function (uid) {
                         var oScope = this;
                         if (uid !== "" && typeof(uid) !== "undefined") {
-                            var fwAJAX = $.get(oScope.settings.serviceUrl, oScope.settings.defaultDataHandler, "xml");
-                            jQuery(oScope.settings.headline_selector).html(oScope.settings.headline_loading_text);
+                            var fwAJAX = $.get(
+                                oScope.settings.serviceUrl,
+                                oScope.settings.defaultDataHandler,
+                                "xml"
+                            );
+                            jQuery(oScope.settings.headline_selector).html(
+                                oScope.settings.headline_loading_text
+                            );
                             jQuery(oScope.settings.intro_selector).html(oScope.settings.intro_loading_text);
                         }
                         jQuery(oScope.settings.popups_pref.link_selector).bind("click", function (e) {
                             e.preventDefault();
-                            launchWindow(this.href, oScope.settings.popups_pref.width, oScope.settings.popups_pref.height);
+                            launchWindow(
+                                this.href,
+                                oScope.settings.popups_pref.width,
+                                oScope.settings.popups_pref.height
+                            );
                         });
                     },
                     settings          : {
@@ -13138,9 +13413,11 @@
                             setTimeout(function () {
                                 Hoptoad.notify({
                                     message: message,
-                                    stack  : "()@" + (file
-                                        ? file + ":"
-                                        : "") + (line || "")
+                                    stack  : "()@" + (
+                                        file
+                                            ? file + ":"
+                                            : ""
+                                    ) + (line || "")
                                 });
                             }, 100);
                         }
@@ -13228,7 +13505,11 @@
                             }
                             this
                                 ._logdev
-                                .write(format_message(format_severity(severity), new Date(), progname, message), file, line);
+                                .write(
+                                    format_message(format_severity(severity), new Date(), progname, message),
+                                    file,
+                                    line
+                                );
                             return true;
                         },
                         debug          : function (progname, file, line) {
@@ -13611,9 +13892,11 @@
                                 .bindEvents(cb);
                             cb.cars.ready = true;
                         }
-                        $(".cb-to-city,.cb-pick-location,.countryScope,.cb-country,.cb-co-discount,.cb-fr" +
-                                "omdate, .cb-todate,.cb-state,.cb-car-type",
-                                __cb).trigger("change");
+                        $(
+                            ".cb-to-city,.cb-pick-location,.countryScope,.cb-country,.cb-co-discount,.cb-fr" +
+                                    "omdate, .cb-todate,.cb-state,.cb-car-type",
+                            __cb
+                        ).trigger("change");
                     },
                     ready         : false
                 },
@@ -13771,7 +14054,11 @@
                                             if ($("#co-geostate", form).is(":visible")) {
                                                 e = cb
                                                     .checkForm
-                                                    .checkLength($("#co-geostate", form).val(), cb.options.errorMsg.e_missing_info, 2);
+                                                    .checkLength(
+                                                        $("#co-geostate", form).val(),
+                                                        cb.options.errorMsg.e_missing_info,
+                                                        2
+                                                    );
                                                 if (e != -1) {
                                                     return cb.showError(e, $("#co-geostate", form));
                                                 }
@@ -13790,7 +14077,11 @@
                                         if ($("#co-poistate", form).length >= 1) {
                                             e = cb
                                                 .checkForm
-                                                .checkLength($("#co-poistate", form).val(), cb.options.errorMsg.e_missing_info, 2);
+                                                .checkLength(
+                                                    $("#co-poistate", form).val(),
+                                                    cb.options.errorMsg.e_missing_info,
+                                                    2
+                                                );
                                             if (e != -1) {
                                                 return cb.showError(e, $("#co-poistate", form));
                                             }
@@ -13937,7 +14228,10 @@
                                 if (jQuery("#nav-pd").attr("checked")) {
                                     e = cb
                                         .checkForm
-                                        .checkLength($("#act-destinations", form).val(), "Please select a destination from the drop down below.");
+                                        .checkLength(
+                                            $("#act-destinations", form).val(),
+                                            "Please select a destination from the drop down below."
+                                        );
                                     if (e != -1) {
                                         return cb.showError(e, $("#act-destinations", form));
                                     }
@@ -14104,9 +14398,11 @@
                                 .bindEvents(cb);
                             cb.flighthotel.ready = true;
                         }
-                        $(".cb-to-city,.cb-from-city,.cb-fromdate, .cb-todate,.cb-total-rooms,.cb-childre" +
-                                "n,.cb-room-child-ages select",
-                                __cb).trigger("change");
+                        $(
+                            ".cb-to-city,.cb-from-city,.cb-fromdate, .cb-todate,.cb-total-rooms,.cb-childre" +
+                                    "n,.cb-room-child-ages select",
+                            __cb
+                        ).trigger("change");
                     },
                     ready     : false
                 },
@@ -14202,8 +14498,14 @@
                         s += "&minorsAge4=" + $("select[name='minorsAge4']", __cb).val();
                         s += "&departure_dt=" + $("select[name='departure_dt']", __cb).val();
                         s += "&arrival_dt=" + $("select[name='arrival_dt']", __cb).val();
-                        s += "&departDateFlexibility=" + $("select[name='departDateFlexibility']", __cb).val();
-                        s += "&returnDateFlexibility=" + $("select[name='returnDateFlexibility']", __cb).val();
+                        s += "&departDateFlexibility=" + $(
+                            "select[name='departDateFlexibility']",
+                            __cb
+                        ).val();
+                        s += "&returnDateFlexibility=" + $(
+                            "select[name='returnDateFlexibility']",
+                            __cb
+                        ).val();
                         return s;
                     },
                     compareAirports  : function (event) {
@@ -14358,9 +14660,11 @@
                                 $("input[name='flightType']", __cb).attr("value", "roundtrip");
                                 __cb.removeClass("form-fow");
                         }
-                        $(".cb-to-city,.cb-from-city,.cb-fromdate, .cb-todate,.cb-state,.cb-car-type,.cb-" +
-                                "children,.cb-csa input,input[name='dateTypeSelect']:checked",
-                                __cb).trigger("change");
+                        $(
+                            ".cb-to-city,.cb-from-city,.cb-fromdate, .cb-todate,.cb-state,.cb-car-type,.cb-" +
+                                    "children,.cb-csa input,input[name='dateTypeSelect']:checked",
+                            __cb
+                        ).trigger("change");
                     },
                     multiDestSearch  : function (event) {
                         var __cb = $("#cb-form-fo");
@@ -14385,7 +14689,10 @@
                             _index = i + 1;
                             $(this).attr("name", "minorAge" + _index + "Room1");
                         });
-                        $("#cb-form-fo").attr("action", $("input[name='fhPath']", event.data.cb.options.cb).val());
+                        $("#cb-form-fo").attr(
+                            "action",
+                            $("input[name='fhPath']", event.data.cb.options.cb).val()
+                        );
                         $("#airTripType").removeAttr("disabled");
                         event.data.cb.options.flightXsell = true;
                     },
@@ -14396,7 +14703,10 @@
                         a.each(function (i) {
                             $(this).attr("name", "minorsAge" + i);
                         });
-                        $("#cb-form-fo").attr("action", $("input[name='foPath']", event.data.cb.options.cb).val());
+                        $("#cb-form-fo").attr(
+                            "action",
+                            $("input[name='foPath']", event.data.cb.options.cb).val()
+                        );
                         document
                             .getElementById("airTripType")
                             .setAttribute("disabled", "disabled");
@@ -14530,8 +14840,9 @@
                             var roomNo = jQuery("#ho-totalrooms").val();
                             var roomDetails = "";
                             for (var x = 1; x <= roomNo; x += 1) {
-                                roomDetails += "rm" + x + "|" + jQuery("input#ho-adults" + x).val() + "|" + jQuery("input#ho-minors" +
-                                        x).val();
+                                roomDetails += "rm" + x + "|" + jQuery("input#ho-adults" + x).val() + "|" + jQuery(
+                                    "input#ho-minors" + x
+                                ).val();
                             }
                             _gaq.push(["_setCustomVar", 11, "HowMany-Rms", roomDetails, 3]);
                             var topSecret = (jQuery("#ho-top-secret").val())
@@ -14554,8 +14865,9 @@
                             var roomNo = jQuery("#hcx-totalrooms").val();
                             var roomDetails = "";
                             for (var x = 1; x <= roomNo; x += 1) {
-                                roomDetails += "rm" + x + "|" + jQuery("input#hcx-adults" + x).val() + "|" + jQuery("input#hcx-minors" +
-                                        x).val() + "|";
+                                roomDetails += "rm" + x + "|" + jQuery("input#hcx-adults" + x).val() + "|" + jQuery(
+                                    "input#hcx-minors" + x
+                                ).val() + "|";
                             }
                             _gaq.push(["_setCustomVar", 11, "HowMany-Rms", roomDetails, 3]);
                             _gaq.push([
@@ -14582,7 +14894,8 @@
                                 ? "CompareSurroundingAirport"
                                 : "";
                             _gaq.push([
-                                "_setCustomVar", 15, "CheckBox", tripType + "|" + surroundingAirport,
+                                "_setCustomVar", 15, "CheckBox", tripType + "|" +
+                                        surroundingAirport,
                                 3
                             ]);
                             _gaq.push([
@@ -14613,17 +14926,24 @@
                         case "cro":
                             _gaq.push(["_setCustomVar", 6, "SearchType", "Cruise", 3]);
                             _gaq.push([
-                                "_setCustomVar", 8, to + "|" + jQuery("#cruiseLength").val() + "|" + jQuery("#cru-datemonth").val() +
-                                        "|" + jQuery("#cro-cruiseline").val(),
+                                "_setCustomVar", 8, to + "|" + jQuery("#cruiseLength").val() + "|" + jQuery(
+                                    "#cru-datemonth"
+                                ).val() + "|" + jQuery("#cro-cruiseline").val(),
                                 3
                             ]);
-                            var senior = (jQuery("form#form-cro input:checkbox[name='srRt']").attr("checked"))
+                            var senior = (
+                                jQuery("form#form-cro input:checkbox[name='srRt']").attr("checked")
+                            )
                                 ? "55yrs"
                                 : "";
-                            var military = (jQuery("form#form-cro input:checkbox[name='milRt']").attr("checked"))
+                            var military = (
+                                jQuery("form#form-cro input:checkbox[name='milRt']").attr("checked")
+                            )
                                 ? "ServedMil"
                                 : "";
-                            var cruised = (jQuery("form#form-cro input:checkbox[name='pPc']").attr("checked"))
+                            var cruised = (
+                                jQuery("form#form-cro input:checkbox[name='pPc']").attr("checked")
+                            )
                                 ? "Cruised"
                                 : "";
                             _gaq.push([
@@ -14719,10 +15039,12 @@
                         cb
                             .hotels
                             .fixLSC($(".cb-to-city", __cb), __cb);
-                        $(".cb-to-city,.cb-pick-location, .cb-co-discount,.cb-fromdate, .cb-todate,.cb-st" +
-                                "ate,.cb-country,.cb-car-type,.cb-total-rooms,.cb-children,.cb-room-child-ages " +
-                                "select",
-                                __cb).trigger("change");
+                        $(
+                            ".cb-to-city,.cb-pick-location, .cb-co-discount,.cb-fromdate, .cb-todate,.cb-st" +
+                                    "ate,.cb-country,.cb-car-type,.cb-total-rooms,.cb-children,.cb-room-child-ages " +
+                                    "select",
+                            __cb
+                        ).trigger("change");
                     },
                     ready     : false
                 },
@@ -14890,9 +15212,11 @@
                         cb
                             .hotels
                             .fixLSC($(".cb-to-city", __cb), __cb);
-                        $(".cb-state,.cb-country,.cb-to-city,.cb-fromdate, .cb-todate,.cb-total-rooms,.cb" +
-                                "-children,.cb-room-child-ages select,.cb-ts-hotels",
-                                __cb).trigger("change");
+                        $(
+                            ".cb-state,.cb-country,.cb-to-city,.cb-fromdate, .cb-todate,.cb-total-rooms,.cb" +
+                                    "-children,.cb-room-child-ages select,.cb-ts-hotels",
+                            __cb
+                        ).trigger("change");
                     },
                     ready                  : false,
                     searchGroup            : function (cb, form) {
@@ -14903,8 +15227,10 @@
                         _ci = $(".cb-fromdate", form).val();
                         _co = $(".cb-todate", form).val();
                         _c  = $(".cb-to-city", form).val();
-                        window.open(_url + "?Checkin=" + _ci + "&Checkout=" + _co + "&City=" + _c + "&R" +
-                                "ooms=5", "searchGroupSite");
+                        window.open(
+                            _url + "?Checkin=" + _ci + "&Checkout=" + _co + "&City=" + _c + "&Rooms=5",
+                            "searchGroupSite"
+                        );
                     },
                     setTopSecretDestination: function (event) {
                         var __cb = $("." + event.data.cb.options.currentView),
@@ -15066,7 +15392,10 @@
                         .addClass("cb-error");
                     $(".cb-error-txt", this.options.cb).text(msg);
                     this.options.errorItem.element = element;
-                    this.options.errorItem.label   = $("label[for='" + element.attr("id") + "']", this.options.cb);
+                    this.options.errorItem.label   = $(
+                        "label[for='" + element.attr("id") + "']",
+                        this.options.cb
+                    );
                     element.css("backgroundColor", this.options.errorBackgroundColor);
                     this
                         .options
@@ -15135,10 +15464,20 @@
                             var propertyName = getPropertyName(parentPath, key);
                             if ($.inArray(propertyPath, settings.ignore) == -1) {
                                 if ($.isArray(json[key])) {
-                                    children += createNodeFromArray(json[key], propertyName, propertyPath + ".", depth +
-                                            1, suffix);
+                                    children += createNodeFromArray(
+                                        json[key],
+                                        propertyName,
+                                        propertyPath + ".",
+                                        depth + 1,
+                                        suffix
+                                    );
                                 } else if (typeof(json[key]) === "object") {
-                                    children += convertToXml(json[key], propertyName, propertyPath + ".", depth + 1);
+                                    children += convertToXml(
+                                        json[key],
+                                        propertyName,
+                                        propertyPath + ".",
+                                        depth + 1
+                                    );
                                 } else {
                                     if ($.inArray(propertyPath, settings.nodes) != -1) {
                                         children += createTextNode(propertyName, json[key], depth, suffix);
@@ -15187,8 +15526,8 @@
                                     var textSuffix = (settings.formatTextNodes)
                                         ? suffix + getIndent(depth)
                                         : "";
-                                    xmlNode += getIndent(depth) + "<" + name + ">" + textPrefix + source[index] + textSuffix +
-                                            "</" + name + ">" + suffix;
+                                    xmlNode += getIndent(depth) + "<" + name + ">" + textPrefix + source[index] +
+                                            textSuffix + "</" + name + ">" + suffix;
                                 }
                             } else {
                                 xmlNode += convertToXml(source[index], name, path, depth);
@@ -15206,8 +15545,8 @@
                     var textSuffix = (settings.formatTextNodes)
                         ? suffix + getIndent(parentDepth + 1)
                         : "";
-                    var xmlNode = getIndent(parentDepth + 1) + "<" + name + ">" + textPrefix + text + textSuffix +
-                            "</" + name + ">" + suffix;
+                    var xmlNode = getIndent(parentDepth + 1) + "<" + name + ">" +
+                            textPrefix + text + textSuffix + "</" + name + ">" + suffix;
                     return xmlNode;
                 };
             })(jQuery); // .
@@ -15374,7 +15713,9 @@
                                     }
                                     return features.join(",");
                                 })(winfeatures);
-                                popup.win = window.open("", "RegistrationWindow" + (new Date()).getTime(), windowfeautres);
+                                popup.win = window.open("", "RegistrationWindow" + (
+                                    new Date()
+                                ).getTime(), windowfeautres);
                                 popup
                                     .win
                                     .blur();
@@ -15475,23 +15816,42 @@
                                 var oe = jQuery("#" + this.oPopupComponents.sErrorMessagesModule).get(0);
                                 switch (this.sState) {
                                     case module_states.SA_WIDGET:
-                                        this.hide(this.oWidgetComponents.sSignupModuleSubscribeImage, this.oWidgetComponents.sSignupModuleSubscribeText);
+                                        this.hide(
+                                            this.oWidgetComponents.sSignupModuleSubscribeImage,
+                                            this.oWidgetComponents.sSignupModuleSubscribeText
+                                        );
                                         if (field_error === this.oValidationErrorCodes.sBadMail) {
                                             this.show(this.oWidgetComponents.sSignupModuleBadMail);
-                                            this.hide(this.oWidgetComponents.sSignupModuleLongMail, this.oWidgetComponents.sSignupModuleComError);
+                                            this.hide(
+                                                this.oWidgetComponents.sSignupModuleLongMail,
+                                                this.oWidgetComponents.sSignupModuleComError
+                                            );
                                         } else {
                                             this.show(this.oWidgetComponents.sSignupModuleLongMail);
-                                            this.hide(this.oWidgetComponents.sSignupModuleBadMail, this.oWidgetComponents.sSignupModuleComError);
+                                            this.hide(
+                                                this.oWidgetComponents.sSignupModuleBadMail,
+                                                this.oWidgetComponents.sSignupModuleComError
+                                            );
                                         }
                                         break;
                                     case module_states.HP_WIDGET:
-                                        this.hide(this.oWidgetComponents.sSignupModuleSubscribeImage, this.oWidgetComponents.sSignupModuleSubscribeText, this.oWidgetComponents.sExistingAccountModule);
+                                        this.hide(
+                                            this.oWidgetComponents.sSignupModuleSubscribeImage,
+                                            this.oWidgetComponents.sSignupModuleSubscribeText,
+                                            this.oWidgetComponents.sExistingAccountModule
+                                        );
                                         if (field_error === this.oValidationErrorCodes.sBadMail) {
                                             this.show(this.oWidgetComponents.sSignupModuleBadMail);
-                                            this.hide(this.oWidgetComponents.sSignupModuleLongMail, this.oWidgetComponents.sSignupModuleComError);
+                                            this.hide(
+                                                this.oWidgetComponents.sSignupModuleLongMail,
+                                                this.oWidgetComponents.sSignupModuleComError
+                                            );
                                         } else {
                                             this.show(this.oWidgetComponents.sSignupModuleLongMail);
-                                            this.hide(this.oWidgetComponents.sSignupModuleBadMail, this.oWidgetComponents.sSignupModuleComError);
+                                            this.hide(
+                                                this.oWidgetComponents.sSignupModuleBadMail,
+                                                this.oWidgetComponents.sSignupModuleComError
+                                            );
                                         }
                                         switch (field_error) {
                                             case this.oValidationErrorCodes.sBadMail:
@@ -15504,21 +15864,42 @@
                                         }
                                         break;
                                     case module_states.SIGNUP:
-                                        this.show(this.oPopupComponents.sSignupModule, this.oPopupComponents.sGoodMail, this.oPopupComponents.sErrorModule, this.oPopupComponents.sErrorDetailsModule);
-                                        this.hide(this.oPopupComponents.sExistingAccountModule, this.oPopupComponents.sMultiMatchModule, this.oPopupComponents.sIntroTextModule, this.oPopupComponents.sAlertModule);
+                                        this.show(
+                                            this.oPopupComponents.sSignupModule,
+                                            this.oPopupComponents.sGoodMail,
+                                            this.oPopupComponents.sErrorModule,
+                                            this.oPopupComponents.sErrorDetailsModule
+                                        );
+                                        this.hide(
+                                            this.oPopupComponents.sExistingAccountModule,
+                                            this.oPopupComponents.sMultiMatchModule,
+                                            this.oPopupComponents.sIntroTextModule,
+                                            this.oPopupComponents.sAlertModule
+                                        );
                                         if (field_error === this.oValidationErrorCodes.sSignupError) {
-                                            this.hide(this.oPopupComponents.sSignupModuleAutoMail, this.oPopupComponents.sErrorDetailsModule);
+                                            this.hide(
+                                                this.oPopupComponents.sSignupModuleAutoMail,
+                                                this.oPopupComponents.sErrorDetailsModule
+                                            );
                                             this.show(this.oPopupComponents.sSignupModuleMail);
                                             this.displayMsg(this.oPopupComponents.sErrorModule, oe[field_error].value);
                                             this.iRetries += 1;
                                         } else {
                                             if (field_error === this.oValidationErrorCodes.sBadMail) {
                                                 this.displayMsg(this.oPopupComponents.sErrorModule, oe.e_msg_badmail.value);
-                                                this.displayMsg(this.oPopupComponents.sErrorDetailsModule, oe.e_detail_badmail.value);
+                                                this.displayMsg(
+                                                    this.oPopupComponents.sErrorDetailsModule,
+                                                    oe.e_detail_badmail.value
+                                                );
                                             } else {
-                                                this.displayMsg(this.oPopupComponents.sErrorModule, oe.e_msg_invalid_information.value);
-                                                this.displayMsg(this.oPopupComponents.sErrorDetailsModule, oe.e_msg_to_do.value +
-                                                        oe[field_error].value);
+                                                this.displayMsg(
+                                                    this.oPopupComponents.sErrorModule,
+                                                    oe.e_msg_invalid_information.value
+                                                );
+                                                this.displayMsg(
+                                                    this.oPopupComponents.sErrorDetailsModule,
+                                                    oe.e_msg_to_do.value + oe[field_error].value
+                                                );
                                             }
                                         }
                                         break;
@@ -15529,19 +15910,33 @@
                                 jQuery(this.oForm).trigger("eDataCollect");
                                 switch (this.sState) {
                                     case module_states.SA_WIDGET:
-                                        this.show(this.oWidgetComponents.sSignupModuleSubscribeText, this.oWidgetComponents.sSignupModuleSubscribeImage);
-                                        this.hide(this.oWidgetComponents.sSignupModuleBadMail, this.oWidgetComponents.sSignupModuleLongMail, this.oWidgetComponents.sSignupModuleComError);
+                                        this.show(
+                                            this.oWidgetComponents.sSignupModuleSubscribeText,
+                                            this.oWidgetComponents.sSignupModuleSubscribeImage
+                                        );
+                                        this.hide(
+                                            this.oWidgetComponents.sSignupModuleBadMail,
+                                            this.oWidgetComponents.sSignupModuleLongMail,
+                                            this.oWidgetComponents.sSignupModuleComError
+                                        );
                                         break;
                                     case module_states.HP_WIDGET:
                                         this.show(this.oWidgetComponents.sSignupModuleSubscribeText);
-                                        this.hide(this.oWidgetComponents.sSignupModuleBadMail, this.oWidgetComponents.sSignupModuleLongMail, this.oWidgetComponents.sSignupModuleComError, this.oWidgetComponents.sExistingAccountModule);
+                                        this.hide(
+                                            this.oWidgetComponents.sSignupModuleBadMail,
+                                            this.oWidgetComponents.sSignupModuleLongMail,
+                                            this.oWidgetComponents.sSignupModuleComError,
+                                            this.oWidgetComponents.sExistingAccountModule
+                                        );
                                         break;
                                 }
                             },
                             onDataValidate             : function () {
                                 var oScope = this;
                                 if (this.sState == module_states.HP_WIDGET) {
-                                    jQuery("#" + oScope.oWidgetComponents.sSignupModule).removeClass("try-again long-mail bad-mail");
+                                    jQuery("#" + oScope.oWidgetComponents.sSignupModule).removeClass(
+                                        "try-again long-mail bad-mail"
+                                    );
                                     jQuery("#" + this.oWidgetComponents.sSignupModuleBadMail).hide();
                                 }
                                 var errors = this.validateFormData();
@@ -15561,7 +15956,14 @@
                                         this.show(this.oWidgetComponents.sNoMatchModule);
                                         break;
                                     case module_states.SIGNUP:
-                                        this.hide(this.oPopupComponents.sSignupModule, this.oPopupComponents.sGoodMail, this.oPopupComponents.sErrorModule, this.oPopupComponents.sErrorDetailsModule, this.oPopupComponents.sAlertModule, this.oPopupComponents.sIntroTextModule);
+                                        this.hide(
+                                            this.oPopupComponents.sSignupModule,
+                                            this.oPopupComponents.sGoodMail,
+                                            this.oPopupComponents.sErrorModule,
+                                            this.oPopupComponents.sErrorDetailsModule,
+                                            this.oPopupComponents.sAlertModule,
+                                            this.oPopupComponents.sIntroTextModule
+                                        );
                                         this.show(this.oPopupComponents.sNoMatchModule);
                                         break;
                                 }
@@ -15572,8 +15974,14 @@
                             onMaxRetries               : function () {
                                 switch (this.sState) {
                                     case module_states.SIGNUP:
-                                        jQuery("#" + this.oPopupComponents.sSignupModuleMail).attr("disabled", "disabled");
-                                        jQuery("#" + this.oPopupComponents.sSignupModuleMailConfirm).attr("disabled", "disabled");
+                                        jQuery("#" + this.oPopupComponents.sSignupModuleMail).attr(
+                                            "disabled",
+                                            "disabled"
+                                        );
+                                        jQuery("#" + this.oPopupComponents.sSignupModuleMailConfirm).attr(
+                                            "disabled",
+                                            "disabled"
+                                        );
                                         break;
                                 }
                             },
@@ -15583,7 +15991,10 @@
                             onMultiMatch               : function () {
                                 switch (this.sState) {
                                     case module_states.HP_WIDGET:
-                                        this.hide(this.oWidgetComponents.sSignupModule, this.oWidgetComponents.sExistingAccountModule);
+                                        this.hide(
+                                            this.oWidgetComponents.sSignupModule,
+                                            this.oWidgetComponents.sExistingAccountModule
+                                        );
                                         this.show(this.oWidgetComponents.sSingleMatchModule);
                                         break;
                                     case module_states.SA_WIDGET:
@@ -15591,25 +16002,53 @@
                                         this.show(this.oWidgetComponents.sSingleMatchModule);
                                         break;
                                     case module_states.SIGNUP:
-                                        $(this.oPopupComponents.sNewAccountModuleMail).innerHTML = this.oFormData.Email + ".<br><br>";
+                                        $(this.oPopupComponents.sNewAccountModuleMail).innerHTML = this.oFormData.Email +
+                                                ".<br><br>";
                                         this.show(this.oPopupComponents.sExistingAccountModule);
-                                        this.hide(this.oPopupComponents.sSignupModule, this.oPopupComponents.sGoodMail, this.oPopupComponents.sErrorModule, this.oPopupComponents.sErrorDetailsModule, this.oPopupComponents.sAlertModule, this.oPopupComponents.sIntroTextModule, this.oPopupComponents.sNewAccountModuleMail, this.oPopupComponents.sNewAccountModuleMailLabel);
+                                        this.hide(
+                                            this.oPopupComponents.sSignupModule,
+                                            this.oPopupComponents.sGoodMail,
+                                            this.oPopupComponents.sErrorModule,
+                                            this.oPopupComponents.sErrorDetailsModule,
+                                            this.oPopupComponents.sAlertModule,
+                                            this.oPopupComponents.sIntroTextModule,
+                                            this.oPopupComponents.sNewAccountModuleMail,
+                                            this.oPopupComponents.sNewAccountModuleMailLabel
+                                        );
                                         break;
                                 }
                             },
                             onNewAccount               : function () {
                                 switch (this.sState) {
                                     case module_states.SIGNUP:
-                                        $(this.oPopupComponents.sNewAccountModuleMail).innerHTML = this.oFormData.Email + ".<br><br>";
+                                        $(this.oPopupComponents.sNewAccountModuleMail).innerHTML = this.oFormData.Email +
+                                                ".<br><br>";
                                         this.show(this.oPopupComponents.sNewAccountModule);
-                                        this.hide(this.oPopupComponents.sSignupModule, this.oPopupComponents.sGoodMail, this.oPopupComponents.sErrorModule, this.oPopupComponents.sErrorDetailsModule, this.oPopupComponents.sAlertModule, this.oPopupComponents.sIntroTextModule);
+                                        this.hide(
+                                            this.oPopupComponents.sSignupModule,
+                                            this.oPopupComponents.sGoodMail,
+                                            this.oPopupComponents.sErrorModule,
+                                            this.oPopupComponents.sErrorDetailsModule,
+                                            this.oPopupComponents.sAlertModule,
+                                            this.oPopupComponents.sIntroTextModule
+                                        );
                                         break;
                                 }
                             },
                             onNoMatch                  : function () {
                                 switch (this.sState) {
                                     case module_states.SIGNUP:
-                                        this.hide(this.oPopupComponents.sSignupModule, this.oPopupComponents.sGoodMail, this.oPopupComponents.sErrorModule, this.oPopupComponents.sErrorDetailsModule, this.oPopupComponents.sAlertModule, this.oPopupComponents.sIntroTextModule, this.oPopupComponents.sExistingAccountModule, this.oPopupComponents.sNewAccountModule, this.oPopupComponents.sMultiMatchModule);
+                                        this.hide(
+                                            this.oPopupComponents.sSignupModule,
+                                            this.oPopupComponents.sGoodMail,
+                                            this.oPopupComponents.sErrorModule,
+                                            this.oPopupComponents.sErrorDetailsModule,
+                                            this.oPopupComponents.sAlertModule,
+                                            this.oPopupComponents.sIntroTextModule,
+                                            this.oPopupComponents.sExistingAccountModule,
+                                            this.oPopupComponents.sNewAccountModule,
+                                            this.oPopupComponents.sMultiMatchModule
+                                        );
                                         this.show(this.oPopupComponents.sNoMatchModule);
                                         break;
                                     case module_states.HP_WIDGET:
@@ -15635,26 +16074,61 @@
                                     case module_states.SIGNUP:
                                         $(this.oPopupComponents.sNewAccountModuleMail).innerHTML = this.oFormData.Email;
                                         this.show(this.oPopupComponents.sExistingAccountModule);
-                                        this.hide(this.oPopupComponents.sSignupModule, this.oPopupComponents.sGoodMail, this.oPopupComponents.sErrorModule, this.oPopupComponents.sErrorDetailsModule, this.oPopupComponents.sAlertModule, this.oPopupComponents.sIntroTextModule);
+                                        this.hide(
+                                            this.oPopupComponents.sSignupModule,
+                                            this.oPopupComponents.sGoodMail,
+                                            this.oPopupComponents.sErrorModule,
+                                            this.oPopupComponents.sErrorDetailsModule,
+                                            this.oPopupComponents.sAlertModule,
+                                            this.oPopupComponents.sIntroTextModule
+                                        );
                                         break;
                                 }
                             },
                             onSubscriptionFailure      : function () {
                                 switch (this.sState) {
                                     case module_states.HP_WIDGET:
-                                        this.show(this.oWidgetComponents.sSignupModuleComError, this.oWidgetComponents.sSignupModuleSubscribeText);
-                                        this.hide(this.oWidgetComponents.sSignupModuleBadMail, this.oWidgetComponents.sSignupModuleSubscribeImage, this.oWidgetComponents.sLongMail, this.oWidgetComponents.sExistingAccountModule);
+                                        this.show(
+                                            this.oWidgetComponents.sSignupModuleComError,
+                                            this.oWidgetComponents.sSignupModuleSubscribeText
+                                        );
+                                        this.hide(
+                                            this.oWidgetComponents.sSignupModuleBadMail,
+                                            this.oWidgetComponents.sSignupModuleSubscribeImage,
+                                            this.oWidgetComponents.sLongMail,
+                                            this.oWidgetComponents.sExistingAccountModule
+                                        );
                                         jQuery("#" + this.oWidgetComponents.sSignupModule).addClass("try-again");
                                         break;
                                     case module_states.SA_WIDGET:
-                                        this.show(this.oWidgetComponents.sSignupModuleSubscribeImage, this.oWidgetComponents.sSignupModuleSubscribeText, this.oWidgetComponents.sSignupModuleComError);
-                                        this.hide(this.oWidgetComponents.sSignupModuleBadMail, this.oWidgetComponents.sLongMail);
+                                        this.show(
+                                            this.oWidgetComponents.sSignupModuleSubscribeImage,
+                                            this.oWidgetComponents.sSignupModuleSubscribeText,
+                                            this.oWidgetComponents.sSignupModuleComError
+                                        );
+                                        this.hide(
+                                            this.oWidgetComponents.sSignupModuleBadMail,
+                                            this.oWidgetComponents.sLongMail
+                                        );
                                         break;
                                     case module_states.SIGNUP:
                                         var oe = $(this.oPopupComponents.sErrorMessagesModule);
-                                        this.show(this.oPopupComponents.sSignupModule, this.oPopupComponents.sGoodMail, this.oPopupComponents.sErrorModule, this.oPopupComponents.sErrorDetailsModule);
-                                        this.hide(this.oPopupComponents.sExistingAccountModule, this.oPopupComponents.sMultiMatchModule, this.oPopupComponents.sIntroTextModule, this.oPopupComponents.sAlertModule);
-                                        this.displayMsg(this.oPopupComponents.sErrorModule, oe[this.oValidationErrorCodes.sComunicationError].value);
+                                        this.show(
+                                            this.oPopupComponents.sSignupModule,
+                                            this.oPopupComponents.sGoodMail,
+                                            this.oPopupComponents.sErrorModule,
+                                            this.oPopupComponents.sErrorDetailsModule
+                                        );
+                                        this.hide(
+                                            this.oPopupComponents.sExistingAccountModule,
+                                            this.oPopupComponents.sMultiMatchModule,
+                                            this.oPopupComponents.sIntroTextModule,
+                                            this.oPopupComponents.sAlertModule
+                                        );
+                                        this.displayMsg(
+                                            this.oPopupComponents.sErrorModule,
+                                            oe[this.oValidationErrorCodes.sComunicationError].value
+                                        );
                                         break;
                                 }
                             },
@@ -15747,16 +16221,35 @@
                             switch (this.sState) {
                                 case module_states.SIGNUP:
                                     this.displayMsg(this.oPopupComponents.sIntroTextModule, oe.i_txt_signup.value);
-                                    this.hide(this.oPopupComponents.sMultiMatchModule, this.oPopupComponents.sNewAccountModule, this.oPopupComponents.sNewAccountModule, this.oPopupComponents.sExistingAccountModule, this.oPopupComponents.sErrorModule, this.oPopupComponents.sErrorDetailsModule, this.oPopupComponents.sAlertModule);
-                                    this.show(this.oPopupComponents.sSignupModule, this.oPopupComponents.sGoodMail, this.oPopupComponents.sIntroTextModule);
+                                    this.hide(
+                                        this.oPopupComponents.sMultiMatchModule,
+                                        this.oPopupComponents.sNewAccountModule,
+                                        this.oPopupComponents.sNewAccountModule,
+                                        this.oPopupComponents.sExistingAccountModule,
+                                        this.oPopupComponents.sErrorModule,
+                                        this.oPopupComponents.sErrorDetailsModule,
+                                        this.oPopupComponents.sAlertModule
+                                    );
+                                    this.show(
+                                        this.oPopupComponents.sSignupModule,
+                                        this.oPopupComponents.sGoodMail,
+                                        this.oPopupComponents.sIntroTextModule
+                                    );
                                     break;
                                 case module_states.HP_WIDGET:
                                     this.show(this.oWidgetComponents.sSignupModule);
-                                    this.hide(this.oWidgetComponents.sSingleMatchModule, this.oWidgetComponents.sNoMatchModule, this.oWidgetComponents.sExistingAccountModule);
+                                    this.hide(
+                                        this.oWidgetComponents.sSingleMatchModule,
+                                        this.oWidgetComponents.sNoMatchModule,
+                                        this.oWidgetComponents.sExistingAccountModule
+                                    );
                                     break;
                                 case module_states.SA_WIDGET:
                                     this.show(this.oWidgetComponents.sSignupModule);
-                                    this.hide(this.oWidgetComponents.sSingleMatchModule, this.oWidgetComponents.sNoMatchModule);
+                                    this.hide(
+                                        this.oWidgetComponents.sSingleMatchModule,
+                                        this.oWidgetComponents.sNoMatchModule
+                                    );
                                     break;
                             }
                         },
@@ -15798,7 +16291,13 @@
                                 jQuery(module_config.subscription_link).bind("click", function (e) {
                                     e.preventDefault();
                                     popup.showWindow();
-                                    popup.show("SignUpPopup", "", oScope.iSbsSource, oScope.sService, module_states.SIGNUP);
+                                    popup.show(
+                                        "SignUpPopup",
+                                        "",
+                                        oScope.iSbsSource,
+                                        oScope.sService,
+                                        module_states.SIGNUP
+                                    );
                                 });
                                 if (oScope.sState !== module_states.SIGNUP) {
                                     return;
@@ -15907,11 +16406,15 @@
                             switch (this.sState) {
                                 case module_states.SIGNUP_LINK:
                                     emailSubmit = this.oPopupComponents.sSignupModuleSubmit;
-                                    jQuery("#" + this.oPopupComponents.sSignupModuleAutoMail).html(jQuery("#" + this.oPopupComponents.sSignupModuleMail).attr("value"));
+                                    jQuery("#" + this.oPopupComponents.sSignupModuleAutoMail).html(jQuery(
+                                        "#" + this.oPopupComponents.sSignupModuleMail
+                                    ).attr("value"));
                                     break;
                                 case module_states.SIGNUP:
                                     emailSubmit = this.oPopupComponents.sSignupModuleSubmit;
-                                    jQuery("#" + this.oPopupComponents.sSignupModuleAutoMail).html(jQuery("#" + this.oPopupComponents.sSignupModuleMail).attr("value"));
+                                    jQuery("#" + this.oPopupComponents.sSignupModuleAutoMail).html(jQuery(
+                                        "#" + this.oPopupComponents.sSignupModuleMail
+                                    ).attr("value"));
                                     break;
                                 case module_states.HP_WIDGET:
                                     emailSubmit = this.oWidgetComponents.sSignupModuleSubmit;
@@ -15923,8 +16426,9 @@
                                     break;
                             }
                             var onSubmit = function (e) {
-                                if ((oScope.sState == module_states.HP_WIDGET || oScope.sState == module_states.SA_WIDGET) && !(jQuery("#" +
-                                        oScope.oWidgetComponents.sSignupModuleSubscribeMail).attr("value").match(/[A-Za-z0-9._+\-]+/))) {
+                                if ((oScope.sState == module_states.HP_WIDGET || oScope.sState == module_states.SA_WIDGET) && !(jQuery(
+                                    "#" + oScope.oWidgetComponents.sSignupModuleSubscribeMail
+                                ).attr("value").match(/[A-Za-z0-9._+\-]+/))) {
                                     return;
                                 }
                                 jQuery(e.data.oForm).trigger("eDataValidate");
@@ -16023,7 +16527,11 @@
                                         if (oScope.sState == module_states.HP_WIDGET) {
                                             jQuery("#" + emailSubmit).removeClass("display_inactive");
                                         }
-                                        var continueProcessing = oScope.fServiceResponseCallback(SubscriptionsConstants.FAILURE_RESPONSE, oScope.oFormData, "");
+                                        var continueProcessing = oScope.fServiceResponseCallback(
+                                            SubscriptionsConstants.FAILURE_RESPONSE,
+                                            oScope.oFormData,
+                                            ""
+                                        );
                                         if (continueProcessing) {
                                             jQuery(oScope.oForm).trigger("SubscriptionFailure");
                                         }
@@ -16044,7 +16552,11 @@
                                                     .text();
                                                 oServiceResponse              = oSubscriptionResponse.Message;
                                             });
-                                        var continueProcessing = oScope.fServiceResponseCallback(oSubscriptionResponse.Status, oScope.oFormData, xml);
+                                        var continueProcessing = oScope.fServiceResponseCallback(
+                                            oSubscriptionResponse.Status,
+                                            oScope.oFormData,
+                                            xml
+                                        );
                                         if (!continueProcessing) {
                                             return;
                                         }
@@ -16052,25 +16564,37 @@
                                             switch (oSubscriptionResponse.Message) {
                                                 case Subscriptions.SINGLE_MATCH_RESPONSE:
                                                     jQuery(oScope.oForm).trigger("TrackSingleMatch");
-                                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
-                                                            "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.SINGLE_MATCH);
+                                                    vsTrackClick(
+                                                        oSubscriptionRequest.sVSTrackUrl,
+                                                        Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX + "." + oScope.sState + "." +
+                                                                Subscriptions.VS_TRACK_CODES.SINGLE_MATCH
+                                                    );
                                                     jQuery(oScope.oForm).trigger("SingleMatch");
                                                     break;
                                                 case Subscriptions.MULTI_MATCH_RESPONSE:
-                                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
-                                                            "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.MULTI_MATCH);
+                                                    vsTrackClick(
+                                                        oSubscriptionRequest.sVSTrackUrl,
+                                                        Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX + "." + oScope.sState + "." +
+                                                                Subscriptions.VS_TRACK_CODES.MULTI_MATCH
+                                                    );
                                                     jQuery(oScope.oForm).trigger("TrackMultiMatch");
                                                     jQuery(oScope.oForm).trigger("MultiMatch");
                                                     break;
                                                 case Subscriptions.NEW_ACCOUNT_RESPONSE:
-                                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
-                                                            "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.NEW_ACCOUNT);
+                                                    vsTrackClick(
+                                                        oSubscriptionRequest.sVSTrackUrl,
+                                                        Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX + "." + oScope.sState + "." +
+                                                                Subscriptions.VS_TRACK_CODES.NEW_ACCOUNT
+                                                    );
                                                     jQuery(oScope.oForm).trigger("TrackNewAccount");
                                                     jQuery(oScope.oForm).trigger("NewAccount");
                                                     break;
                                                 case Subscriptions.EXISTING_ACCOUNT_RESPONSE:
-                                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
-                                                            "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.EXISTING_ACCOUNT);
+                                                    vsTrackClick(
+                                                        oSubscriptionRequest.sVSTrackUrl,
+                                                        Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX + "." + oScope.sState + "." +
+                                                                Subscriptions.VS_TRACK_CODES.EXISTING_ACCOUNT
+                                                    );
                                                     jQuery(oScope.oForm).trigger("TrackExistingAccount");
                                                     jQuery(oScope.oForm).trigger("ExistingAccount");
                                                     break;
@@ -16079,23 +16603,35 @@
                                             if (oSubscriptionResponse.Status == Subscriptions.FAILURE_RESPONSE) {
                                                 switch (oSubscriptionResponse.Message) {
                                                     case Subscriptions.INVALID_PARAMETERS_RESPONSE:
-                                                        vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
-                                                                "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.INVALID_PARAMETERS);
+                                                        vsTrackClick(
+                                                            oSubscriptionRequest.sVSTrackUrl,
+                                                            Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX + "." + oScope.sState + "." +
+                                                                    Subscriptions.VS_TRACK_CODES.INVALID_PARAMETERS
+                                                        );
                                                         jQuery(oScope.oForm).trigger("InvalidParameters");
                                                         break;
                                                     case Subscriptions.MISSING_PARAMETERS_RESPONSE:
-                                                        vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
-                                                                "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.MISSING_PARAMETERS);
+                                                        vsTrackClick(
+                                                            oSubscriptionRequest.sVSTrackUrl,
+                                                            Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX + "." + oScope.sState + "." +
+                                                                    Subscriptions.VS_TRACK_CODES.MISSING_PARAMETERS
+                                                        );
                                                         jQuery(oScope.oForm).trigger("MissingRequiredParameters");
                                                         break;
                                                     case Subscriptions.COMUNICATION_ERROR_RESPONSE:
-                                                        vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
-                                                                "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.COMUNICATION_ERROR_RESPONSE);
+                                                        vsTrackClick(
+                                                            oSubscriptionRequest.sVSTrackUrl,
+                                                            Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX + "." + oScope.sState + "." +
+                                                                    Subscriptions.VS_TRACK_CODES.COMUNICATION_ERROR_RESPONSE
+                                                        );
                                                         jQuery(oScope.oForm).trigger("SubscriptionFailure");
                                                         break;
                                                     case Subscriptions.EXISTING_ACCOUNT_RESPONSE:
-                                                        vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
-                                                                "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.EXISTING_ACCOUNT);
+                                                        vsTrackClick(
+                                                            oSubscriptionRequest.sVSTrackUrl,
+                                                            Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX + "." + oScope.sState + "." +
+                                                                    Subscriptions.VS_TRACK_CODES.EXISTING_ACCOUNT
+                                                        );
                                                         jQuery(oScope.oForm).trigger("ExistingAccount");
                                                         break;
                                                 }
@@ -16104,7 +16640,12 @@
                                     }
                                 };
                                 if ((oScope.validateFormData()).length == 0 && oScope.oFormData) {
-                                    var sData = oScope.uGetXMLRequest(oRequestMode, oScope.oFormData, oScope.iRetries, oScope.iSbsSource);
+                                    var sData = oScope.uGetXMLRequest(
+                                        oRequestMode,
+                                        oScope.oFormData,
+                                        oScope.iRetries,
+                                        oScope.iSbsSource
+                                    );
                                     oSubscriptionRequest.setUp(oRequestConfig);
                                     oSubscriptionRequest.sendRequest(sData, oSubscriptionCallback);
                                 }
@@ -16112,18 +16653,25 @@
                                     jQuery(oScope.oForm).trigger("TrackNoMatch");
                                     popup.showWindow();
                                     jQuery(oScope.oForm).trigger("NoMatch");
-                                    vsTrackClick(oSubscriptionRequest.sVSTrackUrl, Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX +
-                                            "." + oScope.sState + "." + Subscriptions.VS_TRACK_CODES.NO_MATCH);
+                                    vsTrackClick(
+                                        oSubscriptionRequest.sVSTrackUrl,
+                                        Subscriptions.VS_TRACK_CODES.TRACKING_PREFIX + "." + oScope.sState + "." +
+                                                Subscriptions.VS_TRACK_CODES.NO_MATCH
+                                    );
                                     oScope.emptyWidgetFields();
                                 }
                                 return false;
                             };
                             if (emailField) {
-                                jQuery("#" + this.oWidgetComponents.sSignupModuleSubscribeMail).bind("keyup", oScope, function (e) {
-                                    if (e.keyCode == 13) {
-                                        onSubmit(e);
+                                jQuery("#" + this.oWidgetComponents.sSignupModuleSubscribeMail).bind(
+                                    "keyup",
+                                    oScope,
+                                    function (e) {
+                                        if (e.keyCode == 13) {
+                                            onSubmit(e);
+                                        }
                                     }
-                                });
+                                );
                             }
                             jQuery("#" + emailSubmit).bind("click", oScope, function (e) {
                                 onSubmit(e);
@@ -16139,35 +16687,41 @@
                                 jQuery("#" + this.oPopupComponents.sPrintControl).bind("click", function (e) {
                                     window.print();
                                 });
-                                jQuery("#" + this.oPopupComponents.sCloseWindowControl).bind("click", function (e) {
-                                    window.close();
-                                });
+                                jQuery("#" + this.oPopupComponents.sCloseWindowControl).bind(
+                                    "click",
+                                    function (e) {
+                                        window.close();
+                                    }
+                                );
                                 if (module_config.terms_link.url) {
-                                    jQuery("#" + this.oPopupComponents.sAgreementTerms).bind("click", function (e) {
-                                        (function (url, features_object) {
-                                            var features = [];
-                                            for (feature in features_object) {
-                                                features.push(feature + "=" + features_object[feature]);
-                                            }
-                                            var terms_window_attr = features.join(",");
-                                            var win = window.open(url, "TermsAndConditions", terms_window_attr);
-                                            win.focus();
-                                            win.screenX = 0;
-                                            win.screenY = 0;
-                                        })(module_config.terms_link.url, {
-                                            directories: "0",
-                                            height     : module_config.terms_link.height,
-                                            left       : "0",
-                                            location   : "0",
-                                            menubar    : "0",
-                                            resizable  : "0",
-                                            scrollbars : "1",
-                                            status     : "1",
-                                            toolbar    : "0",
-                                            top        : "0",
-                                            width      : module_config.terms_link.width
-                                        });
-                                    });
+                                    jQuery("#" + this.oPopupComponents.sAgreementTerms).bind(
+                                        "click",
+                                        function (e) {
+                                            (function (url, features_object) {
+                                                var features = [];
+                                                for (feature in features_object) {
+                                                    features.push(feature + "=" + features_object[feature]);
+                                                }
+                                                var terms_window_attr = features.join(",");
+                                                var win = window.open(url, "TermsAndConditions", terms_window_attr);
+                                                win.focus();
+                                                win.screenX = 0;
+                                                win.screenY = 0;
+                                            })(module_config.terms_link.url, {
+                                                directories: "0",
+                                                height     : module_config.terms_link.height,
+                                                left       : "0",
+                                                location   : "0",
+                                                menubar    : "0",
+                                                resizable  : "0",
+                                                scrollbars : "1",
+                                                status     : "1",
+                                                toolbar    : "0",
+                                                top        : "0",
+                                                width      : module_config.terms_link.width
+                                            });
+                                        }
+                                    );
                                 }
                             }
                             this.setState();
@@ -16224,7 +16778,9 @@
                             var errors = [];
                             var validate = {
                                 Email            : function (mail) {
-                                    var mailRegExpText = new RegExp(/^[A-Za-z0-9._+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,6}$/gi);
+                                    var mailRegExpText = new RegExp(
+                                        /^[A-Za-z0-9._+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,6}$/gi
+                                    );
                                     var valid_mail = mailRegExpText.test(mail.trim());
                                     return valid_mail;
                                 },
@@ -16502,29 +17058,37 @@
                         buidQueryString  : function () {
                             var oScope = this;
                             var query_buffer = [];
-                            var exactMode = jQuery("#" + oScope.oConfig.SearchModeFields[0] + ":checked").length == 1
+                            var exactMode = jQuery(
+                                "#" + oScope.oConfig.SearchModeFields[0] + ":checked"
+                            ).length == 1
                                 ? true
                                 : false;
-                            var flexMode = jQuery("#" + oScope.oConfig.SearchModeFields[1] + ":checked").length == 1
+                            var flexMode = jQuery(
+                                "#" + oScope.oConfig.SearchModeFields[1] + ":checked"
+                            ).length == 1
                                 ? true
                                 : false;
-                            var plusMinusDatesMode = jQuery("#" + oScope.oConfig.SearchModeFields[2] + ":ch" +
-                                    "ecked").length == 1
+                            var plusMinusDatesMode = jQuery(
+                                "#" + oScope.oConfig.SearchModeFields[2] + ":checked"
+                            ).length == 1
                                 ? true
                                 : false;
                             if (exactMode) {
-                                var clause_edates = jQuery("#" + oScope.oConfig.SearchModeFields[0]).attr("name") + "=" + jQuery("#" +
-                                        oScope.oConfig.SearchModeFields[0]).attr("value");
+                                var clause_edates = jQuery("#" + oScope.oConfig.SearchModeFields[0]).attr(
+                                    "name"
+                                ) + "=" + jQuery("#" + oScope.oConfig.SearchModeFields[0]).attr("value");
                                 query_buffer.push(clause_edates);
                             } else {
                                 if (flexMode) {
-                                    var clause_flex_dates = jQuery("#" + oScope.oConfig.SearchModeFields[1]).attr("name") + "=" + jQuery("#" +
-                                            oScope.oConfig.SearchModeFields[1]).attr("value");
+                                    var clause_flex_dates = jQuery("#" + oScope.oConfig.SearchModeFields[1]).attr(
+                                        "name"
+                                    ) + "=" + jQuery("#" + oScope.oConfig.SearchModeFields[1]).attr("value");
                                     query_buffer.push(clause_flex_dates);
                                 } else {
                                     if (plusMinusDatesMode) {
-                                        var clause_flex_dates = jQuery("#" + oScope.oConfig.SearchModeFields[2]).attr("name") + "=" + jQuery("#" +
-                                                oScope.oConfig.SearchModeFields[2]).attr("value");
+                                        var clause_flex_dates = jQuery("#" + oScope.oConfig.SearchModeFields[2]).attr(
+                                            "name"
+                                        ) + "=" + jQuery("#" + oScope.oConfig.SearchModeFields[2]).attr("value");
                                         query_buffer.push(clause_flex_dates);
                                     }
                                 }
@@ -16540,11 +17104,14 @@
                                 }
                                 if (field.match(/departure_dt|arrival_dt/)) {
                                     var clause_basic_search = field_name + "=" + jQuery(oScope.oSearchForm)
-                                        .find("select[name=" +
-                                                oScope.oConfig.BasicSearchFiedls[field] + "]")
+                                        .find(
+                                            "select[name=" + oScope.oConfig.BasicSearchFiedls[field] + "]"
+                                        )
                                         .attr("value");
                                 } else {
-                                    var clause_basic_search = field_name + "=" + jQuery("#" + oScope.oConfig.BasicSearchFiedls[field]).attr("value");
+                                    var clause_basic_search = field_name + "=" + jQuery(
+                                        "#" + oScope.oConfig.BasicSearchFiedls[field]
+                                    ).attr("value");
                                 }
                                 var reg_test = new RegExp(/[a-zA-Z0-9\?]+/);
                                 query_buffer.push(clause_basic_search);
@@ -16703,14 +17270,15 @@
                                 var newA = jQuery(document.createElement("a"));
                                 var aURL = [
                                     tvly.travelDomain + "/mystuff/SearchFareWatcher.do?goingTo=" + DestCode + "&lea" +
-                                            "vingFrom=" + OrigCode + "&departure_dt=" + cMonth + "&arrival_dt=" + nMonth +
-                                            "&airFareAmount=" + ddata[j],
+                                            "vingFrom=" + OrigCode + "&departure_dt=" + cMonth + "&arrival_dt=" +
+                                            nMonth + "&airFareAmount=" + ddata[j],
                                     tvly.travelDomain + "/hotel/HotelCobrand.do?city=" + DestCode,
                                     tvly.travelDomain + "/trips/InitialSearch.do?leavingFrom=" + OrigCode + "&going" +
                                             "To=" + DestCode
                                 ];
-                                var searchFlightsURL = tvly.travelDomain + "/flights/InitialSearch.do?goingTo=" + DestCode + "&leaving" +
-                                        "From=" + OrigCode;
+                                var searchFlightsURL = tvly.travelDomain +
+                                        "/flights/InitialSearch.do?goingTo=" + DestCode + "&leavingFrom=" +
+                                        OrigCode;
                                 var whatLob = dtags[j].replace(" from ", "");
                                 if (ddata[j] != "-1") {
                                     newLI.append(dtags[j]);
@@ -16727,8 +17295,9 @@
                                 newLI.append(newA);
                                 jQuery(tripInfo).append(newLI);
                             }
-                            jQuery(tripTitle).html(OrigName + " (" + OrigCode + ") to " + DestName + " (" +
-                                    DestCode + ")");
+                            jQuery(tripTitle).html(
+                                OrigName + " (" + OrigCode + ") to " + DestName + " (" + DestCode + ")"
+                            );
                             fwcont.append(tripTitle);
                             fwcont.append(tripInfo);
                             if (f >= maxfw) {
@@ -16758,8 +17327,10 @@
                         YEvt.addListener("fw-fare-info-link", "click", function () {
                             launchWindow(this.href, 400, 300);
                         });
-                        $("fw-button-img").setAttribute("src", tvly.assetDomain + "/images/i/homepage/f" +
-                                "w_login_button.gif");
+                        $("fw-button-img").setAttribute(
+                            "src",
+                            tvly.assetDomain + "/images/i/homepage/fw_login_button.gif"
+                        );
                         $("fw-button-img").setAttribute("alt", "Create Your Own List");
                         noneBlock("fwoptions!1", "fwintro!1");
                     }
@@ -16768,7 +17339,9 @@
                     if (uid !== "" && typeof(uid) !== "undefined") {
                         var fwAJAX = $.get("/xmlfw/1,,,00.xml", FareWatcher.fwSuccess, "xml");
                         jQuery("#fwheadline").html("Loading FareWatcher Plus<sup>SM</sup>...");
-                        jQuery("#fwintro").html("Please wait, we are loading your FareWatcher Plus<sup>SM</sup>...");
+                        jQuery("#fwintro").html(
+                            "Please wait, we are loading your FareWatcher Plus<sup>SM</sup>..."
+                        );
                     }
                 }
             };
@@ -16927,8 +17500,8 @@
                                     enc4 = 64;
                                 }
                             }
-                            output = output + keyString.charAt(enc1) + keyString.charAt(enc2) + keyString.charAt(enc3) +
-                                    keyString.charAt(enc4);
+                            output = output + keyString.charAt(enc1) + keyString.charAt(enc2) +
+                                    keyString.charAt(enc3) + keyString.charAt(enc4);
                         }
                         return output;
                     }
@@ -16964,7 +17537,10 @@
                             .unbind("." + this.widgetName);
                     },
                     _mouseDistanceMet: function (a) {
-                        return Math.max(Math.abs(this._mouseDownEvent.pageX - a.pageX), Math.abs(this._mouseDownEvent.pageY - a.pageY)) >= this.options.distance;
+                        return Math.max(
+                            Math.abs(this._mouseDownEvent.pageX - a.pageX),
+                            Math.abs(this._mouseDownEvent.pageY - a.pageY)
+                        ) >= this.options.distance;
                     },
                     _mouseDown       : function (a) {
                         a.originalEvent = a.originalEvent || {};
@@ -17324,20 +17900,30 @@
                                     ? n + "px"
                                     : n;
                             },
-                            html = "<iframe class='bgiframe'frameborder='0'tabindex='-1'src='" + s.src + "'style='" +
-                                    "display:block;position:absolute;z-index:-1;" + (s.opacity !== false
-                                ? "filter:Alpha(Opacity='0');"
-                                : "") + "top:" + (s.top == "auto"
-                                ? "expression(((parseInt(this.parentNode.currentStyle.borderTopWidth)||0)*-1)+'px" +
+                            html = "<iframe class='bgiframe'frameborder='0'tabindex='-1'src='" + s.src + "'" +
+                                    "style='display:block;position:absolute;z-index:-1;" + (
+                                s.opacity !== false
+                                    ? "filter:Alpha(Opacity='0');"
+                                    : ""
+                            ) + "top:" + (
+                                s.top == "auto"
+                                    ? "expression(((parseInt(this.parentNode.currentStyle.borderTopWidth)||0)*-1)+'px" +
                                         "')"
-                                : prop(s.top)) + ";left:" + (s.left == "auto"
-                                ? "expression(((parseInt(this.parentNode.currentStyle.borderLeftWidth)||0)*-1)+'p" +
+                                    : prop(s.top)
+                            ) + ";left:" + (
+                                s.left == "auto"
+                                    ? "expression(((parseInt(this.parentNode.currentStyle.borderLeftWidth)||0)*-1)+'p" +
                                         "x')"
-                                : prop(s.left)) + ";width:" + (s.width == "auto"
-                                ? "expression(this.parentNode.offsetWidth+'px')"
-                                : prop(s.width)) + ";height:" + (s.height == "auto"
-                                ? "expression(this.parentNode.offsetHeight+'px')"
-                                : prop(s.height)) + ";'/>";
+                                    : prop(s.left)
+                            ) + ";width:" + (
+                                s.width == "auto"
+                                    ? "expression(this.parentNode.offsetWidth+'px')"
+                                    : prop(s.width)
+                            ) + ";height:" + (
+                                s.height == "auto"
+                                    ? "expression(this.parentNode.offsetHeight+'px')"
+                                    : prop(s.height)
+                            ) + ";'/>";
                         return this.each(function () {
                             if ($("> iframe.bgiframe", this).length == 0) {
                                 this.insertBefore(document.createElement(html), this.firstChild);
@@ -17496,7 +18082,9 @@
                                     d = d
                                         .item
                                         .data("item.autocomplete");
-                                    false !== a._trigger("focus", c, {item: d}) && /^key/.test(c.originalEvent.type) && a
+                                    false !== a._trigger("focus", c, {item: d}) && /^key/.test(
+                                        c.originalEvent.type
+                                    ) && a
                                         .element
                                         .val(d.value);
                                 },
@@ -17638,7 +18226,10 @@
                         }
                     },
                     _suggest   : function (a) {
-                        this._renderMenu(this.menu.element.empty().zIndex(this.element.zIndex() + 1), a);
+                        this._renderMenu(
+                            this.menu.element.empty().zIndex(this.element.zIndex() + 1),
+                            a
+                        );
                         this
                             .menu
                             .deactivate();
@@ -17848,9 +18439,12 @@
                                 this.activate(a, c);
                             }
                         } else {
-                            this.activate(a, this.element.children(".ui-menu-item").filter(!this.active || this.last()
-                                ? ":first"
-                                : ":last"));
+                            this.activate(
+                                a,
+                                this.element.children(".ui-menu-item").filter(!this.active || this.last()
+                                    ? ":first"
+                                    : ":last")
+                            );
                         }
                     },
                     previous    : function (a) {
@@ -17881,9 +18475,12 @@
                                 this.activate(a, result);
                             }
                         } else {
-                            this.activate(a, this.element.children(".ui-menu-item").filter(!this.active || this.first()
-                                ? ":last"
-                                : ":first"));
+                            this.activate(
+                                a,
+                                this.element.children(".ui-menu-item").filter(!this.active || this.first()
+                                    ? ":last"
+                                    : ":first")
+                            );
                         }
                     },
                     refresh     : function () {
@@ -17929,10 +18526,14 @@
                         expires = "; expires=" + date.toUTCString();
                     }
                     var path = options.path
-                        ? "; path=" + (options.path)
+                        ? "; path=" + (
+                            options.path
+                        )
                         : "";
                     var domain = options.domain
-                        ? "; domain=" + (options.domain)
+                        ? "; domain=" + (
+                            options.domain
+                        )
                         : "";
                     var secure = options.secure
                         ? "; secure"
@@ -18197,7 +18798,12 @@
                                             CountryName      : $("CountryName", this).text(),
                                             Distance         : jQuery
                                                 ._autocomplete
-                                                .getDistance(config.userLatitude, config.userLongitude, $("Latitude", this).text(), $("Longitude", this).text()),
+                                                .getDistance(
+                                                    config.userLatitude,
+                                                    config.userLongitude,
+                                                    $("Latitude", this).text(),
+                                                    $("Longitude", this).text()
+                                                ),
                                             Latitude         : $("Latitude", this).text(),
                                             LocationCode     : ($("LocationCode", this).length)
                                                 ? $("LocationCode", this).text()
@@ -18270,8 +18876,11 @@
                                 .split(re),
                             result        = item
                                 .value
-                                .replace(re, "<span class='highlightCharacters'>" + item.value.substring(matchPosition, matchPosition +
-                                        this.term.length) + "</span>");
+                                .replace(
+                                    re,
+                                    "<span class='highlightCharacters'>" + item.value.substring(matchPosition, matchPosition + this.term.length) +
+                                            "</span>"
+                                );
                         return $("<li></li>")
                             .addClass((config.displayIcons === true)
                                 ? "autocomplete-lob-icon"
@@ -18292,8 +18901,11 @@
                                 .split(re),
                             result        = item
                                 .value
-                                .replace(re, "<span class='highlightCharacters'>" + item.value.substring(matchPosition, matchPosition +
-                                        this.term.length) + "</span>");
+                                .replace(
+                                    re,
+                                    "<span class='highlightCharacters'>" + item.value.substring(matchPosition, matchPosition + this.term.length) +
+                                            "</span>"
+                                );
                         return $("<li></li>")
                             .addClass((item.type === "ARP")
                                 ? "airline"
@@ -18331,9 +18943,12 @@
                         value = value.replace("${stateProvinceCode}", ((stateProvinceCode !== "")
                             ? (", " + stateProvinceCode)
                             : ""));
-                        value = value.replace("${countryName}", ((countryName !== "" && countryCode !== "US")
-                            ? (", " + countryName)
-                            : ""));
+                        value = value.replace(
+                            "${countryName}",
+                            ((countryName !== "" && countryCode !== "US")
+                                ? (", " + countryName)
+                                : "")
+                        );
                         value = value.replace("${locationType}", ((locationType !== "")
                             ? (", " + locationType)
                             : ""));
@@ -18371,7 +18986,9 @@
                         var qCityCodesToFilter = ["QDF", "QHO"];
                         var allAirportsToFilter = ["DFW", "HOU"];
                         function filterItem(theItem) {
-                            var qCityCodeData = (jQuery.inArray(theItem.locationCode, qCityCodesToFilter) >= 0);
+                            var qCityCodeData = (
+                                jQuery.inArray(theItem.locationCode, qCityCodesToFilter) >= 0
+                            );
                             if (qCityCodeData) {
                                 return true;
                             }
@@ -18451,7 +19068,9 @@
                         radius1  = Math.PI * (lat1 / 180),
                         theta    = lon1 - lon2,
                         rTheta   = Math.PI * (theta / 180),
-                        distance = (Math.sin(rLat1) * Math.sin(rLat2)) + (Math.cos(rLat1) * Math.cos(rLat2)) * Math.cos(rTheta);
+                        distance = (Math.sin(rLat1) * Math.sin(rLat2)) + (
+                            Math.cos(rLat1) * Math.cos(rLat2)
+                        ) * Math.cos(rTheta);
                     distance = Math.acos(distance);
                     distance = distance * 180 / Math.PI;
                     distance = distance * 60 * 1.1515;
@@ -18553,9 +19172,13 @@
             jQuery(function () {
                 new jQuery
                     .tvly
-                    .Cannonball({cruiseScript: "http://i.travelpn.com.edgesuite.net/js/jquery.cb.cruise-1.0.js"});
+                    .Cannonball(
+                        {cruiseScript: "http://i.travelpn.com.edgesuite.net/js/jquery.cb.cruise-1.0.js"}
+                    );
 
-                jQuery("input#fh-from, input#fh-to, input#fo-from, input#fo-to, input#co-to").val("");
+                jQuery("input#fh-from, input#fh-to, input#fo-from, input#fo-to, input#co-to").val(
+                    ""
+                );
 
                 var AutoCompleteOptions = {
                     customParams              : {
@@ -18636,14 +19259,14 @@
                         switch (elementId) {
                             case "ho-to":
                                 _gaq.push([
-                                    "_trackEvent", "ac:HP", "ac:HP|hotel_only|DestinationAutoFill", gaDestination +
-                                            "|" + item.listpos + "|" + typedDestination
+                                    "_trackEvent", "ac:HP", "ac:HP|hotel_only|DestinationAutoFill", gaDestination + "|" +
+                                            item.listpos + "|" + typedDestination
                                 ]);
                                 break;
                             case "hcx-to":
                                 _gaq.push([
-                                    "_trackEvent", "ac:HP", "ac:HP|hotel+car|DestinationAutoFill", gaDestination +
-                                            "|" + item.listpos + "|" + typedDestination
+                                    "_trackEvent", "ac:HP", "ac:HP|hotel+car|DestinationAutoFill", gaDestination + "|" +
+                                            item.listpos + "|" + typedDestination
                                 ]);
                                 break;
                         }
@@ -18653,8 +19276,12 @@
                             "tocomplete"
                 };
 
-                jQuery._autocomplete(jQuery.extend({}, AutoCompleteOptions, {elementId: "ho-to"}));
-                jQuery._autocomplete(jQuery.extend({}, AutoCompleteOptions, {elementId: "hcx-to"}));
+                jQuery._autocomplete(
+                    jQuery.extend({}, AutoCompleteOptions, {elementId: "ho-to"})
+                );
+                jQuery._autocomplete(
+                    jQuery.extend({}, AutoCompleteOptions, {elementId: "hcx-to"})
+                );
                 jQuery("#ho-to, #hcx-to").bind("autocompleteselect", false);
             });
         </script>

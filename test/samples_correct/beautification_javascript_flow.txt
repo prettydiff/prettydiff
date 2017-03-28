@@ -75,13 +75,16 @@ function greatestCommonDivisor(a : number, b : number): number {
 // Annotations included for example purposes only.
 [1, 2, 3].map((num : number) : number => num * 2);
 
-async function getFriendNames(friendIDs : Promise<number[]>, getFriendName : (id : number) => Promise<string>,): Promise<string[]> {
+async function getFriendNames(
+    friendIDs : Promise<number[]>,
+    getFriendName : (id : number) => Promise<string>,
+): Promise<string[]> {
     var ids = await friendIDs;
     var names = await Promise.all(ids.map(getFriendName));
     return names;
 }
 
-function * infinity(): Generator<number, void, void> {
+function* infinity(): Generator<number, void, void> {
     var n = 0;
     while (true) {
         yield n += 1;
