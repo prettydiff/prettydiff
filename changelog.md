@@ -1,5 +1,15 @@
 # Pretty Diff change log
 
+## v2.1.17
+
+### Defects
+* Fixes #410, missing diamond (empty generic type) in Java
+
+### Enhancements
+* Fixes #268, a new diff algorithm... super high precision and possibly the world's fastest diff algorithm
+* Fixes #269, a change of license is universally applied to the project.  New license is CC0.
+* Fixes #417, adding support for "module" script type to markuppretty library.
+
 ## v2.1.16
 
 ### Defects
