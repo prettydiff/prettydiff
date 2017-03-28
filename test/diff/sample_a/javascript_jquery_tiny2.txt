@@ -1,0 +1,22 @@
+if (typeof jQuery == "undefined") {
+    (function (window, undefined) {
+        jQuery.support = (function () {
+            if (!div.addEventListener && div.attachEvent && div.fireEvent) {
+                div.attachEvent("onclick", clickFn = function () {
+                    support.noCloneEvent = false;
+                });
+                div
+                    .cloneNode(true)
+                    .fireEvent("onclick");
+            }
+            jQuery(function () {
+                container.style.cssText = "visibility:hidden;border:0;width:0;height:0;position:static;top:0;margin-top:1" +
+                        "px";
+                body.insertBefore(container, body.firstChild);
+                div.style.cssText                        = "box-sizing:border-box;-moz-box-sizing:border-box;-webkit-box-sizing:border-box" +
+                        ";padding:1px;border:1px;display:block;width:4px;margin-top:1%;position:absolut" +
+                        "e;top:1%;";
+            });
+        })();
+    })(window);
+}

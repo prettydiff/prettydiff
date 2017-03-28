@@ -3,13 +3,10 @@
 /*jshint laxbreak: true*/
 /*jslint for: true, this: true*/
 /***********************************************************************
- This is written by Austin Cheney on 3 Mar 2009. Anybody may use this
- code without permission so long as this comment exists verbatim in each
- instance of its use.
-
- http: //mailmarkup.org/
- http: //prettydiff.com/
-
+ This is written by Austin Cheney on 3 Mar 2009.
+ 
+ Please see the license.txt file associated with the Pretty Diff
+ application for license information.
  ***********************************************************************/
 global.prettydiff.meta = {
     error: "",
@@ -3170,7 +3167,7 @@ global.prettydiff.meta = {
                     } else {
                         pd.test.filled.code = false;
                     }
-                    pd.data.node.report.code.body.innerHTML = "<p>Code type is set to <strong>auto</strong>. Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</p><p>" + global.prettydiff.meta.time + "</p>" + output;
+                    pd.data.node.report.code.body.innerHTML = "<p>Code type is set to <strong>auto</strong>. Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</p><p><strong>Execution time:</strong> <em>" + global.prettydiff.meta.time + "</em></p>" + output;
                     if (autotest === true && pd.data.node.report.code.body.firstChild !== null) {
                         if (pd.data.node.report.code.body.firstChild.nodeType > 1) {
                             pd

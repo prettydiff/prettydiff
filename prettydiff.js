@@ -31,51 +31,8 @@
      biddle global prettydiff
      prettydiff source:"c:\mydirectory\myfile.js" readmethod:"file" diff:"c:\myotherfile.js"
 
-                *******   license start   *******
- @source: http://prettydiff.com/prettydiff.js
- @documentation - English: http://prettydiff.com/documentation.xhtml
-
- @licstart  The following is the entire license notice for Pretty Diff.
-
- This code may not be used or redistributed unless the following
- conditions are met:
-
- * Prettydiff created by Austin Cheney originally on 3 Mar 2009.
- http://prettydiff.com/
-
- * The use of diffview.js and prettydiff.js must contain the following
- copyright:
- Copyright (c) 2007, Snowtide Informatics Systems, Inc.
- All rights reserved.
-     - Redistributions of source code must retain the above copyright
- notice, this list of conditions and the following disclaimer.
-     - Redistributions in binary form must reproduce the above copyright
- notice, this list of conditions and the following disclaimer in the
- documentation and/or other materials provided with the
- distribution.
-     - Neither the name of the Snowtide Informatics Systems nor the
- names of its contributors may be used to endorse or promote products
- derived from this software without specific prior written
- permission.
-     - used as diffview function
-     http://prettydiff.com/lib/diffview.js
-
- * The code mentioned above has significantly expanded documentation in
- each of the respective function's external JS file as linked from the
- documentation page:
- http://prettydiff.com/documentation.php
-
- * In addition to the previously stated requirements any use of any
- component, aside from directly using the full files in their entirety,
- must restate the license mentioned at the top of each concerned file.
-
- If each and all these conditions are met use, extension, alteration,
- and redistribution of Pretty Diff and its required assets is unlimited
- and free without author permission.
-
- @licend  The above is the entire license notice for Pretty Diff.
-                *******   license end   *******
-
+ Please see the license.txt file associated with the Pretty Diff
+ application for license information.
 
  Special thanks to:
 
@@ -414,24 +371,24 @@
             ace: 160307
         },
         api          : {
-            dom      : 161002, //dom.js
-            nodeLocal: 160816 //node-local.js
+            dom      : 170327, //dom.js
+            nodeLocal: 170327 //node-local.js
         },
-        css          : 161204, //css files
-        csspretty    : 170129, //csspretty lib
+        css          : 170327, //css files
+        csspretty    : 170327, //csspretty lib
         csvpretty    : 160816, //csvpretty lib
-        diffview     : 161002, //diffview lib
-        documentation: 161204, //documentation.xhtml and various guide pages
+        diffview     : 170327, //diffview lib
+        documentation: 170327, //documentation.xhtml and various guide pages
         finalFile    : 160816, //HTML report generator
-        jspretty     : 170129, //jspretty lib
+        jspretty     : 170327, //jspretty lib
         language     : 170129, //language lib
         latest       : 0,
-        lint         : 170129, //unit test and lint automation as test/lint.js
-        markuppretty : 170129, //markuppretty lib
-        options      : 161002, //options management
-        prettydiff   : 170129, //this file
-        safeSort     : 160816, //safeSort lib
-        version      : "2.1.16", //version number
+        lint         : 170327, //unit test and lint automation as test/lint.js
+        markuppretty : 170327, //markuppretty lib
+        options      : 170327, //options management
+        prettydiff   : 170327, //this file
+        safeSort     : 170327, //safeSort lib
+        version      : "2.1.17", //version number
         webtool      : 161204
     };
     global.prettydiff.edition.latest = (function edition_latest() {
