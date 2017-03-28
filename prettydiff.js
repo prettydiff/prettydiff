@@ -371,23 +371,23 @@
             ace: 160307
         },
         api          : {
-            dom      : 161002, //dom.js
-            nodeLocal: 160816 //node-local.js
+            dom      : 170327, //dom.js
+            nodeLocal: 170327 //node-local.js
         },
-        css          : 161204, //css files
-        csspretty    : 170129, //csspretty lib
+        css          : 170327, //css files
+        csspretty    : 170327, //csspretty lib
         csvpretty    : 160816, //csvpretty lib
-        diffview     : 161002, //diffview lib
-        documentation: 161204, //documentation.xhtml and various guide pages
+        diffview     : 170327, //diffview lib
+        documentation: 170327, //documentation.xhtml and various guide pages
         finalFile    : 160816, //HTML report generator
-        jspretty     : 170129, //jspretty lib
+        jspretty     : 170327, //jspretty lib
         language     : 170129, //language lib
         latest       : 0,
-        lint         : 170129, //unit test and lint automation as test/lint.js
-        markuppretty : 170129, //markuppretty lib
-        options      : 161002, //options management
-        prettydiff   : 170129, //this file
-        safeSort     : 160816, //safeSort lib
+        lint         : 170327, //unit test and lint automation as test/lint.js
+        markuppretty : 170327, //markuppretty lib
+        options      : 170327, //options management
+        prettydiff   : 170327, //this file
+        safeSort     : 170327, //safeSort lib
         version      : "2.1.17", //version number
         webtool      : 161204
     };
