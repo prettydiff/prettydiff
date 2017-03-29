@@ -509,11 +509,11 @@
                                 }, function taskrunner_lint_install_stat_childtask_child(childerror, childstdout, childstderr) {
                                     var cdupcallback = function taskrunner_lint_install_stat_childtask_child_cdupcallback() {
                                             fs
-                                                .readFile("JSLint/jslint.js", "utf8", function taskrunner_lint_install_stat_childtask_child_cdupcallback_readFile(erread, data) {
+                                                .readFile("JSLint" + path.sep + "jslint.js", "utf8", function taskrunner_lint_install_stat_childtask_child_cdupcallback_readFile(erread, data) {
                                                     var moduleready = function taskrunner_lint_install_stat_childtask_child_cdupcallback_readFile_moduleready() {
                                                         var todaystring = "/*global module*/(function () {\"use strict\";var today=" + date + ";module.exports=today;}());";
-                                                        jslint = require(process.cwd() + "/JSLint/jslint.js");
-                                                        fs.writeFile("test/today.js", todaystring, function taskrunner_lint_install_stat_childtask_child_cdupcallback_readFile_moduleready_writeFile(werr) {
+                                                        jslint = require(process.cwd() + path.sep + "JSLint" + path.sep + "jslint.js");
+                                                        fs.writeFile("test" + path.sep + "today.js", todaystring, function taskrunner_lint_install_stat_childtask_child_cdupcallback_readFile_moduleready_writeFile(werr) {
                                                             if (werr !== null && werr !== undefined) {
                                                                 errout(werr);
                                                             }
@@ -535,7 +535,7 @@
                                                     // already modified
                                                     if (data.slice(data.length - 30).indexOf("\nmodule.exports = jslint;") < 0) {
                                                         data = data + "\nmodule.exports = jslint;";
-                                                        return fs.writeFile("JSLint/jslint.js", data, "utf8", function taskrunner_lint_install_stat_childtask_child_readFile_writeFile(erwrite) {
+                                                        return fs.writeFile("JSLint" + path.sep + "jslint.js", data, "utf8", function taskrunner_lint_install_stat_childtask_child_readFile_writeFile(erwrite) {
                                                             if (erwrite !== null && erwrite !== undefined) {
                                                                 return errout(erwrite);
                                                             }
@@ -548,7 +548,7 @@
                                         errorhandle  = function taskrunner_lint_install_stat_childtask_child_errorhandle(errormsg, stderror, execution) {
                                             if (errormsg !== null) {
                                                 if (stderror.indexOf("Could not resolve host: github.com") > 0) {
-                                                    return fs.stat("JSLint/jslint.js", function taskrunner_lint_install_stat_childtask_child_errorhandle_filestat(jerstat, jstats) {
+                                                    return fs.stat("JSLint" + path.sep + "jslint.js", function taskrunner_lint_install_stat_childtask_child_errorhandle_filestat(jerstat, jstats) {
                                                         if (typeof jerstat === "string") {
                                                             return errout(jerstat);
                                                         }
@@ -588,7 +588,7 @@
                                     console.log("Pulling latest JSLint...");
                                     return childtask();
                                 }
-                                jslint = require(process.cwd() + "/JSLint/jslint.js");
+                                jslint = require(process.cwd() + path.sep + "JSLint" + path.sep + "jslint.js");
                                 console.log("Running prior installed JSLint version " + jslint().edition + ".");
                                 flag.lint  = true;
                                 flag.today = true;
@@ -654,17 +654,10 @@
                                     if (ft === fc) {
                                         flag.files = true;
                                     }
-                                    if (path.sep === "\\") {
-                                        files.push([
-                                            filePath.slice(filePath.indexOf("\\prettydiff\\") + 14),
-                                            data
-                                        ]);
-                                    } else {
-                                        files.push([
-                                            filePath.slice(filePath.indexOf("/prettydiff/") + 12),
-                                            data
-                                        ]);
-                                    }
+                                    files.push([
+                                        filePath.slice(filePath.indexOf(path.sep + "prettydiff" + path.sep) + 12),
+                                        data
+                                    ]);
                                     if (flag.files === true && flag.items === true) {
                                         flag.fs = true;
                                         if (flag.lint === true && flag.today === true) {
@@ -674,11 +667,11 @@
                                     }
                                 });
                         },
-                        readDir  = function taskrunner_lint_getFiles_readDir(path) {
+                        readDir  = function taskrunner_lint_getFiles_readDir(filepath) {
                             fs
-                                .readdir(path, function taskrunner_lint_getFiles_readDir_callback(erra, list) {
+                                .readdir(filepath, function taskrunner_lint_getFiles_readDir_callback(erra, list) {
                                     var fileEval = function taskrunner_lint_getFiles_readDir_callback_fileEval(val) {
-                                        var filename = path + "/" + val;
+                                        var filename = filepath + path.sep + val;
                                         fs.stat(filename, function taskrunner_lint_getFiles_readDir_callback_fileEval_stat(errb, stat) {
                                             var a         = 0,
                                                 ignoreDir = false;
@@ -716,7 +709,7 @@
                                         });
                                     };
                                     if (erra !== null) {
-                                        return errout("Error reading path: " + path + "\n" + erra);
+                                        return errout("Error reading path: " + filepath + "\n" + erra);
                                     }
                                     total += list.length;
                                     list.forEach(fileEval);

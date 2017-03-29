@@ -242,8 +242,7 @@
                                     rel="nofollow"
                                     title="Feedback">Feedback</a>|</li>
                             <li class="last">
-                                <a href="http://www.travelocity.com/custsvc" title="Customer&nbsp;Support">Customer&nbsp;Support</a>or call<span>1.888.872.8356</span>
-                            </li>
+                                <a href="http://www.travelocity.com/custsvc" title="Customer&nbsp;Support">Customer&nbsp;Support</a>or call<span>1.888.872.8356</span></li>
                         </ul>
                     </div>
                     <div class="branding-logo">
@@ -1386,8 +1385,7 @@
                                                             type="radio"
                                                             value="exactDates" />
                                                             <label for="radioexactDates">Exact Dates
-                                                                <span>US/Canada Only</span>
-                                                            </label>
+                                                                <span>US/Canada Only</span></label>
                                                         </li>
 
                                                         <li class="span-2 cb-plus-minus last"><input
@@ -4766,9 +4764,7 @@
                                                                 <a
                                                                     href="http://travel.travelocity.com/ecruise/SpecialRates.do?Service=TRAVELOCITY#senior"
                                                                     id="age-rates-lnk"
-                                                                    rel="nofollow">55 Years of Age or Older?</a>
-                                                            </span>
-                                                        </li>
+                                                                    rel="nofollow">55 Years of Age or Older?</a></span></li>
                                                         <li class="cb-span-5"><input
                                                             name="milRt"
                                                             title="I have served in Military"
@@ -4778,9 +4774,7 @@
                                                                 <a
                                                                     href="http://travel.travelocity.com/ecruise/SpecialRates.do?Service=TRAVELOCITY#military"
                                                                     id="serv-rates-lnk"
-                                                                    rel="nofollow">Served in the Military?</a>
-                                                            </span>
-                                                        </li>
+                                                                    rel="nofollow">Served in the Military?</a></span></li>
                                                         <li class="cb-span-5"><input
                                                             id="pPc"
                                                             name="pPc"
@@ -4791,9 +4785,7 @@
                                                                 <a
                                                                     href="http://travel.travelocity.com/ecruise/SpecialRates.do?Service=TRAVELOCITY#pastpassenger"
                                                                     id="prev-rates-lnk"
-                                                                    rel="nofollow">Taken a Cruise Before?</a>
-                                                            </span>
-                                                        </li>
+                                                                    rel="nofollow">Taken a Cruise Before?</a></span></li>
                                                     </ul>
 
                                                     <div class="cb-previous-cruise" id="prevCruise">
@@ -19297,8 +19289,7 @@
                 <td class="deal-price">
                     <a
                         href="http://vacations.travelocity.com/merchandising/offers/LandingPage.do?destinationId=${DestinationId}&hotelSortOrder=picks&airportCode=${AirportCode}&locLink=GLB_HOMEPAGE|DEALSWIDGET">
-                        <span>${PriceDiscount}</span>
-                    </a>
+                        <span>${PriceDiscount}</span></a>
                 </td>
                 <td class="deal-price-type">${PriceDetail}</td>
             </tr>
