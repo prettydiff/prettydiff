@@ -183,7 +183,7 @@ Manage with biddle
             if (enderflag === true) {
                 return;
             }
-            if (options.endquietly !== "log" && options.summaryonly === false && (method === "filescreen" || method === "screen")) {
+            if (options.endquietly !== "log" && options.summaryonly === false && options.diffcli === false && (method === "filescreen" || method === "screen")) {
                 return;
             }
 
