@@ -78,6 +78,9 @@ Manage with biddle
                 if (pdresponse[1] > 0) {
                     diffCount[1] += 1;
                 }
+                if (pdresponse[2] < 0) {
+                    diffCount[1] = -1;
+                }
                 return pdresponse[0];
             }
             diffCount[0] += meta.difftotal;
@@ -224,6 +227,9 @@ Manage with biddle
                 if (method !== "directory" && method !== "subdirectory") {
                     log.push("found ");
                     log.push(diffCount[0]);
+                    if (diffCount[1] < 0) {
+                        log.push("+");
+                    }
                     log.push(" difference");
                     log.push(plural[0]);
                     log.push(". ");
@@ -394,9 +400,6 @@ Manage with biddle
         cliWrite       = function pdNodeLocal__cliWrite(output, itempath, last) {
             var a      = 0,
                 plural = "",
-                count  = 0,
-                line   = 0,
-                lcount = 0,
                 pdlen  = output[0].length;
             if (options.summaryonly === true) {
                 clidata[2].push(itempath);
@@ -409,37 +412,12 @@ Manage with biddle
                 }
                 if (options.readmethod === "screen" || (options.readmethod === "auto" && method === "screen")) {
                     console.log(lf + "Screen input with " + diffCount[0] + " difference" + plural);
-                } else if (output[5].length === 0) {
-                    console.log(lf + colors.filepath.start + itempath + lf + "Line: " + output[0][a] + colors.filepath.end);
                 }
-                for (a = 0; a < pdlen; a += 1) {
-                    if (output[4][a] === "equal" && output[4][a + 1] === "equal" && output[4][a + 2] !== undefined && output[4][a + 2] !== "equal") {
-                        count += 1;
-                        if (count === 51) {
-                            break;
-                        }
-                        line   = output[0][a] + 2;
-                        lcount = 0;
-                        console.log("");
-                        console.log(colors.filepath.start + "Line: " + line + colors.filepath.end);
-                        if (a === 0) {
-                            console.log(output[3][a]);
-                            console.log(output[3][a + 1]);
-                        }
+                for (a = 0; a < pdlen; a = a + 1) {
+                    if (output[0][a].indexOf("\u001b[36m") === 0) {
+                        console.log("\u001b[36m" + itempath + "\u001b[36m");
                     }
-                    if (lcount < 7) {
-                        lcount += 1;
-                        if (output[4][a] === "delete") {
-                            console.log(colors.del.lineStart + output[1][a].replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
-                        } else if (output[4][a] === "insert") {
-                            console.log(colors.ins.lineStart + output[3][a].replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
-                        } else if (output[4][a] === "equal" && a > 1) {
-                            console.log(output[3][a]);
-                        } else if (output[4][a] === "replace") {
-                            console.log(colors.del.lineStart + output[1][a].replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
-                            console.log(colors.ins.lineStart + output[3][a].replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
-                        }
-                    }
+                    console.log(output[0][a]);
                 }
             }
             if (last === true) {

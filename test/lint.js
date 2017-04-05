@@ -155,98 +155,35 @@
         },
         diffFiles  = function taskrunner_diffFiles(sampleName, sampleSource, sampleDiff) {
             var aa     = 0,
-                line   = 0,
                 pdlen  = 0,
-                count  = 0,
-                diffs  = 0,
-                lcount = 0,
-                report = [],
-                colors = {
-                    del     : {
-                        charEnd  : "\u001b[22m",
-                        charStart: "\u001b[1m",
-                        lineEnd  : "\u001b[39m",
-                        lineStart: "\u001b[31m"
-                    },
-                    filepath: {
-                        end  : "\u001b[39m",
-                        start: "\u001b[36m"
-                    },
-                    ins     : {
-                        charEnd  : "\u001b[22m",
-                        charStart: "\u001b[1m",
-                        lineEnd  : "\u001b[39m",
-                        lineStart: "\u001b[32m"
-                    }
-                };
+                plus   = "",
+                output = [],
+                report = [];
             options.mode    = "diff";
             options.source  = sampleSource;
             options.diff    = sampleDiff;
             options.diffcli = true;
             options.context = 2;
             options.lang    = "text";
-            report          = prettydiff(options)[0];
-            pdlen           = report[0].length;
-            if (report.length < 3) {
-                console.log("");
-                console.log(colors.del.lineStart + "Test diff operation provided a bad code sample:" + colors.del.lineEnd);
-                console.log(report[0]);
-                return errout(colors.del.lineStart + "bad test" + colors.del.lineEnd);
+            output          = prettydiff(options);
+            report          = output[0][0];
+            pdlen           = report.length;
+            if (output[2] < 0) {
+                plus = "+";
             }
             // report indexes from diffcli feature of diffview.js 0 - source line number 1 -
             // source code line 2 - diff line number 3 - diff code line 4 - change 5 - index
             // of options.context (not parallel) 6 - total count of differences
-            if (sampleName !== "phases.simulations" && report[0][0] < 2) {
-                diffs += 1;
-                console.log("");
-                console.log(colors.filepath.start + sampleName);
-                console.log("Line: 1" + colors.filepath.end);
-            }
-            for (aa = 0; aa < pdlen; aa += 1) {
-                if (report[4][aa] === "equal" && report[4][aa + 1] === "equal" && report[4][aa + 2] !== undefined && report[4][aa + 2] !== "equal") {
-                    count += 1;
-                    if (count === 51) {
-                        break;
-                    }
-                    line   = report[0][aa] + 2;
-                    lcount = 0;
-                    diffs  += 1;
-                    console.log("");
-                    console.log(colors.filepath.start + sampleName);
-                    console.log("Line: " + line + colors.filepath.end);
-                    if (aa === 0) {
-                        console.log(report[3][aa]);
-                        console.log(report[3][aa + 1]);
-                    }
+            for (aa = 0; aa < pdlen; aa = aa + 1) {
+                if (report[aa].indexOf("\u001b[36m") === 0) {
+                    console.log("\u001b[36m" + sampleName + "\u001b[36m");
                 }
-                if (lcount < 7) {
-                    lcount += 1;
-                    if (report[4][aa] === "delete" && report[0][aa] !== report[0][aa + 1]) {
-                        if (report[1][aa] === "") {
-                            report[1][aa] = "(empty line)";
-                        } else if (report[1][aa].replace(/\u0020+/g, "") === "") {
-                            report[1][aa] = "(indentation)";
-                        }
-                        console.log(colors.del.lineStart + report[1][aa].replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
-                    } else if (report[4][aa] === "insert" && report[2][aa] !== report[2][aa + 1]) {
-                        if (report[3][aa] === "") {
-                            report[3][aa] = "(empty line)";
-                        } else if (report[3][aa].replace(/\u0020+/g, "") === "") {
-                            report[3][aa] = "(indentation)";
-                        }
-                        console.log(colors.ins.lineStart + report[3][aa].replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
-                    } else if (report[4][aa] === "equal" && aa > 1) {
-                        console.log(report[3][aa]);
-                    } else if (report[4][aa] === "replace") {
-                        console.log(colors.del.lineStart + report[1][aa].replace(/<p(d)>/g, colors.del.charStart).replace(/<\/pd>/g, colors.del.charEnd) + colors.del.lineEnd);
-                        console.log(colors.ins.lineStart + report[3][aa].replace(/<p(d)>/g, colors.ins.charStart).replace(/<\/pd>/g, colors.ins.charEnd) + colors.ins.lineEnd);
-                    }
-                }
+                console.log(report[aa]);
             }
             if (sampleName !== "phases.simulations") {
                 console.log("");
-                console.log(diffs + colors.filepath.start + " differences counted." + colors.filepath.end);
-                errout("Pretty Diff " + colors.del.lineStart + "failed" + colors.del.lineEnd + " on file: " + colors.filepath.start + sampleName + colors.filepath.end);
+                console.log(output[1] + plus + " \u001b[32mdifferences counted.\u001b[39m");
+                errout("Pretty Diff \u001b[31mfailed\u001b[39m on file: \u001b[36m" + sampleName + "\u001b[39m");
             }
         },
         phases     = {

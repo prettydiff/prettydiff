@@ -1,7 +1,3 @@
-*******   license start   *******
-@source: http://prettydiff.com/prettydiff.js
-@documentation - English: http://prettydiff.com/documentation.php
-
 Rights holder Austin Cheney and Pretty Diff
 
 Pretty Diff project, as of version 2.1.17 and all following versions
