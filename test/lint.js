@@ -2133,29 +2133,29 @@
                                             check : "node api/node-local.js source:\"<a><b> <c/>    </b></a>\" readmethod:\"screen\" " +
                                                         "mode:\"diff\" diff:\"<a><b> <d/>    </b></a>\" diffcli:true",
                                             name  : "Test diffcli option",
-                                            verify: "\nScreen input with 1 difference\n\n\u001B[36mLine: 3\u001B[39m\n<a>\n    <b>\n" +
-                                                    "\u001B[31m        <\u001B[1mc\u001B[22m/>\u001B[39m\n\u001B[32m        <\u001B[" +
-                                                    "1md\u001B[22m/>\u001B[39m\n    </b>\n</a>"
+                                            verify: "\nScreen input with 1 difference\n\n\u001b[36mLine: 3\u001b[39m\n<a>\n    <b>\n" +
+                                                    "\u001b[31m        <\u001b[1mc\u001b[22m/>\u001b[39m\n\u001b[32m        <\u001b[" +
+                                                    "1md\u001b[22m/>\u001b[39m\n    </b>\n</a>"
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa1.txt\" readmethod:\"filesc" +
                                                         "reen\" mode:\"diff\" diff:\"test/simulation/testa.txt\"",
                                             name  : "Source file is empty",
-                                            verify: "Source file at - is \u001B[31mempty\u001B[39m but the diff file is not."
+                                            verify: "Source file at - is \u001B[31mempty\u001B[39m but the diff file is not.\n\nPretty Diff found 0 differences. Executed in."
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"filescr" +
                                                         "een\" mode:\"diff\" diff:\"test/simulation/testa1.txt\"",
                                             name  : "Diff file is empty",
-                                            verify: "Diff file at - is \u001B[31mempty\u001B[39m but the source file is not."
+                                            verify: "Diff file at - is \u001B[31mempty\u001B[39m but the source file is not.\n\nPretty Diff found 0 differences. Executed in."
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"filescr" +
                                                         "een\" mode:\"diff\" diff:\"test/simulation/testa1.txt\" diffcli:\"true\"",
                                             name  : "Diff file is empty with diffcli option",
-                                            verify: "Diff file at - is \u001B[31mempty\u001B[39m but the source file is not."
+                                            verify: "Diff file at - is \u001B[31mempty\u001B[39m but the source file is not.\n\nPretty Diff found 0 differences. Executed in."
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"filescr" +
                                                         "een\" mode:\"diff\" diff:\"test/simulation/testa.txt\"",
                                             name  : "Diff file and source file are same file, readmethod filescreen",
-                                            verify: ""
+                                            verify: "\nPretty Diff found 0 differences. Executed in."
                                         }, {
                                             check : "node api/node-local.js source:\"test/simulation/testa.txt\" readmethod:\"file\" " +
                                                         "output:\"test/simulation/testaxx.txt\" mode:\"diff\" diff:\"test/simulation/test" +

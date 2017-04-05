@@ -414,8 +414,8 @@ Manage with biddle
                     console.log(lf + "Screen input with " + diffCount[0] + " difference" + plural);
                 }
                 for (a = 0; a < pdlen; a = a + 1) {
-                    if (output[0][a].indexOf("\u001b[36m") === 0) {
-                        console.log("\u001b[36m" + itempath + "\u001b[36m");
+                    if (output[0][a].indexOf("\u001b[36m") === 0 && itempath !== "") {
+                        console.log("\u001b[36m" + itempath + "\u001b[39m");
                     }
                     console.log(output[0][a]);
                 }
