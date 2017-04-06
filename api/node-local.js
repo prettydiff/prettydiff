@@ -74,22 +74,22 @@ Manage with biddle
                 console.log(meta.error);
             }
             if (options.diffcli === true) {
-                diffCount[0] += pdresponse[1];
+                diffCount[0] = diffCount[0] + pdresponse[1];
                 if (pdresponse[1] > 0) {
-                    diffCount[1] += 1;
+                    diffCount[1] = diffCount[1] + 1;
                 }
                 if (pdresponse[2] < 0) {
                     diffCount[1] = -1;
                 }
                 return pdresponse[0];
             }
-            diffCount[0] += meta.difftotal;
+            diffCount[0] = diffCount[0] + meta.difftotal;
             if (meta.difftotal > 0) {
-                diffCount[1] += 1;
+                diffCount[1] = diffCount[1] + 1;
             }
-            diffCount[2] += 1;
-            diffCount[3] += meta.insize;
-            diffCount[4] += meta.outsize;
+            diffCount[2] = diffCount[2] + 1;
+            diffCount[3] = diffCount[3] + meta.insize;
+            diffCount[4] = diffCount[4] + meta.outsize;
             if (meta.error !== "") {
                 global.prettydiff.finalFile.order[9] = "<p><strong>Error:</strong> " + meta.error + "</p>";
             }
@@ -162,7 +162,7 @@ Manage with biddle
                     var a   = 0,
                         len = diffCount.length,
                         arr = [];
-                    for (a = 0; a < len; a += 1) {
+                    for (a = 0; a < len; a = a + 1) {
                         if (diffCount[a] === 1) {
                             arr.push("");
                         } else {
@@ -299,7 +299,7 @@ Manage with biddle
                                     console.log(lf + "Error writing binary output." + lf);
                                     console.log(err);
                                 }
-                                total[1] += 1;
+                                total[1] = total[1] + 1;
                                 if (total[1] === total[0]) {
                                     ender();
                                 }
@@ -314,7 +314,7 @@ Manage with biddle
                                 } else if (method === "file" && options.endquietly !== "quiet") {
                                     console.log(lf + "Empty file successfully written to file.");
                                 }
-                                total[1] += 1;
+                                total[1] = total[1] + 1;
                                 if (total[1] === total[0]) {
                                     ender();
                                 }
@@ -332,7 +332,7 @@ Manage with biddle
                                         console.log(lf + "File successfully written.");
                                     }
                                 }
-                                total[1] += 1;
+                                total[1] = total[1] + 1;
                                 if (total[1] === total[0]) {
                                     ender();
                                 }
@@ -351,7 +351,7 @@ Manage with biddle
                 newdir   = function pdNodeLocal__fileWrite_newdir(dataC) {
                     fs
                         .mkdir(address.oabspath + dirs.slice(0, count).join(path.sep), function pdNodeLocal__fileWrite_newdir_callback() {
-                            count += 1;
+                            count = count + 1;
                             if (count < dirs.length) {
                                 pdNodeLocal__fileWrite_newdir(dataC);
                             } else {
@@ -441,7 +441,7 @@ Manage with biddle
             if (options.mode === "parse" && options.parseFormat !== "htmltable") {
                 report = JSON.stringify(report);
             }
-            total[1] += 1;
+            total[1] = total[1] + 1;
             console.log(report);
             if (total[0] === total[1] || options.readmethod === "screen" || options.readmethod === "auto") {
                 ender();
@@ -472,16 +472,16 @@ Manage with biddle
         // readHttpFile
         fileComplete   = function pdNodeLocal__fileComplete(data) {
             var totalCalc = function pdNodeLocal__fileComplete_totalCalc() {
-                total[1] += 1;
+                total[1] = total[1] + 1;
                 if (total[1] === total[0]) {
                     ender();
                 }
             };
             if (data.binary === true) {
-                total[0] -= 1;
+                total[0] = total[0] - 1;
             }
             if (options.mode !== "diff" || (options.mode === "diff" && data.type === "diff")) {
-                total[0] += 1;
+                total[0] = total[0] + 1;
             }
             if (data.type === "diff") {
                 dfiledump[data.index] = data.file;
@@ -496,13 +496,13 @@ Manage with biddle
             if (sState[data.index] === true && ((options.mode === "diff" && dState[data.index] === true) || options.mode !== "diff")) {
                 if (options.mode === "diff" && sfiledump[data.index] !== dfiledump[data.index]) {
                     if (dfiledump[data.index] === "" || dfiledump[data.index] === "\n") {
-                        total[1]     += 1;
+                        total[1]     = total[1] + 1;
                         console.log("Diff file at " + data.localpath + " is \u001B[31mempty\u001B[39m but the source file is not.");
                         if (total[0] === total[1]) {
                             ender();
                         }
                     } else if (sfiledump[data.index] === "" || sfiledump[data.index] === "\n") {
-                        total[1]     += 1;
+                        total[1]     = total[1] + 1;
                         console.log("Source file at " + data.localpath + " is \u001B[31mempty\u001B[39m but the diff file is not.");
                         if (total[0] === total[1]) {
                             ender();
@@ -585,7 +585,7 @@ Manage with biddle
                                         if (data.file === undefined) {
                                             data.file = "";
                                         }
-                                        data.file += dump;
+                                        data.file = data.file + dump;
                                         fileComplete(data);
                                         return bytes;
                                     });
@@ -628,7 +628,7 @@ Manage with biddle
                 callback = function pdNodeLocal__readHttpFile_callback(res) {
                     res.setEncoding("utf8");
                     res.on("data", function pdNodeLocal__readHttpFile_callback_response(chunk) {
-                        file += chunk;
+                        file = file + chunk;
                     });
                     res.on("end", function pdNodeLocal__readHttpFile_callback_end() {
                         data.file = file;
@@ -692,7 +692,7 @@ Manage with biddle
                                                         itempath
                                                     ]);
                                             }
-                                            item.count += 1;
+                                            item.count = item.count + 1;
                                         },
                                         preprocess = function pdNodeLocal__directory_readDir_stat_dirtest_stat_preprocess() {
                                             var b      = 0,
@@ -730,7 +730,7 @@ Manage with biddle
                                                 dfiles
                                                     .filepath
                                                     .sort(sorter);
-                                                for (b = 0; b < length; b += 1) {
+                                                for (b = 0; b < length; b = b + 1) {
                                                     dState.push(false);
                                                     sState.push(false);
                                                     sfiledump.push("");
@@ -747,7 +747,7 @@ Manage with biddle
                                                                 clidata[0].push(sfiles.filepath[b][0]);
                                                             }
                                                             if (length === dfiles.filepath.length) {
-                                                                length += 1;
+                                                                length = length + 1;
                                                             }
                                                             dfiles
                                                                 .filepath
@@ -757,7 +757,7 @@ Manage with biddle
                                                                 clidata[1].push(dfiles.filepath[b][0]);
                                                             }
                                                             if (length === sfiles.filepath.length) {
-                                                                length += 1;
+                                                                length = length + 1;
                                                             }
                                                             sfiles
                                                                 .filepath
@@ -770,7 +770,7 @@ Manage with biddle
                                                 }
                                             } else {
                                                 if (options.output !== "") {
-                                                    for (b = 0; b < length; b += 1) {
+                                                    for (b = 0; b < length; b = b + 1) {
                                                         if (b === length - 1) {
                                                             end = true;
                                                         }
@@ -793,21 +793,21 @@ Manage with biddle
                                                 }
                                                 if (stata.isDirectory() === true) {
                                                     if (method === "subdirectory") {
-                                                        item.directories += 1;
+                                                        item.directories = item.directories + 1;
                                                         pdNodeLocal__directory_readDir(itempath, listtype);
-                                                        item.count += 1;
+                                                        item.count = item.count + 1;
                                                     }
                                                     if (method === "directory") {
-                                                        item.total       -= 1;
+                                                        item.total       = item.total - 1;
                                                         item.directories = 0;
                                                     }
                                                 } else if (stata.isFile() === true) {
                                                     pusher(itempath);
                                                 } else {
                                                     if (listtype === "diff") {
-                                                        dfiles.total -= 1;
+                                                        dfiles.total = dfiles.total - 1;
                                                     } else {
-                                                        sfiles.total -= 1;
+                                                        sfiles.total = sfiles.total - 1;
                                                     }
                                                     console.log(itempath + lf + "is an unsupported type");
                                                 }
@@ -831,9 +831,9 @@ Manage with biddle
                                         if (errd !== null || filetotal === 0) {
                                             if (method === "subdirectory") {
                                                 if (listtype === "diff") {
-                                                    dfiles.directories -= 1;
+                                                    dfiles.directories = dfiles.directories - 1;
                                                 } else {
-                                                    sfiles.directories -= 1;
+                                                    sfiles.directories = sfiles.directories - 1;
                                                 }
                                             }
                                             if (errd !== null) {
@@ -849,10 +849,10 @@ Manage with biddle
                                         } else {
                                             item = sfiles;
                                         }
-                                        item.total += filetotal;
-                                        for (x = 0; x < filetotal; x += 1) {
+                                        item.total = item.total + filetotal;
+                                        for (x = 0; x < filetotal; x = x + 1) {
                                             if (x === filetotal - 1) {
-                                                item.directories -= 1;
+                                                item.directories = item.directories - 1;
                                                 dirtest(start + path.sep + files[x]);
                                             } else {
                                                 dirtest(start + path.sep + files[x]);
@@ -908,7 +908,7 @@ Manage with biddle
                                 console.log(err);
                                 outready = true;
                             } else if (olen < odirs.length) {
-                                olen += 1;
+                                olen = olen + 1;
                                 if (olen < odirs.length) {
                                     pdNodeLocal__start_pathslash_makeout();
                                 } else {
@@ -929,7 +929,7 @@ Manage with biddle
                                 .split(".." + path.sep);
                             uplen = ups.length;
                             do {
-                                uplen -= 1;
+                                uplen = uplen - 1;
                                 tree.pop();
                             } while (uplen > 1);
                             return tree.join(path.sep) + path.sep + ups[ups.length - 1];
@@ -1008,7 +1008,7 @@ Manage with biddle
                                 var abs = path.resolve().split(path.sep),
                                     a   = 0;
                                 do {
-                                    a += 1;
+                                    a = a + 1;
                                 } while (odirs[a] === "..");
                                 odirs.splice(0, a);
                                 abs.splice(0, a);
@@ -1289,12 +1289,12 @@ Manage with biddle
                                 b       = 0,
                                 eachkey = function pdNodeLocal__start_stat_readFile_eachkey(val) {
                                     if (val !== "help" && val !== "version" && val !== "v" && val !== "man" && val !== "manual") {
-                                        b += 1;
+                                        b = b + 1;
                                         if (options[val] !== undefined) {
                                             options[val] = pdrc[val];
                                             if (val === "help" && pdrc[val] === true) {
                                                 h = true;
-                                                b -= 1;
+                                                b = b - 1;
                                             }
                                         }
                                     }
