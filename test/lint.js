@@ -48,7 +48,7 @@
                             }
                             do {
                                 b = b * 1024;
-                                a -= 1;
+                                a = a - 1;
                             } while (a > 0);
                             return b;
                         }()),
@@ -229,7 +229,7 @@
                             vertical    : "all",
                             wrap        : 80
                         };
-                        for (a = 0; a < len; a += 1) {
+                        for (a = 0; a < len; a = a + 1) {
                             if (raw[a] === undefined || correct[a] === undefined) {
                                 if (raw[a] === undefined) {
                                     console.log("\u001B[33msamples_raw directory is missing file:\u001B[39m " + correct[a][0]);
@@ -241,7 +241,7 @@
                                 len = (raw.length > correct.length)
                                     ? raw.length
                                     : correct.length;
-                                a   -= 1;
+                                a   = a - 1;
                                 if (a === len - 1) {
                                     console.log("");
                                     console.log("\u001B[32mCore Unit Testing Complete\u001B[39m");
@@ -254,7 +254,7 @@
                                     output = output + "\n";
                                 }
                                 if (output === correct[a][1]) {
-                                    filecount += 1;
+                                    filecount = filecount + 1;
                                     console.log(humantime(false) + "\u001B[32mPass " + filecount + ":\u001B[39m " + correct[a][0]);
                                     if (a === len - 1) {
                                         return next();
@@ -273,7 +273,7 @@
                                 len = (raw.length > correct.length)
                                     ? raw.length
                                     : correct.length;
-                                a   -= 1;
+                                a   = a - 1;
                                 if (a === len - 1) {
                                     return next();
                                 }
@@ -290,7 +290,7 @@
                                             errout("Error reading file: " + __dirname + "/samples_" + type + "/" + val);
                                         } else if (type === "raw") {
                                             raw.push([val, fileData]);
-                                            countr += 1;
+                                            countr = countr + 1;
                                             if (countr === arr.length) {
                                                 utflag.raw = true;
                                                 if (utflag.correct === true) {
@@ -299,7 +299,7 @@
                                             }
                                         } else if (type === "correct") {
                                             correct.push([val, fileData]);
-                                            countc += 1;
+                                            countc = countc + 1;
                                             if (countc === arr.length) {
                                                 utflag.correct = true;
                                                 if (utflag.raw === true) {
@@ -373,7 +373,7 @@
                                         console.log("\u001B[31mJSLint errors on\u001B[39m " + val[0]);
                                         console.log("");
                                     }
-                                    ecount += 1;
+                                    ecount = ecount + 1;
                                     console.log("On line " + warning.line + " at column: " + warning.column);
                                     console.log(warning.message);
                                     console.log("");
@@ -587,7 +587,7 @@
                                     if (err !== null && err !== undefined) {
                                         errout(err);
                                     }
-                                    fc += 1;
+                                    fc = fc + 1;
                                     if (ft === fc) {
                                         flag.files = true;
                                     }
@@ -615,12 +615,12 @@
                                             if (errb !== null) {
                                                 return errout(errb);
                                             }
-                                            count += 1;
+                                            count = count + 1;
                                             if (count === total) {
                                                 flag.items = true;
                                             }
                                             if (stat.isFile() === true && (/(\.js)$/).test(val) === true) {
-                                                ft += 1;
+                                                ft = ft + 1;
                                                 readFile(filename);
                                             }
                                             if (stat.isDirectory() === true) {
@@ -629,7 +629,7 @@
                                                         ignoreDir = true;
                                                         break;
                                                     }
-                                                    a += 1;
+                                                    a = a + 1;
                                                 } while (a < idLen);
                                                 if (ignoreDir === true) {
                                                     if (flag.files === true && flag.items === true) {
@@ -648,7 +648,7 @@
                                     if (erra !== null) {
                                         return errout("Error reading path: " + filepath + "\n" + erra);
                                     }
-                                    total += list.length;
+                                    total = total + list.length;
                                     list.forEach(fileEval);
                                 });
                         };
@@ -3619,7 +3619,7 @@
                             dirchar = path.sep;
                         }
                         comchars = command.split("");
-                        for (a = comchars.length - 1; a > -1; a -= 1) {
+                        for (a = comchars.length - 1; a > -1; a = a - 1) {
                             if (comchars[a] === "/" && comchars[a - 1] !== "<" && comchars[a + 1] !== ">") {
                                 comchars[a] = dirchar;
                             }
@@ -3643,9 +3643,9 @@
                                 var a   = 0,
                                     b   = 0,
                                     str = "";
-                                for (a = depth + 2; a > 0; a -= 1) {
-                                    for (b = tablen; b > 0; b -= 1) {
-                                        str += " ";
+                                for (a = depth + 2; a > 0; a = a - 1) {
+                                    for (b = tablen; b > 0; b = b - 1) {
+                                        str = str + " ";
                                     }
                                 }
                                 return str;
@@ -3661,14 +3661,14 @@
                                             var aa  = 0,
                                                 len = list.length;
                                             if (output === list[0]) {
-                                                passcount[depth] += 1;
+                                                passcount[depth] = passcount[depth] + 1;
                                                 data.push("pass");
                                                 return data.push(stdout);
                                             }
                                             do {
-                                                aa += 1;
+                                                aa = aa + 1;
                                                 if (output === list[aa]) {
-                                                    passcount[depth] += 1;
+                                                    passcount[depth] = passcount[depth] + 1;
                                                     data.push("pass");
                                                     return data.push(stdout);
                                                 }
@@ -3714,7 +3714,7 @@
                                                                 console.log(tab.slice(tablen) + "\u001B[31mAll " + grouplen[depth] + " tests/groups failed" + groupn + "\u001B[39m");
                                                             }
                                                         } else {
-                                                            fgroup  += 1;
+                                                            fgroup  = fgroup + 1;
                                                             fail    = finished[depth] - passcount[depth];
                                                             failper = (fail / grouplen[depth]) * 100;
                                                             if (fail === 1) {
@@ -3732,16 +3732,16 @@
                                                     finished.pop();
                                                     units.pop();
                                                     index.pop();
-                                                    depth -= 1;
+                                                    depth = depth - 1;
                                                     if (depth > -1) {
                                                         tab             = tab.slice(tablen);
-                                                        finished[depth] += 1;
+                                                        finished[depth] = finished[depth] + 1;
                                                         groupn          = " for group: \u001B[39m\u001B[33m" + groupname[depth] + "\u001B[39m";
                                                         if (groupPass === true) {
-                                                            passcount[depth] += 1;
+                                                            passcount[depth] = passcount[depth] + 1;
                                                         }
                                                         if (finished[depth] < grouplen[depth]) {
-                                                            index[depth] += 1;
+                                                            index[depth] = index[depth] + 1;
                                                             if (units[depth][index].group !== undefined) {
                                                                 taskrunner_simulations_shell(units[depth][index]);
                                                             } else {
@@ -3763,7 +3763,7 @@
                                                         status = (gcount === 1)
                                                             ? ""
                                                             : "s";
-                                                        gcount -= 1;
+                                                        gcount = gcount - 1;
                                                         if (fails === 0) {
                                                             console.log("\u001B[32mPassed all " + total + " test" + plural + " from all " + gcount + " groups.\u001B[39m");
                                                             console.log("");
@@ -3775,7 +3775,7 @@
                                                         } else {
                                                             // a hack, this should not increment when a test failure occurred in a child
                                                             // group
-                                                            fgroup -= 1;
+                                                            fgroup = fgroup - 1;
                                                             if (fgroup === 1) {
                                                                 groupn = "";
                                                             }
@@ -3792,25 +3792,25 @@
                                                         len  = tasks.length,
                                                         task = function taskrunner_simulations_shell_child_writeLine_teardown_task() {
                                                             var execCallback = function taskrunner_simulations_shell_child_writeLine_teardown_task_exec(err, stdout, stderr) {
-                                                                a += 1;
+                                                                a = a + 1;
                                                                 if (typeof err === "string") {
                                                                     console.log(err);
                                                                     if (err.indexOf("The directory is not empty.") > 0) {
                                                                         console.log("(err) Async error in Windows file system.  Trying one more time...");
-                                                                        a -= 1;
+                                                                        a = a - 1;
                                                                         return setTimeout(childExec(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
                                                                     }
                                                                 } else if (typeof stderr === "string" && stderr !== "") {
                                                                     console.log(stderr);
                                                                     if (stderr.indexOf("The directory is not empty.") > 0) {
                                                                         console.log("(stderr) Async error in Windows file system.  Trying one more time...");
-                                                                        a -= 1;
+                                                                        a = a - 1;
                                                                         return setTimeout(childExec(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
                                                                     }
                                                                 } else {
                                                                     if (stdout.indexOf("The directory s not empty.") > 0) {
                                                                         console.log("(stdout) Async error in Windows file system.  Trying one more time...");
-                                                                        a -= 1;
+                                                                        a = a - 1;
                                                                         return setTimeout(childExec(tasks[a], taskrunner_simulations_shell_child_writeLine_teardown_task_exec), 1000);
                                                                     }
                                                                     if (a === len) {
@@ -3841,7 +3841,7 @@
                                                     groupEnd();
                                                 }
                                             };
-                                            finished[depth] += 1;
+                                            finished[depth] = finished[depth] + 1;
                                             if (single === false && finished[depth] === 1) {
                                                 if (depth === 0) {
                                                     console.log(tab.slice(tablen) + "\u001B[36mTest group: \u001B[39m\u001B[33m" + groupname[depth] + "\u001B[39m");
@@ -3853,7 +3853,7 @@
                                             console.log(tab.slice(tab.length - 2) + "\u001B[36m*\u001B[39m " + item[0]);
                                             console.log(tab + status + finished[depth] + " of " + grouplen[depth] + totaln);
                                             if (item[1] !== "pass") {
-                                                fails += 1;
+                                                fails = fails + 1;
                                                 console.log(tab + item[2]);
                                             }
                                             if (finished[depth] === grouplen[depth]) {
@@ -3891,11 +3891,11 @@
                                             verifies(stdout, param.verify);
                                         }
                                     } else {
-                                        passcount[depth] += 1;
+                                        passcount[depth] = passcount[depth] + 1;
                                         data.push("pass");
                                         data.push(stdout);
                                     }
-                                    total += 1;
+                                    total = total + 1;
                                     writeLine(data);
                                     if (failflag === true) {
                                         failflag = false;
@@ -3909,7 +3909,7 @@
                                     echo = [],
                                     task = function taskrunner_simulations_shell_buildup_task() {
                                         var buildstep = function taskrunner_simulations_shell_buildup_task_buildstep(err, stdout, stderr) {
-                                            a += 1;
+                                            a = a + 1;
                                             if (typeof err === "string") {
                                                 console.log("\u001B[31mError:\u001B[39m " + err);
                                                 console.log("Terminated early");
@@ -3925,7 +3925,7 @@
                                                         taskrunner_simulations_shell(units[depth][index[depth]]);
                                                         return stdout;
                                                     }
-                                                    for (index[depth] = index[depth]; index[depth] < grouplen[depth]; index[depth] += 1) {
+                                                    for (index[depth] = index[depth]; index[depth] < grouplen[depth]; index[depth] = index[depth] + 1) {
                                                         if (units[depth][index[depth]].group === undefined) {
                                                             child(units[depth][index[depth]]);
                                                             if (units[depth][index[depth] + 1] !== undefined && units[depth][index[depth] + 1].group !== undefined) {
@@ -3938,7 +3938,7 @@
                                         };
                                         if (typeof tasks[a] === "function") {
                                             tasks[a]();
-                                            a += 1;
+                                            a = a + 1;
                                             if (a < len) {
                                                 taskrunner_simulations_shell_buildup_task();
                                             }
@@ -3964,8 +3964,8 @@
                             groupname.push(testData.group);
                             finished.push(0);
                             index.push(0);
-                            gcount += 1;
-                            depth  += 1;
+                            gcount = gcount + 1;
+                            depth  = depth + 1;
                             units.push(testData.units);
                             units[depth].sort(unitsort);
                             grouplen.push(units[depth].length);
@@ -3979,7 +3979,7 @@
                             } else if (index[depth] === 0 && units[depth][index[depth]].group !== undefined) {
                                 taskrunner_simulations_shell(units[depth][index[depth]]);
                             } else {
-                                for (index[depth] = index[depth]; index[depth] < grouplen[depth]; index[depth] += 1) {
+                                for (index[depth] = index[depth]; index[depth] < grouplen[depth]; index[depth] = index[depth] + 1) {
                                     if (units[depth][index[depth]].group === undefined) {
                                         child(units[depth][index[depth]]);
                                         if (units[depth][index[depth] + 1] !== undefined && units[depth][index[depth] + 1].group !== undefined) {
