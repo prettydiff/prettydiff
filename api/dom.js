@@ -290,7 +290,7 @@ global.prettydiff.meta = {
                 a          = 0,
                 edit       = {},
                 dollar     = "$";
-            for (a = 0; a < len; a += 1) {
+            for (a = 0; a < len; a = a + 1) {
                 if (attributes[a].name !== "rows" && attributes[a].name !== "cols" && attributes[a].name !== "wrap") {
                     div.setAttribute(attributes[a].name, attributes[a].value);
                 }
@@ -953,7 +953,7 @@ global.prettydiff.meta = {
                         .getElementsByTagName("li")
                 ];
             if (self.innerHTML.charAt(0) === "-") {
-                for (a = min; a < max; a += 1) {
+                for (a = min; a < max; a = a + 1) {
                     list[0][a].style.display = "none";
                     list[1][a].style.display = "none";
                 }
@@ -961,7 +961,7 @@ global.prettydiff.meta = {
                     .innerHTML
                     .substr(1);
             } else {
-                for (a = min; a < max; a += 1) {
+                for (a = min; a < max; a = a + 1) {
                     list[0][a].style.display = "block";
                     list[1][a].style.display = "block";
                     if (list[0][a].getAttribute("class") === "fold" && list[0][a].innerHTML.charAt(0) === "+") {
@@ -1141,15 +1141,15 @@ global.prettydiff.meta = {
                 };
             event.preventDefault();
             if (typeof pd.data.node === "object" && pd.data.node.report.code.box !== null) {
-                offset += pd.data.node.report.code.box.offsetLeft;
-                offset -= pd.data.node.report.code.body.scrollLeft;
+                offset = offset + pd.data.node.report.code.box.offsetLeft;
+                offset = offset - pd.data.node.report.code.body.scrollLeft;
             } else {
                 subOffset = (document.body.parentNode.scrollLeft > document.body.scrollLeft)
                     ? document.body.parentNode.scrollLeft
                     : document.body.scrollLeft;
-                offset    -= subOffset;
+                offset    = offset - subOffset;
             }
-            offset             += node.clientWidth;
+            offset             = offset + node.clientWidth;
             node.style.cursor  = "ew-resize";
             diff.style.width   = (total / 10) + "em";
             diff.style.display = "inline-block";
@@ -1189,7 +1189,7 @@ global.prettydiff.meta = {
                         .parentNode
                         .getElementsByTagName("ol"),
                 listLen   = listnodes.length;
-            for (a = 0; a < listLen; a += 1) {
+            for (a = 0; a < listLen; a = a + 1) {
                 lists.push(listnodes[a].getElementsByTagName("li"));
             }
             max = (max >= lists[0].length)
@@ -1197,15 +1197,15 @@ global.prettydiff.meta = {
                 : max;
             if (inner.charAt(0) === "-") {
                 self.innerHTML = "+" + inner.substr(1);
-                for (a = min; a < max; a += 1) {
-                    for (b = 0; b < listLen; b += 1) {
+                for (a = min; a < max; a = a + 1) {
+                    for (b = 0; b < listLen; b = b + 1) {
                         lists[b][a].style.display = "none";
                     }
                 }
             } else {
                 self.innerHTML = "-" + inner.substr(1);
-                for (a = min; a < max; a += 1) {
-                    for (b = 0; b < listLen; b += 1) {
+                for (a = min; a < max; a = a + 1) {
+                    for (b = 0; b < listLen; b = b + 1) {
                         lists[b][a].style.display = "block";
                     }
                 }
@@ -1273,7 +1273,7 @@ global.prettydiff.meta = {
                 .parentNode
                 .parentNode
                 .getElementsByTagName("input");
-            for (a = radios.length - 1; a > -1; a -= 1) {
+            for (a = radios.length - 1; a > -1; a = a - 1) {
                 if (radios[a].checked === true) {
                     break;
                 }
@@ -1674,10 +1674,10 @@ global.prettydiff.meta = {
                             ? 9.45
                             : 6.45,
                         grow         = function dom__event_minimize_growth_grow() {
-                            width                    += incW;
-                            height                   += incH;
-                            leftLocal                += incL;
-                            topLocal                 += incT;
+                            width                    = width + incW;
+                            height                   = height + incH;
+                            leftLocal                = leftLocal + incL;
+                            topLocal                 = topLocal + incT;
                             bodyLocal.style.width    = width + "em";
                             bodyLocal.style.height   = height + "em";
                             headingLocal.style.width = (width - saveSpace) + "em";
@@ -1720,7 +1720,7 @@ global.prettydiff.meta = {
                         widthTarget  = (pd.data.settings[id].width / 10);
                         heightTarget = (pd.data.settings[id].height / 10);
                     } else {
-                        topLocal                    += 4;
+                        topLocal                    = topLocal + 4;
                         pd.data.settings[id].left   = 200;
                         pd.data.settings[id].top    = (topLocal * 10);
                         pd.data.settings[id].width  = 550;
@@ -1775,10 +1775,10 @@ global.prettydiff.meta = {
                                 : ((17 - width) / step),
                         incH         = height / step,
                         shrink       = function dom__event_minimize_shrinkage_shrink() {
-                            leftLocal                += incL;
-                            topLocal                 += incT;
-                            width                    -= incW;
-                            height                   -= incH;
+                            leftLocal                = leftLocal + incL;
+                            topLocal                 = topLocal + incT;
+                            width                    = width - incW;
+                            height                   = height - incH;
                             bodyLocal.style.width    = width + "em";
                             headingLocal.style.width = width + "em";
                             bodyLocal.style.height   = height + "em";
@@ -1816,15 +1816,15 @@ global.prettydiff.meta = {
                             pd.data.settings[id].width  = body.clientWidth;
                         }
                         if (pd.data.zIndex > 2) {
-                            pd.data.zIndex      -= 3;
+                            pd.data.zIndex      = pd.data.zIndex - 3;
                             parent.style.zIndex = pd.data.zIndex;
                         }
                     } else {
                         buttonMax.innerHTML         = "\u2191";
-                        pd.data.settings[id].top    += 1;
-                        pd.data.settings[id].left   -= 7;
-                        pd.data.settings[id].height += 35.5;
-                        pd.data.settings[id].width  += 3;
+                        pd.data.settings[id].top    = pd.data.settings[id].top + 1;
+                        pd.data.settings[id].left   = pd.data.settings[id].left - 7;
+                        pd.data.settings[id].height = pd.data.settings[id].height + 35.5;
+                        pd.data.settings[id].width  = pd.data.settings[id].width + 3;
                     }
                     parent.style.display = "none";
                     shrink();
@@ -1909,7 +1909,7 @@ global.prettydiff.meta = {
                         .node
                         .lang
                         .getElementsByTagName("option");
-                    for (c = langs.length - 1; c > -1; c -= 1) {
+                    for (c = langs.length - 1; c > -1; c = c - 1) {
                         if (langs[c].value === "text") {
                             if (pd.data.node.lang.selectedIndex === c) {
                                 pd.data.node.lang.selectedIndex = 0;
@@ -2126,7 +2126,7 @@ global.prettydiff.meta = {
                         .node
                         .lang
                         .getElementsByTagName("option");
-                    for (b = langOps.length - 1; b > -1; b -= 1) {
+                    for (b = langOps.length - 1; b > -1; b = b - 1) {
                         langOps[b].disabled = false;
                     }
                 }
@@ -2676,7 +2676,7 @@ global.prettydiff.meta = {
                     content[2].ontouchstart = pd.event.colSliderGrab;
                 }
                 content = content[0].getElementsByTagName("li");
-                for (pageHeight = content.length - 1; pageHeight > -1; pageHeight -= 1) {
+                for (pageHeight = content.length - 1; pageHeight > -1; pageHeight = pageHeight - 1) {
                     if (content[pageHeight].getAttribute("class") === "fold") {
                         if (pd.data.mode === "beau") {
                             content[pageHeight].onclick = pd.event.beaufold;
@@ -2769,12 +2769,12 @@ global.prettydiff.meta = {
                                     active.focus();
                                 }
                             };
-                        ind -= 1;
+                        ind = ind - 1;
                         if (ind < 0) {
                             ind = max;
                         }
                         change();
-                        ind += 1;
+                        ind = ind + 1;
                         if (ind > max) {
                             ind = 0;
                         }
@@ -2863,13 +2863,13 @@ global.prettydiff.meta = {
                             return str;
                         }
                         arr = str.split("");
-                        for (len = str.length - 4; len > -1; len -= 3) {
+                        for (len = str.length - 4; len > -1; len = len - 3) {
                             arr[len] = arr[len] + ",";
                         }
                         return arr.join("");
                     };
                 node = pd.id("showOptionsCallOut");
-                pd.data.zIndex += 1;
+                pd.data.zIndex = pd.data.zIndex + 1;
                 if (autotest === true) {
                     api.lang = "auto";
                 }
@@ -2906,26 +2906,26 @@ global.prettydiff.meta = {
                                     td      = {},
                                     body    = {},
                                     div     = {};
-                                for (a = 0; a < b; a += 1) {
+                                for (a = 0; a < b; a = a + 1) {
                                     if (output[a].length > cells) {
                                         cells = output[a].length;
                                     }
                                 }
                                 if (b > 5) {
                                     c = output[0].length;
-                                    for (a = 0; a < c; a += 1) {
+                                    for (a = 0; a < c; a = a + 1) {
                                         if (isNaN(output[0][a]) === false || (output[0][a].length < 4 && output[0][a].length < output[1][a].length && output[0][a].length < output[2][a].length)) {
                                             break;
                                         }
                                     }
                                     if (a === c) {
-                                        for (a = 0; a < c; a += 1) {
+                                        for (a = 0; a < c; a = a + 1) {
                                             if (output[1][a] !== undefined && (isNaN(output[1][a].charAt(0)) === false || output[1][a].length < 4)) {
                                                 break;
                                             }
                                         }
                                         if (a < c) {
-                                            for (d = 0; d < c; d += 1) {
+                                            for (d = 0; d < c; d = d + 1) {
                                                 if (output[2][d] !== undefined && (isNaN(output[2][d].charAt(0)) === false || output[2][d].length < 4)) {
                                                     if (d === a) {
                                                         heading = true;
@@ -2949,7 +2949,7 @@ global.prettydiff.meta = {
                                     td           = document.createElement("th");
                                     td.innerHTML = "Index";
                                     tr.appendChild(td);
-                                    for (c = 0; c < cells; c += 1) {
+                                    for (c = 0; c < cells; c = c + 1) {
                                         td = document.createElement("th");
                                         if (output[0][c] !== undefined) {
                                             td.innerHTML = output[0][c];
@@ -2960,7 +2960,7 @@ global.prettydiff.meta = {
                                     table.appendChild(body);
                                 }
                                 body = document.createElement("tbody");
-                                for (a = a; a < b; a += 1) {
+                                for (a = a; a < b; a = a + 1) {
                                     tr = document.createElement("tr");
                                     td = document.createElement("td");
                                     if (a === 0) {
@@ -2969,7 +2969,7 @@ global.prettydiff.meta = {
                                         td.innerHTML = a;
                                     }
                                     tr.appendChild(td);
-                                    for (c = 0; c < cells; c += 1) {
+                                    for (c = 0; c < cells; c = c + 1) {
                                         td = document.createElement("td");
                                         if (output[a][c] !== undefined) {
                                             td.innerHTML = output[a][c];
@@ -2989,19 +2989,19 @@ global.prettydiff.meta = {
                                     .appendChild(div);
                                 if (pd.test.ls === true) {
                                     if (pd.data.mode === "beau") {
-                                        pd.data.stat.beau += 1;
+                                        pd.data.stat.beau = pd.data.stat.beau + 1;
                                         node              = pd.id("stbeau");
                                         if (node !== null) {
                                             node.innerHTML = pd.data.stat.beau;
                                         }
                                     } else if (pd.data.mode === "minn") {
-                                        pd.data.stat.minn += 1;
+                                        pd.data.stat.minn = pd.data.stat.minn + 1;
                                         node              = pd.id("stminn");
                                         if (node !== null) {
                                             node.innerHTML = pd.data.stat.minn;
                                         }
                                     } else if (pd.data.mode === "pars") {
-                                        pd.data.stat.pars += 1;
+                                        pd.data.stat.pars = pd.data.stat.pars + 1;
                                         node              = pd.id("stpars");
                                         if (node !== null) {
                                             node.innerHTML = pd.data.stat.pars;
@@ -3042,7 +3042,7 @@ global.prettydiff.meta = {
                                     table.push("<div class='report'><h4>Definition of data fields</h4><ul>");
                                     keys = Object.keys(output.definition);
                                     klen = keys.length;
-                                    for (a = 0; a < klen; a += 1) {
+                                    for (a = 0; a < klen; a = a + 1) {
                                         table.push("<li><em>");
                                         table.push(keys[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
                                         table.push("</em> - ");
@@ -3074,7 +3074,7 @@ global.prettydiff.meta = {
                                     pd.data.node.report.code.box.style.right = "auto";
                                 }
                                 if (pd.test.ls === true) {
-                                    pd.data.stat.pars += 1;
+                                    pd.data.stat.pars = pd.data.stat.pars + 1;
                                     node              = pd.id("stpars");
                                     if (node !== null) {
                                         node.innerHTML = pd.data.stat.pars;
@@ -3136,7 +3136,7 @@ global.prettydiff.meta = {
                                     var a    = 0,
                                         list = diffList[0].getElementsByTagName("li"),
                                         b    = list.length;
-                                    for (a = 0; a < b; a += 1) {
+                                    for (a = 0; a < b; a = a + 1) {
                                         if (list[a].getAttribute("class") === "fold") {
                                             list[a].onclick = pd.event.beaufold;
                                         }
@@ -3146,7 +3146,7 @@ global.prettydiff.meta = {
                         }
                     }
                     if (pd.test.ls === true) {
-                        pd.data.stat.beau += 1;
+                        pd.data.stat.beau = pd.data.stat.beau + 1;
                         node              = pd.id("stbeau");
                         if (node !== null) {
                             node.innerHTML = pd.data.stat.beau;
@@ -3192,7 +3192,7 @@ global.prettydiff.meta = {
                                 var cells = diffList[0].getElementsByTagName("li"),
                                     len   = cells.length,
                                     a     = 0;
-                                for (a = 0; a < len; a += 1) {
+                                for (a = 0; a < len; a = a + 1) {
                                     if (cells[a].getAttribute("class") === "fold") {
                                         cells[a].onclick = pd.event.difffold;
                                     }
@@ -3205,7 +3205,7 @@ global.prettydiff.meta = {
                         }
                     }
                     if (pd.test.ls === true) {
-                        pd.data.stat.diff += 1;
+                        pd.data.stat.diff = pd.data.stat.diff + 1;
                         node              = pd.id("stdiff");
                         if (node !== null) {
                             node.innerHTML = pd.data.stat.diff;
@@ -3232,7 +3232,7 @@ global.prettydiff.meta = {
                         }
                     }
                     if (pd.test.ls === true) {
-                        pd.data.stat.minn += 1;
+                        pd.data.stat.minn = pd.data.stat.minn + 1;
                         node              = pd.id("stminn");
                         if (node !== null) {
                             node.innerHTML = pd.data.stat.minn;
@@ -3274,7 +3274,7 @@ global.prettydiff.meta = {
                         }
                     }
                     if (pd.test.ls === true) {
-                        pd.data.stat.anal += 1;
+                        pd.data.stat.anal = pd.data.stat.anal + 1;
                         node              = pd.id("stanal");
                         if (node !== null) {
                             node.innerHTML = pd.data.stat.anal;
@@ -3352,31 +3352,31 @@ global.prettydiff.meta = {
                         var size = 0;
                         lang = lang.toLowerCase();
                         if (pd.data.langvalue[1] === "csv") {
-                            pd.data.stat.csv += 1;
+                            pd.data.stat.csv = pd.data.stat.csv + 1;
                             node             = pd.id("stcsv");
                             if (node !== null) {
                                 node.innerHTML = pd.data.stat.csv;
                             }
                         } else if (pd.data.langvalue[1] === "plain text") {
-                            pd.data.stat.text += 1;
+                            pd.data.stat.text = pd.data.stat.text + 1;
                             node              = pd.id("sttext");
                             if (node !== null) {
                                 node.innerHTML = pd.data.stat.text;
                             }
                         } else if (pd.data.langvalue[1] === "javascript") {
-                            pd.data.stat.js += 1;
+                            pd.data.stat.js = pd.data.stat.js + 1;
                             node            = pd.id("stjs");
                             if (node !== null) {
                                 node.innerHTML = pd.data.stat.js;
                             }
                         } else if (pd.data.langvalue[1] === "markup" || pd.data.langvalue[1] === "html" || pd.data.langvalue[1] === "xml" || pd.data.langvalue[1] === "xhtml") {
-                            pd.data.stat.markup += 1;
+                            pd.data.stat.markup = pd.data.stat.markup + 1;
                             node                = pd.id("stmarkup");
                             if (node !== null) {
                                 node.innerHTML = pd.data.stat.markup;
                             }
                         } else if (pd.data.langvalue[1] === "css") {
-                            pd.data.stat.css += 1;
+                            pd.data.stat.css = pd.data.stat.css + 1;
                             node             = pd.id("stcss");
                             if (node !== null) {
                                 node.innerHTML = pd.data.stat.css;
@@ -4236,7 +4236,7 @@ global.prettydiff.meta = {
                 var keys = Object.keys(pd.param),
                     a = 0,
                     len = keys.length;
-                for (a = 0; a < len; a += 1) {
+                for (a = 0; a < len; a = a + 1) {
                     api[keys[a]] = pd.param[keys[a]];
                 }
             }());
@@ -4334,7 +4334,7 @@ global.prettydiff.meta = {
         }
         if (pd.test.ls === true) {
             if (pd.data.node.report.stat.box !== null) {
-                pd.data.stat.usage  += 1;
+                pd.data.stat.usage  = pd.data.stat.usage + 1;
                 pd.data.stat.useday = Math.round(pd.data.stat.usage / ((Date.now() - pd.data.stat.fdate) / 86400000));
                 node                = pd.id("stusage");
                 if (node !== null) {
@@ -5149,7 +5149,7 @@ global.prettydiff.meta = {
                 fileCount   = -1;
             };
             fileCount = files.length;
-            for (a = 0; a < fileCount; a += 1) {
+            for (a = 0; a < fileCount; a = a + 1) {
                 reader         = new FileReader();
                 reader.onload  = fileLoad;
                 reader.onerror = fileError;
@@ -5425,7 +5425,7 @@ global.prettydiff.meta = {
                         .parentNode
                         .getElementsByTagName("input"),
                     aa     = 0;
-                for (aa = radios.length - 1; aa > -1; aa -= 1) {
+                for (aa = radios.length - 1; aa > -1; aa = aa - 1) {
                     radios[aa]
                         .parentNode
                         .removeAttribute("class");
@@ -5535,7 +5535,7 @@ global.prettydiff.meta = {
                                 "November",
                                 "December"
                             ];
-                        list[1] -= 1;
+                        list[1] = list[1] - 1;
                         if (list[2].charAt(0) === "0") {
                             list[2] = list[2].substr(1);
                         }
@@ -5571,7 +5571,7 @@ global.prettydiff.meta = {
                                         "Nov",
                                         "Dec"
                                     ];
-                                list[1] -= 1;
+                                list[1] = list[1] - 1;
                                 return list[2] + " " + month[list[1]] + " 20" + list[0];
                             };
                         dateList = target.getElementsByTagName("tfoot");
@@ -5583,7 +5583,7 @@ global.prettydiff.meta = {
                         row      = target.getElementsByTagName("tr");
                         rowLen   = row.length;
                         dateList = [];
-                        for (b = 0; b < rowLen; b += 1) {
+                        for (b = 0; b < rowLen; b = b + 1) {
                             dateCell = row[b].getElementsByTagName("td")[3];
                             lib      = row[b].getElementsByTagName("a")[0].innerHTML;
                             if (lib === "csspretty.js") {
@@ -5664,7 +5664,7 @@ global.prettydiff.meta = {
                             .sort(function dom__load_documentation_sortReverse(target, row) {
                                 return target[0] - row[0];
                             });
-                        for (b = dateList.length - 1; b > -1; b -= 1) {
+                        for (b = dateList.length - 1; b > -1; b = b - 1) {
                             output.push("<tr>");
                             output.push(dateList[b][1]);
                             output.push("</tr>");
@@ -6011,7 +6011,7 @@ global.prettydiff.meta = {
             if (pd.test.agent.indexOf("webkit") > 0 || pd.test.agent.indexOf("blink") > 0) {
                 inputs    = document.getElementsByTagName("textarea");
                 inputsLen = inputs.length;
-                for (a = 0; a < inputsLen; a += 1) {
+                for (a = 0; a < inputsLen; a = a + 1) {
                     inputs[a].removeAttribute("wrap");
                 }
             }
@@ -6207,7 +6207,7 @@ global.prettydiff.meta = {
             }
             inputs    = document.getElementsByTagName("input");
             inputsLen = inputs.length;
-            for (a = 0; a < inputsLen; a += 1) {
+            for (a = 0; a < inputsLen; a = a + 1) {
                 type = inputs[a].getAttribute("type");
                 id   = inputs[a].getAttribute("id");
                 if (type === "radio") {
@@ -6399,7 +6399,7 @@ global.prettydiff.meta = {
             }
             inputs    = document.getElementsByTagName("select");
             inputsLen = inputs.length;
-            for (a = 0; a < inputsLen; a += 1) {
+            for (a = 0; a < inputsLen; a = a + 1) {
                 id = inputs[a].getAttribute("id");
                 if (id === "colorScheme") {
                     inputs[a].onchange = pd.event.colorScheme;
@@ -6431,7 +6431,7 @@ global.prettydiff.meta = {
             }
             inputs    = document.getElementsByTagName("button");
             inputsLen = inputs.length;
-            for (a = 0; a < inputsLen; a += 1) {
+            for (a = 0; a < inputsLen; a = a + 1) {
                 name = inputs[a].getAttribute("class");
                 id   = inputs[a].getAttribute("id");
                 if (name === null) {
@@ -6485,7 +6485,7 @@ global.prettydiff.meta = {
             if (node !== null) {
                 inputs    = node.getElementsByTagName("a");
                 inputsLen = inputs.length;
-                for (a = 0; a < inputsLen; a += 1) {
+                for (a = 0; a < inputsLen; a = a + 1) {
                     inputs[a].onclick = thirdparty;
                 }
             }
@@ -6532,7 +6532,7 @@ global.prettydiff.meta = {
                         source   = "",
                         diff     = "";
                     pd.param = {};
-                    for (b = 0; b < paramLen; b += 1) {
+                    for (b = 0; b < paramLen; b = b + 1) {
                         param = params[b].split("=");
                         if (param.length > 1) {
                             param[1] = param[1].toLowerCase();
@@ -6568,8 +6568,8 @@ global.prettydiff.meta = {
                                 pd.data.node.modeAnal.checked = true;
                             } else {
                                 params.splice(b, 1);
-                                b -= 1;
-                                paramLen -= 1;
+                                b = b - 1;
+                                paramLen = paramLen - 1;
                             }
                         } else if (param[0] === "s" || param[1] === "source") {
                             param[0] = "source";
@@ -6609,7 +6609,7 @@ global.prettydiff.meta = {
                             } else if (param[1] === "tss" || param[1] === "titanium") {
                                 param[1] = "tss";
                             }
-                            for (c = options.length - 1; c > -1; c -= 1) {
+                            for (c = options.length - 1; c > -1; c = c - 1) {
                                 if (options[c].value === param[1]) {
                                     pd.data.node.lang.selectedIndex = c;
                                     break;
@@ -6672,7 +6672,7 @@ global.prettydiff.meta = {
                                 .langOps(pd.data.node.lang);
                         } else if (param[0] === "c" || param[0] === "color") {
                             param[0] = "color";
-                            for (c = colors.length - 1; c > -1; c -= 1) {
+                            for (c = colors.length - 1; c > -1; c = c - 1) {
                                 if (colors[c].innerHTML.toLowerCase() === param[1]) {
                                     color.selectedIndex = c;
                                     pd
@@ -6683,8 +6683,8 @@ global.prettydiff.meta = {
                             }
                             if (c < 0) {
                                 params.splice(b, 1);
-                                b -= 1;
-                                paramLen -= 1;
+                                b = b - 1;
+                                paramLen = paramLen - 1;
                             }
                         } else if (param[0] === "jsscope") {
                             param[1] = "true";
@@ -6715,7 +6715,7 @@ global.prettydiff.meta = {
                                     .app
                                     .options(node);
                             }
-                            for (c = options.length - 1; c > -1; c -= 1) {
+                            for (c = options.length - 1; c > -1; c = c - 1) {
                                 if (options[c].value === "html") {
                                     pd.data.node.lang.selectedIndex = c;
                                     pd
@@ -7808,7 +7808,7 @@ global.prettydiff.meta = {
                         bytes   = new Uint8Array(buff),
                         z       = 0,
                         bytelen = buff.byteLength;
-                    for (z = 0; z < bytelen; z += 1) {
+                    for (z = 0; z < bytelen; z = z + 1) {
                         bytes[z] = pd
                             .data
                             .audio
@@ -8126,7 +8126,7 @@ global.prettydiff.meta = {
                             }
                             colorParam = colorParam.split("&")[0];
                             colorParam = colorParam.substr(colorParam.indexOf("=") + 1);
-                            for (b = 0; b < olen; b += 1) {
+                            for (b = 0; b < olen; b = b + 1) {
                                 if (options[b].value.toLowerCase() === colorParam) {
                                     node.selectedIndex = b;
                                     break;
@@ -8142,7 +8142,7 @@ global.prettydiff.meta = {
                         colorScheme.onchange = pd.event.colorScheme;
                     };
                 b = docbuttons.length;
-                for (a = 0; a < b; a += 1) {
+                for (a = 0; a < b; a = a + 1) {
                     if (docbuttons[a].parentNode.nodeName.toLowerCase() === "h2") {
                         docbuttons[a].onclick = showhide;
                     }
@@ -8184,7 +8184,7 @@ global.prettydiff.meta = {
                         }
                         colorParam = colorParam.split("&")[0];
                         colorParam = colorParam.substr(colorParam.indexOf("=") + 1);
-                        for (b = 0; b < olen; b += 1) {
+                        for (b = 0; b < olen; b = b + 1) {
                             if (options[b].value.toLowerCase() === colorParam) {
                                 node.selectedIndex = b;
                                 break;
@@ -8207,13 +8207,13 @@ global.prettydiff.meta = {
                         ol    = [],
                         li    = [],
                         lilen = 0;
-                    for (inca = 0; inca < len; inca += 1) {
+                    for (inca = 0; inca < len; inca = inca + 1) {
                         if (div[inca].getAttribute("class") === "beautify") {
                             ol = div[inca].getElementsByTagName("ol");
                             if (ol[0].getAttribute("class") === "count") {
                                 li    = ol[0].getElementsByTagName("li");
                                 lilen = li.length;
-                                for (incb = 0; incb < lilen; incb += 1) {
+                                for (incb = 0; incb < lilen; incb = incb + 1) {
                                     if (li[incb].getAttribute("class") === "fold") {
                                         li[incb].onclick = pd.event.beaufold;
                                     }
