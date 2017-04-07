@@ -52,10 +52,10 @@
                             if (typeof h !== "object" || h === null || h.checked) {
                                 h = "";
                             }
-                            f      += 1;
-                            g      += 1;
-                            g      += Number(i.selectedIndex);
-                            maxAge += 1;
+                            f      = f + 1;
+                            g      = g + 1;
+                            g      = g + Number(i.selectedIndex);
+                            maxAge = maxAge + 1;
                             if (h !== "" || c.checked || d.value === "" || d.value === "mm/dd/yyyy" || e.value === "" || e.value === "mm/dd/yyyy" || f > 3 || g > 4) {
                                 action(dom, a, "/hotel/HotelCobrand.do");
                                 return;
@@ -82,8 +82,8 @@
                                     .parentNode
                                     .getElementsByTagName("fieldset")[0]
                                     .getElementsByTagName("select");
-                                g += 1;
-                                g += h;
+                                g = g + 1;
+                                g = g + h;
                                 if (g > 4) {
                                     action(dom, a, "/hotel/HotelCobrand.do");
                                     return;
@@ -110,8 +110,8 @@
                                     .parentNode
                                     .getElementsByTagName("fieldset")[0]
                                     .getElementsByTagName("select");
-                                g += 1;
-                                g += h;
+                                g = g + 1;
+                                g = g + h;
                                 if (g > 4) {
                                     action(dom, a, "/hotel/HotelCobrand.do");
                                     return;
@@ -207,13 +207,15 @@
             var s_domain = (s_proto == "https:")
                 ? "a248.e.akamai.net/f/248/5879/1h/i.travelpn.com"
                 : "i.travelpn.com.edgesuite.net";
-            for (i = 0; i < o_scr.length; i += 1) {
+            for (i = 0; i < o_scr.length; i = i + 1) {
                 var s_scriptSrc = o_scr
                     .item(i)
                     .src;
-                i_scrptCnt += parseInt((s_scriptSrc.toUpperCase().indexOf("NAVIGATION.JS") > 0)
-                    ? "1"
-                    : "0");
+                i_scrptCnt = i_scrptCnt + parseInt(
+                    (s_scriptSrc.toUpperCase().indexOf("NAVIGATION.JS") > 0)
+                        ? "1"
+                        : "0"
+                );
             }
             if (i_scrptCnt == 0) {
                 var o_head = document.getElementsByTagName("head")[0];
@@ -5598,7 +5600,7 @@
                         n,
                         o,
                         p;
-                    for (g = 1; g < i; g += 1) {
+                    for (g = 1; g < i; g = g + 1) {
                         if (g === 1) {
                             for (h in a.converters) {
                                 typeof h === "string" && (f[h.toLowerCase()] = a.converters[h]);
@@ -5707,7 +5709,7 @@
                             : 0,
                         k = a === bH,
                         l;
-                    for (; i < j && (k || !l); i += 1) {
+                    for (; i < j && (k || !l); i = i + 1) {
                         l = h[i](c, d, e),
                         typeof l === "string" && (!k || g[l]
                             ? l = b
@@ -5728,7 +5730,7 @@
                                 h,
                                 i,
                                 j;
-                            for (; f < g; f += 1) {
+                            for (; f < g; f = f + 1) {
                                 h = e[f],
                                 j = /^\+/.test(h),
                                 j && (h = h.substr(1) || "*"),
@@ -5753,10 +5755,10 @@
                         return f;
                     }
                     d.each(e, function () {
-                        c || (f -= parseFloat(d.css(a, "padding" + this)) || 0),
+                        c || (f = f - parseFloat(d.css(a, "padding" + this)) || 0),
                         c === "margin"
-                            ? f += parseFloat(d.css(a, "margin" + this)) || 0
-                            : f -= parseFloat(d.css(a, "border" + this + "Width")) || 0;
+                            ? f = f + parseFloat(d.css(a, "margin" + this)) || 0
+                            : f = f - parseFloat(d.css(a, "border" + this + "Width")) || 0;
                     });
                     return f;
                 }
@@ -5813,7 +5815,7 @@
                                 delete f.handle,
                                 f.events = {};
                                 for (var h in g) {
-                                    for (var i = 0, j = g[h].length; i < j; i += 1) {
+                                    for (var i = 0, j = g[h].length; i < j; i = i + 1) {
                                         d
                                             .event
                                             .add(b, h + (g[h][i].namespace
@@ -5892,7 +5894,7 @@
                         var t = s
                             .live
                             .slice(0);
-                        for (i = 0; i < t.length; i += 1) {
+                        for (i = 0; i < t.length; i = i + 1) {
                             g = t[i],
                             g
                                 .origType
@@ -5901,9 +5903,9 @@
                                     : t.splice(i--, 1);
                         }
                         f = d(a.target).closest(r, a.currentTarget);
-                        for (j = 0, k = f.length; j < k; j += 1) {
+                        for (j = 0, k = f.length; j < k; j = j + 1) {
                             m = f[j];
-                            for (i = 0; i < t.length; i += 1) {
+                            for (i = 0; i < t.length; i = i + 1) {
                                 g = t[i];
                                 if (m.selector === g.selector && (!n || n.test(g.namespace)) && !m.elem.disabled) {
                                     h = m.elem,
@@ -5916,7 +5918,7 @@
                                 }
                             }
                         }
-                        for (j = 0, k = q.length; j < k; j += 1) {
+                        for (j = 0, k = q.length; j < k; j = j + 1) {
                             f = q[j];
                             if (c && f.level > c) {
                                 break;
@@ -6186,8 +6188,8 @@
                                 l = !1;
                             typeof i === "boolean" && (l = i, i = arguments[1] || {}, j = 2),
                             typeof i !== "object" && !d.isFunction(i) && (i = {}),
-                            k === j && (i = this, j -= 1);
-                            for (; j < k; j += 1) {
+                            k === j && (i = this, j = j - 1);
+                            for (; j < k; j = j + 1) {
                                 if ((a = arguments[j]) != null) {
                                     for (c in a) {
                                         e = i[c],
@@ -6231,7 +6233,7 @@
                                                     j,
                                                     k;
                                                 b && (k = b, b = 0);
-                                                for (g = 0, h = c.length; g < h; g += 1) {
+                                                for (g = 0, h = c.length; g < h; g = g + 1) {
                                                     i = c[g],
                                                     j = d.type(i),
                                                     j === "array"
@@ -6287,7 +6289,7 @@
                                 }
                                 if (e !== b) {
                                     f = !h && f && d.isFunction(e);
-                                    for (var k = 0; k < i; k += 1) {
+                                    for (var k = 0; k < i; k = k + 1) {
                                         g(a[k], c, f
                                             ? e.call(a[k], k, g(a[k], c))
                                             : e,
@@ -6381,7 +6383,7 @@
                                             }
                                         }
                                     } else {
-                                        for (var j = a[0]; g < h && c.call(j, g, j) !== !1; j = a[g += 1]) {}
+                                        for (var j = a[0]; g < h && c.call(j, g, j) !== !1; j = a[g = g + 1]) {}
                                     }
                                 }
                                 return a;
@@ -6406,7 +6408,7 @@
                                 var d = [],
                                     e;
                                 c = !!c;
-                                for (var f = 0, g = a.length; f < g; f += 1) {
+                                for (var f = 0, g = a.length; f < g; f = f + 1) {
                                     e = !!b(a[f], f),
                                     c !== e && d.push(a[f]);
                                 }
@@ -6417,7 +6419,7 @@
                                 if (b.indexOf) {
                                     return b.indexOf(a);
                                 }
-                                for (var c = 0, d = b.length; c < d; c += 1) {
+                                for (var c = 0, d = b.length; c < d; c = c + 1) {
                                     if (b[c] === a) {
                                         return c;
                                     }
@@ -6469,7 +6471,7 @@
                             map          : function (a, b, c) {
                                 var d = [],
                                     e;
-                                for (var f = 0, g = a.length; f < g; f += 1) {
+                                for (var f = 0, g = a.length; f < g; f = f + 1) {
                                     e = b(a[f], f, c),
                                     e != null && (d[d.length] = e);
                                 }
@@ -6481,7 +6483,7 @@
                                 var d = a.length,
                                     e = 0;
                                 if (typeof c.length === "number") {
-                                    for (var f = c.length; e < f; e += 1) {
+                                    for (var f = c.length; e < f; e = e + 1) {
                                         a[d++] = c[e];
                                     }
                                 } else {
@@ -6918,7 +6920,7 @@
                                     if (this[0].nodeType === 1) {
                                         var g = this[0].attributes,
                                             h;
-                                        for (var i = 0, j = g.length; i < j; i += 1) {
+                                        for (var i = 0, j = g.length; i < j; i = i + 1) {
                                             h = g[i].name,
                                             h.indexOf("data-") === 0 && (h = h.substr(5), f(this[0], h, e[h]));
                                         }
@@ -7049,14 +7051,14 @@
                             }
                             if (a && typeof a === "string") {
                                 var b = (a || "").split(i);
-                                for (var c = 0, e = this.length; c < e; c += 1) {
+                                for (var c = 0, e = this.length; c < e; c = c + 1) {
                                     var f = this[c];
                                     if (f.nodeType === 1) {
                                         if (f.className) {
                                             var g = " " + f.className + " ",
                                                 h = f.className;
-                                            for (var j = 0, k = b.length; j < k; j += 1) {
-                                                g.indexOf(" " + b[j] + " ") < 0 && (h += " " + b[j]);
+                                            for (var j = 0, k = b.length; j < k; j = j + 1) {
+                                                g.indexOf(" " + b[j] + " ") < 0 && (h = h + " " + b[j]);
                                             }
                                             f.className = d.trim(h);
                                         } else {
@@ -7072,7 +7074,7 @@
                         },
                         hasClass   : function (a) {
                             var b = " " + a + " ";
-                            for (var c = 0, d = this.length; c < d; c += 1) {
+                            for (var c = 0, d = this.length; c < d; c = c + 1) {
                                 if ((" " + this[c].className + " ").replace(h, " ").indexOf(b) > -1) {
                                     return !0;
                                 }
@@ -7094,12 +7096,12 @@
                             }
                             if (a && typeof a === "string" || a === b) {
                                 var c = (a || "").split(i);
-                                for (var e = 0, f = this.length; e < f; e += 1) {
+                                for (var e = 0, f = this.length; e < f; e = e + 1) {
                                     var g = this[e];
                                     if (g.nodeType === 1 && g.className) {
                                         if (a) {
                                             var j = (" " + g.className + " ").replace(h, " ");
-                                            for (var k = 0, l = c.length; k < l; k += 1) {
+                                            for (var k = 0, l = c.length; k < l; k = k + 1) {
                                                 j = j.replace(" " + c[k] + " ", " ");
                                             }
                                             g.className = d.trim(j);
@@ -7168,7 +7170,7 @@
                                             : 0,
                                         l = i
                                             ? f + 1
-                                            : h.length; k < l; k += 1) {
+                                            : h.length; k < l; k = k + 1) {
                                             var m = h[k];
                                             if (m.selected && (d.support.optDisabled
                                                 ? !m.disabled
@@ -7203,7 +7205,7 @@
                                     e == null
                                         ? e = ""
                                         : typeof e === "number"
-                                            ? e += ""
+                                            ? e = e + ""
                                             : d.isArray(e) && (e = d.map(e, function (a) {
                                                 return a == null
                                                     ? ""
@@ -7375,7 +7377,7 @@
                         var e = a;
                         a = d.Event(e);
                         for (var f = this.props.length, g; f;) {
-                            g    = this.props[f -= 1],
+                            g    = this.props[f = f - 1],
                             a[g] = e[g];
                         }
                         a.target || (a.target = a.srcElement || c),
@@ -7440,7 +7442,7 @@
                         f               = (i || {})[c.type];
                         if (i && f) {
                             f = f.slice(0);
-                            for (var l = 0, m = f.length; l < m; l += 1) {
+                            for (var l = 0, m = f.length; l < m; l = l + 1) {
                                 var n = f[l];
                                 if (e || h.test(n.namespace)) {
                                     c.handler   = n.handler,
@@ -7513,7 +7515,7 @@
                                     continue;
                                 }
                                 if (!e) {
-                                    for (j = 0; j < p.length; j += 1) {
+                                    for (j = 0; j < p.length; j = j + 1) {
                                         q = p[j];
                                         if (l || n.test(q.namespace)) {
                                             d
@@ -7527,7 +7529,7 @@
                                 o = d
                                     .event
                                     .special[h] || {};
-                                for (j = f || 0; j < p.length; j += 1) {
+                                for (j = f || 0; j < p.length; j = j + 1) {
                                     q = p[j];
                                     if (e.guid === q.guid) {
                                         if (l || n.test(q.namespace)) {
@@ -7906,7 +7908,7 @@
                         if (a === "unload" && c !== "one") {
                             this.one(a, e, f);
                         } else {
-                            for (var i = 0, j = this.length; i < j; i += 1) {
+                            for (var i = 0, j = this.length; i < j; i = i + 1) {
                                 d
                                     .event
                                     .add(this[i], a, h, e);
@@ -7959,7 +7961,7 @@
                         },
                         unbind        : function (a, b) {
                             if (typeof a !== "object" || a.preventDefault) {
-                                for (var e = 0, f = this.length; e < f; e += 1) {
+                                for (var e = 0, f = this.length; e < f; e = e + 1) {
                                     d
                                         .event
                                         .remove(this[e], a, b);
@@ -8017,7 +8019,7 @@
                                 ? (a.push(D[h] + k), h = h + k)
                                 : h = (D[h] || h) + k;
                             if (c === "live") {
-                                for (var q = 0, r = n.length; q < r; q += 1) {
+                                for (var q = 0, r = n.length; q < r; q = q + 1) {
                                     d
                                         .event
                                         .add(n[q], "live." + F(h, m), {
@@ -8054,7 +8056,7 @@
                 ),
                 function () {
                     function u(a, b, c, d, e, f) {
-                        for (var g = 0, h = d.length; g < h; g += 1) {
+                        for (var g = 0, h = d.length; g < h; g = g + 1) {
                             var i = d[g];
                             if (i) {
                                 var j = !1;
@@ -8083,7 +8085,7 @@
                         }
                     }
                     function t(a, b, c, d, e, f) {
-                        for (var g = 0, h = d.length; g < h; g += 1) {
+                        for (var g = 0, h = d.length; g < h; g = g + 1) {
                             var i = d[g];
                             if (i) {
                                 var j = !1;
@@ -8158,7 +8160,7 @@
                                     : k(x.shift(), d);
                                 while (x.length) {
                                     b = x.shift(),
-                                    l.relative[b] && (b += x.shift()),
+                                    l.relative[b] && (b = b + x.shift()),
                                     j = v(b, j);
                                 }
                             }
@@ -8209,7 +8211,7 @@
                         if (f.call(n) === "[object Array]") {
                             if (u) {
                                 if (d && d.nodeType === 1) {
-                                    for (t = 0; n[t] != null; t += 1) {
+                                    for (t = 0; n[t] != null; t = t + 1) {
                                         n[t] && (n[t] === !0 || n[t].nodeType === 1 && k.contains(d, n[t])) && e.push(
                                             j[t]
                                         );
@@ -8217,7 +8219,7 @@
                                 }
                             }
                         } else {
-                            for (t = 0; n[t] != null; t += 1) {
+                            for (t = 0; n[t] != null; t = t + 1) {
                                 n[t] && n[t].nodeType === 1 && e.push(j[t]);
                             }
                         } else {
@@ -8235,7 +8237,7 @@
                             g = h,
                             a.sort(r);
                             if (g) {
-                                for (var b = 1; b < a.length; b += 1) {
+                                for (var b = 1; b < a.length; b = b + 1) {
                                     a[b] === a[b - 1] && a.splice(b--, 1);
                                 }
                             }
@@ -8253,7 +8255,7 @@
                         if (!a) {
                             return [];
                         }
-                        for (var e = 0, f = l.order.length; e < f; e += 1) {
+                        for (var e = 0, f = l.order.length; e < f; e = e + 1) {
                             var g,
                                 h = l.order[e];
                             if (g = l.leftMatch[h].exec(a)) {
@@ -8305,7 +8307,7 @@
                                         }
                                     }
                                     if (f) {
-                                        for (var s = 0; (p = j[s]) != null; s += 1) {
+                                        for (var s = 0; (p = j[s]) != null; s = s + 1) {
                                             if (p) {
                                                 o = q(p, f, s, j);
                                                 var t = e ^ !!o;
@@ -8454,7 +8456,7 @@
                                     }
                                     if (e === "not") {
                                         var g = b[3];
-                                        for (var h = 0, i = g.length; h < i; h += 1) {
+                                        for (var h = 0, i = g.length; h < i; h = h + 1) {
                                             if (g[h] === a) {
                                                 return !1;
                                             }
@@ -8541,7 +8543,7 @@
                                     if (typeof b.getElementsByName !== "undefined") {
                                         var c = [],
                                             d = b.getElementsByName(a[1]);
-                                        for (var e = 0, f = d.length; e < f; e += 1) {
+                                        for (var e = 0, f = d.length; e < f; e = e + 1) {
                                             d[e].getAttribute("name") === a[1] && c.push(d[e]);
                                         }
                                         return c.length === 0
@@ -8597,7 +8599,7 @@
                                     if (f) {
                                         return a;
                                     }
-                                    for (var g = 0, h; (h = b[g]) != null; g += 1) {
+                                    for (var g = 0, h; (h = b[g]) != null; g = g + 1) {
                                         h && (
                                             e ^ (h.className && (" " + h.className + " ").replace(/[\t\n\r]/g, " ").indexOf(a) >= 0)
                                                 ? c || d.push(h)
@@ -8648,7 +8650,7 @@
                                         d = c && !j.test(b),
                                         e = c && !d;
                                     d && (b = b.toLowerCase());
-                                    for (var f = 0, g = a.length, h; f < g; f += 1) {
+                                    for (var f = 0, g = a.length, h; f < g; f = f + 1) {
                                         if (h = a[f]) {
                                             while ((h = h.previousSibling) && h.nodeType !== 1) {}
                                             a[f] = e || h && h
@@ -8667,7 +8669,7 @@
                                         f = a.length;
                                     if (d && !j.test(b)) {
                                         b = b.toLowerCase();
-                                        for (; e < f; e += 1) {
+                                        for (; e < f; e = e + 1) {
                                             c = a[e];
                                             if (c) {
                                                 var g = c.parentNode;
@@ -8679,7 +8681,7 @@
                                             }
                                         }
                                     } else {
-                                        for (; e < f; e += 1) {
+                                        for (; e < f; e = e + 1) {
                                             c = a[e],
                                             c && (a[e] = d
                                                 ? c.parentNode
@@ -8766,11 +8768,11 @@
                                     .push
                                     .apply(d, a);
                             } else if (typeof a.length === "number") {
-                                for (var e = a.length; c < e; c += 1) {
+                                for (var e = a.length; c < e; c = c + 1) {
                                     d.push(a[c]);
                                 }
                             } else {
-                                for (; a[c]; c += 1) {
+                                for (; a[c]; c = c + 1) {
                                     d.push(a[c]);
                                 }
                             }
@@ -8826,7 +8828,7 @@
                             }
                             c = e.length,
                             d = f.length;
-                            for (var k = 0; k < c && k < d; k += 1) {
+                            for (var k = 0; k < c && k < d; k = k + 1) {
                                 if (e[k] !== f[k]) {
                                     return s(e[k], f[k]);
                                 }
@@ -8850,11 +8852,11 @@
                     k.getText = function (a) {
                         var b = "",
                             c;
-                        for (var d = 0; a[d]; d += 1) {
+                        for (var d = 0; a[d]; d = d + 1) {
                             c = a[d],
                             c.nodeType === 3 || c.nodeType === 4
-                                ? b += c.nodeValue
-                                : c.nodeType !== 8 && (b += k.getText(c.childNodes));
+                                ? b = b + c.nodeValue
+                                : c.nodeType !== 8 && (b = b + k.getText(c.childNodes));
                         }
                         return b;
                     },
@@ -8895,7 +8897,7 @@
                             var c = b.getElementsByTagName(a[1]);
                             if (a[1] === "*") {
                                 var d = [];
-                                for (var e = 0; c[e]; e += 1) {
+                                for (var e = 0; c[e]; e = e + 1) {
                                     c[e].nodeType === 1 && d.push(c[e]);
                                 }
                                 c = d;
@@ -9040,13 +9042,13 @@
                                 ? [b]
                                 : b;
                         while (c = l.match.PSEUDO.exec(a)) {
-                            e += c[0],
+                            e = e + c[0],
                             a = a.replace(l.match.PSEUDO, "");
                         }
                         a = l.relative[a]
                             ? a + "*"
                             : a;
-                        for (var g = 0, h = f.length; g < h; g += 1) {
+                        for (var g = 0, h = f.length; g < h; g = g + 1) {
                             k(a, f[g], d);
                         }
                         return k.filter(e, d);
@@ -9097,7 +9099,7 @@
                                     j = {},
                                     k = 1;
                                 if (g && a.length) {
-                                    for (e = 0, f = a.length; e < f; e += 1) {
+                                    for (e = 0, f = a.length; e < f; e = e + 1) {
                                         i = a[e],
                                         j[i] || (j[i] = d.expr.match.POS.test(i)
                                             ? d(i, b || this.context)
@@ -9111,7 +9113,7 @@
                                                 : d(g).is(h)) && c.push({elem: g, level: k, selector: i});
                                         }
                                         g = g.parentNode,
-                                        k += 1;
+                                        k = k + 1;
                                     }
                                 }
                                 return c;
@@ -9119,7 +9121,7 @@
                             var l = L.test(a)
                                 ? d(a, b || this.context)
                                 : null;
-                            for (e = 0, f = this.length; e < f; e += 1) {
+                            for (e = 0, f = this.length; e < f; e = e + 1) {
                                 g = this[e];
                                 while (g) {
                                     if (l
@@ -9145,12 +9147,12 @@
                         find   : function (a) {
                             var b = this.pushStack("", "find", a),
                                 c = 0;
-                            for (var e = 0, f = this.length; e < f; e += 1) {
+                            for (var e = 0, f = this.length; e < f; e = e + 1) {
                                 c = b.length,
                                 d.find(a, this[e], b);
                                 if (e > 0) {
-                                    for (var g = c; g < b.length; g += 1) {
-                                        for (var h = 0; h < c; h += 1) {
+                                    for (var g = c; g < b.length; g = g + 1) {
+                                        for (var h = 0; h < c; h = h + 1) {
                                             if (b[h] === b[g]) {
                                                 b.splice(g--, 1);
                                                 break;
@@ -9164,7 +9166,7 @@
                         has    : function (a) {
                             var b = d(a);
                             return this.filter(function () {
-                                for (var a = 0, c = b.length; a < c; a += 1) {
+                                for (var a = 0, c = b.length; a < c; a = a + 1) {
                                     if (d.contains(this, b[a])) {
                                         return !0;
                                     }
@@ -9410,7 +9412,7 @@
                                     : g = h.firstChild;
                                 if (g) {
                                     c = c && d.nodeName(g, "tr");
-                                    for (var l = 0, m = this.length, n = m - 1; l < m; l += 1) {
+                                    for (var l = 0, m = this.length, n = m - 1; l < m; l = l + 1) {
                                         e.call(c
                                             ? Y(this[l], g)
                                             : this[l],
@@ -9424,7 +9426,7 @@
                             return this;
                         },
                         empty      : function () {
-                            for (var a = 0, b; (b = this[a]) != null; a += 1) {
+                            for (var a = 0, b; (b = this[a]) != null; a = a + 1) {
                                 b.nodeType === 1 && d.cleanData(b.getElementsByTagName("*"));
                                 while (b.firstChild) {
                                     b.removeChild(b.firstChild);
@@ -9452,7 +9454,7 @@
                             } else {
                                 a = a.replace(R, "<$1></$2>");
                                 try {
-                                    for (var c = 0, e = this.length; c < e; c += 1) {
+                                    for (var c = 0, e = this.length; c < e; c = c + 1) {
                                         this[c].nodeType === 1 && (
                                             d.cleanData(this[c].getElementsByTagName("*")),
                                             this[c].innerHTML = a
@@ -9472,7 +9474,7 @@
                             });
                         },
                         remove     : function (a, b) {
-                            for (var c = 0, e; (e = this[c]) != null; c += 1) {
+                            for (var c = 0, e; (e = this[c]) != null; c = c + 1) {
                                 if (!a || d.filter(a, [e]).length) {
                                     !b && e.nodeType === 1 && (
                                         d.cleanData(e.getElementsByTagName("*")),
@@ -9609,7 +9611,7 @@
                             f[b](this[0]);
                             return this;
                         }
-                        for (var h = 0, i = f.length; h < i; h += 1) {
+                        for (var h = 0, i = f.length; h < i; h = h + 1) {
                             var j = (h > 0
                                 ? this.clone(!0)
                                 : this).get();
@@ -9626,8 +9628,8 @@
                             b = b.ownerDocument || b[0] && b[0].ownerDocument || c
                         );
                         var g = [];
-                        for (var h = 0, i; (i = a[h]) != null; h += 1) {
-                            typeof i === "number" && (i += "");
+                        for (var h = 0, i; (i = a[h]) != null; h = h + 1) {
+                            typeof i === "number" && (i = i + "");
                             if (!i) {
                                 continue;
                             }
@@ -9649,7 +9651,7 @@
                                                 : k[1] === "<table>" && !n
                                                     ? m.childNodes
                                                     : [];
-                                        for (var p = o.length - 1; p >= 0; p -= 1) {
+                                        for (var p = o.length - 1; p >= 0; p = p - 1) {
                                             d.nodeName(o[p], "tbody") && !o[p].childNodes.length && o[p]
                                                 .parentNode
                                                 .removeChild(o[p]);
@@ -9669,7 +9671,7 @@
                                 : g = d.merge(g, i);
                         }
                         if (e) {
-                            for (h = 0; g[h]; h += 1) {
+                            for (h = 0; g[h]; h = h + 1) {
                                 !f || !d.nodeName(g[h], "script") || g[h].type && g[h]
                                     .type
                                     .toLowerCase() !== "text/javascript"
@@ -9694,7 +9696,7 @@
                             f = d.expando,
                             g = d.event.special,
                             h = d.support.deleteExpando;
-                        for (var i = 0, j; (j = a[i]) != null; i += 1) {
+                        for (var i = 0, j; (j = a[i]) != null; i = i + 1) {
                             if (j.nodeName && d.noData[
                                 j
                                     .nodeName
@@ -9731,7 +9733,7 @@
                             $(a, e),
                             f = _(a),
                             g = _(e);
-                            for (h = 0; f[h]; h += 1) {
+                            for (h = 0; f[h]; h = h + 1) {
                                 $(f[h], g[h]);
                             }
                         }
@@ -9740,7 +9742,7 @@
                             if (c) {
                                 f = _(a),
                                 g = _(e);
-                                for (h = 0; f[h]; h += 1) {
+                                for (h = 0; f[h]; h = h + 1) {
                                     Z(f[h], g[h]);
                                 }
                             }
@@ -9838,7 +9840,7 @@
                             if (typeof e === "number" && isNaN(e) || e == null) {
                                 return;
                             }
-                            typeof e === "number" && !d.cssNumber[h] && (e += "px");
+                            typeof e === "number" && !d.cssNumber[h] && (e = e + "px");
                             if (!j || !("set" in j) || (e = j.set(a, e)) !== b) {
                                 try {
                                     i[c] = e;
@@ -10276,7 +10278,7 @@
                             .event
                             .trigger("ajaxStart");
                         if (!e.hasContent) {
-                            e.data && (e.url += (by.test(e.url)
+                            e.data && (e.url = e.url + (by.test(e.url)
                                 ? "&"
                                 : "?") + e.data),
                             k = e.url;
@@ -10434,7 +10436,7 @@
                             };
                         b.jsonp !== !1 && (
                             j = j.replace(bS, l),
-                            b.url === j && (f && (k = k.replace(bS, l)), b.data === k && (j += (/\?/.test(j)
+                            b.url === j && (f && (k = k.replace(bS, l)), b.data === k && (j = j + (/\?/.test(j)
                                 ? "&"
                                 : "?") + b.jsonp + "=" + h))
                         ),
@@ -10692,7 +10694,7 @@
                             if (a || a === 0) {
                                 return this.animate(cc("hide", 3), a, b, c);
                             }
-                            for (var e = 0, f = this.length; e < f; e += 1) {
+                            for (var e = 0, f = this.length; e < f; e = e + 1) {
                                 var g = d.css(this[e], "display");
                                 g !== "none" && !d._data(this[e], "olddisplay") && d._data(
                                     this[e],
@@ -10700,7 +10702,7 @@
                                     g
                                 );
                             }
-                            for (e = 0; e < f; e += 1) {
+                            for (e = 0; e < f; e = e + 1) {
                                 this[e].style.display = "none";
                             }
                             return this;
@@ -10711,7 +10713,7 @@
                             if (a || a === 0) {
                                 return this.animate(cc("show", 3), a, b, c);
                             }
-                            for (var g = 0, h = this.length; g < h; g += 1) {
+                            for (var g = 0, h = this.length; g < h; g = g + 1) {
                                 e = this[g],
                                 f = e.style.display,
                                 !d._data(e, "olddisplay") && f === "none" && (f = e.style.display = ""),
@@ -10721,7 +10723,7 @@
                                     cd(e.nodeName)
                                 );
                             }
-                            for (g = 0; g < h; g += 1) {
+                            for (g = 0; g < h; g = g + 1) {
                                 e = this[g],
                                 f = e.style.display;
                                 if (f === "" || f === "none") {
@@ -10734,7 +10736,7 @@
                             var c = d.timers;
                             a && this.queue([]),
                             this.each(function () {
-                                for (var a = c.length - 1; a >= 0; a -= 1) {
+                                for (var a = c.length - 1; a >= 0; a = a - 1) {
                                     c[a].elem === this && (b && c[a](!0), c.splice(a, 1));
                                 }
                             }),
@@ -10961,7 +10963,7 @@
                     },
                     tick    : function () {
                         var a = d.timers;
-                        for (var b = 0; b < a.length; b += 1) {
+                        for (var b = 0; b < a.length; b = b + 1) {
                             a[b]() || a.splice(b--, 1);
                         }
                         a.length || d
@@ -11062,28 +11064,31 @@
                             c = j
                                 ? j.getComputedStyle(b, null)
                                 : b.currentStyle,
-                            l -= b.scrollTop,
-                            m -= b.scrollLeft,
+                            l = l - b.scrollTop,
+                            m = m - b.scrollLeft,
                             b === e && (
-                                l += b.offsetTop,
-                                m += b.offsetLeft,
-                                d.offset.doesNotAddBorder && (!d.offset.doesAddBorderForTableAndCells || !ce.test(b.nodeName)) && (l += parseFloat(c.borderTopWidth) || 0, m += parseFloat(c.borderLeftWidth) || 0),
+                                l = l + b.offsetTop,
+                                m = m + b.offsetLeft,
+                                d.offset.doesNotAddBorder && (!d.offset.doesAddBorderForTableAndCells || !ce.test(b.nodeName)) && (
+                                    l = l + parseFloat(c.borderTopWidth) || 0,
+                                    m = m + parseFloat(c.borderLeftWidth) || 0
+                                ),
                                 f = e,
                                 e = b.offsetParent
                             ),
                             d.offset.subtractsBorderForOverflowNotVisible && c.overflow !== "visible" && (
-                                l += parseFloat(c.borderTopWidth) || 0,
-                                m += parseFloat(c.borderLeftWidth) || 0
+                                l = l + parseFloat(c.borderTopWidth) || 0,
+                                m = m + parseFloat(c.borderLeftWidth) || 0
                             ),
                             k = c;
                         }
                         if (k.position === "relative" || k.position === "static") {
-                            l += i.offsetTop,
-                            m += i.offsetLeft;
+                            l = l + i.offsetTop,
+                            m = m + i.offsetLeft;
                         }
                         d.offset.supportsFixedPosition && k.position === "fixed" && (
-                            l += Math.max(h.scrollTop, i.scrollTop),
-                            m += Math.max(h.scrollLeft, i.scrollLeft)
+                            l = l + Math.max(h.scrollTop, i.scrollTop),
+                            m = m + Math.max(h.scrollLeft, i.scrollLeft)
                         );
                         return {left: m, top: l};
                     },
@@ -11095,8 +11100,8 @@
                             .offset
                             .initialize(),
                         d.offset.doesNotIncludeMarginInBodyOffset && (
-                            b += parseFloat(d.css(a, "marginTop")) || 0,
-                            c += parseFloat(d.css(a, "marginLeft")) || 0
+                            b = b + parseFloat(d.css(a, "marginTop")) || 0,
+                            c = c + parseFloat(d.css(a, "marginLeft")) || 0
                         );
                         return {left: c, top: b};
                     },
@@ -11195,10 +11200,10 @@
                                         left: 0
                                     }
                                     : b.offset();
-                            c.top  -= parseFloat(d.css(a, "marginTop")) || 0,
-                            c.left -= parseFloat(d.css(a, "marginLeft")) || 0,
-                            e.top  += parseFloat(d.css(b[0], "borderTopWidth")) || 0,
-                            e.left += parseFloat(d.css(b[0], "borderLeftWidth")) || 0;
+                            c.top  = c.top - parseFloat(d.css(a, "marginTop")) || 0,
+                            c.left = c.left - parseFloat(d.css(a, "marginLeft")) || 0,
+                            e.top  = e.top + parseFloat(d.css(b[0], "borderTopWidth")) || 0,
+                            e.left = e.left + parseFloat(d.css(b[0], "borderLeftWidth")) || 0;
                             return {
                                 left: c.left - e.left,
                                 top : c.top - e.top
@@ -11444,12 +11449,12 @@
                     ], function (a, b) {
                         function d(f, g, l, m) {
                             c.each(e, function () {
-                                g -= parseFloat(c.curCSS(f, "padding" + this, true)) || 0;
+                                g = g - parseFloat(c.curCSS(f, "padding" + this, true)) || 0;
                                 if (l) {
-                                    g -= parseFloat(c.curCSS(f, "border" + this + "Width", true)) || 0;
+                                    g = g - parseFloat(c.curCSS(f, "border" + this + "Width", true)) || 0;
                                 }
                                 if (m) {
-                                    g -= parseFloat(c.curCSS(f, "margin" + this, true)) || 0;
+                                    g = g - parseFloat(c.curCSS(f, "margin" + this, true)) || 0;
                                 }
                             });
                             return g;
@@ -11576,7 +11581,7 @@
                             },
                             call: function (a, b, d) {
                                 if ((b = a.plugins[b]) && a.element[0].parentNode) {
-                                    for (var e = 0; e < b.length; e += 1) {
+                                    for (var e = 0; e < b.length; e = e + 1) {
                                         a.options[b[e][0]] && b[e][1].apply(a.element, d);
                                     }
                                 }
@@ -11600,7 +11605,7 @@
                 if (b.cleanData) {
                     var k = b.cleanData;
                     b.cleanData = function (a) {
-                        for (var c = 0, d; (d = a[c]) != null; c += 1) {
+                        for (var c = 0, d; (d = a[c]) != null; c = c + 1) {
                             b(d).triggerHandler("remove");
                         }
                         k(a);
@@ -11745,7 +11750,7 @@
                             for (var f; a;) {
                                 f    = b
                                     .event
-                                    .props[a -= 1];
+                                    .props[a = a - 1];
                                 c[f] = c.originalEvent[f];
                             }
                         }
@@ -11817,10 +11822,10 @@
  */
             (function (d, p) {
                 function u() {
-                    return v += 1;
+                    return v = v + 1;
                 }
                 function w() {
-                    return x += 1;
+                    return x = x + 1;
                 }
                 var v = 0,
                     x = 0;
@@ -12026,7 +12031,7 @@
                         ]("ui-tabs-collapsible");
                         c.cookie && this._cookie(c.selected, c.cookie);
                         b = 0;
-                        for (var j; j = this.lis[b]; b += 1) {
+                        for (var j; j = this.lis[b]; b = b + 1) {
                             d(j)[
                                 d.inArray(b, c.disabled) != -1 && !d(j).hasClass("ui-tabs-selected")
                                     ? "addClass"
@@ -12576,7 +12581,7 @@
             }
             function noneBlock() {
                 a_arguments = noneBlock.arguments;
-                for (var i = 0; i < a_arguments.length; i += 1) {
+                for (var i = 0; i < a_arguments.length; i = i + 1) {
                     a_nB                     = a_arguments[i].split("!");
                     s_nBit                   = a_nB[0];
                     i_nBdisplay              = a_nB[1];
@@ -12677,7 +12682,7 @@
                         .cookie
                         .indexOf(search);
                     if (offset != -1) {
-                        offset += search.length;
+                        offset = offset + search.length;
                         end    = document
                             .cookie
                             .indexOf(";", offset);
@@ -12885,7 +12890,7 @@
                                     "senior']:visible",
                             "#cb-form-" + prefix
                         ).each(function (e, ex) {
-                            _c += ~~ (1 * jQuery(this).val());
+                            _c = _c + ~~ (1 * jQuery(this).val());
                         });
                         return (_c <= 6
                             ? _c
@@ -13044,7 +13049,7 @@
                                 "dest",
                                 "triptype"
                             ];
-                            for (var k = 0, kl = keys.length; k < kl; k += 1) {
+                            for (var k = 0, kl = keys.length; k < kl; k = k + 1) {
                                 if (typeof(url_parameters[keys[k]]) !== "undefined") {
                                     s.push(keys[k] + "=" + url_parameters[keys[k]]);
                                 } else {
@@ -13108,7 +13113,7 @@
                                 var nMonth = months[cDate.getMonth() + 1];
                                 var htmlBuffer = "<td><span>" + OrigName + " (" + OrigCode + ") to " +
                                         DestName + " (" + DestCode + ")</span></td>";
-                                for (var j = 0; j < ddata.length; j += 1) {
+                                for (var j = 0; j < ddata.length; j = j + 1) {
                                     var itemHtml = "";
                                     var aURL = [
                                         _fareWatcher.settings.domain + "/mystuff/SearchFareWatcher.do?goingTo=" +
@@ -13128,17 +13133,18 @@
                                         if ((/flights/i).test(whatLob)) {
                                             p_meta = "+ <small>RT</small>";
                                         }
-                                        htmlBuffer += "<td class='price-right'><span class='price-right'><a href='" + aURL[j] +
-                                                "'>" + cData + "" + ddata[j] + " " + p_meta + "</a></span></td>";
+                                        htmlBuffer = htmlBuffer + "<td class='price-right'><span class='price-right'><a" +
+                                                " href='" + aURL[j] + "'>" + cData + "" + ddata[j] + " " + p_meta + "</a></span" +
+                                                "></td>";
                                     } else {
                                         var href = "";
                                         whatLob = whatLob.replace(/from/i, "");
                                         if ((/flights/i).test(whatLob)) {
-                                            htmlBuffer += "<td class='price-right'><span class='price-right'><a href='" +
-                                                    searchFlightsURL + "'>Search " + whatLob + "</a></span></td>";
+                                            htmlBuffer = htmlBuffer + "<td class='price-right'><span class='price-right'><a" +
+                                                    " href='" + searchFlightsURL + "'>Search " + whatLob + "</a></span></td>";
                                         } else {
-                                            htmlBuffer += "<td class='price-right'><span class='price-right'><a href='" + aURL[j] + "'>Se" +
-                                                    "arch " + whatLob + "</a></span></td>";
+                                            htmlBuffer = htmlBuffer + "<td class='price-right'><span class='price-right'><a" +
+                                                    " href='" + aURL[j] + "'>Search " + whatLob + "</a></span></td>";
                                         }
                                     }
                                 }
@@ -13317,7 +13323,7 @@
                                 script.onreadystatechange = function () {
                                     if (script.readyState == "loaded" || script.readyState == "complete") {
                                         script.onreadystatechange = null;
-                                        numberOfScriptsLoaded     += 1;
+                                        numberOfScriptsLoaded     = numberOfScriptsLoaded + 1;
                                         if (callback && numberOfScriptsLoaded === scripts.length) {
                                             callback();
                                         }
@@ -13325,7 +13331,7 @@
                                 };
                             } else {
                                 script.onload = function () {
-                                    numberOfScriptsLoaded += 1;
+                                    numberOfScriptsLoaded = numberOfScriptsLoaded + 1;
                                     if (callback && numberOfScriptsLoaded === scripts.length) {
                                         callback();
                                     }
@@ -13913,7 +13919,7 @@
                                 }
                                 if (children.val() != 0) {
                                     childages = $(".cb-child-ages select", form);
-                                    for (i = 0; i < children.val(); i += 1) {
+                                    for (i = 0; i < children.val(); i = i + 1) {
                                         if (isNaN($(childages[i]).val())) {
                                             e = this.cb.options.errorMsg.e_child;
                                             return {
@@ -13939,9 +13945,9 @@
                                 irooms = $(".cb-total-rooms", form)
                                     ? $(".cb-total-rooms", form).val()
                                     : 1;
-                                for (i = 0; i < irooms; i += 1) {
+                                for (i = 0; i < irooms; i = i + 1) {
                                     if ($(children[i]).val() != 0) {
-                                        for (var j = 0; j < $(children[i]).val(); j += 1) {
+                                        for (var j = 0; j < $(children[i]).val(); j = j + 1) {
                                             childages = $("select", $(roomchildages[i]));
                                             if (isNaN($(childages[j]).val())) {
                                                 e = this.cb.options.errorMsg.e_child;
@@ -14406,12 +14412,12 @@
                             .cb
                             .flights
                             .collectForm(event);
-                        s += "&leavingFrom=" + $("input[name='leavingFrom']", __cb).val();
-                        s += "&goingTo=" + $("input[name='goingTo']", __cb).val();
-                        s += "&leavingDate=" + $("input[name='leavingDate']", __cb).val();
-                        s += "&dateLeavingTime=" + $("select[name='dateLeavingTime']", __cb).val();
-                        s += "&returningDate=" + $("input[name='returningDate']", __cb).val();
-                        s += "&dateReturningTime=" + $("select[name='dateReturningTime']", __cb).val();
+                        s = s + "&leavingFrom=" + $("input[name='leavingFrom']", __cb).val();
+                        s = s + "&goingTo=" + $("input[name='goingTo']", __cb).val();
+                        s = s + "&leavingDate=" + $("input[name='leavingDate']", __cb).val();
+                        s = s + "&dateLeavingTime=" + $("select[name='dateLeavingTime']", __cb).val();
+                        s = s + "&returningDate=" + $("input[name='returningDate']", __cb).val();
+                        s = s + "&dateReturningTime=" + $("select[name='dateReturningTime']", __cb).val();
                         $(this).attr("href", $(this).attr("href") + s);
                     },
                     bindEvents       : function (cb) {
@@ -14477,24 +14483,24 @@
                     collectForm      : function (event) {
                         var __cb = $("#cb-form-fo"),
                             s    = "";
-                        s += "&flightType=multicity";
-                        s += "&dateTypeSelect=" + $("input[name='dateTypeSelect']", __cb).val();
-                        s += "&goingTo=" + $("input[name='goingTo']", __cb).val();
-                        s += "&adults=" + $("select[name='adults']", __cb).val();
-                        s += "&children=" + $("select[name='children']", __cb).val();
-                        s += "&seniors=" + $("select[name='seniors']", __cb).val();
-                        s += "&minorsAge0=" + $("select[name='minorsAge0']", __cb).val();
-                        s += "&minorsAge1=" + $("select[name='minorsAge1']", __cb).val();
-                        s += "&minorsAge2=" + $("select[name='minorsAge2']", __cb).val();
-                        s += "&minorsAge3=" + $("select[name='minorsAge3']", __cb).val();
-                        s += "&minorsAge4=" + $("select[name='minorsAge4']", __cb).val();
-                        s += "&departure_dt=" + $("select[name='departure_dt']", __cb).val();
-                        s += "&arrival_dt=" + $("select[name='arrival_dt']", __cb).val();
-                        s += "&departDateFlexibility=" + $(
+                        s = s + "&flightType=multicity";
+                        s = s + "&dateTypeSelect=" + $("input[name='dateTypeSelect']", __cb).val();
+                        s = s + "&goingTo=" + $("input[name='goingTo']", __cb).val();
+                        s = s + "&adults=" + $("select[name='adults']", __cb).val();
+                        s = s + "&children=" + $("select[name='children']", __cb).val();
+                        s = s + "&seniors=" + $("select[name='seniors']", __cb).val();
+                        s = s + "&minorsAge0=" + $("select[name='minorsAge0']", __cb).val();
+                        s = s + "&minorsAge1=" + $("select[name='minorsAge1']", __cb).val();
+                        s = s + "&minorsAge2=" + $("select[name='minorsAge2']", __cb).val();
+                        s = s + "&minorsAge3=" + $("select[name='minorsAge3']", __cb).val();
+                        s = s + "&minorsAge4=" + $("select[name='minorsAge4']", __cb).val();
+                        s = s + "&departure_dt=" + $("select[name='departure_dt']", __cb).val();
+                        s = s + "&arrival_dt=" + $("select[name='arrival_dt']", __cb).val();
+                        s = s + "&departDateFlexibility=" + $(
                             "select[name='departDateFlexibility']",
                             __cb
                         ).val();
-                        s += "&returnDateFlexibility=" + $(
+                        s = s + "&returnDateFlexibility=" + $(
                             "select[name='returnDateFlexibility']",
                             __cb
                         ).val();
@@ -14612,7 +14618,7 @@
                         if (!cb.flights.ready) {
                             if ($(".cb-sub-nav", __cb).length != 0) {
                                 _subnav = __cb.find(".cb-sub-nav input[name='subnav']");
-                                for (var i = 0; i < _subnav.length; i += 1) {
+                                for (var i = 0; i < _subnav.length; i = i + 1) {
                                     var nav = $(_subnav[i]);
                                     nav.bind("click", {
                                         cb: cb
@@ -14661,14 +14667,14 @@
                     multiDestSearch  : function (event) {
                         var __cb = $("#cb-form-fo");
                         var s = "?Service=" + $("input[name='Service']", __cb).val();
-                        s += event
+                        s = s + event
                             .data
                             .cb
                             .flights
                             .collectForm(event);
-                        s += "&leavingFrom=" + $("input[name='leavingFrom']", __cb).val();
-                        s += "&leavingDate1=" + $("input[name='leavingDate']", __cb).val();
-                        s += "&leavingTime1=" + $("select[name='dateLeavingTime']", __cb).val();
+                        s = s + "&leavingFrom=" + $("input[name='leavingFrom']", __cb).val();
+                        s = s + "&leavingDate1=" + $("input[name='leavingDate']", __cb).val();
+                        s = s + "&leavingTime1=" + $("select[name='dateLeavingTime']", __cb).val();
                         $(this).attr("href", $(this).attr("href") + s);
                     },
                     ready            : false,
@@ -14831,10 +14837,9 @@
                             ]);
                             var roomNo = jQuery("#ho-totalrooms").val();
                             var roomDetails = "";
-                            for (var x = 1; x <= roomNo; x += 1) {
-                                roomDetails += "rm" + x + "|" + jQuery("input#ho-adults" + x).val() + "|" + jQuery(
-                                    "input#ho-minors" + x
-                                ).val();
+                            for (var x = 1; x <= roomNo; x = x + 1) {
+                                roomDetails = roomDetails + "rm" + x + "|" + jQuery("input#ho-adults" + x).val() +
+                                        "|" + jQuery("input#ho-minors" + x).val();
                             }
                             _gaq.push(["_setCustomVar", 11, "HowMany-Rms", roomDetails, 3]);
                             var topSecret = (jQuery("#ho-top-secret").val())
@@ -14856,10 +14861,9 @@
                             ]);
                             var roomNo = jQuery("#hcx-totalrooms").val();
                             var roomDetails = "";
-                            for (var x = 1; x <= roomNo; x += 1) {
-                                roomDetails += "rm" + x + "|" + jQuery("input#hcx-adults" + x).val() + "|" + jQuery(
-                                    "input#hcx-minors" + x
-                                ).val() + "|";
+                            for (var x = 1; x <= roomNo; x = x + 1) {
+                                roomDetails = roomDetails + "rm" + x + "|" + jQuery("input#hcx-adults" + x).val() +
+                                        "|" + jQuery("input#hcx-minors" + x).val() + "|";
                             }
                             _gaq.push(["_setCustomVar", 11, "HowMany-Rms", roomDetails, 3]);
                             _gaq.push([
@@ -15155,7 +15159,7 @@
                             cgm  = $(".cb-group-message", __cb);
                         if (r != "5+") {
                             cgm.hide();
-                            r -= 1;
+                            r = r - 1;
                             rms.each(function (index) {
                                 (r < index)
                                     ? $(this).hide()
@@ -15357,7 +15361,7 @@
                     this.options      = jQuery.extend(true, defaults, options);
                     this._bindEvents(cb);
                     var selectedNav = null;
-                    for (var i = 0; i < defaults.cbNav.length; i += 1) {
+                    for (var i = 0; i < defaults.cbNav.length; i = i + 1) {
                         var nav = $(defaults.cbNav[i]);
                         nav.bind("click", {
                             cb: cb
@@ -15456,7 +15460,7 @@
                             var propertyName = getPropertyName(parentPath, key);
                             if ($.inArray(propertyPath, settings.ignore) == -1) {
                                 if ($.isArray(json[key])) {
-                                    children += createNodeFromArray(
+                                    children = children + createNodeFromArray(
                                         json[key],
                                         propertyName,
                                         propertyPath + ".",
@@ -15464,7 +15468,7 @@
                                         suffix
                                     );
                                 } else if (typeof(json[key]) === "object") {
-                                    children += convertToXml(
+                                    children = children + convertToXml(
                                         json[key],
                                         propertyName,
                                         propertyPath + ".",
@@ -15472,25 +15476,26 @@
                                     );
                                 } else {
                                     if ($.inArray(propertyPath, settings.nodes) != -1) {
-                                        children += createTextNode(propertyName, json[key], depth, suffix);
+                                        children = children + createTextNode(propertyName, json[key], depth, suffix);
                                     } else {
-                                        xmlTag += " " + propertyName + "='" + json[key] + "'";
+                                        xmlTag = xmlTag + " " + propertyName + "='" + json[key] + "'";
                                     }
                                 }
                             }
                         }
                     }
                     if (children !== "") {
-                        xmlTag += ">" + suffix + children + indent + "</" + tagName + ">" + suffix;
+                        xmlTag = xmlTag + ">" + suffix + children + indent + "</" + tagName + ">" +
+                                suffix;
                     } else {
-                        xmlTag += "/>" + suffix;
+                        xmlTag = xmlTag + "/>" + suffix;
                     }
                     return xmlTag;
                 };
                 var getIndent = function (depth) {
                     var output = "";
-                    for (var i = 0; i < depth; i += 1) {
-                        output += settings.indentString;
+                    for (var i = 0; i < depth; i = i + 1) {
+                        output = output + settings.indentString;
                     }
                     return output;
                 };
@@ -15510,7 +15515,7 @@
                         for (var index in source) {
                             if (typeof(source[index]) !== "object") {
                                 if (source[index] === "") {
-                                    xmlNode += getIndent(depth) + "<" + name + "/>" + suffix;
+                                    xmlNode = xmlNode + getIndent(depth) + "<" + name + "/>" + suffix;
                                 } else {
                                     var textPrefix = (settings.formatTextNodes)
                                         ? suffix + getIndent(depth + 1)
@@ -15518,15 +15523,15 @@
                                     var textSuffix = (settings.formatTextNodes)
                                         ? suffix + getIndent(depth)
                                         : "";
-                                    xmlNode += getIndent(depth) + "<" + name + ">" + textPrefix + source[index] +
-                                            textSuffix + "</" + name + ">" + suffix;
+                                    xmlNode = xmlNode + getIndent(depth) + "<" + name + ">" + textPrefix +
+                                            source[index] + textSuffix + "</" + name + ">" + suffix;
                                 }
                             } else {
-                                xmlNode += convertToXml(source[index], name, path, depth);
+                                xmlNode = xmlNode + convertToXml(source[index], name, path, depth);
                             }
                         }
                     } else {
-                        xmlNode += getIndent(depth) + "<" + name + "/>" + suffix;
+                        xmlNode = xmlNode + getIndent(depth) + "<" + name + "/>" + suffix;
                     }
                     return xmlNode;
                 };
@@ -15746,7 +15751,7 @@
                             var msg = arguments[1];
                             var type = arguments[0];
                             jQuery("#" + type).html(msg);
-                            for (var i = 2; i < arguments.length; i += 1) {
+                            for (var i = 2; i < arguments.length; i = i + 1) {
                                 jQuery("#" + arguments[i]).show();
                             }
                         },
@@ -15758,7 +15763,7 @@
                                     break;
                                 case module_states.HP_WIDGET:
                                     oScope.oForm = jQuery("#" + oScope.oWidgetComponents.sSignupModuleForm).get(0);
-                                    for (var e = 0; e < oScope.oForm.elements.length; e += 1) {
+                                    for (var e = 0; e < oScope.oForm.elements.length; e = e + 1) {
                                         if (oScope.oForm.elements[e].name != "submit") {
                                             oScope
                                                 .oForm
@@ -15769,7 +15774,7 @@
                                     break;
                                 case module_states.SA_WIDGET:
                                     oScope.oForm = jQuery("#" + oScope.oWidgetComponents.sSignupModuleForm).get(0);
-                                    for (var e = 0; e < oScope.oForm.elements.length; e += 1) {
+                                    for (var e = 0; e < oScope.oForm.elements.length; e = e + 1) {
                                         if (oScope.oForm.elements[e].tagName != "BUTTON") {
                                             oScope
                                                 .oForm
@@ -15785,7 +15790,7 @@
                         },
                         hide                    : function () {
                             var to_hide = [];
-                            for (var h = 0; h < arguments.length; h += 1) {
+                            for (var h = 0; h < arguments.length; h = h + 1) {
                                 var e = $(arguments[h]);
                                 if (e !== null) {
                                     to_hide.push("#" + arguments[h]);
@@ -15875,7 +15880,7 @@
                                             );
                                             this.show(this.oPopupComponents.sSignupModuleMail);
                                             this.displayMsg(this.oPopupComponents.sErrorModule, oe[field_error].value);
-                                            this.iRetries += 1;
+                                            this.iRetries = this.iRetries + 1;
                                         } else {
                                             if (field_error === this.oValidationErrorCodes.sBadMail) {
                                                 this.displayMsg(this.oPopupComponents.sErrorModule, oe.e_msg_badmail.value);
@@ -16304,7 +16309,7 @@
                                     break;
                                 case module_states.HP_WIDGET:
                                     oScope.oForm = jQuery("#" + oScope.oWidgetComponents.sSignupModuleForm).get(0);
-                                    for (var e = 0; e < oScope.oForm.elements.length; e += 1) {
+                                    for (var e = 0; e < oScope.oForm.elements.length; e = e + 1) {
                                         if (oScope.oForm.elements[e].name != "submit") {
                                             this
                                                 .oForm
@@ -16315,7 +16320,7 @@
                                     break;
                                 case module_states.SA_WIDGET:
                                     oScope.oForm = jQuery("#" + oScope.oWidgetComponents.sSignupModuleForm).get(0);
-                                    for (var e = 0; e < oScope.oForm.elements.length; e += 1) {
+                                    for (var e = 0; e < oScope.oForm.elements.length; e = e + 1) {
                                         if (oScope.oForm.elements[e].tagName != "BUTTON") {
                                             this
                                                 .oForm
@@ -16720,7 +16725,7 @@
                         },
                         show                    : function () {
                             var to_show = [];
-                            for (var s = 0; s < arguments.length; s += 1) {
+                            for (var s = 0; s < arguments.length; s = s + 1) {
                                 var e = $(arguments[s]);
                                 if (e !== null) {
                                     to_show.push("#" + arguments[s]);
@@ -16734,29 +16739,32 @@
                         sState                  : "",
                         uGetXMLRequest          : function () {
                             var sXmlRequest = "";
-                            sXmlRequest += "<Action>" + arguments[0] + "</Action>";
+                            sXmlRequest = sXmlRequest + "<Action>" + arguments[0] + "</Action>";
                             for (element in arguments[1]) {
                                 switch (element) {
                                     case "Email":
-                                        sXmlRequest += "<Email>" + arguments[1][element] + "</Email>";
+                                        sXmlRequest = sXmlRequest + "<Email>" + arguments[1][element] + "</Email>";
                                         break;
                                     case "FirstName":
-                                        sXmlRequest += "<FirstName>" + arguments[1][element] + "</FirstName>";
+                                        sXmlRequest = sXmlRequest + "<FirstName>" + arguments[1][element] + "</FirstNam" +
+                                                "e>";
                                         break;
                                     case "LastName":
-                                        sXmlRequest += "<LastName>" + arguments[1][element] + "</LastName>";
+                                        sXmlRequest = sXmlRequest + "<LastName>" + arguments[1][element] +
+                                                "</LastName>";
                                         break;
                                     case "Zip":
-                                        sXmlRequest += "<Zip>" + arguments[1][element] + "</Zip>";
+                                        sXmlRequest = sXmlRequest + "<Zip>" + arguments[1][element] + "</Zip>";
                                         break;
                                 }
                             }
-                            sXmlRequest += "<SubscriptionSource>" + arguments[3] + "</SubscriptionSource>";
+                            sXmlRequest = sXmlRequest + "<SubscriptionSource>" + arguments[3] + "</Subscrip" +
+                                    "tionSource>";
                             if (arguments[2] >= 1) {
-                                sXmlRequest += "<Retry>" + arguments[2] + "</Retry>";
+                                sXmlRequest = sXmlRequest + "<Retry>" + arguments[2] + "</Retry>";
                             } else {
                                 if (("" + arguments[3]) == Subscriptions.LINK_SUBSCRIPTION_SOURCE) {
-                                    sXmlRequest += "<Retry>1</Retry>";
+                                    sXmlRequest = sXmlRequest + "<Retry>1</Retry>";
                                 }
                             }
                             sXmlRequest = "<?xml version='1.0' encoding='UTF-8'?><SubscriptionRequest xsi:noNamespaceSche" +
@@ -16835,7 +16843,7 @@
                                             };
                                             break;
                                     }
-                                    for (var i = 0; i < values.length; i += 1) {
+                                    for (var i = 0; i < values.length; i = i + 1) {
                                         for (test in tests) {
                                             var ctest = tests[test];
                                             if (ctest.regexp.test(values[i]) == ctest.expected_result && values[i] !== "") {
@@ -16889,7 +16897,7 @@
                                     fields = [this.oWidgetComponents.sSignupModuleSubscribeMail + "|Email"];
                                     break;
                             }
-                            for (var f = 0; f < fields.length; f += 1) {
+                            for (var f = 0; f < fields.length; f = f + 1) {
                                 var inst = fields[f].split(/\|/);
                                 var errorCode = "";
                                 var invalidField = "";
@@ -17200,7 +17208,7 @@
                         .cookie
                         .indexOf(search);
                     if (offset != -1) {
-                        offset += search.length;
+                        offset = offset + search.length;
                         end    = document
                             .cookie
                             .indexOf(";", offset);
@@ -17256,7 +17264,7 @@
                             ];
                             var cMonth = months[cDate.getMonth()];
                             var nMonth = months[cDate.getMonth() + 1];
-                            for (var j = 0; j < ddata.length; j += 1) {
+                            for (var j = 0; j < ddata.length; j = j + 1) {
                                 var newLI = jQuery(document.createElement("p"));
                                 newLI.attr("class", dclass[j]);
                                 var newA = jQuery(document.createElement("a"));
@@ -17295,7 +17303,7 @@
                             if (f >= maxfw) {
                                 return false;
                             } else {
-                                f += 1;
+                                f = f + 1;
                             }
                         });
                     var isDef = jQuery(data)
@@ -17345,7 +17353,7 @@
                     this.activeSection = (olID == "")
                         ? ""
                         : oLink;
-                    for (var x = 0; x < this.sections.length; x += 1) {
+                    for (var x = 0; x < this.sections.length; x = x + 1) {
                         var odID = olID.replace("-heading", "");
                         var olDiv = $(odID);
                         if (odID == this.sections[x]) {
@@ -17369,7 +17377,7 @@
                 },
                 inactiveHClass: "inactive-heading",
                 init          : function () {
-                    for (var x = 0; x < this.sections.length; x += 1) {
+                    for (var x = 0; x < this.sections.length; x = x + 1) {
                         jQuery("#" + this.sections[x] + "-heading a").each(function () {
                             jQuery(this)
                                 .mouseover(function () {
@@ -17394,18 +17402,18 @@
                 var uTF8Encode = function (string) {
                     string = string.replace(/\x0d\x0a/g, "\x0a");
                     var output = "";
-                    for (var n = 0; n < string.length; n += 1) {
+                    for (var n = 0; n < string.length; n = n + 1) {
                         var c = string.charCodeAt(n);
                         if (c < 128) {
-                            output += String.fromCharCode(c);
+                            output = output + String.fromCharCode(c);
                         } else {
                             if ((c > 127) && (c < 2048)) {
-                                output += String.fromCharCode((c >> 6) | 192);
-                                output += String.fromCharCode((c & 63) | 128);
+                                output = output + String.fromCharCode((c >> 6) | 192);
+                                output = output + String.fromCharCode((c & 63) | 128);
                             } else {
-                                output += String.fromCharCode((c >> 12) | 224);
-                                output += String.fromCharCode(((c >> 6) & 63) | 128);
-                                output += String.fromCharCode((c & 63) | 128);
+                                output = output + String.fromCharCode((c >> 12) | 224);
+                                output = output + String.fromCharCode(((c >> 6) & 63) | 128);
+                                output = output + String.fromCharCode((c & 63) | 128);
                             }
                         }
                     }
@@ -17418,18 +17426,20 @@
                     while (i < input.length) {
                         c = input.charCodeAt(i);
                         if (c < 128) {
-                            string += String.fromCharCode(c);
-                            i      += 1;
+                            string = string + String.fromCharCode(c);
+                            i      = i + 1;
                         } else {
                             if ((c > 191) && (c < 224)) {
                                 c2     = input.charCodeAt(i + 1);
-                                string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
-                                i      += 2;
+                                string = string + String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+                                i      = i + 2;
                             } else {
                                 c2     = input.charCodeAt(i + 1);
                                 c3     = input.charCodeAt(i + 2);
-                                string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
-                                i      += 3;
+                                string = string + String.fromCharCode(
+                                    ((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63)
+                                );
+                                i      = i + 3;
                             }
                         }
                     }
@@ -17718,17 +17728,17 @@
                     }
                     e[1] = parseInt(e[1], 10) || 0;
                     if (b.at[0] === "right") {
-                        j.left += h;
+                        j.left = j.left + h;
                     } else if (b.at[0] === "center") {
-                        j.left += h / 2;
+                        j.left = j.left + h / 2;
                     }
                     if (b.at[1] === "bottom") {
-                        j.top += k;
+                        j.top = j.top + k;
                     } else if (b.at[1] === "center") {
-                        j.top += k / 2;
+                        j.top = j.top + k / 2;
                     }
-                    j.left += e[0];
-                    j.top  += e[1];
+                    j.left = j.left + e[0];
+                    j.top  = j.top + e[1];
                     return this.each(function () {
                         var f = c(this),
                             l = f.outerWidth(),
@@ -17740,14 +17750,14 @@
                             i = c.extend({}, j),
                             r;
                         if (b.my[0] === "right") {
-                            i.left -= l;
+                            i.left = i.left - l;
                         } else if (b.my[0] === "center") {
-                            i.left -= l / 2;
+                            i.left = i.left - l / 2;
                         }
                         if (b.my[1] === "bottom") {
-                            i.top -= m;
+                            i.top = i.top - m;
                         } else if (b.my[1] === "center") {
-                            i.top -= m / 2;
+                            i.top = i.top - m / 2;
                         }
                         i.left = parseInt(i.left);
                         i.top  = parseInt(i.top);
@@ -17810,7 +17820,7 @@
                                         ? a.targetWidth
                                         : -a.targetWidth,
                                     h = -2 * a.offset[0];
-                                b.left += a.collisionPosition.left < 0
+                                b.left = b.left + a.collisionPosition.left < 0
                                     ? g + e + h
                                     : d > 0
                                         ? g + e + h
@@ -17830,7 +17840,7 @@
                                         ? a.targetHeight
                                         : -a.targetHeight,
                                     h = -2 * a.offset[1];
-                                b.top += a.collisionPosition.top < 0
+                                b.top = b.top + a.collisionPosition.top < 0
                                     ? g + e + h
                                     : d > 0
                                         ? g + e + h
@@ -18545,7 +18555,7 @@
                         var cookies = document
                             .cookie
                             .split(";");
-                        for (var i = 0; i < cookies.length; i += 1) {
+                        for (var i = 0; i < cookies.length; i = i + 1) {
                             var cookie = jQuery.trim(cookies[i]);
                             if (cookie.substring(0, name.length + 1) == (name + "=")) {
                                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
@@ -18714,9 +18724,9 @@
                         var auxLength = (aux.length == 1)
                             ? 2
                             : aux.length;
-                        for (var i = 0; i < auxLength - 1; i += 1) {
+                        for (var i = 0; i < auxLength - 1; i = i + 1) {
                             var index = aux[i];
-                            for (var x = 0; x < tempSort[index].length; x += 1) {
+                            for (var x = 0; x < tempSort[index].length; x = x + 1) {
                                 finalSort.push(tempSort[index][x]);
                             }
                         }
@@ -18825,7 +18835,7 @@
                                     ._autocomplete
                                     .sortResults[config.LOB](config, filteredData);
                                 ret = sortedData.slice(0, config.numberOfResultsDisplay);
-                                for (var x = 0; x < ret.length; x += 1) {
+                                for (var x = 0; x < ret.length; x = x + 1) {
                                     ret[x].listpos = x;
                                 }
                                 var height = (ret.length < 11)
@@ -18991,7 +19001,7 @@
                         }
                         var resultArray = [];
                         if (mappedData != null) {
-                            for (var i = 0; i < mappedData.length; i += 1) {
+                            for (var i = 0; i < mappedData.length; i = i + 1) {
                                 if (!filterItem(mappedData[i])) {
                                     resultArray.push(mappedData[i]);
                                 }
@@ -19001,9 +19011,9 @@
                     },
                     HOT: function (configObj, mappedData) {
                         var resultArray = [];
-                        mainLoop : for (var i = 0; i < mappedData.length; i += 1) {
+                        mainLoop : for (var i = 0; i < mappedData.length; i = i + 1) {
                             if (resultArray.length >= 1) {
-                                for (var x = 0; x < resultArray.length; x += 1) {
+                                for (var x = 0; x < resultArray.length; x = x + 1) {
                                     if (mappedData[i]["locationId"] == resultArray[x]["locationId"]) {
                                         continue mainLoop;
                                     }
@@ -19221,10 +19231,10 @@
                                 _l = item.cityName;
                                 var gaDestination = _l;
                                 if (item.stateProvinceCode != "") {
-                                    _l += "," + item.stateProvinceCode;
+                                    _l = _l + "," + item.stateProvinceCode;
                                 }
                                 if (item.countryCode != "US") {
-                                    _l += "," + item.countryCode;
+                                    _l = _l + "," + item.countryCode;
                                 }
                                 switch (_to) {
                                     case null:

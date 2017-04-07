@@ -71,7 +71,7 @@
             n,
             o,
             p;
-        for (g = 1; g < i; g += 1) {
+        for (g = 1; g < i; g = g + 1) {
             if (g === 1) {
                 for (h in a.converters) {
                     typeof h === "string" && (f[h.toLowerCase()] = a.converters[h]);
@@ -180,7 +180,7 @@
                 : 0,
             k = a === bH,
             l;
-        for (; i < j && (k || !l); i += 1) {
+        for (; i < j && (k || !l); i = i + 1) {
             l = h[i](c, d, e),
             typeof l === "string" && (!k || g[l]
                 ? l = b
@@ -201,7 +201,7 @@
                     h,
                     i,
                     j;
-                for (; f < g; f += 1) {
+                for (; f < g; f = f + 1) {
                     h = e[f],
                     j = /^\+/.test(h),
                     j && (h = h.substr(1) || "*"),
@@ -226,10 +226,10 @@
             return f;
         }
         d.each(e, function () {
-            c || (f -= parseFloat(d.css(a, "padding" + this)) || 0),
+            c || (f = f - parseFloat(d.css(a, "padding" + this)) || 0),
             c === "margin"
-                ? f += parseFloat(d.css(a, "margin" + this)) || 0
-                : f -= parseFloat(d.css(a, "border" + this + "Width")) || 0;
+                ? f = f + parseFloat(d.css(a, "margin" + this)) || 0
+                : f = f - parseFloat(d.css(a, "border" + this + "Width")) || 0;
         });
         return f;
     }
@@ -286,7 +286,7 @@
                     delete f.handle,
                     f.events = {};
                     for (var h in g) {
-                        for (var i = 0, j = g[h].length; i < j; i += 1) {
+                        for (var i = 0, j = g[h].length; i < j; i = i + 1) {
                             d
                                 .event
                                 .add(b, h + (g[h][i].namespace
@@ -365,7 +365,7 @@
             var t = s
                 .live
                 .slice(0);
-            for (i = 0; i < t.length; i += 1) {
+            for (i = 0; i < t.length; i = i + 1) {
                 g = t[i],
                 g
                     .origType
@@ -374,9 +374,9 @@
                         : t.splice(i--, 1);
             }
             f = d(a.target).closest(r, a.currentTarget);
-            for (j = 0, k = f.length; j < k; j += 1) {
+            for (j = 0, k = f.length; j < k; j = j + 1) {
                 m = f[j];
-                for (i = 0; i < t.length; i += 1) {
+                for (i = 0; i < t.length; i = i + 1) {
                     g = t[i];
                     if (m.selector === g.selector && (!n || n.test(g.namespace)) && !m.elem.disabled) {
                         h = m.elem,
@@ -389,7 +389,7 @@
                     }
                 }
             }
-            for (j = 0, k = q.length; j < k; j += 1) {
+            for (j = 0, k = q.length; j < k; j = j + 1) {
                 f = q[j];
                 if (c && f.level > c) {
                     break;
@@ -659,8 +659,8 @@
                     l = !1;
                 typeof i === "boolean" && (l = i, i = arguments[1] || {}, j = 2),
                 typeof i !== "object" && !d.isFunction(i) && (i = {}),
-                k === j && (i = this, j -= 1);
-                for (; j < k; j += 1) {
+                k === j && (i = this, j = j - 1);
+                for (; j < k; j = j + 1) {
                     if ((a = arguments[j]) != null) {
                         for (c in a) {
                             e = i[c],
@@ -704,7 +704,7 @@
                                         j,
                                         k;
                                     b && (k = b, b = 0);
-                                    for (g = 0, h = c.length; g < h; g += 1) {
+                                    for (g = 0, h = c.length; g < h; g = g + 1) {
                                         i = c[g],
                                         j = d.type(i),
                                         j === "array"
@@ -760,7 +760,7 @@
                     }
                     if (e !== b) {
                         f = !h && f && d.isFunction(e);
-                        for (var k = 0; k < i; k += 1) {
+                        for (var k = 0; k < i; k = k + 1) {
                             g(a[k], c, f
                                 ? e.call(a[k], k, g(a[k], c))
                                 : e,
@@ -854,7 +854,7 @@
                                 }
                             }
                         } else {
-                            for (var j = a[0]; g < h && c.call(j, g, j) !== !1; j = a[g += 1]) {}
+                            for (var j = a[0]; g < h && c.call(j, g, j) !== !1; j = a[g = g + 1]) {}
                         }
                     }
                     return a;
@@ -879,7 +879,7 @@
                     var d = [],
                         e;
                     c = !!c;
-                    for (var f = 0, g = a.length; f < g; f += 1) {
+                    for (var f = 0, g = a.length; f < g; f = f + 1) {
                         e = !!b(a[f], f),
                         c !== e && d.push(a[f]);
                     }
@@ -890,7 +890,7 @@
                     if (b.indexOf) {
                         return b.indexOf(a);
                     }
-                    for (var c = 0, d = b.length; c < d; c += 1) {
+                    for (var c = 0, d = b.length; c < d; c = c + 1) {
                         if (b[c] === a) {
                             return c;
                         }
@@ -942,7 +942,7 @@
                 map          : function (a, b, c) {
                     var d = [],
                         e;
-                    for (var f = 0, g = a.length; f < g; f += 1) {
+                    for (var f = 0, g = a.length; f < g; f = f + 1) {
                         e = b(a[f], f, c),
                         e != null && (d[d.length] = e);
                     }
@@ -954,7 +954,7 @@
                     var d = a.length,
                         e = 0;
                     if (typeof c.length === "number") {
-                        for (var f = c.length; e < f; e += 1) {
+                        for (var f = c.length; e < f; e = e + 1) {
                             a[d++] = c[e];
                         }
                     } else {
@@ -1391,7 +1391,7 @@
                         if (this[0].nodeType === 1) {
                             var g = this[0].attributes,
                                 h;
-                            for (var i = 0, j = g.length; i < j; i += 1) {
+                            for (var i = 0, j = g.length; i < j; i = i + 1) {
                                 h = g[i].name,
                                 h.indexOf("data-") === 0 && (h = h.substr(5), f(this[0], h, e[h]));
                             }
@@ -1522,14 +1522,14 @@
                 }
                 if (a && typeof a === "string") {
                     var b = (a || "").split(i);
-                    for (var c = 0, e = this.length; c < e; c += 1) {
+                    for (var c = 0, e = this.length; c < e; c = c + 1) {
                         var f = this[c];
                         if (f.nodeType === 1) {
                             if (f.className) {
                                 var g = " " + f.className + " ",
                                     h = f.className;
-                                for (var j = 0, k = b.length; j < k; j += 1) {
-                                    g.indexOf(" " + b[j] + " ") < 0 && (h += " " + b[j]);
+                                for (var j = 0, k = b.length; j < k; j = j + 1) {
+                                    g.indexOf(" " + b[j] + " ") < 0 && (h = h + " " + b[j]);
                                 }
                                 f.className = d.trim(h);
                             } else {
@@ -1545,7 +1545,7 @@
             },
             hasClass   : function (a) {
                 var b = " " + a + " ";
-                for (var c = 0, d = this.length; c < d; c += 1) {
+                for (var c = 0, d = this.length; c < d; c = c + 1) {
                     if ((" " + this[c].className + " ").replace(h, " ").indexOf(b) > -1) {
                         return !0;
                     }
@@ -1567,12 +1567,12 @@
                 }
                 if (a && typeof a === "string" || a === b) {
                     var c = (a || "").split(i);
-                    for (var e = 0, f = this.length; e < f; e += 1) {
+                    for (var e = 0, f = this.length; e < f; e = e + 1) {
                         var g = this[e];
                         if (g.nodeType === 1 && g.className) {
                             if (a) {
                                 var j = (" " + g.className + " ").replace(h, " ");
-                                for (var k = 0, l = c.length; k < l; k += 1) {
+                                for (var k = 0, l = c.length; k < l; k = k + 1) {
                                     j = j.replace(" " + c[k] + " ", " ");
                                 }
                                 g.className = d.trim(j);
@@ -1641,7 +1641,7 @@
                                 : 0,
                             l = i
                                 ? f + 1
-                                : h.length; k < l; k += 1) {
+                                : h.length; k < l; k = k + 1) {
                                 var m = h[k];
                                 if (m.selected && (d.support.optDisabled
                                     ? !m.disabled
@@ -1676,7 +1676,7 @@
                         e == null
                             ? e = ""
                             : typeof e === "number"
-                                ? e += ""
+                                ? e = e + ""
                                 : d.isArray(e) && (e = d.map(e, function (a) {
                                     return a == null
                                         ? ""
@@ -1848,7 +1848,7 @@
             var e = a;
             a = d.Event(e);
             for (var f = this.props.length, g; f;) {
-                g    = this.props[f -= 1],
+                g    = this.props[f = f - 1],
                 a[g] = e[g];
             }
             a.target || (a.target = a.srcElement || c),
@@ -1913,7 +1913,7 @@
             f               = (i || {})[c.type];
             if (i && f) {
                 f = f.slice(0);
-                for (var l = 0, m = f.length; l < m; l += 1) {
+                for (var l = 0, m = f.length; l < m; l = l + 1) {
                     var n = f[l];
                     if (e || h.test(n.namespace)) {
                         c.handler   = n.handler,
@@ -1986,7 +1986,7 @@
                         continue;
                     }
                     if (!e) {
-                        for (j = 0; j < p.length; j += 1) {
+                        for (j = 0; j < p.length; j = j + 1) {
                             q = p[j];
                             if (l || n.test(q.namespace)) {
                                 d
@@ -2000,7 +2000,7 @@
                     o = d
                         .event
                         .special[h] || {};
-                    for (j = f || 0; j < p.length; j += 1) {
+                    for (j = f || 0; j < p.length; j = j + 1) {
                         q = p[j];
                         if (e.guid === q.guid) {
                             if (l || n.test(q.namespace)) {
@@ -2379,7 +2379,7 @@
             if (a === "unload" && c !== "one") {
                 this.one(a, e, f);
             } else {
-                for (var i = 0, j = this.length; i < j; i += 1) {
+                for (var i = 0, j = this.length; i < j; i = i + 1) {
                     d
                         .event
                         .add(this[i], a, h, e);
@@ -2432,7 +2432,7 @@
             },
             unbind        : function (a, b) {
                 if (typeof a !== "object" || a.preventDefault) {
-                    for (var e = 0, f = this.length; e < f; e += 1) {
+                    for (var e = 0, f = this.length; e < f; e = e + 1) {
                         d
                             .event
                             .remove(this[e], a, b);
@@ -2490,7 +2490,7 @@
                     ? (a.push(D[h] + k), h = h + k)
                     : h = (D[h] || h) + k;
                 if (c === "live") {
-                    for (var q = 0, r = n.length; q < r; q += 1) {
+                    for (var q = 0, r = n.length; q < r; q = q + 1) {
                         d
                             .event
                             .add(n[q], "live." + F(h, m), {
@@ -2527,7 +2527,7 @@
     ),
     function () {
         function u(a, b, c, d, e, f) {
-            for (var g = 0, h = d.length; g < h; g += 1) {
+            for (var g = 0, h = d.length; g < h; g = g + 1) {
                 var i = d[g];
                 if (i) {
                     var j = !1;
@@ -2556,7 +2556,7 @@
             }
         }
         function t(a, b, c, d, e, f) {
-            for (var g = 0, h = d.length; g < h; g += 1) {
+            for (var g = 0, h = d.length; g < h; g = g + 1) {
                 var i = d[g];
                 if (i) {
                     var j = !1;
@@ -2631,7 +2631,7 @@
                         : k(x.shift(), d);
                     while (x.length) {
                         b = x.shift(),
-                        l.relative[b] && (b += x.shift()),
+                        l.relative[b] && (b = b + x.shift()),
                         j = v(b, j);
                     }
                 }
@@ -2682,7 +2682,7 @@
             if (f.call(n) === "[object Array]") {
                 if (u) {
                     if (d && d.nodeType === 1) {
-                        for (t = 0; n[t] != null; t += 1) {
+                        for (t = 0; n[t] != null; t = t + 1) {
                             n[t] && (n[t] === !0 || n[t].nodeType === 1 && k.contains(d, n[t])) && e.push(
                                 j[t]
                             );
@@ -2690,7 +2690,7 @@
                     }
                 }
             } else {
-                for (t = 0; n[t] != null; t += 1) {
+                for (t = 0; n[t] != null; t = t + 1) {
                     n[t] && n[t].nodeType === 1 && e.push(j[t]);
                 }
             } else {
@@ -2708,7 +2708,7 @@
                 g = h,
                 a.sort(r);
                 if (g) {
-                    for (var b = 1; b < a.length; b += 1) {
+                    for (var b = 1; b < a.length; b = b + 1) {
                         a[b] === a[b - 1] && a.splice(b--, 1);
                     }
                 }
@@ -2726,7 +2726,7 @@
             if (!a) {
                 return [];
             }
-            for (var e = 0, f = l.order.length; e < f; e += 1) {
+            for (var e = 0, f = l.order.length; e < f; e = e + 1) {
                 var g,
                     h = l.order[e];
                 if (g = l.leftMatch[h].exec(a)) {
@@ -2778,7 +2778,7 @@
                             }
                         }
                         if (f) {
-                            for (var s = 0; (p = j[s]) != null; s += 1) {
+                            for (var s = 0; (p = j[s]) != null; s = s + 1) {
                                 if (p) {
                                     o = q(p, f, s, j);
                                     var t = e ^ !!o;
@@ -2927,7 +2927,7 @@
                         }
                         if (e === "not") {
                             var g = b[3];
-                            for (var h = 0, i = g.length; h < i; h += 1) {
+                            for (var h = 0, i = g.length; h < i; h = h + 1) {
                                 if (g[h] === a) {
                                     return !1;
                                 }
@@ -3014,7 +3014,7 @@
                         if (typeof b.getElementsByName !== "undefined") {
                             var c = [],
                                 d = b.getElementsByName(a[1]);
-                            for (var e = 0, f = d.length; e < f; e += 1) {
+                            for (var e = 0, f = d.length; e < f; e = e + 1) {
                                 d[e].getAttribute("name") === a[1] && c.push(d[e]);
                             }
                             return c.length === 0
@@ -3070,7 +3070,7 @@
                         if (f) {
                             return a;
                         }
-                        for (var g = 0, h; (h = b[g]) != null; g += 1) {
+                        for (var g = 0, h; (h = b[g]) != null; g = g + 1) {
                             h && (
                                 e ^ (h.className && (" " + h.className + " ").replace(/[\t\n\r]/g, " ").indexOf(a) >= 0)
                                     ? c || d.push(h)
@@ -3121,7 +3121,7 @@
                             d = c && !j.test(b),
                             e = c && !d;
                         d && (b = b.toLowerCase());
-                        for (var f = 0, g = a.length, h; f < g; f += 1) {
+                        for (var f = 0, g = a.length, h; f < g; f = f + 1) {
                             if (h = a[f]) {
                                 while ((h = h.previousSibling) && h.nodeType !== 1) {}
                                 a[f] = e || h && h
@@ -3140,7 +3140,7 @@
                             f = a.length;
                         if (d && !j.test(b)) {
                             b = b.toLowerCase();
-                            for (; e < f; e += 1) {
+                            for (; e < f; e = e + 1) {
                                 c = a[e];
                                 if (c) {
                                     var g = c.parentNode;
@@ -3152,7 +3152,7 @@
                                 }
                             }
                         } else {
-                            for (; e < f; e += 1) {
+                            for (; e < f; e = e + 1) {
                                 c = a[e],
                                 c && (a[e] = d
                                     ? c.parentNode
@@ -3239,11 +3239,11 @@
                         .push
                         .apply(d, a);
                 } else if (typeof a.length === "number") {
-                    for (var e = a.length; c < e; c += 1) {
+                    for (var e = a.length; c < e; c = c + 1) {
                         d.push(a[c]);
                     }
                 } else {
-                    for (; a[c]; c += 1) {
+                    for (; a[c]; c = c + 1) {
                         d.push(a[c]);
                     }
                 }
@@ -3299,7 +3299,7 @@
                 }
                 c = e.length,
                 d = f.length;
-                for (var k = 0; k < c && k < d; k += 1) {
+                for (var k = 0; k < c && k < d; k = k + 1) {
                     if (e[k] !== f[k]) {
                         return s(e[k], f[k]);
                     }
@@ -3323,11 +3323,11 @@
         k.getText = function (a) {
             var b = "",
                 c;
-            for (var d = 0; a[d]; d += 1) {
+            for (var d = 0; a[d]; d = d + 1) {
                 c = a[d],
                 c.nodeType === 3 || c.nodeType === 4
-                    ? b += c.nodeValue
-                    : c.nodeType !== 8 && (b += k.getText(c.childNodes));
+                    ? b = b + c.nodeValue
+                    : c.nodeType !== 8 && (b = b + k.getText(c.childNodes));
             }
             return b;
         },
@@ -3368,7 +3368,7 @@
                 var c = b.getElementsByTagName(a[1]);
                 if (a[1] === "*") {
                     var d = [];
-                    for (var e = 0; c[e]; e += 1) {
+                    for (var e = 0; c[e]; e = e + 1) {
                         c[e].nodeType === 1 && d.push(c[e]);
                     }
                     c = d;
@@ -3513,13 +3513,13 @@
                     ? [b]
                     : b;
             while (c = l.match.PSEUDO.exec(a)) {
-                e += c[0],
+                e = e + c[0],
                 a = a.replace(l.match.PSEUDO, "");
             }
             a = l.relative[a]
                 ? a + "*"
                 : a;
-            for (var g = 0, h = f.length; g < h; g += 1) {
+            for (var g = 0, h = f.length; g < h; g = g + 1) {
                 k(a, f[g], d);
             }
             return k.filter(e, d);
@@ -3570,7 +3570,7 @@
                         j = {},
                         k = 1;
                     if (g && a.length) {
-                        for (e = 0, f = a.length; e < f; e += 1) {
+                        for (e = 0, f = a.length; e < f; e = e + 1) {
                             i = a[e],
                             j[i] || (j[i] = d.expr.match.POS.test(i)
                                 ? d(i, b || this.context)
@@ -3584,7 +3584,7 @@
                                     : d(g).is(h)) && c.push({elem: g, level: k, selector: i});
                             }
                             g = g.parentNode,
-                            k += 1;
+                            k = k + 1;
                         }
                     }
                     return c;
@@ -3592,7 +3592,7 @@
                 var l = L.test(a)
                     ? d(a, b || this.context)
                     : null;
-                for (e = 0, f = this.length; e < f; e += 1) {
+                for (e = 0, f = this.length; e < f; e = e + 1) {
                     g = this[e];
                     while (g) {
                         if (l
@@ -3618,12 +3618,12 @@
             find   : function (a) {
                 var b = this.pushStack("", "find", a),
                     c = 0;
-                for (var e = 0, f = this.length; e < f; e += 1) {
+                for (var e = 0, f = this.length; e < f; e = e + 1) {
                     c = b.length,
                     d.find(a, this[e], b);
                     if (e > 0) {
-                        for (var g = c; g < b.length; g += 1) {
-                            for (var h = 0; h < c; h += 1) {
+                        for (var g = c; g < b.length; g = g + 1) {
+                            for (var h = 0; h < c; h = h + 1) {
                                 if (b[h] === b[g]) {
                                     b.splice(g--, 1);
                                     break;
@@ -3637,7 +3637,7 @@
             has    : function (a) {
                 var b = d(a);
                 return this.filter(function () {
-                    for (var a = 0, c = b.length; a < c; a += 1) {
+                    for (var a = 0, c = b.length; a < c; a = a + 1) {
                         if (d.contains(this, b[a])) {
                             return !0;
                         }
@@ -3883,7 +3883,7 @@
                         : g = h.firstChild;
                     if (g) {
                         c = c && d.nodeName(g, "tr");
-                        for (var l = 0, m = this.length, n = m - 1; l < m; l += 1) {
+                        for (var l = 0, m = this.length, n = m - 1; l < m; l = l + 1) {
                             e.call(c
                                 ? Y(this[l], g)
                                 : this[l],
@@ -3897,7 +3897,7 @@
                 return this;
             },
             empty      : function () {
-                for (var a = 0, b; (b = this[a]) != null; a += 1) {
+                for (var a = 0, b; (b = this[a]) != null; a = a + 1) {
                     b.nodeType === 1 && d.cleanData(b.getElementsByTagName("*"));
                     while (b.firstChild) {
                         b.removeChild(b.firstChild);
@@ -3925,7 +3925,7 @@
                 } else {
                     a = a.replace(R, "<$1></$2>");
                     try {
-                        for (var c = 0, e = this.length; c < e; c += 1) {
+                        for (var c = 0, e = this.length; c < e; c = c + 1) {
                             this[c].nodeType === 1 && (
                                 d.cleanData(this[c].getElementsByTagName("*")),
                                 this[c].innerHTML = a
@@ -3945,7 +3945,7 @@
                 });
             },
             remove     : function (a, b) {
-                for (var c = 0, e; (e = this[c]) != null; c += 1) {
+                for (var c = 0, e; (e = this[c]) != null; c = c + 1) {
                     if (!a || d.filter(a, [e]).length) {
                         !b && e.nodeType === 1 && (
                             d.cleanData(e.getElementsByTagName("*")),
@@ -4082,7 +4082,7 @@
                 f[b](this[0]);
                 return this;
             }
-            for (var h = 0, i = f.length; h < i; h += 1) {
+            for (var h = 0, i = f.length; h < i; h = h + 1) {
                 var j = (h > 0
                     ? this.clone(!0)
                     : this).get();
@@ -4099,8 +4099,8 @@
                 b = b.ownerDocument || b[0] && b[0].ownerDocument || c
             );
             var g = [];
-            for (var h = 0, i; (i = a[h]) != null; h += 1) {
-                typeof i === "number" && (i += "");
+            for (var h = 0, i; (i = a[h]) != null; h = h + 1) {
+                typeof i === "number" && (i = i + "");
                 if (!i) {
                     continue;
                 }
@@ -4122,7 +4122,7 @@
                                     : k[1] === "<table>" && !n
                                         ? m.childNodes
                                         : [];
-                            for (var p = o.length - 1; p >= 0; p -= 1) {
+                            for (var p = o.length - 1; p >= 0; p = p - 1) {
                                 d.nodeName(o[p], "tbody") && !o[p].childNodes.length && o[p]
                                     .parentNode
                                     .removeChild(o[p]);
@@ -4142,7 +4142,7 @@
                     : g = d.merge(g, i);
             }
             if (e) {
-                for (h = 0; g[h]; h += 1) {
+                for (h = 0; g[h]; h = h + 1) {
                     !f || !d.nodeName(g[h], "script") || g[h].type && g[h]
                         .type
                         .toLowerCase() !== "text/javascript"
@@ -4167,7 +4167,7 @@
                 f = d.expando,
                 g = d.event.special,
                 h = d.support.deleteExpando;
-            for (var i = 0, j; (j = a[i]) != null; i += 1) {
+            for (var i = 0, j; (j = a[i]) != null; i = i + 1) {
                 if (j.nodeName && d.noData[
                     j
                         .nodeName
@@ -4204,7 +4204,7 @@
                 $(a, e),
                 f = _(a),
                 g = _(e);
-                for (h = 0; f[h]; h += 1) {
+                for (h = 0; f[h]; h = h + 1) {
                     $(f[h], g[h]);
                 }
             }
@@ -4213,7 +4213,7 @@
                 if (c) {
                     f = _(a),
                     g = _(e);
-                    for (h = 0; f[h]; h += 1) {
+                    for (h = 0; f[h]; h = h + 1) {
                         Z(f[h], g[h]);
                     }
                 }
@@ -4311,7 +4311,7 @@
                 if (typeof e === "number" && isNaN(e) || e == null) {
                     return;
                 }
-                typeof e === "number" && !d.cssNumber[h] && (e += "px");
+                typeof e === "number" && !d.cssNumber[h] && (e = e + "px");
                 if (!j || !("set" in j) || (e = j.set(a, e)) !== b) {
                     try {
                         i[c] = e;
@@ -4749,7 +4749,7 @@
                 .event
                 .trigger("ajaxStart");
             if (!e.hasContent) {
-                e.data && (e.url += (by.test(e.url)
+                e.data && (e.url = e.url + (by.test(e.url)
                     ? "&"
                     : "?") + e.data),
                 k = e.url;
@@ -4907,7 +4907,7 @@
                 };
             b.jsonp !== !1 && (
                 j = j.replace(bS, l),
-                b.url === j && (f && (k = k.replace(bS, l)), b.data === k && (j += (/\?/.test(j)
+                b.url === j && (f && (k = k.replace(bS, l)), b.data === k && (j = j + (/\?/.test(j)
                     ? "&"
                     : "?") + b.jsonp + "=" + h))
             ),
@@ -5165,7 +5165,7 @@
                 if (a || a === 0) {
                     return this.animate(cc("hide", 3), a, b, c);
                 }
-                for (var e = 0, f = this.length; e < f; e += 1) {
+                for (var e = 0, f = this.length; e < f; e = e + 1) {
                     var g = d.css(this[e], "display");
                     g !== "none" && !d._data(this[e], "olddisplay") && d._data(
                         this[e],
@@ -5173,7 +5173,7 @@
                         g
                     );
                 }
-                for (e = 0; e < f; e += 1) {
+                for (e = 0; e < f; e = e + 1) {
                     this[e].style.display = "none";
                 }
                 return this;
@@ -5184,7 +5184,7 @@
                 if (a || a === 0) {
                     return this.animate(cc("show", 3), a, b, c);
                 }
-                for (var g = 0, h = this.length; g < h; g += 1) {
+                for (var g = 0, h = this.length; g < h; g = g + 1) {
                     e = this[g],
                     f = e.style.display,
                     !d._data(e, "olddisplay") && f === "none" && (f = e.style.display = ""),
@@ -5194,7 +5194,7 @@
                         cd(e.nodeName)
                     );
                 }
-                for (g = 0; g < h; g += 1) {
+                for (g = 0; g < h; g = g + 1) {
                     e = this[g],
                     f = e.style.display;
                     if (f === "" || f === "none") {
@@ -5207,7 +5207,7 @@
                 var c = d.timers;
                 a && this.queue([]),
                 this.each(function () {
-                    for (var a = c.length - 1; a >= 0; a -= 1) {
+                    for (var a = c.length - 1; a >= 0; a = a - 1) {
                         c[a].elem === this && (b && c[a](!0), c.splice(a, 1));
                     }
                 }),
@@ -5434,7 +5434,7 @@
         },
         tick    : function () {
             var a = d.timers;
-            for (var b = 0; b < a.length; b += 1) {
+            for (var b = 0; b < a.length; b = b + 1) {
                 a[b]() || a.splice(b--, 1);
             }
             a.length || d
@@ -5535,28 +5535,31 @@
                 c = j
                     ? j.getComputedStyle(b, null)
                     : b.currentStyle,
-                l -= b.scrollTop,
-                m -= b.scrollLeft,
+                l = l - b.scrollTop,
+                m = m - b.scrollLeft,
                 b === e && (
-                    l += b.offsetTop,
-                    m += b.offsetLeft,
-                    d.offset.doesNotAddBorder && (!d.offset.doesAddBorderForTableAndCells || !ce.test(b.nodeName)) && (l += parseFloat(c.borderTopWidth) || 0, m += parseFloat(c.borderLeftWidth) || 0),
+                    l = l + b.offsetTop,
+                    m = m + b.offsetLeft,
+                    d.offset.doesNotAddBorder && (!d.offset.doesAddBorderForTableAndCells || !ce.test(b.nodeName)) && (
+                        l = l + parseFloat(c.borderTopWidth) || 0,
+                        m = m + parseFloat(c.borderLeftWidth) || 0
+                    ),
                     f = e,
                     e = b.offsetParent
                 ),
                 d.offset.subtractsBorderForOverflowNotVisible && c.overflow !== "visible" && (
-                    l += parseFloat(c.borderTopWidth) || 0,
-                    m += parseFloat(c.borderLeftWidth) || 0
+                    l = l + parseFloat(c.borderTopWidth) || 0,
+                    m = m + parseFloat(c.borderLeftWidth) || 0
                 ),
                 k = c;
             }
             if (k.position === "relative" || k.position === "static") {
-                l += i.offsetTop,
-                m += i.offsetLeft;
+                l = l + i.offsetTop,
+                m = m + i.offsetLeft;
             }
             d.offset.supportsFixedPosition && k.position === "fixed" && (
-                l += Math.max(h.scrollTop, i.scrollTop),
-                m += Math.max(h.scrollLeft, i.scrollLeft)
+                l = l + Math.max(h.scrollTop, i.scrollTop),
+                m = m + Math.max(h.scrollLeft, i.scrollLeft)
             );
             return {left: m, top: l};
         },
@@ -5568,8 +5571,8 @@
                 .offset
                 .initialize(),
             d.offset.doesNotIncludeMarginInBodyOffset && (
-                b += parseFloat(d.css(a, "marginTop")) || 0,
-                c += parseFloat(d.css(a, "marginLeft")) || 0
+                b = b + parseFloat(d.css(a, "marginTop")) || 0,
+                c = c + parseFloat(d.css(a, "marginLeft")) || 0
             );
             return {left: c, top: b};
         },
@@ -5668,10 +5671,10 @@
                             left: 0
                         }
                         : b.offset();
-                c.top  -= parseFloat(d.css(a, "marginTop")) || 0,
-                c.left -= parseFloat(d.css(a, "marginLeft")) || 0,
-                e.top  += parseFloat(d.css(b[0], "borderTopWidth")) || 0,
-                e.left += parseFloat(d.css(b[0], "borderLeftWidth")) || 0;
+                c.top  = c.top - parseFloat(d.css(a, "marginTop")) || 0,
+                c.left = c.left - parseFloat(d.css(a, "marginLeft")) || 0,
+                e.top  = e.top + parseFloat(d.css(b[0], "borderTopWidth")) || 0,
+                e.left = e.left + parseFloat(d.css(b[0], "borderLeftWidth")) || 0;
                 return {
                     left: c.left - e.left,
                     top : c.top - e.top
@@ -5853,7 +5856,7 @@
                 i[d](this[0]);
                 g = this;
             } else {
-                for (h = 0, m = i.length; h < m; h += 1) {
+                for (h = 0, m = i.length; h < m; h = h + 1) {
                     c = h;
                     k = (h > 0
                         ? this.clone(true)
@@ -5996,7 +5999,7 @@
                     : [];
             d.call(f, b);
             m(e);
-            c += 1;
+            c = c + 1;
         },
         complete  : function () {
             b = {};
@@ -6104,7 +6107,7 @@
                     }
                     i = j._default || [];
                     if (c && !/\w$/.test(b)) {
-                        b += c;
+                        b = b + c;
                         c = "";
                     }
                     if (b) {
@@ -6174,12 +6177,12 @@
             e,
             p,
             h;
-        for (e = 0, p = o.length; e < p; e += 1) {
+        for (e = 0, p = o.length; e < p; e = e + 1) {
             if ((k = o[e]).nodeType !== 1) {
                 continue;
             }
             j = k.getElementsByTagName("*");
-            for (h = j.length - 1; h >= 0; h -= 1) {
+            for (h = j.length - 1; h >= 0; h = h - 1) {
                 m(j[h]);
             }
             m(k);
@@ -6371,7 +6374,7 @@ jQuery.cookie = function (name, value, options) {
             var cookies = document
                 .cookie
                 .split(";");
-            for (var i = 0; i < cookies.length; i += 1) {
+            for (var i = 0; i < cookies.length; i = i + 1) {
                 var cookie = jQuery.trim(cookies[i]);
                 // Does this cookie string begin with the name we want?
                 if (cookie.substring(0, name.length + 1) == (name + "=")) {
@@ -6435,17 +6438,17 @@ jQuery.cookie = function (name, value, options) {
     var uTF8Encode = function (string) {
         string = string.replace(/\x0d\x0a/g, "\x0a");
         var output = "";
-        for (var n = 0; n < string.length; n += 1) {
+        for (var n = 0; n < string.length; n = n + 1) {
             var c = string.charCodeAt(n);
             if (c < 128) {
-                output += String.fromCharCode(c);
+                output = output + String.fromCharCode(c);
             } else if ((c > 127) && (c < 2048)) {
-                output += String.fromCharCode((c >> 6) | 192);
-                output += String.fromCharCode((c & 63) | 128);
+                output = output + String.fromCharCode((c >> 6) | 192);
+                output = output + String.fromCharCode((c & 63) | 128);
             } else {
-                output += String.fromCharCode((c >> 12) | 224);
-                output += String.fromCharCode(((c >> 6) & 63) | 128);
-                output += String.fromCharCode((c & 63) | 128);
+                output = output + String.fromCharCode((c >> 12) | 224);
+                output = output + String.fromCharCode(((c >> 6) & 63) | 128);
+                output = output + String.fromCharCode((c & 63) | 128);
             }
         }
         return output;
@@ -6458,17 +6461,19 @@ jQuery.cookie = function (name, value, options) {
         while (i < input.length) {
             c = input.charCodeAt(i);
             if (c < 128) {
-                string += String.fromCharCode(c);
-                i      += 1;
+                string = string + String.fromCharCode(c);
+                i      = i + 1;
             } else if ((c > 191) && (c < 224)) {
                 c2     = input.charCodeAt(i + 1);
-                string += String.fromCharCode(((c & 31) << 6) | (c2 & 63));
-                i      += 2;
+                string = string + String.fromCharCode(((c & 31) << 6) | (c2 & 63));
+                i      = i + 2;
             } else {
                 c2     = input.charCodeAt(i + 1);
                 c3     = input.charCodeAt(i + 2);
-                string += String.fromCharCode(((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63));
-                i      += 3;
+                string = string + String.fromCharCode(
+                    ((c & 15) << 12) | ((c2 & 63) << 6) | (c3 & 63)
+                );
+                i      = i + 3;
             }
         }
         return string;
@@ -6674,12 +6679,12 @@ jQuery.cookie = function (name, value, options) {
         ], function (a, b) {
             function d(f, g, l, m) {
                 c.each(e, function () {
-                    g -= parseFloat(c.curCSS(f, "padding" + this, true)) || 0;
+                    g = g - parseFloat(c.curCSS(f, "padding" + this, true)) || 0;
                     if (l) {
-                        g -= parseFloat(c.curCSS(f, "border" + this + "Width", true)) || 0;
+                        g = g - parseFloat(c.curCSS(f, "border" + this + "Width", true)) || 0;
                     }
                     if (m) {
-                        g -= parseFloat(c.curCSS(f, "margin" + this, true)) || 0;
+                        g = g - parseFloat(c.curCSS(f, "margin" + this, true)) || 0;
                     }
                 });
                 return g;
@@ -6806,7 +6811,7 @@ jQuery.cookie = function (name, value, options) {
                 },
                 call: function (a, b, d) {
                     if ((b = a.plugins[b]) && a.element[0].parentNode) {
-                        for (var e = 0; e < b.length; e += 1) {
+                        for (var e = 0; e < b.length; e = e + 1) {
                             a.options[b[e][0]] && b[e][1].apply(a.element, d);
                         }
                     }
@@ -6828,7 +6833,7 @@ jQuery.cookie = function (name, value, options) {
     if (b.cleanData) {
         var k = b.cleanData;
         b.cleanData = function (a) {
-            for (var c = 0, d; (d = a[c]) != null; c += 1) {
+            for (var c = 0, d; (d = a[c]) != null; c = c + 1) {
                 b(d).triggerHandler("remove");
             }
             k(a);
@@ -6973,7 +6978,7 @@ jQuery.cookie = function (name, value, options) {
                 for (var f; a;) {
                     f    = b
                         .event
-                        .props[a -= 1];
+                        .props[a = a - 1];
                     c[f] = c.originalEvent[f];
                 }
             }
@@ -7379,10 +7384,10 @@ jQuery.cookie = function (name, value, options) {
                 .offsetParent
                 .offset();
             if (this.cssPosition == "absolute" && this.scrollParent[0] != document && d.ui.contains(this.scrollParent[0], this.offsetParent[0])) {
-                a.left += this
+                a.left = a.left + this
                     .scrollParent
                     .scrollLeft();
-                a.top  += this
+                a.top  = a.top + this
                     .scrollParent
                     .scrollTop();
             }
@@ -7679,8 +7684,8 @@ jQuery.cookie = function (name, value, options) {
                                 ._mouseStart(a, true, true);
                             this.instance.offset.click.top   = c.offset.click.top;
                             this.instance.offset.click.left  = c.offset.click.left;
-                            this.instance.offset.parent.left -= c.offset.parent.left - this.instance.offset.parent.left;
-                            this.instance.offset.parent.top  -= c.offset.parent.top - this.instance.offset.parent.top;
+                            this.instance.offset.parent.left = this.instance.offset.parent.left - c.offset.parent.left - this.instance.offset.parent.left;
+                            this.instance.offset.parent.top  = this.instance.offset.parent.top - c.offset.parent.top - this.instance.offset.parent.top;
                             c._trigger("toSortable", a);
                             c.dropped                 = this.instance.element;
                             c.currentItem             = c.element;
@@ -7914,7 +7919,7 @@ jQuery.cookie = function (name, value, options) {
                     o     = m + c.helperProportions.height,
                     h     = c.snapElements.length - 1;
                     h >= 0;
-                    h -= 1
+                    h = h - 1
                 ) {
                     var i = c
                             .snapElements[h]
@@ -8116,10 +8121,10 @@ jQuery.cookie = function (name, value, options) {
  */
 (function (d, p) {
     function u() {
-        return v += 1;
+        return v = v + 1;
     }
     function w() {
-        return x += 1;
+        return x = x + 1;
     }
     var v = 0,
         x = 0;
@@ -8325,7 +8330,7 @@ jQuery.cookie = function (name, value, options) {
             ]("ui-tabs-collapsible");
             c.cookie && this._cookie(c.selected, c.cookie);
             b = 0;
-            for (var j; j = this.lis[b]; b += 1) {
+            for (var j; j = this.lis[b]; b = b + 1) {
                 d(j)[
                     d.inArray(b, c.disabled) != -1 && !d(j).hasClass("ui-tabs-selected")
                         ? "addClass"
@@ -9307,7 +9312,7 @@ jQuery.cookie = function (name, value, options) {
                 c.ui.dialog.maxZ = e.zIndex;
             }
             if (d.overlay) {
-                c.ui.dialog.maxZ += 1;
+                c.ui.dialog.maxZ = c.ui.dialog.maxZ + 1;
                 d
                     .overlay
                     .$el
@@ -9321,7 +9326,7 @@ jQuery.cookie = function (name, value, options) {
                     .element
                     .attr("scrollTop")
             };
-            c.ui.dialog.maxZ += 1;
+            c.ui.dialog.maxZ = c.ui.dialog.maxZ + 1;
             d
                 .uiDialog
                 .css("z-index", c.ui.dialog.maxZ);
@@ -9412,7 +9417,7 @@ jQuery.cookie = function (name, value, options) {
         getTitleId: function (a) {
             a = a.attr("id");
             if (!a) {
-                this.uuid += 1;
+                this.uuid = this.uuid + 1;
                 a         = this.uuid;
             }
             return "ui-dialog-title-" + a;
@@ -9565,18 +9570,18 @@ jQuery.cookie = function (name, value, options) {
         this._days         = f + e * 7,
         this._months       = d + c * 12,
         b.milliseconds     = j % 1e3,
-        i                  += E(j / 1e3),
+        i                  = i + E(j / 1e3),
         b.seconds          = i % 60,
-        h                  += E(i / 60),
+        h                  = h + E(i / 60),
         b.minutes          = h % 60,
-        g                  += E(h / 60),
+        g                  = g + E(h / 60),
         b.hours            = g % 24,
-        f                  += E(g / 24),
-        f                  += e * 7,
+        f                  = f + E(g / 24),
+        f                  = f + e * 7,
         b.days             = f % 30,
-        d                  += E(f / 30),
+        d                  = d + E(f / 30),
         b.months           = d % 12,
-        c                  += E(d / 12),
+        c                  = c + E(d / 12),
         b.years            = c;
     }
     function G(a, b) {
@@ -9785,7 +9790,7 @@ jQuery.cookie = function (name, value, options) {
                 break;
             case "MMM":
             case "MMMM":
-                for (f = 0; f < 12; f += 1) {
+                for (f = 0; f < 12; f = f + 1) {
                     if (c.monthsParse[f].test(b)) {
                         d[1] = f;
                         break;
@@ -9860,15 +9865,15 @@ jQuery.cookie = function (name, value, options) {
             f = c.match(l),
             g,
             h;
-        for (g = 0; g < f.length; g += 1) {
+        for (g = 0; g < f.length; g = g + 1) {
             h = (L(f[g]).exec(b) || [0])[0],
             b = b.replace(L(f[g]), ""),
             M(f[g], h, d, e);
         }
-        return e.isPm && d[3] < 12 && (d[3] += 12),
+        return e.isPm && d[3] < 12 && (d[3] = d[3] + 12),
         e.isPm === !1 && d[3] === 12 && (d[3] = 0),
-        d[3] += e.tzh,
-        d[4] += e.tzm,
+        d[3] = d[3] + e.tzh,
+        d[4] = d[4] + e.tzm,
         e.isUTC
             ? new a(a.UTC.apply({}, d))
             : J(d);
@@ -9878,7 +9883,7 @@ jQuery.cookie = function (name, value, options) {
             d = Math.abs(a.length - b.length),
             e = 0,
             f;
-        for (f = 0; f < c; f += 1) { ~~ a[f] !==~~ b[f] && e++;
+        for (f = 0; f < c; f = f + 1) { ~~ a[f] !==~~ b[f] && e++;
         }
         return e + d;
     }
@@ -9890,7 +9895,7 @@ jQuery.cookie = function (name, value, options) {
             g,
             h,
             i;
-        for (g = 0; g < b.length; g += 1) {
+        for (g = 0; g < b.length; g = g + 1) {
             h = N(a, b[g]),
             e = K(new D(h), b[g]).match(m),
             i = O(d, e),
@@ -9902,9 +9907,9 @@ jQuery.cookie = function (name, value, options) {
         var c = "YYYY-MM-DDT",
             d;
         if (w.exec(b)) {
-            for (d = 0; d < 3; d += 1) {
+            for (d = 0; d < 3; d = d + 1) {
                 if (y[d][1].exec(b)) {
-                    c += y[d][0];
+                    c = c + y[d][0];
                     break;
                 }
             }
@@ -10073,7 +10078,7 @@ jQuery.cookie = function (name, value, options) {
             return h;
         }
         if (b) {
-            for (d = 0; d < 12; d += 1) {
+            for (d = 0; d < 12; d = d + 1) {
                 f[d] = new RegExp(
                     "^" + b.months[d] + "|^" + b.monthsShort[d].replace(".", ""),
                     "i"
@@ -10083,7 +10088,7 @@ jQuery.cookie = function (name, value, options) {
             g[a]          = b;
         }
         if (g[a]) {
-            for (d = 0; d < j.length; d += 1) {
+            for (d = 0; d < j.length; d = d + 1) {
                 c[j[d]] = g[a][j[d]] || g.en[j[d]];
             }
             h = a;
@@ -10303,7 +10308,7 @@ jQuery.cookie = function (name, value, options) {
                     .getTimezoneOffset();
         }
     };
-    for (f = 0; f < A.length; f += 1) {
+    for (f = 0; f < A.length; f = f + 1) {
         T(A[f].toLowerCase(), A[f]);
     }
     T("year", "FullYear"),
@@ -10324,7 +10329,7 @@ jQuery.cookie = function (name, value, options) {
             return E(this.days() / 7);
         }
     };
-    for (f = 0; f < B.length; f += 1) {
+    for (f = 0; f < B.length; f = f + 1) {
         U(B[f]);
     }
     for (f in C) {
@@ -10355,7 +10360,7 @@ var jsUri = function () {
                     d = a
                         .toString()
                         .split(/[&;]/);
-                    for (c = 0; c < d.length; c += 1) {
+                    for (c = 0; c < d.length; c = c + 1) {
                         e = d[c],
                         f = e.split("="),
                         b.push([
@@ -10369,10 +10374,10 @@ var jsUri = function () {
                     var a = "",
                         b,
                         d;
-                    for (b = 0; b < c.length; b += 1) {
+                    for (b = 0; b < c.length; b = b + 1) {
                         d = c[b],
-                        a.length > 0 && (a += "&"),
-                        a += d.join("=");
+                        a.length > 0 && (a = a + "&"),
+                        a = a + d.join("=");
                     }
                     return a.length > 0
                         ? "?" + a
@@ -10386,7 +10391,7 @@ var jsUri = function () {
                 f = function (a) {
                     var b,
                         d;
-                    for (d = 0; d < c.length; d += 1) {
+                    for (d = 0; d < c.length; d = d + 1) {
                         b = c[d];
                         if (e(a) === e(b[0])) {
                             return b[1];
@@ -10397,7 +10402,7 @@ var jsUri = function () {
                     var b = [],
                         d,
                         f;
-                    for (d = 0; d < c.length; d += 1) {
+                    for (d = 0; d < c.length; d = d + 1) {
                         f = c[d],
                         e(a) === e(f[0]) && b.push(f[1]);
                     }
@@ -10409,7 +10414,7 @@ var jsUri = function () {
                         g,
                         h,
                         i;
-                    for (f = 0; f < c.length; f += 1) {
+                    for (f = 0; f < c.length; f = f + 1) {
                         g = c[f],
                         h = e(g[0]) === e(a),
                         i = e(g[1]) === e(b),
@@ -10431,7 +10436,7 @@ var jsUri = function () {
                         g,
                         j;
                     if (arguments.length === 3) {
-                        for (g = 0; g < c.length; g += 1) {
+                        for (g = 0; g < c.length; g = g + 1) {
                             j = c[g];
                             if (e(j[0]) === e(a) && decodeURIComponent(j[1]) === e(d)) {
                                 f = g;
@@ -10440,7 +10445,7 @@ var jsUri = function () {
                         }
                         h(a, d).addParam(a, b, f);
                     } else {
-                        for (g = 0; g < c.length; g += 1) {
+                        for (g = 0; g < c.length; g = g + 1) {
                             j = c[g];
                             if (e(j[0]) === e(a)) {
                                 f = g;
@@ -10606,21 +10611,25 @@ var jsUri = function () {
                             return a !== null && a !== "";
                         };
                     b(f())
-                        ? (a += f(), f().indexOf(":") !== f().length - 1 && (a += ":"), a += "//")
-                        : h() && b(j()) && (a += "//"),
+                        ? (
+                            a = a + f(),
+                            f().indexOf(":") !== f().length - 1 && (a = a + ":"),
+                            a = a + "//"
+                        )
+                        : h() && b(j()) && (a = a + "//"),
                     b(i()) && b(j()) && (
-                        a += i(),
-                        i().indexOf("@") !== i().length - 1 && (a += "@")
+                        a = a + i(),
+                        i().indexOf("@") !== i().length - 1 && (a = a + "@")
                     ),
-                    b(j()) && (a += j(), b(k()) && (a += ":" + k())),
+                    b(j()) && (a = a + j(), b(k()) && (a = a + ":" + k())),
                     b(l())
-                        ? a += l()
-                        : b(j()) && (b(m().toString()) || b(n())) && (a += "/"),
+                        ? a = a + l()
+                        : b(j()) && (b(m().toString()) || b(n())) && (a = a + "/"),
                     b(m().toString()) && (
-                        m().toString().indexOf("?") !== 0 && (a += "?"),
-                        a += m().toString()
+                        m().toString().indexOf("?") !== 0 && (a = a + "?"),
+                        a = a + m().toString()
                     ),
-                    b(n()) && (n().indexOf("#") !== 0 && (a += "#"), a += n());
+                    b(n()) && (n().indexOf("#") !== 0 && (a = a + "#"), a = a + n());
                     return a;
                 },
                 C = function () {
@@ -10699,7 +10708,7 @@ jQuery.shuffleIt        = function (b) {
         d    = b.length;
         d;
         c = parseInt(Math.random() * d),
-        a    = b[d -= 1],
+        a    = b[d = d - 1],
         b[d] = b[c],
         b[c] = a
     ) {}
@@ -10858,17 +10867,17 @@ tvly.Activator.setupCustomOnloadFunction = function () {
         }
         e[1] = parseInt(e[1], 10) || 0;
         if (b.at[0] === "right") {
-            j.left += h;
+            j.left = j.left + h;
         } else if (b.at[0] === "center") {
-            j.left += h / 2;
+            j.left = j.left + h / 2;
         }
         if (b.at[1] === "bottom") {
-            j.top += k;
+            j.top = j.top + k;
         } else if (b.at[1] === "center") {
-            j.top += k / 2;
+            j.top = j.top + k / 2;
         }
-        j.left += e[0];
-        j.top  += e[1];
+        j.left = j.left + e[0];
+        j.top  = j.top + e[1];
         return this.each(function () {
             var f = c(this),
                 l = f.outerWidth(),
@@ -10880,14 +10889,14 @@ tvly.Activator.setupCustomOnloadFunction = function () {
                 i = c.extend({}, j),
                 r;
             if (b.my[0] === "right") {
-                i.left -= l;
+                i.left = i.left - l;
             } else if (b.my[0] === "center") {
-                i.left -= l / 2;
+                i.left = i.left - l / 2;
             }
             if (b.my[1] === "bottom") {
-                i.top -= m;
+                i.top = i.top - m;
             } else if (b.my[1] === "center") {
-                i.top -= m / 2;
+                i.top = i.top - m / 2;
             }
             i.left = parseInt(i.left);
             i.top  = parseInt(i.top);
@@ -10950,7 +10959,7 @@ tvly.Activator.setupCustomOnloadFunction = function () {
                             ? a.targetWidth
                             : -a.targetWidth,
                         h = -2 * a.offset[0];
-                    b.left += a.collisionPosition.left < 0
+                    b.left = b.left + a.collisionPosition.left < 0
                         ? g + e + h
                         : d > 0
                             ? g + e + h
@@ -10970,7 +10979,7 @@ tvly.Activator.setupCustomOnloadFunction = function () {
                             ? a.targetHeight
                             : -a.targetHeight,
                         h = -2 * a.offset[1];
-                    b.top += a.collisionPosition.top < 0
+                    b.top = b.top + a.collisionPosition.top < 0
                         ? g + e + h
                         : d > 0
                             ? g + e + h
@@ -11783,9 +11792,9 @@ tvly.Activator.setupCustomOnloadFunction = function () {
             var e = (c.length == 1)
                 ? 2
                 : c.length;
-            for (var f = 0; f < e - 1; f += 1) {
+            for (var f = 0; f < e - 1; f = f + 1) {
                 var j = c[f];
-                for (var l = 0; l < h[j].length; l += 1) {
+                for (var l = 0; l < h[j].length; l = l + 1) {
                     b.push(h[j][l]);
                 }
             }
@@ -11888,7 +11897,7 @@ tvly.Activator.setupCustomOnloadFunction = function () {
                         return l(this, d);
                     });
                     b = m.slice(0, d.numberOfResultsDisplay);
-                    for (var j = 0; j < b.length; j += 1) {
+                    for (var j = 0; j < b.length; j = j + 1) {
                         b[j].listpos = j;
                     }
                     var i = (b.length < 11)
@@ -12049,7 +12058,7 @@ tvly.Activator.setupCustomOnloadFunction = function () {
             }
             var e = [];
             if (h != null) {
-                for (var d = 0; d < h.length; d += 1) {
+                for (var d = 0; d < h.length; d = d + 1) {
                     if (!f(h[d])) {
                         e.push(h[d]);
                     }
@@ -12059,9 +12068,9 @@ tvly.Activator.setupCustomOnloadFunction = function () {
         },
         HOT: function (e, f) {
             var d = [];
-            mainLoop : for (var c = 0; c < f.length; c += 1) {
+            mainLoop : for (var c = 0; c < f.length; c = c + 1) {
                 if (d.length >= 1) {
-                    for (var b = 0; b < d.length; b += 1) {
+                    for (var b = 0; b < d.length; b = b + 1) {
                         if (f[c]["locationId"] == d[b]["locationId"]) {
                             continue mainLoop;
                         }
@@ -12219,14 +12228,14 @@ jQuery.fn.pagination = function (a, b) {
             }
             if (k[0] > 0 && b.num_edge_entries > 0) {
                 var j = Math.min(b.num_edge_entries, k[0]);
-                for (var l = 0; l < j; l += 1) {
+                for (var l = 0; l < j; l = l + 1) {
                     n(l);
                 }
                 if (b.num_edge_entries < k[0] && b.ellipse_text) {
                     jQuery("<span>" + b.ellipse_text + "</span>").appendTo(d);
                 }
             }
-            for (var l = k[0]; l < k[1]; l += 1) {
+            for (var l = k[0]; l < k[1]; l = l + 1) {
                 n(l);
             }
             if (k[1] < o && b.num_edge_entries > 0) {
@@ -12234,7 +12243,7 @@ jQuery.fn.pagination = function (a, b) {
                     jQuery("<span>" + b.ellipse_text + "</span>").appendTo(d);
                 }
                 var m = Math.max(o - b.num_edge_entries, k[1]);
-                for (var l = m; l < o; l += 1) {
+                for (var l = m; l < o; l = l + 1) {
                     n(l);
                 }
             }

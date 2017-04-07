@@ -2628,12 +2628,12 @@
                                     destinationSelectElement.innerHTML      = "";
                                     var selectedNum = -1;
                                     var optionCount = 0;
-                                    for (var i = 0, num = selectDOM.childNodes.length; i < num; i += 1) {
+                                    for (var i = 0, num = selectDOM.childNodes.length; i < num; i = i + 1) {
                                         if (selectDOM.childNodes[0].selected && selectedNum == -1) {
                                             selectedNum = optionCount;
                                         }
                                         if (selectDOM.childNodes[0].nodeName == "OPTION") {
-                                            optionCount += 1;
+                                            optionCount = optionCount + 1;
                                         }
                                         destinationSelectElement.appendChild(selectDOM.childNodes[0]);
                                     }
@@ -2779,7 +2779,7 @@
                         state
                     ) {
                         var radioButtons = cx.exp.widgetlibrary.search.common.container.radioButtons;
-                        for (var i = 0; i < radioButtons.length; i += 1) {
+                        for (var i = 0; i < radioButtons.length; i = i + 1) {
                             if (state === true) { //disabling
                                 radioButtons[i].setAttribute("disabled", "true");
                             } else { //enableing
@@ -3198,7 +3198,7 @@
                             .hideOrShowBPG(defaultLob);
 
                         var radioButtons = cx.exp.widgetlibrary.search.common.container.radioButtons;
-                        for (var i = 0; i < radioButtons.length; i += 1) {
+                        for (var i = 0; i < radioButtons.length; i = i + 1) {
                             var radioButton = radioButtons[i];
                             if (!(YAHOO.lang.isNull(radioButton) || YAHOO.lang.isUndefined(radioButton))) {
                                 YAHOO
@@ -3329,7 +3329,7 @@
                                     .toString();
                                 window.globalAdTileId = datePart + randomPart;
                             }
-                            url   += "&tile=" + window.globalAdTileId;
+                            url   = url + "&tile=" + window.globalAdTileId;
                             e.src = url;
                         }
                     })();
@@ -3419,7 +3419,7 @@
                                                         .toString();
                                                     window.globalAdTileId = datePart + randomPart;
                                                 }
-                                                url   += "&tile=" + window.globalAdTileId;
+                                                url   = url + "&tile=" + window.globalAdTileId;
                                                 e.src = url;
                                             }
                                         })();
@@ -4366,9 +4366,9 @@
             // If s_BrandEAPID is set then the OM code will append it to s_account So append
             // the dev postfix to account if blank, but s_BrandEAPID otherwise
             if (s_BrandEAPID.length > 0) {
-                s_BrandEAPID += s_accountDevPostfix;
+                s_BrandEAPID = s_BrandEAPID + s_accountDevPostfix;
             } else {
-                s_account += s_accountDevPostfix;
+                s_account = s_account + s_accountDevPostfix;
             }
 
             //This is for future use so that OM can add 'dev' by itself
@@ -4409,7 +4409,7 @@
             }
 
             if ("undefined" != typeof(OmnitureABIds)) {
-                for (var i = 0; i < OmnitureABIds.length; i += 1) {
+                for (var i = 0; i < OmnitureABIds.length; i = i + 1) {
                     PLSetABTestIDAndValue(OmnitureABIds[i]);
                 }
             }
