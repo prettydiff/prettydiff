@@ -73,11 +73,6 @@ Manage with biddle
             if (options.nodeerror === true) {
                 console.log(meta.error);
             }
-            if (options.newline === true) {
-                pdresponse = pdresponse.replace(/(\s+)$/, "\r\n");
-            } else {
-                pdresponse = pdresponse.replace(/(\s+)$/, "");
-            }
             diffCount[0] = diffCount[0] + meta.difftotal;
             if (meta.difftotal > 0) {
                 diffCount[1] = diffCount[1] + 1;
@@ -85,6 +80,16 @@ Manage with biddle
             diffCount[2] = diffCount[2] + 1;
             diffCount[3] = diffCount[3] + meta.insize;
             diffCount[4] = diffCount[4] + meta.outsize;
+            if (options.diffcli === true) {
+                return pdresponse;
+            }
+            if (typeof pdresponse === "string") {
+                if (options.newline === true) {
+                    pdresponse = pdresponse.replace(/(\s+)$/, "\r\n");
+                } else {
+                    pdresponse = pdresponse.replace(/(\s+)$/, "");
+                }
+            }
             if (meta.error !== "") {
                 global.prettydiff.finalFile.order[9] = "<p><strong>Error:</strong> " + meta.error + "</p>";
             }
@@ -395,7 +400,7 @@ Manage with biddle
         cliWrite       = function pdNodeLocal__cliWrite(output, itempath, last) {
             var a      = 0,
                 plural = "",
-                pdlen  = output[0].length;
+                pdlen  = output.length;
             if (options.summaryonly === true) {
                 clidata[2].push(itempath);
                 if (method === "screen" || method === "filescreen") {
@@ -409,10 +414,10 @@ Manage with biddle
                     console.log(lf + "Screen input with " + diffCount[0] + " difference" + plural);
                 }
                 for (a = 0; a < pdlen; a = a + 1) {
-                    if (output[0][a].indexOf("\u001b[36m") === 0 && itempath !== "") {
+                    if (output[a].indexOf("\u001b[36m") === 0 && itempath !== "") {
                         console.log("\u001b[36m" + itempath + "\u001b[39m");
                     }
-                    console.log(output[0][a]);
+                    console.log(output[a]);
                 }
             }
             if (last === true) {

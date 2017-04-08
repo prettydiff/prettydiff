@@ -224,17 +224,17 @@
                         return hourString + minuteString + secondString;
                     },
                     output       = function core__output(finalProduct, difftotal, difflines) {
-                        var meta = {
-                            difflines: 0,
-                            difftotal: 0,
-                            error    : "",
-                            insize   : 0,
-                            lang     : [
-                                "", "", ""
-                            ],
-                            outsize  : 0,
-                            time     : ""
-                        };
+                        var meta         = {
+                                difflines: 0,
+                                difftotal: 0,
+                                error    : "",
+                                insize   : 0,
+                                lang     : [
+                                    "", "", ""
+                                ],
+                                outsize  : 0,
+                                time     : ""
+                            };
                         meta.lang   = options.autoval;
                         meta.time   = proctime();
                         meta.insize = (options.mode === "diff")
@@ -345,7 +345,8 @@
                         options.diff   = apidiffout;
                         options.source = apioutput;
                         if (options.diffcli === true) {
-                            return output(global.prettydiff.diffview(options));
+                            a = global.prettydiff.diffview(options);
+                            return output(a[0], a[1], a[2]);
                         }
                         if (apioutput === "Error: This does not appear to be JavaScript." || apidiffout === "Error: This does not appear to be JavaScript.") {
                             return output(
