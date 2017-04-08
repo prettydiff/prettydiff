@@ -3,7 +3,6 @@
 ## v2.1.18
 
 ### Defects
-* Fixes #419, broken logic in api/node-local.js associated with relative versus absolute paths
 * Fixes #420, markup attributes should not be sorted if sorting is disabled in the options
 * Fixes #429, fixes regression against diffcli option
 
@@ -15,7 +14,6 @@
 * Fixes #427, two performance improvements for new diff algorithm
 * Fixes #428, performance improvement in all code for V8 by converting arithmetic assignment operators to assignments followed by separate explicit arithmetic
 * Fixes #430, created a minimal barebones HTML code sample demonstrating running Pretty Diff in a generic HTML tool
-* Fixes #431, replace api/node-local.js file copy mechanism for the similar mechanism in prettydiff/biddle
 
 ## v2.1.17
 

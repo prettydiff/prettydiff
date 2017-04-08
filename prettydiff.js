@@ -65,6 +65,9 @@
             time     : ""
         };
     }
+    if (typeof process === "object" && Array.isArray(process.argv) === true && process.argv[1].replace(/\\/g, "/").replace(".js", "").split("prettydiff/prettydiff")[1] === "") {
+        return console.log("This file \u001b[31m\u001b[1mdoes not execute with Node.js\u001b[0m\u001b[39m.  Use \u001b[32mapi/node-local.js\u001b[39m instead.");
+    }
     if (typeof require === "function" && (typeof ace !== "object" || ace.prettydiffid === undefined)) {
         (function glib_prettydiff() {
             var localPath = (
@@ -416,25 +419,25 @@
             ace: 160307
         },
         api          : {
-            dom      : 170327, //dom.js
-            nodeLocal: 170327 //node-local.js
+            dom      : 170408, //dom.js
+            nodeLocal: 170408 //node-local.js
         },
         css          : 170327, //css files
-        csspretty    : 170327, //csspretty lib
-        csvpretty    : 160816, //csvpretty lib
-        diffview     : 170327, //diffview lib
-        documentation: 170327, //documentation.xhtml and various guide pages
-        finalFile    : 160816, //HTML report generator
-        jspretty     : 170327, //jspretty lib
-        language     : 170129, //language lib
+        csspretty    : 170408, //csspretty lib
+        csvpretty    : 170408, //csvpretty lib
+        diffview     : 170408, //diffview lib
+        documentation: 170408, //documentation.xhtml and various guide pages
+        finalFile    : 170408, //HTML report generator
+        jspretty     : 170408, //jspretty lib
+        language     : 170408, //language lib
         latest       : 0,
-        lint         : 170327, //unit test and lint automation as test/lint.js
-        markuppretty : 170327, //markuppretty lib
-        options      : 170327, //options management
-        prettydiff   : 170327, //this file
-        safeSort     : 170327, //safeSort lib
+        lint         : 170408, //unit test and lint automation as test/lint.js
+        markuppretty : 170408, //markuppretty lib
+        options      : 170408, //options management
+        prettydiff   : 170408, //this file
+        safeSort     : 170408, //safeSort lib
         version      : "2.1.18", //version number
-        webtool      : 161204
+        webtool      : 170408
     };
     global.prettydiff.edition.latest = (function edition_latest() {
         return Math.max(
