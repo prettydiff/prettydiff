@@ -348,31 +348,31 @@ public class IOOperations {
                         .println(stmt.executeUpdate(query));
                 }
             }
-            message += successfullyUpdatedMessage;
+            message = message + successfullyUpdatedMessage;
 
         } catch (SQLException e) {
             e.printStackTrace();
-            message += e.getMessage();
+            message = message + e.getMessage();
         } finally {
             if (rs != null) {
                 try {
                     rs.close();
                 } catch (Exception e) {
-                    message += e.getMessage();
+                    message = message + e.getMessage();
                 }
             }
             if (stmt != null) {
                 try {
                     stmt.close();
                 } catch (Exception e) {
-                    message += e.getMessage();
+                    message = message + e.getMessage();
                 }
             }
             if (conn != null) {
                 try {
                     conn.close();
                 } catch (Exception e) {
-                    message += e.getMessage();
+                    message = message + e.getMessage();
                 }
             }
         }
@@ -411,30 +411,30 @@ public class IOOperations {
                 // System.out.println(query);
                 stmt.executeUpdate(query);
             }
-            message += successfullyUpdatedMessage;
+            message = message + successfullyUpdatedMessage;
 
         } catch (SQLException e) {
-            message += e.getMessage();
+            message = message + e.getMessage();
         } finally {
             if (rs != null) {
                 try {
                     rs.close();
                 } catch (Exception e) {
-                    message += e.getMessage();
+                    message = message + e.getMessage();
                 }
             }
             if (stmt != null) {
                 try {
                     stmt.close();
                 } catch (Exception e) {
-                    message += e.getMessage();
+                    message = message + e.getMessage();
                 }
             }
             if (conn != null) {
                 try {
                     conn.close();
                 } catch (Exception e) {
-                    message += e.getMessage();
+                    message = message + e.getMessage();
                 }
             }
         }
@@ -560,15 +560,15 @@ public class IOOperations {
 
             results    = new String[numberOfRows][rsMetaData.getColumnCount()];
 
-            for (int i = 0; i < rsMetaData.getColumnCount(); i += 1) {
+            for (int i = 0; i < rsMetaData.getColumnCount(); i = i + 1) {
                 results[0][i] = rsMetaData.getColumnLabel(i + 1);
             }
             int j = 1;
             while (rs.next()) {
-                for (int i = 0; i < rsMetaData.getColumnCount(); i += 1) {
+                for (int i = 0; i < rsMetaData.getColumnCount(); i = i + 1) {
                     results[j][i] = rs.getString(i + 1);
                 }
-                j += 1;
+                j = j + 1;
             }
 
 

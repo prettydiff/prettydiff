@@ -13,8 +13,7 @@
                                 <a href="#">
                                     <i class="fa fa-gamepad fa-fw"></i>
                                     {{$game.Display}}
-                                    <span class="fa arrow"></span>
-                                </a>
+                                    <span class="fa arrow"></span></a>
                                 <ul
                                     class="nav nav-second-level collapse {{if $actGame}} {{if eq $actGame.ID $game.ID }}in{{end}}{{end}}">
                                     <li>
@@ -27,8 +26,7 @@
                                             <a href="#">
                                                 <i class="fa fa-language fa-fw"></i>
                                                 {{$lang.ToDisplay}}
-                                                <span class="fa arrow"></span>
-                                            </a>
+                                                <span class="fa arrow"></span></a>
                                             <ul class="nav nav-third-level collapse {{if eq $actLang $lang}}in{{end}}">
                                                 <li>
                                                     <a href="/client?lang={{$lang}}&game_id={{$game.ID}}&mode=0">设计</a>

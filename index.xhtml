@@ -47,7 +47,7 @@
                 style="display:none"></p>
             <div id="headline" style="display:block">
                 <h2>Announcement &mdash;</h2>
-                <p>Automated distribution with <a href="https://github.com/prettydiff/prettydiff/issues/291#issuecomment-259951141">biddle</a></p>
+                <p><a href="license.txt">License</a> change and new <a href="guide/unrelated_diff.xhtml">diff algorithm</a> with version <a href="https://github.com/prettydiff/prettydiff/releases/tag/2.1.17">2.1.17</a>.</p>
                 <span class="clear"></span>
             </div>
             <ul id="infolinks">
@@ -498,7 +498,20 @@
                     <label class="label" for="csvchar">Character separator
                         <a class="apiname" href="documentation.xhtml#csvchar">(csvchar)</a>
                     </label>
-                    <input id="csvchar" type="text" value=","/></p>
+                    <span><input id="csvchar" type="text" value=","/></span></p>
+                <p>
+                    <strong>Empty new line at end of output
+                        <a classname="apiname" href="documentation.xhtml#newline">newline</a>
+                    </strong>
+                    <span>
+                        <input checked="checked" id="newline-yes" name="newline" type="radio"/>
+                        <label for="newline-yes">End with new line</label>
+                    </span>
+                    <span>
+                        <input id="newline-no" name="newline" type="radio"/>
+                        <label for="newline-no">End without white space</label>
+                    </span>
+                </p>
                 <p>
                     <button id="option_commentClear">Reset Comment String</button>
                     <label class="label" for="option_comment">Pretty Diff Comment</label>
@@ -1077,19 +1090,16 @@
                     <fieldset>
                         <legend>Basic Options</legend>
                         <p>
-                            <label class="label" for="beau-quan">Indentation size
-                                <a class="apiname" href="documentation.xhtml#insize">(insize)</a>
-                            </label>
+                            <strong>Indent Comments
+                                <a class="apiname" href="documentation.xhtml#comments">(comments)</a>
+                            </strong>
                             <span>
-                                <input id="beau-quan" type="text" value="4"/>
+                                <input checked="checked" id="incomment-yes" name="incomment" type="radio"/>
+                                <label for="incomment-yes">Indent comments</label>
                             </span>
-                        </p>
-                        <p>
-                            <label class="label" for="inlevel">Code padding, Markup / JavaScript
-                                <a class="apiname" href="documentation.xhtml#inlevel">(inlevel)</a>
-                            </label>
                             <span>
-                                <input id="inlevel" type="text" value="0"/>
+                                <input id="incomment-no" name="incomment" type="radio"/>
+                                <label for="incomment-no">No comment indentation</label>
                             </span>
                         </p>
                         <p>
@@ -1117,16 +1127,19 @@
                             </span>
                         </p>
                         <p>
-                            <strong>Indent Comments
-                                <a class="apiname" href="documentation.xhtml#comments">(comments)</a>
-                            </strong>
+                            <label class="label" for="inlevel">Code padding, Markup / JavaScript
+                                <a class="apiname" href="documentation.xhtml#inlevel">(inlevel)</a>
+                            </label>
                             <span>
-                                <input checked="checked" id="incomment-yes" name="incomment" type="radio"/>
-                                <label for="incomment-yes">Indent comments</label>
+                                <input id="inlevel" type="text" value="0"/>
                             </span>
+                        </p>
+                        <p>
+                            <label class="label" for="beau-quan">Indentation size
+                                <a class="apiname" href="documentation.xhtml#insize">(insize)</a>
+                            </label>
                             <span>
-                                <input id="incomment-no" name="incomment" type="radio"/>
-                                <label for="incomment-no">No comment indentation</label>
+                                <input id="beau-quan" type="text" value="4"/>
                             </span>
                         </p>
                         <p>

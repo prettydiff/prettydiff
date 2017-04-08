@@ -140,7 +140,7 @@ Array.prototype.indexOf = function (t) {
     i = i >= 0
         ? i
         : Math.max(0, r + i);
-    for (; i < r; i += 1) {
+    for (; i < r; i = i + 1) {
         if (i in n && n[i] === t) {
             return i;
         }

@@ -1,5 +1,20 @@
 # Pretty Diff change log
 
+## v2.1.18
+
+### Defects
+* Fixes #420, markup attributes should not be sorted if sorting is disabled in the options
+* Fixes #429, fixes regression against diffcli option
+
+### Enhancements
+* Fixes #414, better preserve whitespace adjacent to span tags in HTML
+* Fixes #418, performance improvement for lib/markuppretty.js in V8 by ensuring level array contains only number types
+* Fixes #422, create a new option to explicitly supply or eliminate a new line at the end of output
+* Fixes #426, remove duplicate logic from lib/diffview.js
+* Fixes #427, two performance improvements for new diff algorithm
+* Fixes #428, performance improvement in all code for V8 by converting arithmetic assignment operators to assignments followed by separate explicit arithmetic
+* Fixes #430, created a minimal barebones HTML code sample demonstrating running Pretty Diff in a generic HTML tool
+
 ## v2.1.17
 
 ### Defects

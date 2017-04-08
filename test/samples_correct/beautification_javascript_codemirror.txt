@@ -95,7 +95,8 @@
         updateGutters(this);
         themeChanged(this);
         if (options.lineWrapping) {
-            this.display.wrapper.className += " CodeMirror-wrap";
+            this.display.wrapper.className = this.display.wrapper.className + " CodeMirror-" +
+                    "wrap";
         }
         if (options.autofocus && !mobile) {
             focusInput(this);
@@ -141,7 +142,7 @@
             }
         }
         maybeUpdateLineNumberWidth(this);
-        for (var i = 0; i < initHooks.length; i += 1) {
+        for (var i = 0; i < initHooks.length; i = i + 1) {
             initHooks[i](this);
         }
         endOperation(this);
@@ -350,7 +351,7 @@
             });
         cm.doc.frontier = cm.doc.first;
         startWorker(cm, 100);
-        cm.state.modeGen += 1;
+        cm.state.modeGen = cm.state.modeGen + 1;
         if (cm.curOp) {
             regChange(cm);
         }
@@ -390,9 +391,9 @@
 
             var widgetsHeight = 0;
             if (line.widgets) {
-                for (var i = 0; i < line.widgets.length; i += 1) {
+                for (var i = 0; i < line.widgets.length; i = i + 1) {
                     if (line.widgets[i].height) {
-                        widgetsHeight += line
+                        widgetsHeight = widgetsHeight + line
                             .widgets[i]
                             .height;
                     }
@@ -444,7 +445,7 @@
         var gutters = cm.display.gutters,
             specs   = cm.options.gutters;
         removeChildren(gutters);
-        for (var i = 0; i < specs.length; i += 1) {
+        for (var i = 0; i < specs.length; i = i + 1) {
             var gutterClass = specs[i];
             var gElt = gutters.appendChild(
                 elt("div", null, "CodeMirror-gutter " + gutterClass)
@@ -477,14 +478,14 @@
         while (merged = collapsedSpanAtStart(cur)) {
             var found = merged.find(0, true);
             cur = found.from.line;
-            len += found.from.ch - found.to.ch;
+            len = len + found.from.ch - found.to.ch;
         }
         cur = line;
         while (merged = collapsedSpanAtEnd(cur)) {
             var found = merged.find(0, true);
-            len -= cur.text.length - found.from.ch;
+            len = len - cur.text.length - found.from.ch;
             cur = found.to.line;
-            len += cur.text.length - found.to.ch;
+            len = len + cur.text.length - found.to.ch;
         }
         return len;
     }
@@ -731,7 +732,7 @@
         for (
             var i = 0;
             i < 4 && startWidth != cm.display.barWidth || startHeight != cm.display.barHeight;
-            i += 1
+            i = i + 1
         ) {
             if (startWidth != cm.display.barWidth && cm.options.lineWrapping) {
                 updateHeightsInViewport(cm);
@@ -818,14 +819,14 @@
         var comp = compensateForHScroll(display) - display.scroller.scrollLeft + cm.doc.scrollLeft;
         var gutterW = display.gutters.offsetWidth,
             left    = comp + "px";
-        for (var i = 0; i < view.length; i += 1) {
+        for (var i = 0; i < view.length; i = i + 1) {
             if (!view[i].hidden) {
                 if (cm.options.fixedGutter && view[i].gutter) {
                     view[i].gutter.style.left = left;
                 }
                 var align = view[i].alignable;
                 if (align) {
-                    for (var j = 0; j < align.length; j += 1) {
+                    for (var j = 0; j < align.length; j = j + 1) {
                         align[j].style.left = left;
                     }
                 }
@@ -1064,7 +1065,7 @@
     function updateHeightsInViewport(cm) {
         var display = cm.display;
         var prevBottom = display.lineDiv.offsetTop;
-        for (var i = 0; i < display.view.length; i += 1) {
+        for (var i = 0; i < display.view.length; i = i + 1) {
             var cur = display.view[i],
                 height;
             if (cur.hidden) {
@@ -1088,7 +1089,7 @@
                 updateLineHeight(cur.line, height);
                 updateWidgetHeight(cur.line);
                 if (cur.rest) {
-                    for (var j = 0; j < cur.rest.length; j += 1) {
+                    for (var j = 0; j < cur.rest.length; j = j + 1) {
                         updateWidgetHeight(cur.rest[j]);
                     }
                 }
@@ -1099,7 +1100,7 @@
     // Read and store the height of line widgets associated with the given line.
     function updateWidgetHeight(line) {
         if (line.widgets) {
-            for (var i = 0; i < line.widgets.length; i += 1) {
+            for (var i = 0; i < line.widgets.length; i = i + 1) {
                 line
                     .widgets[i]
                     .height = line
@@ -1117,7 +1118,7 @@
             left  = {},
             width = {};
         var gutterLeft = d.gutters.clientLeft;
-        for (var n = d.gutters.firstChild, i = 0; n; n = n.nextSibling, i += 1) {
+        for (var n = d.gutters.firstChild, i = 0; n; n = n.nextSibling, i = i + 1) {
             left[
                 cm
                     .options
@@ -1158,7 +1159,7 @@
             lineN = display.viewFrom;
         // Loop over the elements in the view, syncing cur (the DOM nodes in
         // display.lineDiv) with the view as we go.
-        for (var i = 0; i < view.length; i += 1) {
+        for (var i = 0; i < view.length; i = i + 1) {
             var lineView = view[i];
             if (lineView.hidden) {} else if (!lineView.node) { // Not drawn yet
                 var node = buildLineElement(cm, lineView, lineN, dims);
@@ -1182,7 +1183,7 @@
                 }
                 cur = lineView.node.nextSibling;
             }
-            lineN += lineView.size;
+            lineN = lineN + lineView.size;
         }
         while (cur) {
             cur = rm(cur);
@@ -1192,7 +1193,7 @@
     // When an aspect of a line changes, a string is added to lineView.changes. This
     // updates the relevant part of the line's DOM structure.
     function updateLineForChanges(cm, lineView, lineN, dims) {
-        for (var j = 0; j < lineView.changes.length; j += 1) {
+        for (var j = 0; j < lineView.changes.length; j = j + 1) {
             var type = lineView.changes[j];
             if (type == "text") {
                 updateLineText(cm, lineView);
@@ -1235,7 +1236,7 @@
             )
             : lineView.line.bgClass;
         if (cls) {
-            cls += " CodeMirror-linebackground";
+            cls = cls + " CodeMirror-linebackground";
         }
         if (lineView.background) {
             if (cls) {
@@ -1321,7 +1322,7 @@
                 lineView.text
             );
             if (lineView.line.gutterClass) {
-                gutterWrap.className += " " + lineView.line.gutterClass;
+                gutterWrap.className = gutterWrap.className + " " + lineView.line.gutterClass;
             }
             if (cm.options.lineNumbers && (!markers || !markers["CodeMirror-linenumbers"])) {
                 lineView.lineNumber = gutterWrap.appendChild(elt(
@@ -1333,7 +1334,7 @@
                 ));
             }
             if (markers) {
-                for (var k = 0; k < cm.options.gutters.length; k += 1) {
+                for (var k = 0; k < cm.options.gutters.length; k = k + 1) {
                     var id    = cm
                             .options
                             .gutters[k],
@@ -1388,7 +1389,7 @@
     function insertLineWidgets(lineView, dims) {
         insertLineWidgetsFor(lineView.line, lineView, dims, true);
         if (lineView.rest) {
-            for (var i = 0; i < lineView.rest.length; i += 1) {
+            for (var i = 0; i < lineView.rest.length; i = i + 1) {
                 insertLineWidgetsFor(lineView.rest[i], lineView, dims, false);
             }
         }
@@ -1399,7 +1400,7 @@
             return;
         }
         var wrap = ensureLineWrapped(lineView);
-        for (var i = 0, ws = line.widgets; i < ws.length; i += 1) {
+        for (var i = 0, ws = line.widgets; i < ws.length; i = i + 1) {
             var widget = ws[i],
                 node   = elt("div", [widget.node], "CodeMirror-linewidget");
             if (!widget.handleMouseEvents) {
@@ -1421,7 +1422,7 @@
             var width = dims.wrapperWidth;
             node.style.left = dims.fixedPos + "px";
             if (!widget.coverGutter) {
-                width                  -= dims.gutterTotalWidth;
+                width                  = width - dims.gutterTotalWidth;
                 node.style.paddingLeft = dims.gutterTotalWidth + "px";
             }
             node.style.width = width + "px";
@@ -1479,7 +1480,7 @@
             if (!end) {
                 end = pos;
             }
-            for (var i = 0; i < this.ranges.length; i += 1) {
+            for (var i = 0; i < this.ranges.length; i = i + 1) {
                 var range = this.ranges[i];
                 if (cmp(end, range.from()) >= 0 && cmp(pos, range.to()) <= 0) {
                     return i;
@@ -1488,7 +1489,7 @@
             return -1;
         },
         deepCopy         : function () {
-            for (var out = [], i = 0; i < this.ranges.length; i += 1) {
+            for (var out = [], i = 0; i < this.ranges.length; i = i + 1) {
                 out[i] = new Range(
                     copyPos(this.ranges[i].anchor),
                     copyPos(this.ranges[i].head)
@@ -1503,7 +1504,7 @@
             if (other.primIndex != this.primIndex || other.ranges.length != this.ranges.length) {
                 return false;
             }
-            for (var i = 0; i < this.ranges.length; i += 1) {
+            for (var i = 0; i < this.ranges.length; i = i + 1) {
                 var here  = this.ranges[i],
                     there = other.ranges[i];
                 if (cmp(here.anchor, there.anchor) != 0 || cmp(here.head, there.head) != 0) {
@@ -1516,7 +1517,7 @@
             return this.ranges[this.primIndex];
         },
         somethingSelected: function () {
-            for (var i = 0; i < this.ranges.length; i += 1) {
+            for (var i = 0; i < this.ranges.length; i = i + 1) {
                 if (!this.ranges[i].empty()) {
                     return true;
                 }
@@ -1550,7 +1551,7 @@
             return cmp(a.from(), b.from());
         });
         primIndex = indexOf(ranges, prim);
-        for (var i = 1; i < ranges.length; i += 1) {
+        for (var i = 1; i < ranges.length; i = i + 1) {
             var cur  = ranges[i],
                 prev = ranges[i - 1];
             if (cmp(prev.to(), cur.from()) >= 0) {
@@ -1562,7 +1563,7 @@
                 if (i <= primIndex) {
                     --primIndex;
                 }
-                ranges.splice(i -= 1, 2, new Range(inv
+                ranges.splice(i = i - 1, 2, new Range(inv
                     ? to
                     : from,
                 inv
@@ -1606,7 +1607,7 @@
         return l >= doc.first && l < doc.first + doc.size;
     }
     function clipPosArray(doc, array) {
-        for (var out = [], i = 0; i < array.length; i += 1) {
+        for (var out = [], i = 0; i < array.length; i = i + 1) {
             out[i] = clipPos(doc, array[i]);
         }
         return out;
@@ -1648,7 +1649,7 @@
     // Extend all selections (pos is an array of selections with length equal the
     // number of selections)
     function extendSelections(doc, heads, options) {
-        for (var out = [], i = 0; i < doc.sel.ranges.length; i += 1) {
+        for (var out = [], i = 0; i < doc.sel.ranges.length; i = i + 1) {
             out[i] = extendRange(doc, doc.sel.ranges[i], heads[i], null);
         }
         var newSel = normalizeSelection(out, doc.sel.primIndex);
@@ -1676,7 +1677,7 @@
             ranges: sel.ranges,
             update: function (ranges) {
                 this.ranges = [];
-                for (var i = 0; i < ranges.length; i += 1) {
+                for (var i = 0; i < ranges.length; i = i + 1) {
                     this.ranges[i] = new Range(
                         clipPos(doc, ranges[i].anchor),
                         clipPos(doc, ranges[i].head)
@@ -1758,7 +1759,7 @@
     // Return a selection that does not partially select any atomic ranges.
     function skipAtomicInSelection(doc, sel, bias, mayClear) {
         var out;
-        for (var i = 0; i < sel.ranges.length; i += 1) {
+        for (var i = 0; i < sel.ranges.length; i = i + 1) {
             var range = sel.ranges[i];
             var newAnchor = skipAtomic(doc, range.anchor, bias, mayClear);
             var newHead = skipAtomic(doc, range.head, bias, mayClear);
@@ -1785,7 +1786,7 @@
         search : for (;;) {
             var line = getLine(doc, curPos.line);
             if (line.markedSpans) {
-                for (var i = 0; i < line.markedSpans.length; i += 1) {
+                for (var i = 0; i < line.markedSpans.length; i = i + 1) {
                     var sp = line.markedSpans[i],
                         m  = sp.marker;
                     if ((sp.from == null || (m.inclusiveLeft
@@ -1799,7 +1800,7 @@
                                 if (!line.markedSpans) {
                                     break;
                                 } else {
-                                    i -= 1;
+                                    i = i - 1;
                                     continue;
                                 }
                             }
@@ -1811,7 +1812,7 @@
                             ? -1
                             : 1);
                         if (cmp(newPos, curPos) == 0) {
-                            newPos.ch += dir;
+                            newPos.ch = newPos.ch + dir;
                             if (newPos.ch < 0) {
                                 if (newPos.line > doc.first) {
                                     newPos = clipPos(doc, Pos(newPos.line - 1));
@@ -1859,7 +1860,7 @@
         var curFragment = result.cursors = document.createDocumentFragment();
         var selFragment = result.selection = document.createDocumentFragment();
 
-        for (var i = 0; i < doc.sel.ranges.length; i += 1) {
+        for (var i = 0; i < doc.sel.ranges.length; i = i + 1) {
             var range = doc
                 .sel
                 .ranges[i];
@@ -2121,7 +2122,7 @@
                     var ischange = !oldStyles || oldStyles.length != line.styles.length || oldCls != newCls && (
                         !oldCls || !newCls || oldCls.bgClass != newCls.bgClass || oldCls.textClass != newCls.textClass
                     );
-                    for (var i = 0; !ischange && i < oldStyles.length; i += 1) {
+                    for (var i = 0; !ischange && i < oldStyles.length; i = i + 1) {
                         ischange = oldStyles[i] != line.styles[i];
                     }
                     if (ischange) {
@@ -2143,7 +2144,7 @@
         );
         if (changedLines.length) {
             runInOp(cm, function () {
-                for (var i = 0; i < changedLines.length; i += 1) {
+                for (var i = 0; i < changedLines.length; i = i + 1) {
                     regLineChange(cm, changedLines[i], "text");
                 }
             });
@@ -2163,7 +2164,7 @@
             : n - (cm.doc.mode.innerMode
                 ? 1000
                 : 100);
-        for (var search = n; search > lim; search -= 1) {
+        for (var search = n; search > lim; search = search - 1) {
             if (search <= doc.first) {
                 return doc.first;
             }
@@ -2199,7 +2200,7 @@
             line.stateAfter = save
                 ? copyState(doc.mode, state)
                 : null;
-            pos             += 1;
+            pos             = pos + 1;
         });
         if (precise) {
             doc.frontier = pos;
@@ -2257,7 +2258,7 @@
                     .text
                     .firstChild
                     .getClientRects();
-                for (var i = 0; i < rects.length - 1; i += 1) {
+                for (var i = 0; i < rects.length - 1; i = i + 1) {
                     var cur  = rects[i],
                         next = rects[i + 1];
                     if (Math.abs(cur.bottom - next.bottom) > 2) {
@@ -2276,7 +2277,7 @@
         if (lineView.line == line) {
             return {cache: lineView.measure.cache, map: lineView.measure.map};
         }
-        for (var i = 0; i < lineView.rest.length; i += 1) {
+        for (var i = 0; i < lineView.rest.length; i = i + 1) {
             if (lineView.rest[i] == line) {
                 return {
                     cache: lineView
@@ -2288,7 +2289,7 @@
                 };
             }
         }
-        for (var i = 0; i < lineView.rest.length; i += 1) {
+        for (var i = 0; i < lineView.rest.length; i = i + 1) {
             if (lineNo(lineView.rest[i]) > lineN) {
                 return {
                     before: true,
@@ -2417,7 +2418,7 @@
             collapse;
         // First, search the line map for the text node corresponding to, or closest to,
         // the target character.
-        for (var i = 0; i < map.length; i += 3) {
+        for (var i = 0; i < map.length; i = i + 3) {
             var mStart = map[i],
                 mEnd   = map[i + 1];
             if (ch < mStart) {
@@ -2443,7 +2444,7 @@
                 }
                 if (bias == "left" && start == 0) {
                     while (i && map[i - 2] == map[i - 3] && map[i - 1].insertLeft) {
-                        node     = map[(i -= 3) + 2];
+                        node     = map[(i = i - 3) + 2];
                         collapse = "left";
                     }
                 }
@@ -2451,7 +2452,7 @@
                     while (
                         i < map.length - 3 && map[i + 3] == map[i + 4] && !map[i + 5].insertLeft
                     ) {
-                        node     = map[(i += 3) + 2];
+                        node     = map[(i = i + 3) + 2];
                         collapse = "right";
                     }
                 }
@@ -2461,7 +2462,7 @@
 
         var rect;
         if (node.nodeType == 3) { // If it is a text node, use a range to retrieve the coordinates.
-            for (var i = 0; i < 4; i += 1) { // Retry a maximum of 4 times when nonsense rectangles are returned
+            for (var i = 0; i < 4; i = i + 1) { // Retry a maximum of 4 times when nonsense rectangles are returned
                 while (start && isExtendingChar(prepared.line.text.charAt(mStart + start))) {
                     --start;
                 }
@@ -2533,7 +2534,7 @@
             rbot = rect.bottom - prepared.rect.top;
         var mid = (rtop + rbot) / 2;
         var heights = prepared.view.measure.heights;
-        for (var i = 0; i < heights.length - 1; i += 1) {
+        for (var i = 0; i < heights.length - 1; i = i + 1) {
             if (mid < heights[i]) {
                 break;
             }
@@ -2584,7 +2585,7 @@
             lineView.measure.cache   = {};
             lineView.measure.heights = null;
             if (lineView.rest) {
-                for (var i = 0; i < lineView.rest.length; i += 1) {
+                for (var i = 0; i < lineView.rest.length; i = i + 1) {
                     lineView
                         .measure
                         .caches[i] = {};
@@ -2596,7 +2597,7 @@
     function clearLineMeasurementCache(cm) {
         cm.display.externalMeasure = null;
         removeChildren(cm.display.lineMeasure);
-        for (var i = 0; i < cm.display.view.length; i += 1) {
+        for (var i = 0; i < cm.display.view.length; i = i + 1) {
             clearLineMeasurementCacheFor(cm.display.view[i]);
         }
     }
@@ -2622,11 +2623,11 @@
     // (display.lineDiv), "local"/null (editor), "window", or "page".
     function intoCoordSystem(cm, lineObj, rect, context) {
         if (lineObj.widgets) {
-            for (var i = 0; i < lineObj.widgets.length; i += 1) {
+            for (var i = 0; i < lineObj.widgets.length; i = i + 1) {
                 if (lineObj.widgets[i].above) {
                     var size = widgetHeight(lineObj.widgets[i]);
-                    rect.top    += size;
-                    rect.bottom += size;
+                    rect.top    = rect.top + size;
+                    rect.bottom = rect.bottom + size;
                 }
             }
         }
@@ -2638,26 +2639,26 @@
         }
         var yOff = heightAtLine(lineObj);
         if (context == "local") {
-            yOff += paddingTop(cm.display);
+            yOff = yOff + paddingTop(cm.display);
         } else {
-            yOff -= cm.display.viewOffset;
+            yOff = yOff - cm.display.viewOffset;
         }
         if (context == "page" || context == "window") {
             var lOff = cm
                 .display
                 .lineSpace
                 .getBoundingClientRect();
-            yOff += lOff.top + (context == "window"
+            yOff = yOff + lOff.top + (context == "window"
                 ? 0
                 : pageScrollY());
             var xOff = lOff.left + (context == "window"
                 ? 0
                 : pageScrollX());
-            rect.left  += xOff;
-            rect.right += xOff;
+            rect.left  = rect.left + xOff;
+            rect.right = rect.right + xOff;
         }
-        rect.top    += yOff;
-        rect.bottom += yOff;
+        rect.top    = rect.top + yOff;
+        rect.bottom = rect.bottom + yOff;
         return rect;
     }
 
@@ -2671,15 +2672,15 @@
             top  = coords.top;
         // First move into "page" coordinate system
         if (context == "page") {
-            left -= pageScrollX();
-            top  -= pageScrollY();
+            left = left - pageScrollX();
+            top  = top - pageScrollY();
         } else if (context == "local" || !context) {
             var localBox = cm
                 .display
                 .sizer
                 .getBoundingClientRect();
-            left += localBox.left;
-            top  += localBox.top;
+            left = left + localBox.left;
+            top  = top + localBox.top;
         }
 
         var lineSpaceBox = cm
@@ -2727,13 +2728,13 @@
             var part  = order[partPos],
                 right = part.level % 2;
             if (ch == bidiLeft(part) && partPos && part.level < order[partPos - 1].level) {
-                part  = order[partPos -= 1];
+                part  = order[partPos = partPos - 1];
                 ch    = bidiRight(part) - (part.level % 2
                     ? 0
                     : 1);
                 right = true;
             } else if (ch == bidiRight(part) && partPos < order.length - 1 && part.level < order[partPos + 1].level) {
-                part  = order[partPos += 1];
+                part  = order[partPos = partPos + 1];
                 ch    = bidiLeft(part) - part.level % 2;
                 right = false;
             }
@@ -2791,7 +2792,7 @@
     // be lineSpace-local ("div" coordinate system).
     function coordsChar(cm, x, y) {
         var doc = cm.doc;
-        y += cm.display.viewOffset;
+        y = y + cm.display.viewOffset;
         if (y < 0) {
             return PosWithInfo(doc.first, 0, true, -1);
         }
@@ -2881,7 +2882,7 @@
                 middle = from + step;
             if (bidi) {
                 middle = from;
-                for (var i = 0; i < step; i += 1) {
+                for (var i = 0; i < step; i = i + 1) {
                     middle = moveVisually(lineObj, middle, 1);
                 }
             }
@@ -2890,14 +2891,14 @@
                 to  = middle;
                 toX = middleX;
                 if (toOutside = wrongLine) {
-                    toX += 1000;
+                    toX = toX + 1000;
                 }
                 dist = step;
             } else {
                 from        = middle;
                 fromX       = middleX;
                 fromOutside = wrongLine;
-                dist        -= step;
+                dist        = dist - step;
             }
         }
     }
@@ -2911,7 +2912,7 @@
         if (measureText == null) {
             measureText = elt("pre");
             // Measure a bunch of lines, for browsers that compute fractional heights.
-            for (var i = 0; i < 49; i += 1) {
+            for (var i = 0; i < 49; i = i + 1) {
                 measureText.appendChild(document.createTextNode("x"));
                 measureText.appendChild(elt("br"));
             }
@@ -2986,10 +2987,10 @@
         var callbacks = group.delayedCallbacks,
             i         = 0;
         do {
-            for (; i < callbacks.length; i += 1) {
+            for (; i < callbacks.length; i = i + 1) {
                 callbacks[i]();
             }
-            for (var j = 0; j < group.ops.length; j += 1) {
+            for (var j = 0; j < group.ops.length; j = j + 1) {
                 var op = group.ops[j];
                 if (op.cursorActivityHandlers) {
                     while (op.cursorActivityCalled < op.cursorActivityHandlers.length) {
@@ -3012,7 +3013,7 @@
             fireCallbacksForOps(group);
         } finally {
             operationGroup = null;
-            for (var i = 0; i < group.ops.length; i += 1) {
+            for (var i = 0; i < group.ops.length; i = i + 1) {
                 group
                     .ops[i]
                     .cm
@@ -3026,19 +3027,19 @@
     // minimum number of relayouts are required.
     function endOperations(group) {
         var ops = group.ops;
-        for (var i = 0; i < ops.length; i += 1) { // Read DOM
+        for (var i = 0; i < ops.length; i = i + 1) { // Read DOM
             endOperation_R1(ops[i]);
         }
-        for (var i = 0; i < ops.length; i += 1) { // Write DOM (maybe)
+        for (var i = 0; i < ops.length; i = i + 1) { // Write DOM (maybe)
             endOperation_W1(ops[i]);
         }
-        for (var i = 0; i < ops.length; i += 1) { // Read DOM
+        for (var i = 0; i < ops.length; i = i + 1) { // Read DOM
             endOperation_R2(ops[i]);
         }
-        for (var i = 0; i < ops.length; i += 1) { // Write DOM (maybe)
+        for (var i = 0; i < ops.length; i = i + 1) { // Write DOM (maybe)
             endOperation_W2(ops[i]);
         }
-        for (var i = 0; i < ops.length; i += 1) { // Read DOM
+        for (var i = 0; i < ops.length; i = i + 1) { // Read DOM
             endOperation_finish(ops[i]);
         }
     }
@@ -3185,14 +3186,14 @@
         var hidden   = op.maybeHiddenMarkers,
             unhidden = op.maybeUnhiddenMarkers;
         if (hidden) {
-            for (var i = 0; i < hidden.length; i += 1) {
+            for (var i = 0; i < hidden.length; i = i + 1) {
                 if (!hidden[i].lines.length) {
                     signal(hidden[i], "hide");
                 }
             }
         }
         if (unhidden) {
-            for (var i = 0; i < unhidden.length; i += 1) {
+            for (var i = 0; i < unhidden.length; i = i + 1) {
                 if (unhidden[i].lines.length) {
                     signal(unhidden[i], "unhide");
                 }
@@ -3323,8 +3324,8 @@
             if (sawCollapsedSpans && visualLineEndNo(cm.doc, to + lendiff) > display.viewFrom) {
                 resetView(cm);
             } else {
-                display.viewFrom += lendiff;
-                display.viewTo   += lendiff;
+                display.viewFrom = display.viewFrom + lendiff;
+                display.viewTo   = display.viewTo + lendiff;
             }
         } else if (from <= display.viewFrom && to >= display.viewTo) { // Full overlap
             resetView(cm);
@@ -3335,7 +3336,7 @@
                     .view
                     .slice(cut.index);
                 display.viewFrom = cut.lineN;
-                display.viewTo   += lendiff;
+                display.viewTo   = display.viewTo + lendiff;
             } else {
                 resetView(cm);
             }
@@ -3358,7 +3359,7 @@
                     .slice(0, cutTop.index)
                     .concat(buildViewArray(cm, cutTop.lineN, cutBot.lineN))
                     .concat(display.view.slice(cutBot.index));
-                display.viewTo += lendiff;
+                display.viewTo = display.viewTo + lendiff;
             } else {
                 resetView(cm);
             }
@@ -3367,7 +3368,7 @@
         var ext = display.externalMeasured;
         if (ext) {
             if (to < ext.lineN) {
-                ext.lineN += lendiff;
+                ext.lineN = ext.lineN + lendiff;
             } else if (from < ext.lineN + ext.size) {
                 display.externalMeasured = null;
             }
@@ -3410,13 +3411,13 @@
         if (n >= cm.display.viewTo) {
             return null;
         }
-        n -= cm.display.viewFrom;
+        n = n - cm.display.viewFrom;
         if (n < 0) {
             return null;
         }
         var view = cm.display.view;
-        for (var i = 0; i < view.length; i += 1) {
-            n -= view[i].size;
+        for (var i = 0; i < view.length; i = i + 1) {
+            n = n - view[i].size;
             if (n < 0) {
                 return i;
             }
@@ -3430,8 +3431,8 @@
         if (!sawCollapsedSpans || newN == cm.doc.first + cm.doc.size) {
             return {index: index, lineN: newN};
         }
-        for (var i = 0, n = cm.display.viewFrom; i < index; i += 1) {
-            n += view[i].size;
+        for (var i = 0, n = cm.display.viewFrom; i < index; i = i + 1) {
+            n = n + view[i].size;
         }
         if (n != oldN) {
             if (dir > 0) {
@@ -3439,12 +3440,12 @@
                     return null;
                 }
                 diff  = (n + view[index].size) - oldN;
-                index += 1;
+                index = index + 1;
             } else {
                 diff = n - oldN;
             }
-            oldN += diff;
-            newN += diff;
+            oldN = oldN + diff;
+            newN = newN + diff;
         }
         while (visualLineNo(cm.doc, newN) != newN) {
             if (index == (dir < 0
@@ -3452,10 +3453,10 @@
                 : view.length - 1)) {
                 return null;
             }
-            newN  += dir * view[index - (dir < 0
+            newN  = newN + dir * view[index - (dir < 0
                     ? 1
                     : 0)].size;
-            index += dir;
+            index = index + dir;
         }
         return {index: index, lineN: newN};
     }
@@ -3495,7 +3496,7 @@
     function countDirtyView(cm) {
         var view  = cm.display.view,
             dirty = 0;
-        for (var i = 0; i < view.length; i += 1) {
+        for (var i = 0; i < view.length; i = i + 1) {
             var lineView = view[i];
             if (!lineView.hidden && (!lineView.node || lineView.changes)) {
                 ++dirty;
@@ -3621,7 +3622,7 @@
         }
 
         // Normal behavior is to insert the new text into every selection
-        for (var i = doc.sel.ranges.length - 1; i >= 0; i -= 1) {
+        for (var i = doc.sel.ranges.length - 1; i >= 0; i = i - 1) {
             var range = doc
                 .sel
                 .ranges[i];
@@ -3656,7 +3657,7 @@
                 var mode = cm.getModeAt(range.head);
                 var end = changeEnd(changeEvent);
                 if (mode.electricChars) {
-                    for (var j = 0; j < mode.electricChars.length; j += 1) {
+                    for (var j = 0; j < mode.electricChars.length; j = j + 1) {
                         if (inserted.indexOf(mode.electricChars.charAt(j)) > -1) {
                             indentLine(cm, end.line, "smart");
                             break;
@@ -3846,7 +3847,7 @@
             if (webkit && !cm.state.fakedLastChar && !(new Date - cm.state.lastMiddleDown < 200)) {
                 var start = d.input.selectionStart,
                     end   = d.input.selectionEnd;
-                d.input.value          += "$";
+                d.input.value          = d.input.value + "$";
                 // The selection end needs to be set before the start, otherwise there can be an
                 // intermediate non-empty selection between the two, which can override the
                 // middle-click paste buffer on linux and cause the wrong thing to get pasted.
@@ -3870,7 +3871,7 @@
             } else {
                 var text   = [],
                     ranges = [];
-                for (var i = 0; i < cm.doc.sel.ranges.length; i += 1) {
+                for (var i = 0; i < cm.doc.sel.ranges.length; i = i + 1) {
                     var line = cm
                         .doc
                         .sel
@@ -4190,7 +4191,7 @@
                     var line = Math.min(start.line, pos.line),
                     end      = Math.min(cm.lastLine(), Math.max(start.line, pos.line));
                     line <= end;
-                    line += 1
+                    line = line + 1
                 ) {
                     var text    = getLine(doc, line).text,
                         leftPos = findColumn(text, left, tabSize);
@@ -4277,7 +4278,7 @@
                         if (counter != curCount) {
                             return;
                         }
-                        display.scroller.scrollTop += outside;
+                        display.scroller.scrollTop = display.scroller.scrollTop + outside;
                         extend(e);
                     }), 50);
                 }
@@ -4329,9 +4330,9 @@
         if (mY > lineBox.bottom || !hasHandler(cm, type)) {
             return e_defaultPrevented(e);
         }
-        mY -= lineBox.top - display.viewOffset;
+        mY = mY - lineBox.top - display.viewOffset;
 
-        for (var i = 0; i < cm.options.gutters.length; i += 1) {
+        for (var i = 0; i < cm.options.gutters.length; i = i + 1) {
             var g = display
                 .gutters
                 .childNodes[i];
@@ -4391,7 +4392,7 @@
                 });
                 reader.readAsText(file);
             };
-            for (var i = 0; i < n; i += 1) {
+            for (var i = 0; i < n; i = i + 1) {
                 loadFile(files[i], i);
             }
         } else { // Normal drop
@@ -4416,7 +4417,7 @@
                     }
                     setSelectionNoUndo(cm.doc, simpleSelection(pos, pos));
                     if (selected) {
-                        for (var i = 0; i < selected.length; i += 1) {
+                        for (var i = 0; i < selected.length; i = i + 1) {
                             replaceRange(cm.doc, "", selected[i].anchor, selected[i].head, "drag");
                         }
                     }
@@ -4549,8 +4550,8 @@
     };
     codeMirror.wheelEventPixels = function (e) {
         var delta = wheelEventDelta(e);
-        delta.x *= wheelPixelsPerUnit;
-        delta.y *= wheelPixelsPerUnit;
+        delta.x = delta.x * wheelPixelsPerUnit;
+        delta.y = delta.y * wheelPixelsPerUnit;
         return delta;
     };
 
@@ -4576,7 +4577,7 @@
                 cur != scroll;
                 cur = cur.parentNode
             ) {
-                for (var i = 0; i < view.length; i += 1) {
+                for (var i = 0; i < view.length; i = i + 1) {
                     if (view[i].node == cur) {
                         cm.display.currentWheelTarget = cur;
                         break outer;
@@ -4645,11 +4646,11 @@
                     wheelPixelsPerUnit = (wheelPixelsPerUnit * wheelSamples + sample) / (
                         wheelSamples + 1
                     );
-                    wheelSamples       += 1;
+                    wheelSamples       = wheelSamples + 1;
                 }, 200);
             } else {
-                display.wheelDX += dx;
-                display.wheelDY += dy;
+                display.wheelDX = display.wheelDX + dx;
+                display.wheelDY = display.wheelDY + dy;
             }
         }
     }
@@ -4685,7 +4686,7 @@
     }
 
     function lookupKeyForEditor(cm, name, handle) {
-        for (var i = 0; i < cm.state.keyMaps.length; i += 1) {
+        for (var i = 0; i < cm.state.keyMaps.length; i = i + 1) {
             var result = lookupKey(name, cm.state.keyMaps[i], handle, cm);
             if (result) {
                 return result;
@@ -5035,14 +5036,14 @@
         var line = pos.line + change.text.length - (change.to.line - change.from.line) - 1,
             ch   = pos.ch;
         if (pos.line == change.to.line) {
-            ch += changeEnd(change).ch - change.to.ch;
+            ch = ch + changeEnd(change).ch - change.to.ch;
         }
         return Pos(line, ch);
     }
 
     function computeSelAfterChange(doc, change) {
         var out = [];
-        for (var i = 0; i < doc.sel.ranges.length; i += 1) {
+        for (var i = 0; i < doc.sel.ranges.length; i = i + 1) {
             var range = doc
                 .sel
                 .ranges[i];
@@ -5067,7 +5068,7 @@
         var out = [];
         var oldPrev = Pos(doc.first, 0),
             newPrev = oldPrev;
-        for (var i = 0; i < changes.length; i += 1) {
+        for (var i = 0; i < changes.length; i = i + 1) {
             var change = changes[i];
             var from = offsetPos(change.from, oldPrev, newPrev);
             var to = offsetPos(changeEnd(change), oldPrev, newPrev);
@@ -5157,7 +5158,7 @@
             change.to
         );
         if (split) {
-            for (var i = split.length - 1; i >= 0; i -= 1) {
+            for (var i = split.length - 1; i >= 0; i = i - 1) {
                 makeChangeInner(doc, {
                     from: split[i].from,
                     text: i
@@ -5210,7 +5211,7 @@
 
         // Verify that there is a useable event (so that ctrl-z won't needlessly clear
         // selection events)
-        for (var i = 0; i < source.length; i += 1) {
+        for (var i = 0; i < source.length; i = i + 1) {
             event = source[i];
             if (allowSelectionOnly
                 ? event.ranges && !event.equals(doc.sel)
@@ -5249,7 +5250,7 @@
             "beforeChange"
         );
 
-        for (var i = event.changes.length - 1; i >= 0; i -= 1) {
+        for (var i = event.changes.length - 1; i >= 0; i = i - 1) {
             var change = event.changes[i];
             change.origin = type;
             if (filter && !filterChange(doc, change, false)) {
@@ -5287,7 +5288,7 @@
         if (distance == 0) {
             return;
         }
-        doc.first += distance;
+        doc.first = doc.first + distance;
         doc.sel   = new Selection(map(doc.sel.ranges, function (range) {
             return new Range(Pos(range.anchor.line + distance, range.anchor.ch), Pos(
                 range.head.line + distance,
@@ -5296,7 +5297,7 @@
         }), doc.sel.primIndex);
         if (doc.cm) {
             regChange(doc.cm, doc.first, doc.first - distance, distance);
-            for (var d = doc.cm.display, l = d.viewFrom; l < d.viewTo; l += 1) {
+            for (var d = doc.cm.display, l = d.viewFrom; l < d.viewTo; l = l + 1) {
                 regLineChange(doc.cm, l, "gutter");
             }
         }
@@ -5489,7 +5490,7 @@
         if (margin == null) {
             margin = 0;
         }
-        for (var limit = 0; limit < 5; limit += 1) {
+        for (var limit = 0; limit < 5; limit = limit + 1) {
             var changed = false,
                 coords  = cursorCoords(cm, pos);
             var endCoords = !end || end == pos
@@ -5711,13 +5712,13 @@
         var indentString = "",
             pos          = 0;
         if (cm.options.indentWithTabs) {
-            for (var i = Math.floor(indentation / tabSize); i; i -= 1) {
-                pos          += tabSize;
-                indentString += "\t";
+            for (var i = Math.floor(indentation / tabSize); i; i = i - 1) {
+                pos          = pos + tabSize;
+                indentString = indentString + "\t";
             }
         }
         if (pos < indentation) {
-            indentString += spaceStr(indentation - pos);
+            indentString = indentString + spaceStr(indentation - pos);
         }
 
         if (indentString != curSpaceString) {
@@ -5731,7 +5732,7 @@
         } else {
             // Ensure that, if the cursor was in the whitespace at the start of the line, it
             // is moved to the end of that space.
-            for (var i = 0; i < doc.sel.ranges.length; i += 1) {
+            for (var i = 0; i < doc.sel.ranges.length; i = i + 1) {
                 var range = doc
                     .sel
                     .ranges[i];
@@ -5770,7 +5771,7 @@
         var ranges = cm.doc.sel.ranges,
             kill   = [];
         // Build up a set of ranges to kill first, merging overlapping ranges.
-        for (var i = 0; i < ranges.length; i += 1) {
+        for (var i = 0; i < ranges.length; i = i + 1) {
             var toKill = compute(ranges[i]);
             while (kill.length && cmp(toKill.from, lst(kill).to) <= 0) {
                 var replaced = kill.pop();
@@ -5783,7 +5784,7 @@
         }
         // Next, remove those actual ranges.
         runInOp(cm, function () {
-            for (var i = kill.length - 1; i >= 0; i -= 1) {
+            for (var i = kill.length - 1; i >= 0; i = i - 1) {
                 replaceRange(cm.doc, "", kill[i].from, kill[i].to, "+delete");
             }
             ensureCursorVisible(cm);
@@ -5917,7 +5918,7 @@
                 target.hitSide = true;
                 break;
             }
-            y += dir * 5;
+            y = y + dir * 5;
         }
         return target;
     }
@@ -5958,7 +5959,7 @@
                     modeSpec: spec,
                     opaque  : options && options.opaque
                 });
-            this.state.modeGen += 1;
+            this.state.modeGen = this.state.modeGen + 1;
             regChange(this);
         }),
 
@@ -6096,7 +6097,7 @@
                 dir    = -1;
                 amount = -amount;
             }
-            for (var i = 0, cur = clipPos(this.doc, from); i < amount; i += 1) {
+            for (var i = 0, cur = clipPos(this.doc, from); i < amount; i = i + 1) {
                 cur = findPosH(this.doc, cur, dir, unit, visually);
                 if (cur.hitSide) {
                     break;
@@ -6112,7 +6113,7 @@
                 dir    = -1;
                 amount = -amount;
             }
-            for (var i = 0, cur = clipPos(this.doc, from); i < amount; i += 1) {
+            for (var i = 0, cur = clipPos(this.doc, from); i < amount; i = i + 1) {
                 var coords = cursorCoords(this, cur, "div");
                 if (x == null) {
                     x = coords.left;
@@ -6189,7 +6190,7 @@
                     found.push(help[mode[type]]);
                 }
             } else if (mode[type]) {
-                for (var i = 0; i < mode[type].length; i += 1) {
+                for (var i = 0; i < mode[type].length; i = i + 1) {
                     var val = help[mode[type][i]];
                     if (val) {
                         found.push(val);
@@ -6200,7 +6201,7 @@
             } else if (help[mode.name]) {
                 found.push(help[mode.name]);
             }
-            for (var i = 0; i < help._global.length; i += 1) {
+            for (var i = 0; i < help._global.length; i = i + 1) {
                 var cur = help._global[i];
                 if (cur.pred(mode, this) && indexOf(found, cur.val) == -1) {
                     found.push(cur.val);
@@ -6339,7 +6340,7 @@
         indentSelection   : methodOp(function (how) {
             var ranges = this.doc.sel.ranges,
                 end    = -1;
-            for (var i = 0; i < ranges.length; i += 1) {
+            for (var i = 0; i < ranges.length; i = i + 1) {
                 var range = ranges[i];
                 if (!range.empty()) {
                     var from = range.from(),
@@ -6348,7 +6349,7 @@
                     end = Math.min(this.lastLine(), to.line - (to.ch
                         ? 0
                         : 1)) + 1;
-                    for (var j = start; j < end; j += 1) {
+                    for (var j = start; j < end; j = j + 1) {
                         indentLine(this, j, how);
                     }
                     var newRanges = this.doc.sel.ranges;
@@ -6444,7 +6445,7 @@
                 return pos;
             }, sel_move);
             if (goals.length) {
-                for (var i = 0; i < doc.sel.ranges.length; i += 1) {
+                for (var i = 0; i < doc.sel.ranges.length; i = i + 1) {
                     doc
                         .sel
                         .ranges[i]
@@ -6471,7 +6472,7 @@
         }),
         removeKeyMap      : function (map) {
             var maps = this.state.keyMaps;
-            for (var i = 0; i < maps.length; i += 1) {
+            for (var i = 0; i < maps.length; i = i + 1) {
                 if (maps[i] == map || maps[i].name == map) {
                     maps.splice(i, 1);
                     return true;
@@ -6484,11 +6485,11 @@
         },
         removeOverlay     : methodOp(function (spec) {
             var overlays = this.state.overlays;
-            for (var i = 0; i < overlays.length; i += 1) {
+            for (var i = 0; i < overlays.length; i = i + 1) {
                 var cur = overlays[i].modeSpec;
                 if (cur == spec || typeof spec == "string" && cur.name == spec) {
                     overlays.splice(i, 1);
-                    this.state.modeGen += 1;
+                    this.state.modeGen = this.state.modeGen + 1;
                     regChange(this);
                     return;
                 }
@@ -6595,7 +6596,7 @@
                 .doc
                 .iter(lineNo, cm.display.viewTo, function (line) {
                     if (line.widgets) {
-                        for (var i = 0; i < line.widgets.length; i += 1) {
+                        for (var i = 0; i < line.widgets.length; i = i + 1) {
                             if (line.widgets[i].noHScroll) {
                                 regLineChange(cm, lineNo, "widget");
                                 break;
@@ -7167,7 +7168,7 @@
             var spaces  = [],
                 ranges  = cm.listSelections(),
                 tabSize = cm.options.tabSize;
-            for (var i = 0; i < ranges.length; i += 1) {
+            for (var i = 0; i < ranges.length; i = i + 1) {
                 var pos = ranges[i].from();
                 var col = countColumn(cm.getLine(pos.line), pos.ch, tabSize);
                 spaces.push([tabSize - col % tabSize + 1].join(" "));
@@ -7202,7 +7203,7 @@
                 var len = cm
                     .listSelections()
                     .length;
-                for (var i = 0; i < len; i += 1) {
+                for (var i = 0; i < len; i = i + 1) {
                     var range = cm.listSelections()[i];
                     cm.replaceRange("\n", range.anchor, range.head, "+input");
                     cm.indentLine(range.from().line + 1, null, true);
@@ -7229,7 +7230,7 @@
             runInOp(cm, function () {
                 var ranges = cm.listSelections(),
                     newSel = [];
-                for (var i = 0; i < ranges.length; i += 1) {
+                for (var i = 0; i < ranges.length; i = i + 1) {
                     var cur  = ranges[i].head,
                         line = getLine(cm.doc, cur.line).text;
                     if (line) {
@@ -7388,7 +7389,7 @@
             ctrl,
             shift,
             cmd;
-        for (var i = 0; i < parts.length - 1; i += 1) {
+        for (var i = 0; i < parts.length - 1; i = i + 1) {
             var mod = parts[i];
             if (/^(cmd|meta|m)$/i.test(mod)) {
                 cmd = true;
@@ -7435,7 +7436,7 @@
                 }
 
                 var keys = map(keyname.split(" "), normalizeKeyName);
-                for (var i = 0; i < keys.length; i += 1) {
+                for (var i = 0; i < keys.length; i = i + 1) {
                     var val,
                         name;
                     if (i == keys.length - 1) {
@@ -7482,7 +7483,7 @@
             if (Object.prototype.toString.call(map.fallthrough) != "[object Array]") {
                 return lookupKey(key, map.fallthrough, handle, context);
             }
-            for (var i = 0; i < map.fallthrough.length; i += 1) {
+            for (var i = 0; i < map.fallthrough.length; i = i + 1) {
                 var result = lookupKey(key, map.fallthrough[i], handle, context);
                 if (result) {
                     return result;
@@ -7615,7 +7616,7 @@
 
     StringStream.prototype = {
         backUp        : function (n) {
-            this.pos -= n;
+            this.pos = this.pos - n;
         },
         column        : function () {
             if (this.lastColumnPos < this.start) {
@@ -7669,11 +7670,11 @@
             return this.pos >= this.string.length;
         },
         hideFirstChars: function (n, inner) {
-            this.lineStart += n;
+            this.lineStart = this.lineStart + n;
             try {
                 return inner();
             } finally {
-                this.lineStart -= n;
+                this.lineStart = this.lineStart - n;
             }
         },
         indentation   : function () {
@@ -7693,7 +7694,7 @@
                     .substr(this.pos, pattern.length);
                 if (cased(substr) == cased(pattern)) {
                     if (consume !== false) {
-                        this.pos += pattern.length;
+                        this.pos = this.pos + pattern.length;
                     }
                     return true;
                 }
@@ -7706,7 +7707,7 @@
                     return null;
                 }
                 if (match && consume !== false) {
-                    this.pos += match[0].length;
+                    this.pos = this.pos + match[0].length;
                 }
                 return match;
             }
@@ -7774,7 +7775,7 @@
         }
         var min = null,
             max = null;
-        for (var i = 0; i < this.lines.length; i += 1) {
+        for (var i = 0; i < this.lines.length; i = i + 1) {
             var line = this.lines[i];
             var span = getMarkedSpanFor(line.markedSpans, this);
             if (cm && !this.collapsed) {
@@ -7793,7 +7794,7 @@
             }
         }
         if (cm && this.collapsed && !cm.options.lineWrapping) {
-            for (var i = 0; i < this.lines.length; i += 1) {
+            for (var i = 0; i < this.lines.length; i = i + 1) {
                 var visual = visualLine(this.lines[i]),
                     len    = lineLength(visual);
                 if (len > cm.display.maxLineLength) {
@@ -7839,7 +7840,7 @@
         }
         var from,
             to;
-        for (var i = 0; i < this.lines.length; i += 1) {
+        for (var i = 0; i < this.lines.length; i = i + 1) {
             var line = this.lines[i];
             var span = getMarkedSpanFor(line.markedSpans, this);
             if (span.from != null) {
@@ -7989,7 +7990,7 @@
             curLine == to.line
                 ? to.ch
                 : null));
-            curLine += 1;
+            curLine = curLine + 1;
         });
         // lineIsHidden depends on the presence of the spans, so needs a second pass
         if (marker.collapsed) {
@@ -8024,7 +8025,7 @@
             if (marker.collapsed) {
                 regChange(cm, from.line, to.line + 1);
             } else if (marker.className || marker.title || marker.startStyle || marker.endStyle || marker.css) {
-                for (var i = from.line; i <= to.line; i += 1) {
+                for (var i = from.line; i <= to.line; i = i + 1) {
                     regLineChange(cm, i, "text");
                 }
             }
@@ -8044,7 +8045,7 @@
     ) {
         this.markers = markers;
         this.primary = primary;
-        for (var i = 0; i < markers.length; i += 1) {
+        for (var i = 0; i < markers.length; i = i + 1) {
             markers[i].parent = this;
         };
     }
@@ -8055,7 +8056,7 @@
             return;
         }
         this.explicitlyCleared = true;
-        for (var i = 0; i < this.markers.length; i += 1) {
+        for (var i = 0; i < this.markers.length; i = i + 1) {
             this
                 .markers[i]
                 .clear();
@@ -8081,7 +8082,7 @@
             markers.push(
                 markText(doc, clipPos(doc, from), clipPos(doc, to), options, type)
             );
-            for (var i = 0; i < doc.linked.length; i += 1) {
+            for (var i = 0; i < doc.linked.length; i = i + 1) {
                 if (doc.linked[i].isParent) {
                     return;
                 }
@@ -8102,7 +8103,7 @@
     }
 
     function copySharedMarkers(doc, markers) {
-        for (var i = 0; i < markers.length; i += 1) {
+        for (var i = 0; i < markers.length; i = i + 1) {
             var marker = markers[i],
                 pos    = marker.find();
             var mFrom = doc.clipPos(pos.from),
@@ -8118,13 +8119,13 @@
     }
 
     function detachSharedMarkers(markers) {
-        for (var i = 0; i < markers.length; i += 1) {
+        for (var i = 0; i < markers.length; i = i + 1) {
             var marker = markers[i],
                 linked = [marker.primary.doc];;
             linkedDocs(marker.primary.doc, function (d) {
                 linked.push(d);
             });
-            for (var j = 0; j < marker.markers.length; j += 1) {
+            for (var j = 0; j < marker.markers.length; j = j + 1) {
                 var subMarker = marker.markers[j];
                 if (indexOf(linked, subMarker.doc) == -1) {
                     subMarker.parent = null;
@@ -8147,7 +8148,7 @@
     // Search an array of spans for a span matching the given marker.
     function getMarkedSpanFor(spans, marker) {
         if (spans) {
-            for (var i = 0; i < spans.length; i += 1) {
+            for (var i = 0; i < spans.length; i = i + 1) {
                 var span = spans[i];
                 if (span.marker == marker) {
                     return span;
@@ -8158,7 +8159,7 @@
     // Remove a span from an array, returning undefined if no spans are left (we
     // don't store arrays for lines without spans).
     function removeMarkedSpan(spans, span) {
-        for (var r, i = 0; i < spans.length; i += 1) {
+        for (var r, i = 0; i < spans.length; i = i + 1) {
             if (spans[i] != span) {
                 (r || (r = [])).push(spans[i]);
             }
@@ -8182,7 +8183,7 @@
     // returning an array of remaining chunks (or undefined if nothing remains).
     function markedSpansBefore(old, startCh, isInsert) {
         if (old) {
-            for (var i = 0, nw; i < old.length; i += 1) {
+            for (var i = 0, nw; i < old.length; i = i + 1) {
                 var span   = old[i],
                     marker = span.marker;
                 var startsBefore = span.from == null || (marker.inclusiveLeft
@@ -8202,7 +8203,7 @@
     }
     function markedSpansAfter(old, endCh, isInsert) {
         if (old) {
-            for (var i = 0, nw; i < old.length; i += 1) {
+            for (var i = 0, nw; i < old.length; i = i + 1) {
                 var span   = old[i],
                     marker = span.marker;
                 var endsAfter = span.to == null || (marker.inclusiveRight
@@ -8253,7 +8254,7 @@
                 : 0);
         if (first) {
             // Fix up .to properties of first
-            for (var i = 0; i < first.length; i += 1) {
+            for (var i = 0; i < first.length; i = i + 1) {
                 var span = first[i];
                 if (span.to == null) {
                     var found = getMarkedSpanFor(last, span.marker);
@@ -8269,10 +8270,10 @@
         }
         if (last) {
             // Fix up .from in last (or move them into first in case of sameLine)
-            for (var i = 0; i < last.length; i += 1) {
+            for (var i = 0; i < last.length; i = i + 1) {
                 var span = last[i];
                 if (span.to != null) {
-                    span.to += offset;
+                    span.to = span.to + offset;
                 }
                 if (span.from == null) {
                     var found = getMarkedSpanFor(first, span.marker);
@@ -8283,7 +8284,7 @@
                         }
                     }
                 } else {
-                    span.from += offset;
+                    span.from = span.from + offset;
                     if (sameLine) {
                         (first || (first = [])).push(span);
                     }
@@ -8304,7 +8305,7 @@
             var gap = change.text.length - 2,
                 gapMarkers;
             if (gap > 0 && first) {
-                for (var i = 0; i < first.length; i += 1) {
+                for (var i = 0; i < first.length; i = i + 1) {
                     if (first[i].to == null) {
                         (gapMarkers || (gapMarkers = [])).push(
                             new MarkedSpan(first[i].marker, null, null)
@@ -8312,7 +8313,7 @@
                     }
                 }
             }
-            for (var i = 0; i < gap; i += 1) {
+            for (var i = 0; i < gap; i = i + 1) {
                 newMarkers.push(gapMarkers);
             }
             newMarkers.push(last);
@@ -8322,7 +8323,7 @@
 
     // Remove spans that are empty and don't have a clearWhenEmpty option of false.
     function clearEmptySpans(spans) {
-        for (var i = 0; i < spans.length; i += 1) {
+        for (var i = 0; i < spans.length; i = i + 1) {
             var span = spans[i];
             if (span.from != null && span.from == span.to && span.marker.clearWhenEmpty !== false) {
                 spans.splice(i--, 1);
@@ -8348,13 +8349,13 @@
             return old;
         }
 
-        for (var i = 0; i < old.length; i += 1) {
+        for (var i = 0; i < old.length; i = i + 1) {
             var oldCur     = old[i],
                 stretchCur = stretched[i];
             if (oldCur && stretchCur) {
-                spans : for (var j = 0; j < stretchCur.length; j += 1) {
+                spans : for (var j = 0; j < stretchCur.length; j = j + 1) {
                     var span = stretchCur[j];
-                    for (var k = 0; k < oldCur.length; k += 1) {
+                    for (var k = 0; k < oldCur.length; k = k + 1) {
                         if (oldCur[k].marker == span.marker) {
                             continue spans;
                         }
@@ -8373,7 +8374,7 @@
         var markers = null;
         doc.iter(from.line, to.line + 1, function (line) {
             if (line.markedSpans) {
-                for (var i = 0; i < line.markedSpans.length; i += 1) {
+                for (var i = 0; i < line.markedSpans.length; i = i + 1) {
                     var mark = line
                         .markedSpans[i]
                         .marker;
@@ -8392,10 +8393,10 @@
                 to  : to
             }
         ];
-        for (var i = 0; i < markers.length; i += 1) {
+        for (var i = 0; i < markers.length; i = i + 1) {
             var mk = markers[i],
                 m  = mk.find(0);
-            for (var j = 0; j < parts.length; j += 1) {
+            for (var j = 0; j < parts.length; j = j + 1) {
                 var p = parts[j];
                 if (cmp(p.to, m.from) < 0 || cmp(p.from, m.to) > 0) {
                     continue;
@@ -8414,7 +8415,7 @@
                 parts
                     .splice
                     .apply(parts, newParts);
-                j += newParts.length - 1;
+                j = j + newParts.length - 1;
             }
         }
         return parts;
@@ -8426,7 +8427,7 @@
         if (!spans) {
             return;
         }
-        for (var i = 0; i < spans.length; i += 1) {
+        for (var i = 0; i < spans.length; i = i + 1) {
             spans[i]
                 .marker
                 .detachLine(line);
@@ -8437,7 +8438,7 @@
         if (!spans) {
             return;
         }
-        for (var i = 0; i < spans.length; i += 1) {
+        for (var i = 0; i < spans.length; i = i + 1) {
             spans[i]
                 .marker
                 .attachLine(line);
@@ -8485,7 +8486,7 @@
         var sps = sawCollapsedSpans && line.markedSpans,
             found;
         if (sps) {
-            for (var sp, i = 0; i < sps.length; i += 1) {
+            for (var sp, i = 0; i < sps.length; i = i + 1) {
                 sp = sps[i];
                 if (sp.marker.collapsed && (start
                     ? sp.from
@@ -8509,7 +8510,7 @@
         var line = getLine(doc, lineNo);
         var sps = sawCollapsedSpans && line.markedSpans;
         if (sps) {
-            for (var i = 0; i < sps.length; i += 1) {
+            for (var i = 0; i < sps.length; i = i + 1) {
                 var sp = sps[i];
                 if (!sp.marker.collapsed) {
                     continue;
@@ -8592,7 +8593,7 @@
     function lineIsHidden(doc, line) {
         var sps = sawCollapsedSpans && line.markedSpans;
         if (sps) {
-            for (var sp, i = 0; i < sps.length; i += 1) {
+            for (var sp, i = 0; i < sps.length; i = i + 1) {
                 sp = sps[i];
                 if (!sp.marker.collapsed) {
                     continue;
@@ -8623,7 +8624,7 @@
         if (span.marker.inclusiveRight && span.to == line.text.length) {
             return true;
         }
-        for (var sp, i = 0; i < line.markedSpans.length; i += 1) {
+        for (var sp, i = 0; i < line.markedSpans.length; i = i + 1) {
             sp = line.markedSpans[i];
             if (sp.marker.collapsed && !sp.marker.widgetNode && sp.from == span.to && (sp.to == null || sp.to != span.from) && (sp.marker.inclusiveLeft || span.marker.inclusiveRight) && lineIsHiddenInner(doc, line, sp)) {
                 return true;
@@ -8660,7 +8661,7 @@
         if (no == null || !ws) {
             return;
         }
-        for (var i = 0; i < ws.length; i += 1) {
+        for (var i = 0; i < ws.length; i = i + 1) {
             if (ws[i] == this) {
                 ws.splice(i--, 1);
             }
@@ -8698,10 +8699,11 @@
         if (!contains(document.body, widget.node)) {
             var parentStyle = "position: relative;";
             if (widget.coverGutter) {
-                parentStyle += "margin-left: -" + widget.cm.display.gutters.offsetWidth + "px;";
+                parentStyle = parentStyle + "margin-left: -" + widget.cm.display.gutters.offsetWidth +
+                        "px;";
             }
             if (widget.noHScroll) {
-                parentStyle += "width: " + widget.cm.display.wrapper.clientWidth + "px;";
+                parentStyle = parentStyle + "width: " + widget.cm.display.wrapper.clientWidth + "px;";
             }
             removeChildrenAndAdd(
                 widget.cm.display.measure,
@@ -8800,7 +8802,7 @@
                 if (output[prop] == null) {
                     output[prop] = lineClass[2];
                 } else if (!(new RegExp("(?:^|\s)" + lineClass[2] + "(?:$|\s)")).test(output[prop])) {
-                    output[prop] += " " + lineClass[2];
+                    output[prop] = output[prop] + " " + lineClass[2];
                 }
             }
             return type;
@@ -8823,7 +8825,7 @@
     }
 
     function readToken(mode, stream, state, inner) {
-        for (var i = 0; i < 10; i += 1) {
+        for (var i = 0; i < 10; i = i + 1) {
             if (inner) {
                 inner[0] = codeMirror
                     .innerMode(mode, state)
@@ -8950,7 +8952,7 @@
         );
 
         // Run overlays, adjust style array.
-        for (var o = 0; o < cm.state.overlays.length; o += 1) {
+        for (var o = 0; o < cm.state.overlays.length; o = o + 1) {
             var overlay = cm
                     .state
                     .overlays[o],
@@ -8964,7 +8966,7 @@
                     if (i_end > end) {
                         st.splice(i, 1, end, st[i + 1], i_end);
                     }
-                    i  += 2;
+                    i  = i + 2;
                     at = Math.min(end, i_end);
                 }
                 if (!style) {
@@ -8974,7 +8976,7 @@
                     st.splice(start, i - start, end, "cm-overlay " + style);
                     i = start + 2;
                 } else {
-                    for (; start < i; start += 2) {
+                    for (; start < i; start = start + 2) {
                         var cur = st[start + 1];
                         st[start + 1] = (cur
                             ? cur + " "
@@ -9006,7 +9008,7 @@
                 line.styleClasses = null;
             }
             if (updateFrontier === cm.doc.frontier) {
-                cm.doc.frontier += 1;
+                cm.doc.frontier = cm.doc.frontier + 1;
             }
         }
         return line.styles;
@@ -9066,7 +9068,7 @@
         // Iterate over the logical lines that make up this visual line.
         for (var i = 0; i <= (lineView.rest
             ? lineView.rest.length
-            : 0); i += 1) {
+            : 0); i = i + 1) {
             var line = i
                     ? lineView.rest[i - 1]
                     : lineView.line,
@@ -9145,7 +9147,7 @@
         var special  = builder.cm.options.specialChars,
             mustWrap = false;
         if (!special.test(text)) {
-            builder.col += text.length;
+            builder.col = builder.col + text.length;
             var content = document.createTextNode(text);
             builder
                 .map
@@ -9153,7 +9155,7 @@
             if (ie && ie_version < 9) {
                 mustWrap = true;
             }
-            builder.pos += text.length;
+            builder.pos = builder.pos + text.length;
         } else {
             var content = document.createDocumentFragment(),
                 pos     = 0;
@@ -9173,18 +9175,18 @@
                     builder
                         .map
                         .push(builder.pos, builder.pos + skipped, txt);
-                    builder.col += skipped;
-                    builder.pos += skipped;
+                    builder.col = builder.col + skipped;
+                    builder.pos = builder.pos + skipped;
                 }
                 if (!m) {
                     break;
                 }
-                pos += skipped + 1;
+                pos = pos + skipped + 1;
                 if (m[0] == "\t") {
                     var tabSize  = builder.cm.options.tabSize,
                         tabWidth = tabSize - builder.col % tabSize;
                     var txt = content.appendChild(elt("span", spaceStr(tabWidth), "cm-tab"));
-                    builder.col += tabWidth;
+                    builder.col = builder.col + tabWidth;
                 } else {
                     var txt = builder
                         .cm
@@ -9195,21 +9197,21 @@
                     } else {
                         content.appendChild(txt);
                     }
-                    builder.col += 1;
+                    builder.col = builder.col + 1;
                 }
                 builder
                     .map
                     .push(builder.pos, builder.pos + 1, txt);
-                builder.pos += 1;
+                builder.pos = builder.pos + 1;
             }
         }
         if (style || startStyle || endStyle || mustWrap || css) {
             var fullStyle = style || "";
             if (startStyle) {
-                fullStyle += startStyle;
+                fullStyle = fullStyle + startStyle;
             }
             if (endStyle) {
-                fullStyle += endStyle;
+                fullStyle = fullStyle + endStyle;
             }
             var token = elt("span", [content], fullStyle, css);
             if (title) {
@@ -9227,12 +9229,12 @@
     function buildTokenSplitSpaces(inner) {
         function split(old) {
             var out = " ";
-            for (var i = 0; i < old.length - 2; i += 1) {
-                out += i % 2
+            for (var i = 0; i < old.length - 2; i = i + 1) {
+                out = out + i % 2
                     ? " "
                     : "\u00a0";
             }
-            out += " ";
+            out = out + " ";
             return out;
         }
         return function (builder, text, style, startStyle, endStyle, title) {
@@ -9258,7 +9260,7 @@
                 end   = start + text.length;
             for (;;) {
                 // Find the part that overlaps with the start of this text
-                for (var i = 0; i < order.length; i += 1) {
+                for (var i = 0; i < order.length; i = i + 1) {
                     var part = order[i];
                     if (part.to > start && part.from <= start) {
                         break;
@@ -9285,7 +9287,7 @@
                 .content
                 .appendChild(widget);
         }
-        builder.pos += size;
+        builder.pos = builder.pos + size;
     }
 
     // Outputs a number of spans to make up a line, taking highlighting and marked
@@ -9295,7 +9297,7 @@
             allText = line.text,
             at      = 0;
         if (!spans) {
-            for (var i = 1; i < styles.length; i += 2) {
+            for (var i = 1; i < styles.length; i = i + 2) {
                 builder.addToken(
                     builder,
                     allText.slice(at, at = styles[i]),
@@ -9323,7 +9325,7 @@
                 collapsed  = null;
                 nextChange = Infinity;
                 var foundBookmarks = [];
-                for (var j = 0; j < spans.length; j += 1) {
+                for (var j = 0; j < spans.length; j = j + 1) {
                     var sp = spans[j],
                         m  = sp.marker;
                     if (sp.from <= pos && (sp.to == null || sp.to > pos)) {
@@ -9332,16 +9334,16 @@
                             spanEndStyle = "";
                         }
                         if (m.className) {
-                            spanStyle += " " + m.className;
+                            spanStyle = spanStyle + " " + m.className;
                         }
                         if (m.css) {
                             css = m.css;
                         }
                         if (m.startStyle && sp.from == pos) {
-                            spanStartStyle += " " + m.startStyle;
+                            spanStartStyle = spanStartStyle + " " + m.startStyle;
                         }
                         if (m.endStyle && sp.to == nextChange) {
-                            spanEndStyle += " " + m.endStyle;
+                            spanEndStyle = spanEndStyle + " " + m.endStyle;
                         }
                         if (m.title && !title) {
                             title = m.title;
@@ -9365,7 +9367,7 @@
                     }
                 }
                 if (!collapsed && foundBookmarks.length) {
-                    for (var j = 0; j < foundBookmarks.length; j += 1) {
+                    for (var j = 0; j < foundBookmarks.length; j = j + 1) {
                         buildCollapsedSpan(builder, 0, foundBookmarks[j]);
                     }
                 }
@@ -9427,7 +9429,7 @@
             signalLater(line, "change", line, change);
         }
         function linesFor(start, end) {
-            for (var i = start, result = []; i < end; i += 1) {
+            for (var i = start, result = []; i < end; i = i + 1) {
                 result.push(new Line(text[i], spansFor(i), estimateHeight));
             }
             return result;
@@ -9507,9 +9509,9 @@
     function LeafChunk(lines) {
         this.lines  = lines;
         this.parent = null;
-        for (var i = 0, height = 0; i < lines.length; i += 1) {
+        for (var i = 0, height = 0; i < lines.length; i = i + 1) {
             lines[i].parent = this;
-            height          += lines[i].height;
+            height          = height + lines[i].height;
         }
         this.height = height;
     }
@@ -9527,19 +9529,19 @@
         // Insert the given array of lines at offset 'at', count them as having the
         // given height.
         insertInner: function (at, lines, height) {
-            this.height += height;
+            this.height = this.height + height;
             this.lines  = this
                 .lines
                 .slice(0, at)
                 .concat(lines)
                 .concat(this.lines.slice(at));
-            for (var i = 0; i < lines.length; i += 1) {
+            for (var i = 0; i < lines.length; i = i + 1) {
                 lines[i].parent = this;
             }
         },
         // Used to iterate over a part of the tree.
         iterN      : function (at, n, op) {
-            for (var e = at + n; at < e; at += 1) {
+            for (var e = at + n; at < e; at = at + 1) {
                 if (op(this.lines[at])) {
                     return true;
                 }
@@ -9547,9 +9549,9 @@
         },
         // Remove the n lines at offset 'at'.
         removeInner: function (at, n) {
-            for (var i = at, e = at + n; i < e; i += 1) {
+            for (var i = at, e = at + n; i < e; i = i + 1) {
                 var line = this.lines[i];
-                this.height -= line.height;
+                this.height = this.height - line.height;
                 cleanUpLine(line);
                 signalLater(line, "delete");
             }
@@ -9563,10 +9565,10 @@
         this.children = children;
         var size   = 0,
             height = 0;
-        for (var i = 0; i < children.length; i += 1) {
+        for (var i = 0; i < children.length; i = i + 1) {
             var ch = children[i];
-            size      += ch.chunkSize();
-            height    += ch.height;
+            size      = size + ch.chunkSize();
+            height    = height + ch.height;
             ch.parent = this;
         }
         this.size   = size;
@@ -9579,16 +9581,16 @@
             return this.size;
         },
         collapse   : function (lines) {
-            for (var i = 0; i < this.children.length; i += 1) {
+            for (var i = 0; i < this.children.length; i = i + 1) {
                 this
                     .children[i]
                     .collapse(lines);
             }
         },
         insertInner: function (at, lines, height) {
-            this.size   += lines.length;
-            this.height += height;
-            for (var i = 0; i < this.children.length; i += 1) {
+            this.size   = this.size + lines.length;
+            this.height = this.height + height;
+            for (var i = 0; i < this.children.length; i = i + 1) {
                 var child = this.children[i],
                     sz    = child.chunkSize();
                 if (at <= sz) {
@@ -9599,7 +9601,7 @@
                                 .lines
                                 .splice(child.lines.length - 25, 25);
                             var newleaf = new LeafChunk(spilled);
-                            child.height -= newleaf.height;
+                            child.height = child.height - newleaf.height;
                             this
                                 .children
                                 .splice(i + 1, 0, newleaf);
@@ -9609,11 +9611,11 @@
                     }
                     break;
                 }
-                at -= sz;
+                at = at - sz;
             }
         },
         iterN      : function (at, n, op) {
-            for (var i = 0; i < this.children.length; i += 1) {
+            for (var i = 0; i < this.children.length; i = i + 1) {
                 var child = this.children[i],
                     sz    = child.chunkSize();
                 if (at < sz) {
@@ -9621,12 +9623,12 @@
                     if (child.iterN(at, used, op)) {
                         return true;
                     }
-                    if ((n -= used) == 0) {
+                    if ((n = n - used) == 0) {
                         break;
                     }
                     at = 0;
                 } else {
-                    at -= sz;
+                    at = at - sz;
                 }
             }
         },
@@ -9647,8 +9649,8 @@
                     me.children = [copy, sibling];
                     me          = copy;
                 } else {
-                    me.size   -= sibling.size;
-                    me.height -= sibling.height;
+                    me.size   = me.size - sibling.size;
+                    me.height = me.height - sibling.height;
                     var myIndex = indexOf(me.parent.children, me);
                     me
                         .parent
@@ -9662,27 +9664,27 @@
                 .maybeSpill();
         },
         removeInner: function (at, n) {
-            this.size -= n;
-            for (var i = 0; i < this.children.length; i += 1) {
+            this.size = this.size - n;
+            for (var i = 0; i < this.children.length; i = i + 1) {
                 var child = this.children[i],
                     sz    = child.chunkSize();
                 if (at < sz) {
                     var rm        = Math.min(n, sz - at),
                         oldHeight = child.height;
                     child.removeInner(at, rm);
-                    this.height -= oldHeight - child.height;
+                    this.height = this.height - oldHeight - child.height;
                     if (sz == rm) {
                         this
                             .children
                             .splice(i--, 1);
                         child.parent = null;
                     }
-                    if ((n -= rm) == 0) {
+                    if ((n = n - rm) == 0) {
                         break;
                     }
                     at = 0;
                 } else {
-                    at -= sz;
+                    at = at - sz;
                 }
             }
             // If the result is smaller than 25 lines, ensure that it is a single leaf node.
@@ -9747,7 +9749,7 @@
                 } else if (classTest(cls).test(line[prop])) {
                     return false;
                 } else {
-                    line[prop] += " " + cls;
+                    line[prop] = line[prop] + " " + cls;
                 }
                 return true;
             });
@@ -9813,7 +9815,7 @@
             this.iter(from.line, to.line + 1, function (line) {
                 var spans = line.markedSpans;
                 if (spans) {
-                    for (var i = 0; i < spans.length; i += 1) {
+                    for (var i = 0; i < spans.length; i = i + 1) {
                         var span = spans[i];
                         if (!(lineNo == from.line && from.ch > span.to || span.from == null && lineNo != from.line || lineNo == to.line && span.from > to.ch) && (!filter || filter(span.marker))) {
                             found.push(span.marker.parent || span.marker);
@@ -9829,7 +9831,7 @@
             var markers = [],
                 spans   = getLine(this, pos.line).markedSpans;
             if (spans) {
-                for (var i = 0; i < spans.length; i += 1) {
+                for (var i = 0; i < spans.length; i = i + 1) {
                     var span = spans[i];
                     if ((span.from == null || span.from <= pos.ch) && (span.to == null || span.to >= pos.ch)) {
                         markers.push(span.marker.parent || span.marker);
@@ -9846,7 +9848,7 @@
             this.iter(function (line) {
                 var sps = line.markedSpans;
                 if (sps) {
-                    for (var i = 0; i < sps.length; i += 1) {
+                    for (var i = 0; i < sps.length; i = i + 1) {
                         if (sps[i].from != null) {
                             markers.push(sps[i].marker);
                         }
@@ -9921,7 +9923,7 @@
         getSelection            : function (lineSep) {
             var ranges = this.sel.ranges,
                 lines;
-            for (var i = 0; i < ranges.length; i += 1) {
+            for (var i = 0; i < ranges.length; i = i + 1) {
                 var sel = getBetween(this, ranges[i].from(), ranges[i].to());
                 lines = lines
                     ? lines.concat(sel)
@@ -9936,7 +9938,7 @@
         getSelections           : function (lineSep) {
             var parts  = [],
                 ranges = this.sel.ranges;
-            for (var i = 0; i < ranges.length; i += 1) {
+            for (var i = 0; i < ranges.length; i = i + 1) {
                 var sel = getBetween(this, ranges[i].from(), ranges[i].to());
                 if (lineSep !== false) {
                     sel = sel.join(lineSep || "\n");
@@ -9961,12 +9963,12 @@
             var hist   = this.history,
                 done   = 0,
                 undone = 0;
-            for (var i = 0; i < hist.done.length; i += 1) {
+            for (var i = 0; i < hist.done.length; i = i + 1) {
                 if (!hist.done[i].ranges) {
                     ++done;
                 }
             }
-            for (var i = 0; i < hist.undone.length; i += 1) {
+            for (var i = 0; i < hist.undone.length; i = i + 1) {
                 if (!hist.undone[i].ranges) {
                     ++undone;
                 }
@@ -9980,7 +9982,7 @@
                 return 0;
             }
             this.iter(this.first, coords.line, function (line) {
-                index += line.text.length + 1;
+                index = index + line.text.length + 1;
             });
             return index;
         },
@@ -9988,8 +9990,8 @@
         // Non-public interface for adding and removing lines.
         insert                  : function (at, lines) {
             var height = 0;
-            for (var i = 0; i < lines.length; i += 1) {
-                height += lines[i].height;
+            for (var i = 0; i < lines.length; i = i + 1) {
+                height = height + lines[i].height;
             }
             this.insertInner(at - this.first, lines, height);
         },
@@ -10071,8 +10073,8 @@
                     ch = off;
                     return true;
                 }
-                off    -= sz;
-                lineNo += 1;
+                off    = off - sz;
+                lineNo = lineNo + 1;
             });
             return clipPos(this, Pos(lineNo, ch));
         },
@@ -10124,7 +10126,7 @@
         },
         replaceSelection        : function (code, collapse, origin) {
             var dup = [];
-            for (var i = 0; i < this.sel.ranges.length; i += 1) {
+            for (var i = 0; i < this.sel.ranges.length; i = i + 1) {
                 dup[i] = code;
             }
             this.replaceSelections(dup, collapse, origin || "+input");
@@ -10132,7 +10134,7 @@
         replaceSelections       : docMethodOp(function (code, collapse, origin) {
             var changes = [],
                 sel     = this.sel;
-            for (var i = 0; i < sel.ranges.length; i += 1) {
+            for (var i = 0; i < sel.ranges.length; i = i + 1) {
                 var range = sel.ranges[i];
                 changes[i] = {
                     from  : range.from(),
@@ -10146,7 +10148,7 @@
                 changes,
                 collapse
             );
-            for (var i = changes.length - 1; i >= 0; i -= 1) {
+            for (var i = changes.length - 1; i >= 0; i = i - 1) {
                 makeChange(this, changes[i]);
             }
             if (newSel) {
@@ -10194,7 +10196,7 @@
             if (!ranges.length) {
                 return;
             }
-            for (var i = 0, out = []; i < ranges.length; i += 1) {
+            for (var i = 0, out = []; i < ranges.length; i = i + 1) {
                 out[i] = new Range(
                     clipPos(this, ranges[i].anchor),
                     clipPos(this, ranges[i].head)
@@ -10233,7 +10235,7 @@
                 other = other.doc;
             }
             if (this.linked) {
-                for (var i = 0; i < this.linked.length; i += 1) {
+                for (var i = 0; i < this.linked.length; i = i + 1) {
                     var link = this.linked[i];
                     if (link.doc != other) {
                         continue;
@@ -10281,7 +10283,7 @@
     function linkedDocs(doc, f, sharedHistOnly) {
         function propagate(doc, skip, sharedHist) {
             if (doc.linked) {
-                for (var i = 0; i < doc.linked.length; i += 1) {
+                for (var i = 0; i < doc.linked.length; i = i + 1) {
                     var rel = doc.linked[i];
                     if (rel.doc == skip) {
                         continue;
@@ -10316,21 +10318,21 @@
 
     // LINE UTILITIES Find the line object corresponding to the given line number.
     function getLine(doc, n) {
-        n -= doc.first;
+        n = n - doc.first;
         if (n < 0 || n >= doc.size) {
             throw new Error("There is no line " + (
                 n + doc.first
             ) + " in the document.");
         }
         for (var chunk = doc; !chunk.lines;) {
-            for (var i = 0;; i += 1) {
+            for (var i = 0;; i = i + 1) {
                 var child = chunk.children[i],
                     sz    = child.chunkSize();
                 if (n < sz) {
                     chunk = child;
                     break;
                 }
-                n -= sz;
+                n = n - sz;
             }
         }
         return chunk.lines[n];
@@ -10349,7 +10351,7 @@
                 text = text.slice(start.ch);
             }
             out.push(text);
-            n += 1;
+            n = n + 1;
         });
         return out;
     }
@@ -10368,7 +10370,7 @@
         var diff = height - line.height;
         if (diff) {
             for (var n = line; n; n = n.parent) {
-                n.height += diff;
+                n.height = n.height + diff;
             }
         }
     }
@@ -10382,11 +10384,11 @@
         var cur = line.parent,
             no  = indexOf(cur.lines, line);
         for (var chunk = cur.parent; chunk; cur = chunk, chunk = chunk.parent) {
-            for (var i = 0;; i += 1) {
+            for (var i = 0;; i = i + 1) {
                 if (chunk.children[i] == cur) {
                     break;
                 }
-                no += chunk
+                no = no + chunk
                     .children[i]
                     .chunkSize();
             }
@@ -10399,25 +10401,25 @@
     function lineAtHeight(chunk, h) {
         var n = chunk.first;
         outer : do {
-            for (var i = 0; i < chunk.children.length; i += 1) {
+            for (var i = 0; i < chunk.children.length; i = i + 1) {
                 var child = chunk.children[i],
                     ch    = child.height;
                 if (h < ch) {
                     chunk = child;
                     continue outer;
                 }
-                h -= ch;
-                n += child.chunkSize();
+                h = h - ch;
+                n = n + child.chunkSize();
             }
             return n;
         } while (!chunk.lines);
-        for (var i = 0; i < chunk.lines.length; i += 1) {
+        for (var i = 0; i < chunk.lines.length; i = i + 1) {
             var line = chunk.lines[i],
                 lh   = line.height;
             if (h < lh) {
                 break;
             }
-            h -= lh;
+            h = h - lh;
         }
         return n + i;
     }
@@ -10429,21 +10431,21 @@
 
         var h     = 0,
             chunk = lineObj.parent;
-        for (var i = 0; i < chunk.lines.length; i += 1) {
+        for (var i = 0; i < chunk.lines.length; i = i + 1) {
             var line = chunk.lines[i];
             if (line == lineObj) {
                 break;
             } else {
-                h += line.height;
+                h = h + line.height;
             }
         }
         for (var p = chunk.parent; p; chunk = p, p = chunk.parent) {
-            for (var i = 0; i < p.children.length; i += 1) {
+            for (var i = 0; i < p.children.length; i = i + 1) {
                 var cur = p.children[i];
                 if (cur == chunk) {
                     break;
                 } else {
-                    h += cur.height;
+                    h = h + cur.height;
                 }
             }
         }
@@ -10644,7 +10646,7 @@
         if (!spans) {
             return null;
         }
-        for (var i = 0, out; i < spans.length; i += 1) {
+        for (var i = 0, out; i < spans.length; i = i + 1) {
             if (spans[i].marker.explicitlyCleared) {
                 if (!out) {
                     out = spans.slice(0, i);
@@ -10666,7 +10668,7 @@
         if (!found) {
             return null;
         }
-        for (var i = 0, nw = []; i < change.text.length; i += 1) {
+        for (var i = 0, nw = []; i < change.text.length; i = i + 1) {
             nw.push(removeClearedSpans(found[i]));
         }
         return nw;
@@ -10675,7 +10677,7 @@
     // Used both to provide a JSON-safe object in .getHistory, and, when detaching a
     // document, to split the history in two
     function copyHistoryArray(events, newGroup, instantiateSel) {
-        for (var i = 0, copy = []; i < events.length; i += 1) {
+        for (var i = 0, copy = []; i < events.length; i = i + 1) {
             var event = events[i];
             if (event.ranges) {
                 copy.push(instantiateSel
@@ -10686,7 +10688,7 @@
             var changes    = event.changes,
                 newChanges = [];
             copy.push({changes: newChanges});
-            for (var j = 0; j < changes.length; j += 1) {
+            for (var j = 0; j < changes.length; j = j + 1) {
                 var change = changes[j],
                     m;
                 newChanges.push({from: change.from, text: change.text, to: change.to});
@@ -10709,7 +10711,7 @@
 
     function rebaseHistSelSingle(pos, from, to, diff) {
         if (to < pos.line) {
-            pos.line += diff;
+            pos.line = pos.line + diff;
         } else if (from < pos.line) {
             pos.line = from;
             pos.ch   = 0;
@@ -10723,7 +10725,7 @@
     // avoid having to reallocate them all on every rebase, but also avoid problems
     // with shared position objects being unsafely updated.
     function rebaseHistArray(array, from, to, diff) {
-        for (var i = 0; i < array.length; i += 1) {
+        for (var i = 0; i < array.length; i = i + 1) {
             var sub = array[i],
                 ok  = true;
             if (sub.ranges) {
@@ -10731,13 +10733,13 @@
                     sub        = array[i] = sub.deepCopy();
                     sub.copied = true;
                 }
-                for (var j = 0; j < sub.ranges.length; j += 1) {
+                for (var j = 0; j < sub.ranges.length; j = j + 1) {
                     rebaseHistSelSingle(sub.ranges[j].anchor, from, to, diff);
                     rebaseHistSelSingle(sub.ranges[j].head, from, to, diff);
                 }
                 continue;
             }
-            for (var j = 0; j < sub.changes.length; j += 1) {
+            for (var j = 0; j < sub.changes.length; j = j + 1) {
                 var cur = sub.changes[j];
                 if (to < cur.from.line) {
                     cur.from = Pos(cur.from.line + diff, cur.from.ch);
@@ -10834,7 +10836,7 @@
             if (!arr) {
                 return;
             }
-            for (var i = 0; i < arr.length; i += 1) {
+            for (var i = 0; i < arr.length; i = i + 1) {
                 if (arr[i] == f) {
                     arr.splice(i, 1);
                     break;
@@ -10852,7 +10854,7 @@
             .prototype
             .slice
             .call(arguments, 2);
-        for (var i = 0; i < arr.length; i += 1) {
+        for (var i = 0; i < arr.length; i = i + 1) {
             arr[i].apply(null, args);
         };
     }
@@ -10888,7 +10890,7 @@
                 f.apply(null, args);
             };
         };
-        for (var i = 0; i < arr.length; i += 1) {
+        for (var i = 0; i < arr.length; i = i + 1) {
             list.push(bnd(arr[i]));
         }
     }
@@ -10896,7 +10898,7 @@
     function fireOrphanDelayed() {
         var delayed = orphanDelayedCallbacks;
         orphanDelayedCallbacks = null;
-        for (var i = 0; i < delayed.length; i += 1) {
+        for (var i = 0; i < delayed.length; i = i + 1) {
             delayed[i]();
         }
     }
@@ -10925,7 +10927,7 @@
         var set = cm.curOp.cursorActivityHandlers || (
             cm.curOp.cursorActivityHandlers = []
         );
-        for (var i = 0; i < arr.length; i += 1) {
+        for (var i = 0; i < arr.length; i = i + 1) {
             if (indexOf(set, arr[i]) == -1) {
                 set.push(arr[i]);
             }
@@ -10997,8 +10999,8 @@
             if (nextTab < 0 || nextTab >= end) {
                 return n + (end - i);
             }
-            n += nextTab - i;
-            n += tabSize - (n % tabSize);
+            n = n + nextTab - i;
+            n = n + tabSize - (n % tabSize);
             i = nextTab + 1;
         }
     };
@@ -11015,8 +11017,8 @@
             if (nextTab == string.length || col + skipped >= goal) {
                 return pos + Math.min(skipped, goal - col);
             }
-            col += nextTab - pos;
-            col += tabSize - (col % tabSize);
+            col = col + nextTab - pos;
+            col = col + tabSize - (col % tabSize);
             pos = nextTab + 1;
             if (col >= goal) {
                 return pos;
@@ -11053,7 +11055,7 @@
     }
 
     function indexOf(array, elt) {
-        for (var i = 0; i < array.length; i += 1) {
+        for (var i = 0; i < array.length; i = i + 1) {
             if (array[i] == elt) {
                 return i;
             }
@@ -11062,7 +11064,7 @@
     }
     function map(array, f) {
         var out = [];
-        for (var i = 0; i < array.length; i += 1) {
+        for (var i = 0; i < array.length; i = i + 1) {
             out[i] = f(array[i], i);
         }
         return out;
@@ -11153,7 +11155,7 @@
         if (typeof content == "string") {
             e.appendChild(document.createTextNode(content));
         } else if (content) {
-            for (var i = 0; i < content.length; i += 1) {
+            for (var i = 0; i < content.length; i = i + 1) {
                 e.appendChild(content[i]);
             }
         }
@@ -11186,7 +11188,7 @@
     }
 
     function removeChildren(e) {
-        for (var count = e.childNodes.length; count > 0; count -= 1) {
+        for (var count = e.childNodes.length; count > 0; count = count - 1) {
             e.removeChild(e.firstChild);
         }
         return e;
@@ -11238,16 +11240,16 @@
     var addClass = codeMirror.addClass = function (node, cls) {
         var current = node.className;
         if (!classTest(cls).test(current)) {
-            node.className += (current
+            node.className = node.className + (current
                 ? " "
                 : "") + cls;
         };
     }
     function joinClasses(a, b) {
         var as = a.split(" ");
-        for (var i = 0; i < as.length; i += 1) {
+        for (var i = 0; i < as.length; i = i + 1) {
             if (as[i] && !classTest(as[i]).test(b)) {
-                b += " " + as[i];
+                b = b + " " + as[i];
             }
         }
         return b;
@@ -11264,7 +11266,7 @@
         var byClass = document
             .body
             .getElementsByClassName("CodeMirror");
-        for (var i = 0; i < byClass.length; i += 1) {
+        for (var i = 0; i < byClass.length; i = i + 1) {
             var cm = byClass[i].CodeMirror;
             if (cm) {
                 f(cm);
@@ -11369,7 +11371,7 @@
                     var rt = line.indexOf("\r");
                     if (rt != -1) {
                         result.push(line.slice(0, rt));
-                        pos += rt + 1;
+                        pos = pos + rt + 1;
                     } else {
                         result.push(line);
                         pos = nl + 1;
@@ -11481,15 +11483,15 @@
     codeMirror.keyNames = keyNames;
     (function () {
         // Number keys
-        for (var i = 0; i < 10; i += 1) {
+        for (var i = 0; i < 10; i = i + 1) {
             keyNames[i + 48] = keyNames[i + 96] = String(i);
         }
         // Alphabetic keys
-        for (var i = 65; i <= 90; i += 1) {
+        for (var i = 65; i <= 90; i = i + 1) {
             keyNames[i] = String.fromCharCode(i);
         }
         // Function keys
-        for (var i = 1; i <= 12; i += 1) {
+        for (var i = 1; i <= 12; i = i + 1) {
             keyNames[i + 111] = keyNames[i + 63235] = "F" + i;
         }
     })();
@@ -11501,7 +11503,7 @@
             return f(from, to, "ltr");
         }
         var found = false;
-        for (var i = 0; i < order.length; i += 1) {
+        for (var i = 0; i < order.length; i = i + 1) {
             var part = order[i];
             if (part.from < to && part.to > from || from == to && part.to == from) {
                 f(Math.max(part.from, from), Math.min(part.to, to), part.level == 1
@@ -11601,7 +11603,7 @@
     var bidiOther;
     function getBidiPartAt(order, pos) {
         bidiOther = null;
-        for (var i = 0, found; i < order.length; i += 1) {
+        for (var i = 0, found; i < order.length; i = i + 1) {
             var cur = order[i];
             if (cur.from < pos && cur.to > pos) {
                 return i;
@@ -11630,7 +11632,7 @@
             return pos + dir;
         }
         do {
-            pos += dir;
+            pos = pos + dir;
         } while (pos > 0 && isExtendingChar(line.text.charAt(pos)));
         return pos;
     }
@@ -11660,12 +11662,12 @@
                 if (getBidiPartAt(bidi, target) == pos) {
                     return target;
                 }
-                part = bidi[pos += dir];
+                part = bidi[pos = pos + dir];
                 return (dir > 0) == part.level % 2
                     ? part.to
                     : part.from;
             } else {
-                part = bidi[pos += dir];
+                part = bidi[pos = pos + dir];
                 if (!part) {
                     return null;
                 }
@@ -11682,7 +11684,7 @@
         var target = start + dir;
         if (byUnit) {
             while (target > 0 && isExtendingChar(line.text.charAt(target))) {
-                target += dir;
+                target = target + dir;
             }
         }
         return target < 0 || target > line.text.length
@@ -11760,14 +11762,14 @@
             }
             var len   = str.length,
                 types = [];
-            for (var i = 0, type; i < len; i += 1) {
+            for (var i = 0, type; i < len; i = i + 1) {
                 types.push(type = charType(str.charCodeAt(i)));
             }
 
             // W1. Examine each non-spacing mark (NSM) in the level run, and change the type
             // of the NSM to the type of the previous character. If the NSM is at the start
             // of the level run, it will get the type of sor.
-            for (var i = 0, prev = outerType; i < len; i += 1) {
+            for (var i = 0, prev = outerType; i < len; i = i + 1) {
                 var type = types[i];
                 if (type == "m") {
                     types[i] = prev;
@@ -11779,7 +11781,7 @@
             // W2. Search backwards from each instance of a European number until the first
             // strong type (R, L, AL, or sor) is found. If an AL is found, change the type
             // of the European number to Arabic number. W3. Change all ALs to R.
-            for (var i = 0, cur = outerType; i < len; i += 1) {
+            for (var i = 0, cur = outerType; i < len; i = i + 1) {
                 var type = types[i];
                 if (type == "1" && cur == "r") {
                     types[i] = "n";
@@ -11794,7 +11796,7 @@
             // W4. A single European separator between two European numbers changes to a
             // European number. A single common separator between two numbers of the same
             // type changes to that type.
-            for (var i = 1, prev = types[0]; i < len - 1; i += 1) {
+            for (var i = 1, prev = types[0]; i < len - 1; i = i + 1) {
                 var type = types[i];
                 if (type == "+" && prev == "1" && types[i + 1] == "1") {
                     types[i] = "1";
@@ -11807,16 +11809,16 @@
             // W5. A sequence of European terminators adjacent to European numbers changes
             // to all European numbers. W6. Otherwise, separators and terminators change to
             // Other Neutral.
-            for (var i = 0; i < len; i += 1) {
+            for (var i = 0; i < len; i = i + 1) {
                 var type = types[i];
                 if (type == ",") {
                     types[i] = "N";
                 } else if (type == "%") {
-                    for (var end = i + 1; end < len && types[end] == "%"; end += 1) {}
+                    for (var end = i + 1; end < len && types[end] == "%"; end = end + 1) {}
                     var replace = (i && types[i - 1] == "!") || (end < len && types[end] == "1")
                         ? "1"
                         : "N";
-                    for (var j = i; j < end; j += 1) {
+                    for (var j = i; j < end; j = j + 1) {
                         types[j] = replace;
                     }
                     i = end - 1;
@@ -11826,7 +11828,7 @@
             // W7. Search backwards from each instance of a European number until the first
             // strong type (R, L, or sor) is found. If an L is found, then change the type
             // of the European number to L.
-            for (var i = 0, cur = outerType; i < len; i += 1) {
+            for (var i = 0, cur = outerType; i < len; i = i + 1) {
                 var type = types[i];
                 if (cur == "L" && type == "1") {
                     types[i] = "L";
@@ -11840,9 +11842,9 @@
             // act as if they were R in terms of their influence on neutrals.
             // Start-of-level-run (sor) and end-of-level-run (eor) are used at level run
             // boundaries. N2. Any remaining neutrals take the embedding direction.
-            for (var i = 0; i < len; i += 1) {
+            for (var i = 0; i < len; i = i + 1) {
                 if (isNeutral.test(types[i])) {
-                    for (var end = i + 1; end < len && isNeutral.test(types[end]); end += 1) {}
+                    for (var end = i + 1; end < len && isNeutral.test(types[end]); end = end + 1) {}
                     var before = (i
                         ? types[i - 1]
                         : outerType) == "L";
@@ -11852,7 +11854,7 @@
                     var replace = before || after
                         ? "L"
                         : "R";
-                    for (var j = i; j < end; j += 1) {
+                    for (var j = i; j < end; j = j + 1) {
                         types[j] = replace;
                     }
                     i = end - 1;
@@ -11868,19 +11870,19 @@
             for (var i = 0; i < len;) {
                 if (countsAsLeft.test(types[i])) {
                     var start = i;
-                    for (i += 1; i < len && countsAsLeft.test(types[i]); i += 1) {}
+                    for (i = i + 1; i < len && countsAsLeft.test(types[i]); i = i + 1) {}
                     order.push(new BidiSpan(0, start, i));
                 } else {
                     var pos = i,
                         at  = order.length;
-                    for (i += 1; i < len && types[i] != "L"; i += 1) {}
+                    for (i = i + 1; i < len && types[i] != "L"; i = i + 1) {}
                     for (var j = pos; j < i;) {
                         if (countsAsNum.test(types[j])) {
                             if (pos < j) {
                                 order.splice(at, 0, new BidiSpan(1, pos, j));
                             }
                             var nstart = j;
-                            for (j += 1; j < i && countsAsNum.test(types[j]); j += 1) {}
+                            for (j = j + 1; j < i && countsAsNum.test(types[j]); j = j + 1) {}
                             order.splice(at, 0, new BidiSpan(2, nstart, j));
                             pos = j;
                         } else {
@@ -11897,7 +11899,7 @@
                 order.unshift(new BidiSpan(0, 0, m[0].length));
             }
             if (lst(order).level == 1 && (m = str.match(/\s+$/))) {
-                lst(order).to -= m[0].length;
+                lst(order).to = lst(order).to - m[0].length;
                 order.push(new BidiSpan(0, len - m[0].length, len));
             }
             if (order[0].level != lst(order).level) {
@@ -11978,7 +11980,7 @@
 
     function isFolded(cm, line) {
         var marks = cm.findMarksAt(Pos(line));
-        for (var i = 0; i < marks.length; i += 1) {
+        for (var i = 0; i < marks.length; i = i + 1) {
             if (marks[i].__isFold && marks[i].find().from.line == line) {
                 return true;
             }
@@ -12012,7 +12014,7 @@
                 }
             }
             cm.setGutterMarker(line, opts.gutter, mark);
-            cur += 1;
+            cur = cur + 1;
         });
     }
 
@@ -12136,7 +12138,7 @@
             lastLine = cm.lastLine(),
             end,
             endCh;
-        outer : for (var i = line; i <= lastLine; i += 1) {
+        outer : for (var i = line; i <= lastLine; i = i + 1) {
             var text = cm.getLine(i),
                 pos  = i == line
                     ? startCh
@@ -12163,7 +12165,7 @@
                         break outer;
                     }
                 }
-                pos += 1;
+                pos = pos + 1;
             }
         };
         if (end == null || line == end && endCh == startCh) {
@@ -12188,7 +12190,7 @@
                 return null;
             }
             // Now find closing semicolon, return its position
-            for (var i = line, e = Math.min(cm.lastLine(), line + 10); i <= e; i += 1) {
+            for (var i = line, e = Math.min(cm.lastLine(), line + 10); i <= e; i = i + 1) {
                 var text = cm.getLine(i),
                     semi = text.indexOf(";");
                 if (semi != -1) {
@@ -12303,7 +12305,7 @@
             lastLine = cm.lastLine(),
             end,
             endCh;
-        outer : for (var i = line; i <= lastLine; i += 1) {
+        outer : for (var i = line; i <= lastLine; i = i + 1) {
             var text = cm.getLine(i),
                 pos  = i == line
                     ? startCh
@@ -12328,7 +12330,7 @@
                     endCh = pos;
                     break outer;
                 }
-                pos += 1;
+                pos = pos + 1;
             }
         };
         if (end == null || line == end && endCh == startCh) {
@@ -12366,7 +12368,7 @@
         var lastLineInFold = null;
         // Go through lines until we find a line that definitely doesn't belong in the
         // block we're folding, or to the end.
-        for (var i = start.line + 1, end = cm.lastLine(); i <= end; i += 1) {
+        for (var i = start.line + 1, end = cm.lastLine(); i <= end; i = i + 1) {
             var curLine = cm.getLine(i);
             var curIndent = getIndent(curLine);
             if (curIndent > myIndent) {
@@ -12580,7 +12582,7 @@
                 continue;
             }
             if (next[1]) { // closing tag
-                for (var i = stack.length - 1; i >= 0; i -= 1) {
+                for (var i = stack.length - 1; i >= 0; i = i - 1) {
                     if (stack[i] == next[2]) {
                         stack.length = i;
                         break;
@@ -12618,7 +12620,7 @@
             if (start[1]) { // closing tag
                 stack.push(start[2]);
             } else { // opening tag
-                for (var i = stack.length - 1; i >= 0; i -= 1) {
+                for (var i = stack.length - 1; i >= 0; i = i - 1) {
                     if (stack[i] == start[2]) {
                         stack.length = i;
                         break;
@@ -12745,7 +12747,7 @@
                 return null;
             }
             var marks = cm.findMarksAt(range.from);
-            for (var i = 0; i < marks.length; i += 1) {
+            for (var i = 0; i < marks.length; i = i + 1) {
                 if (marks[i].__isFold && force !== "fold") {
                     if (!allowFolded) {
                         return null;
@@ -12812,7 +12814,7 @@
 
     codeMirror.defineExtension("isFolded", function (pos) {
         var marks = this.findMarksAt(pos);
-        for (var i = 0; i < marks.length; i += 1) {
+        for (var i = 0; i < marks.length; i = i + 1) {
             if (marks[i].__isFold) {
                 return true;
             }
@@ -12830,14 +12832,14 @@
     };
     codeMirror.commands.foldAll    = function (cm) {
         cm.operation(function () {
-            for (var i = cm.firstLine(), e = cm.lastLine(); i <= e; i += 1) {
+            for (var i = cm.firstLine(), e = cm.lastLine(); i <= e; i = i + 1) {
                 cm.foldCode(codeMirror.Pos(i, 0), null, "fold");
             }
         });
     };
     codeMirror.commands.unfoldAll  = function (cm) {
         cm.operation(function () {
-            for (var i = cm.firstLine(), e = cm.lastLine(); i <= e; i += 1) {
+            for (var i = cm.firstLine(), e = cm.lastLine(); i <= e; i = i + 1) {
                 cm.foldCode(codeMirror.Pos(i, 0), null, "unfold");
             }
         });
@@ -12849,7 +12851,7 @@
             .slice
             .call(arguments, 0);
         return function (cm, start) {
-            for (var i = 0; i < funcs.length; i += 1) {
+            for (var i = 0; i < funcs.length; i = i + 1) {
                 var found = funcs[i](cm, start);
                 if (found) {
                     return found;
@@ -12860,7 +12862,7 @@
 
     codeMirror.registerHelper("fold", "auto", function (cm, start) {
         var helpers = cm.getHelpers(start, "fold");
-        for (var i = 0; i < helpers.length; i += 1) {
+        for (var i = 0; i < helpers.length; i = i + 1) {
             var cur = helpers[i](cm, start);
             if (cur) {
                 return cur;
@@ -13020,7 +13022,7 @@
                         var l = stream.string.length,
                         i     = l;
                         i && /\s/.test(stream.string.charAt(i - 1));
-                        i -= 1
+                        i = i - 1
                     ) {}
                     if (i > stream.pos) {
                         stream.pos = i;
@@ -13182,7 +13184,7 @@
             return states[state.context.type](type, stream, state);
         }
         function popAndPass(type, stream, state, n) {
-            for (var i = n || 1; i > 0; i -= 1) {
+            for (var i = n || 1; i > 0; i = i - 1) {
                 state.context = state.context.prev;
             }
             return pass(type, stream, state);
@@ -13251,7 +13253,7 @@
                         : "tag";
                     return "block";
                 } else {
-                    override += " error";
+                    override = override + " error";
                     return "maybeprop";
                 }
             } else if (type == "meta") {
@@ -13286,7 +13288,7 @@
             }
 
             if (type == "hash" && !/^#([0-9a-fA-f]{3}|[0-9a-fA-f]{6})$/.test(stream.current())) {
-                override += " error";
+                override = override + " error";
             } else if (type == "word") {
                 wordAsValue(stream);
             } else if (type == "interpolation") {
@@ -13485,7 +13487,7 @@
 
     function keySet(array) {
         var keys = {};
-        for (var i = 0; i < array.length; i += 1) {
+        for (var i = 0; i < array.length; i = i + 1) {
             keys[array[i]] = true;
         }
         return keys;
@@ -14800,7 +14802,7 @@
             mode   : codeMirror.getMode(config, "javascript")
         });
         if (scriptTypesConf) {
-            for (var i = 0; i < scriptTypesConf.length; i += 1) {
+            for (var i = 0; i < scriptTypesConf.length; i = i + 1) {
                 var conf = scriptTypesConf[i];
                 scriptTypes.push({
                     matches: conf.matches,
@@ -14831,7 +14833,7 @@
                 if (scriptType && /[\"\']/.test(scriptType.charAt(0))) {
                     scriptType = scriptType.slice(1, scriptType.length - 1);
                 }
-                for (var i = 0; i < scriptTypes.length; i += 1) {
+                for (var i = 0; i < scriptTypes.length; i = i + 1) {
                     var tp = scriptTypes[i];
                     if (typeof tp.matches == "string"
                         ? scriptType == tp.matches
@@ -15199,27 +15201,27 @@
 
             var depth        = 0,
                 sawSomething = false;
-            for (var pos = arrow - 1; pos >= 0; pos -= 1) {
+            for (var pos = arrow - 1; pos >= 0; pos = pos - 1) {
                 var ch = stream
                     .string
                     .charAt(pos);
                 var bracket = brackets.indexOf(ch);
                 if (bracket >= 0 && bracket < 3) {
                     if (!depth) {
-                        pos += 1;
+                        pos = pos + 1;
                         break;
                     }
                     if (--depth == 0) {
                         break;
                     }
                 } else if (bracket >= 3 && bracket < 6) {
-                    depth += 1;
+                    depth = depth + 1;
                 } else if (wordRE.test(ch)) {
                     sawSomething = true;
                 } else if (/["'\/]/.test(ch)) {
                     return;
                 } else if (sawSomething && !depth) {
-                    pos += 1;
+                    pos = pos + 1;
                     break;
                 }
             }
@@ -15310,7 +15312,7 @@
             state : null
         };
         function pass() {
-            for (var i = arguments.length - 1; i >= 0; i -= 1) {
+            for (var i = arguments.length - 1; i >= 0; i = i - 1) {
                 cx
                     .cc
                     .push(arguments[i]);
@@ -15717,7 +15719,7 @@
             };
         }
         function contCommasep(what, end, info) {
-            for (var i = 3; i < arguments.length; i += 1) {
+            for (var i = 3; i < arguments.length; i = i + 1) {
                 cx
                     .cc
                     .push(arguments[i]);
@@ -15985,7 +15987,7 @@
                     lexical   = state.lexical;
                 // Kludge to prevent 'maybelse' from blocking lexical scope pops
                 if (!/^\s*else\b/.test(textAfter)) {
-                    for (var i = state.cc.length - 1; i >= 0; i -= 1) {
+                    for (var i = state.cc.length - 1; i >= 0; i = i - 1) {
                         var c = state.cc[i];
                         if (c == poplex) {
                             lexical = lexical.prev;
@@ -16141,7 +16143,7 @@
         ]) || matching[
             line
                 .text
-                .charAt(pos += 1)
+                .charAt(pos = pos + 1)
         ];
         if (!match) {
             return null;
@@ -16186,7 +16188,7 @@
         var lineEnd = dir > 0
             ? Math.min(where.line + maxScanLines, cm.lastLine() + 1)
             : Math.max(cm.firstLine() - 1, where.line - maxScanLines);
-        for (var lineNo = where.line; lineNo != lineEnd; lineNo += dir) {
+        for (var lineNo = where.line; lineNo != lineEnd; lineNo = lineNo + dir) {
             var line = cm.getLine(lineNo);
             if (!line) {
                 continue;
@@ -16205,7 +16207,7 @@
                     ? 1
                     : 0);
             }
-            for (; pos != end; pos += dir) {
+            for (; pos != end; pos = pos + dir) {
                 var ch = line.charAt(pos);
                 if (re.test(ch) && (style === undefined || cm.getTokenTypeAt(Pos(lineNo, pos + 1)) == style)) {
                     var match = matching[ch];
@@ -16234,7 +16236,7 @@
         var maxHighlightLen = cm.state.matchBrackets.maxHighlightLineLength || 1000;
         var marks  = [],
             ranges = cm.listSelections();
-        for (var i = 0; i < ranges.length; i += 1) {
+        for (var i = 0; i < ranges.length; i = i + 1) {
             var match = ranges[i].empty() && findMatchingBracket(
                 cm,
                 ranges[i].head,
@@ -16268,7 +16270,7 @@
 
             var clear = function () {
                 cm.operation(function () {
-                    for (var i = 0; i < marks.length; i += 1) {
+                    for (var i = 0; i < marks.length; i = i + 1) {
                         marks[i].clear();
                     }
                 });
