@@ -84,7 +84,7 @@
                     ? module + "/"
                     : ""
             ) + code;
-            for (i = 2; i < arguments.length; i += 1) {
+            for (i = 2; i < arguments.length; i = i + 1) {
                 message = message + (i == 2
                     ? "?"
                     : "&") + "p" + (
@@ -334,7 +334,7 @@
             } else if (obj.forEach && obj.forEach !== forEach) {
                 obj.forEach(iterator, context);
             } else if (isArrayLike(obj)) {
-                for (key = 0; key < obj.length; key += 1) {
+                for (key = 0; key < obj.length; key = key + 1) {
                     iterator.call(context, obj[key], key);
                 }
             } else {
@@ -360,7 +360,7 @@
 
     function forEachSorted(obj, iterator, context) {
         var keys = sortedKeys(obj);
-        for (var i = 0; i < keys.length; i += 1) {
+        for (var i = 0; i < keys.length; i = i + 1) {
             iterator.call(context, obj[keys[i]], keys[i]);
         }
         return keys;
@@ -391,7 +391,7 @@
         var digit;
 
         while (index) {
-            index -= 1;
+            index = index - 1;
             digit = uid[index].charCodeAt(0);
             if (digit == 57/*'9'*/) {
                 uid[index] = "A";
@@ -717,7 +717,7 @@
         var obj   = {},
             items = str.split(","),
             i;
-        for (i = 0; i < items.length; i += 1) {
+        for (i = 0; i < items.length; i = i + 1) {
             obj[items[i]] = true;
         }
         return obj;
@@ -772,7 +772,7 @@
         } else if (isObject(obj)) {
             for (key in obj) {
                 if (!ownPropsOnly || obj.hasOwnProperty(key)) {
-                    count += 1;
+                    count = count + 1;
                 }
             }
         }
@@ -790,7 +790,7 @@
             return array.indexOf(obj);
         }
 
-        for (var i = 0; i < array.length; i += 1) {
+        for (var i = 0; i < array.length; i = i + 1) {
             if (obj === array[i]) {
                 return i;
             }
@@ -901,7 +901,7 @@
             }
             if (isArray(source)) {
                 destination.length = 0;
-                for (var i = 0; i < source.length; i += 1) {
+                for (var i = 0; i < source.length; i = i + 1) {
                     destination.push(copy(source[i]));
                 }
             } else {
@@ -986,7 +986,7 @@
                         return false;
                     }
                     if ((length = o1.length) == o2.length) {
-                        for (key = 0; key < length; key += 1) {
+                        for (key = 0; key < length; key = key + 1) {
                             if (!equals(o1[key], o2[key])) {
                                 return false;
                             }
@@ -1553,7 +1553,7 @@
         var lastInstance = obj;
         var len = keys.length;
 
-        for (var i = 0; i < len; i += 1) {
+        for (var i = 0; i < len; i = i + 1) {
             key = keys[i];
             if (obj) {
                 obj = (lastInstance = obj)[key];
@@ -2234,7 +2234,7 @@
             });
 
     function jqNextId() {
-        return jqId += 1;
+        return jqId = jqId + 1;
     }
 
 
@@ -2295,7 +2295,12 @@
             if (!getterIfNoArguments || param != null) {
                 while (list.length) {
                     set = list.shift();
-                    for (setIndex = 0, setLength = set.length; setIndex < setLength; setIndex += 1) {
+                    for (
+                        setIndex  = 0,
+                        setLength = set.length;
+                        setIndex < setLength;
+                        setIndex = setIndex + 1
+                    ) {
                         element = jqLite(set[setIndex]);
                         if (fireEvent) {
                             element.triggerHandler("$destroy");
@@ -2306,7 +2311,7 @@
                             childIndex  = 0,
                             childLength = (children = element.children()).length;
                             childIndex < childLength;
-                            childIndex += 1
+                            childIndex = childIndex + 1
                         ) {
                             list.push(jQuery(children[childIndex]));
                         }
@@ -2357,7 +2362,7 @@
             var i    = 0,
             children = element.childNodes || [];
             i < children.length;
-            i += 1
+            i = i + 1
         ) {
             jqLiteDealoc(children[i]);
         }
@@ -2483,7 +2488,7 @@
             forEach(cssClasses.split(" "), function (cssClass) {
                 cssClass = trim(cssClass);
                 if (existingClasses.indexOf(" " + cssClass + " ") === -1) {
-                    existingClasses += cssClass + " ";
+                    existingClasses = existingClasses + cssClass + " ";
                 }
             });
 
@@ -2498,7 +2503,7 @@
             )
                 ? elements
                 : [elements];
-            for (var i = 0; i < elements.length; i += 1) {
+            for (var i = 0; i < elements.length; i = i + 1) {
                 root.push(elements[i]);
             }
         }
@@ -2524,7 +2529,7 @@
 
         while (element.length) {
 
-            for (var i = 0, ii = names.length; i < ii; i += 1) {
+            for (var i = 0, ii = names.length; i < ii; i = i + 1) {
                 if ((value = element.data(names[i])) !== undefined) {
                     return value;
                 }
@@ -2534,7 +2539,12 @@
     }
 
     function jqLiteEmpty(element) {
-        for (var i = 0, childNodes = element.childNodes; i < childNodes.length; i += 1) {
+        for (
+            var i      = 0,
+            childNodes = element.childNodes;
+            i < childNodes.length;
+            i = i + 1
+        ) {
             jqLiteDealoc(childNodes[i]);
         }
         while (element.firstChild) {
@@ -2685,7 +2695,12 @@
             if (isUndefined(value)) {
                 return element.innerHTML;
             }
-            for (var i = 0, childNodes = element.childNodes; i < childNodes.length; i += 1) {
+            for (
+                var i      = 0,
+                childNodes = element.childNodes;
+                i < childNodes.length;
+                i = i + 1
+            ) {
                 jqLiteDealoc(childNodes[i]);
             }
             element.innerHTML = value;
@@ -2780,7 +2795,7 @@
                 if (isObject(arg1)) {
 
                     // we are a write, but the object properties are the key/values
-                    for (i = 0; i < this.length; i += 1) {
+                    for (i = 0; i < this.length; i = i + 1) {
                         if (fn === jqLiteData) {
                             // data() takes the whole object in jQuery
                             fn(this[i], arg1);
@@ -2800,7 +2815,7 @@
                     var jj = (value === undefined)
                         ? Math.min(this.length, 1)
                         : this.length;
-                    for (var j = 0; j < jj; j += 1) {
+                    for (var j = 0; j < jj; j = j + 1) {
                         var nodeValue = fn(this[j], arg1, arg2);
                         value = value
                             ? value + nodeValue
@@ -2810,7 +2825,7 @@
                 }
             } else {
                 // we are a write, so apply to all children
-                for (i = 0; i < this.length; i += 1) {
+                for (i = 0; i < this.length; i = i + 1) {
                     fn(this[i], arg1, arg2);
                 }
                 // return self for chaining
@@ -3111,7 +3126,7 @@
    */
         JQLite.prototype[name]  = function (arg1, arg2, arg3) {
             var value;
-            for (var i = 0; i < this.length; i += 1) {
+            for (var i = 0; i < this.length; i = i + 1) {
                 if (isUndefined(value)) {
                     value = fn(this[i], arg1, arg2, arg3);
                     if (isDefined(value)) {
@@ -3918,7 +3933,7 @@
                             i           = 0,
                             ii          = invokeQueue.length;
                             i < ii;
-                            i += 1
+                            i = i + 1
                         ) {
                             var invokeArgs = invokeQueue[i],
                                 provider   = providerInjector.get(invokeArgs[0]);
@@ -3993,7 +4008,7 @@
                     i,
                     key;
 
-                for (i = 0, length = $inject.length; i < length; i += 1) {
+                for (i = 0, length = $inject.length; i < length; i = i + 1) {
                     key = $inject[i];
                     if (typeof key !== "string") {
                         throw $injectorMinErr(
@@ -4439,7 +4454,7 @@
         // TODO(vojta): remove this temporary api
         self.$$completeOutstandingRequest = completeOutstandingRequest;
         self.$$incOutstandingRequestCount = function () {
-            outstandingRequestCount += 1;
+            outstandingRequestCount = outstandingRequestCount + 1;
         };
 
         /**
@@ -4450,7 +4465,7 @@
             try {
                 fn.apply(null, sliceArgs(arguments, 1));
             } finally {
-                outstandingRequestCount -= 1;
+                outstandingRequestCount = outstandingRequestCount - 1;
                 if (outstandingRequestCount === 0) {
                     while (outstandingRequestCallbacks.length) {
                         try {
@@ -4743,7 +4758,7 @@
                     cookieArray      = lastCookieString.split("; ");
                     lastCookies      = {};
 
-                    for (i = 0; i < cookieArray.length; i += 1) {
+                    for (i = 0; i < cookieArray.length; i = i + 1) {
                         cookie = cookieArray[i];
                         index  = cookie.indexOf("=");
                         if (index > 0) { //ignore nameless cookies
@@ -4778,7 +4793,7 @@
    */
         self.defer = function (fn, delay) {
             var timeoutId;
-            outstandingRequestCount    += 1;
+            outstandingRequestCount    = outstandingRequestCount + 1;
             timeoutId                  = setTimeout(function () {
                 delete pendingDeferIds[timeoutId];
                 completeOutstandingRequest(fn);
@@ -4921,7 +4936,7 @@
                             return;
                         }
                         if (!(key in data)) {
-                            size += 1;
+                            size = size + 1;
                         }
                         data[key] = value;
 
@@ -4950,7 +4965,7 @@
 
                         delete lruHash[key];
                         delete data[key];
-                        size -= 1;
+                        size = size - 1;
                     },
 
 
@@ -5974,7 +5989,7 @@
                         });
 
                         // Attach scope only to non-text nodes.
-                        for (var i = 0, ii = $linkNode.length; i < ii; i += 1) {
+                        for (var i = 0, ii = $linkNode.length; i < ii; i = i + 1) {
                             var node     = $linkNode[i],
                                 nodeType = node.nodeType;
                             if (nodeType === 1/* element */
@@ -6035,7 +6050,7 @@
                         childLinkFn,
                         linkFnFound;
 
-                    for (var i = 0; i < nodeList.length; i += 1) {
+                    for (var i = 0; i < nodeList.length; i = i + 1) {
                         attrs      = new Attributes();
 
                         // we must always refer to nodeList[i] since the nodes can be replaced
@@ -6096,11 +6111,11 @@
                         // copy nodeList so that linking doesn't break due to live list updates.
                         var nodeListLength = nodeList.length,
                             stableNodeList = [nodeListLength];
-                        for (i = 0; i < nodeListLength; i += 1) {
+                        for (i = 0; i < nodeListLength; i = i + 1) {
                             stableNodeList[i] = nodeList[i];
                         }
 
-                        for (i = 0, n = 0, ii = linkFns.length; i < ii; n += 1) {
+                        for (i = 0, n = 0, ii = linkFns.length; i < ii; n = n + 1) {
                             node        = stableNodeList[n];
                             nodeLinkFn  = linkFns[i++];
                             childLinkFn = linkFns[i++];
@@ -6194,7 +6209,7 @@
                                 j      = 0,
                                 jj     = nAttrs && nAttrs.length;
                                 j < jj;
-                                j += 1
+                                j = j + 1
                             ) {
                                 var attrStartName = false;
                                 var attrEndName = false;
@@ -6294,10 +6309,10 @@
                             }
                             if (node.nodeType == 1/** Element **/) {
                                 if (node.hasAttribute(attrStart)) {
-                                    depth += 1;
+                                    depth = depth + 1;
                                 }
                                 if (node.hasAttribute(attrEnd)) {
-                                    depth -= 1;
+                                    depth = depth - 1;
                                 }
                             }
                             nodes.push(node);
@@ -6379,7 +6394,7 @@
                         directiveValue;
 
                     // executes all directives on the current element
-                    for (var i = 0, ii = directives.length; i < ii; i += 1) {
+                    for (var i = 0, ii = directives.length; i < ii; i = i + 1) {
                         directive = directives[i];
                         var attrStart = directive.$$start;
                         var attrEnd = directive.$$end;
@@ -6810,7 +6825,7 @@
                         }
 
                         // PRELINKING
-                        for (i = 0, ii = preLinkFns.length; i < ii; i += 1) {
+                        for (i = 0, ii = preLinkFns.length; i < ii; i = i + 1) {
                             try {
                                 linkFn = preLinkFns[i];
                                 linkFn(
@@ -6842,7 +6857,7 @@
                         );
 
                         // POSTLINKING
-                        for (i = postLinkFns.length - 1; i >= 0; i -= 1) {
+                        for (i = postLinkFns.length - 1; i >= 0; i = i - 1) {
                             try {
                                 linkFn = postLinkFns[i];
                                 linkFn(
@@ -6880,7 +6895,7 @@
 
                 function markDirectivesAsIsolate(directives) {
                     // mark all directives as needing isolate scope.
-                    for (var j = 0, jj = directives.length; j < jj; j += 1) {
+                    for (var j = 0, jj = directives.length; j < jj; j = j + 1) {
                         directives[j] = inherit(directives[j], {$$isolateScope: true});
                     }
                 }
@@ -6919,7 +6934,7 @@
                             i          = 0,
                             ii         = directives.length;
                             i < ii;
-                            i += 1
+                            i = i + 1
                         ) {
                             try {
                                 directive = directives[i];
@@ -6959,7 +6974,7 @@
                     forEach(dst, function (value, key) {
                         if (key.charAt(0) != "$") {
                             if (src[key]) {
-                                value += (key === "style"
+                                value = value + (key === "style"
                                     ? ";"
                                     : " ") + src[key];
                             }
@@ -7287,7 +7302,7 @@
                         ii;
 
                     if ($rootElement) {
-                        for (i = 0, ii = $rootElement.length; i < ii; i += 1) {
+                        for (i = 0, ii = $rootElement.length; i < ii; i = i + 1) {
                             if ($rootElement[i] == firstElementToRemove) {
                                 $rootElement[i++] = newNode;
                                 for (
@@ -7295,8 +7310,8 @@
                                     j2    = j + removeCount - 1,
                                     jj    = $rootElement.length;
                                     j < jj;
-                                    j += 1,
-                                    j2    += 1
+                                    j = j + 1,
+                                    j2    = j2 + 1
                                 ) {
                                     if (j2 < jj) {
                                         $rootElement[j] = $rootElement[j2];
@@ -7304,7 +7319,7 @@
                                         delete $rootElement[j];
                                     }
                                 }
-                                $rootElement.length -= removeCount - 1;
+                                $rootElement.length = $rootElement.length - removeCount - 1;
                                 break;
                             }
                         }
@@ -7316,7 +7331,7 @@
                     var fragment = document.createDocumentFragment();
                     fragment.appendChild(firstElementToRemove);
                     newNode[jqLite.expando] = firstElementToRemove[jqLite.expando];
-                    for (var k = 1, kk = elementsToRemove.length; k < kk; k += 1) {
+                    for (var k = 1, kk = elementsToRemove.length; k < kk; k = k + 1) {
                         var element = elementsToRemove[k];
                         jqLite(element).remove(); // must do this way to clean up expando
                         fragment.appendChild(element);
@@ -7424,14 +7439,14 @@
             tokens1 = str1.split(/\s+/),
             tokens2 = str2.split(/\s+/);
 
-        outer : for (var i = 0; i < tokens1.length; i += 1) {
+        outer : for (var i = 0; i < tokens1.length; i = i + 1) {
             var token = tokens1[i];
-            for (var j = 0; j < tokens2.length; j += 1) {
+            for (var j = 0; j < tokens2.length; j = j + 1) {
                 if (token == tokens2[j]) {
                     continue outer;
                 }
             }
-            values += (values.length > 0
+            values = values + (values.length > 0
                 ? " "
                 : "") + token;
         };
@@ -7628,7 +7643,7 @@
 
             if (key) {
                 if (parsed[key]) {
-                    parsed[key] += ", " + val;
+                    parsed[key] = parsed[key] + ", " + val;
                 } else {
                     parsed[key] = val;
                 }
@@ -9094,7 +9109,7 @@
                         concat.length = length;
                         fn            = function (context) {
                             try {
-                                for (var i = 0, ii = length, part; i < ii; i += 1) {
+                                for (var i = 0, ii = length, part; i < ii; i = i + 1) {
                                     if (typeof(part = parts[i]) == "function") {
                                         part = part(context);
                                         if (trustedContext) {
@@ -10168,7 +10183,7 @@
                     var currentReplace = $location.$$replace;
 
                     if (!changeCounter || oldUrl != $location.absUrl()) {
-                        changeCounter += 1;
+                        changeCounter = changeCounter + 1;
                         $rootScope.$evalAsync(function () {
                             if ($rootScope.$broadcast("$locationChangeStart", $location.absUrl(), oldUrl).defaultPrevented) {
                                 $location.$$parse(oldUrl);
@@ -10623,9 +10638,9 @@
                     if (this.is("}]")) {
                         json.shift();
                     }
-                    this.index += 1;
+                    this.index = this.index + 1;
                 } else if (this.isWhitespace(this.ch)) {
-                    this.index += 1;
+                    this.index = this.index + 1;
                     continue;
                 } else {
                     var ch2 = this.ch + this.peek();
@@ -10637,12 +10652,12 @@
                         this
                             .tokens
                             .push({fn: fn3, index: this.index, text: ch3});
-                        this.index += 3;
+                        this.index = this.index + 3;
                     } else if (fn2) {
                         this
                             .tokens
                             .push({fn: fn2, index: this.index, text: ch2});
-                        this.index += 2;
+                        this.index = this.index + 2;
                     } else if (fn) {
                         this
                             .tokens
@@ -10652,7 +10667,7 @@
                                 json : (this.was("[,:") && this.is("+-")),
                                 text : this.ch
                             });
-                        this.index += 1;
+                        this.index = this.index + 1;
                     } else {
                         this.throwError("Unexpected next character ", this.index, this.index + 1);
                     }
@@ -10690,11 +10705,11 @@
                     if (ch === ".") {
                         lastDot = this.index;
                     }
-                    ident += ch;
+                    ident = ident + ch;
                 } else {
                     break;
                 }
-                this.index += 1;
+                this.index = this.index + 1;
             }
 
             //check if this is not a method invocation and if it is back out to last dot
@@ -10711,7 +10726,7 @@
                         break;
                     }
                     if (this.isWhitespace(ch)) {
-                        peekIndex += 1;
+                        peekIndex = peekIndex + 1;
                     } else {
                         break;
                     }
@@ -10763,20 +10778,20 @@
             while (this.index < this.text.length) {
                 var ch = lowercase(this.text.charAt(this.index));
                 if (ch == "." || this.isNumber(ch)) {
-                    number += ch;
+                    number = number + ch;
                 } else {
                     var peekCh = this.peek();
                     if (ch == "e" && this.isExpOperator(peekCh)) {
-                        number += ch;
+                        number = number + ch;
                     } else if (this.isExpOperator(ch) && peekCh && this.isNumber(peekCh) && number.charAt(number.length - 1) == "e") {
-                        number += ch;
+                        number = number + ch;
                     } else if (this.isExpOperator(ch) && (!peekCh || !this.isNumber(peekCh)) && number.charAt(number.length - 1) == "e") {
                         this.throwError("Invalid exponent");
                     } else {
                         break;
                     }
                 }
-                this.index += 1;
+                this.index = this.index + 1;
             }
             number = 1 * number;
             this
@@ -10793,7 +10808,7 @@
 
         readString   : function (quote) {
             var start = this.index;
-            this.index += 1;
+            this.index = this.index + 1;
             var string = "";
             var rawString = quote;
             var escape = false;
@@ -10801,7 +10816,7 @@
                 var ch = this
                     .text
                     .charAt(this.index);
-                rawString += ch;
+                rawString = rawString + ch;
                 if (escape) {
                     if (ch === "u") {
                         var hex = this
@@ -10810,21 +10825,21 @@
                         if (!hex.match(/[\da-f]{4}/i)) {
                             this.throwError("Invalid unicode escape [\\u" + hex + "]");
                         }
-                        this.index += 4;
-                        string     += String.fromCharCode(parseInt(hex, 16));
+                        this.index = this.index + 4;
+                        string     = string + String.fromCharCode(parseInt(hex, 16));
                     } else {
                         var rep = ESCAPE[ch];
                         if (rep) {
-                            string += rep;
+                            string = string + rep;
                         } else {
-                            string += ch;
+                            string = string + ch;
                         }
                     }
                     escape = false;
                 } else if (ch === "\\") {
                     escape = true;
                 } else if (ch === quote) {
-                    this.index += 1;
+                    this.index = this.index + 1;
                     this
                         .tokens
                         .push({
@@ -10838,9 +10853,9 @@
                         });
                     return;
                 } else {
-                    string += ch;
+                    string = string + ch;
                 }
-                this.index += 1;
+                this.index = this.index + 1;
             }
             this.throwError("Unterminated quote", start);
         },
@@ -10905,7 +10920,7 @@
 
             return extend(function (self, locals) {
                 var array = [];
-                for (var i = 0; i < elementFns.length; i += 1) {
+                for (var i = 0; i < elementFns.length; i = i + 1) {
                     array.push(elementFns[i](self, locals));
                 }
                 return array;
@@ -11003,7 +11018,7 @@
                 } else {
                     var fnInvoke = function (self, locals, input) {
                         var args = [input];
-                        for (var i = 0; i < argsFn.length; i += 1) {
+                        for (var i = 0; i < argsFn.length; i = i + 1) {
                             args.push(argsFn[i](self, locals));
                         }
                         return fn.apply(self, args);
@@ -11044,7 +11059,7 @@
                     ? contextGetter(scope, locals)
                     : scope;
 
-                for (var i = 0; i < argsFn.length; i += 1) {
+                for (var i = 0; i < argsFn.length; i = i + 1) {
                     args.push(argsFn[i](scope, locals));
                 }
                 var fnPtr = fn(scope, locals, context) || noop;
@@ -11110,7 +11125,7 @@
 
             return extend(function (self, locals) {
                 var object = {};
-                for (var i = 0; i < keyValues.length; i += 1) {
+                for (var i = 0; i < keyValues.length; i = i + 1) {
                     var keyValue = keyValues[i];
                     object[keyValue.key] = keyValue.value(self, locals);
                 }
@@ -11276,7 +11291,7 @@
                         ? statements[0]
                         : function (self, locals) {
                             var value;
-                            for (var i = 0; i < statements.length; i += 1) {
+                            for (var i = 0; i < statements.length; i = i + 1) {
                                 var statement = statements[i];
                                 if (statement) {
                                     value = statement(self, locals);
@@ -11357,7 +11372,7 @@
 
         var element = path.split("."),
             key;
-        for (var i = 0; element.length > 1; i += 1) {
+        for (var i = 0; element.length > 1; i = i + 1) {
             key = ensureSafeMemberName(element.shift(), fullExp);
             var propertyObj = obj[key];
             if (!propertyObj) {
@@ -11630,7 +11645,7 @@
             var code = "var p;\n";
             forEach(pathKeys, function (key, index) {
                 ensureSafeMemberName(key, fullExp);
-                code += "if(s == null) return undefined;\ns=" + (
+                code = code + "if(s == null) return undefined;\ns=" + (
                     index
                     // we simply dereference 's' on any .dot notation
                         ? "s"
@@ -11644,7 +11659,7 @@
                         : ""
                 );
             });
-            code += "return s;";
+            code = code + "return s;";
 
             /* jshint -W054 */
             var evaledFnGetter = new Function("s", "k", "pw", code); // s=scope, k=locals, pw=promiseWarning
@@ -12076,7 +12091,7 @@
                         if (pending.length) {
                             nextTick(function () {
                                 var callback;
-                                for (var i = 0, ii = callbacks.length; i < ii; i += 1) {
+                                for (var i = 0, ii = callbacks.length; i < ii; i = i + 1) {
                                     callback = callbacks[i];
                                     callback[2](progress);
                                 }
@@ -12186,7 +12201,7 @@
                         if (callbacks.length) {
                             nextTick(function () {
                                 var callback;
-                                for (var i = 0, ii = callbacks.length; i < ii; i += 1) {
+                                for (var i = 0, ii = callbacks.length; i < ii; i = i + 1) {
                                     callback = callbacks[i];
                                     value.then(callback[0], callback[1], callback[2]);
                                 }
@@ -12378,13 +12393,13 @@
                     : {};
 
             forEach(promises, function (promise, key) {
-                counter += 1;
+                counter = counter + 1;
                 ref(promise).then(function (value) {
                     if (results.hasOwnProperty(key)) {
                         return;
                     }
                     results[key] = value;
-                    if (!(counter -= 1)) {
+                    if (!(counter = counter - 1)) {
                         deferred.resolve(results);
                     }
                 }, function (reason) {
@@ -12668,12 +12683,12 @@
                         while ((current = next)) {
                             event.currentScope = current;
                             listeners          = current.$$listeners[name] || [];
-                            for (i = 0, length = listeners.length; i < length; i += 1) {
+                            for (i = 0, length = listeners.length; i < length; i = i + 1) {
                                 // if listeners were deregistered, defragment the array
                                 if (!listeners[i]) {
                                     listeners.splice(i, 1);
-                                    i      -= 1;
-                                    length -= 1;
+                                    i      = i - 1;
+                                    length = length - 1;
                                     continue;
                                 }
 
@@ -12886,7 +12901,7 @@
                                                                 watch.exp.name || watch.exp.toString()
                                                             )
                                                             : watch.exp;
-                                                        logMsg += "; newVal: " + toJson(value) + "; oldVal: " + toJson(last);
+                                                        logMsg = logMsg + "; newVal: " + toJson(value) + "; oldVal: " + toJson(last);
                                                         watchLog[logIdx].push(logMsg);
                                                     }
                                                 } else if (watch === lastDirtyWatch) {
@@ -12986,13 +13001,13 @@
                         do {
                             namedListeners     = scope.$$listeners[name] || empty;
                             event.currentScope = scope;
-                            for (i = 0, length = namedListeners.length; i < length; i += 1) {
+                            for (i = 0, length = namedListeners.length; i < length; i = i + 1) {
 
                                 // if listeners were deregistered, defragment the array
                                 if (!namedListeners[i]) {
                                     namedListeners.splice(i, 1);
-                                    i      -= 1;
-                                    length -= 1;
+                                    i      = i - 1;
+                                    length = length - 1;
                                     continue;
                                 }
                                 try {
@@ -13188,7 +13203,7 @@
                             if (!current.$$listenerCount[name]) {
                                 current.$$listenerCount[name] = 0;
                             }
-                            current.$$listenerCount[name] += 1;
+                            current.$$listenerCount[name] = current.$$listenerCount[name] + 1;
                         } while ((current = current.$parent));
 
                         var self = this;
@@ -13424,27 +13439,27 @@
                             if (!isObject(newValue)) {
                                 if (oldValue !== newValue) {
                                     oldValue       = newValue;
-                                    changeDetected += 1;
+                                    changeDetected = changeDetected + 1;
                                 }
                             } else if (isArrayLike(newValue)) {
                                 if (oldValue !== internalArray) {
                                     // we are transitioning from something which was not an array into array.
                                     oldValue       = internalArray;
                                     oldLength      = oldValue.length = 0;
-                                    changeDetected += 1;
+                                    changeDetected = changeDetected + 1;
                                 }
 
                                 newLength = newValue.length;
 
                                 if (oldLength !== newLength) {
                                     // if lengths do not match we need to trigger change notification
-                                    changeDetected  += 1;
+                                    changeDetected  = changeDetected + 1;
                                     oldValue.length = oldLength = newLength;
                                 }
                                 // copy the items to oldValue and look for changes.
-                                for (var i = 0; i < newLength; i += 1) {
+                                for (var i = 0; i < newLength; i = i + 1) {
                                     if (oldValue[i] !== newValue[i]) {
-                                        changeDetected += 1;
+                                        changeDetected = changeDetected + 1;
                                         oldValue[i]    = newValue[i];
                                     }
                                 }
@@ -13453,31 +13468,31 @@
                                     // we are transitioning from something which was not an object into object.
                                     oldValue       = internalObject = {};
                                     oldLength      = 0;
-                                    changeDetected += 1;
+                                    changeDetected = changeDetected + 1;
                                 }
                                 // copy the items to oldValue and look for changes.
                                 newLength = 0;
                                 for (key in newValue) {
                                     if (newValue.hasOwnProperty(key)) {
-                                        newLength += 1;
+                                        newLength = newLength + 1;
                                         if (oldValue.hasOwnProperty(key)) {
                                             if (oldValue[key] !== newValue[key]) {
-                                                changeDetected += 1;
+                                                changeDetected = changeDetected + 1;
                                                 oldValue[key]  = newValue[key];
                                             }
                                         } else {
-                                            oldLength      += 1;
+                                            oldLength      = oldLength + 1;
                                             oldValue[key]  = newValue[key];
-                                            changeDetected += 1;
+                                            changeDetected = changeDetected + 1;
                                         }
                                     }
                                 }
                                 if (oldLength > newLength) {
                                     // we used to have more keys, need to find them and destroy them.
-                                    changeDetected += 1;
+                                    changeDetected = changeDetected + 1;
                                     for (key in oldValue) {
                                         if (oldValue.hasOwnProperty(key) && !newValue.hasOwnProperty(key)) {
-                                            oldLength -= 1;
+                                            oldLength = oldLength - 1;
                                             delete oldValue[key];
                                         }
                                     }
@@ -13520,7 +13535,7 @@
 
                 function decrementListenerCount(current, count, name) {
                     do {
-                        current.$$listenerCount[name] -= count;
+                        current.$$listenerCount[name] = current.$$listenerCount[name] - count;
 
                         if (current.$$listenerCount[name] === 0) {
                             delete current.$$listenerCount[name];
@@ -13845,7 +13860,7 @@
                         n,
                         allowed = false;
                     // Ensure that at least one item from the whitelist allows this url.
-                    for (i = 0, n = resourceUrlWhitelist.length; i < n; i += 1) {
+                    for (i = 0, n = resourceUrlWhitelist.length; i < n; i = i + 1) {
                         if (matchUrl(resourceUrlWhitelist[i], parsedUrl)) {
                             allowed = true;
                             break;
@@ -13853,7 +13868,7 @@
                     }
                     if (allowed) {
                         // Ensure that no item from the blacklist blocked this url.
-                        for (i = 0, n = resourceUrlBlacklist.length; i < n; i += 1) {
+                        for (i = 0, n = resourceUrlBlacklist.length; i < n; i = i + 1) {
                             if (matchUrl(resourceUrlBlacklist[i], parsedUrl)) {
                                 allowed = false;
                                 break;
@@ -15336,7 +15351,7 @@
                 predicates     = [];
 
             predicates.check = function (value) {
-                for (var j = 0; j < predicates.length; j += 1) {
+                for (var j = 0; j < predicates.length; j = j + 1) {
                     if (!predicates[j](value)) {
                         return false;
                     }
@@ -15382,7 +15397,7 @@
                         }
                         return false;
                     case "array":
-                        for (var i = 0; i < obj.length; i += 1) {
+                        for (var i = 0; i < obj.length; i = i + 1) {
                             if (search(obj[i], text)) {
                                 return true;
                             }
@@ -15424,7 +15439,7 @@
                     return array;
             }
             var filtered = [];
-            for (var j = 0; j < array.length; j += 1) {
+            for (var j = 0; j < array.length; j = j + 1) {
                 var value = array[j];
                 if (predicates.check(value)) {
                     filtered.push(value);
@@ -15602,28 +15617,28 @@
 
             if (whole.length >= (lgroup + group)) {
                 pos = whole.length - lgroup;
-                for (i = 0; i < pos; i += 1) {
+                for (i = 0; i < pos; i = i + 1) {
                     if ((pos - i) % group === 0 && i !== 0) {
-                        formatedText += groupSep;
+                        formatedText = formatedText + groupSep;
                     }
-                    formatedText += whole.charAt(i);
+                    formatedText = formatedText + whole.charAt(i);
                 }
             }
 
-            for (i = pos; i < whole.length; i += 1) {
+            for (i = pos; i < whole.length; i = i + 1) {
                 if ((whole.length - i) % lgroup === 0 && i !== 0) {
-                    formatedText += groupSep;
+                    formatedText = formatedText + groupSep;
                 }
-                formatedText += whole.charAt(i);
+                formatedText = formatedText + whole.charAt(i);
             }
 
             // format fraction part.
             while (fraction.length < fractionSize) {
-                fraction += "0";
+                fraction = fraction + "0";
             }
 
             if (fractionSize && fractionSize !== "0") {
-                formatedText += decimalSep + fraction.substr(0, fractionSize);
+                formatedText = formatedText + decimalSep + fraction.substr(0, fractionSize);
             }
         } else {
 
@@ -15664,7 +15679,7 @@
         return function (date) {
             var value = date["get" + name]();
             if (offset > 0 || value > -offset) {
-                value += offset;
+                value = value + offset;
             }
             if (value === 0 && offset == -12) {
                 value = 12;
@@ -15690,7 +15705,7 @@
             ? "+"
             : "";
 
-        paddedZone += padNumber(Math[
+        paddedZone = paddedZone + padNumber(Math[
             zone > 0
                 ? "floor"
                 : "ceil"
@@ -15892,7 +15907,7 @@
 
             forEach(parts, function (value) {
                 fn   = DATE_FORMATS[value];
-                text += fn
+                text = text + fn
                     ? fn(date, $locale.DATETIME_FORMATS)
                     : value
                         .replace(/(^'|'$)/g, "")
@@ -16058,7 +16073,7 @@
                 n = input.length;
             }
 
-            for (; i < n; i += 1) {
+            for (; i < n; i = i + 1) {
                 out.push(input[i]);
             }
 
@@ -16176,13 +16191,13 @@
                 }, descending);
             });
             var arrayCopy = [];
-            for (var i = 0; i < array.length; i += 1) {
+            for (var i = 0; i < array.length; i = i + 1) {
                 arrayCopy.push(array[i]);
             }
             return arrayCopy.sort(reverseComparator(comparator, reverseOrder));
 
             function comparator(o1, o2) {
-                for (var i = 0; i < sortPredicate.length; i += 1) {
+                for (var i = 0; i < sortPredicate.length; i = i + 1) {
                     var comp = sortPredicate[i](o1, o2);
                     if (comp !== 0) {
                         return comp;
@@ -16798,7 +16813,7 @@
                 if (queue) {
                     arrayRemove(queue, control);
                     if (!queue.length) {
-                        invalidCount -= 1;
+                        invalidCount = invalidCount - 1;
                         if (!invalidCount) {
                             toggleValidCss(isValid);
                             form.$valid   = true;
@@ -16820,7 +16835,7 @@
                     }
                 } else {
                     errors[validationToken] = queue = [];
-                    invalidCount            += 1;
+                    invalidCount            = invalidCount + 1;
                     toggleValidCss(false, validationToken);
                     parentForm.$setValidity(validationToken, false, form);
                 }
@@ -18187,7 +18202,7 @@
 
                 if (isValid) {
                     if ($error[validationErrorKey]) {
-                        invalidCount -= 1;
+                        invalidCount = invalidCount - 1;
                     }
                     if (!invalidCount) {
                         toggleValidCss(true);
@@ -18198,7 +18213,7 @@
                     toggleValidCss(false);
                     this.$invalid = true;
                     this.$valid   = false;
-                    invalidCount  += 1;
+                    invalidCount  = invalidCount + 1;
                 }
 
                 $error[validationErrorKey] = !isValid;
@@ -20854,7 +20869,7 @@
 
                         // locate existing items
                         length      = nextBlockOrder.length = collectionKeys.length;
-                        for (index = 0; index < length; index += 1) {
+                        for (index = 0; index < length; index = index + 1) {
                             key       = (collection === collectionKeys)
                                 ? index
                                 : collectionKeys[index];
@@ -20908,7 +20923,12 @@
                         }
 
                         // we are not using forEach for perf reasons (trying to avoid #call)
-                        for (index = 0, length = collectionKeys.length; index < length; index += 1) {
+                        for (
+                            index  = 0,
+                            length = collectionKeys.length;
+                            index < length;
+                            index = index + 1
+                        ) {
                             key   = (collection === collectionKeys)
                                 ? index
                                 : collectionKeys[index];
@@ -21496,7 +21516,7 @@
                         selectedScopes = [];
 
                     scope.$watch(watchExpr, function ngSwitchWatchAction(value) {
-                        for (var i = 0, ii = selectedScopes.length; i < ii; i += 1) {
+                        for (var i = 0, ii = selectedScopes.length; i < ii; i = i + 1) {
                             selectedScopes[i].$destroy();
                             $animate.leave(selectedElements[i]);
                         }
@@ -21923,7 +21943,7 @@
                         children = element.children(),
                         ii       = children.length;
                         i < ii;
-                        i += 1
+                        i = i + 1
                     ) {
                         if (children[i].value === "") {
                             emptyOption = nullOption = children.eq(i);
@@ -22089,19 +22109,23 @@
                                         groupIndex  = 0,
                                         groupLength = optionGroupsCache.length;
                                         groupIndex < groupLength;
-                                        groupIndex += 1
+                                        groupIndex = groupIndex + 1
                                     ) {
                                         // list of options for that group. (first item has the parent)
                                         optionGroup = optionGroupsCache[groupIndex];
 
-                                        for (index = 1, length = optionGroup.length; index < length; index += 1) {
+                                        for (index = 1, length = optionGroup.length; index < length; index = index + 1) {
                                             if ((optionElement = optionGroup[index].element)[0].selected) {
                                                 key = optionElement.val();
                                                 if (keyName) {
                                                     locals[keyName] = key;
                                                 }
                                                 if (trackFn) {
-                                                    for (trackIndex = 0; trackIndex < collection.length; trackIndex += 1) {
+                                                    for (
+                                                        trackIndex = 0;
+                                                        trackIndex < collection.length;
+                                                        trackIndex = trackIndex + 1
+                                                    ) {
                                                         locals[valueName] = collection[trackIndex];
                                                         if (trackFn(scope, locals) == key) {
                                                             break;
@@ -22122,7 +22146,11 @@
                                         value = null;
                                     } else {
                                         if (trackFn) {
-                                            for (trackIndex = 0; trackIndex < collection.length; trackIndex += 1) {
+                                            for (
+                                                trackIndex = 0;
+                                                trackIndex < collection.length;
+                                                trackIndex = trackIndex + 1
+                                            ) {
                                                 locals[valueName] = collection[trackIndex];
                                                 if (trackFn(scope, locals) == key) {
                                                     value = valueFn(scope, locals);
@@ -22179,7 +22207,11 @@
                             if (multiple) {
                                 if (trackFn && isArray(modelValue)) {
                                     selectedSet = new HashMap([]);
-                                    for (var trackIndex = 0; trackIndex < modelValue.length; trackIndex += 1) {
+                                    for (
+                                        var trackIndex = 0;
+                                        trackIndex < modelValue.length;
+                                        trackIndex = trackIndex + 1
+                                    ) {
                                         locals[valueName] = modelValue[trackIndex];
                                         selectedSet.put(trackFn(scope, locals), modelValue[trackIndex]);
                                     }
@@ -22189,7 +22221,7 @@
                             }
 
                             // We now build up the list of options we need (we merge later)
-                            for (index = 0; length = keys.length, index < length; index += 1) {
+                            for (index = 0; length = keys.length, index < length; index = index + 1) {
 
                                 key = index;
                                 if (keyName) {
@@ -22258,7 +22290,7 @@
                                 groupIndex  = 0,
                                 groupLength = optionGroupNames.length;
                                 groupIndex < groupLength;
-                                groupIndex += 1
+                                groupIndex = groupIndex + 1
                             ) {
                                 // current option group name or '' if no group
                                 optionGroupName = optionGroupNames[groupIndex];
@@ -22290,7 +22322,7 @@
                                 }
 
                                 lastElement = null; // start at the beginning
-                                for (index = 0, length = optionGroup.length; index < length; index += 1) {
+                                for (index = 0, length = optionGroup.length; index < length; index = index + 1) {
                                     option = optionGroup[index];
                                     if ((existingOption = existingOptions[index + 1])) {
                                         // reuse elements
@@ -22337,7 +22369,7 @@
                                     }
                                 }
                                 // remove any excessive OPTIONs in a group
-                                index += 1; // increment since the existingOptions[0] is parent element not OPTION
+                                index = index + 1; // increment since the existingOptions[0] is parent element not OPTION
                                 while (existingOptions.length > index) {
                                     existingOptions
                                         .pop()
