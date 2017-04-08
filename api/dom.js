@@ -1516,10 +1516,10 @@ global.prettydiff.meta = {
             if (x === pd.data.node.lang) {
                 if (pd.data.node.langdefault !== null) {
                     if (lang === "auto") {
-                        pd.data.node.langdefault.parentNode.style.display = "block";
+                        pd.data.node.langdefault.parentNode.parentNode.style.display = "block";
                         pd.data.node.langdefault.disabled                 = false;
                     } else {
-                        pd.data.node.langdefault.parentNode.style.display = "none";
+                        pd.data.node.langdefault.parentNode.parentNode.style.display = "none";
                     }
                 }
                 if (lang === "auto") {
@@ -2868,6 +2868,11 @@ global.prettydiff.meta = {
                         }
                         return arr.join("");
                     };
+                if (api.newline === true) {
+                    output = output.replace(/(\s+)$/, "\r\n");
+                } else {
+                    output = output.replace(/(\s+)$/, "");
+                }
                 node = pd.id("showOptionsCallOut");
                 pd.data.zIndex = pd.data.zIndex + 1;
                 if (autotest === true) {
@@ -3444,6 +3449,13 @@ global.prettydiff.meta = {
         }
 
         //gather updated dom nodes
+        api.api         = "dom";
+        node            = pd.id("csvchar");
+        api.csvchar     = (node === null || node.value.length === 0)
+            ? ","
+            : node.value;
+        node            = pd.id("lterminator-crlf");
+        api.crlf        = (node !== null && node.checked === true);
         api.lang        = (pd.data.node.lang === null)
             ? "javascript"
             : (pd.data.node.lang.nodeName.toLowerCase() === "select")
@@ -3462,13 +3474,7 @@ global.prettydiff.meta = {
         api.langdefault = (pd.data.node.langdefault !== null)
             ? pd.data.node.langdefault[pd.data.node.langdefault.selectedIndex].value
             : "javascript";
-        node            = pd.id("csvchar");
-        api.csvchar     = (node === null || node.value.length === 0)
-            ? ","
-            : node.value;
-        node            = pd.id("lterminator-crlf");
-        api.crlf        = (node !== null && node.checked === true);
-        api.api         = "dom";
+        api.newline     = (pd.id("newline-yes") !== null && pd.id("newline-yes").checked === true);
         if (api.lang === "auto") {
             autotest = true;
         }

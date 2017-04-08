@@ -73,15 +73,10 @@ Manage with biddle
             if (options.nodeerror === true) {
                 console.log(meta.error);
             }
-            if (options.diffcli === true) {
-                diffCount[0] = diffCount[0] + pdresponse[1];
-                if (pdresponse[1] > 0) {
-                    diffCount[1] = diffCount[1] + 1;
-                }
-                if (pdresponse[2] < 0) {
-                    diffCount[1] = -1;
-                }
-                return pdresponse[0];
+            if (options.newline === true) {
+                pdresponse = pdresponse.replace(/(\s+)$/, "\r\n");
+            } else {
+                pdresponse = pdresponse.replace(/(\s+)$/, "");
             }
             diffCount[0] = diffCount[0] + meta.difftotal;
             if (meta.difftotal > 0) {
