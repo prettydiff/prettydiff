@@ -8703,7 +8703,8 @@
                         "px;";
             }
             if (widget.noHScroll) {
-                parentStyle = parentStyle + "width: " + widget.cm.display.wrapper.clientWidth + "px;";
+                parentStyle = parentStyle + "width: " + widget.cm.display.wrapper.clientWidth +
+                        "px;";
             }
             removeChildrenAndAdd(
                 widget.cm.display.measure,

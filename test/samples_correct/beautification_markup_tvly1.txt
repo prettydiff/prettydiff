@@ -19261,14 +19261,14 @@
                         switch (elementId) {
                             case "ho-to":
                                 _gaq.push([
-                                    "_trackEvent", "ac:HP", "ac:HP|hotel_only|DestinationAutoFill", gaDestination + "|" +
-                                            item.listpos + "|" + typedDestination
+                                    "_trackEvent", "ac:HP", "ac:HP|hotel_only|DestinationAutoFill", gaDestination +
+                                            "|" + item.listpos + "|" + typedDestination
                                 ]);
                                 break;
                             case "hcx-to":
                                 _gaq.push([
-                                    "_trackEvent", "ac:HP", "ac:HP|hotel+car|DestinationAutoFill", gaDestination + "|" +
-                                            item.listpos + "|" + typedDestination
+                                    "_trackEvent", "ac:HP", "ac:HP|hotel+car|DestinationAutoFill", gaDestination +
+                                            "|" + item.listpos + "|" + typedDestination
                                 ]);
                                 break;
                         }

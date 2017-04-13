@@ -158,8 +158,10 @@
             var aa     = 0,
                 pdlen  = 0,
                 plus   = "",
+                plural = "",
                 output = [],
-                report = [];
+                report = [],
+                total  = 0;
             options.mode    = "diff";
             options.source  = sampleSource;
             options.diff    = sampleDiff;
@@ -167,24 +169,29 @@
             options.context = 2;
             options.lang    = "text";
             output          = prettydiff(options);
-            report          = output[0][0];
+            report          = output;
             pdlen           = report.length;
-            if (output[2] < 0) {
+            total           = global.prettydiff.meta.difftotal;
+            if (total > 50) {
                 plus = "+";
+            }
+            if (total !== 1) {
+                plural = "s";
             }
             // report indexes from diffcli feature of diffview.js 0 - source line number 1 -
             // source code line 2 - diff line number 3 - diff code line 4 - change 5 - index
             // of options.context (not parallel) 6 - total count of differences
-            for (aa = 0; aa < pdlen; aa = aa + 1) {
+            do {
                 if (report[aa].indexOf("\u001b[36m") === 0) {
                     console.log("\u001b[36m" + sampleName + "\u001b[36m");
                 }
                 console.log(report[aa]);
-            }
+                aa = aa + 1;
+            } while (aa < pdlen);
             if (sampleName !== "phases.simulations") {
                 console.log("");
                 console.log(
-                    output[1] + plus + " \u001b[32mdifferences counted.\u001b[39m"
+                    total + plus + " \u001b[32mdifference" + plural + " counted.\u001b[39m"
                 );
                 errout(
                     "Pretty Diff \u001b[31mfailed\u001b[39m on file: \u001b[36m" + sampleName + "" +

@@ -14196,7 +14196,8 @@ define("ace/layer/text", [
                         "<span class='" + f + "' style='width:" + i.config.characterWidth * 2 + "px'>" + l + "</span>";
                     }
                     return r
-                        ? "<span class='ace_invisible ace_invisible_space ace_invalid'>" + i.SPACE_CHAR + "</span>"
+                        ? "<span class='ace_invisible ace_invisible_space ace_invalid'>" + i.SPACE_CHAR +
+                                "</span>"
                         : (
                             t = t + 1,
                             "<span class='ace_cjk' style='width:" + i.config.characterWidth * 2 + "px'>" + e + "</span>"
@@ -14632,7 +14633,8 @@ define("ace/scrollbar", [
         u.call(this, e),
         this.scrollLeft         = 0,
         this.height             = t.$scrollbarWidth,
-        this.inner.style.height = this.element.style.height = (this.height || 15) + 5 + "px";
+        this.inner.style.height = this.element.style.height = (this.height || 15) + 5 +
+                "px";
     };
     r.inherits(f, u),
     function () {
