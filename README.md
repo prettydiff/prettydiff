@@ -54,6 +54,10 @@ var prettydiff = require("prettydiff"),
     output     = prettydiff(args);
 ```
 
+#### Execute in the browser as a vanilla or RequireJS app
+
+Please see the [barebones code samples](test/barebones)
+
 #### Execute from the command line
 
 Run in windows

@@ -34,17 +34,8 @@
         <script src="lib/jspretty.js" type="application/javascript"></script>
         <script src="lib/markuppretty.js" type="application/javascript"></script>
         <script src="prettydiff.js" type="application/javascript"></script>
-        <script type="application/javascript">
-            <![CDATA[
-            var args = JSON.parse(document.getElementById("object").value),
-                button = document.getElementById("button");
-            button.onclick = function () {
-                if (typeof args.source !== "string" || args.source === "") {
-                    args.source = document.getElementById("input").value;
-                }
-                document.getElementById("output").value = global.prettydiff.prettydiff(args);
-            };
-            ]]>
-        </script>
+
+        <!-- barbones code -->
+        <script src="barebones.js" type="application/javascript"></script>
     </body>
 </html>

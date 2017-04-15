@@ -116,7 +116,8 @@ rights.
 4. Limitations and Disclaimers.
 
     a. No trademark or patent rights held by Affirmer are waived,
-    abandoned, surrendered, licensed or otherwise affected by this document.
+    abandoned, surrendered, licensed or otherwise affected by this
+    document.
 
     b. Affirmer offers the Work as-is and makes no representations or
     warranties of any kind concerning the Work, express, implied,
@@ -146,5 +147,3 @@ unless otherwise changed, is licensed with a Creative Commons 1.0
 Universal license (CC0).
 
 https://creativecommons.org/publicdomain/zero/1.0/legalcode
-
-The license text is as follows:
