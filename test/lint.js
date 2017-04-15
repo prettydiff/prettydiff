@@ -700,7 +700,8 @@
                                             filename,
                                             function taskrunner_lint_getFiles_readDir_callback_fileEval_stat(errb, stat) {
                                                 var a         = 0,
-                                                    ignoreDir = false;
+                                                    ignoreDir = false,
+                                                    dirtest   = filepath.replace(/\\/g, "/") + "/" + val;
                                                 if (errb !== null) {
                                                     return errout(errb);
                                                 }
@@ -714,7 +715,7 @@
                                                 }
                                                 if (stat.isDirectory() === true) {
                                                     do {
-                                                        if (val === ignoreDirectory[a]) {
+                                                        if (dirtest.indexOf(ignoreDirectory[a]) === dirtest.length - ignoreDirectory[a].length) {
                                                             ignoreDir = true;
                                                             break;
                                                         }
