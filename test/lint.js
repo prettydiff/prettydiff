@@ -365,6 +365,7 @@
                         "ignore",
                         "JSLint",
                         "node_modules",
+                        "test/barebones",
                         "test/samples_correct",
                         "test/samples_raw"
                     ],

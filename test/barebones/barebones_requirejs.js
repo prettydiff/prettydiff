@@ -15,16 +15,16 @@ var args = JSON.parse(document.getElementById("object").value),
     };
 require(
     [
-        "lib/csspretty.js",
-        "lib/csvpretty.js",
-        "lib/diffview.js",
-        "lib/finalFile.js",
-        "lib/jspretty.js",
-        "lib/language.js",
-        "lib/markuppretty.js",
-        "lib/options.js",
-        "lib/safeSort.js",
-        "prettydiff.js"
+        "../../lib/csspretty.js",
+        "../../lib/csvpretty.js",
+        "../../lib/diffview.js",
+        "../../lib/finalFile.js",
+        "../../lib/jspretty.js",
+        "../../lib/language.js",
+        "../../lib/markuppretty.js",
+        "../../lib/options.js",
+        "../../lib/safeSort.js",
+        "../../prettydiff.js"
     ],
     function requirejs(csspretty, csvpretty, diffview, finalFile, jspretty, language, markuppretty, options, safeSort, prettydiff) {
         global.prettydiff.csspretty = csspretty;
