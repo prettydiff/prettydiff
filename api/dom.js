@@ -2790,7 +2790,7 @@ global.prettydiff.meta = {
     // events: beaufold, colSliderGrab, difffold, minimize, save
     pd.event.recycle    = function dom__event_recycle(e) {
         var api         = {},
-            output      = [],
+            output      = "",
             domain      = (/^((https?:\/\/)|(file:\/\/\/))/),
             event       = e || window.event,
             lang        = "",
@@ -2807,42 +2807,24 @@ global.prettydiff.meta = {
                 return;
             },
             application = function dom__event_recycle_application(lang) {
-                if (typeof global.prettydiff.prettydiff === "function") {
+                /*if (typeof global.prettydiff.prettydiff === "function") {
                     return global.prettydiff.prettydiff;
-                }
+                }*/
                 if (pd.data.mode === "diff" && typeof global.prettydiff.diffview === "function") {
                     api.lang = "text";
                     return global.prettydiff.diffview;
                 }
                 if (typeof global.prettydiff.markuppretty === "function" && (lang === "markup" || lang === "html")) {
-                    return function dom__event_recycle_application_markuppretty() {
-                        var code = global.prettydiff.markuppretty(api),
-                            sum  = (global.prettydiff.report === undefined)
-                                ? ""
-                                : global.prettydiff.report;
-                        return [code, sum];
-                    };
+                    return global.prettydiff.markuppretty(api);
                 }
                 if (typeof global.prettydiff.csvpretty === "function" && lang === "csv") {
                     return global.prettydiff.csvpretty;
                 }
                 if (typeof global.prettydiff.csspretty === "function" && lang === "css") {
-                    return function dom__event_recycle_application_csspretty() {
-                        var code = global.prettydiff.csspretty(api),
-                            sum  = (global.prettydiff.report === undefined)
-                                ? ""
-                                : global.prettydiff.report;
-                        return [code, sum];
-                    };
+                    return global.prettydiff.csspretty(api);
                 }
                 if (typeof global.prettydiff.jspretty === "function") {
-                    return function dom__event_recycle_application_jspretty() {
-                        var code = global.prettydiff.jspretty(api),
-                            sum  = (global.prettydiff.report === undefined)
-                                ? ""
-                                : global.prettydiff.report;
-                        return [code, sum];
-                    };
+                    return global.prettydiff.jspretty(api);
                 }
             },
             execOutput  = function dom__event_recycle_execOutput() {
@@ -4072,7 +4054,7 @@ global.prettydiff.meta = {
                                             if (app === undefined) {
                                                 if (pd.test.delayExecution === true) {
                                                     pd.test.delayExecution = false;
-                                                    setTimeout(appDelay, 100);
+                                                    setTimeout(appDelay, 2000);
                                                 }
                                             } else {
                                                 output = app(api);
@@ -4315,7 +4297,7 @@ global.prettydiff.meta = {
                                     if (app === undefined) {
                                         if (pd.test.delayExecution === true) {
                                             pd.test.delayExecution = false;
-                                            setTimeout(appDelay, 100);
+                                            setTimeout(appDelay, 2000);
                                         }
                                     } else {
                                         output = app(api);
@@ -4429,10 +4411,7 @@ global.prettydiff.meta = {
                             : api.lang;
                         pd.data.source = api.source;
                         pd.data.diff   = "";
-                        app            = application(api.lang);
-                        if (app !== undefined) {
-                            output = app(api);
-                        }
+                        output         = application(api.lang);
                         execOutput();
                     }, 50);
                 }
@@ -4449,10 +4428,7 @@ global.prettydiff.meta = {
                             : api.lang;
                         pd.data.source = api.source;
                         pd.data.diff   = "";
-                        app            = application(api.lang);
-                        if (app !== undefined) {
-                            output = app(api);
-                        }
+                        output         = application(api.lang);
                         execOutput();
                     }, 50);
                 }
@@ -4469,10 +4445,7 @@ global.prettydiff.meta = {
                             : api.lang;
                         pd.data.source = api.source;
                         pd.data.diff   = "";
-                        app            = application(api.lang);
-                        if (app !== undefined) {
-                            output = app(api);
-                        }
+                        output         = application(api.lang);
                         execOutput();
                     }, 50);
                 }
@@ -4489,10 +4462,7 @@ global.prettydiff.meta = {
                             : api.lang;
                         pd.data.source = api.source;
                         pd.data.diff   = "";
-                        app            = application(api.lang);
-                        if (app !== undefined) {
-                            output = app(api);
-                        }
+                        output         = application(api.lang);
                         execOutput();
                     }, 50);
                 }
@@ -4518,10 +4488,7 @@ global.prettydiff.meta = {
                 } else {
                     pd.data.diff = "";
                 }
-                app = application(api.lang);
-                if (app !== undefined) {
-                    output = app(api);
-                }
+                output = application(api.lang);
                 execOutput();
             }
         }
