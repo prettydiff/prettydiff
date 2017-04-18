@@ -602,7 +602,7 @@
                             absentfun = function taskrunner_lint_install_stat_absentfun() {
                                 // we only need to install once per day, so determine if JSLint has already
                                 // installed today
-                                if (today < date) {
+                                if (today < date || jslint === undefined) {
                                     console.log("Pulling latest JSLint...");
                                     return childtask();
                                 }
