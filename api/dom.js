@@ -2803,22 +2803,19 @@ global.prettydiff.meta = {
             autotest    = false,
             crlf        = pd.id("lterminator-crlf"),
             textout     = ((pd.data.node.jsscope === null || pd.data.node.jsscope.checked === false) && (node === null || node.checked === false)),
-            app         = function dom__event_recycle_appInit() {
-                return;
-            },
             application = function dom__event_recycle_application(lang) {
                 if (typeof global.prettydiff.prettydiff === "function") {
-                    return global.prettydiff.prettydiff;
+                    return global.prettydiff.prettydiff(api);
                 }
                 if (pd.data.mode === "diff" && typeof global.prettydiff.diffview === "function") {
                     api.lang = "text";
-                    return global.prettydiff.diffview;
+                    return global.prettydiff.diffview(api);
                 }
                 if (typeof global.prettydiff.markuppretty === "function" && (lang === "markup" || lang === "html")) {
                     return global.prettydiff.markuppretty(api);
                 }
                 if (typeof global.prettydiff.csvpretty === "function" && lang === "csv") {
-                    return global.prettydiff.csvpretty;
+                    return global.prettydiff.csvpretty(api);
                 }
                 if (typeof global.prettydiff.csspretty === "function" && lang === "css") {
                     return global.prettydiff.csspretty(api);
@@ -4015,11 +4012,10 @@ global.prettydiff.meta = {
                         if (slashIndex > 0 || api.diff.indexOf("http") === 0) {
                             xhr.onreadystatechange = function dom__event_recycle_xhrDiff_stateChange() {
                                 var appDelay = function dom__event_recycle_xhrDiff_statechange_appDelay() {
-                                    var apptest = application(api.lang);
-                                    if (apptest === undefined) {
+                                    output = application(api.lang);
+                                    if (output === undefined) {
                                         setTimeout(dom__event_recycle_xhrDiff_statechange_appDelay, 100);
                                     } else {
-                                        output = apptest(api);
                                         execOutput();
                                     }
                                 };
@@ -4050,14 +4046,13 @@ global.prettydiff.meta = {
                                             } else {
                                                 pd.data.diff = "";
                                             }
-                                            app = application(api.lang);
-                                            if (app === undefined) {
+                                            output = application(api.lang);
+                                            if (output === undefined) {
                                                 if (pd.test.delayExecution === true) {
                                                     pd.test.delayExecution = false;
                                                     setTimeout(appDelay, 2000);
                                                 }
                                             } else {
-                                                output = app(api);
                                                 execOutput();
                                             }
                                             return;
@@ -4252,11 +4247,10 @@ global.prettydiff.meta = {
                 if (slashIndex > 0 || api.source.indexOf("http") === 0) {
                     xhr.onreadystatechange = function dom__event_recycle_xhrSource_statechange() {
                         var appDelay = function dom__event_recycle_xhrSource_statechange_appDelay() {
-                            var apptest = application(api.lang);
-                            if (apptest === undefined) {
+                            output = application(api.lang);
+                            if (output === undefined) {
                                 setTimeout(dom__event_recycle_xhrSource_statechange_appDelay, 100);
                             } else {
-                                output = apptest(api);
                                 execOutput();
                             }
                         };
@@ -4293,14 +4287,13 @@ global.prettydiff.meta = {
                                     } else {
                                         pd.data.diff = "";
                                     }
-                                    app = application(api.lang);
-                                    if (app === undefined) {
+                                    output = application(api.lang);
+                                    if (output === undefined) {
                                         if (pd.test.delayExecution === true) {
                                             pd.test.delayExecution = false;
                                             setTimeout(appDelay, 2000);
                                         }
                                     } else {
-                                        output = app(api);
                                         execOutput();
                                     }
                                     return;
