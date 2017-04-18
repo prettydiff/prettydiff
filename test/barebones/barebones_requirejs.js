@@ -35,26 +35,34 @@ require([
     safeSort,
     prettydiff
 ) {
-    var args   = JSON.parse(document.getElementById("object").value),
-        button = document.getElementById("button");
-    global.prettydiff.csspretty    = csspretty;
-    global.prettydiff.csvpretty    = csvpretty;
-    global.prettydiff.diffview     = diffview;
-    global.prettydiff.finalFile    = finalFile;
-    global.prettydiff.jspretty     = jspretty;
-    global.prettydiff.language     = language;
+    var button = document.getElementById("button");
+    global.prettydiff.csspretty = csspretty;
+    global.prettydiff.csvpretty = csvpretty;
+    global.prettydiff.diffview = diffview;
+    global.prettydiff.finalFile = finalFile;
+    global.prettydiff.jspretty = jspretty;
+    global.prettydiff.language = language;
     global.prettydiff.markuppretty = markuppretty;
-    global.prettydiff.options      = options;
-    global.prettydiff.safeSort     = safeSort;
-    global.prettydiff.prettydiff   = prettydiff;
-    button.onclick                 = function () {
+    global.prettydiff.safeSort = safeSort;
+    global.prettydiff.prettydiff = prettydiff;
+    button.onclick = function () {
+        var args = JSON.parse(document.getElementById("object").value);
         args.source = document
             .getElementById("input")
             .value;
-        document
-            .getElementById("output")
-            .value = global
-            .prettydiff
-            .prettydiff(args);
+        args.diff = document
+            .getElementById("diff")
+            .value;
+        if (args.mode === "parse") {
+            document
+                .getElementById("output")
+                .value = JSON.stringify(global.prettydiff.prettydiff(args));
+        } else {
+            document
+                .getElementById("output")
+                .value = global
+                .prettydiff
+                .prettydiff(args);
+        }
     };
 });
