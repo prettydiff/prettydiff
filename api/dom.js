@@ -2807,9 +2807,9 @@ global.prettydiff.meta = {
                 return;
             },
             application = function dom__event_recycle_application(lang) {
-                /*if (typeof global.prettydiff.prettydiff === "function") {
+                if (typeof global.prettydiff.prettydiff === "function") {
                     return global.prettydiff.prettydiff;
-                }*/
+                }
                 if (pd.data.mode === "diff" && typeof global.prettydiff.diffview === "function") {
                     api.lang = "text";
                     return global.prettydiff.diffview;
