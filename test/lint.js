@@ -602,13 +602,13 @@
                             absentfun = function taskrunner_lint_install_stat_absentfun() {
                                 // we only need to install once per day, so determine if JSLint has already
                                 // installed today
-                                if (today < date || jslint === undefined) {
+                                if (today < date) {
                                     console.log("Pulling latest JSLint...");
                                     return childtask();
                                 }
                                 jslint = require(
                                     process.cwd() + path.sep + "JSLint" + path.sep + "jslint.js"
-                                );
+                                );console.log(typeof jslint);
                                 console.log("Running prior installed JSLint version " + jslint().edition + ".");
                                 flag.lint  = true;
                                 flag.today = true;
