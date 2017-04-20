@@ -608,7 +608,7 @@
                                 }
                                 jslint = require(
                                     process.cwd() + path.sep + "JSLint" + path.sep + "jslint.js"
-                                );console.log(typeof jslint);
+                                );
                                 console.log("Running prior installed JSLint version " + jslint().edition + ".");
                                 flag.lint  = true;
                                 flag.today = true;
