@@ -4,7 +4,7 @@
 /*jslint for: true, this: true*/
 /***********************************************************************
  This is written by Austin Cheney on 3 Mar 2009.
- 
+
  Please see the license.txt file associated with the Pretty Diff
  application for license information.
  ***********************************************************************/
@@ -5653,6 +5653,15 @@ global.prettydiff.meta = {
                 delay();
             };
         if (page === "webtool") {
+            (function dom__announcement() {
+                var ann         = document.getElementById("headline").getElementsByTagName("p")[0],
+                    x           = Math.random(),
+                    circulation = [
+                        "<a href=\"license.txt\">License</a> change and new <a href=\"guide/unrelated_diff.xhtml\">diff algorithm</a> with version <a href=\"https://github.com/prettydiff/prettydiff/releases/tag/2.1.17\">2.1.17</a>.",
+                        "Version 2.2.0 brings complete biddle integration, <a href=\"https://asciinema.org/a/118428\">watch the video</a>."
+                    ];
+                ann.innerHTML = circulation[Math.floor(x * circulation.length)];
+            }());
             document.consolePrint = global.prettydiff.options.functions.consolePrint;
             pd.data.node.report.feed.body = (pd.data.node.report.feed.box === null)
                 ? null
