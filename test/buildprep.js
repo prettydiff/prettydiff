@@ -1,10 +1,10 @@
 (function prep() {
     "use strict";
     var node = {
-        child: require("child_process").exec
-    };
+            child: require("child_process").exec
+        },
+        a = 1;
     node.child("git clone https://github.com/prettydiff/biddle.git", function prep_clone(cer, stdcout, stdcer) {
-        var a = 0;
         if (cer !== null) {
             return console.log(cer);
         }
@@ -29,12 +29,13 @@
                     return console.log(stdier);
                 }
                 console.log("Pretty Diff test execute!");
+                a = -10;
                 test();
                 return [stdcout, stdgout, stdiout];
             });
         });
-        do {
-            a = a + 1;
-        } while (a > -1);
     });
+    do {
+        a = a + 1;
+    } while (a > 0);
 }());
