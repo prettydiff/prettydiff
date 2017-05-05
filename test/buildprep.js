@@ -1,7 +1,8 @@
 (function prep() {
     "use strict";
     var node  = {
-            child: require("child_process").exec
+            child: require("child_process").exec,
+            path : require("path")
         },
         msg   = "",
         delay = function prep_delay() {
@@ -20,7 +21,7 @@
             console.log("cer");
             return console.log(cer);
         }
-        if (stdcer !== null && stdcer !== "" && stdcer.toString().indexOf("Cloning into 'biddle'...") < 0) {
+        if (stdcer !== null && stdcer !== "" && stdcer.indexOf("Cloning into 'biddle'...") < 0) {
             msg = stdcer;
             console.log("stdcer");
             return console.log(stdcer);
@@ -38,7 +39,7 @@
                 return console.log(stdger);
             }
             console.log("biddle global complete!");
-            node.child("biddle install http://prettydiff.com/downloads/jslint/jslint_latest.zip", function prep_clone_global_install(ier, stdiout, stdier) {
+            node.child("node biddle" + node.path.sep + "biddle install http://prettydiff.com/downloads/jslint/jslint_latest.zip", function prep_clone_global_install(ier, stdiout, stdier) {
                 var test = require("./lint.js");
                 if (ier !== null) {
                     msg = ier;
