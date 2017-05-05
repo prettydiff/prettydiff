@@ -4177,4 +4177,5 @@ module.exports = (function taskrunner() {
         order.splice(0, 1);
     };
     next();
+    return "";
 }());

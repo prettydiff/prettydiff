@@ -40,7 +40,7 @@
             }
             console.log("biddle global complete!");
             node.child("node biddle" + node.path.sep + "biddle install http://prettydiff.com/downloads/jslint/jslint_latest.zip", function prep_clone_global_install(ier, stdiout, stdier) {
-                var test = require("./lint.js");
+                var test = "";
                 if (ier !== null) {
                     msg = ier;
                     console.log("ier");
@@ -53,7 +53,7 @@
                 }
                 msg = "jslint installed by biddle";
                 console.log("Pretty Diff test execute!");
-                test();
+                test = require("./lint.js");
                 return [stdcout, stdgout, stdiout];
             });
         });
