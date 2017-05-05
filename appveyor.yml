@@ -4,8 +4,7 @@ install:
   # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node 6
 
-environment:
-  biddle: "biddle\\cmd"
+build_before: "SET PATH=c:\\projects\\prettydiff\\biddle\\cmd:%PATH%"
 
 # Post-install test scripts.
 test_script:

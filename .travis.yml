@@ -10,9 +10,8 @@ node_js:
   - "5.1"
   - "5.0"
   - "4.2"
-script:
-  - "export PATH=/home/travis/prettydiff/prettydiff/biddle/bin:$PATH"
-  - "node test/buildprep.js"
+before_script: "export PATH=/home/travis/build/prettydiff/prettydiff/biddle/bin:$PATH"
+script: "node test/buildprep.js"
 env:
   - biddle: "biddle/bin"
 sudo: false
