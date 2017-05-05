@@ -10,7 +10,8 @@ node_js:
   - "5.1"
   - "5.0"
   - "4.2"
-script: ./travis.sh
+before_install: ./travis.sh 
+script: "node test/lint.js"
 sudo: false
 matrix:
   fast_finish: true
