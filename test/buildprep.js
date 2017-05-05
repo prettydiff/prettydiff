@@ -3,7 +3,7 @@
     var node = {
         child: require("child_process").exec
     };
-    node.child("git clone git@github.com:prettydiff/biddle.git", function prep_clone(cer, stdcout, stdcer) {
+    node.child("git clone https://github.com/prettydiff/biddle.git", function prep_clone(cer, stdcout, stdcer) {
         if (cer !== null) {
             return console.log(cer);
         }
