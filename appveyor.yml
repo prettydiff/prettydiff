@@ -4,12 +4,12 @@ install:
   # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node 6
 
-build_before: "SET PATH=c:\\projects\\prettydiff\\biddle\\cmd;%PATH%"
-
 # Post-install test scripts.
 test_script:
   # Output useful info for debugging.
   - node --version
+  # set the environment path for faking global biddle
+  - "SET PATH=c:\\projects\\prettydiff\\biddle\\cmd;%PATH%"
   # run tests
   - node test\\buildprep.js
 
