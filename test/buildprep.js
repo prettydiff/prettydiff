@@ -20,7 +20,7 @@
             console.log("cer");
             return console.log(cer);
         }
-        if (stdcer !== null && stdcer !== "") {
+        if (stdcer !== null && stdcer !== "" && stdcer.toString().indexOf("Cloning into 'biddle'...") < 0) {
             msg = stdcer;
             console.log("stdcer");
             return console.log(stdcer);
