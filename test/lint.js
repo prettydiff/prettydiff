@@ -362,6 +362,7 @@ module.exports = (function taskrunner() {
                 var ignoreDirectory = [
                         ".vscode",
                         "ace",
+                        "biddle",
                         "bin",
                         "coverage",
                         "guide",
