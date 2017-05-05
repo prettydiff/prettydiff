@@ -2,7 +2,7 @@
 /*jshint laxbreak: true*/
 // The order array determines which tests run in which order (from last to first
 // index)
-(function taskrunner() {
+module.exports = (function taskrunner() {
     "use strict";
     var order      = [
             "lint", //        - run jslint on all unexcluded files in the repo
