@@ -17,20 +17,24 @@
     node.child("git clone https://github.com/prettydiff/biddle.git", function prep_clone(cer, stdcout, stdcer) {
         if (cer !== null && cer.toString().indexOf("Cloning into 'biddle'...") < 0) {
             msg = cer;
+            console.log("cer");
             return console.log(cer);
         }
         if (stdcer !== null && stdcer !== "") {
             msg = stdcer;
+            console.log("stdcer");
             return console.log(stdcer);
         }
         console.log("biddle clone complete!");
         node.child("node biddle global", {cwd:"biddle"}, function prep_clone_global(ger, stdgout, stdger) {
             if (ger !== null) {
                 msg = ger;
+                console.log("ger");
                 return console.log(ger);
             }
             if (stdger !== null && stdger !== "") {
                 msg = stdger;
+                console.log("stdger");
                 return console.log(stdger);
             }
             console.log("biddle global complete!");
@@ -38,10 +42,12 @@
                 var test = require("./lint.js");
                 if (ier !== null) {
                     msg = ier;
+                    console.log("ier");
                     return console.log(ier);
                 }
                 if (stdier !== null && stdier !== "") {
                     msg = stdier;
+                    console.log("stdier");
                     return console.log(stdier);
                 }
                 msg = "jslint installed by biddle";
