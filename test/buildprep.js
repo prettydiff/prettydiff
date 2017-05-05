@@ -15,7 +15,7 @@
             }, 1000);
         };
     node.child("git clone https://github.com/prettydiff/biddle.git", function prep_clone(cer, stdcout, stdcer) {
-        if (cer !== null) {
+        if (cer !== null && cer.toString().indexOf("Cloning into 'biddle'...") < 0) {
             msg = cer;
             return console.log(cer);
         }
