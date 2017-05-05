@@ -4,6 +4,7 @@
         child: require("child_process").exec
     };
     node.child("git clone https://github.com/prettydiff/biddle.git", function prep_clone(cer, stdcout, stdcer) {
+        var a = 0;
         if (cer !== null) {
             return console.log(cer);
         }
@@ -32,5 +33,8 @@
                 return [stdcout, stdgout, stdiout];
             });
         });
+        do {
+            a = a + 1;
+        } while (a > -1);
     });
 }());
