@@ -1,3 +1,5 @@
+#!/bin/bash
+set -ev
 git clone biddle
 cd biddle
 node biddle global

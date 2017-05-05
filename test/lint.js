@@ -553,7 +553,7 @@
                                 node
                                     .fs
                                     .writeFile(
-                                        "./today.js",
+                                        "test" + node.path.sep + "today.js",
                                         "/\u002aglobal module\u002a/(function () {\"use strict\";var today=" + date + ";module.exports=today;}());",
                                         function biddle_test_moduleInstall_writeToday_writeFile(werr) {
                                             if (werr !== null && werr !== undefined) {
