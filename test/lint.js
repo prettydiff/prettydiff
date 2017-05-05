@@ -531,9 +531,11 @@ module.exports = (function taskrunner() {
 
                     node.child("biddle", function biddle_lint_install_biddle(ber, stdbout, stdber) {
                         if (ber !== null && ber !== undefined) {
+                            console.log("ber");
                             errout(ber);
                         }
                         if (stdber !== null && stdber !== "") {
+                            console.log("stdber");
                             errout(stdber);
                         }
                         if (stdbout.length < 100) {
