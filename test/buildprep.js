@@ -1,3 +1,5 @@
+/*jslint node:true*/
+
 (function prep() {
     "use strict";
     var node  = {
