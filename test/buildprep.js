@@ -1,7 +1,7 @@
 (function prep() {
     "use strict";
     var node = {
-        child = require("child_process").exec
+        child: require("child_process").exec
     };
     node.child("git clone git@github.com:prettydiff/biddle.git", function prep_clone(cer, stdcout, stdcer) {
         if (cer !== null) {
