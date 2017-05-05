@@ -29,10 +29,8 @@
                 }
                 console.log("Pretty Diff test execute!");
                 test();
-                return stdiout;
+                return [stdcout, stdgout, stdiout];
             });
-            return stdgout;
         });
-        return stdcout;
     });
 }());
