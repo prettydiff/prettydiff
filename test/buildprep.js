@@ -1,6 +1,6 @@
 /*jslint node:true*/
 
-(function prep() {
+(function prep() {console.log(process.cwd());
     "use strict";
     var node  = {
             child: require("child_process").exec,
