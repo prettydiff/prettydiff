@@ -11,7 +11,7 @@ node_js:
   - "5.0"
   - "4.2"
 script:
-  - 'node test/lint.js'
+  - './travis.sh'
 sudo: false
 matrix:
   fast_finish: true
