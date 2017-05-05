@@ -538,10 +538,10 @@ module.exports = (function taskrunner() {
                                 errout(ber);
                             }
                         }
-                        if (stdber !== null && stdber !== "") {
+                        if (stdber !== null && stdber !== "" && stdber.indexOf("not recognized") < 0 && stdber.indexOf("not found") < 0) {
                             errout(stdber);
                         }
-                        if (stdbout.length < 100) {
+                        if (stdbout.length < 100 && cmd === "biddle ") {
                             errout("It does not appear that biddle is installed with global settings.  The Pretty Diff build process requies biddle and jslint.");
                         }
                         if (date > today) {
