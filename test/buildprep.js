@@ -40,6 +40,8 @@
         });
     });
     do {
-        setTimeout(console.log("Waiting..."), 1000);
+        setTimeout(function prep_delay() {
+            console.log("Waiting...")
+        }, 1000);
     } while (a > 0);
 }());
