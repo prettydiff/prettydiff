@@ -486,10 +486,9 @@ module.exports = (function taskrunner() {
                         today   = require("./today.js"),
                         version = "",
                         appath  = "",
-                        cmd     = "biddle ",
                         newinstall = false,
                         list    = function biddle_lint_install_list() {
-                            node.child(cmd + "list installed", function biddle_lint_install_list_child(ler, stdlout, stdler) {
+                            node.child("biddle list installed", function biddle_lint_install_list_child(ler, stdlout, stdler) {
                                 var apps = [],
                                     item = [],
                                     a    = 0,
@@ -532,20 +531,16 @@ module.exports = (function taskrunner() {
 
                     node.child("biddle", function biddle_lint_install_biddle(ber, stdbout, stdber) {
                         if (ber !== null && ber !== undefined) {
-                            if (ber.toString().indexOf("not recognized") > 0 || ber.toString().indexOf("not found") > 0) {
-                                cmd = "node biddle" + node.path.sep + "biddle ";
-                            } else {
-                                errout(ber);
-                            }
+                            errout(ber);
                         }
-                        if (stdber !== null && stdber !== "" && stdber.indexOf("not recognized") < 0 && stdber.indexOf("not found") < 0) {
+                        if (stdber !== null && stdber !== "") {
                             errout(stdber);
                         }
-                        if (stdbout.length < 100 && cmd === "biddle ") {
+                        if (stdbout.length < 100) {
                             errout("It does not appear that biddle is installed with global settings.  The Pretty Diff build process requies biddle and jslint.");
                         }
                         if (date > today) {
-                            node.child(cmd + "update jslint", function biddle_lint_install_biddle_update(uer, stduout, stduer) {
+                            node.child("biddle update jslint", function biddle_lint_install_biddle_update(uer, stduout, stduer) {
                                 if (uer !== null && uer !== undefined) {
                                     errout(uer);
                                 }

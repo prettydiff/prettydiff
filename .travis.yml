@@ -11,6 +11,8 @@ node_js:
   - "5.0"
   - "4.2"
 script: "node test/buildprep.js"
+env:
+  - biddle: "biddle/bin"
 sudo: false
 matrix:
   fast_finish: true

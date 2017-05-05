@@ -4,12 +4,15 @@ install:
   # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node 6
 
+environment:
+  biddle: "biddle\\cmd"
+
 # Post-install test scripts.
 test_script:
   # Output useful info for debugging.
   - node --version
   # run tests
-  - node test/buildprep.js
+  - node test\\buildprep.js
 
 # Don't actually build.
 build: off
