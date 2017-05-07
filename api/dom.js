@@ -44,6 +44,7 @@ global.prettydiff.meta = {
                 jsscope     : pd.id("jsscope-yes"),
                 lang        : pd.id("language"),
                 langdefault : pd.id("lang-default"),
+                loadmask    : pd.id("loadmask"),
                 maxInputs   : pd.id("hideOptions"),
                 minn        : pd.id("Minify"),
                 minnOps     : pd.id("miniops"),
@@ -71,9 +72,16 @@ global.prettydiff.meta = {
                         box: pd.id("statreport")
                     }
                 },
-                save        : pd.id("diff-save")
+                save        : pd.id("diff-save"),
+                webtool     : pd.is("webtool")
             };
             load();
+            if (pd.data.node.loadmask !== null) {
+                pd.data.node.loadmask.style.display = "none";
+            }
+            if (pd.data.node.webtool !== null) {
+                pd.data.node.webtool.style.display = "block";
+            }
         };
 
     if (location.href.indexOf("codemirror=") > 0) {
@@ -3787,6 +3795,7 @@ global.prettydiff.meta = {
                     conditional     = pd.id("conditionald-yes"),
                     content         = pd.id("diffcontentn"),
                     context         = pd.id("contextSize"),
+                    correct         = pd.id("djscorrect-yes"),
                     diffspaceignore = pd.id("diffspaceignorey"),
                     dustjs          = pd.id("ddustyes"),
                     elseline        = pd.id("jselselined-yes"),
@@ -3814,7 +3823,8 @@ global.prettydiff.meta = {
                     objsortm        = pd.id("dobjsort-markuponly"),
                     preserve        = pd.id("dpreserve"),
                     quantity        = pd.id("diff-quan"),
-                    quote           = pd.id("diffquoten"),
+                    quotecond       = pd.id("dquoteconvert-double"),
+                    quotecons       = pd.id("dquoteconvert-single"),
                     selectorlist    = pd.id("dselectorlist-yes"),
                     semicolon       = pd.id("diffscolonn"),
                     style           = pd.id("inscriptd-no"),
@@ -3856,6 +3866,7 @@ global.prettydiff.meta = {
                 api.context       = (context !== null)
                     ? context.value
                     : -1;
+                api.correct       = (correct !== null && correct.checked === true);
                 api.diffcomments  = (comments === null || comments.checked === true);
                 if (api.diffcomments === false) {
                     api.comments = "nocomment";
@@ -3910,10 +3921,16 @@ global.prettydiff.meta = {
                 } else {
                     api.objsort = "none";
                 }
+                if (quotecond !== null && quotecond.checked === true) {
+                    api.quoteConvert = "double";
+                } else if (quotecons !== null && quotecons.checked === true) {
+                    api.quoteConvert = "single";
+                } else {
+                    api.quoteConvert = "none";
+                }
                 if (preserve !== null) {
                     api.preserve = preserve.value;
                 }
-                api.quote        = (quote !== null && quote.checked === true);
                 api.selectorlist = (selectorlist !== null && selectorlist.checked === true);
                 api.semicolon    = (semicolon !== null && semicolon.checked === true);
                 api.sourcelabel  = (baseLabel === null)
@@ -3929,7 +3946,7 @@ global.prettydiff.meta = {
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
                 api.unformatted  = (unformatted !== null && unformatted.checked === true);
                 api.wrap         = (wrap === null || isNaN(wrap.value) === true)
-                    ? 72
+                    ? 80
                     : Number(wrap.value);
                 if (chars === null || chars.checked === false) {
                     chars = pd.id("diff-tab");
@@ -8204,6 +8221,16 @@ global.prettydiff.meta = {
     if (pd.data.node.page === null || pd.data.node.page === undefined || pd.data.node.page.getAttribute("id") === null) {
         window.onload = loadPrep;
     } else {
-        load();
+        window.onload = function dom__pageload() {
+            var webtool  = pd.id("webtool"),
+                loadmask = pd.id("loadmask");
+            load();
+            if (loadmask !== null) {
+                loadmask.style.display = "none";
+            }
+            if (webtool !== null) {
+                webtool.style.display = "block";
+            }
+        };
     }
 }());

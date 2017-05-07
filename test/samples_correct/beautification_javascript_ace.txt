@@ -117,17 +117,27 @@ define("ace/lib/regexp", [
 ], function (e, t, n) {
     "use strict";
     function o(e) {
-        return (e.global
-            ? "g"
-            : "") + (e.ignoreCase
-            ? "i"
-            : "") + (e.multiline
-            ? "m"
-            : "") + (e.extended
-            ? "x"
-            : "") + (e.sticky
-            ? "y"
-            : "");
+        return (
+            e.global
+                ? "g"
+                : ""
+        ) + (
+            e.ignoreCase
+                ? "i"
+                : ""
+        ) + (
+            e.multiline
+                ? "m"
+                : ""
+        ) + (
+            e.extended
+                ? "x"
+                : ""
+        ) + (
+            e.sticky
+                ? "y"
+                : ""
+        );
     }
     function u(e, t, n) {
         if (Array.prototype.indexOf) {
@@ -558,9 +568,11 @@ define("ace/lib/es5-shim", [
         };
     }
     Object.getPrototypeOf || (Object.getPrototypeOf = function (t) {
-        return t.__proto__ || (t.constructor
-            ? t.constructor.prototype
-            : o);
+        return t.__proto__ || (
+            t.constructor
+                ? t.constructor.prototype
+                : o
+        );
     });
     if (!Object.getOwnPropertyDescriptor) {
         var y = "Object.getOwnPropertyDescriptor called on a non-object: ";
@@ -1422,26 +1434,42 @@ define("ace/lib/event", [
     };
     var s = !i.isMac || !i.isOpera || "KeyboardEvent" in window
         ? function (e) {
-            return 0 | (e.ctrlKey
-                ? 1
-                : 0) | (e.altKey
-                ? 2
-                : 0) | (e.shiftKey
-                ? 4
-                : 0) | (e.metaKey
-                ? 8
-                : 0);
+            return 0 | (
+                e.ctrlKey
+                    ? 1
+                    : 0
+            ) | (
+                e.altKey
+                    ? 2
+                    : 0
+            ) | (
+                e.shiftKey
+                    ? 4
+                    : 0
+            ) | (
+                e.metaKey
+                    ? 8
+                    : 0
+            );
         }
         : function (e) {
-            return 0 | (e.metaKey
-                ? 1
-                : 0) | (e.altKey
-                ? 2
-                : 0) | (e.shiftKey
-                ? 4
-                : 0) | (e.ctrlKey
-                ? 8
-                : 0);
+            return 0 | (
+                e.metaKey
+                    ? 1
+                    : 0
+            ) | (
+                e.altKey
+                    ? 2
+                    : 0
+            ) | (
+                e.shiftKey
+                    ? 4
+                    : 0
+            ) | (
+                e.ctrlKey
+                    ? 8
+                    : 0
+            );
         };
     t.getModifierString = function (e) {
         return r.KEY_MODS[s(e)];
@@ -1710,15 +1738,18 @@ define("ace/keyboard/textinput", [
             }
             function R() {
                 clearTimeout(q),
-                q = setTimeout(function () {
-                    p && (n.style.cssText = p, p = ""),
-                    t.renderer.$keepTextAreaAtCursor == null && (
-                        t.renderer.$keepTextAreaAtCursor = !0,
-                        t.renderer.$moveTextAreaToCursor()
-                    );
-                }, i.isOldIE
-                    ? 200
-                    : 0);
+                q = setTimeout(
+                    function () {
+                        p && (n.style.cssText = p, p = ""),
+                        t.renderer.$keepTextAreaAtCursor == null && (
+                            t.renderer.$keepTextAreaAtCursor = !0,
+                            t.renderer.$moveTextAreaToCursor()
+                        );
+                    },
+                    i.isOldIE
+                        ? 200
+                        : 0
+                );
             }
             var n = s.createElement("textarea");
             n.className     = "ace_text-input",
@@ -1900,10 +1931,12 @@ define("ace/keyboard/textinput", [
                         return r.preventDefault(e);
                     }
                     M(e, s)
-                        ? (i
-                            ? t.onCut()
-                            : t.onCopy(),
-                        r.preventDefault(e))
+                        ? (
+                            i
+                                ? t.onCut()
+                                : t.onCopy(),
+                            r.preventDefault(e)
+                        )
                         : (l = !0, n.value = s, n.select(), setTimeout(function () {
                             l = !1,
                             w(),
@@ -2064,9 +2097,11 @@ define("ace/keyboard/textinput", [
                     return;
                 }
                 p || (p = n.style.cssText),
-                n.style.cssText = (o
-                    ? "z-index:100000;"
-                    : "") + "height:" + n.style.height + ";" + (
+                n.style.cssText = (
+                    o
+                        ? "z-index:100000;"
+                        : ""
+                ) + "height:" + n.style.height + ";" + (
                     i.isIE
                         ? "opacity:0.1;"
                         : ""
@@ -2735,12 +2770,16 @@ define("ace/mouse/dragdrop_handler", [
                     column: e.column,
                     row   : e.row
                 };
-            f / s <= 2 && (c.column = c.column + a.x.left < a.x.right
-                ? -3
-                : 2),
-            l / i <= 1 && (c.row = c.row + a.y.top < a.y.bottom
-                ? -1
-                : 1);
+            f / s <= 2 && (
+                c.column = c.column + a.x.left < a.x.right
+                    ? -3
+                    : 2
+            ),
+            l / i <= 1 && (
+                c.row = c.row + a.y.top < a.y.bottom
+                    ? -1
+                    : 1
+            );
             var h = e.row != c.row,
                 v = e.column != c.column,
                 m = !n || e.row != n.row;
@@ -3316,9 +3355,11 @@ define("ace/lib/app_config", [
         },
         this.setDefaultValue  = function (e, t, n) {
             var r = this.$defaultOptions[e] || (this.$defaultOptions[e] = {});
-            r[t] && (r.forwardTo
-                ? this.setDefaultValue(r.forwardTo, t, n)
-                : r[t].value = n);
+            r[t] && (
+                r.forwardTo
+                    ? this.setDefaultValue(r.forwardTo, t, n)
+                    : r[t].value = n
+            );
         },
         this.setDefaultValues = function (e, t) {
             Object
@@ -3691,10 +3732,12 @@ define("ace/mouse/fold_handler", [
             var n = t.getDocumentPosition(),
                 r = e.session,
                 i = r.getFoldAt(n.row, n.column, 1);
-            i && (t.getAccelKey()
-                ? r.removeFold(i)
-                : r.expandFold(i),
-            t.stop());
+            i && (
+                t.getAccelKey()
+                    ? r.removeFold(i)
+                    : r.expandFold(i),
+                t.stop()
+            );
         }),
         e.on("gutterclick", function (t) {
             var n = e
@@ -3884,18 +3927,24 @@ define("ace/range", [
                 r = e.start;
             return t = this.compare(n.row, n.column),
             t == 1
-                ? (t = this.compare(r.row, r.column), t == 1
-                    ? 2
-                    : t == 0
-                        ? 1
-                        : 0)
+                ? (
+                    t = this.compare(r.row, r.column),
+                    t == 1
+                        ? 2
+                        : t == 0
+                            ? 1
+                            : 0
+                )
                 : t == -1
                     ? -2
-                    : (t = this.compare(r.row, r.column), t == -1
-                        ? -1
-                        : t == 1
-                            ? 42
-                            : 0);
+                    : (
+                        t = this.compare(r.row, r.column),
+                        t == -1
+                            ? -1
+                            : t == 1
+                                ? 42
+                                : 0
+                    );
         },
         this.comparePoint  = function (e) {
             return this.compare(e.row, e.column);
@@ -4557,9 +4606,11 @@ define("ace/selection", [
             var n = this
                 .session
                 .documentToScreenPosition(this.lead.row, this.lead.column);
-            t === 0 && (this.$desiredColumn
-                ? n.column = this.$desiredColumn
-                : this.$desiredColumn = n.column);
+            t === 0 && (
+                this.$desiredColumn
+                    ? n.column            = this.$desiredColumn
+                    : this.$desiredColumn = n.column
+            );
             var r = this
                 .session
                 .screenToDocumentPosition(n.row + e, n.column);
@@ -4720,9 +4771,11 @@ define("ace/tokenizer", [
                                     rule      : f
                                 }), f.token = f.token[0])
                                 : (f.tokenArray = f.token, f.token = null, f.onMatch = this.$arrayTokens)
-                        : typeof f.token == "function" && !f.onMatch && (c > 1
-                            ? f.onMatch = this.$applyToken
-                            : f.onMatch = f.token),
+                        : typeof f.token == "function" && !f.onMatch && (
+                            c > 1
+                                ? f.onMatch = this.$applyToken
+                                : f.onMatch = f.token
+                        ),
                     c > 1 && (
                         /\\\d/.test(f.regex)
                             ? l = f.regex.replace(/\\([0-9]+)/g, function (e, t) {
@@ -5758,9 +5811,11 @@ define("ace/mode/text", [
             }),
             a == Infinity && (a = E, s = !1, o = !1),
             l && a % f != 0 && (a = Math.floor(a / f) * f),
-            w(o
-                ? m
-                : v);
+            w(
+                o
+                    ? m
+                    : v
+            );
         },
         this.toggleBlockComment  = function (e, t, n, r) {
             var i = this.blockComment;
@@ -5958,9 +6013,11 @@ define("ace/apply_delta", [
             "delta.end must contained in document for 'remove' actions"
         );
         var o = s.row - n.row,
-            u = s.column - (o == 0
-                ? n.column
-                : 0);
+            u = s.column - (
+                o == 0
+                    ? n.column
+                    : 0
+            );
         (o != t.lines.length - 1 || t.lines[o].length != u) && r(
             t,
             "delta.range must match delta lines"
@@ -6017,12 +6074,16 @@ define("ace/anchor", [
         }
         function t(t, n, r) {
             var i = t.action == "insert",
-                s = (i
-                    ? 1
-                    : -1) * (t.end.row - t.start.row),
-                o = (i
-                    ? 1
-                    : -1) * (t.end.column - t.start.column),
+                s = (
+                    i
+                        ? 1
+                        : -1
+                ) * (t.end.row - t.start.row),
+                o = (
+                    i
+                        ? 1
+                        : -1
+                ) * (t.end.column - t.start.column),
                 u = t.start,
                 a = i
                     ? u
@@ -6035,9 +6096,11 @@ define("ace/anchor", [
                 : e(a, n, !r)
                     ? {
                         row   : n.row + s,
-                        column: n.column + (n.row == a.row
-                            ? o
-                            : 0)
+                        column: n.column + (
+                            n.row == a.row
+                                ? o
+                                : 0
+                        )
                     }
                     : {
                         column: u.column,
@@ -6324,9 +6387,11 @@ define("ace/document", [
         this.insertMergedLines        = function (e, t) {
             var n = this.clippedPos(e.row, e.column),
                 r = {
-                    column: (t.length == 1
-                        ? n.column
-                        : 0) + t[t.length - 1].length,
+                    column: (
+                        t.length == 1
+                            ? n.column
+                            : 0
+                    ) + t[t.length - 1].length,
                     row   : n.row + t.length - 1
                 };
             return this.applyDelta({action: "insert", end: r, lines: t, start: n}),
@@ -6421,9 +6486,11 @@ define("ace/document", [
         },
         this.applyDelta               = function (e, t) {
             var n = e.action == "insert";
-            if (n
-                ? e.lines.length <= 1 && !e.lines[0]
-                : !o.comparePoints(e.start, e.end)) {
+            if (
+                n
+                    ? e.lines.length <= 1 && !e.lines[0]
+                    : !o.comparePoints(e.start, e.end)
+            ) {
                 return;
             }
             n && e.lines.length > 2e4 && this.$splitAndapplyLargeDelta(e, 2e4),
@@ -7372,14 +7439,18 @@ define("ace/edit_session/folding", [
                     o = s.end.row,
                     u = s.start.row;
                 if (o >= t) {
-                    u < t && (u >= e
-                        ? r = r - t - u
-                        : r = 0);
+                    u < t && (
+                        u >= e
+                            ? r = r - t - u
+                            : r = 0
+                    );
                     break;
                 }
-                o >= e && (u >= e
-                    ? r = r - o - u
-                    : r = r - o - e + 1);
+                o >= e && (
+                    u >= e
+                        ? r = r - o - u
+                        : r = r - o - e + 1
+                );
             }
             return r;
         },
@@ -7488,9 +7559,11 @@ define("ace/edit_session/folding", [
                 o.start.row    = s[0].start.row,
                 o.start.column = s[0].start.column;
             }
-            this.$updating || (this.$useWrapMode
-                ? this.$updateWrapData(n, r)
-                : this.$updateRowLengthCache(n, r)),
+            this.$updating || (
+                this.$useWrapMode
+                    ? this.$updateWrapData(n, r)
+                    : this.$updateRowLengthCache(n, r)
+            ),
             this.$modified = !0,
             this._emit("changeFold", {
                 action: "remove",
@@ -7636,10 +7709,12 @@ define("ace/edit_session/folding", [
                         column: s.column + 1,
                         row   : s.row
                     }))
-                        ? (n.comparePoint(i) == 1
-                            ? n.end = i
-                            : n.start = i,
-                        n.start.column++)
+                        ? (
+                            n.comparePoint(i) == 1
+                                ? n.end   = i
+                                : n.start = i,
+                            n.start.column++
+                        )
                         : n = this.getCommentFoldRange(s.row, s.column) || n;
             } else {
                 var o = this.getFoldsInRange(n);
@@ -7815,10 +7890,13 @@ define("ace/edit_session/folding", [
                 i = n === "end"
                     ? -1
                     : 1,
-                s = this.getFoldAt(e, i === -1
-                    ? 0
-                    : r.length,
-                i);
+                s = this.getFoldAt(
+                    e,
+                    i === -1
+                        ? 0
+                        : r.length,
+                    i
+                );
             if (s) {
                 t.children || t.all
                     ? this.removeFold(s)
@@ -7839,17 +7917,27 @@ define("ace/edit_session/folding", [
                     var a = u.range.start.row + 1,
                         f = u.range.end.row;
                 }
-                this.foldAll(a, f, t.all
-                    ? 1e4
-                    : 0);
+                this.foldAll(
+                    a,
+                    f,
+                    t.all
+                        ? 1e4
+                        : 0
+                );
             } else {
                 t.children
-                    ? (f = o
-                        ? o.end.row
-                        : this.getLength(),
-                    this.foldAll(e + 1, f, t.all
-                        ? 1e4
-                        : 0))
+                    ? (
+                        f = o
+                            ? o.end.row
+                            : this.getLength(),
+                        this.foldAll(
+                            e + 1,
+                            f,
+                            t.all
+                                ? 1e4
+                                : 0
+                        )
+                    )
                     : o && (t.all && (o.collapseChildren = 1e4), this.addFold("...", o));
             }
             return o;
@@ -8388,9 +8476,11 @@ define("ace/edit_session", [
             var n = t.inFront
                 ? this.$frontMarkers
                 : this.$backMarkers;
-            t && (delete n[e], this._signal(t.inFront
-                ? "changeFrontMarker"
-                : "changeBackMarker"));
+            t && (delete n[e], this._signal(
+                t.inFront
+                    ? "changeFrontMarker"
+                    : "changeBackMarker"
+            ));
         },
         this.getMarkers                  = function (e) {
             return e
@@ -9372,9 +9462,13 @@ define("ace/edit_session", [
                 }
                 o = o + u,
                 r++,
-                r > d && (r = p.end.row + 1, p = this.getNextFoldLine(r, p), d = p
-                    ? p.start.row
-                    : Infinity),
+                r > d && (
+                    r = p.end.row + 1,
+                    p = this.getNextFoldLine(r, p),
+                    d = p
+                        ? p.start.row
+                        : Infinity
+                ),
                 c && (this.$docRowCache.push(r), this.$screenRowCache.push(o));
             }
             if (p && p.start.row <= r) {
@@ -9518,9 +9612,13 @@ define("ace/edit_session", [
                         ? u.length + 1
                         : 1,
                     s++,
-                    s > o && (s = t.end.row + 1, t = this.$foldData[r++], o = t
-                        ? t.start.row
-                        : Infinity);
+                    s > o && (
+                        s = t.end.row + 1,
+                        t = this.$foldData[r++],
+                        o = t
+                            ? t.start.row
+                            : Infinity
+                    );
                 }
             }
             return this.lineWidgets && (e = e + this.$getWidgetScreenLength()),
@@ -9897,13 +9995,15 @@ define("ace/search", [
                 r = t.skipCurrent != 0,
                 i = t.range,
                 s = t.start;
-            s || (s = i
-                ? i[
-                    n
-                        ? "end"
-                        : "start"
-                ]
-                : e.selection.getRange()),
+            s || (
+                s = i
+                    ? i[
+                        n
+                            ? "end"
+                            : "start"
+                    ]
+                    : e.selection.getRange()
+            ),
             s.start && (s = s[
                 r != n
                     ? "end"
@@ -9970,9 +10070,11 @@ define("ace/keyboard/hash_handler", [
 ], function (e, t, n) {
     "use strict";
     function o(e, t) {
-        this.platform          = t || (i.isMac
-            ? "mac"
-            : "win"),
+        this.platform          = t || (
+            i.isMac
+                ? "mac"
+                : "win"
+        ),
         this.commands          = {},
         this.commandKeyBinding = {},
         this.addCommands(e),
@@ -9996,9 +10098,11 @@ define("ace/keyboard/hash_handler", [
             e.bindKey && this._buildKeyHash(e);
         },
         this.removeCommand        = function (e, t) {
-            var n = e && (typeof e == "string"
-                ? e
-                : e.name);
+            var n = e && (
+                typeof e == "string"
+                    ? e
+                    : e.name
+            );
             e = this.commands[n],
             t || delete this.commands[n];
             var r = this.commandKeyBinding;
@@ -10037,9 +10141,11 @@ define("ace/keyboard/hash_handler", [
                         i.forEach(function (e) {
                             var t = this.parseKeys(e),
                                 n = s[t.hashId] + t.key;
-                            r = r + (r
-                                ? " "
-                                : "") + n,
+                            r = r + (
+                                r
+                                    ? " "
+                                    : ""
+                            ) + n,
                             this._addCommandToBinding(r, "chainKeys");
                         }, this),
                         r = r + " ";
@@ -10060,9 +10166,11 @@ define("ace/keyboard/hash_handler", [
                 Array.isArray(i[t])
                     ? (s = i[t].indexOf(n)) != -1 && i[t].splice(s, 1)
                     : i[t] = [i[t]],
-                typeof r != "number" && (r || n.isDefault
-                    ? r = -100
-                    : r = e(n));
+                typeof r != "number" && (
+                    r || n.isDefault
+                        ? r = -100
+                        : r = e(n)
+                );
                 var o = i[t];
                 for (s = 0; s < o.length; s = s + 1) {
                     var u = o[s],
@@ -11167,10 +11275,12 @@ define("ace/commands/default_commands", [
                         e.selection.moveCursorTo(n.row, n.column),
                         e.selection.selectTo(n.row, n.column + a)
                     )
-                    : (o = e.session.doc.getLine(n.row).length > o
-                        ? o + 1
-                        : o,
-                    e.selection.moveCursorTo(n.row, o));
+                    : (
+                        o = e.session.doc.getLine(n.row).length > o
+                            ? o + 1
+                            : o,
+                        e.selection.moveCursorTo(n.row, o)
+                    );
             },
             multiSelectAction: "forEach",
             name             : "joinlines",
@@ -11264,10 +11374,12 @@ define("ace/editor", [
             var n = e.getContainerElement();
             this.container         = n,
             this.renderer          = e,
-            this.commands          = new v(o.isMac
-                ? "mac"
-                : "win",
-            m),
+            this.commands          = new v(
+                o.isMac
+                    ? "mac"
+                    : "win",
+                m
+            ),
             this.textInput         = new u(e.getTextAreaContainer(), this),
             this.renderer.textarea = this
                 .textInput
@@ -11672,9 +11784,11 @@ define("ace/editor", [
                         i = r.stepForward(),
                         i && i.value === s && i
                             .type
-                            .indexOf("tag-name") !== -1 && (u.value === "<"
-                                ? o++
-                                : u.value === "</" && o--);
+                            .indexOf("tag-name") !== -1 && (
+                                u.value === "<"
+                                    ? o++
+                                    : u.value === "</" && o--
+                            );
                     } while (i && o >= 0);
                 } else {
                     do {
@@ -11682,9 +11796,11 @@ define("ace/editor", [
                         u = r.stepBackward(),
                         i && i.value === s && i
                             .type
-                            .indexOf("tag-name") !== -1 && (u.value === "<"
-                                ? o++
-                                : u.value === "</" && o--);
+                            .indexOf("tag-name") !== -1 && (
+                                u.value === "<"
+                                    ? o++
+                                    : u.value === "</" && o--
+                            );
                     } while (u && o <= 0);
                     r.stepForward();
                 }
@@ -12015,9 +12131,11 @@ define("ace/editor", [
                 u = n.getLine(i.row),
                 c = r.checkOutdent(l, u, e),
                 h = n.insert(i, e);
-            s && s.selection && (s.selection.length == 2
-                ? this.selection.setSelectionRange(new p(i.row, f + s.selection[0], i.row, f + s.selection[1]))
-                : this.selection.setSelectionRange(new p(i.row + s.selection[0], s.selection[1], i.row + s.selection[2], s.selection[3])));
+            s && s.selection && (
+                s.selection.length == 2
+                    ? this.selection.setSelectionRange(new p(i.row, f + s.selection[0], i.row, f + s.selection[1]))
+                    : this.selection.setSelectionRange(new p(i.row + s.selection[0], s.selection[1], i.row + s.selection[2], s.selection[3]))
+            );
             if (n.getDocument().isNewLine(e)) {
                 var d = r.getNextLineIndent(l, u.slice(0, i.column), n.getTabString());
                 n.insert({
@@ -12171,9 +12289,11 @@ define("ace/editor", [
         this.remove                       = function (e) {
             this
                 .selection
-                .isEmpty() && (e == "left"
-                    ? this.selection.selectLeft()
-                    : this.selection.selectRight());
+                .isEmpty() && (
+                    e == "left"
+                        ? this.selection.selectLeft()
+                        : this.selection.selectRight()
+                );
             var t = this.getSelectionRange();
             if (this.getBehavioursEnabled()) {
                 var n = this.session,
@@ -12516,9 +12636,13 @@ define("ace/editor", [
                 n = this.$getSelectedRows(s),
                 r = this
                     .session
-                    .$moveLines(n.first, n.last, t
-                        ? 0
-                        : e),
+                    .$moveLines(
+                        n.first,
+                        n.last,
+                        t
+                            ? 0
+                            : e
+                    ),
                 t && e == -1 && (r = 0),
                 s.moveBy(r, 0),
                 i.fromOrientedRange(s);
@@ -12551,9 +12675,13 @@ define("ace/editor", [
                     l = l - 1,
                     u = this
                         .session
-                        .$moveLines(h, p, t
-                            ? 0
-                            : e),
+                        .$moveLines(
+                            h,
+                            p,
+                            t
+                                ? 0
+                                : e
+                        ),
                     t && e == -1 && (c = l + 1);
                     while (c <= l) {
                         o[c].moveBy(u, 0),
@@ -12815,10 +12943,12 @@ define("ace/editor", [
                         i = r.stepBackward(),
                         i && (
                             i.type.indexOf("tag-close") !== -1 && h.setEnd(r.getCurrentTokenRow(), r.getCurrentTokenColumn() + 1),
-                            s.value === v && s.type.indexOf("tag-name") !== -1 && (i.value === "<"
-                                ? a[v]++
-                                : i.value === "</" && a[v]--,
-                            a[v] === 0 && (u = !0))
+                            s.value === v && s.type.indexOf("tag-name") !== -1 && (
+                                i.value === "<"
+                                    ? a[v]++
+                                    : i.value === "</" && a[v]--,
+                                a[v] === 0 && (u = !0)
+                            )
                         );
                     } while (i && !u);
                 }
@@ -12830,13 +12960,15 @@ define("ace/editor", [
                     );
             }
             d = h && h.cursor || d,
-            d && (e
-                ? h && t
-                    ? this.selection.setRange(h)
-                    : h && h.isEqual(this.getSelectionRange())
-                        ? this.clearSelection()
-                        : this.selection.selectTo(d.row, d.column)
-                : this.selection.moveTo(d.row, d.column));
+            d && (
+                e
+                    ? h && t
+                        ? this.selection.setRange(h)
+                        : h && h.isEqual(this.getSelectionRange())
+                            ? this.clearSelection()
+                            : this.selection.selectTo(d.row, d.column)
+                    : this.selection.moveTo(d.row, d.column)
+            );
         },
         this.gotoLine                     = function (e, t, n) {
             this
@@ -13495,9 +13627,13 @@ define("ace/layer/gutter", [
                 d = -1,
                 v = n;
             for (;;) {
-                v > o && (v = s.end.row + 1, s = t.getNextFoldLine(v, s), o = s
-                    ? s.start.row
-                    : Infinity);
+                v > o && (
+                    v = s.end.row + 1,
+                    s = t.getNextFoldLine(v, s),
+                    o = s
+                        ? s.start.row
+                        : Infinity
+                );
                 if (v > i) {
                     while (this.$cells.length > d + 1) {
                         p = this
@@ -13636,15 +13772,23 @@ define("ace/layer/marker", [
         };
     (function () {
         function e(e, t, n, r) {
-            return (e
-                ? 1
-                : 0) | (t
-                ? 2
-                : 0) | (n
-                ? 4
-                : 0) | (r
-                ? 8
-                : 0);
+            return (
+                e
+                    ? 1
+                    : 0
+            ) | (
+                t
+                    ? 2
+                    : 0
+            ) | (
+                n
+                    ? 4
+                    : 0
+            ) | (
+                r
+                    ? 8
+                    : 0
+            );
         }
         this.$padding             = 0,
         this.setPadding           = function (e) {
@@ -13719,12 +13863,20 @@ define("ace/layer/marker", [
                     : l == f
                         ? 0
                         : n.end.column,
-                this.drawSingleLineMarker(t, d, i + (l == a
-                    ? " ace_start"
-                    : "") + " ace_br" + e(l == a || l == a + 1 && n.start.column, c<h, h> p, l == f), s, l == f
-                    ? 0
-                    : 1,
-                o);
+                this.drawSingleLineMarker(
+                    t,
+                    d,
+                    i + (
+                        l == a
+                            ? " ace_start"
+                            : ""
+                    ) + " ace_br" + e(l == a || l == a + 1 && n.start.column, c<h, h> p, l == f),
+                    s,
+                    l == f
+                        ? 0
+                        : 1,
+                    o
+                );
             }
         },
         this.drawMultiLineMarker  = function (e, t, n, r, i) {
@@ -13776,11 +13928,14 @@ define("ace/layer/marker", [
                 return;
             }
             u = this.$getTop(t.start.row + 1, r);
-            var l = (t.start.column
-                ? 1
-                : 0) | (t.end.column
-                ? 0
-                : 8);
+            var l = (
+                t.start.column
+                    ? 1
+                    : 0
+            ) | (
+                t.end.column
+                    ? 0
+                    : 8);
             e.push(
                 "<div class='",
                 n,

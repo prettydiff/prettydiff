@@ -52,6 +52,7 @@
 #prettydiff.white .box .body p em{color:#080}
 #prettydiff.white .box .body p strong{color:#009}
 #prettydiff.white #webtool textarea{background:#eee;border-color:#999;color:#009}
+#prettydiff #loadmask span{background:#ccc}
 
 /*color - canvas, webtool only*/
 #prettydiff.canvas .filefocus,
@@ -195,6 +196,7 @@
 
 /*webtool - webtool page element*/
 #prettydiff #webtool.contentarea{box-shadow:none;max-width:100%}
+#prettydiff #loadmask{display:block;font-size:10em;text-align:center;width:100%}
 
 /*webtool - footer*/
 #prettydiff #footer{padding:0 1em}
