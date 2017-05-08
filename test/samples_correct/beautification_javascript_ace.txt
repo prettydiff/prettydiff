@@ -4925,7 +4925,11 @@ define("ace/tokenizer", [
                             ? r     = d.next
                             : r     = d.next(r, n),
                         s           = this.states[r],
-                        s || (this.reportError("state doesn't exist", r), r = "start", s = this.states[r]),
+                        s || (
+                            this.reportError("state doesn't exist", r),
+                            r = "start",
+                            s = this.states[r]
+                        ),
                         o           = this.matchMappings[r],
                         l           = m,
                         u           = this.regExps[r],
@@ -12133,8 +12137,12 @@ define("ace/editor", [
                 h = n.insert(i, e);
             s && s.selection && (
                 s.selection.length == 2
-                    ? this.selection.setSelectionRange(new p(i.row, f + s.selection[0], i.row, f + s.selection[1]))
-                    : this.selection.setSelectionRange(new p(i.row + s.selection[0], s.selection[1], i.row + s.selection[2], s.selection[3]))
+                    ? this.selection.setSelectionRange(
+                        new p(i.row, f + s.selection[0], i.row, f + s.selection[1])
+                    )
+                    : this.selection.setSelectionRange(
+                        new p(i.row + s.selection[0], s.selection[1], i.row + s.selection[2], s.selection[3])
+                    )
             );
             if (n.getDocument().isNewLine(e)) {
                 var d = r.getNextLineIndent(l, u.slice(0, i.column), n.getTabString());
@@ -13935,7 +13943,8 @@ define("ace/layer/marker", [
             ) | (
                 t.end.column
                     ? 0
-                    : 8);
+                    : 8
+            );
             e.push(
                 "<div class='",
                 n,
@@ -14176,18 +14185,27 @@ define("ace/layer/text", [
                     ? a.start.row
                     : Infinity;
             for (;;) {
-                u > f && (u = a.end.row + 1, a = this.session.getNextFoldLine(u, a), f = a
-                    ? a.start.row
-                    : Infinity);
+                u > f && (
+                    u = a.end.row + 1,
+                    a = this.session.getNextFoldLine(u, a),
+                    f = a
+                        ? a.start.row
+                        : Infinity
+                );
                 if (u > i) {
                     break;
                 }
                 var l = s[o++];
                 if (l) {
                     var c = [];
-                    this.$renderLine(c, u, !this.$useLineGroups(), u == f
-                        ? a
-                        : !1),
+                    this.$renderLine(
+                        c,
+                        u,
+                        !this.$useLineGroups(),
+                        u == f
+                            ? a
+                            : !1
+                    ),
                     l.style.height = e.lineHeight * this
                         .session
                         .getRowLength(u) + "px",
@@ -14248,17 +14266,26 @@ define("ace/layer/text", [
                     ? o.start.row
                     : Infinity;
             for (;;) {
-                s > u && (s = o.end.row + 1, o = this.session.getNextFoldLine(s, o), u = o
-                    ? o.start.row
-                    : Infinity);
+                s > u && (
+                    s = o.end.row + 1,
+                    o = this.session.getNextFoldLine(s, o),
+                    u = o
+                        ? o.start.row
+                        : Infinity
+                );
                 if (s > n) {
                     break;
                 }
                 var a = i.createElement("div"),
                     f = [];
-                this.$renderLine(f, s, !1, s == u
-                    ? o
-                    : !1),
+                this.$renderLine(
+                    f,
+                    s,
+                    !1,
+                    s == u
+                        ? o
+                        : !1
+                ),
                 a.innerHTML = f.join("");
                 if (this.$useLineGroups()) {
                     a.className = "ace_line_group",
@@ -14288,9 +14315,13 @@ define("ace/layer/text", [
                     ? s.start.row
                     : Infinity;
             for (;;) {
-                i > o && (i = s.end.row + 1, s = this.session.getNextFoldLine(i, s), o = s
-                    ? s.start.row
-                    : Infinity);
+                i > o && (
+                    i = s.end.row + 1,
+                    s = this.session.getNextFoldLine(i, s),
+                    o = s
+                        ? s.start.row
+                        : Infinity
+                );
                 if (i > r) {
                     break;
                 }
@@ -14299,9 +14330,14 @@ define("ace/layer/text", [
                     e.lineHeight * this.session.getRowLength(i),
                     "px'>"
                 ),
-                this.$renderLine(t, i, !1, i == o
-                    ? s
-                    : !1),
+                this.$renderLine(
+                    t,
+                    i,
+                    !1,
+                    i == o
+                        ? s
+                        : !1
+                ),
                 this.$useLineGroups() && t.push("</div>"),
                 i = i + 1;
             }
@@ -14447,13 +14483,11 @@ define("ace/layer/text", [
                     .session
                     .getTokens(t);
             }
-            n || e.push(
-                "<div class='ace_line' style='height:",
-                this.config.lineHeight * (this.$useLineGroups()
+            n || e.push("<div class='ace_line' style='height:", this.config.lineHeight * (
+                this.$useLineGroups()
                     ? 1
-                    : this.session.getRowLength(t)),
-                "px'>"
-            );
+                    : this.session.getRowLength(t)
+            ), "px'>");
             if (i.length) {
                 var s = this
                     .session
@@ -14547,9 +14581,11 @@ define("ace/layer/cursor", [
             this.cursors        = [],
             this.cursor         = this.addCursor(),
             r.addCssClass(this.element, "ace_hidden-cursors"),
-            this.$updateCursors = (i
-                ? this.$updateVisibility
-                : this.$updateOpacity).bind(this);
+            this.$updateCursors = (
+                i
+                    ? this.$updateVisibility
+                    : this.$updateOpacity
+            ).bind(this);
         };
     (function () {
         this.$updateVisibility = function (e) {
@@ -14654,9 +14690,11 @@ define("ace/layer/cursor", [
                     .session
                     .documentToScreenPosition(e),
                 r = this.$padding + n.column * this.config.characterWidth,
-                i = (n.row - (t
-                    ? this.config.firstRowScreen
-                    : 0)) * this.config.lineHeight;
+                i = (n.row - (
+                    t
+                        ? this.config.firstRowScreen
+                        : 0
+                )) * this.config.lineHeight;
             return {left: r, top: i};
         },
         this.update            = function (e) {
@@ -14698,9 +14736,12 @@ define("ace/layer/cursor", [
         },
         this.drawCursor        = null,
         this.$setOverwrite     = function (e) {
-            e != this.overwrite && (this.overwrite = e, e
-                ? r.addCssClass(this.element, "ace_overwrite-cursors")
-                : r.removeCssClass(this.element, "ace_overwrite-cursors"));
+            e != this.overwrite && (
+                this.overwrite = e,
+                e
+                    ? r.addCssClass(this.element, "ace_overwrite-cursors")
+                    : r.removeCssClass(this.element, "ace_overwrite-cursors")
+            );
         },
         this.destroy           = function () {
             clearInterval(this.intervalId),
@@ -15482,9 +15523,11 @@ define("ace/virtual_renderer", [
             if (n && (e || s.width != n)) {
                 i                                   |= this.CHANGE_SIZE,
                 s.width                             = n,
-                t == null && (t = this.$showGutter
-                    ? this.$gutter.offsetWidth
-                    : 0),
+                t == null && (
+                    t = this.$showGutter
+                        ? this.$gutter.offsetWidth
+                        : 0
+                ),
                 this.gutterWidth                    = t,
                 this.scrollBarH.element.style.left  = this.scroller.style.left = t + "px",
                 s.scrollerWidth                     = Math.max(0, n - t - this.scrollBarV.getWidth()),
@@ -15662,9 +15705,11 @@ define("ace/virtual_renderer", [
             return this.layerConfig.firstRow;
         },
         this.getFirstFullyVisibleRow    = function () {
-            return this.layerConfig.firstRow + (this.layerConfig.offset === 0
-                ? 0
-                : 1);
+            return this.layerConfig.firstRow + (
+                this.layerConfig.offset === 0
+                    ? 0
+                    : 1
+            );
         },
         this.getLastFullyVisibleRow     = function () {
             var e = Math.floor(
@@ -16723,9 +16768,11 @@ define("ace/worker/worker_client", [
             a
                 .messageBuffer
                 .push(e),
-            r && (i
-                ? setTimeout(f)
-                : f());
+            r && (
+                i
+                    ? setTimeout(f)
+                    : f()
+            );
         },
         this.setEmitSync         = function (e) {
             i = e;
@@ -17109,10 +17156,12 @@ define("ace/mouse/multi_select_handler", [
                 var e = c.toOrientedRange();
                 T && e.isEmpty() && s(T.cursor, e.cursor)
                     ? c.substractPoint(e.cursor)
-                    : (o
-                        ? c.substractPoint(x.cursor)
-                        : x && (l.removeSelectionMarker(x), c.addRange(x)),
-                    c.addRange(e)),
+                    : (
+                        o
+                            ? c.substractPoint(x.cursor)
+                            : x && (l.removeSelectionMarker(x), c.addRange(x)),
+                        c.addRange(e)
+                    ),
                 l.$blockScrolling--,
                 l.inVirtualSelectionMode = !1;
             });
@@ -17793,9 +17842,11 @@ define("ace/multi_select", [
                 o = this.session,
                 u = this.selection,
                 a = u.rangeList,
-                f = (r
-                    ? u
-                    : a).ranges,
+                f = (
+                    r
+                        ? u
+                        : a
+                ).ranges,
                 l;
             if (!f.length) {
                 return e.exec
@@ -17936,9 +17987,11 @@ define("ace/multi_select", [
             if (!n.isEmpty()) {
                 var u = this
                         .session
-                        .documentToScreenPosition(r
-                            ? n.end
-                            : n.start),
+                        .documentToScreenPosition(
+                            r
+                                ? n.end
+                                : n.start
+                        ),
                     a = this
                         .session
                         .screenToDocumentPosition(u.row + e, u.column);
@@ -18157,13 +18210,15 @@ define("ace/multi_select", [
                             )
                         : [e];
                 })
-                .map(t
-                    ? f
-                    : n
-                        ? r
-                            ? l
-                            : f
-                        : c);
+                .map(
+                    t
+                        ? f
+                        : n
+                            ? r
+                                ? l
+                                : f
+                            : c
+                );
         };
     }).call(d.prototype),
     t.onSessionChange = function (e) {
@@ -18706,9 +18761,11 @@ define("ace/ext/error_marker", [
             l;
         if (f) {
             var c = f[0];
-            s.column = (c.pos && typeof c.column != "number"
-                ? c.pos.sc
-                : c.column) || 0,
+            s.column = (
+                c.pos && typeof c.column != "number"
+                    ? c.pos.sc
+                    : c.column
+            ) || 0,
             s.row    = c.row,
             l        = e
                 .renderer

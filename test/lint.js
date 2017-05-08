@@ -513,7 +513,7 @@ module.exports = (function taskrunner() {
                                         if (newinstall === true) {
                                             console.log("jslint updated to version " + version);
                                         } else {
-                                            console.log("Using previously installed jslint version " + version);
+                                            console.log("Using previously installed jslint version \u001b[1m\u001b[36m" + version + "\u001b[39m\u001b[0m");
                                         }
                                         jslint    = require(appath + "jslint.js");
                                         flag.lint = true;

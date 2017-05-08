@@ -25,9 +25,11 @@
     var ie_upto10 = /MSIE \d/.test(navigator.userAgent);
     var ie_11up = /Trident\/(?:[7-9]|\d{2,})\..*rv:(\d+)/.exec(navigator.userAgent);
     var ie = ie_upto10 || ie_11up;
-    var ie_version = ie && (ie_upto10
-        ? document.documentMode || 6
-        : ie_11up[1]);
+    var ie_version = ie && (
+        ie_upto10
+            ? document.documentMode || 6
+            : ie_11up[1]
+    );
     var webkit = /WebKit\//.test(navigator.userAgent);
     var qtwebkit = webkit && /Qt\/\d+\.\d+/.test(navigator.userAgent);
     var chrome = /Chrome\//.test(navigator.userAgent);
@@ -620,9 +622,11 @@
                 this.vert.style.bottom  = needsH
                     ? sWidth + "px"
                     : "0";
-                var totalHeight = measure.viewHeight - (needsH
-                    ? sWidth
-                    : 0);
+                var totalHeight = measure.viewHeight - (
+                    needsH
+                        ? sWidth
+                        : 0
+                );
                 // A bug in IE8 can cause this value to be negative, so guard it.
                 this.vert.firstChild.style.height = Math.max(
                     0,
@@ -639,9 +643,11 @@
                     ? sWidth + "px"
                     : "0";
                 this.horiz.style.left    = measure.barLeft + "px";
-                var totalWidth = measure.viewWidth - measure.barLeft - (needsV
-                    ? sWidth
-                    : 0);
+                var totalWidth = measure.viewWidth - measure.barLeft - (
+                    needsV
+                        ? sWidth
+                        : 0
+                );
                 this.horiz.firstChild.style.width = (
                     measure.scrollWidth - measure.clientWidth + totalWidth
                 ) + "px";
@@ -1563,12 +1569,14 @@
                 if (i <= primIndex) {
                     --primIndex;
                 }
-                ranges.splice(i = i - 1, 2, new Range(inv
-                    ? to
-                    : from,
-                inv
-                    ? from
-                    : to));
+                ranges.splice(i = i - 1, 2, new Range(
+                    inv
+                        ? to
+                        : from,
+                    inv
+                        ? from
+                        : to
+                ));
             }
         }
         return new Selection(ranges, primIndex);
@@ -1710,10 +1718,14 @@
     // Set a new selection.
     function setSelection(doc, sel, options) {
         setSelectionNoUndo(doc, sel, options);
-        addSelectionToHistory(doc, doc.sel, doc.cm
-            ? doc.cm.curOp.id
-            : NaN,
-        options);
+        addSelectionToHistory(
+            doc,
+            doc.sel,
+            doc.cm
+                ? doc.cm.curOp.id
+                : NaN,
+            options
+        );
     }
 
     function setSelectionNoUndo(doc, sel, options) {
@@ -1789,11 +1801,15 @@
                 for (var i = 0; i < line.markedSpans.length; i = i + 1) {
                     var sp = line.markedSpans[i],
                         m  = sp.marker;
-                    if ((sp.from == null || (m.inclusiveLeft
-                        ? sp.from <= curPos.ch
-                        : sp.from < curPos.ch)) && (sp.to == null || (m.inclusiveRight
-                        ? sp.to >= curPos.ch
-                        : sp.to > curPos.ch))) {
+                    if ((sp.from == null || (
+                        m.inclusiveLeft
+                            ? sp.from <= curPos.ch
+                            : sp.from < curPos.ch
+                    )) && (sp.to == null || (
+                        m.inclusiveRight
+                            ? sp.to >= curPos.ch
+                            : sp.to > curPos.ch
+                    ))) {
                         if (mayClear) {
                             signal(m, "beforeCursorEnter");
                             if (m.explicitlyCleared) {
@@ -1808,9 +1824,11 @@
                         if (!m.atomic) {
                             continue;
                         }
-                        var newPos = m.find(dir < 0
-                            ? -1
-                            : 1);
+                        var newPos = m.find(
+                            dir < 0
+                                ? -1
+                                : 1
+                        );
                         if (cmp(newPos, curPos) == 0) {
                             newPos.ch = newPos.ch + dir;
                             if (newPos.ch < 0) {
@@ -1977,51 +1995,55 @@
                 return charCoords(cm, Pos(line, ch), "div", lineObj, bias);
             }
 
-            iterateBidiSections(getOrder(lineObj), fromArg || 0, toArg == null
-                ? lineLen
-                : toArg,
-            function (from, to, dir) {
-                var leftPos = coords(from, "left"),
-                    rightPos,
-                    left,
-                    right;
-                if (from == to) {
-                    rightPos = leftPos;
-                    left     = right = leftPos.left;
-                } else {
-                    rightPos = coords(to - 1, "right");
-                    if (dir == "rtl") {
-                        var tmp = leftPos;
-                        leftPos  = rightPos;
-                        rightPos = tmp;
+            iterateBidiSections(
+                getOrder(lineObj),
+                fromArg || 0,
+                toArg == null
+                    ? lineLen
+                    : toArg,
+                function (from, to, dir) {
+                    var leftPos = coords(from, "left"),
+                        rightPos,
+                        left,
+                        right;
+                    if (from == to) {
+                        rightPos = leftPos;
+                        left     = right = leftPos.left;
+                    } else {
+                        rightPos = coords(to - 1, "right");
+                        if (dir == "rtl") {
+                            var tmp = leftPos;
+                            leftPos  = rightPos;
+                            rightPos = tmp;
+                        }
+                        left  = leftPos.left;
+                        right = rightPos.right;
                     }
-                    left  = leftPos.left;
-                    right = rightPos.right;
-                }
-                if (fromArg == null && from == 0) {
-                    left = leftSide;
-                }
-                if (rightPos.top - leftPos.top > 3) { // Different lines, draw top part
-                    add(left, leftPos.top, null, leftPos.bottom);
-                    left = leftSide;
-                    if (leftPos.bottom < rightPos.top) {
-                        add(left, leftPos.bottom, null, rightPos.top);
+                    if (fromArg == null && from == 0) {
+                        left = leftSide;
                     }
+                    if (rightPos.top - leftPos.top > 3) { // Different lines, draw top part
+                        add(left, leftPos.top, null, leftPos.bottom);
+                        left = leftSide;
+                        if (leftPos.bottom < rightPos.top) {
+                            add(left, leftPos.bottom, null, rightPos.top);
+                        }
+                    }
+                    if (toArg == null && to == lineLen) {
+                        right = rightSide;
+                    }
+                    if (!start || leftPos.top < start.top || leftPos.top == start.top && leftPos.left < start.left) {
+                        start = leftPos;
+                    }
+                    if (!end || rightPos.bottom > end.bottom || rightPos.bottom == end.bottom && rightPos.right > end.right) {
+                        end = rightPos;
+                    }
+                    if (left < leftSide + 1) {
+                        left = leftSide;
+                    }
+                    add(left, rightPos.top, right - left, rightPos.bottom);
                 }
-                if (toArg == null && to == lineLen) {
-                    right = rightSide;
-                }
-                if (!start || leftPos.top < start.top || leftPos.top == start.top && leftPos.left < start.left) {
-                    start = leftPos;
-                }
-                if (!end || rightPos.bottom > end.bottom || rightPos.bottom == end.bottom && rightPos.right > end.right) {
-                    end = rightPos;
-                }
-                if (left < leftSide + 1) {
-                    left = leftSide;
-                }
-                add(left, rightPos.top, right - left, rightPos.bottom);
-            });
+            );
             return {end: end, start: start};
         }
 
@@ -2033,13 +2055,20 @@
             var fromLine = getLine(doc, sFrom.line),
                 toLine   = getLine(doc, sTo.line);
             var singleVLine = visualLine(fromLine) == visualLine(toLine);
-            var leftEnd = drawForLine(sFrom.line, sFrom.ch, singleVLine
-                ? fromLine.text.length + 1
-                : null).end;
-            var rightStart = drawForLine(sTo.line, singleVLine
-                ? 0
-                : null,
-            sTo.ch).start;
+            var leftEnd = drawForLine(
+                sFrom.line,
+                sFrom.ch,
+                singleVLine
+                    ? fromLine.text.length + 1
+                    : null
+            ).end;
+            var rightStart = drawForLine(
+                sTo.line,
+                singleVLine
+                    ? 0
+                    : null,
+                sTo.ch
+            ).start;
             if (singleVLine) {
                 if (leftEnd.top < rightStart.top - 2) {
                     add(leftEnd.right, leftEnd.top, null, leftEnd.bottom);
@@ -2161,9 +2190,11 @@
             doc = cm.doc;
         var lim = precise
             ? -1
-            : n - (cm.doc.mode.innerMode
-                ? 1000
-                : 100);
+            : n - (
+                cm.doc.mode.innerMode
+                    ? 1000
+                    : 100
+            );
         for (var search = n; search > lim; search = search - 1) {
             if (search <= doc.first) {
                 return doc.first;
@@ -2437,9 +2468,11 @@
             }
             if (start != null) {
                 node = map[i + 2];
-                if (mStart == mEnd && bias == (node.insertLeft
-                    ? "left"
-                    : "right")) {
+                if (mStart == mEnd && bias == (
+                    node.insertLeft
+                        ? "left"
+                        : "right"
+                )) {
                     collapse = bias;
                 }
                 if (bias == "left" && start == 0) {
@@ -2545,12 +2578,16 @@
             bot = heights[i];
         var result = {
             bottom: bot,
-            left  : (collapse == "right"
-                ? rect.right
-                : rect.left) - prepared.rect.left,
-            right : (collapse == "left"
-                ? rect.left
-                : rect.right) - prepared.rect.left,
+            left  : (
+                collapse == "right"
+                    ? rect.right
+                    : rect.left
+            ) - prepared.rect.left,
+            right : (
+                collapse == "left"
+                    ? rect.left
+                    : rect.right
+            ) - prepared.rect.left,
             top   : top
         };
         if (!rect.left && !rect.right) {
@@ -2648,12 +2685,16 @@
                 .display
                 .lineSpace
                 .getBoundingClientRect();
-            yOff = yOff + lOff.top + (context == "window"
-                ? 0
-                : pageScrollY());
-            var xOff = lOff.left + (context == "window"
-                ? 0
-                : pageScrollX());
+            yOff = yOff + lOff.top + (
+                context == "window"
+                    ? 0
+                    : pageScrollY()
+            );
+            var xOff = lOff.left + (
+                context == "window"
+                    ? 0
+                    : pageScrollX()
+            );
             rect.left  = rect.left + xOff;
             rect.right = rect.right + xOff;
         }
@@ -2713,10 +2754,15 @@
             preparedMeasure = prepareMeasureForLine(cm, lineObj);
         }
         function get(ch, right) {
-            var m = measureCharPrepared(cm, preparedMeasure, ch, right
-                ? "right"
-                : "left",
-            varHeight);
+            var m = measureCharPrepared(
+                cm,
+                preparedMeasure,
+                ch,
+                right
+                    ? "right"
+                    : "left",
+                varHeight
+            );
             if (right) {
                 m.left = m.right;
             } else {
@@ -2729,9 +2775,11 @@
                 right = part.level % 2;
             if (ch == bidiLeft(part) && partPos && part.level < order[partPos - 1].level) {
                 part  = order[partPos = partPos - 1];
-                ch    = bidiRight(part) - (part.level % 2
-                    ? 0
-                    : 1);
+                ch    = bidiRight(part) - (
+                    part.level % 2
+                        ? 0
+                        : 1
+                );
                 right = true;
             } else if (ch == bidiRight(part) && partPos < order.length - 1 && part.level < order[partPos + 1].level) {
                 part  = order[partPos = partPos + 1];
@@ -2856,26 +2904,34 @@
         }
         // Do a binary search between these bounds.
         for (;;) {
-            if (bidi
-                ? to == from || to == moveVisually(lineObj, from, 1)
-                : to - from <= 1) {
+            if (
+                bidi
+                    ? to == from || to == moveVisually(lineObj, from, 1)
+                    : to - from <= 1
+            ) {
                 var ch = x < fromX || x - fromX <= toX - x
                     ? from
                     : to;
-                var xDiff = x - (ch == from
-                    ? fromX
-                    : toX);
+                var xDiff = x - (
+                    ch == from
+                        ? fromX
+                        : toX
+                );
                 while (isExtendingChar(lineObj.text.charAt(ch))) {
                     ++ch;
                 }
-                var pos = PosWithInfo(lineNo, ch, ch == from
-                    ? fromOutside
-                    : toOutside,
-                xDiff < -1
-                    ? -1
-                    : xDiff > 1
-                        ? 1
-                        : 0);
+                var pos = PosWithInfo(
+                    lineNo,
+                    ch,
+                    ch == from
+                        ? fromOutside
+                        : toOutside,
+                    xDiff < -1
+                        ? -1
+                        : xDiff > 1
+                            ? 1
+                            : 0
+                );
                 return pos;
             }
             var step   = Math.ceil(dist / 2),
@@ -3448,14 +3504,18 @@
             newN = newN + diff;
         }
         while (visualLineNo(cm.doc, newN) != newN) {
-            if (index == (dir < 0
-                ? 0
-                : view.length - 1)) {
+            if (index == (
+                dir < 0
+                    ? 0
+                    : view.length - 1
+            )) {
                 return null;
             }
-            newN  = newN + dir * view[index - (dir < 0
-                    ? 1
-                    : 0)].size;
+            newN  = newN + dir * view[index - (
+                    dir < 0
+                        ? 1
+                        : 0
+                )].size;
             index = index + dir;
         }
         return {index: index, lineN: newN};
@@ -4410,9 +4470,11 @@
                     .dataTransfer
                     .getData("Text");
                 if (text) {
-                    if (cm.state.draggingText && !(mac
-                        ? e.metaKey
-                        : e.ctrlKey)) {
+                    if (cm.state.draggingText && !(
+                        mac
+                            ? e.metaKey
+                            : e.ctrlKey
+                    )) {
                         var selected = cm.listSelections();
                     }
                     setSelectionNoUndo(cm.doc, simpleSelection(pos, pos));
@@ -4490,9 +4552,11 @@
     }
     // Sync scroller and scrollbar, ensure the gutter elements are aligned.
     function setScrollLeft(cm, val, isScroller) {
-        if (isScroller
-            ? val == cm.doc.scrollLeft
-            : Math.abs(cm.doc.scrollLeft - val) < 2) {
+        if (
+            isScroller
+                ? val == cm.doc.scrollLeft
+                : Math.abs(cm.doc.scrollLeft - val) < 2
+        ) {
             return;
         }
         val               = Math.min(
@@ -4747,9 +4811,11 @@
             return dispatchKey(cm, "Shift-" + name, e, function (b) {
                 return doHandleBinding(cm, b, true);
             }) || dispatchKey(cm, name, e, function (b) {
-                if (typeof b == "string"
-                    ? /^go[A-Z]/.test(b)
-                    : b.motion) {
+                if (
+                    typeof b == "string"
+                        ? /^go[A-Z]/.test(b)
+                        : b.motion
+                ) {
                     return doHandleBinding(cm, b);
                 }
             });
@@ -4786,9 +4852,11 @@
                 ? code
                 : null;
             // Opera has no cut event... we try to at least catch the key combo
-            if (!handled && code == 88 && !hasCopyEvent && (mac
-                ? e.metaKey
-                : e.ctrlKey)) {
+            if (!handled && code == 88 && !hasCopyEvent && (
+                mac
+                    ? e.metaKey
+                    : e.ctrlKey
+            )) {
                 cm.replaceSelection("", null, "cut");
             }
         }
@@ -4836,9 +4904,11 @@
         if (((presto && (!e.which || e.which < 10)) || khtml) && handleKeyBinding(cm, e)) {
             return;
         }
-        var ch = String.fromCharCode(charCode == null
-            ? keyCode
-            : charCode);
+        var ch = String.fromCharCode(
+            charCode == null
+                ? keyCode
+                : charCode
+        );
         if (handleCharBinding(cm, e, ch)) {
             return;
         }
@@ -5017,9 +5087,11 @@
         }
         return Pos(
             change.from.line + change.text.length - 1,
-            lst(change.text).length + (change.text.length == 1
-                ? change.from.ch
-                : 0)
+            lst(change.text).length + (
+                change.text.length == 1
+                    ? change.from.ch
+                    : 0
+            )
         );
     };
 
@@ -5079,12 +5151,14 @@
                         .sel
                         .ranges[i],
                     inv   = cmp(range.head, range.anchor) < 0;
-                out[i] = new Range(inv
-                    ? to
-                    : from,
-                inv
-                    ? from
-                    : to);
+                out[i] = new Range(
+                    inv
+                        ? to
+                        : from,
+                    inv
+                        ? from
+                        : to
+                );
             } else {
                 out[i] = new Range(from, from);
             }
@@ -5177,9 +5251,14 @@
             return;
         }
         var selAfter = computeSelAfterChange(doc, change);
-        addChangeToHistory(doc, change, selAfter, doc.cm
-            ? doc.cm.curOp.id
-            : NaN);
+        addChangeToHistory(
+            doc,
+            change,
+            selAfter,
+            doc.cm
+                ? doc.cm.curOp.id
+                : NaN
+        );
 
         makeChangeSingleDoc(doc, change, selAfter, stretchSpansOverChange(doc, change));
         var rebased = [];
@@ -5213,9 +5292,11 @@
         // selection events)
         for (var i = 0; i < source.length; i = i + 1) {
             event = source[i];
-            if (allowSelectionOnly
-                ? event.ranges && !event.equals(doc.sel)
-                : !event.ranges) {
+            if (
+                allowSelectionOnly
+                    ? event.ranges && !event.equals(doc.sel)
+                    : !event.ranges
+            ) {
                 break;
             }
         }
@@ -5560,9 +5641,11 @@
                 ? 0
                 : y1;
         } else if (y2 > screentop + screen) {
-            var newTop = Math.min(y1, (atBottom
-                ? docBottom
-                : y2) - screen);
+            var newTop = Math.min(y1, (
+                atBottom
+                    ? docBottom
+                    : y2
+            ) - screen);
             if (newTop != screentop) {
                 result.scrollTop = newTop;
             }
@@ -5571,9 +5654,11 @@
         var screenleft = cm.curOp && cm.curOp.scrollLeft != null
             ? cm.curOp.scrollLeft
             : display.scroller.scrollLeft;
-        var screenw = displayWidth(cm) - (cm.options.fixedGutter
-            ? display.gutters.offsetWidth
-            : 0);
+        var screenw = displayWidth(cm) - (
+            cm.options.fixedGutter
+                ? display.gutters.offsetWidth
+                : 0
+        );
         var tooWide = x2 - x1 > screenw;
         if (tooWide) {
             x2 = x1 + screenw;
@@ -5581,13 +5666,17 @@
         if (x1 < 10) {
             result.scrollLeft = 0;
         } else if (x1 < screenleft) {
-            result.scrollLeft = Math.max(0, x1 - (tooWide
-                ? 0
-                : 10));
+            result.scrollLeft = Math.max(0, x1 - (
+                tooWide
+                    ? 0
+                    : 10
+            ));
         } else if (x2 > screenw + screenleft - 3) {
-            result.scrollLeft = x2 + (tooWide
-                ? 0
-                : 10) - screenw;
+            result.scrollLeft = x2 + (
+                tooWide
+                    ? 0
+                    : 10
+            ) - screenw;
         }
         return result;
     }
@@ -5599,14 +5688,18 @@
             resolveScrollToPos(cm);
         }
         if (left != null) {
-            cm.curOp.scrollLeft = (cm.curOp.scrollLeft == null
-                ? cm.doc.scrollLeft
-                : cm.curOp.scrollLeft) + left;
+            cm.curOp.scrollLeft = (
+                cm.curOp.scrollLeft == null
+                    ? cm.doc.scrollLeft
+                    : cm.curOp.scrollLeft
+            ) + left;
         }
         if (top != null) {
-            cm.curOp.scrollTop = (cm.curOp.scrollTop == null
-                ? cm.doc.scrollTop
-                : cm.curOp.scrollTop) + top;
+            cm.curOp.scrollTop = (
+                cm.curOp.scrollTop == null
+                    ? cm.doc.scrollTop
+                    : cm.curOp.scrollTop
+            ) + top;
         }
     }
 
@@ -5814,15 +5907,19 @@
             return lineObj = getLine(doc, l);
         }
         function moveOnce(boundToLine) {
-            var next = (visually
-                ? moveVisually
-                : moveLogically)(lineObj, ch, dir, true);
+            var next = (
+                visually
+                    ? moveVisually
+                    : moveLogically
+            )(lineObj, ch, dir, true);
             if (next == null) {
                 if (!boundToLine && findNextLine()) {
                     if (visually) {
-                        ch = (dir < 0
-                            ? lineRight
-                            : lineLeft)(lineObj);
+                        ch = (
+                            dir < 0
+                                ? lineRight
+                                : lineLeft
+                        )(lineObj);
                     } else {
                         ch = dir < 0
                             ? lineObj.text.length
@@ -5899,9 +5996,11 @@
                 cm.display.wrapper.clientHeight,
                 window.innerHeight || document.documentElement.clientHeight
             );
-            y = pos.top + dir * (pageSize - (dir < 0
-                ? 1.5
-                : .5) * textHeight(cm.display));
+            y = pos.top + dir * (pageSize - (
+                dir < 0
+                    ? 1.5
+                    : .5
+            ) * textHeight(cm.display));
         } else if (unit == "line") {
             y = dir > 0
                 ? pos.bottom + 3
@@ -5912,9 +6011,11 @@
             if (!target.outside) {
                 break;
             }
-            if (dir < 0
-                ? y <= 0
-                : y >= doc.height) {
+            if (
+                dir < 0
+                    ? y <= 0
+                    : y >= doc.height
+            ) {
                 target.hitSide = true;
                 break;
             }
@@ -6248,9 +6349,12 @@
 
         getStateAfter     : function (line, precise) {
             var doc = this.doc;
-            line = clipLine(doc, line == null
-                ? doc.first + doc.size - 1
-                : line);
+            line = clipLine(
+                doc,
+                line == null
+                    ? doc.first + doc.size - 1
+                    : line
+            );
             return getStateBefore(this, line + 1, precise);
         },
 
@@ -6272,9 +6376,11 @@
             } else {
                 for (;;) {
                     var mid = (before + after) >> 1;
-                    if ((mid
-                        ? styles[mid * 2 - 1]
-                        : 0) >= ch) {
+                    if ((
+                        mid
+                            ? styles[mid * 2 - 1]
+                            : 0
+                    ) >= ch) {
                         after = mid;
                     } else if (styles[mid * 2 + 1] < ch) {
                         before = mid + 1;
@@ -6316,9 +6422,11 @@
             return intoCoordSystem(this, lineObj, {
                 left: 0,
                 top : 0
-            }, mode || "page").top + (end
-                ? this.doc.height - heightAtLine(lineObj)
-                : 0);
+            }, mode || "page").top + (
+                end
+                    ? this.doc.height - heightAtLine(lineObj)
+                    : 0
+            );
         },
 
         indentLine        : methodOp(function (n, dir, aggressive) {
@@ -6346,9 +6454,11 @@
                     var from = range.from(),
                         to   = range.to();
                     var start = Math.max(end, from.line);
-                    end = Math.min(this.lastLine(), to.line - (to.ch
-                        ? 0
-                        : 1)) + 1;
+                    end = Math.min(this.lastLine(), to.line - (
+                        to.ch
+                            ? 0
+                            : 1
+                    )) + 1;
                     for (var j = start; j < end; j = j + 1) {
                         indentLine(this, j, how);
                     }
@@ -6687,9 +6797,11 @@
         "specialChars",
         /[\t\u0000-\u0019\u00ad\u200b-\u200f\u2028\u2029\ufeff]/g,
         function (cm, val) {
-            cm.options.specialChars = new RegExp(val.source + (val.test("\t")
-                ? ""
-                : "|\t"), "g");
+            cm.options.specialChars = new RegExp(val.source + (
+                val.test("\t")
+                    ? ""
+                    : "|\t"
+            ), "g");
             cm.refresh();
         },
         true
@@ -7514,14 +7626,18 @@
         if (event.altKey && base != "Alt") {
             name = "Alt-" + name;
         }
-        if ((flipCtrlCmd
-            ? event.metaKey
-            : event.ctrlKey) && base != "Ctrl") {
+        if ((
+            flipCtrlCmd
+                ? event.metaKey
+                : event.ctrlKey
+        ) && base != "Ctrl") {
             name = "Ctrl-" + name;
         }
-        if ((flipCtrlCmd
-            ? event.ctrlKey
-            : event.metaKey) && base != "Cmd") {
+        if ((
+            flipCtrlCmd
+                ? event.ctrlKey
+                : event.metaKey
+        ) && base != "Cmd") {
             name = "Cmd-" + name;
         }
         if (!noShift && event.shiftKey && base != "Shift") {
@@ -7629,9 +7745,11 @@
                 );
                 this.lastColumnPos   = this.start;
             }
-            return this.lastColumnValue - (this.lineStart
-                ? countColumn(this.string, this.lineStart, this.tabSize)
-                : 0);
+            return this.lastColumnValue - (
+                this.lineStart
+                    ? countColumn(this.string, this.lineStart, this.tabSize)
+                    : 0
+            );
         },
         current       : function () {
             return this
@@ -7645,9 +7763,11 @@
             if (typeof match == "string") {
                 var ok = ch == match;
             } else {
-                var ok = ch && (match.test
-                    ? match.test(ch)
-                    : match(ch));
+                var ok = ch && (
+                    match.test
+                        ? match.test(ch)
+                        : match(ch)
+                );
             }
             if (ok) {
                 ++this.pos;
@@ -7678,9 +7798,11 @@
             }
         },
         indentation   : function () {
-            return countColumn(this.string, null, this.tabSize) - (this.lineStart
-                ? countColumn(this.string, this.lineStart, this.tabSize)
-                : 0);
+            return countColumn(this.string, null, this.tabSize) - (
+                this.lineStart
+                    ? countColumn(this.string, this.lineStart, this.tabSize)
+                    : 0
+            );
         },
         match         : function (pattern, consume, caseInsensitive) {
             if (typeof pattern == "string") {
@@ -7844,19 +7966,23 @@
             var line = this.lines[i];
             var span = getMarkedSpanFor(line.markedSpans, this);
             if (span.from != null) {
-                from = Pos(lineObj
-                    ? line
-                    : lineNo(line),
-                span.from);
+                from = Pos(
+                    lineObj
+                        ? line
+                        : lineNo(line),
+                    span.from
+                );
                 if (side == -1) {
                     return from;
                 }
             }
             if (span.to != null) {
-                to = Pos(lineObj
-                    ? line
-                    : lineNo(line),
-                span.to);
+                to = Pos(
+                    lineObj
+                        ? line
+                        : lineNo(line),
+                    span.to
+                );
                 if (side == 1) {
                     return to;
                 }
@@ -7984,12 +8110,15 @@
             if (marker.collapsed && curLine != from.line) {
                 updateLineHeight(line, 0);
             }
-            addMarkedSpan(line, new MarkedSpan(marker, curLine == from.line
-                ? from.ch
-                : null,
-            curLine == to.line
-                ? to.ch
-                : null));
+            addMarkedSpan(line, new MarkedSpan(
+                marker,
+                curLine == from.line
+                    ? from.ch
+                    : null,
+                curLine == to.line
+                    ? to.ch
+                    : null
+            ));
             curLine = curLine + 1;
         });
         // lineIsHidden depends on the presence of the spans, so needs a second pass
@@ -8186,16 +8315,24 @@
             for (var i = 0, nw; i < old.length; i = i + 1) {
                 var span   = old[i],
                     marker = span.marker;
-                var startsBefore = span.from == null || (marker.inclusiveLeft
-                    ? span.from <= startCh
-                    : span.from < startCh);
+                var startsBefore = span.from == null || (
+                    marker.inclusiveLeft
+                        ? span.from <= startCh
+                        : span.from < startCh
+                );
                 if (startsBefore || span.from == startCh && marker.type == "bookmark" && (!isInsert || !span.marker.insertLeft)) {
-                    var endsAfter = span.to == null || (marker.inclusiveRight
-                        ? span.to >= startCh
-                        : span.to > startCh);
-                    (nw || (nw = [])).push(new MarkedSpan(marker, span.from, endsAfter
-                        ? null
-                        : span.to));
+                    var endsAfter = span.to == null || (
+                        marker.inclusiveRight
+                            ? span.to >= startCh
+                            : span.to > startCh
+                    );
+                    (nw || (nw = [])).push(new MarkedSpan(
+                        marker,
+                        span.from,
+                        endsAfter
+                            ? null
+                            : span.to
+                    ));
                 }
             }
         }
@@ -8206,19 +8343,26 @@
             for (var i = 0, nw; i < old.length; i = i + 1) {
                 var span   = old[i],
                     marker = span.marker;
-                var endsAfter = span.to == null || (marker.inclusiveRight
-                    ? span.to >= endCh
-                    : span.to > endCh);
+                var endsAfter = span.to == null || (
+                    marker.inclusiveRight
+                        ? span.to >= endCh
+                        : span.to > endCh
+                );
                 if (endsAfter || span.from == endCh && marker.type == "bookmark" && (!isInsert || span.marker.insertLeft)) {
-                    var startsBefore = span.from == null || (marker.inclusiveLeft
-                        ? span.from <= endCh
-                        : span.from < endCh);
-                    (nw || (nw = [])).push(new MarkedSpan(marker, startsBefore
-                        ? null
-                        : span.from - endCh,
-                    span.to == null
-                        ? null
-                        : span.to - endCh));
+                    var startsBefore = span.from == null || (
+                        marker.inclusiveLeft
+                            ? span.from <= endCh
+                            : span.from < endCh
+                    );
+                    (nw || (nw = [])).push(new MarkedSpan(
+                        marker,
+                        startsBefore
+                            ? null
+                            : span.from - endCh,
+                        span.to == null
+                            ? null
+                            : span.to - endCh
+                    ));
                 }
             }
         }
@@ -8249,9 +8393,11 @@
 
         // Next, merge those two ends
         var sameLine = change.text.length == 1,
-            offset   = lst(change.text).length + (sameLine
-                ? startCh
-                : 0);
+            offset   = lst(change.text).length + (
+                sameLine
+                    ? startCh
+                    : 0
+            );
         if (first) {
             // Fix up .to properties of first
             for (var i = 0; i < first.length; i = i + 1) {
@@ -8488,9 +8634,11 @@
         if (sps) {
             for (var sp, i = 0; i < sps.length; i = i + 1) {
                 sp = sps[i];
-                if (sp.marker.collapsed && (start
-                    ? sp.from
-                    : sp.to) == null && (!found || compareCollapsedMarkers(found, sp.marker) < 0)) {
+                if (sp.marker.collapsed && (
+                    start
+                        ? sp.from
+                        : sp.to
+                ) == null && (!found || compareCollapsedMarkers(found, sp.marker) < 0)) {
                     found = sp.marker;
                 }
             }
@@ -8979,9 +9127,11 @@
                 } else {
                     for (; start < i; start = start + 2) {
                         var cur = st[start + 1];
-                        st[start + 1] = (cur
-                            ? cur + " "
-                            : "") + "cm-overlay " + style;
+                        st[start + 1] = (
+                            cur
+                                ? cur + " "
+                                : ""
+                        ) + "cm-overlay " + style;
                     }
                 }
             }, lineClasses);
@@ -9054,9 +9204,14 @@
         // The padding-right forces the element to have a 'border', which is needed on
         // Webkit to be able to get line-level bounding rectangles for it (in
         // measureChar).
-        var content = elt("span", null, null, webkit
-            ? "padding-right: .1px"
-            : null);
+        var content = elt(
+            "span",
+            null,
+            null,
+            webkit
+                ? "padding-right: .1px"
+                : null
+        );
         var builder = {
             cm     : cm,
             col    : 0,
@@ -9067,9 +9222,11 @@
         lineView.measure = {};
 
         // Iterate over the logical lines that make up this visual line.
-        for (var i = 0; i <= (lineView.rest
-            ? lineView.rest.length
-            : 0); i = i + 1) {
+        for (var i = 0; i <= (
+            lineView.rest
+                ? lineView.rest.length
+                : 0
+        ); i = i + 1) {
             var line = i
                     ? lineView.rest[i - 1]
                     : lineView.line,
@@ -9360,9 +9517,11 @@
                     }
                 }
                 if (collapsed && (collapsed.from || 0) == pos) {
-                    buildCollapsedSpan(builder, (collapsed.to == null
-                        ? len + 1
-                        : collapsed.to) - pos, collapsed.marker, collapsed.from == null);
+                    buildCollapsedSpan(builder, (
+                        collapsed.to == null
+                            ? len + 1
+                            : collapsed.to
+                    ) - pos, collapsed.marker, collapsed.from == null);
                     if (collapsed.to == null) {
                         return;
                     }
@@ -9385,15 +9544,19 @@
                         var tokenText = end > upto
                             ? text.slice(0, upto - pos)
                             : text;
-                        builder.addToken(builder, tokenText, style
-                            ? style + spanStyle
-                            : spanStyle,
-                        spanStartStyle,
-                        pos + tokenText.length == nextChange
-                            ? spanEndStyle
-                            : "",
-                        title,
-                        css);
+                        builder.addToken(
+                            builder,
+                            tokenText,
+                            style
+                                ? style + spanStyle
+                                : spanStyle,
+                            spanStartStyle,
+                            pos + tokenText.length == nextChange
+                                ? spanEndStyle
+                                : "",
+                            title,
+                            css
+                        );
                     }
                     if (end >= upto) {
                         text = text.slice(upto - pos);
@@ -9734,26 +9897,30 @@
 
     Doc.prototype          = createObj(BranchChunk.prototype, {
         addLineClass            : docMethodOp(function (handle, where, cls) {
-            return changeLine(this, handle, where == "gutter"
-                ? "gutter"
-                : "class",
-            function (line) {
-                var prop = where == "text"
-                    ? "textClass"
-                    : where == "background"
-                        ? "bgClass"
-                        : where == "gutter"
-                            ? "gutterClass"
-                            : "wrapClass";
-                if (!line[prop]) {
-                    line[prop] = cls;
-                } else if (classTest(cls).test(line[prop])) {
-                    return false;
-                } else {
-                    line[prop] = line[prop] + " " + cls;
+            return changeLine(
+                this,
+                handle,
+                where == "gutter"
+                    ? "gutter"
+                    : "class",
+                function (line) {
+                    var prop = where == "text"
+                        ? "textClass"
+                        : where == "background"
+                            ? "bgClass"
+                            : where == "gutter"
+                                ? "gutterClass"
+                                : "wrapClass";
+                    if (!line[prop]) {
+                        line[prop] = cls;
+                    } else if (classTest(cls).test(line[prop])) {
+                        return false;
+                    } else {
+                        line[prop] = line[prop] + " " + cls;
+                    }
+                    return true;
                 }
-                return true;
-            });
+            );
         }),
         addSelection            : docMethodOp(function (anchor, head, options) {
             var ranges = this
@@ -10089,34 +10256,40 @@
             this.removeInner(at - this.first, n);
         },
         removeLineClass         : docMethodOp(function (handle, where, cls) {
-            return changeLine(this, handle, where == "gutter"
-                ? "gutter"
-                : "class",
-            function (line) {
-                var prop = where == "text"
-                    ? "textClass"
-                    : where == "background"
-                        ? "bgClass"
-                        : where == "gutter"
-                            ? "gutterClass"
-                            : "wrapClass";
-                var cur = line[prop];
-                if (!cur) {
-                    return false;
-                } else if (cls == null) {
-                    line[prop] = null;
-                } else {
-                    var found = cur.match(classTest(cls));
-                    if (!found) {
+            return changeLine(
+                this,
+                handle,
+                where == "gutter"
+                    ? "gutter"
+                    : "class",
+                function (line) {
+                    var prop = where == "text"
+                        ? "textClass"
+                        : where == "background"
+                            ? "bgClass"
+                            : where == "gutter"
+                                ? "gutterClass"
+                                : "wrapClass";
+                    var cur = line[prop];
+                    if (!cur) {
                         return false;
+                    } else if (cls == null) {
+                        line[prop] = null;
+                    } else {
+                        var found = cur.match(classTest(cls));
+                        if (!found) {
+                            return false;
+                        }
+                        var end = found.index + found[0].length;
+                        line[prop] = cur.slice(0, found.index) + (
+                            !found.index || end == cur.length
+                                ? ""
+                                : " "
+                        ) + cur.slice(end) || null;
                     }
-                    var end = found.index + found[0].length;
-                    line[prop] = cur.slice(0, found.index) + (!found.index || end == cur.length
-                        ? ""
-                        : " ") + cur.slice(end) || null;
+                    return true;
                 }
-                return true;
-            });
+            );
         }),
         replaceRange            : function (code, from, to, origin) {
             from = clipPos(this, from);
@@ -10162,9 +10335,11 @@
             var realOpts = {
                 clearWhenEmpty: false,
                 insertLeft    : options && options.insertLeft,
-                replacedWith  : options && (options.nodeType == null
-                    ? options.widget
-                    : options),
+                replacedWith  : options && (
+                    options.nodeType == null
+                        ? options.widget
+                        : options
+                ),
                 shared        : options && options.shared
             };
             pos = clipPos(this, pos);
@@ -10172,9 +10347,12 @@
         },
 
         setCursor               : docMethodOp(function (line, ch, options) {
-            setSimpleSelection(this, clipPos(this, typeof line == "number"
-                ? Pos(line, ch || 0)
-                : line), null, options);
+            setSimpleSelection(this, clipPos(
+                this,
+                typeof line == "number"
+                    ? Pos(line, ch || 0)
+                    : line
+            ), null, options);
         }),
 
         setExtending            : function (val) {
@@ -10681,9 +10859,11 @@
         for (var i = 0, copy = []; i < events.length; i = i + 1) {
             var event = events[i];
             if (event.ranges) {
-                copy.push(instantiateSel
-                    ? Selection.prototype.deepCopy.call(event)
-                    : event);
+                copy.push(
+                    instantiateSel
+                        ? Selection.prototype.deepCopy.call(event)
+                        : event
+                );
                 continue;
             }
             var changes    = event.changes,
@@ -11233,17 +11413,21 @@
         var match = classTest(cls).exec(current);
         if (match) {
             var after = current.slice(match.index + match[0].length);
-            node.className = current.slice(0, match.index) + (after
-                ? match[1] + after
-                : "");
+            node.className = current.slice(0, match.index) + (
+                after
+                    ? match[1] + after
+                    : ""
+            );
         }
     };
     var addClass = codeMirror.addClass = function (node, cls) {
         var current = node.className;
         if (!classTest(cls).test(current)) {
-            node.className = node.className + (current
-                ? " "
-                : "") + cls;
+            node.className = node.className + (
+                current
+                    ? " "
+                    : ""
+            ) + cls;
         };
     }
     function joinClasses(a, b) {
@@ -11366,9 +11550,12 @@
                     if (nl == -1) {
                         nl = string.length;
                     }
-                    var line = string.slice(pos, string.charAt(nl - 1) == "\r"
-                        ? nl - 1
-                        : nl);
+                    var line = string.slice(
+                        pos,
+                        string.charAt(nl - 1) == "\r"
+                            ? nl - 1
+                            : nl
+                    );
                     var rt = line.indexOf("\r");
                     if (rt != -1) {
                         result.push(line.slice(0, rt));
@@ -11507,9 +11694,13 @@
         for (var i = 0; i < order.length; i = i + 1) {
             var part = order[i];
             if (part.from < to && part.to > from || from == to && part.to == from) {
-                f(Math.max(part.from, from), Math.min(part.to, to), part.level == 1
-                    ? "rtl"
-                    : "ltr");
+                f(
+                    Math.max(part.from, from),
+                    Math.min(part.to, to),
+                    part.level == 1
+                        ? "rtl"
+                        : "ltr"
+                );
                 found = true;
             }
         }
@@ -11572,10 +11763,12 @@
             : order[0].level % 2
                 ? lineLeft(line)
                 : lineRight(line);
-        return Pos(lineN == null
-            ? lineNo(line)
-            : lineN,
-        ch);
+        return Pos(
+            lineN == null
+                ? lineNo(line)
+                : lineN,
+            ch
+        );
     }
     function lineStartSmart(cm, pos) {
         var start = lineStart(cm, pos.line);
@@ -11584,9 +11777,12 @@
         if (!order || order[0].level == 0) {
             var firstNonWS = Math.max(0, line.text.search(/\S/));
             var inWS = pos.line == start.line && pos.ch <= firstNonWS && pos.ch;
-            return Pos(start.line, inWS
-                ? 0
-                : firstNonWS);
+            return Pos(
+                start.line,
+                inWS
+                    ? 0
+                    : firstNonWS
+            );
         }
         return start;
     }
@@ -11650,10 +11846,14 @@
         }
         var pos  = getBidiPartAt(bidi, start),
             part = bidi[pos];
-        var target = moveInLine(line, start, part.level % 2
-            ? -dir
-            : dir,
-        byUnit);
+        var target = moveInLine(
+            line,
+            start,
+            part.level % 2
+                ? -dir
+                : dir,
+            byUnit
+        );
 
         for (;;) {
             if (target > part.from && target < part.to) {
@@ -11846,12 +12046,16 @@
             for (var i = 0; i < len; i = i + 1) {
                 if (isNeutral.test(types[i])) {
                     for (var end = i + 1; end < len && isNeutral.test(types[end]); end = end + 1) {}
-                    var before = (i
-                        ? types[i - 1]
-                        : outerType) == "L";
-                    var after = (end < len
-                        ? types[end]
-                        : outerType) == "L";
+                    var before = (
+                        i
+                            ? types[i - 1]
+                            : outerType
+                    ) == "L";
+                    var after = (
+                        end < len
+                            ? types[end]
+                            : outerType
+                    ) == "L";
                     var replace = before || after
                         ? "L"
                         : "R";
@@ -12573,9 +12777,11 @@
             var next      = toNextTag(iter),
                 end,
                 startLine = iter.line,
-                startCh   = iter.ch - (next
-                    ? next[0].length
-                    : 0);
+                startCh   = iter.ch - (
+                    next
+                        ? next[0].length
+                        : 0
+                );
             if (!next || !(end = toTagEnd(iter))) {
                 return;
             }
@@ -12709,12 +12915,17 @@
 
     // Used by addon/edit/closetag.js
     codeMirror.scanForClosingTag = function (cm, pos, name, end) {
-        var iter = new Iter(cm, pos.line, pos.ch, end
-            ? {
-                from: 0,
-                to  : end
-            }
-            : null);
+        var iter = new Iter(
+            cm,
+            pos.line,
+            pos.ch,
+            end
+                ? {
+                    from: 0,
+                    to  : end
+                }
+                : null
+        );
         return findMatchingClose(iter, name);
     };
 });
@@ -13341,9 +13552,13 @@
                 return popAndPass(type, stream, state);
             }
             if (type == "{") {
-                return popContext(state) && pushContext(state, stream, allowNested
-                    ? "block"
-                    : "top");
+                return popContext(state) && pushContext(
+                    state,
+                    stream,
+                    allowNested
+                        ? "block"
+                        : "top"
+                );
             }
 
             if (type == "word") {
@@ -14836,9 +15051,11 @@
                 }
                 for (var i = 0; i < scriptTypes.length; i = i + 1) {
                     var tp = scriptTypes[i];
-                    if (typeof tp.matches == "string"
-                        ? scriptType == tp.matches
-                        : tp.matches.test(scriptType)) {
+                    if (
+                        typeof tp.matches == "string"
+                            ? scriptType == tp.matches
+                            : tp.matches.test(scriptType)
+                    ) {
                         if (tp.mode) {
                             state.token      = script;
                             state.localMode  = tp.mode;
@@ -15538,9 +15755,11 @@
                 return cont(functiondef, maybeop);
             }
             if (type == "keyword c") {
-                return cont(noComma
-                    ? maybeexpressionNoComma
-                    : maybeexpression);
+                return cont(
+                    noComma
+                        ? maybeexpressionNoComma
+                        : maybeexpression
+                );
             }
             if (type == "(") {
                 return cont(
@@ -15553,9 +15772,11 @@
                 );
             }
             if (type == "operator" || type == "spread") {
-                return cont(noComma
-                    ? expressionNoComma
-                    : expression);
+                return cont(
+                    noComma
+                        ? expressionNoComma
+                        : expression
+                );
             }
             if (type == "[") {
                 return cont(pushlex("]"), arrayLiteral, poplex, maybeop);
@@ -15595,10 +15816,13 @@
                 ? expression
                 : expressionNoComma;
             if (type == "=>") {
-                return cont(pushcontext, noComma
-                    ? arrowBodyNoComma
-                    : arrowBody,
-                popcontext);
+                return cont(
+                    pushcontext,
+                    noComma
+                        ? arrowBodyNoComma
+                        : arrowBody,
+                    popcontext
+                );
             }
             if (type == "operator") {
                 if (/\+\+|--/.test(value)) {
@@ -15643,15 +15867,19 @@
         }
         function arrowBody(type) {
             findFatArrow(cx.stream, cx.state);
-            return pass(type == "{"
-                ? statement
-                : expression);
+            return pass(
+                type == "{"
+                    ? statement
+                    : expression
+            );
         }
         function arrowBodyNoComma(type) {
             findFatArrow(cx.stream, cx.state);
-            return pass(type == "{"
-                ? statement
-                : expressionNoComma);
+            return pass(
+                type == "{"
+                    ? statement
+                    : expressionNoComma
+            );
         }
         function maybelabel(type) {
             if (type == ":") {
@@ -16017,21 +16245,29 @@
                 } else if (type == "form") {
                     return lexical.indented + indentUnit;
                 } else if (type == "stat") {
-                    return lexical.indented + (isContinuedStatement(state, textAfter)
-                        ? statementIndent || indentUnit
-                        : 0);
+                    return lexical.indented + (
+                        isContinuedStatement(state, textAfter)
+                            ? statementIndent || indentUnit
+                            : 0
+                    );
                 } else if (lexical.info == "switch" && !closing && parserConfig.doubleIndentSwitch != false) {
-                    return lexical.indented + (/^(?:case|default)\b/.test(textAfter)
-                        ? indentUnit
-                        : 2 * indentUnit);
+                    return lexical.indented + (
+                        /^(?:case|default)\b/.test(textAfter)
+                            ? indentUnit
+                            : 2 * indentUnit
+                    );
                 } else if (lexical.align) {
-                    return lexical.column + (closing
-                        ? 0
-                        : 1);
+                    return lexical.column + (
+                        closing
+                            ? 0
+                            : 1
+                    );
                 } else {
-                    return lexical.indented + (closing
-                        ? 0
-                        : indentUnit);
+                    return lexical.indented + (
+                        closing
+                            ? 0
+                            : indentUnit
+                    );
                 }
             },
             jsonldMode       : jsonldMode,
@@ -16157,9 +16393,11 @@
         }
         var style = cm.getTokenTypeAt(Pos(where.line, pos + 1));
 
-        var found = scanForBracket(cm, Pos(where.line, pos + (dir > 0
-            ? 1
-            : 0)), dir, style || null, config);
+        var found = scanForBracket(cm, Pos(where.line, pos + (
+            dir > 0
+                ? 1
+                : 0
+        )), dir, style || null, config);
         if (found == null) {
             return null;
         }
@@ -16204,9 +16442,11 @@
                 continue;
             }
             if (lineNo == where.line) {
-                pos = where.ch - (dir < 0
-                    ? 1
-                    : 0);
+                pos = where.ch - (
+                    dir < 0
+                        ? 1
+                        : 0
+                );
             }
             for (; pos != end; pos = pos + dir) {
                 var ch = line.charAt(pos);
@@ -16225,9 +16465,11 @@
                 }
             }
         }
-        return lineNo - dir == (dir > 0
-            ? cm.lastLine()
-            : cm.firstLine())
+        return lineNo - dir == (
+            dir > 0
+                ? cm.lastLine()
+                : cm.firstLine()
+        )
             ? false
             : null;
     }
