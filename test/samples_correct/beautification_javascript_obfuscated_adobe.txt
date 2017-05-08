@@ -63,9 +63,11 @@ if (typeof jQuery == "undefined") {
             get        : function (num) {
                 return num == null
                     ? this.toArray()
-                    : (num < 0
-                        ? this[this.length + num]
-                        : this[num]);
+                    : (
+                        num < 0
+                            ? this[this.length + num]
+                            : this[num]
+                    );
             },
             init       : function (selector, context, rootjQuery) {
                 var match,
@@ -91,9 +93,11 @@ if (typeof jQuery == "undefined") {
                             context  = context instanceof jQuery
                                 ? context[0]
                                 : context;
-                            doc      = (context && context.nodeType
-                                ? context.ownerDocument || context
-                                : document);
+                            doc      = (
+                                context && context.nodeType
+                                    ? context.ownerDocument || context
+                                    : document
+                            );
                             selector = jQuery.parseHTML(match[1], doc, true);
                             if (rsingleTag.test(match[1]) && jQuery.isPlainObject(context)) {
                                 this
@@ -146,9 +150,11 @@ if (typeof jQuery == "undefined") {
                 ret.prevObject = this;
                 ret.context    = this.context;
                 if (name === "find") {
-                    ret.selector = this.selector + (this.selector
-                        ? " "
-                        : "") + selector;
+                    ret.selector = this.selector + (
+                        this.selector
+                            ? " "
+                            : ""
+                    ) + selector;
                 } else if (name) {
                     ret.selector = this.selector + "." + name + "(" + selector + ")";
                 }
@@ -256,10 +262,14 @@ if (typeof jQuery == "undefined") {
                     }
                     if (fn) {
                         for (; i < length; i = i + 1) {
-                            fn(elems[i], key, exec
-                                ? value.call(elems[i], i, fn(elems[i], key))
-                                : value,
-                            pass);
+                            fn(
+                                elems[i],
+                                key,
+                                exec
+                                    ? value.call(elems[i], i, fn(elems[i], key))
+                                    : value,
+                                pass
+                            );
                         }
                     }
                     chainable = 1;
@@ -488,12 +498,18 @@ if (typeof jQuery == "undefined") {
                 if ((parsed = rsingleTag.exec(data))) {
                     return [context.createElement(parsed[1])];
                 }
-                parsed = jQuery.buildFragment([data], context, scripts
-                    ? null
-                    : []);
-                return jQuery.merge([], (parsed.cacheable
-                    ? jQuery.clone(parsed.fragment)
-                    : parsed.fragment).childNodes);
+                parsed = jQuery.buildFragment(
+                    [data],
+                    context,
+                    scripts
+                        ? null
+                        : []
+                );
+                return jQuery.merge([], (
+                    parsed.cacheable
+                        ? jQuery.clone(parsed.fragment)
+                        : parsed.fragment
+                ).childNodes);
             },
             parseJSON    : function (data) {
                 if (!data || typeof data !== "string") {
@@ -553,9 +569,11 @@ if (typeof jQuery == "undefined") {
                 return proxy;
             },
             ready        : function (wait) {
-                if (wait === true
-                    ? --jQuery.readyWait
-                    : jQuery.isReady) {
+                if (
+                    wait === true
+                        ? --jQuery.readyWait
+                        : jQuery.isReady
+                ) {
                     return;
                 }
                 if (!document.body) {
@@ -802,23 +820,27 @@ if (typeof jQuery == "undefined") {
                                     jQuery.each(tuples, function (i, tuple) {
                                         var action = tuple[0],
                                             fn     = fns[i];
-                                        deferred[tuple[1]](jQuery.isFunction(fn)
-                                            ? function () {
-                                                var returned = fn.apply(this, arguments);
-                                                if (returned && jQuery.isFunction(returned.promise)) {
-                                                    returned
-                                                        .promise()
-                                                        .done(newDefer.resolve)
-                                                        .fail(newDefer.reject)
-                                                        .progress(newDefer.notify);
-                                                } else {
-                                                    newDefer[action + "With"](this === deferred
-                                                        ? newDefer
-                                                        : this,
-                                                    [returned]);
+                                        deferred[tuple[1]](
+                                            jQuery.isFunction(fn)
+                                                ? function () {
+                                                    var returned = fn.apply(this, arguments);
+                                                    if (returned && jQuery.isFunction(returned.promise)) {
+                                                        returned
+                                                            .promise()
+                                                            .done(newDefer.resolve)
+                                                            .fail(newDefer.reject)
+                                                            .progress(newDefer.notify);
+                                                    } else {
+                                                        newDefer[action + "With"](
+                                                            this === deferred
+                                                                ? newDefer
+                                                                : this,
+                                                            [returned]
+                                                        );
+                                                    }
                                                 }
-                                            }
-                                            : newDefer[action]);
+                                                : newDefer[action]
+                                        );
                                     });
                                     fns = null;
                                 })
@@ -1189,9 +1211,11 @@ if (typeof jQuery == "undefined") {
                         for (i = 0, l = name.length; i < l; i = i + 1) {
                             delete thisCache[name[i]];
                         }
-                        if (!(pvt
-                            ? isEmptyDataObject
-                            : jQuery.isEmptyObject)(thisCache)) {
+                        if (!(
+                            pvt
+                                ? isEmptyDataObject
+                                : jQuery.isEmptyObject
+                        )(thisCache)) {
                             return;
                         }
                     }
@@ -1668,9 +1692,11 @@ if (typeof jQuery == "undefined") {
                 notxml = nType !== 1 || !jQuery.isXMLDoc(elem);
                 if (notxml) {
                     name  = name.toLowerCase();
-                    hooks = jQuery.attrHooks[name] || (rboolean.test(name)
-                        ? boolHook
-                        : nodeHook);
+                    hooks = jQuery.attrHooks[name] || (
+                        rboolean.test(name)
+                            ? boolHook
+                            : nodeHook
+                    );
                 }
                 if (value !== undefined) {
                     if (value === null) {
@@ -1793,9 +1819,11 @@ if (typeof jQuery == "undefined") {
                             if (!isBool) {
                                 jQuery.attr(elem, name, "");
                             }
-                            elem.removeAttribute(getSetAttribute
-                                ? name
-                                : propName);
+                            elem.removeAttribute(
+                                getSetAttribute
+                                    ? name
+                                    : propName
+                            );
                             if (isBool && propName in elem) {
                                 elem[propName] = false;
                             }
@@ -1833,9 +1861,11 @@ if (typeof jQuery == "undefined") {
                             : options.length;
                         for (; i < max; i = i + 1) {
                             option = options[i];
-                            if (option.selected && (jQuery.support.optDisabled
-                                ? !option.disabled
-                                : option.getAttribute("disabled") === null) && (!option.parentNode.disabled || !jQuery.nodeName(option.parentNode, "optgroup"))) {
+                            if (option.selected && (
+                                jQuery.support.optDisabled
+                                    ? !option.disabled
+                                    : option.getAttribute("disabled") === null
+                            ) && (!option.parentNode.disabled || !jQuery.nodeName(option.parentNode, "optgroup"))) {
                                 value = jQuery(option).val();
                                 if (one) {
                                     return value;
@@ -1897,9 +1927,11 @@ if (typeof jQuery == "undefined") {
                 get: function (elem, name) {
                     var ret;
                     ret = elem.getAttributeNode(name);
-                    return ret && (fixSpecified[name]
-                        ? ret.value !== ""
-                        : ret.specified)
+                    return ret && (
+                        fixSpecified[name]
+                            ? ret.value !== ""
+                            : ret.specified
+                    )
                         ? ret.value
                         : undefined;
                 },
@@ -2067,9 +2099,11 @@ if (typeof jQuery == "undefined") {
                     special    = jQuery
                         .event
                         .special[type] || {};
-                    type       = (selector
-                        ? special.delegateType
-                        : special.bindType) || type;
+                    type       = (
+                        selector
+                            ? special.delegateType
+                            : special.bindType
+                    ) || type;
                     special    = jQuery
                         .event
                         .special[type] || {};
@@ -2282,13 +2316,19 @@ if (typeof jQuery == "undefined") {
                             : fromElement;
                     }
                     if (!event.which && button !== undefined) {
-                        event.which = (button & 1
-                            ? 1
-                            : (button & 2
-                                ? 3
-                                : (button & 4
-                                    ? 2
-                                    : 0)));
+                        event.which = (
+                            button & 1
+                                ? 1
+                                : (
+                                    button & 2
+                                        ? 3
+                                        : (
+                                            button & 4
+                                                ? 2
+                                                : 0
+                                        )
+                                )
+                        );
                     }
                     return event;
                 },
@@ -2336,9 +2376,11 @@ if (typeof jQuery == "undefined") {
                     special    = jQuery
                         .event
                         .special[type] || {};
-                    type       = (selector
-                        ? special.delegateType
-                        : special.bindType) || type;
+                    type       = (
+                        selector
+                            ? special.delegateType
+                            : special.bindType
+                    ) || type;
                     eventType  = events[type] || [];
                     origCount  = eventType.length;
                     namespaces = namespaces
@@ -2800,11 +2842,13 @@ if (typeof jQuery == "undefined") {
                         type;
                     if (types && types.preventDefault && types.handleObj) {
                         handleObj = types.handleObj;
-                        jQuery(types.delegateTarget).off(handleObj.namespace
-                            ? handleObj.origType + "." + handleObj.namespace
-                            : handleObj.origType,
-                        handleObj.selector,
-                        handleObj.handler);
+                        jQuery(types.delegateTarget).off(
+                            handleObj.namespace
+                                ? handleObj.origType + "." + handleObj.namespace
+                                : handleObj.origType,
+                            handleObj.selector,
+                            handleObj.handler
+                        );
                         return this;
                     }
                     if (typeof types === "object") {
@@ -3493,9 +3537,11 @@ if (typeof jQuery == "undefined") {
                             if (!match[2]) {
                                 Sizzle.error(match[0]);
                             }
-                            match[3] = +(match[3]
-                                ? match[4] + (match[5] || 1)
-                                : 2 * (match[2] === "even" || match[2] === "odd"));
+                            match[3] = + (
+                                match[3]
+                                    ? match[4] + (match[5] || 1)
+                                    : 2 * (match[2] === "even" || match[2] === "odd")
+                            );
                             match[4] = +((match[6] + match[7]) || match[2] === "odd");
                         } else if (match[2]) {
                             Sizzle.error(match[0]);
@@ -3585,9 +3631,11 @@ if (typeof jQuery == "undefined") {
                         );
                     },
                     "gt"      : createPositionalPseudo(function (matchIndexes, length, argument) {
-                        for (var i = argument < 0
-                            ? argument + length
-                            : argument; ++i < length;) {
+                        for (
+                            var i = argument < 0
+                                ? argument + length
+                                : argument; ++i < length;
+                        ) {
                             matchIndexes.push(i);
                         }
                         return matchIndexes;
@@ -3608,9 +3656,11 @@ if (typeof jQuery == "undefined") {
                         return [length - 1];
                     }),
                     "lt"      : createPositionalPseudo(function (matchIndexes, length, argument) {
-                        for (var i = argument < 0
-                            ? argument + length
-                            : argument; --i >= 0;) {
+                        for (
+                            var i = argument < 0
+                                ? argument + length
+                                : argument; --i >= 0;
+                        ) {
                             matchIndexes.push(i);
                         }
                         return matchIndexes;
@@ -3701,9 +3751,11 @@ if (typeof jQuery == "undefined") {
                         hasDuplicate = true;
                         return 0;
                     }
-                    return (!a.compareDocumentPosition || !b.compareDocumentPosition
-                        ? a.compareDocumentPosition
-                        : a.compareDocumentPosition(b) & 4)
+                    return (
+                        !a.compareDocumentPosition || !b.compareDocumentPosition
+                            ? a.compareDocumentPosition
+                            : a.compareDocumentPosition(b) & 4
+                    )
                         ? -1
                         : 1;
                 }
@@ -3916,18 +3968,23 @@ if (typeof jQuery == "undefined") {
                         preMap      = [],
                         postMap     = [],
                         preexisting = results.length,
-                        elems       = seed || multipleContexts(selector || "*", context.nodeType
-                            ? [context]
-                            : context,
-                        [],
-                        seed),
+                        elems       = seed || multipleContexts(
+                            selector || "*",
+                            context.nodeType
+                                ? [context]
+                                : context,
+                            [],
+                            seed
+                        ),
                         matcherIn   = preFilter && (seed || !selector)
                             ? condense(elems, preMap, preFilter, context, xml)
                             : elems,
                         matcherOut  = matcher
-                            ? postFinder || (seed
-                                ? preFilter
-                                : preexisting || postFilter)
+                            ? postFinder || (
+                                seed
+                                    ? preFilter
+                                    : preexisting || postFilter
+                            )
                                 ? []
                                 : results
                             : matcherIn;
@@ -3952,9 +4009,11 @@ if (typeof jQuery == "undefined") {
                             }
                         }
                     } else {
-                        matcherOut = condense(matcherOut === results
-                            ? matcherOut.splice(preexisting, matcherOut.length)
-                            : matcherOut);
+                        matcherOut = condense(
+                            matcherOut === results
+                                ? matcherOut.splice(preexisting, matcherOut.length)
+                                : matcherOut
+                        );
                         if (postFinder) {
                             postFinder(null, results, matcherOut, xml);
                         } else {
@@ -4033,9 +4092,11 @@ if (typeof jQuery == "undefined") {
                                 "*",
                                 expandContext && context.parentNode || context
                             ),
-                            dirrunsUnique = (dirruns = dirruns + contextBackup == null
-                                ? 1
-                                : Math.E);
+                            dirrunsUnique = (
+                                dirruns = dirruns + contextBackup == null
+                                    ? 1
+                                    : Math.E
+                            );
                         if (outermost) {
                             outermostContext = context !== document && context;
                             cachedruns       = superMatcher.el;
@@ -4148,9 +4209,11 @@ if (typeof jQuery == "undefined") {
                             }
                             selector = selector.slice(tokens.shift().length);
                         }
-                        for (i = matchExpr["POS"].test(selector)
-                            ? -1
-                            : tokens.length - 1; i >= 0; i = i - 1) {
+                        for (
+                            i = matchExpr["POS"].test(selector)
+                                ? -1
+                                : tokens.length - 1; i >= 0; i = i - 1
+                        ) {
                             token = tokens[i];
                             if (Expr.relative[(type = token.type)]) {
                                 break;
@@ -4299,18 +4362,24 @@ if (typeof jQuery == "undefined") {
                 add    : function (selector, context) {
                     var set = typeof selector === "string"
                             ? jQuery(selector, context)
-                            : jQuery.makeArray(selector && selector.nodeType
-                                ? [selector]
-                                : selector),
+                            : jQuery.makeArray(
+                                selector && selector.nodeType
+                                    ? [selector]
+                                    : selector
+                            ),
                         all = jQuery.merge(this.get(), set);
-                    return this.pushStack(isDisconnected(set[0]) || isDisconnected(all[0])
-                        ? all
-                        : jQuery.unique(all));
+                    return this.pushStack(
+                        isDisconnected(set[0]) || isDisconnected(all[0])
+                            ? all
+                            : jQuery.unique(all)
+                    );
                 },
                 addBack: function (selector) {
-                    return this.add(selector == null
-                        ? this.prevObject
-                        : this.prevObject.filter(selector));
+                    return this.add(
+                        selector == null
+                            ? this.prevObject
+                            : this.prevObject.filter(selector)
+                    );
                 },
                 closest: function (selectors, context) {
                     var cur,
@@ -4323,9 +4392,11 @@ if (typeof jQuery == "undefined") {
                     for (; i < l; i = i + 1) {
                         cur = this[i];
                         while (cur && cur.ownerDocument && cur !== context && cur.nodeType !== 11) {
-                            if (pos
-                                ? pos.index(cur) > -1
-                                : jQuery.find.matchesSelector(cur, selectors)) {
+                            if (
+                                pos
+                                    ? pos.index(cur) > -1
+                                    : jQuery.find.matchesSelector(cur, selectors)
+                            ) {
                                 ret.push(cur);
                                 break;
                             }
@@ -4397,17 +4468,21 @@ if (typeof jQuery == "undefined") {
                     if (typeof elem === "string") {
                         return jQuery.inArray(this[0], jQuery(elem));
                     }
-                    return jQuery.inArray(elem.jquery
-                        ? elem[0]
-                        : elem,
-                    this);
+                    return jQuery.inArray(
+                        elem.jquery
+                            ? elem[0]
+                            : elem,
+                        this
+                    );
                 },
                 is     : function (selector) {
-                    return !!selector && (typeof selector === "string"
-                        ? rneedsContext.test(selector)
-                            ? jQuery(selector, this.context).index(this[0]) >= 0
-                            : jQuery.filter(selector, this).length > 0
-                        : this.filter(selector).length > 0);
+                    return !!selector && (
+                        typeof selector === "string"
+                            ? rneedsContext.test(selector)
+                                ? jQuery(selector, this.context).index(this[0]) >= 0
+                                : jQuery.filter(selector, this).length > 0
+                            : this.filter(selector).length > 0
+                    );
                 },
                 not    : function (selector) {
                     return this.pushStack(winnow(this, selector, false), "not", selector);
@@ -4673,9 +4748,13 @@ if (typeof jQuery == "undefined") {
                     if (jQuery.isFunction(value)) {
                         return this.each(function (i) {
                             var self = jQuery(this);
-                            args[0] = value.call(this, i, table
-                                ? self.html()
-                                : undefined);
+                            args[0] = value.call(
+                                this,
+                                i,
+                                table
+                                    ? self.html()
+                                    : undefined
+                            );
                             self.domManip(args, table, callback);
                         });
                     }
@@ -4689,12 +4768,14 @@ if (typeof jQuery == "undefined") {
                         if (first) {
                             table = table && jQuery.nodeName(first, "tr");
                             for (iNoClone = results.cacheable || l - 1; i < l; i = i + 1) {
-                                callback.call(table && jQuery.nodeName(this[i], "table")
-                                    ? findOrAppend(this[i], "tbody")
-                                    : this[i],
-                                i === iNoClone
-                                    ? fragment
-                                    : jQuery.clone(fragment, true, true));
+                                callback.call(
+                                    table && jQuery.nodeName(this[i], "table")
+                                        ? findOrAppend(this[i], "tbody")
+                                        : this[i],
+                                    i === iNoClone
+                                        ? fragment
+                                        : jQuery.clone(fragment, true, true)
+                                );
                             }
                         }
                         fragment = first = null;
@@ -4822,9 +4903,11 @@ if (typeof jQuery == "undefined") {
                         });
                     }
                     return this.length
-                        ? this.pushStack(jQuery(jQuery.isFunction(value)
-                            ? value()
-                            : value), "replaceWith", value)
+                        ? this.pushStack(jQuery(
+                            jQuery.isFunction(value)
+                                ? value()
+                                : value
+                        ), "replaceWith", value)
                         : this;
                 },
                 text       : function (value) {
