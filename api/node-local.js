@@ -519,7 +519,7 @@ Manage with biddle
                         options.diff   = dfiledump[data.index];
                         options.source = sfiledump[data.index];
                         screenWrite();
-                    } else if (method === "file" || method === "directory" || method === "subdirectory") {if(method === "subdirectory")
+                    } else if (method === "file" || method === "directory" || method === "subdirectory") {
                         fileWrite(data);
                     }
                     sState[data.index] = false;
