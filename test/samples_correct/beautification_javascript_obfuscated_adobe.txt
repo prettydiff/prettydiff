@@ -4932,9 +4932,11 @@ if (typeof jQuery == "undefined") {
                 wrap       : function (html) {
                     var isFunction = jQuery.isFunction(html);
                     return this.each(function (i) {
-                        jQuery(this).wrapAll(isFunction
-                            ? html.call(this, i)
-                            : html);
+                        jQuery(this).wrapAll(
+                            isFunction
+                                ? html.call(this, i)
+                                : html
+                        );
                     });
                 },
                 wrapAll    : function (html) {
@@ -5086,9 +5088,11 @@ if (typeof jQuery == "undefined") {
                     return this;
                 } else {
                     for (; i < l; i = i + 1) {
-                        elems = (i > 0
-                            ? this.clone(true)
-                            : this).get();
+                        elems = (
+                            i > 0
+                                ? this.clone(true)
+                                : this
+                        ).get();
                         jQuery(insert[i])[original](elems);
                         ret = ret.concat(elems);
                     }
@@ -5200,9 +5204,11 @@ if (typeof jQuery == "undefined") {
                     handleScript = function (elem) {
                         if (!elem.type || rscriptType.test(elem.type)) {
                             return scripts
-                                ? scripts.push(elem.parentNode
-                                    ? elem.parentNode.removeChild(elem)
-                                    : elem)
+                                ? scripts.push(
+                                    elem.parentNode
+                                        ? elem.parentNode.removeChild(elem)
+                                        : elem
+                                )
                                 : fragment.appendChild(elem);
                         }
                     };
@@ -5476,9 +5482,11 @@ if (typeof jQuery == "undefined") {
                         return eventsToggle.apply(this, arguments);
                     }
                     return this.each(function () {
-                        if (bool
-                            ? state
-                            : isHidden(this)) {
+                        if (
+                            bool
+                                ? state
+                                : isHidden(this)
+                        ) {
                             jQuery(this).show();
                         } else {
                             jQuery(this).hide();
@@ -5654,9 +5662,11 @@ if (typeof jQuery == "undefined") {
                 : value;
         }
         function augmentWidthOrHeight(elem, name, extra, isBorderBox) {
-            var i   = extra === (isBorderBox
-                    ? "border"
-                    : "content")
+            var i   = extra === (
+                    isBorderBox
+                        ? "border"
+                        : "content"
+                )
                     ? 4
                     : name === "width"
                         ? 1
@@ -5701,9 +5711,11 @@ if (typeof jQuery == "undefined") {
                 );
                 val              = parseFloat(val) || 0;
             }
-            return (val + augmentWidthOrHeight(elem, name, extra || (isBorderBox
-                ? "border"
-                : "content"), valueIsBorderBox)) + "px";
+            return (val + augmentWidthOrHeight(elem, name, extra || (
+                isBorderBox
+                    ? "border"
+                    : "content"
+            ), valueIsBorderBox)) + "px";
         }
         function css_defaultDisplay(nodeName) {
             if (elemdisplay[nodeName]) {
@@ -5752,23 +5764,29 @@ if (typeof jQuery == "undefined") {
                     }
                 },
                 set: function (elem, value, extra) {
-                    return setPositiveNumber(elem, value, extra
-                        ? augmentWidthOrHeight(
-                            elem,
-                            name,
-                            extra,
-                            jQuery.support.boxSizing && jQuery.css(elem, "boxSizing") === "border-box"
-                        )
-                        : 0);
+                    return setPositiveNumber(
+                        elem,
+                        value,
+                        extra
+                            ? augmentWidthOrHeight(
+                                elem,
+                                name,
+                                extra,
+                                jQuery.support.boxSizing && jQuery.css(elem, "boxSizing") === "border-box"
+                            )
+                            : 0
+                    );
                 }
             };
         });
         if (!jQuery.support.opacity) {
             jQuery.cssHooks.opacity = {
                 get: function (elem, computed) {
-                    return ropacity.test((computed && elem.currentStyle
-                        ? elem.currentStyle.filter
-                        : elem.style.filter) || "")
+                    return ropacity.test((
+                        computed && elem.currentStyle
+                            ? elem.currentStyle.filter
+                            : elem.style.filter
+                    ) || "")
                         ? (0.01 * parseFloat(RegExp.$1)) + ""
                         : computed
                             ? "1"
@@ -5910,9 +5928,11 @@ if (typeof jQuery == "undefined") {
                 add = function (key, value) {
                     value       = jQuery.isFunction(value)
                         ? value()
-                        : (value == null
-                            ? ""
-                            : value);
+                        : (
+                            value == null
+                                ? ""
+                                : value
+                        );
                     s[s.length] = encodeURIComponent(key) + "=" +
                             encodeURIComponent(value);
                 };
@@ -6064,9 +6084,11 @@ if (typeof jQuery == "undefined") {
                 flatOptions = jQuery.ajaxSettings.flatOptions || {};
             for (key in src) {
                 if (src[key] !== undefined) {
-                    (flatOptions[key]
-                        ? target
-                        : (deep || (deep = {})))[key] = src[key];
+                    (
+                        flatOptions[key]
+                            ? target
+                            : (deep || (deep = {}))
+                    )[key] = src[key];
                 }
             }
             if (deep) {
@@ -6109,9 +6131,11 @@ if (typeof jQuery == "undefined") {
                 })
                 .done(function (responseText) {
                     response = arguments;
-                    self.html(selector
-                        ? jQuery("<div>").append(responseText.replace(rscript, "")).find(selector)
-                        : responseText);
+                    self.html(
+                        selector
+                            ? jQuery("<div>").append(responseText.replace(rscript, "")).find(selector)
+                            : responseText
+                    );
                 });
             return this;
         };
@@ -6323,15 +6347,19 @@ if (typeof jQuery == "undefined") {
                     .split(core_rspace);
                 if (s.crossDomain == null) {
                     parts         = rurl.exec(s.url.toLowerCase()) || false;
-                    s.crossDomain = parts && (parts.join(":") + (parts[3]
-                        ? ""
-                        : parts[1] === "http:"
-                            ? 80
-                            : 443)) !== (ajaxLocParts.join(":") + (ajaxLocParts[3]
-                        ? ""
-                        : ajaxLocParts[1] === "http:"
-                            ? 80
-                            : 443));
+                    s.crossDomain = parts && (parts.join(":") + (
+                        parts[3]
+                            ? ""
+                            : parts[1] === "http:"
+                                ? 80
+                                : 443
+                    )) !== (ajaxLocParts.join(":") + (
+                        ajaxLocParts[3]
+                            ? ""
+                            : ajaxLocParts[1] === "http:"
+                                ? 80
+                                : 443
+                    ));
                 }
                 if (s.data && s.processData && typeof s.data !== "string") {
                     s.data = jQuery.param(s.data, s.traditional);
@@ -6352,9 +6380,11 @@ if (typeof jQuery == "undefined") {
                 }
                 if (!s.hasContent) {
                     if (s.data) {
-                        s.url = s.url + (rquery.test(s.url)
-                            ? "&"
-                            : "?") + s.data;
+                        s.url = s.url + (
+                            rquery.test(s.url)
+                                ? "&"
+                                : "?"
+                        ) + s.data;
                         delete s.data;
                     }
                     ifModifiedKey = s.url;
@@ -6363,11 +6393,15 @@ if (typeof jQuery == "undefined") {
                             ret = s
                                 .url
                                 .replace(rts, "$1_=" + ts);
-                        s.url = ret + ((ret === s.url)
-                            ? (rquery.test(s.url)
-                                ? "&"
-                                : "?") + "_=" + ts
-                            : "");
+                        s.url = ret + (
+                            (ret === s.url)
+                                ? (
+                                    rquery.test(s.url)
+                                        ? "&"
+                                        : "?"
+                                ) + "_=" + ts
+                                : ""
+                        );
                     }
                 }
                 if (s.data && s.hasContent && s.contentType !== false || options.contentType) {
@@ -6382,11 +6416,16 @@ if (typeof jQuery == "undefined") {
                         jqXHR.setRequestHeader("If-None-Match", jQuery.etag[ifModifiedKey]);
                     }
                 }
-                jqXHR.setRequestHeader("Accept", s.dataTypes[0] && s.accepts[s.dataTypes[0]]
-                    ? s.accepts[s.dataTypes[0]] + (s.dataTypes[0] !== "*"
-                        ? ", " + allTypes + "; q=0.01"
-                        : "")
-                    : s.accepts["*"]);
+                jqXHR.setRequestHeader(
+                    "Accept",
+                    s.dataTypes[0] && s.accepts[s.dataTypes[0]]
+                        ? s.accepts[s.dataTypes[0]] + (
+                            s.dataTypes[0] !== "*"
+                                ? ", " + allTypes + "; q=0.01"
+                                : ""
+                        )
+                        : s.accepts["*"]
+                );
                 for (i in s.headers) {
                     jqXHR.setRequestHeader(i, s.headers[i]);
                 }
@@ -6624,9 +6663,11 @@ if (typeof jQuery == "undefined") {
                 } else if (replaceInData) {
                     s.data = data.replace(rjsonp, "$1" + callbackName);
                 } else if (hasCallback) {
-                    s.url = s.url + (rquestion.test(url)
-                        ? "&"
-                        : "?") + s.jsonp + "=" + callbackName;
+                    s.url = s.url + (
+                        rquestion.test(url)
+                            ? "&"
+                            : "?"
+                    ) + s.jsonp + "=" + callbackName;
                 }
                 s.converters["script json"] = function () {
                     if (!responseContainer) {
@@ -6868,9 +6909,11 @@ if (typeof jQuery == "undefined") {
                             maxIterations = 20;
                         if (parts) {
                             end  = +parts[2];
-                            unit = parts[3] || (jQuery.cssNumber[prop]
-                                ? ""
-                                : "px");
+                            unit = parts[3] || (
+                                jQuery.cssNumber[prop]
+                                    ? ""
+                                    : "px"
+                            );
                             if (unit !== "px" && start) {
                                 start = jQuery.css(tween.elem, prop, true) || end || 1;
                                 do {
@@ -7132,9 +7175,11 @@ if (typeof jQuery == "undefined") {
                 value = props[index];
                 if (rfxtypes.exec(value)) {
                     delete props[index];
-                    if (value === (hidden
-                        ? "hide"
-                        : "show")) {
+                    if (value === (
+                        hidden
+                            ? "hide"
+                            : "show"
+                    )) {
                         continue;
                     }
                     handled.push(index);
@@ -7159,9 +7204,12 @@ if (typeof jQuery == "undefined") {
                 });
                 for (index = 0; index < length; index = index + 1) {
                     prop       = handled[index];
-                    tween      = anim.createTween(prop, hidden
-                        ? dataShow[prop]
-                        : 0);
+                    tween      = anim.createTween(
+                        prop,
+                        hidden
+                            ? dataShow[prop]
+                            : 0
+                    );
                     orig[prop] = dataShow[prop] || jQuery.style(elem, prop);
                     if (!(prop in dataShow)) {
                         dataShow[prop] = tween.start;
@@ -7199,9 +7247,11 @@ if (typeof jQuery == "undefined") {
                 this.options = options;
                 this.start   = this.now = this.cur();
                 this.end     = end;
-                this.unit    = unit || (jQuery.cssNumber[prop]
-                    ? ""
-                    : "px");
+                this.unit    = unit || (
+                    jQuery.cssNumber[prop]
+                        ? ""
+                        : "px"
+                );
             },
             run        : function (percent) {
                 var eased,
@@ -7632,12 +7682,14 @@ if (typeof jQuery == "undefined") {
                             : elem[method];
                     }
                     if (win) {
-                        win.scrollTo(!top
-                            ? val
-                            : jQuery(win).scrollLeft(),
-                        top
-                            ? val
-                            : jQuery(win).scrollTop());
+                        win.scrollTo(
+                            !top
+                                ? val
+                                : jQuery(win).scrollLeft(),
+                            top
+                                ? val
+                                : jQuery(win).scrollTop()
+                        );
                     } else {
                         elem[method] = val;
                     }
@@ -7664,34 +7716,41 @@ if (typeof jQuery == "undefined") {
                     var chainable = arguments.length && (
                             defaultExtra || typeof margin !== "boolean"
                         ),
-                        extra     = defaultExtra || (margin === true || value === true
-                            ? "margin"
-                            : "border");
-                    return jQuery.access(this, function (elem, type, value) {
-                        var doc;
-                        if (jQuery.isWindow(elem)) {
-                            return elem
-                                .document
-                                .documentElement["client" + name];
-                        }
-                        if (elem.nodeType === 9) {
-                            doc = elem.documentElement;
-                            return Math.max(
-                                elem.body["scroll" + name],
-                                doc["scroll" + name],
-                                elem.body["offset" + name],
-                                doc["offset" + name],
-                                doc["client" + name]
-                            );
-                        }
-                        return value === undefined
-                            ? jQuery.css(elem, type, value, extra)
-                            : jQuery.style(elem, type, value, extra);
-                    }, type, chainable
-                        ? margin
-                        : undefined,
-                    chainable,
-                    null);
+                        extra     = defaultExtra || (
+                            margin === true || value === true
+                                ? "margin"
+                                : "border"
+                        );
+                    return jQuery.access(
+                        this,
+                        function (elem, type, value) {
+                            var doc;
+                            if (jQuery.isWindow(elem)) {
+                                return elem
+                                    .document
+                                    .documentElement["client" + name];
+                            }
+                            if (elem.nodeType === 9) {
+                                doc = elem.documentElement;
+                                return Math.max(
+                                    elem.body["scroll" + name],
+                                    doc["scroll" + name],
+                                    elem.body["offset" + name],
+                                    doc["offset" + name],
+                                    doc["client" + name]
+                                );
+                            }
+                            return value === undefined
+                                ? jQuery.css(elem, type, value, extra)
+                                : jQuery.style(elem, type, value, extra);
+                        },
+                        type,
+                        chainable
+                            ? margin
+                            : undefined,
+                        chainable,
+                        null
+                    );
                 };
             });
         });
@@ -7834,11 +7893,13 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 img = $("img[usemap=#" + mapName + "]")[0];
                 return !!img && visible(img);
             }
-            return (/input|select|textarea|button|object/.test(nodeName)
-                ? !element.disabled
-                : "a" === nodeName
-                    ? element.href || isTabIndexNotNaN
-                    : isTabIndexNotNaN) && visible(element);
+            return (
+                /input|select|textarea|button|object/.test(nodeName)
+                    ? !element.disabled
+                    : "a" === nodeName
+                        ? element.href || isTabIndexNotNaN
+                        : isTabIndexNotNaN
+            ) && visible(element);
         }
         function visible(element) {
             return $
@@ -7921,9 +7982,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
         }
         if (!$.fn.addBack) {
             $.fn.addBack = function (selector) {
-                return this.add(selector == null
-                    ? this.prevObject
-                    : this.prevObject.filter(selector));
+                return this.add(
+                    selector == null
+                        ? this.prevObject
+                        : this.prevObject.filter(selector)
+                );
             };
         }
         if ($("<a>").data("a-b", "a").removeData("a-b").data("a-b")) {
@@ -7943,9 +8006,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             .fn
             .extend({
                 disableSelection: function () {
-                    return this.bind(($.support.selectstart
-                        ? "selectstart"
-                        : "mousedown") + ".ui-disableSelection", function (event) {
+                    return this.bind((
+                        $.support.selectstart
+                            ? "selectstart"
+                            : "mousedown"
+                    ) + ".ui-disableSelection", function (event) {
                         event.preventDefault();
                     });
                 },
@@ -8207,9 +8272,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             }
                         }
                     });
-                    this.document = $(element.style
-                        ? element.ownerDocument
-                        : element.document || element);
+                    this.document = $(
+                        element.style
+                            ? element.ownerDocument
+                            : element.document || element
+                    );
                     this.window   = $(this.document[0].defaultView || this.document[0].parentWindow);
                 }
                 this._create();
@@ -8218,9 +8285,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             },
             _delay             : function (handler, delay) {
                 function handlerProxy() {
-                    return (typeof handler === "string"
-                        ? instance[handler]
-                        : handler).apply(instance, arguments);
+                    return (
+                        typeof handler === "string"
+                            ? instance[handler]
+                            : handler
+                    ).apply(instance, arguments);
                 }
                 var instance = this;
                 return setTimeout(handlerProxy, delay || 0);
@@ -8286,9 +8355,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         if (!suppressDisabledCheck && (instance.options.disabled === true || $(this).hasClass("ui-state-disabled"))) {
                             return;
                         }
-                        return (typeof handler === "string"
-                            ? instance[handler]
-                            : handler).apply(instance, arguments);
+                        return (
+                            typeof handler === "string"
+                                ? instance[handler]
+                                : handler
+                        ).apply(instance, arguments);
                     }
                     if (typeof handler !== "string") {
                         handlerProxy.guid = handler.guid = handler.guid || handlerProxy.guid || $.guid++;
@@ -8335,9 +8406,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     callback = this.options[type];
                 data         = data || {};
                 event        = $.Event(event);
-                event.type   = (type === this.widgetEventPrefix
-                    ? type
-                    : this.widgetEventPrefix + type).toLowerCase();
+                event.type   = (
+                    type === this.widgetEventPrefix
+                        ? type
+                        : this.widgetEventPrefix + type
+                ).toLowerCase();
                 event.target = this.element[0];
                 orig         = event.originalEvent;
                 if (orig) {
@@ -8518,9 +8591,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 this._mouseDownEvent = event;
                 var that       = this,
                     btnIsLeft  = (event.which === 1),
-                    elIsCancel = (typeof this.options.cancel === "string" && event.target.nodeName
-                        ? $(event.target).closest(this.options.cancel).length
-                        : false);
+                    elIsCancel = (
+                        typeof this.options.cancel === "string" && event.target.nodeName
+                            ? $(event.target).closest(this.options.cancel).length
+                            : false
+                    );
                 if (!btnIsLeft || elIsCancel || !this._mouseCapture(event)) {
                     return true;
                 }
@@ -8580,9 +8655,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 }
                 if (this._mouseDistanceMet(event) && this._mouseDelayMet(event)) {
                     this._mouseStarted = (this._mouseStart(this._mouseDownEvent, event) !== false);
-                    (this._mouseStarted
-                        ? this._mouseDrag(event)
-                        : this._mouseUp(event));
+                    (
+                        this._mouseStarted
+                            ? this._mouseDrag(event)
+                            : this._mouseUp(event)
+                    );
                 }
                 return !this._mouseStarted;
             },
@@ -8679,18 +8756,24 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     scrollIsRootNode = (/(html|body)/i).test(scroll[0].tagName);
                 return {
                     left: (
-                        pos.left + this.offset.relative.left * mod + this.offset.parent.left * mod - ((this.cssPosition === "fixed"
-                            ? -this.scrollParent.scrollLeft()
-                            : scrollIsRootNode
-                                ? 0
-                                : scroll.scrollLeft()) * mod)
+                        pos.left + this.offset.relative.left * mod + this.offset.parent.left * mod - ((
+                            this.cssPosition === "fixed"
+                                ? -this.scrollParent.scrollLeft()
+                                : scrollIsRootNode
+                                    ? 0
+                                    : scroll.scrollLeft()
+                        ) * mod)
                     ),
                     top : (
-                        pos.top + this.offset.relative.top * mod + this.offset.parent.top * mod - ((this.cssPosition === "fixed"
-                            ? -this.scrollParent.scrollTop()
-                            : (scrollIsRootNode
-                                ? 0
-                                : scroll.scrollTop())) * mod)
+                        pos.top + this.offset.relative.top * mod + this.offset.parent.top * mod - ((
+                            this.cssPosition === "fixed"
+                                ? -this.scrollParent.scrollTop()
+                                : (
+                                    scrollIsRootNode
+                                        ? 0
+                                        : scroll.scrollTop()
+                                )
+                        ) * mod)
                     )
                 };
             },
@@ -8717,13 +8800,17 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 var o      = this.options,
                     helper = $.isFunction(o.helper)
                         ? $(o.helper.apply(this.element[0], [event]))
-                        : (o.helper === "clone"
-                            ? this.element.clone().removeAttr("id")
-                            : this.element);
+                        : (
+                            o.helper === "clone"
+                                ? this.element.clone().removeAttr("id")
+                                : this.element
+                        );
                 if (!helper.parents("body").length) {
-                    helper.appendTo((o.appendTo === "parent"
-                        ? this.element[0].parentNode
-                        : o.appendTo));
+                    helper.appendTo((
+                        o.appendTo === "parent"
+                            ? this.element[0].parentNode
+                            : o.appendTo
+                    ));
                 }
                 if (helper[0] !== this.element[0] && !(/(fixed|absolute)/).test(helper.css("position"))) {
                     helper.css("position", "absolute");
@@ -8786,9 +8873,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             ? (
                                 (top - this.offset.click.top >= containment[1] || top - this.offset.click.top > containment[3])
                                     ? top
-                                    : ((top - this.offset.click.top >= containment[1])
-                                        ? top - o.grid[1]
-                                        : top + o.grid[1])
+                                    : (
+                                        (top - this.offset.click.top >= containment[1])
+                                            ? top - o.grid[1]
+                                            : top + o.grid[1]
+                                    )
                             )
                             : top;
                         left  = o.grid[0]
@@ -8798,27 +8887,35 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             ? (
                                 (left - this.offset.click.left >= containment[0] || left - this.offset.click.left > containment[2])
                                     ? left
-                                    : ((left - this.offset.click.left >= containment[0])
-                                        ? left - o.grid[0]
-                                        : left + o.grid[0])
+                                    : (
+                                        (left - this.offset.click.left >= containment[0])
+                                            ? left - o.grid[0]
+                                            : left + o.grid[0]
+                                    )
                             )
                             : left;
                     }
                 }
                 return {
                     left: (
-                        pageX - this.offset.click.left - this.offset.relative.left - this.offset.parent.left + ((this.cssPosition === "fixed"
-                            ? -this.scrollParent.scrollLeft()
-                            : scrollIsRootNode
-                                ? 0
-                                : scroll.scrollLeft()))
+                        pageX - this.offset.click.left - this.offset.relative.left - this.offset.parent.left + ((
+                            this.cssPosition === "fixed"
+                                ? -this.scrollParent.scrollLeft()
+                                : scrollIsRootNode
+                                    ? 0
+                                    : scroll.scrollLeft()
+                        ))
                     ),
                     top : (
-                        pageY - this.offset.click.top - this.offset.relative.top - this.offset.parent.top + ((this.cssPosition === "fixed"
-                            ? -this.scrollParent.scrollTop()
-                            : (scrollIsRootNode
-                                ? 0
-                                : scroll.scrollTop())))
+                        pageY - this.offset.click.top - this.offset.relative.top - this.offset.parent.top + ((
+                            this.cssPosition === "fixed"
+                                ? -this.scrollParent.scrollTop()
+                                : (
+                                    scrollIsRootNode
+                                        ? 0
+                                        : scroll.scrollTop()
+                                )
+                        ))
                     )
                 };
             },
@@ -8881,20 +8978,22 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 if (!this.handle) {
                     return false;
                 }
-                $(o.iframeFix === true
-                    ? "iframe"
-                    : o.iframeFix).each(function () {
-                        $("<div class='ui-draggable-iframeFix' style='background: #fff;'></div>")
-                            .css({
-                                height  : this.offsetHeight + "px",
-                                opacity : "0.001",
-                                position: "absolute",
-                                width   : this.offsetWidth + "px",
-                                zIndex  : 1000
-                            })
-                            .css($(this).offset())
-                            .appendTo("body");
-                    });
+                $(
+                    o.iframeFix === true
+                        ? "iframe"
+                        : o.iframeFix
+                ).each(function () {
+                    $("<div class='ui-draggable-iframeFix' style='background: #fff;'></div>")
+                        .css({
+                            height  : this.offsetHeight + "px",
+                            opacity : "0.001",
+                            position: "absolute",
+                            width   : this.offsetWidth + "px",
+                            zIndex  : 1000
+                        })
+                        .css($(this).offset())
+                        .appendTo("body");
+                });
                 return true;
             },
             _mouseDrag             : function (event, noPropagation) {
@@ -9065,16 +9164,24 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         o.containment === "document"
                             ? 0
                             : $(window).scrollTop() - this.offset.relative.top - this.offset.parent.top,
-                        (o.containment === "document"
-                            ? 0
-                            : $(window).scrollLeft()) + $(o.containment === "document"
-                            ? document
-                            : window).width() - this.helperProportions.width - this.margins.left,
-                        (o.containment === "document"
-                            ? 0
-                            : $(window).scrollTop()) + ($(o.containment === "document"
-                            ? document
-                            : window).height() || document.body.parentNode.scrollHeight) - this.helperProportions.height - this.margins.top
+                        (
+                            o.containment === "document"
+                                ? 0
+                                : $(window).scrollLeft()
+                        ) + $(
+                            o.containment === "document"
+                                ? document
+                                : window
+                        ).width() - this.helperProportions.width - this.margins.left,
+                        (
+                            o.containment === "document"
+                                ? 0
+                                : $(window).scrollTop()
+                        ) + ($(
+                            o.containment === "document"
+                                ? document
+                                : window
+                        ).height() || document.body.parentNode.scrollHeight) - this.helperProportions.height - this.margins.top
                     ];
                 }
                 if (!(/^(document|window|parent)$/).test(o.containment) && o.containment.constructor !== Array) {
@@ -9091,14 +9198,18 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         (parseInt($(ce).css("borderTopWidth"), 10) || 0) + (
                             parseInt($(ce).css("paddingTop"), 10) || 0
                         ),
-                        (over
-                            ? Math.max(ce.scrollWidth, ce.offsetWidth)
-                            : ce.offsetWidth) - (parseInt($(ce).css("borderRightWidth"), 10) || 0) - (
+                        (
+                            over
+                                ? Math.max(ce.scrollWidth, ce.offsetWidth)
+                                : ce.offsetWidth
+                        ) - (parseInt($(ce).css("borderRightWidth"), 10) || 0) - (
                             parseInt($(ce).css("paddingRight"), 10) || 0
                         ) - this.helperProportions.width - this.margins.left - this.margins.right,
-                        (over
-                            ? Math.max(ce.scrollHeight, ce.offsetHeight)
-                            : ce.offsetHeight) - (parseInt($(ce).css("borderBottomWidth"), 10) || 0) - (
+                        (
+                            over
+                                ? Math.max(ce.scrollHeight, ce.offsetHeight)
+                                : ce.offsetHeight
+                        ) - (parseInt($(ce).css("borderBottomWidth"), 10) || 0) - (
                             parseInt($(ce).css("paddingBottom"), 10) || 0
                         ) - this.helperProportions.height - this.margins.top - this.margins.bottom
                     ];
@@ -9562,19 +9673,21 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     var i = $(this).data("ui-draggable"),
                         o = i.options;
                     i.snapElements = [];
-                    $(o.snap.constructor !== String
-                        ? (o.snap.items || ":data(ui-draggable)")
-                        : o.snap).each(function () {
-                            var $t = $(this),
-                                $o = $t.offset();
-                            if (this !== i.element[0]) {
-                                i
-                                    .snapElements
-                                    .push(
-                                        {height: $t.outerHeight(), item: this, left: $o.left, top: $o.top, width: $t.outerWidth()}
-                                    );
-                            }
-                        });
+                    $(
+                        o.snap.constructor !== String
+                            ? (o.snap.items || ":data(ui-draggable)")
+                            : o.snap
+                    ).each(function () {
+                        var $t = $(this),
+                            $o = $t.offset();
+                        if (this !== i.element[0]) {
+                            i
+                                .snapElements
+                                .push(
+                                    {height: $t.outerHeight(), item: this, left: $o.left, top: $o.top, width: $t.outerWidth()}
+                                );
+                        }
+                    });
                 }
             });
         $
@@ -9870,9 +9983,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             .intersect(draggable, this, this.options.tolerance),
                         c          = !intersects && this.isover
                             ? "isout"
-                            : (intersects && !this.isover
-                                ? "isover"
-                                : null);
+                            : (
+                                intersects && !this.isover
+                                    ? "isover"
+                                    : null
+                            );
                     if (!c) {
                         return;
                     }
@@ -10164,18 +10279,20 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         });
                     this._proportionallyResize();
                 }
-                this.handles = o.handles || (!$(".ui-resizable-handle", this.element).length
-                    ? "e,s,se"
-                    : {
-                        e : ".ui-resizable-e",
-                        n : ".ui-resizable-n",
-                        ne: ".ui-resizable-ne",
-                        nw: ".ui-resizable-nw",
-                        s : ".ui-resizable-s",
-                        se: ".ui-resizable-se",
-                        sw: ".ui-resizable-sw",
-                        w : ".ui-resizable-w"
-                    });
+                this.handles = o.handles || (
+                    !$(".ui-resizable-handle", this.element).length
+                        ? "e,s,se"
+                        : {
+                            e : ".ui-resizable-e",
+                            n : ".ui-resizable-n",
+                            ne: ".ui-resizable-ne",
+                            nw: ".ui-resizable-nw",
+                            s : ".ui-resizable-s",
+                            se: ".ui-resizable-se",
+                            sw: ".ui-resizable-sw",
+                            w : ".ui-resizable-w"
+                        }
+                );
                 if (this.handles.constructor === String) {
                     if (this.handles === "all") {
                         this.handles = "n,e,s,w,se,sw,ne,nw";
@@ -10424,9 +10541,12 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     ? o.aspectRatio
                     : ((this.originalSize.width / this.originalSize.height) || 1);
                 cursor                     = $(".ui-resizable-" + this.axis).css("cursor");
-                $("body").css("cursor", cursor === "auto"
-                    ? this.axis + "-resize"
-                    : cursor);
+                $("body").css(
+                    "cursor",
+                    cursor === "auto"
+                        ? this.axis + "-resize"
+                        : cursor
+                );
                 el.addClass("ui-resizable-resizing");
                 this._propagate("start", event);
                 return true;
@@ -10741,12 +10861,15 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         ) || null;
                     that
                         .element
-                        .animate($.extend(style, top && left
-                            ? {
-                                top : top,
-                                left: left
-                            }
-                            : {}), {
+                        .animate($.extend(
+                            style,
+                            top && left
+                                ? {
+                                    top : top,
+                                    left: left
+                                }
+                                : {}
+                        ), {
                             duration: o.animateDuration,
                             easing  : o.animateEasing,
                             step    : function () {
@@ -10787,12 +10910,16 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     if (ce[0] !== document && (/static/).test(ce.css("position"))) {
                         cop = co;
                     }
-                    if (cp.left < (that._helper
-                        ? co.left
-                        : 0)) {
-                        that.size.width = that.size.width + (that._helper
-                            ? (that.position.left - co.left)
-                            : (that.position.left - cop.left));
+                    if (cp.left < (
+                        that._helper
+                            ? co.left
+                            : 0
+                    )) {
+                        that.size.width = that.size.width + (
+                            that._helper
+                                ? (that.position.left - co.left)
+                                : (that.position.left - cop.left)
+                        );
                         if (pRatio) {
                             that.size.height = that.size.width / that.aspectRatio;
                         }
@@ -10800,12 +10927,16 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             ? co.left
                             : 0;
                     }
-                    if (cp.top < (that._helper
-                        ? co.top
-                        : 0)) {
-                        that.size.height = that.size.height + (that._helper
-                            ? (that.position.top - co.top)
-                            : that.position.top);
+                    if (cp.top < (
+                        that._helper
+                            ? co.top
+                            : 0
+                    )) {
+                        that.size.height = that.size.height + (
+                            that._helper
+                                ? (that.position.top - co.top)
+                                : that.position.top
+                        );
                         if (pRatio) {
                             that.size.width = that.size.height * that.aspectRatio;
                         }
@@ -10815,12 +10946,16 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     }
                     that.offset.left = that.parentData.left + that.position.left;
                     that.offset.top  = that.parentData.top + that.position.top;
-                    woset            = Math.abs((that._helper
-                        ? that.offset.left - cop.left
-                        : (that.offset.left - cop.left)) + that.sizeDiff.width);
-                    hoset            = Math.abs((that._helper
-                        ? that.offset.top - cop.top
-                        : (that.offset.top - co.top)) + that.sizeDiff.height);
+                    woset            = Math.abs((
+                        that._helper
+                            ? that.offset.left - cop.left
+                            : (that.offset.left - cop.left)
+                    ) + that.sizeDiff.width);
+                    hoset            = Math.abs((
+                        that._helper
+                            ? that.offset.top - cop.top
+                            : (that.offset.top - co.top)
+                    ) + that.sizeDiff.height);
                     isParent         = that
                         .containerElement
                         .get(0) === that
@@ -10900,12 +11035,16 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         co                     = that.containerOffset;
                         ch                     = that.containerSize.height;
                         cw                     = that.containerSize.width;
-                        width                  = ($.ui.hasScroll(ce, "left")
-                            ? ce.scrollWidth
-                            : cw);
-                        height                 = ($.ui.hasScroll(ce)
-                            ? ce.scrollHeight
-                            : ch);
+                        width                  = (
+                            $.ui.hasScroll(ce, "left")
+                                ? ce.scrollWidth
+                                : cw
+                        );
+                        height                 = (
+                            $.ui.hasScroll(ce)
+                                ? ce.scrollHeight
+                                : ch
+                        );
                         that.parentData        = {
                             element: ce,
                             height : height,
@@ -11048,9 +11187,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             width   : cs.width
                         })
                         .addClass("ui-resizable-ghost")
-                        .addClass(typeof o.ghost === "string"
-                            ? o.ghost
-                            : "");
+                        .addClass(
+                            typeof o.ghost === "string"
+                                ? o.ghost
+                                : ""
+                        );
                     that
                         .ghost
                         .appendTo(that.helper);
@@ -11321,12 +11462,16 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                                 .hasClass("ui-selected");
                             selectee
                                 .$element
-                                .removeClass(doSelect
-                                    ? "ui-unselecting"
-                                    : "ui-selected")
-                                .addClass(doSelect
-                                    ? "ui-selecting"
-                                    : "ui-unselecting");
+                                .removeClass(
+                                    doSelect
+                                        ? "ui-unselecting"
+                                        : "ui-selected"
+                                )
+                                .addClass(
+                                    doSelect
+                                        ? "ui-selecting"
+                                        : "ui-unselecting"
+                                );
                             selectee.unselecting = !doSelect;
                             selectee.selecting   = doSelect;
                             selectee.selected    = doSelect;
@@ -11522,9 +11667,12 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 if (this._storedZIndex) {
                     this
                         .helper
-                        .css("zIndex", this._storedZIndex === "auto"
-                            ? ""
-                            : this._storedZIndex);
+                        .css(
+                            "zIndex",
+                            this._storedZIndex === "auto"
+                                ? ""
+                                : this._storedZIndex
+                        );
                 }
                 this.dragging = false;
                 if (this.cancelHelperRemoval) {
@@ -11700,18 +11848,24 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     scrollIsRootNode = (/(html|body)/i).test(scroll[0].tagName);
                 return {
                     left: (
-                        pos.left + this.offset.relative.left * mod + this.offset.parent.left * mod - ((this.cssPosition === "fixed"
-                            ? -this.scrollParent.scrollLeft()
-                            : scrollIsRootNode
-                                ? 0
-                                : scroll.scrollLeft()) * mod)
+                        pos.left + this.offset.relative.left * mod + this.offset.parent.left * mod - ((
+                            this.cssPosition === "fixed"
+                                ? -this.scrollParent.scrollLeft()
+                                : scrollIsRootNode
+                                    ? 0
+                                    : scroll.scrollLeft()
+                        ) * mod)
                     ),
                     top : (
-                        pos.top + this.offset.relative.top * mod + this.offset.parent.top * mod - ((this.cssPosition === "fixed"
-                            ? -this.scrollParent.scrollTop()
-                            : (scrollIsRootNode
-                                ? 0
-                                : scroll.scrollTop())) * mod)
+                        pos.top + this.offset.relative.top * mod + this.offset.parent.top * mod - ((
+                            this.cssPosition === "fixed"
+                                ? -this.scrollParent.scrollTop()
+                                : (
+                                    scrollIsRootNode
+                                        ? 0
+                                        : scroll.scrollTop()
+                                )
+                        ) * mod)
                     )
                 };
             },
@@ -11735,13 +11889,17 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 var o      = this.options,
                     helper = $.isFunction(o.helper)
                         ? $(o.helper.apply(this.element[0], [event, this.currentItem]))
-                        : (o.helper === "clone"
-                            ? this.currentItem.clone()
-                            : this.currentItem);
+                        : (
+                            o.helper === "clone"
+                                ? this.currentItem.clone()
+                                : this.currentItem
+                        );
                 if (!helper.parents("body").length) {
-                    $(o.appendTo !== "parent"
-                        ? o.appendTo
-                        : this.currentItem[0].parentNode)[0].appendChild(helper[0]);
+                    $(
+                        o.appendTo !== "parent"
+                            ? o.appendTo
+                            : this.currentItem[0].parentNode
+                    )[0].appendChild(helper[0]);
                 }
                 if (helper[0] === this.currentItem[0]) {
                     this._storedCSS = {
@@ -11875,9 +12033,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             ? (
                                 (top - this.offset.click.top >= this.containment[1] && top - this.offset.click.top <= this.containment[3])
                                     ? top
-                                    : ((top - this.offset.click.top >= this.containment[1])
-                                        ? top - o.grid[1]
-                                        : top + o.grid[1])
+                                    : (
+                                        (top - this.offset.click.top >= this.containment[1])
+                                            ? top - o.grid[1]
+                                            : top + o.grid[1]
+                                    )
                             )
                             : top;
                         left  = this.originalPageX + Math.round(
@@ -11887,41 +12047,53 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             ? (
                                 (left - this.offset.click.left >= this.containment[0] && left - this.offset.click.left <= this.containment[2])
                                     ? left
-                                    : ((left - this.offset.click.left >= this.containment[0])
-                                        ? left - o.grid[0]
-                                        : left + o.grid[0])
+                                    : (
+                                        (left - this.offset.click.left >= this.containment[0])
+                                            ? left - o.grid[0]
+                                            : left + o.grid[0]
+                                    )
                             )
                             : left;
                     }
                 }
                 return {
                     left: (
-                        pageX - this.offset.click.left - this.offset.relative.left - this.offset.parent.left + ((this.cssPosition === "fixed"
-                            ? -this.scrollParent.scrollLeft()
-                            : scrollIsRootNode
-                                ? 0
-                                : scroll.scrollLeft()))
+                        pageX - this.offset.click.left - this.offset.relative.left - this.offset.parent.left + ((
+                            this.cssPosition === "fixed"
+                                ? -this.scrollParent.scrollLeft()
+                                : scrollIsRootNode
+                                    ? 0
+                                    : scroll.scrollLeft()
+                        ))
                     ),
                     top : (
-                        pageY - this.offset.click.top - this.offset.relative.top - this.offset.parent.top + ((this.cssPosition === "fixed"
-                            ? -this.scrollParent.scrollTop()
-                            : (scrollIsRootNode
-                                ? 0
-                                : scroll.scrollTop())))
+                        pageY - this.offset.click.top - this.offset.relative.top - this.offset.parent.top + ((
+                            this.cssPosition === "fixed"
+                                ? -this.scrollParent.scrollTop()
+                                : (
+                                    scrollIsRootNode
+                                        ? 0
+                                        : scroll.scrollTop()
+                                )
+                        ))
                     )
                 };
             },
             _getDragHorizontalDirection: function () {
                 var delta = this.positionAbs.left - this.lastPositionAbs.left;
-                return delta !== 0 && (delta > 0
-                    ? "right"
-                    : "left");
+                return delta !== 0 && (
+                    delta > 0
+                        ? "right"
+                        : "left"
+                );
             },
             _getDragVerticalDirection  : function () {
                 var delta = this.positionAbs.top - this.lastPositionAbs.top;
-                return delta !== 0 && (delta > 0
-                    ? "down"
-                    : "up");
+                return delta !== 0 && (
+                    delta > 0
+                        ? "down"
+                        : "up"
+                );
             },
             _getItemsAsjQuery          : function (connected) {
                 var i,
@@ -12069,9 +12241,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             ? 2
                             : 1
                     )
-                    : (verticalDirection && (verticalDirection === "down"
-                        ? 2
-                        : 1));
+                    : (verticalDirection && (
+                        verticalDirection === "down"
+                            ? 2
+                            : 1
+                    ));
             },
             _intersectsWithSides       : function (item) {
                 var isOverBottomHalf    = isOverAxis(
@@ -12418,9 +12592,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     : i
                         .item[0]
                         .parentNode
-                        .insertBefore(this.placeholder[0], (this.direction === "down"
-                            ? i.item[0]
-                            : i.item[0].nextSibling));
+                        .insertBefore(this.placeholder[0], (
+                            this.direction === "down"
+                                ? i.item[0]
+                                : i.item[0].nextSibling
+                        ));
                 this.counter = this.counter
                     ? ++this.counter
                     : 1;
@@ -12521,12 +12697,16 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     this.containment = [
                         0 - this.offset.relative.left - this.offset.parent.left,
                         0 - this.offset.relative.top - this.offset.parent.top,
-                        $(o.containment === "document"
-                            ? document
-                            : window).width() - this.helperProportions.width - this.margins.left,
-                        ($(o.containment === "document"
-                            ? document
-                            : window).height() || document.body.parentNode.scrollHeight) - this.helperProportions.height - this.margins.top
+                        $(
+                            o.containment === "document"
+                                ? document
+                                : window
+                        ).width() - this.helperProportions.width - this.margins.left,
+                        ($(
+                            o.containment === "document"
+                                ? document
+                                : window
+                        ).height() || document.body.parentNode.scrollHeight) - this.helperProportions.height - this.margins.top
                     ];
                 }
                 if (!(/^(document|window|parent)$/).test(o.containment)) {
@@ -12540,14 +12720,18 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         co.top + (parseInt($(ce).css("borderTopWidth"), 10) || 0) + (
                             parseInt($(ce).css("paddingTop"), 10) || 0
                         ) - this.margins.top,
-                        co.left + (over
-                            ? Math.max(ce.scrollWidth, ce.offsetWidth)
-                            : ce.offsetWidth) - (parseInt($(ce).css("borderLeftWidth"), 10) || 0) - (
+                        co.left + (
+                            over
+                                ? Math.max(ce.scrollWidth, ce.offsetWidth)
+                                : ce.offsetWidth
+                        ) - (parseInt($(ce).css("borderLeftWidth"), 10) || 0) - (
                             parseInt($(ce).css("paddingRight"), 10) || 0
                         ) - this.helperProportions.width - this.margins.left,
-                        co.top + (over
-                            ? Math.max(ce.scrollHeight, ce.offsetHeight)
-                            : ce.offsetHeight) - (parseInt($(ce).css("borderTopWidth"), 10) || 0) - (
+                        co.top + (
+                            over
+                                ? Math.max(ce.scrollHeight, ce.offsetHeight)
+                                : ce.offsetHeight
+                        ) - (parseInt($(ce).css("borderTopWidth"), 10) || 0) - (
                             parseInt($(ce).css("paddingBottom"), 10) || 0
                         ) - this.helperProportions.height - this.margins.top
                     ];
@@ -13090,9 +13274,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     var prefix = "rgba(",
                         rgba   = jQuery.map(this._rgba, function (v, i) {
                             return v == null
-                                ? (i > 2
-                                    ? 1
-                                    : 0)
+                                ? (
+                                    i > 2
+                                        ? 1
+                                        : 0
+                                )
                                 : v;
                         });
                     if (rgba[3] === 1) {
@@ -13260,11 +13446,15 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     }
                     color.fn[key] = function (value) {
                         var vtype = jQuery.type(value),
-                            fn    = (key === "alpha"
-                                ? (this._hsla
-                                    ? "hsla"
-                                    : "rgba")
-                                : spaceName),
+                            fn    = (
+                                key === "alpha"
+                                    ? (
+                                        this._hsla
+                                            ? "hsla"
+                                            : "rgba"
+                                    )
+                                    : spaceName
+                            ),
                             local = this[fn](),
                             cur   = local[prop.idx],
                             match;
@@ -13281,9 +13471,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         if (vtype === "string") {
                             match = rplusequals.exec(value);
                             if (match) {
-                                value = cur + parseFloat(match[2]) * (match[1] === "+"
-                                    ? 1
-                                    : -1);
+                                value = cur + parseFloat(match[2]) * (
+                                    match[1] === "+"
+                                        ? 1
+                                        : -1
+                                );
                             }
                         }
                         local[prop.idx] = value;
@@ -13313,9 +13505,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                                             curElem         = curElem.parentNode;
                                         } catch (e) {}
                                     }
-                                    value = value.blend(backgroundColor && backgroundColor !== "transparent"
-                                        ? backgroundColor
-                                        : "_default");
+                                    value = value.blend(
+                                        backgroundColor && backgroundColor !== "transparent"
+                                            ? backgroundColor
+                                            : "_default"
+                                    );
                                 }
                                 value = value.toRgbaString();
                             }
@@ -13445,9 +13639,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             }
             if (!$.fn.addBack) {
                 $.fn.addBack = function (selector) {
-                    return this.add(selector == null
-                        ? this.prevObject
-                        : this.prevObject.filter(selector));
+                    return this.add(
+                        selector == null
+                            ? this.prevObject
+                            : this.prevObject.filter(selector)
+                    );
                 };
             }
             $.effects.animateClass = function (value, duration, easing, callback) {
@@ -13555,13 +13751,15 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                                     return $
                                         .effects
                                         .animateClass
-                                        .call(this, (force
-                                            ? {
-                                                add: classNames
-                                            }
-                                            : {
-                                                remove: classNames
-                                            }), speed, easing, callback);
+                                        .call(this, (
+                                            force
+                                                ? {
+                                                    add: classNames
+                                                }
+                                                : {
+                                                    remove: classNames
+                                                }
+                                        ), speed, easing, callback);
                                 }
                             } else {
                                 return $

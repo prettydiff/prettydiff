@@ -495,7 +495,11 @@ module.exports = (function taskrunner() {
                                     a    = 0,
                                     len  = 0;
                                 if (ler !== null && ler !== undefined) {
-                                    errout(ler);
+                                    if (stdlout.indexOf("\u001b[1m\u001b[36mFunction:\u001b[39m\u001b[0m") > -1) {
+                                        errout(stdlout);
+                                    } else {
+                                        errout(ler);
+                                    }
                                 }
                                 if (stdler !== null && stdler !== "") {
                                     errout(stdler);
@@ -543,7 +547,11 @@ module.exports = (function taskrunner() {
                         if (date > today) {
                             node.child("biddle update jslint", function biddle_lint_install_biddle_update(uer, stduout, stduer) {
                                 if (uer !== null && uer !== undefined) {
-                                    errout(uer);
+                                    if (stduout.indexOf("\u001b[1m\u001b[36mFunction:\u001b[39m\u001b[0m") > -1) {
+                                        errout(stduout);
+                                    } else {
+                                        errout(uer);
+                                    }
                                 }
                                 if (stduer !== null && stduer !== "") {
                                     errout(stduer);
