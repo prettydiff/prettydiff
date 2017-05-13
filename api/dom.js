@@ -5674,6 +5674,7 @@ global.prettydiff.meta = {
                 var ann         = document.getElementById("headline").getElementsByTagName("p")[0],
                     x           = Math.random(),
                     circulation = [
+                        "Looking for a JavaScript developer? Email me at <a href=\"mailto:info@prettydiff.com\">info@prettydiff.com</a>.",
                         "<a href=\"license.txt\">License</a> change and new <a href=\"guide/unrelated_diff.xhtml\">diff algorithm</a> with version <a href=\"https://github.com/prettydiff/prettydiff/releases/tag/2.1.17\">2.1.17</a>.",
                         "Version 2.2.0 brings complete biddle integration, <a href=\"https://asciinema.org/a/118428\">watch the video</a>."
                     ];

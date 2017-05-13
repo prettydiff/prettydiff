@@ -14015,9 +14015,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                                     next();
                                 }
                             }
-                            if (elem.is(":hidden")
-                                ? mode === "hide"
-                                : mode === "show") {
+                            if (
+                                elem.is(":hidden")
+                                    ? mode === "hide"
+                                    : mode === "show"
+                            ) {
                                 elem[mode]();
                                 done();
                             } else {
@@ -15179,9 +15181,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 messages: {
                     noResults: "No search results.",
                     results  : function (amount) {
-                        return amount + (amount > 1
-                            ? " results are"
-                            : " result is") + " available, use up and down arrow keys to navigate.";
+                        return amount + (
+                            amount > 1
+                                ? " results are"
+                                : " result is"
+                        ) + " available, use up and down arrow keys to navigate.";
                     }
                 }
             }
@@ -15246,9 +15250,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         : "",
                     focusClass   = "ui-state-focus";
                 if (options.label === null) {
-                    options.label = (this.type === "input"
-                        ? this.buttonElement.val()
-                        : this.buttonElement.html());
+                    options.label = (
+                        this.type === "input"
+                            ? this.buttonElement.val()
+                            : this.buttonElement.html()
+                    );
                 }
                 this._hoverable(this.buttonElement);
                 this
@@ -15483,9 +15489,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         buttonClasses.push("ui-button-text-icon" + (
                             multipleIcons
                                 ? "s"
-                                : (icons.primary
-                                    ? "-primary"
-                                    : "-secondary")
+                                : (
+                                    icons.primary
+                                        ? "-primary"
+                                        : "-secondary"
+                                )
                         ));
                     }
                     if (icons.primary) {
@@ -15500,9 +15508,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         );
                     }
                     if (!this.options.text) {
-                        buttonClasses.push(multipleIcons
-                            ? "ui-button-icons-only"
-                            : "ui-button-icon-only");
+                        buttonClasses.push(
+                            multipleIcons
+                                ? "ui-button-icons-only"
+                                : "ui-button-icon-only"
+                        );
                         if (!this.hasTitle) {
                             buttonElement.attr("title", $.trim(buttonText));
                         }
@@ -15636,14 +15646,18 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     })
                     .removeClass("ui-corner-all ui-corner-left ui-corner-right")
                     .filter(":first")
-                    .addClass(rtl
-                        ? "ui-corner-right"
-                        : "ui-corner-left")
+                    .addClass(
+                        rtl
+                            ? "ui-corner-right"
+                            : "ui-corner-left"
+                    )
                     .end()
                     .filter(":last")
-                    .addClass(rtl
-                        ? "ui-corner-left"
-                        : "ui-corner-right")
+                    .addClass(
+                        rtl
+                            ? "ui-corner-left"
+                            : "ui-corner-right"
+                    )
                     .end()
                     .end();
             },
@@ -15794,18 +15808,24 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 if (this._isDisabledDatepicker(target[0])) {
                     return;
                 }
-                this._adjustInstDate(inst, offset + (period === "M"
-                    ? this._get(inst, "showCurrentAtPos")
-                    : 0), period);
+                this._adjustInstDate(inst, offset + (
+                    period === "M"
+                        ? this._get(inst, "showCurrentAtPos")
+                        : 0
+                ), period);
                 this._updateDatepicker(inst);
             },
             _adjustInstDate         : function (inst, offset, period) {
-                var year  = inst.drawYear + (period === "Y"
-                        ? offset
-                        : 0),
-                    month = inst.drawMonth + (period === "M"
-                        ? offset
-                        : 0),
+                var year  = inst.drawYear + (
+                        period === "Y"
+                            ? offset
+                            : 0
+                    ),
+                    month = inst.drawMonth + (
+                        period === "M"
+                            ? offset
+                            : 0
+                    ),
                     day   = Math.min(inst.selectedDay, this._getDaysInMonth(year, month)) + (
                         period === "D"
                             ? offset
@@ -15936,11 +15956,17 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 if (showOn === "button" || showOn === "both") {
                     buttonText   = this._get(inst, "buttonText");
                     buttonImage  = this._get(inst, "buttonImage");
-                    inst.trigger = $(this._get(inst, "buttonImageOnly")
-                        ? $("<img/>").addClass(this._triggerClass).attr({alt: buttonText, src: buttonImage, title: buttonText})
-                        : $("<button type='button'></button>").addClass(this._triggerClass).html(!buttonImage
-                            ? buttonText
-                            : $("<img/>").attr({alt: buttonText, src: buttonImage, title: buttonText})));
+                    inst.trigger = $(
+                        this._get(inst, "buttonImageOnly")
+                            ? $("<img/>").addClass(this._triggerClass).attr(
+                                {alt: buttonText, src: buttonImage, title: buttonText}
+                            )
+                            : $("<button type='button'></button>").addClass(this._triggerClass).html(
+                                !buttonImage
+                                    ? buttonText
+                                    : $("<img/>").attr({alt: buttonText, src: buttonImage, title: buttonText})
+                            )
+                    );
                     input[
                         isRTL
                             ? "before"
@@ -15989,12 +16015,16 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             }
                             return maxI;
                         };
-                        date.setMonth(findMax(this._get(inst, (dateFormat.match(/MM/)
-                            ? "monthNames"
-                            : "monthNamesShort"))));
-                        date.setDate(findMax(this._get(inst, (dateFormat.match(/DD/)
-                            ? "dayNames"
-                            : "dayNamesShort"))) + 20 - date.getDay());
+                        date.setMonth(findMax(this._get(inst, (
+                            dateFormat.match(/MM/)
+                                ? "monthNames"
+                                : "monthNamesShort"
+                        ))));
+                        date.setDate(findMax(this._get(inst, (
+                            dateFormat.match(/DD/)
+                                ? "dayNames"
+                                : "dayNamesShort"
+                        ))) + 20 - date.getDay());
                     }
                     inst
                         .input
@@ -16003,9 +16033,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             },
             _canAdjustMonth         : function (inst, offset, curYear, curMonth) {
                 var numMonths = this._getNumberOfMonths(inst),
-                    date      = this._daylightSavingAdjust(new Date(curYear, curMonth + (offset < 0
-                        ? offset
-                        : numMonths[0] * numMonths[1]), 1));
+                    date      = this._daylightSavingAdjust(new Date(curYear, curMonth + (
+                        offset < 0
+                            ? offset
+                            : numMonths[0] * numMonths[1]
+                    ), 1));
                 if (offset < 0) {
                     date.setDate(this._getDaysInMonth(date.getFullYear(), date.getMonth()));
                 }
@@ -16047,15 +16079,21 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             .input
                             .outerHeight()
                         : 0,
-                    viewWidth   = document.documentElement.clientWidth + (isFixed
-                        ? 0
-                        : $(document).scrollLeft()),
-                    viewHeight  = document.documentElement.clientHeight + (isFixed
-                        ? 0
-                        : $(document).scrollTop());
-                offset.left = offset.left - (this._get(inst, "isRTL")
-                    ? (dpWidth - inputWidth)
-                    : 0);
+                    viewWidth   = document.documentElement.clientWidth + (
+                        isFixed
+                            ? 0
+                            : $(document).scrollLeft()
+                    ),
+                    viewHeight  = document.documentElement.clientHeight + (
+                        isFixed
+                            ? 0
+                            : $(document).scrollTop()
+                    );
+                offset.left = offset.left - (
+                    this._get(inst, "isRTL")
+                        ? (dpWidth - inputWidth)
+                        : 0
+                );
                 offset.left = offset.left - (
                     isFixed && offset.left === inst.input.offset().left
                 )
@@ -16107,9 +16145,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 if (!date) {
                     return null;
                 }
-                date.setHours(date.getHours() > 12
-                    ? date.getHours() + 2
-                    : 0);
+                date.setHours(
+                    date.getHours() > 12
+                        ? date.getHours() + 2
+                        : 0
+                );
                 return date;
             },
             _destroyDatepicker      : function (target) {
@@ -16158,9 +16198,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                                     $.datepicker._getFormatConfig(inst)
                                 );
                         } catch (e) {}
-                        var date    = (offset.toLowerCase().match(/^c/)
-                                ? $.datepicker._getDate(inst)
-                                : null) || new Date(),
+                        var date    = (
+                                offset.toLowerCase().match(/^c/)
+                                    ? $.datepicker._getDate(inst)
+                                    : null
+                            ) || new Date(),
                             year    = date.getFullYear(),
                             month   = date.getMonth(),
                             day     = date.getDate(),
@@ -16191,18 +16233,28 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         }
                         return new Date(year, month, day);
                     },
-                    newDate       = (date == null || date === ""
+                    newDate       = (
+                        date == null || date === ""
+                            ? defaultDate
+                            : (
+                                typeof date === "string"
+                                    ? offsetString(date)
+                                    : (
+                                        typeof date === "number"
+                                            ? (
+                                                isNaN(date)
+                                                    ? defaultDate
+                                                    : offsetNumeric(date)
+                                            )
+                                            : new Date(date.getTime())
+                                    )
+                            )
+                    );
+                newDate = (
+                    newDate && newDate.toString() === "Invalid Date"
                         ? defaultDate
-                        : (typeof date === "string"
-                            ? offsetString(date)
-                            : (typeof date === "number"
-                                ? (isNaN(date)
-                                    ? defaultDate
-                                    : offsetNumeric(date))
-                                : new Date(date.getTime()))));
-                newDate = (newDate && newDate.toString() === "Invalid Date"
-                    ? defaultDate
-                    : newDate);
+                        : newDate
+                );
                 if (newDate) {
                     newDate.setHours(0);
                     newDate.setMinutes(0);
@@ -16234,17 +16286,23 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     $.data(this._dialogInput[0], PROP_NAME, inst);
                 }
                 extendRemove(inst.settings, settings || {});
-                date = (date && date.constructor === Date
-                    ? this._formatDate(inst, date)
-                    : date);
+                date = (
+                    date && date.constructor === Date
+                        ? this._formatDate(inst, date)
+                        : date
+                );
                 this
                     ._dialogInput
                     .val(date);
-                this._pos = (pos
-                    ? (pos.length
-                        ? pos
-                        : [pos.pageX, pos.pageY])
-                    : null);
+                this._pos = (
+                    pos
+                        ? (
+                            pos.length
+                                ? pos
+                                : [pos.pageX, pos.pageY]
+                        )
+                        : null
+                );
                 if (!this._pos) {
                     browserWidth  = document.documentElement.clientWidth;
                     browserHeight = document.documentElement.clientHeight;
@@ -16303,9 +16361,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         .prop("disabled", true);
                 }
                 this._disabledInputs                              = $.map(this._disabledInputs, function (value) {
-                    return (value === target
-                        ? null
-                        : value);
+                    return (
+                        value === target
+                            ? null
+                            : value
+                    );
                 });
                 this._disabledInputs[this._disabledInputs.length] = target;
             },
@@ -16347,9 +16407,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                                 dateStr = $
                                     .datepicker
                                     ._formatDate(inst);
-                                onSelect.apply((inst.input
-                                    ? inst.input[0]
-                                    : null), [dateStr, inst]);
+                                onSelect.apply((
+                                    inst.input
+                                        ? inst.input[0]
+                                        : null
+                                ), [dateStr, inst]);
                             } else {
                                 $
                                     .datepicker
@@ -16364,16 +16426,20 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         case 33:
                             $
                                 .datepicker
-                                ._adjustDate(event.target, (event.ctrlKey
-                                    ? -$.datepicker._get(inst, "stepBigMonths")
-                                    : -$.datepicker._get(inst, "stepMonths")), "M");
+                                ._adjustDate(event.target, (
+                                    event.ctrlKey
+                                        ? -$.datepicker._get(inst, "stepBigMonths")
+                                        : -$.datepicker._get(inst, "stepMonths")
+                                ), "M");
                             break;
                         case 34:
                             $
                                 .datepicker
-                                ._adjustDate(event.target, (event.ctrlKey
-                                    ? +$.datepicker._get(inst, "stepBigMonths")
-                                    : +$.datepicker._get(inst, "stepMonths")), "M");
+                                ._adjustDate(event.target, (
+                                    event.ctrlKey
+                                        ? +$.datepicker._get(inst, "stepBigMonths")
+                                        : +$.datepicker._get(inst, "stepMonths")
+                                ), "M");
                             break;
                         case 35:
                             if (event.ctrlKey || event.metaKey) {
@@ -16395,17 +16461,21 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             if (event.ctrlKey || event.metaKey) {
                                 $
                                     .datepicker
-                                    ._adjustDate(event.target, (isRTL
-                                        ? + 1
-                                        : -1), "D");
+                                    ._adjustDate(event.target, (
+                                        isRTL
+                                            ? + 1
+                                            : -1
+                                    ), "D");
                             }
                             handled = event.ctrlKey || event.metaKey;
                             if (event.originalEvent.altKey) {
                                 $
                                     .datepicker
-                                    ._adjustDate(event.target, (event.ctrlKey
-                                        ? -$.datepicker._get(inst, "stepBigMonths")
-                                        : -$.datepicker._get(inst, "stepMonths")), "M");
+                                    ._adjustDate(event.target, (
+                                        event.ctrlKey
+                                            ? -$.datepicker._get(inst, "stepBigMonths")
+                                            : -$.datepicker._get(inst, "stepMonths")
+                                    ), "M");
                             }
                             break;
                         case 38:
@@ -16420,17 +16490,21 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             if (event.ctrlKey || event.metaKey) {
                                 $
                                     .datepicker
-                                    ._adjustDate(event.target, (isRTL
-                                        ? -1
-                                        : + 1), "D");
+                                    ._adjustDate(event.target, (
+                                        isRTL
+                                            ? -1
+                                            : + 1
+                                    ), "D");
                             }
                             handled = event.ctrlKey || event.metaKey;
                             if (event.originalEvent.altKey) {
                                 $
                                     .datepicker
-                                    ._adjustDate(event.target, (event.ctrlKey
-                                        ? +$.datepicker._get(inst, "stepBigMonths")
-                                        : +$.datepicker._get(inst, "stepMonths")), "M");
+                                    ._adjustDate(event.target, (
+                                        event.ctrlKey
+                                            ? +$.datepicker._get(inst, "stepBigMonths")
+                                            : +$.datepicker._get(inst, "stepMonths")
+                                    ), "M");
                             }
                             break;
                         case 40:
@@ -16466,9 +16540,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     chars = $
                         .datepicker
                         ._possibleChars($.datepicker._get(inst, "dateFormat"));
-                    chr   = String.fromCharCode(event.charCode == null
-                        ? event.keyCode
-                        : event.charCode);
+                    chr   = String.fromCharCode(
+                        event.charCode == null
+                            ? event.keyCode
+                            : event.charCode
+                    );
                     return event.ctrlKey || event.metaKey || (
                         chr < " " || !chars || chars.indexOf(chr) > -1
                     );
@@ -16483,9 +16559,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     try {
                         date = $
                             .datepicker
-                            .parseDate($.datepicker._get(inst, "dateFormat"), (inst.input
-                                ? inst.input.val()
-                                : null), $.datepicker._getFormatConfig(inst));
+                            .parseDate($.datepicker._get(inst, "dateFormat"), (
+                                inst.input
+                                    ? inst.input.val()
+                                    : null
+                            ), $.datepicker._getFormatConfig(inst));
                         if (date) {
                             $
                                 .datepicker
@@ -16533,9 +16611,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         .prop("disabled", false);
                 }
                 this._disabledInputs = $.map(this._disabledInputs, function (value) {
-                    return (value === target
-                        ? null
-                        : value);
+                    return (
+                        value === target
+                            ? null
+                            : value
+                    );
                 });
             },
             _findPos                : function (obj) {
@@ -16560,11 +16640,17 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     inst.currentMonth = inst.selectedMonth;
                     inst.currentYear  = inst.selectedYear;
                 }
-                var date = (day
-                    ? (typeof day === "object"
-                        ? day
-                        : this._daylightSavingAdjust(new Date(year, month, day)))
-                    : this._daylightSavingAdjust(new Date(inst.currentYear, inst.currentMonth, inst.currentDay)));
+                var date = (
+                    day
+                        ? (
+                            typeof day === "object"
+                                ? day
+                                : this._daylightSavingAdjust(new Date(year, month, day))
+                        )
+                        : this._daylightSavingAdjust(
+                            new Date(inst.currentYear, inst.currentMonth, inst.currentDay)
+                        )
+                );
                 return this.formatDate(
                     this._get(inst, "dateFormat"),
                     date,
@@ -16623,9 +16709,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     showCurrentAtPos       = this._get(inst, "showCurrentAtPos"),
                     stepMonths             = this._get(inst, "stepMonths"),
                     isMultiMonth           = (numMonths[0] !== 1 || numMonths[1] !== 1),
-                    currentDate            = this._daylightSavingAdjust((!inst.currentDay
-                        ? new Date(9999, 9, 9)
-                        : new Date(inst.currentYear, inst.currentMonth, inst.currentDay))),
+                    currentDate            = this._daylightSavingAdjust((
+                        !inst.currentDay
+                            ? new Date(9999, 9, 9)
+                            : new Date(inst.currentYear, inst.currentMonth, inst.currentDay)
+                    )),
                     minDate                = this._getMinMaxDate(inst, "min"),
                     maxDate                = this._getMinMaxDate(inst, "max"),
                     drawMonth              = inst.drawMonth - showCurrentAtPos,
@@ -16640,9 +16728,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         maxDate.getMonth() - (numMonths[0] * numMonths[1]) + 1,
                         maxDate.getDate()
                     ));
-                    maxDraw = (minDate && maxDraw < minDate
-                        ? minDate
-                        : maxDraw);
+                    maxDraw = (
+                        minDate && maxDraw < minDate
+                            ? minDate
+                            : maxDraw
+                    );
                     while (this._daylightSavingAdjust(new Date(drawYear, drawMonth, 1)) > maxDraw) {
                         drawMonth = drawMonth - 1;
                         if (drawMonth < 0) {
@@ -16654,80 +16744,106 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 inst.drawMonth    = drawMonth;
                 inst.drawYear     = drawYear;
                 prevText          = this._get(inst, "prevText");
-                prevText          = (!navigationAsDateFormat
-                    ? prevText
-                    : this.formatDate(
-                        prevText,
-                        this._daylightSavingAdjust(new Date(drawYear, drawMonth - stepMonths, 1)),
-                        this._getFormatConfig(inst)
-                    ));
-                prev              = (this._canAdjustMonth(inst, -1, drawYear, drawMonth)
-                    ? "<a class='ui-datepicker-prev ui-corner-all' data-handler='prev' data-event='cl" +
-                            "ick' title='" + prevText + "'><span class='ui-icon ui-icon-circle-triangle-" + (
-                        isRTL
-                            ? "e"
-                            : "w"
-                    ) + "'>" + prevText + "</span></a>"
-                    : (hideIfNoPrevNext
-                        ? ""
-                        : "<a class='ui-datepicker-prev ui-corner-all ui-state-disabled' title='" +
-                                prevText + "'><span class='ui-icon ui-icon-circle-triangle-" + (
+                prevText          = (
+                    !navigationAsDateFormat
+                        ? prevText
+                        : this.formatDate(
+                            prevText,
+                            this._daylightSavingAdjust(new Date(drawYear, drawMonth - stepMonths, 1)),
+                            this._getFormatConfig(inst)
+                        )
+                );
+                prev              = (
+                    this._canAdjustMonth(inst, -1, drawYear, drawMonth)
+                        ? "<a class='ui-datepicker-prev ui-corner-all' data-handler='prev' data-event='cl" +
+                                "ick' title='" + prevText + "'><span class='ui-icon ui-icon-circle-triangle-" + (
                             isRTL
                                 ? "e"
                                 : "w"
-                        ) + "'>" + prevText + "</span></a>"));
+                        ) + "'>" + prevText + "</span></a>"
+                        : (
+                            hideIfNoPrevNext
+                                ? ""
+                                : "<a class='ui-datepicker-prev ui-corner-all ui-state-disabled' title='" +
+                                        prevText + "'><span class='ui-icon ui-icon-circle-triangle-" + (
+                                    isRTL
+                                        ? "e"
+                                        : "w"
+                                ) + "'>" + prevText + "</span></a>"
+                        )
+                );
                 nextText          = this._get(inst, "nextText");
-                nextText          = (!navigationAsDateFormat
-                    ? nextText
-                    : this.formatDate(
-                        nextText,
-                        this._daylightSavingAdjust(new Date(drawYear, drawMonth + stepMonths, 1)),
-                        this._getFormatConfig(inst)
-                    ));
-                next              = (this._canAdjustMonth(inst, + 1, drawYear, drawMonth)
-                    ? "<a class='ui-datepicker-next ui-corner-all' data-handler='next' data-event='cl" +
-                            "ick' title='" + nextText + "'><span class='ui-icon ui-icon-circle-triangle-" + (
-                        isRTL
-                            ? "w"
-                            : "e"
-                    ) + "'>" + nextText + "</span></a>"
-                    : (hideIfNoPrevNext
-                        ? ""
-                        : "<a class='ui-datepicker-next ui-corner-all ui-state-disabled' title='" +
-                                nextText + "'><span class='ui-icon ui-icon-circle-triangle-" + (
+                nextText          = (
+                    !navigationAsDateFormat
+                        ? nextText
+                        : this.formatDate(
+                            nextText,
+                            this._daylightSavingAdjust(new Date(drawYear, drawMonth + stepMonths, 1)),
+                            this._getFormatConfig(inst)
+                        )
+                );
+                next              = (
+                    this._canAdjustMonth(inst, + 1, drawYear, drawMonth)
+                        ? "<a class='ui-datepicker-next ui-corner-all' data-handler='next' data-event='cl" +
+                                "ick' title='" + nextText + "'><span class='ui-icon ui-icon-circle-triangle-" + (
                             isRTL
                                 ? "w"
                                 : "e"
-                        ) + "'>" + nextText + "</span></a>"));
+                        ) + "'>" + nextText + "</span></a>"
+                        : (
+                            hideIfNoPrevNext
+                                ? ""
+                                : "<a class='ui-datepicker-next ui-corner-all ui-state-disabled' title='" +
+                                        nextText + "'><span class='ui-icon ui-icon-circle-triangle-" + (
+                                    isRTL
+                                        ? "w"
+                                        : "e"
+                                ) + "'>" + nextText + "</span></a>"
+                        )
+                );
                 currentText       = this._get(inst, "currentText");
-                gotoDate          = (this._get(inst, "gotoCurrent") && inst.currentDay
-                    ? currentDate
-                    : today);
-                currentText       = (!navigationAsDateFormat
-                    ? currentText
-                    : this.formatDate(currentText, gotoDate, this._getFormatConfig(inst)));
-                controls          = (!inst.inline
-                    ? "<button type='button' class='ui-datepicker-close ui-state-default ui-priority-" +
-                            "primary ui-corner-all' data-handler='hide' data-event='click'>" + this._get(inst, "closeText") +
-                            "</button>"
-                    : "");
+                gotoDate          = (
+                    this._get(inst, "gotoCurrent") && inst.currentDay
+                        ? currentDate
+                        : today
+                );
+                currentText       = (
+                    !navigationAsDateFormat
+                        ? currentText
+                        : this.formatDate(currentText, gotoDate, this._getFormatConfig(inst))
+                );
+                controls          = (
+                    !inst.inline
+                        ? "<button type='button' class='ui-datepicker-close ui-state-default ui-priority-" +
+                                "primary ui-corner-all' data-handler='hide' data-event='click'>" + this._get(
+                            inst,
+                            "closeText"
+                        ) + "</button>"
+                        : ""
+                );
                 buttonPanel       = (showButtonPanel)
                     ? "<div class='ui-datepicker-buttonpane ui-widget-content'>" + (
                         isRTL
                             ? controls
                             : ""
-                    ) + (this._isInRange(inst, gotoDate)
-                        ? "<button type='button' class='ui-datepicker-current ui-state-default ui-priorit" +
-                                "y-secondary ui-corner-all' data-handler='today' data-event='click'>" +
-                                currentText + "</button>"
-                        : "") + (isRTL
-                        ? ""
-                        : controls) + "</div>"
+                    ) + (
+                        this._isInRange(inst, gotoDate)
+                            ? "<button type='button' class='ui-datepicker-current ui-state-default ui-priorit" +
+                                    "y-secondary ui-corner-all' data-handler='today' data-event='click'>" +
+                                    currentText + "</button>"
+                            : ""
+                    ) + (
+                        isRTL
+                            ? ""
+                            : controls
+                    ) + "</div>"
                     : "";
                 firstDay          = parseInt(this._get(inst, "firstDay"), 10);
-                firstDay          = (isNaN(firstDay)
-                    ? 0
-                    : firstDay);
+                firstDay          = (
+                    isNaN(firstDay)
+                        ? 0
+                        : firstDay
+                );
                 showWeek          = this._get(inst, "showWeek");
                 dayNames          = this._get(inst, "dayNames");
                 dayNamesMin       = this._get(inst, "dayNamesMin");
@@ -16779,15 +16895,21 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         calender = calender + "<div class='ui-datepicker-header ui-widget-header ui-hel" +
                                 "per-clearfix" + cornerClass + "'>" + (
                             /all|left/.test(cornerClass) && row === 0
-                                ? (isRTL
-                                    ? next
-                                    : prev)
+                                ? (
+                                    isRTL
+                                        ? next
+                                        : prev
+                                )
                                 : ""
-                        ) + (/all|right/.test(cornerClass) && row === 0
-                            ? (isRTL
-                                ? prev
-                                : next)
-                            : "") + this._generateMonthYearHeader(
+                        ) + (
+                            /all|right/.test(cornerClass) && row === 0
+                                ? (
+                                    isRTL
+                                        ? prev
+                                        : next
+                                )
+                                : ""
+                        ) + this._generateMonthYearHeader(
                             inst,
                             drawMonth,
                             drawYear,
@@ -16797,10 +16919,12 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             monthNames,
                             monthNamesShort
                         ) + "</div><table class='ui-datepicker-calendar'><thead><tr>";
-                        thead    = (showWeek
-                            ? "<th class='ui-datepicker-week-col'>" + this._get(inst, "weekHeader") +
-                                    "</th>"
-                            : "");
+                        thead    = (
+                            showWeek
+                                ? "<th class='ui-datepicker-week-col'>" + this._get(inst, "weekHeader") +
+                                        "</th>"
+                                : ""
+                        );
                         for (dow = 0; dow < 7; dow = dow + 1) {
                             day   = (dow + firstDay) % 7;
                             thead = thead + "<th" + (
@@ -16817,28 +16941,36 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         }
                         leadDays     = (this._getFirstDayOfMonth(drawYear, drawMonth) - firstDay + 7) % 7;
                         curRows      = Math.ceil((leadDays + daysInMonth) / 7);
-                        numRows      = (isMultiMonth
-                            ? this.maxRows > curRows
-                                ? this.maxRows
+                        numRows      = (
+                            isMultiMonth
+                                ? this.maxRows > curRows
+                                    ? this.maxRows
+                                    : curRows
                                 : curRows
-                            : curRows);
+                        );
                         this.maxRows = numRows;
                         printDate    = this._daylightSavingAdjust(
                             new Date(drawYear, drawMonth, 1 - leadDays)
                         );
                         for (dRow = 0; dRow < numRows; dRow = dRow + 1) {
                             calender = calender + "<tr>";
-                            tbody    = (!showWeek
-                                ? ""
-                                : "<td class='ui-datepicker-week-col'>" + this._get(inst, "calculateWeek")(
-                                    printDate
-                                ) + "</td>");
+                            tbody    = (
+                                !showWeek
+                                    ? ""
+                                    : "<td class='ui-datepicker-week-col'>" + this._get(inst, "calculateWeek")(
+                                        printDate
+                                    ) + "</td>"
+                            );
                             for (dow = 0; dow < 7; dow = dow + 1) {
-                                daySettings  = (beforeShowDay
-                                    ? beforeShowDay.apply((inst.input
-                                        ? inst.input[0]
-                                        : null), [printDate])
-                                    : [true, ""]);
+                                daySettings  = (
+                                    beforeShowDay
+                                        ? beforeShowDay.apply((
+                                            inst.input
+                                                ? inst.input[0]
+                                                : null
+                                        ), [printDate])
+                                        : [true, ""]
+                                );
                                 otherMonth   = (printDate.getMonth() !== drawMonth);
                                 unselectable = (otherMonth && !selectOtherMonths) || !daySettings[0] || (
                                     minDate && printDate < minDate
@@ -16847,41 +16979,59 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                                     (dow + firstDay + 6) % 7 >= 5
                                         ? " ui-datepicker-week-end"
                                         : ""
-                                ) + (otherMonth
-                                    ? " ui-datepicker-other-month"
-                                    : "") + (
+                                ) + (
+                                    otherMonth
+                                        ? " ui-datepicker-other-month"
+                                        : ""
+                                ) + (
                                     (printDate.getTime() === selectedDate.getTime() && drawMonth === inst.selectedMonth && inst._keyEvent) || (defaultDate.getTime() === printDate.getTime() && defaultDate.getTime() === selectedDate.getTime())
                                         ? " " + this._dayOverClass
                                         : ""
-                                ) + (unselectable
-                                    ? " " + this._unselectableClass + " ui-state-disabled"
-                                    : "") + (otherMonth && !showOtherMonths
-                                    ? ""
-                                    : " " + daySettings[1] + (printDate.getTime() === currentDate.getTime()
-                                        ? " " + this._currentClass
-                                        : "") + (printDate.getTime() === today.getTime()
-                                        ? " ui-datepicker-today"
-                                        : "")) + "'" + (
+                                ) + (
+                                    unselectable
+                                        ? " " + this._unselectableClass + " ui-state-disabled"
+                                        : ""
+                                ) + (
+                                    otherMonth && !showOtherMonths
+                                        ? ""
+                                        : " " + daySettings[1] + (
+                                            printDate.getTime() === currentDate.getTime()
+                                                ? " " + this._currentClass
+                                                : ""
+                                        ) + (
+                                            printDate.getTime() === today.getTime()
+                                                ? " ui-datepicker-today"
+                                                : ""
+                                        )
+                                ) + "'" + (
                                     (!otherMonth || showOtherMonths) && daySettings[2]
                                         ? " title='" + daySettings[2].replace(/'/g, "&#39;") + "'"
                                         : ""
-                                ) + (unselectable
-                                    ? ""
-                                    : " data-handler='selectDay' data-event='click' data-month='" + printDate.getMonth() +
-                                            "' data-year='" + printDate.getFullYear() + "'") + ">" + (
+                                ) + (
+                                    unselectable
+                                        ? ""
+                                        : " data-handler='selectDay' data-event='click' data-month='" + printDate.getMonth() +
+                                                "' data-year='" + printDate.getFullYear() + "'"
+                                ) + ">" + (
                                     otherMonth && !showOtherMonths
                                         ? "&#xa0;"
-                                        : (unselectable
-                                            ? "<span class='ui-state-default'>" + printDate.getDate() + "</span>"
-                                            : "<a class='ui-state-default" + (
-                                                printDate.getTime() === today.getTime()
-                                                    ? " ui-state-highlight"
-                                                    : ""
-                                            ) + (printDate.getTime() === currentDate.getTime()
-                                                ? " ui-state-active"
-                                                : "") + (otherMonth
-                                                ? " ui-priority-secondary"
-                                                : "") + "' href='#'>" + printDate.getDate() + "</a>")
+                                        : (
+                                            unselectable
+                                                ? "<span class='ui-state-default'>" + printDate.getDate() + "</span>"
+                                                : "<a class='ui-state-default" + (
+                                                    printDate.getTime() === today.getTime()
+                                                        ? " ui-state-highlight"
+                                                        : ""
+                                                ) + (
+                                                    printDate.getTime() === currentDate.getTime()
+                                                        ? " ui-state-active"
+                                                        : ""
+                                                ) + (
+                                                    otherMonth
+                                                        ? " ui-priority-secondary"
+                                                        : ""
+                                                ) + "' href='#'>" + printDate.getDate() + "</a>"
+                                        )
                                 ) + "</td>";
                                 printDate.setDate(printDate.getDate() + 1);
                                 printDate = this._daylightSavingAdjust(printDate);
@@ -16953,9 +17103,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     monthHtml = monthHtml + "</select>";
                 }
                 if (!showMonthAfterYear) {
-                    html = html + monthHtml + (secondary || !(changeMonth && changeYear)
-                        ? "&#xa0;"
-                        : "");
+                    html = html + monthHtml + (
+                        secondary || !(changeMonth && changeYear)
+                            ? "&#xa0;"
+                            : ""
+                    );
                 }
                 if (!inst.yearshtml) {
                     inst.yearshtml = "";
@@ -16967,23 +17119,33 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             .split(":");
                         thisYear       = new Date().getFullYear();
                         determineYear  = function (value) {
-                            var year = (value.match(/c[+\-].*/)
-                                ? drawYear + parseInt(value.substring(1), 10)
-                                : (value.match(/[+\-].*/)
-                                    ? thisYear + parseInt(value, 10)
-                                    : parseInt(value, 10)));
-                            return (isNaN(year)
-                                ? thisYear
-                                : year);
+                            var year = (
+                                value.match(/c[+\-].*/)
+                                    ? drawYear + parseInt(value.substring(1), 10)
+                                    : (
+                                        value.match(/[+\-].*/)
+                                            ? thisYear + parseInt(value, 10)
+                                            : parseInt(value, 10)
+                                    )
+                            );
+                            return (
+                                isNaN(year)
+                                    ? thisYear
+                                    : year
+                            );
                         };
                         year           = determineYear(years[0]);
                         endYear        = Math.max(year, determineYear(years[1] || ""));
-                        year           = (minDate
-                            ? Math.max(year, minDate.getFullYear())
-                            : year);
-                        endYear        = (maxDate
-                            ? Math.min(endYear, maxDate.getFullYear())
-                            : endYear);
+                        year           = (
+                            minDate
+                                ? Math.max(year, minDate.getFullYear())
+                                : year
+                        );
+                        endYear        = (
+                            maxDate
+                                ? Math.min(endYear, maxDate.getFullYear())
+                                : endYear
+                        );
                         inst.yearshtml = inst.yearshtml + "<select class='ui-datepicker-year' data-hand" +
                                 "ler='selectYear' data-event='change'>";
                         for (; year <= endYear; year = year + 1) {
@@ -17000,9 +17162,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 }
                 html = html + this._get(inst, "yearSuffix");
                 if (showMonthAfterYear) {
-                    html = html + (secondary || !(changeMonth && changeYear)
-                        ? "&#xa0;"
-                        : "") + monthHtml;
+                    html = html + (
+                        secondary || !(changeMonth && changeYear)
+                            ? "&#xa0;"
+                            : ""
+                    ) + monthHtml;
                 }
                 html = html + "</div>";
                 return html;
@@ -17022,9 +17186,13 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 ];
             },
             _getDate                : function (inst) {
-                var startDate = (!inst.currentYear || (inst.input && inst.input.val() === "")
-                    ? null
-                    : this._daylightSavingAdjust(new Date(inst.currentYear, inst.currentMonth, inst.currentDay)));
+                var startDate = (
+                    !inst.currentYear || (inst.input && inst.input.val() === "")
+                        ? null
+                        : this._daylightSavingAdjust(
+                            new Date(inst.currentYear, inst.currentMonth, inst.currentDay)
+                        )
+                );
                 return startDate;
             },
             _getDateDatepicker      : function (target, noDefault) {
@@ -17032,9 +17200,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 if (inst && !inst.inline) {
                     this._setDateFromField(inst, noDefault);
                 }
-                return (inst
-                    ? this._getDate(inst)
-                    : null);
+                return (
+                    inst
+                        ? this._getDate(inst)
+                        : null
+                );
             },
             _getDaysInMonth         : function (year, month) {
                 return 32 - this
@@ -17052,9 +17222,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             },
             _getFormatConfig        : function (inst) {
                 var shortYearCutoff = this._get(inst, "shortYearCutoff");
-                shortYearCutoff = (typeof shortYearCutoff !== "string"
-                    ? shortYearCutoff
-                    : new Date().getFullYear() % 100 + parseInt(shortYearCutoff, 10));
+                shortYearCutoff = (
+                    typeof shortYearCutoff !== "string"
+                        ? shortYearCutoff
+                        : new Date().getFullYear() % 100 + parseInt(shortYearCutoff, 10)
+                );
                 return {
                     dayNames       : this._get(inst, "dayNames"),
                     dayNamesShort  : this._get(inst, "dayNamesShort"),
@@ -17075,11 +17247,15 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             },
             _getNumberOfMonths      : function (inst) {
                 var numMonths = this._get(inst, "numberOfMonths");
-                return (numMonths == null
-                    ? [1, 1]
-                    : (typeof numMonths === "number"
-                        ? [1, numMonths]
-                        : numMonths));
+                return (
+                    numMonths == null
+                        ? [1, 1]
+                        : (
+                            typeof numMonths === "number"
+                                ? [1, numMonths]
+                                : numMonths
+                        )
+                );
             },
             _gotoToday              : function (id) {
                 var date,
@@ -17120,13 +17296,19 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             .dpDiv
                             .hide(showAnim, $.datepicker._get(inst, "showOptions"), duration, postProcess);
                     } else {
-                        inst.dpDiv[(showAnim === "slideDown"
+                        inst.dpDiv[(
+                            showAnim === "slideDown"
                                 ? "slideUp"
-                                : (showAnim === "fadeIn"
-                                    ? "fadeOut"
-                                    : "hide"))]((showAnim
-                            ? duration
-                            : null), postProcess);
+                                : (
+                                    showAnim === "fadeIn"
+                                        ? "fadeOut"
+                                        : "hide"
+                                )
+                        )]((
+                            showAnim
+                                ? duration
+                                : null
+                        ), postProcess);
                     }
                     if (!showAnim) {
                         postProcess();
@@ -17134,12 +17316,16 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     this._datepickerShowing = false;
                     onClose                 = this._get(inst, "onClose");
                     if (onClose) {
-                        onClose.apply((inst.input
-                            ? inst.input[0]
-                            : null), [
-                            (inst.input
-                                ? inst.input.val()
-                                : ""),
+                        onClose.apply((
+                            inst.input
+                                ? inst.input[0]
+                                : null
+                        ), [
+                            (
+                                inst.input
+                                    ? inst.input.val()
+                                    : ""
+                            ),
                             inst
                         ]);
                     }
@@ -17215,12 +17401,14 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     .id
                     .replace(/([^A-Za-z0-9_\-])/g, "\\\\$1");
                 return {
-                    dpDiv        : (!inline
-                        ? this.dpDiv
-                        : bindHover($(
-                            "<div class='" + this._inlineClass + " ui-datepicker ui-widget ui-widget-conten" +
-                            "t ui-helper-clearfix ui-corner-all'></div>"
-                        ))),
+                    dpDiv        : (
+                        !inline
+                            ? this.dpDiv
+                            : bindHover($(
+                                "<div class='" + this._inlineClass + " ui-datepicker ui-widget ui-widget-conten" +
+                                "t ui-helper-clearfix ui-corner-all'></div>"
+                            ))
+                    ),
                     drawMonth    : 0,
                     drawYear     : 0,
                     id           : id,
@@ -17234,9 +17422,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             _notifyChange           : function (inst) {
                 var onChange = this._get(inst, "onChangeMonthYear");
                 if (onChange) {
-                    onChange.apply((inst.input
-                        ? inst.input[0]
-                        : null), [
+                    onChange.apply((
+                        inst.input
+                            ? inst.input[0]
+                            : null
+                    ), [
                         inst.selectedYear, inst.selectedMonth + 1,
                         inst
                     ]);
@@ -17249,13 +17439,19 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     maxDate,
                     inst = this._getInst(target);
                 if (arguments.length === 2 && typeof name === "string") {
-                    return (name === "defaults"
-                        ? $.extend({}, $.datepicker._defaults)
-                        : (inst
-                            ? (name === "all"
-                                ? $.extend({}, inst.settings)
-                                : this._get(inst, name))
-                            : null));
+                    return (
+                        name === "defaults"
+                            ? $.extend({}, $.datepicker._defaults)
+                            : (
+                                inst
+                                    ? (
+                                        name === "all"
+                                            ? $.extend({}, inst.settings)
+                                            : this._get(inst, name)
+                                    )
+                                    : null
+                            )
+                    );
                 }
                 settings = name || {};
                 if (typeof name === "string") {
@@ -17344,20 +17540,26 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             _restrictMinMax         : function (inst, date) {
                 var minDate = this._getMinMaxDate(inst, "min"),
                     maxDate = this._getMinMaxDate(inst, "max"),
-                    newDate = (minDate && date < minDate
-                        ? minDate
-                        : date);
-                return (maxDate && newDate > maxDate
-                    ? maxDate
-                    : newDate);
+                    newDate = (
+                        minDate && date < minDate
+                            ? minDate
+                            : date
+                    );
+                return (
+                    maxDate && newDate > maxDate
+                        ? maxDate
+                        : newDate
+                );
             },
             _selectDate             : function (id, dateStr) {
                 var onSelect,
                     target = $(id),
                     inst   = this._getInst(target[0]);
-                dateStr = (dateStr != null
-                    ? dateStr
-                    : this._formatDate(inst));
+                dateStr = (
+                    dateStr != null
+                        ? dateStr
+                        : this._formatDate(inst)
+                );
                 if (inst.input) {
                     inst
                         .input
@@ -17366,9 +17568,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 this._updateAlternate(inst);
                 onSelect = this._get(inst, "onSelect");
                 if (onSelect) {
-                    onSelect.apply((inst.input
-                        ? inst.input[0]
-                        : null), [dateStr, inst]);
+                    onSelect.apply((
+                        inst.input
+                            ? inst.input[0]
+                            : null
+                    ), [dateStr, inst]);
                 } else if (inst.input) {
                     inst
                         .input
@@ -17435,9 +17639,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 if (inst.input) {
                     inst
                         .input
-                        .val(clear
-                            ? ""
-                            : this._formatDate(inst));
+                        .val(
+                            clear
+                                ? ""
+                                : this._formatDate(inst)
+                        );
                 }
             },
             _setDateDatepicker      : function (target, date) {
@@ -17464,22 +17670,30 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 try {
                     date = this.parseDate(dateFormat, dates, settings) || defaultDate;
                 } catch (event) {
-                    dates = (noDefault
-                        ? ""
-                        : dates);
+                    dates = (
+                        noDefault
+                            ? ""
+                            : dates
+                    );
                 }
                 inst.selectedDay  = date.getDate();
                 inst.drawMonth    = inst.selectedMonth = date.getMonth();
                 inst.drawYear     = inst.selectedYear = date.getFullYear();
-                inst.currentDay   = (dates
-                    ? date.getDate()
-                    : 0);
-                inst.currentMonth = (dates
-                    ? date.getMonth()
-                    : 0);
-                inst.currentYear  = (dates
-                    ? date.getFullYear()
-                    : 0);
+                inst.currentDay   = (
+                    dates
+                        ? date.getDate()
+                        : 0
+                );
+                inst.currentMonth = (
+                    dates
+                        ? date.getMonth()
+                        : 0
+                );
+                inst.currentYear  = (
+                    dates
+                        ? date.getFullYear()
+                        : 0
+                );
                 this._adjustInstDate(inst);
             },
             _showDatepicker         : function (input) {
@@ -17573,11 +17787,15 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     .css({
                         display : "none",
                         left    : offset.left + "px",
-                        position: ($.datepicker._inDialog && $.blockUI
-                            ? "static"
-                            : (isFixed
-                                ? "fixed"
-                                : "absolute")),
+                        position: (
+                            $.datepicker._inDialog && $.blockUI
+                                ? "static"
+                                : (
+                                    isFixed
+                                        ? "fixed"
+                                        : "absolute"
+                                )
+                        ),
                         top     : offset.top + "px"
                     });
                 if (!inst.inline) {
@@ -17596,9 +17814,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             .dpDiv
                             .show(showAnim, $.datepicker._get(inst, "showOptions"), duration);
                     } else {
-                        inst.dpDiv[showAnim || "show"](showAnim
-                            ? duration
-                            : null);
+                        inst.dpDiv[showAnim || "show"](
+                            showAnim
+                                ? duration
+                                : null
+                        );
                     }
                     if (inst.input.is(":visible") && !inst.input.is(":disabled")) {
                         inst
@@ -17659,12 +17879,16 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         .addClass("ui-datepicker-multi-" + cols)
                         .css("width", (width * cols) + "em");
                 }
-                inst.dpDiv[(numMonths[0] !== 1 || numMonths[1] !== 1
+                inst.dpDiv[(
+                    numMonths[0] !== 1 || numMonths[1] !== 1
                         ? "add"
-                        : "remove") + "Class"]("ui-datepicker-multi");
-                inst.dpDiv[(this._get(inst, "isRTL")
+                        : "remove"
+                ) + "Class"]("ui-datepicker-multi");
+                inst.dpDiv[(
+                    this._get(inst, "isRTL")
                         ? "add"
-                        : "remove") + "Class"]("ui-datepicker-rtl");
+                        : "remove"
+                ) + "Class"]("ui-datepicker-rtl");
                 if (inst === $.datepicker._curInst && $.datepicker._datepickerShowing && inst.input && inst.input.is(":visible") && !inst.input.is(":disabled") && inst.input[0] !== document.activeElement) {
                     inst
                         .input
@@ -17693,18 +17917,26 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     return "";
                 }
                 var iFormat,
-                    dayNamesShort   = (settings
-                        ? settings.dayNamesShort
-                        : null) || this._defaults.dayNamesShort,
-                    dayNames        = (settings
-                        ? settings.dayNames
-                        : null) || this._defaults.dayNames,
-                    monthNamesShort = (settings
-                        ? settings.monthNamesShort
-                        : null) || this._defaults.monthNamesShort,
-                    monthNames      = (settings
-                        ? settings.monthNames
-                        : null) || this._defaults.monthNames,
+                    dayNamesShort   = (
+                        settings
+                            ? settings.dayNamesShort
+                            : null
+                    ) || this._defaults.dayNamesShort,
+                    dayNames        = (
+                        settings
+                            ? settings.dayNames
+                            : null
+                    ) || this._defaults.dayNames,
+                    monthNamesShort = (
+                        settings
+                            ? settings.monthNamesShort
+                            : null
+                    ) || this._defaults.monthNamesShort,
+                    monthNames      = (
+                        settings
+                            ? settings.monthNames
+                            : null
+                    ) || this._defaults.monthNames,
                     lookAhead       = function (match) {
                         var matches = (
                             iFormat + 1 < format.length && format.charAt(iFormat + 1) === match
@@ -17724,9 +17956,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         return num;
                     },
                     formatName      = function (match, value, shortNames, longNames) {
-                        return (lookAhead(match)
-                            ? longNames[value]
-                            : shortNames[value]);
+                        return (
+                            lookAhead(match)
+                                ? longNames[value]
+                                : shortNames[value]
+                        );
                     },
                     output          = "",
                     literal         = false;
@@ -17760,11 +17994,15 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                                     output = output + formatName("M", date.getMonth(), monthNamesShort, monthNames);
                                     break;
                                 case "y":
-                                    output = output + (lookAhead("y")
-                                        ? date.getFullYear()
-                                        : (date.getYear() % 100 < 10
-                                            ? "0"
-                                            : "") + date.getYear() % 100);
+                                    output = output + (
+                                        lookAhead("y")
+                                            ? date.getFullYear()
+                                            : (
+                                                date.getYear() % 100 < 10
+                                                    ? "0"
+                                                    : ""
+                                            ) + date.getYear() % 100
+                                    );
                                     break;
                                 case "@":
                                     output = output + date.getTime();
@@ -17810,9 +18048,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 if (format == null || value == null) {
                     throw "Invalid arguments";
                 }
-                value = (typeof value === "object"
-                    ? value.toString()
-                    : value + "");
+                value = (
+                    typeof value === "object"
+                        ? value.toString()
+                        : value + ""
+                );
                 if (value === "") {
                     return null;
                 }
@@ -17820,24 +18060,36 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     dim,
                     extra,
                     iValue              = 0,
-                    shortYearCutoffTemp = (settings
-                        ? settings.shortYearCutoff
-                        : null) || this._defaults.shortYearCutoff,
-                    shortYearCutoff     = (typeof shortYearCutoffTemp !== "string"
-                        ? shortYearCutoffTemp
-                        : new Date().getFullYear() % 100 + parseInt(shortYearCutoffTemp, 10)),
-                    dayNamesShort       = (settings
-                        ? settings.dayNamesShort
-                        : null) || this._defaults.dayNamesShort,
-                    dayNames            = (settings
-                        ? settings.dayNames
-                        : null) || this._defaults.dayNames,
-                    monthNamesShort     = (settings
-                        ? settings.monthNamesShort
-                        : null) || this._defaults.monthNamesShort,
-                    monthNames          = (settings
-                        ? settings.monthNames
-                        : null) || this._defaults.monthNames,
+                    shortYearCutoffTemp = (
+                        settings
+                            ? settings.shortYearCutoff
+                            : null
+                    ) || this._defaults.shortYearCutoff,
+                    shortYearCutoff     = (
+                        typeof shortYearCutoffTemp !== "string"
+                            ? shortYearCutoffTemp
+                            : new Date().getFullYear() % 100 + parseInt(shortYearCutoffTemp, 10)
+                    ),
+                    dayNamesShort       = (
+                        settings
+                            ? settings.dayNamesShort
+                            : null
+                    ) || this._defaults.dayNamesShort,
+                    dayNames            = (
+                        settings
+                            ? settings.dayNames
+                            : null
+                    ) || this._defaults.dayNames,
+                    monthNamesShort     = (
+                        settings
+                            ? settings.monthNamesShort
+                            : null
+                    ) || this._defaults.monthNamesShort,
+                    monthNames          = (
+                        settings
+                            ? settings.monthNames
+                            : null
+                    ) || this._defaults.monthNames,
                     year                = -1,
                     month               = -1,
                     day                 = -1,
@@ -17855,15 +18107,23 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     },
                     getNumber           = function (match) {
                         var isDoubled = lookAhead(match),
-                            size      = (match === "@"
-                                ? 14
-                                : (match === "!"
-                                    ? 20
-                                    : (match === "y" && isDoubled
-                                        ? 4
-                                        : (match === "o"
-                                            ? 3
-                                            : 2)))),
+                            size      = (
+                                match === "@"
+                                    ? 14
+                                    : (
+                                        match === "!"
+                                            ? 20
+                                            : (
+                                                match === "y" && isDoubled
+                                                    ? 4
+                                                    : (
+                                                        match === "o"
+                                                            ? 3
+                                                            : 2
+                                                    )
+                                            )
+                                    )
+                            ),
                             digits    = new RegExp("^\\d{1," + size + "}"),
                             num       = value
                                 .substring(iValue)
@@ -17877,14 +18137,16 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     getName             = function (match, shortNames, longNames) {
                         var index = -1,
                             names = $
-                                .map(lookAhead(match)
-                                    ? longNames
-                                    : shortNames,
-                                function (v, k) {
-                                    return [
-                                        [k, v]
-                                    ];
-                                })
+                                .map(
+                                    lookAhead(match)
+                                        ? longNames
+                                        : shortNames,
+                                    function (v, k) {
+                                        return [
+                                            [k, v]
+                                        ];
+                                    }
+                                )
                                 .sort(function (a, b) {
                                     return -(a[1].length - b[1].length);
                                 });
@@ -18019,9 +18281,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     }
                 })
                 .delegate(selector, "mouseover", function () {
-                    if (!$.datepicker._isDisabledDatepicker(instActive.inline
-                        ? dpDiv.parent()[0]
-                        : instActive.input[0])) {
+                    if (!$.datepicker._isDisabledDatepicker(
+                        instActive.inline
+                            ? dpDiv.parent()[0]
+                            : instActive.input[0]
+                    )) {
                         $(this)
                             .parents(".ui-datepicker-calendar")
                             .find("a")
@@ -18823,11 +19087,15 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             });
                             position = {
                                 at: myAt.join(" "),
-                                my: myAt[0] + (offset[0] < 0
-                                    ? offset[0]
-                                    : "+" + offset[0]) + " " + myAt[1] + (offset[1] < 0
-                                    ? offset[1]
-                                    : "+" + offset[1])
+                                my: myAt[0] + (
+                                    offset[0] < 0
+                                        ? offset[0]
+                                        : "+" + offset[0]
+                                ) + " " + myAt[1] + (
+                                    offset[1] < 0
+                                        ? offset[1]
+                                        : "+" + offset[1]
+                                )
                             };
                         }
                         position = $.extend({}, $.ui.dialog.prototype.options.position, position);
@@ -18906,14 +19174,18 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 : 0;
             if (!motion) {
                 el
-                    .css(vertical
-                        ? "bottom"
-                        : "right",
-                    0)
-                    .css(vertical
-                        ? "top"
-                        : "left",
-                    "auto")
+                    .css(
+                        vertical
+                            ? "bottom"
+                            : "right",
+                        0
+                    )
+                    .css(
+                        vertical
+                            ? "top"
+                            : "left",
+                        "auto"
+                    )
                     .css({position: "absolute"});
                 animation[ref2] = show
                     ? margin
@@ -18964,9 +19236,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 direction = o.direction || "up",
                 distance  = o.distance,
                 times     = o.times || 5,
-                anims     = times * 2 + (show || hide
-                    ? 1
-                    : 0),
+                anims     = times * 2 + (
+                    show || hide
+                        ? 1
+                        : 0
+                ),
                 speed     = o.duration / anims,
                 easing    = o.easing,
                 ref       = (direction === "up" || direction === "down")
@@ -19002,9 +19276,12 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 downAnim[ref] = 0;
                 el
                     .css("opacity", 0)
-                    .css(ref, motion
-                        ? -distance * 2
-                        : distance * 2)
+                    .css(
+                        ref,
+                        motion
+                            ? -distance * 2
+                            : distance * 2
+                    )
                     .animate(downAnim, speed, easing);
             }
             if (hide) {
@@ -19014,9 +19291,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             downAnim[ref] = 0;
             for (i = 0; i < times; i = i + 1) {
                 upAnim      = {};
-                upAnim[ref] = (motion
-                    ? "-="
-                    : "+=") + distance;
+                upAnim[ref] = (
+                    motion
+                        ? "-="
+                        : "+="
+                ) + distance;
                 el
                     .animate(upAnim, speed, easing)
                     .animate(downAnim, speed, easing);
@@ -19028,9 +19307,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 upAnim      = {
                     opacity: 0
                 };
-                upAnim[ref] = (motion
-                    ? "-="
-                    : "+=") + distance;
+                upAnim[ref] = (
+                    motion
+                        ? "-="
+                        : "+="
+                ) + distance;
                 el.animate(upAnim, speed, easing);
             }
             el.queue(function () {
@@ -19167,17 +19448,26 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             if (show) {
                 el
                     .css("opacity", 0)
-                    .css(ref, motion === "pos"
-                        ? -distance
-                        : distance);
+                    .css(
+                        ref,
+                        motion === "pos"
+                            ? -distance
+                            : distance
+                    );
             }
-            animation[ref] = (show
-                ? (motion === "pos"
-                    ? "+="
-                    : "-=")
-                : (motion === "pos"
-                    ? "-="
-                    : "+=")) + distance;
+            animation[ref] = (
+                show
+                    ? (
+                        motion === "pos"
+                            ? "+="
+                            : "-="
+                    )
+                    : (
+                        motion === "pos"
+                            ? "-="
+                            : "+="
+                    )
+            ) + distance;
             el.animate(animation, {
                 complete: function () {
                     if (mode === "hide") {
@@ -19247,29 +19537,37 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         .addClass("ui-effects-explode")
                         .css({
                             height  : height,
-                            left    : left + (show
-                                ? mx * width
-                                : 0),
+                            left    : left + (
+                                show
+                                    ? mx * width
+                                    : 0
+                            ),
                             opacity : show
                                 ? 0
                                 : 1,
                             overflow: "hidden",
                             position: "absolute",
-                            top     : top + (show
-                                ? my * height
-                                : 0),
+                            top     : top + (
+                                show
+                                    ? my * height
+                                    : 0
+                            ),
                             width   : width
                         })
                         .animate({
-                            left   : left + (show
-                                ? 0
-                                : mx * width),
+                            left   : left + (
+                                show
+                                    ? 0
+                                    : mx * width
+                            ),
                             opacity: show
                                 ? 1
                                 : 0,
-                            top    : top + (show
-                                ? 0
-                                : my * height)
+                            top    : top + (
+                                show
+                                    ? 0
+                                    : my * height
+                            )
                         }, o.duration || 500, o.easing, childComplete);
                 }
             }
@@ -19349,15 +19647,17 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 ];
             }
             if (show) {
-                wrapper.css(horizFirst
-                    ? {
-                        height: 0,
-                        width : size
-                    }
-                    : {
-                        height: size,
-                        width : 0
-                    });
+                wrapper.css(
+                    horizFirst
+                        ? {
+                            height: 0,
+                            width : size
+                        }
+                        : {
+                            height: size,
+                            width : 0
+                        }
+                );
             }
             animation1[ref[0]] = show
                 ? distance[0]
@@ -19430,9 +19730,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 show      = mode === "show",
                 hide      = mode === "hide",
                 showhide  = (show || mode === "hide"),
-                anims     = ((o.times || 5) * 2) + (showhide
-                    ? 1
-                    : 0),
+                anims     = ((o.times || 5) * 2) + (
+                    showhide
+                        ? 1
+                        : 0
+                ),
                 duration  = o.duration / anims,
                 animateTo = 0,
                 queue     = elem.queue(),
@@ -19508,11 +19810,15 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 mode      = $
                     .effects
                     .setMode(el, o.mode || "effect"),
-                percent   = parseInt(o.percent, 10) || (parseInt(o.percent, 10) === 0
-                    ? 0
-                    : (mode === "hide"
+                percent   = parseInt(o.percent, 10) || (
+                    parseInt(o.percent, 10) === 0
                         ? 0
-                        : 100)),
+                        : (
+                            mode === "hide"
+                                ? 0
+                                : 100
+                        )
+                ),
                 direction = o.direction || "both",
                 origin    = o.origin,
                 original  = {
@@ -19536,14 +19842,16 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 options.origin  = origin || ["middle", "center"];
                 options.restore = true;
             }
-            options.from = o.from || (mode === "show"
-                ? {
-                    height     : 0,
-                    width      : 0,
-                    outerHeight: 0,
-                    outerWidth : 0
-                }
-                : original);
+            options.from = o.from || (
+                mode === "show"
+                    ? {
+                        height     : 0,
+                        width      : 0,
+                        outerHeight: 0,
+                        outerWidth : 0
+                    }
+                    : original
+            );
             options.to   = {
                 height     : original.*factor.y,
                 outerHeight: original.*factor.y,
@@ -19628,12 +19936,16 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 el.from = o.to || zero;
                 el.to   = o.from || original;
             } else {
-                el.from = o.from || (mode === "show"
-                    ? zero
-                    : original);
-                el.to   = o.to || (mode === "hide"
-                    ? zero
-                    : original);
+                el.from = o.from || (
+                    mode === "show"
+                        ? zero
+                        : original
+                );
+                el.to   = o.to || (
+                    mode === "hide"
+                        ? zero
+                        : original
+                );
             }
             factor = {
                 from: {
@@ -19838,15 +20150,21 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             $
                 .effects
                 .createWrapper(el);
-            animation[ref]  = (positiveMotion
-                ? "-="
-                : "+=") + distance;
-            animation1[ref] = (positiveMotion
-                ? "+="
-                : "-=") + distance * 2;
-            animation2[ref] = (positiveMotion
-                ? "-="
-                : "+=") + distance * 2;
+            animation[ref]  = (
+                positiveMotion
+                    ? "-="
+                    : "+="
+            ) + distance;
+            animation1[ref] = (
+                positiveMotion
+                    ? "+="
+                    : "-="
+            ) + distance * 2;
+            animation2[ref] = (
+                positiveMotion
+                    ? "-="
+                    : "+="
+            ) + distance * 2;
             el.animate(animation, speed, o.easing);
             for (i = 1; i < times; i = i + 1) {
                 el
@@ -19913,19 +20231,30 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 .createWrapper(el)
                 .css({overflow: "hidden"});
             if (show) {
-                el.css(ref, positiveMotion
-                    ? (isNaN(distance)
-                        ? "-" + distance
-                        : -distance)
-                    : distance);
+                el.css(
+                    ref,
+                    positiveMotion
+                        ? (
+                            isNaN(distance)
+                                ? "-" + distance
+                                : -distance
+                        )
+                        : distance
+                );
             }
-            animation[ref] = (show
-                ? (positiveMotion
-                    ? "+="
-                    : "-=")
-                : (positiveMotion
-                    ? "-="
-                    : "+=")) + distance;
+            animation[ref] = (
+                show
+                    ? (
+                        positiveMotion
+                            ? "+="
+                            : "-="
+                    )
+                    : (
+                        positiveMotion
+                            ? "-="
+                            : "+="
+                    )
+            ) + distance;
             el.animate(animation, {
                 complete: function () {
                     if (mode === "hide") {
@@ -20595,12 +20924,16 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             _position   = $.fn.position;
         function getOffsets(offsets, width, height) {
             return [
-                parseFloat(offsets[0]) * (rpercent.test(offsets[0])
-                    ? width / 100
-                    : 1),
-                parseFloat(offsets[1]) * (rpercent.test(offsets[1])
-                    ? height / 100
-                    : 1)
+                parseFloat(offsets[0]) * (
+                    rpercent.test(offsets[0])
+                        ? width / 100
+                        : 1
+                ),
+                parseFloat(offsets[1]) * (
+                    rpercent.test(offsets[1])
+                        ? height / 100
+                        : 1
+                )
             ];
         }
         function parseCss(element, property) {
@@ -21078,9 +21411,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 i,
                 body = document.getElementsByTagName("body")[0],
                 div  = document.createElement("div");
-            testElement      = document.createElement(body
-                ? "div"
-                : "body");
+            testElement      = document.createElement(
+                body
+                    ? "div"
+                    : "body"
+            );
             testElementStyle = {
                 background: "none",
                 border    : 0,
@@ -21314,9 +21649,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     }
                     this
                         .range
-                        .addClass(classes + ((options.range === "min" || options.range === "max")
-                            ? " ui-slider-range-" + options.range
-                            : ""));
+                        .addClass(classes + (
+                            (options.range === "min" || options.range === "max")
+                                ? " ui-slider-range-" + options.range
+                                : ""
+                        ));
                 } else {
                     this.range = $([]);
                 }
@@ -21527,14 +21864,18 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     valueMouse;
                 if (this.orientation === "horizontal") {
                     pixelTotal = this.elementSize.width;
-                    pixelMouse = position.x - this.elementOffset.left - (this._clickOffset
-                        ? this._clickOffset.left
-                        : 0);
+                    pixelMouse = position.x - this.elementOffset.left - (
+                        this._clickOffset
+                            ? this._clickOffset.left
+                            : 0
+                    );
                 } else {
                     pixelTotal = this.elementSize.height;
-                    pixelMouse = position.y - this.elementOffset.top - (this._clickOffset
-                        ? this._clickOffset.top
-                        : 0);
+                    pixelMouse = position.y - this.elementOffset.top - (
+                        this._clickOffset
+                            ? this._clickOffset.top
+                            : 0
+                    );
                 }
                 percentMouse = (pixelMouse / pixelTotal);
                 if (percentMouse > 1) {
@@ -21777,9 +22118,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     newValues,
                     allowed;
                 if (this.options.values && this.options.values.length) {
-                    otherVal = this.values(index
-                        ? 0
-                        : 1);
+                    otherVal = this.values(
+                        index
+                            ? 0
+                            : 1
+                    );
                     if ((this.options.values.length === 2 && this.options.range === true) && ((index === 0 && newVal > otherVal) || (index === 1 && newVal < otherVal))) {
                         newVal = otherVal;
                     }
@@ -21791,9 +22134,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                             value : newVal,
                             values: newValues
                         });
-                        otherVal         = this.values(index
-                            ? 0
-                            : 1);
+                        otherVal         = this.values(
+                            index
+                                ? 0
+                                : 1
+                        );
                         if (allowed !== false) {
                             this.values(index, newVal, true);
                         }
@@ -22071,10 +22416,13 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     if (this._start(event) === false) {
                         return;
                     }
-                    this._repeat(null, $(event.currentTarget).hasClass("ui-spinner-up")
-                        ? 1
-                        : -1,
-                    event);
+                    this._repeat(
+                        null,
+                        $(event.currentTarget).hasClass("ui-spinner-up")
+                            ? 1
+                            : -1,
+                        event
+                    );
                 },
                 "mouseenter .ui-spinner-button": function (event) {
                     if (!$(event.currentTarget).hasClass("ui-state-active")) {
@@ -22083,10 +22431,13 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     if (this._start(event) === false) {
                         return false;
                     }
-                    this._repeat(null, $(event.currentTarget).hasClass("ui-spinner-up")
-                        ? 1
-                        : -1,
-                    event);
+                    this._repeat(
+                        null,
+                        $(event.currentTarget).hasClass("ui-spinner-up")
+                            ? 1
+                            : -1,
+                        event
+                    );
                 },
                 "mouseleave .ui-spinner-button": "_stop",
                 "mouseup .ui-spinner-button"   : "_stop",
@@ -22119,9 +22470,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     if (!this.spinning && !this._start(event)) {
                         return false;
                     }
-                    this._spin((delta > 0
-                        ? 1
-                        : -1) * this.options.step, event);
+                    this._spin((
+                        delta > 0
+                            ? 1
+                            : -1
+                    ) * this.options.step, event);
                     clearTimeout(this.mousewheelTimer);
                     this.mousewheelTimer = this._delay(function () {
                         if (this.spinning) {
@@ -22951,9 +23304,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     case $.ui.keyCode.ENTER:
                         event.preventDefault();
                         clearTimeout(this.activating);
-                        this._activate(selectedIndex === this.options.active
-                            ? false
-                            : selectedIndex);
+                        this._activate(
+                            selectedIndex === this.options.active
+                                ? false
+                                : selectedIndex
+                        );
                         return;
                     default:
                         return;
@@ -23382,9 +23737,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             },
             close         : function (event) {
                 var that    = this,
-                    target  = $(event
-                        ? event.currentTarget
-                        : this.element),
+                    target  = $(
+                        event
+                            ? event.currentTarget
+                            : this.element
+                    ),
                     tooltip = this._find(target);
                 if (this.closing) {
                     return;
@@ -23416,9 +23773,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             },
             open          : function (event) {
                 var that   = this,
-                    target = $(event
-                        ? event.target
-                        : this.element).closest(this.options.items);
+                    target = $(
+                        event
+                            ? event.target
+                            : this.element
+                    ).closest(this.options.items);
                 if (!target.length || target.data("ui-tooltip-id")) {
                     return;
                 }
@@ -23743,9 +24102,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 var $this = $(this)
                     .unbind("click")
                     .bind("click", function () {
-                        goToStep(env, getRelativeStep(env, ($this.is(".next")
-                            ? "next"
-                            : "prev")));
+                        goToStep(env, getRelativeStep(env, (
+                            $this.is(".next")
+                                ? "next"
+                                : "prev"
+                        )));
                         stopAutoSlide(env);
                     })
                     .removeClass("disabled");
@@ -23775,9 +24136,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
         if (env.params.btnsPosition = "below") {
             env.$elts.pagination = $(
                 "<div class='center-wrap LayoutHItem carousel-pagination'></div>"
-            )[((env.params.paginationPosition == "outside")
+            )[(
+                (env.params.paginationPosition == "outside")
                     ? "insertAfter"
-                    : "prependTo")](env.$elts.buttons);
+                    : "prependTo"
+            )](env.$elts.buttons);
         }
         env.$elts.paginationBtns = $([]);
         if (env.params.paginationType == "single") {
@@ -23908,18 +24271,22 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             if ((env.steps.first - env.params.dispItems) >= 0) {
                 return env.steps.first - env.params.dispItems;
             } else {
-                return ((env.params.loop)
-                    ? (env.steps.count - env.params.dispItems)
-                    : false);
+                return (
+                    (env.params.loop)
+                        ? (env.steps.count - env.params.dispItems)
+                        : false
+                );
             }
         } else {
             if (position == "next") {
                 if ((env.steps.first + env.params.dispItems) < env.steps.count) {
                     return env.steps.first + env.params.dispItems;
                 } else {
-                    return ((env.params.loop)
-                        ? 0
-                        : false);
+                    return (
+                        (env.params.loop)
+                            ? 0
+                            : false
+                    );
                 }
             }
         }
@@ -27142,9 +27509,11 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
             sz_storeMargin(i, o, "_cfs_tempCssMargin");
             i.each(function () {
                 var j = $(this);
-                j.css(o.d["marginRight"], ((x)
-                    ? j.data("_cfs_tempCssMargin")
-                    : m + j.data("_cfs_origCssMargin")));
+                j.css(o.d["marginRight"], (
+                    (x)
+                        ? j.data("_cfs_tempCssMargin")
+                        : m + j.data("_cfs_origCssMargin")
+                ));
             });
         }
     }
@@ -27843,9 +28212,11 @@ if (typeof jQuery != "undefined" && typeof $.jcarousel == "undefined") {
                 ? "width"
                 : "height";
             this.lt = !this.options.vertical
-                ? (this.options.rtl
-                    ? "right"
-                    : "left")
+                ? (
+                    this.options.rtl
+                        ? "right"
+                        : "left"
+                )
                 : "top";
             var skin  = "",
                 split = e
@@ -27929,9 +28300,11 @@ if (typeof jQuery != "undefined" && typeof $.jcarousel == "undefined") {
                 .list
                 .addClass(this.className("jcarousel-list"))
                 .css({margin: 0, overflow: "hidden", padding: 0, position: "relative", top: 0})
-                .css((this.options.rtl
-                    ? "right"
-                    : "left"), 0);
+                .css((
+                    this.options.rtl
+                        ? "right"
+                        : "left"
+                ), 0);
             this
                 .container
                 .addClass(this.className("jcarousel-container"))
@@ -28084,13 +28457,15 @@ if (typeof jQuery != "undefined" && typeof $.jcarousel == "undefined") {
                         scrolled();
                     } else {
                         var o = !this.options.vertical
-                            ? (this.options.rtl
-                                ? {
-                                    "right": p
-                                }
-                                : {
-                                    "left": p
-                                })
+                            ? (
+                                this.options.rtl
+                                    ? {
+                                        "right": p
+                                    }
+                                    : {
+                                        "left": p
+                                    }
+                            )
                             : {
                                 "top": p
                             };
@@ -28132,9 +28507,12 @@ if (typeof jQuery != "undefined" && typeof $.jcarousel == "undefined") {
                                     ? "removeClass"
                                     : "addClass"
                             ](this.className("jcarousel-next-disabled"))
-                            .attr("disabled", n
-                                ? false
-                                : true);
+                            .attr(
+                                "disabled",
+                                n
+                                    ? false
+                                    : true
+                            );
                         if (this.options.buttonNextCallback !== null && this.buttonNext.data("jcarouselstate") != n) {
                             this
                                 .buttonNext
@@ -28167,9 +28545,12 @@ if (typeof jQuery != "undefined" && typeof $.jcarousel == "undefined") {
                                     ? "removeClass"
                                     : "addClass"
                             ](this.className("jcarousel-prev-disabled"))
-                            .attr("disabled", p
-                                ? false
-                                : true);
+                            .attr(
+                                "disabled",
+                                p
+                                    ? false
+                                    : true
+                            );
                         if (this.options.buttonPrevCallback !== null && this.buttonPrev.data("jcarouselstate") != p) {
                             this
                                 .buttonPrev
@@ -28225,9 +28606,11 @@ if (typeof jQuery != "undefined" && typeof $.jcarousel == "undefined") {
                     }
                 },
                 className : function (c) {
-                    return c + " " + c + (!this.options.vertical
-                        ? "-horizontal"
-                        : "-vertical");
+                    return c + " " + c + (
+                        !this.options.vertical
+                            ? "-horizontal"
+                            : "-vertical"
+                    );
                 },
                 clipping  : function () {
                     return !this.options.vertical
@@ -28282,9 +28665,11 @@ if (typeof jQuery != "undefined" && typeof $.jcarousel == "undefined") {
                         .addClass(this.className("jcarousel-item"))
                         .addClass(this.className("jcarousel-item-" + i))
                         .css({
-                            "float"     : (this.options.rtl
-                                ? "right"
-                                : "left"),
+                            "float"     : (
+                                this.options.rtl
+                                    ? "right"
+                                    : "left"
+                            ),
                             "list-style": "none"
                         })
                         .attr("jcarouselindex", i);
@@ -28332,9 +28717,11 @@ if (typeof jQuery != "undefined" && typeof $.jcarousel == "undefined") {
                 notify    : function (evt) {
                     var state = this.prevFirst === null
                         ? "init"
-                        : (this.prevFirst < this.first
-                            ? "next"
-                            : "prev");
+                        : (
+                            this.prevFirst < this.first
+                                ? "next"
+                                : "prev"
+                        );
                     this.callback("itemLoadCallback", evt, state);
                     if (this.prevFirst !== this.first) {
                         this.callback("itemFirstInCallback", evt, state, this.first);
@@ -28378,9 +28765,11 @@ if (typeof jQuery != "undefined" && typeof $.jcarousel == "undefined") {
                     if (this.options.wrap != "circular") {
                         i = i < 1
                             ? 1
-                            : (this.options.size && i > this.options.size
-                                ? this.options.size
-                                : i);
+                            : (
+                                this.options.size && i > this.options.size
+                                    ? this.options.size
+                                    : i
+                            );
                     }
                     var back = this.first > i;
                     var f = this.options.wrap != "circular" && this.first <= 1
@@ -28397,9 +28786,11 @@ if (typeof jQuery != "undefined" && typeof $.jcarousel == "undefined") {
                         p = false,
                         d = 0,
                         g;
-                    while (back
-                        ? --j >= i
-                        : ++j < i) {
+                    while (
+                        back
+                            ? --j >= i
+                            : ++j < i
+                    ) {
                         e = this.get(j);
                         p = !e.length;
                         if (e.length === 0) {
@@ -28522,9 +28913,12 @@ if (typeof jQuery != "undefined" && typeof $.jcarousel == "undefined") {
                     }
                     this.tail = null;
                     if (this.options.wrap != "circular" && last == this.options.size && (last - visible + 1) >= 1) {
-                        var m = $jc.margin(this.get(last), !this.options.vertical
-                            ? "marginRight"
-                            : "marginBottom");
+                        var m = $jc.margin(
+                            this.get(last),
+                            !this.options.vertical
+                                ? "marginRight"
+                                : "marginBottom"
+                        );
                         if ((v - m) > clipping) {
                             this.tail = v - clipping - m;
                         }
@@ -28800,15 +29194,19 @@ jaaulde.utils.cookies = (function () {
     };
     assembleOptionsString            = function (options) {
         options = resolveOptions(options);
-        return (
-            (typeof options.expiresAt === "object" && options.expiresAt instanceof Date
+        return ((
+            typeof options.expiresAt === "object" && options.expiresAt instanceof Date
                 ? "; expires=" + options.expiresAt.toGMTString()
-                : "") + "; path=" + options.path + (typeof options.domain === "string"
+                : ""
+        ) + "; path=" + options.path + (
+            typeof options.domain === "string"
                 ? "; domain=" + options.domain
-                : "") + (options.secure === true
+                : ""
+        ) + (
+            options.secure === true
                 ? "; secure"
-                : "")
-        );
+                : ""
+        ));
     };
     parseCookies                     = function () {
         var cookies   = {},
@@ -29483,11 +29881,13 @@ $(document).ready(function () {
                                 pattern  = "";
                                 break;
                             case "hh":
-                                retValue = retValue + (time.hour === 0
-                                    ? 12
-                                    : time.hour < 13
-                                        ? time.hour
-                                        : time.hour - 12);
+                                retValue = retValue + (
+                                    time.hour === 0
+                                        ? 12
+                                        : time.hour < 13
+                                            ? time.hour
+                                            : time.hour - 12
+                                );
                                 pattern  = "";
                                 break;
                             case "mm":
@@ -29767,9 +30167,12 @@ if (jQuery) {
                             ? label.attr("id") + " " + ariaLabelledBy
                             : label.attr("id");
                         control
-                            .attr("role", isMac
-                                ? "button"
-                                : "combobox")
+                            .attr(
+                                "role",
+                                isMac
+                                    ? "button"
+                                    : "combobox"
+                            )
                             .attr("aria-haspopup", true)
                             .attr("aria-readonly", true)
                             .attr("aria-expanded", false)
@@ -32029,12 +32432,14 @@ if (jQuery) {
                 if (debounce_mode === undefined && elapsed > delay) {
                     exec();
                 } else if (no_trailing !== true) {
-                    timeout_id = setTimeout(debounce_mode
-                        ? clear
-                        : exec,
-                    debounce_mode === undefined
-                        ? delay - elapsed
-                        : delay);
+                    timeout_id = setTimeout(
+                        debounce_mode
+                            ? clear
+                            : exec,
+                        debounce_mode === undefined
+                            ? delay - elapsed
+                            : delay
+                    );
                 }
             };
             if ($.guid) {
@@ -32060,9 +32465,11 @@ if (jQuery) {
                         (p.ignoreCase)
                             ? "i"
                             : ""
-                    ) + ((p.multiline)
-                        ? "m"
-                        : "");
+                    ) + (
+                        (p.multiline)
+                            ? "m"
+                            : ""
+                    );
                     return new RegExp(p.source, mods);
                 }
                 this.str            = str;
@@ -33506,11 +33913,13 @@ if (jQuery) {
                     c;
                 for (c in this) {
                     if (this.hasOwnProperty(c) && (e.transform3d || !("rotateX" === c || "rotateY" === c || "perspective" === c || "transformOrigin" === c))) {
-                        "_" !== c[0] && (a && "scale" === c
-                            ? b.push(c + "3d(" + this[c] + ",1)")
-                            : a && "translate" === c
-                                ? b.push(c + "3d(" + this[c] + ",0)")
-                                : b.push(c + "(" + this[c] + ")"));
+                        "_" !== c[0] && (
+                            a && "scale" === c
+                                ? b.push(c + "3d(" + this[c] + ",1)")
+                                : a && "translate" === c
+                                    ? b.push(c + "3d(" + this[c] + ",0)")
+                                    : b.push(c + "(" + this[c] + ")")
+                        );
                     }
                 }
                 return b.join(" ");
@@ -34640,9 +35049,11 @@ if (jQuery) {
                 ? d
                 : "http://www.adobe.com";
             var faasScript   = this.wsFaaSServerUrl + "faas/service/jquery.faas-3.0.0.js",
-                hostProtocol = (document.location.protocol == "https:"
-                    ? "https"
-                    : "http"),
+                hostProtocol = (
+                    document.location.protocol == "https:"
+                        ? "https"
+                        : "http"
+                ),
                 pi           = faasScript.indexOf("://");
             if (pi >= 0) {
                 faasScript = hostProtocol + faasScript.substring(pi);
@@ -35027,9 +35438,11 @@ if (jQuery) {
         },
         preloadFormTemplates           : function () {
             var wsUrl        = this.wsFaaSServerUrl + "faas/api/form/?" + this.wsParameters,
-                hostProtocol = (document.location.protocol == "https:"
-                    ? "https"
-                    : "http"),
+                hostProtocol = (
+                    document.location.protocol == "https:"
+                        ? "https"
+                        : "http"
+                ),
                 pi           = wsUrl.indexOf("://");
             if (pi >= 0) {
                 wsUrl = hostProtocol + wsUrl.substring(pi);
@@ -35060,9 +35473,11 @@ if (jQuery) {
             window.setSelectedFormTemplate(formId);
             var wsformUrl    = this.wsFaaSServerUrl,
                 wsUrl        = wsformUrl + "faas/api/form/" + formId + "?" + this.wsParameters,
-                hostProtocol = (document.location.protocol == "https:"
-                    ? "https"
-                    : "http"),
+                hostProtocol = (
+                    document.location.protocol == "https:"
+                        ? "https"
+                        : "http"
+                ),
                 pi           = wsUrl.indexOf("://");
             if (pi >= 0) {
                 wsUrl = hostProtocol + wsUrl.substring(pi);
@@ -35974,12 +36389,16 @@ if (jQuery) {
             d          = document,
             pixel,
             page_id,
-            URL_SCHEME = (d.location.protocol == "https:"
-                ? "https"
-                : "http"),
-            CDN_URL    = (URL_SCHEME == "https"
-                ? "https://info.evidon.com/c/betrad/pub/"
-                : "http://cdn.betrad.com/pub/");
+            URL_SCHEME = (
+                d.location.protocol == "https:"
+                    ? "https"
+                    : "http"
+            ),
+            CDN_URL    = (
+                URL_SCHEME == "https"
+                    ? "https://info.evidon.com/c/betrad/pub/"
+                    : "http://cdn.betrad.com/pub/"
+            );
         if ((evidonID != null) && (hideEvidon != true) && isDesktop()) {
             evidonID.show();
             if ((URLParser.host == "www.adobe.com") || (URLParser.host == "adobe.com") || (URLParser.host == "get.adobe.com" || (URLParser.host == "get2.adobe.com") || (URLParser.host == "get3.adobe.com")) || (URLParser.host == "kb2.adobe.com") || (URLParser.host == "community.adobe.com") || (URLParser.host == "helpx.adobe.com") || (URLParser.host == "store1.adobe.com") || (URLParser.host == "store2.adobe.com") || (URLParser.host == "store3.adobe.com")) {
@@ -37587,9 +38006,11 @@ if (jQuery) {
                                             .focus();
                                     }
                                 } else {
-                                    node = previousElementSibling(this.parentNode === siteHeaderDropdownLink
-                                        ? this.parentNode
-                                        : this);
+                                    node = previousElementSibling(
+                                        this.parentNode === siteHeaderDropdownLink
+                                            ? this.parentNode
+                                            : this
+                                    );
                                     if (node) {
                                         if (node.nodeName.toLowerCase() == "a") {
                                             node.focus();
@@ -38057,11 +38478,13 @@ if (jQuery) {
                     }
                     return false;
                 }
-                return (/input|select|textarea|button|object/.test(nodeName)
-                    ? !element.disabled
-                    : "a" == nodeName
-                        ? element.href || isTabIndexNotNaN
-                        : isTabIndexNotNaN) && visible(element);
+                return (
+                    /input|select|textarea|button|object/.test(nodeName)
+                        ? !element.disabled
+                        : "a" == nodeName
+                            ? element.href || isTabIndexNotNaN
+                            : isTabIndexNotNaN
+                ) && visible(element);
             },
             tabbable                                    = function (element) {
                 var tabIndex      = element.getAttribute("tabindex")
@@ -38975,9 +39398,11 @@ if (jQuery) {
     adobe.http.cdnprefix          = function (environment) {
         var cdnPrefix,
             envObj       = [],
-            hostProtocol = (document.location.protocol == "https:"
-                ? "https"
-                : "http"),
+            hostProtocol = (
+                document.location.protocol == "https:"
+                    ? "https"
+                    : "http"
+            ),
             host         = URLParser.host;
         var cdnAddy = (hostProtocol == "https")
             ? hostProtocol + "://wwwimages2"
@@ -39011,9 +39436,11 @@ if (jQuery) {
     };
     adobe.http.getCookies         = function (cookie) {
         function trim(s) {
-            return ((s === undefined)
-                ? ""
-                : String(s).replace(/^\s*/, "").replace(/\s*$/, ""));
+            return (
+                (s === undefined)
+                    ? ""
+                    : String(s).replace(/^\s*/, "").replace(/\s*$/, "")
+            );
         }
         var o = {};
         if (typeof cookie == "string") {
@@ -39915,9 +40342,12 @@ if (jQuery) {
                     if (elementLabel && !elementLabel.attr("id")) {
                         elementLabel.attr("id", elementIdOrName + "Label");
                     }
-                    element.data("aria-labelledby", (!elementLabel || isMacOriOS)
-                        ? elementIdOrName + this.errorClass
-                        : elementLabel.attr("id") + " " + elementIdOrName + this.errorClass);
+                    element.data(
+                        "aria-labelledby",
+                        (!elementLabel || isMacOriOS)
+                            ? elementIdOrName + this.errorClass
+                            : elementLabel.attr("id") + " " + elementIdOrName + this.errorClass
+                    );
                     error
                         .insertAfter(
                             element.attr({"aria-invalid": "true", "aria-labelledby": element.data("aria-labelledby")})
@@ -40951,9 +41381,11 @@ if (jQuery) {
                         .prototype
                         .toString
                         .call(o)
-                ] || (o
-                    ? "object"
-                    : "null");
+                ] || (
+                    o
+                        ? "object"
+                        : "null"
+                );
             }
         });
     })(jQuery);

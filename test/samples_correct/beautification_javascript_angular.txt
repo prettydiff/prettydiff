@@ -11728,8 +11728,8 @@
                 ) + "['" + key + "'];\n" + (
                     options.unwrapPromises
                         ? "if (s && s.then) {\n pw('" + fullExp.replace(/(["\r\n])/g, "\\$1") + "');\n if" +
-                            " (!('$$v' in s)) {\n p=s;\n p.$$v = undefined;\n p.then(function(v) {p.$$v=v;}" +
-                            ");\n}\n s=s.$$v\n}\n"
+                                " (!('$$v' in s)) {\n p=s;\n p.$$v = undefined;\n p.then(function(v) {p.$$v=v;}" +
+                                ");\n}\n s=s.$$v\n}\n"
                         : ""
                 );
             });
