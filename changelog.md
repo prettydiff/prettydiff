@@ -1,5 +1,20 @@
 # Pretty Diff change log
 
+## v2.2.0
+
+### Defects
+* Fixes numerous undocumented defects in the validation build and diff tool
+* Fixes #434, CSS beautfication defect with a space appearing before a selector list
+* Fixes #435, Circular dependency problem when using require.js
+* Fixes #441, Fold error in rendered HTML reports
+* Fixes #442, Ternaries inside parenthesis now cause an extra step of indentation
+* Fixes #444, CLI with readmethod:file and mode:diff producing no output
+* Fixes #445, ASP, PHP error where tags containing the "do" command were treated like a start tag
+* Fixes #447, Diff library ignoring carriage return characters. White space differences are now more explicitly called out.
+
+### Enhancements
+* Fixes #409, Pretty Diff is fully integrated with biddle for its own dependency and in publication with biddle for distribution elsewhere.
+
 ## v2.1.18
 
 ### Defects

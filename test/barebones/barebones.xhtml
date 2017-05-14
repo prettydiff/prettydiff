@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Pretty Diff - The difference tool</title>
+    </head>
+    <body>
+        <h1>Pretty Diff, barebones example</h1>
+        <p><a href="documentation.xhtml">documentation</a></p>
+        <p>
+            <label for="input" style="display:block">Input</label>
+            <textarea id="input" style="height:200px;white-space:pre;min-width:400px">var a;function g(){return function y() {return q;};};</textarea>
+        </p>
+        <p>
+            <label for="object" style="display:block">Options object</label>
+            <textarea id="object" style="height:200px;white-space:pre;min-width:400px" data-prettydiff-ignore="true">{
+    "mode": "beautify",
+    "lang": "auto",
+    "wrap": 80
+}</textarea>
+        </p>
+        <p>
+            <label for="output" style="display:block">Output</label>
+            <textarea id="output" style="height:200px;white-space:pre;min-width:400px"></textarea>
+        </p>
+        <p><button type="button" id="button">Beautify Code</button></p>
+        <script src="../../lib/global.js" type="application/javascript"></script>
+        <script src="../../lib/language.js" type="application/javascript"></script>
+        <script src="../../lib/options.js" type="application/javascript"></script>
+        <script src="../../lib/finalFile.js" type="application/javascript"></script>
+        <script src="../../lib/safeSort.js" type="application/javascript"></script>
+        <script src="../../lib/csspretty.js" type="application/javascript"></script>
+        <script src="../../lib/csvpretty.js" type="application/javascript"></script>
+        <script src="../../lib/diffview.js" type="application/javascript"></script>
+        <script src="../../lib/jspretty.js" type="application/javascript"></script>
+        <script src="../../lib/markuppretty.js" type="application/javascript"></script>
+        <script src="../../prettydiff.js" type="application/javascript"></script>
+
+        <!-- barbones code -->
+        <script src="barebones.js" type="application/javascript"></script>
+    </body>
+</html>

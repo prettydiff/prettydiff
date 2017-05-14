@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Pretty Diff - The difference tool</title>
+    </head>
+    <body>
+        <h1>Pretty Diff, barebones example</h1>
+        <p><a href="documentation.xhtml">documentation</a></p>
+        <p>
+            <label for="input" style="display:block">Source Sample</label>
+            <textarea id="input" style="height:120px;white-space:pre;min-width:400px">var a;function g(){return function y() {return q;};};</textarea>
+        </p>
+        <p>
+            <label for="diff" style="display:block">Diff Sample</label>
+            <textarea id="diff" style="height:120px;white-space:pre;min-width:400px">var b;function h(){return function y() {return z;};};</textarea>
+        </p>
+        <p>
+            <label for="object" style="display:block">Options Object</label>
+            <textarea id="object" style="height:120px;white-space:pre;min-width:400px" data-prettydiff-ignore="true">{
+    "mode": "beautify",
+    "lang": "auto",
+    "wrap": 80
+}</textarea>
+        </p>
+        <p>
+            <label for="output" style="display:block">Output</label>
+            <textarea id="output" style="height:120px;white-space:pre;min-width:400px"></textarea>
+        </p>
+        <p><button type="button" id="button">Beautify Code</button></p>
+        <script src="barebones_requirejs.js" type="application/javascript"></script>
+    </body>
+</html>

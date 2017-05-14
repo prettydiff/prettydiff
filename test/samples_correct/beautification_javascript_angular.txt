@@ -85,9 +85,11 @@
                     : ""
             ) + code;
             for (i = 2; i < arguments.length; i = i + 1) {
-                message = message + (i == 2
-                    ? "?"
-                    : "&") + "p" + (
+                message = message + (
+                    i == 2
+                        ? "?"
+                        : "&"
+                ) + "p" + (
                     i - 2
                 ) + "=" + encodeURIComponent(stringify(arguments[i]));
             }
@@ -1116,9 +1118,13 @@
         if (typeof obj === "undefined") {
             return undefined;
         }
-        return JSON.stringify(obj, toJsonReplacer, pretty
-            ? "  "
-            : null);
+        return JSON.stringify(
+            obj,
+            toJsonReplacer,
+            pretty
+                ? "  "
+                : null
+        );
     }
 
 
@@ -1238,14 +1244,18 @@
         forEach(obj, function (value, key) {
             if (isArray(value)) {
                 forEach(value, function (arrayValue) {
-                    parts.push(encodeUriQuery(key, true) + (arrayValue === true
-                        ? ""
-                        : "=" + encodeUriQuery(arrayValue, true)));
+                    parts.push(encodeUriQuery(key, true) + (
+                        arrayValue === true
+                            ? ""
+                            : "=" + encodeUriQuery(arrayValue, true)
+                    ));
                 });
             } else {
-                parts.push(encodeUriQuery(key, true) + (value === true
-                    ? ""
-                    : "=" + encodeUriQuery(value, true)));
+                parts.push(encodeUriQuery(key, true) + (
+                    value === true
+                        ? ""
+                        : "=" + encodeUriQuery(value, true)
+                ));
             }
         });
         return parts.length
@@ -1290,9 +1300,11 @@
             .replace(/%3A/gi, ":")
             .replace(/%24/g, "$")
             .replace(/%2C/gi, ",")
-            .replace(/%20/g, (pctEncodeSpaces
-                ? "%20"
-                : "+"));
+            .replace(/%20/g, (
+                pctEncodeSpaces
+                    ? "%20"
+                    : "+"
+            ));
     }
 
 
@@ -1382,9 +1394,12 @@
             }
         });
         if (appElement) {
-            bootstrap(appElement, module
-                ? [module]
-                : []);
+            bootstrap(
+                appElement,
+                module
+                    ? [module]
+                    : []
+            );
         }
     }
 
@@ -1467,9 +1482,11 @@
     function snake_case(name, separator) {
         separator = separator || "_";
         return name.replace(SNAKE_CASE_REGEXP, function (letter, pos) {
-            return (pos
-                ? separator
-                : "") + letter.toLowerCase();
+            return (
+                pos
+                    ? separator
+                    : ""
+            ) + letter.toLowerCase();
         });
     }
 
@@ -2218,20 +2235,24 @@
     var jqCache               = JQLite.cache = {},
         jqName                = JQLite.expando = "ng-" + new Date().getTime(),
         jqId                  = 1,
-        addEventListenerFn    = (window.document.addEventListener
-            ? function (element, type, fn) {
-                element.addEventListener(type, fn, false);
-            }
-            : function (element, type, fn) {
-                element.attachEvent("on" + type, fn);
-            }),
-        removeEventListenerFn = (window.document.removeEventListener
-            ? function (element, type, fn) {
-                element.removeEventListener(type, fn, false);
-            }
-            : function (element, type, fn) {
-                element.detachEvent("on" + type, fn);
-            });
+        addEventListenerFn    = (
+            window.document.addEventListener
+                ? function (element, type, fn) {
+                    element.addEventListener(type, fn, false);
+                }
+                : function (element, type, fn) {
+                    element.attachEvent("on" + type, fn);
+                }
+        ),
+        removeEventListenerFn = (
+            window.document.removeEventListener
+                ? function (element, type, fn) {
+                    element.removeEventListener(type, fn, false);
+                }
+                : function (element, type, fn) {
+                    element.detachEvent("on" + type, fn);
+                }
+        );
 
     function jqNextId() {
         return jqId = jqId + 1;
@@ -2789,9 +2810,11 @@
             // jqLiteHasClass has only two arguments, but is a getter-only fn, so we need to
             // special-case it in a way that survives minification. jqLiteEmpty takes no
             // arguments but is a setter.
-            if (fn !== jqLiteEmpty && (((fn.length == 2 && (fn !== jqLiteHasClass && fn !== jqLiteController))
-                ? arg1
-                : arg2) === undefined)) {
+            if (fn !== jqLiteEmpty && ((
+                (fn.length == 2 && (fn !== jqLiteHasClass && fn !== jqLiteController))
+                    ? arg1
+                    : arg2
+            ) === undefined)) {
                 if (isObject(arg1)) {
 
                     // we are a write, but the object properties are the key/values
@@ -2989,9 +3012,11 @@
                                         ? a.documentElement
                                         : a,
                                     bup   = b && b.parentNode;
-                                return a === bup || !!(bup && bup.nodeType === 1 && (adown.contains
-                                    ? adown.contains(bup)
-                                    : a.compareDocumentPosition && a.compareDocumentPosition(bup) & 16));
+                                return a === bup || !!(bup && bup.nodeType === 1 && (
+                                    adown.contains
+                                        ? adown.contains(bup)
+                                        : a.compareDocumentPosition && a.compareDocumentPosition(bup) & 16
+                                ));
                             }
                             : function (a, b) {
                                 if (b) {
@@ -3090,9 +3115,11 @@
             if (isUndefined(condition)) {
                 condition = !jqLiteHasClass(element, selector);
             }
-            (condition
-                ? jqLiteAddClass
-                : jqLiteRemoveClass)(element, selector);
+            (
+                condition
+                    ? jqLiteAddClass
+                    : jqLiteRemoveClass
+            )(element, selector);
         },
 
         triggerHandler: function (element, eventName, eventData) {
@@ -4017,9 +4044,11 @@
                             key
                         );
                     }
-                    args.push(locals && locals.hasOwnProperty(key)
-                        ? locals[key]
-                        : getService(key));
+                    args.push(
+                        locals && locals.hasOwnProperty(key)
+                            ? locals[key]
+                            : getService(key)
+                    );
                 }
                 if (!fn.$inject) {
                     // this means that we must be an array.
@@ -4038,9 +4067,11 @@
                 // Check if Type is annotated and use just the given function at n-1 as
                 // parameter e.g. someModule.factory('greeter', ['$window',
                 // function(renamed$window) {}]);
-                Constructor.prototype = (isArray(Type)
-                    ? Type[Type.length - 1]
-                    : Type).prototype;
+                Constructor.prototype = (
+                    isArray(Type)
+                        ? Type[Type.length - 1]
+                        : Type
+                ).prototype;
                 instance              = new Constructor();
                 returnedValue         = invoke(Type, instance, locals);
 
@@ -6055,10 +6086,15 @@
 
                         // we must always refer to nodeList[i] since the nodes can be replaced
                         // underneath us.
-                        directives = collectDirectives(nodeList[i], [], attrs, i === 0
-                            ? maxPriority
-                            : undefined,
-                        ignoreDirective);
+                        directives = collectDirectives(
+                            nodeList[i],
+                            [],
+                            attrs,
+                            i === 0
+                                ? maxPriority
+                                : undefined,
+                            ignoreDirective
+                        );
 
                         nodeLinkFn = (directives.length)
                             ? applyDirectivesToNode(
@@ -6082,9 +6118,12 @@
                             nodeLinkFn && nodeLinkFn.terminal || !(childNodes = nodeList[i].childNodes) || !childNodes.length
                         )
                             ? null
-                            : compileNodes(childNodes, nodeLinkFn
-                                ? nodeLinkFn.transclude
-                                : transcludeFn);
+                            : compileNodes(
+                                childNodes,
+                                nodeLinkFn
+                                    ? nodeLinkFn.transclude
+                                    : transcludeFn
+                            );
 
                         linkFns.push(nodeLinkFn, childLinkFn);
                         linkFnFound            = linkFnFound || nodeLinkFn || childLinkFn;
@@ -6974,9 +7013,11 @@
                     forEach(dst, function (value, key) {
                         if (key.charAt(0) != "$") {
                             if (src[key]) {
-                                value = value + (key === "style"
-                                    ? ";"
-                                    : " ") + src[key];
+                                value = value + (
+                                    key === "style"
+                                        ? ";"
+                                        : " "
+                                ) + src[key];
                             }
                             dst.$set(key, value, true, srcAttr[key]);
                         }
@@ -6986,14 +7027,18 @@
                     forEach(src, function (value, key) {
                         if (key == "class") {
                             safeAddClass($element, value);
-                            dst["class"] = (dst["class"]
-                                ? dst["class"] + " "
-                                : "") + value;
+                            dst["class"] = (
+                                dst["class"]
+                                    ? dst["class"] + " "
+                                    : ""
+                            ) + value;
                         } else if (key == "style") {
                             $element.attr("style", $element.attr("style") + ";" + value);
-                            dst["style"] = (dst["style"]
-                                ? dst["style"] + ";"
-                                : "") + value;
+                            dst["style"] = (
+                                dst["style"]
+                                    ? dst["style"] + ";"
+                                    : ""
+                            ) + value;
                             // `dst` will never contain hasOwnProperty as DOM parser won't let it. You will
                             // get an "InvalidCharacterError: DOM Exception 5" error if you have an
                             // attribute like "has-own-property" or "data-has-own-property", etc.
@@ -7446,9 +7491,11 @@
                     continue outer;
                 }
             }
-            values = values + (values.length > 0
-                ? " "
-                : "") + token;
+            values = values + (
+                values.length > 0
+                    ? " "
+                    : ""
+            ) + token;
         };
         return values;
     }
@@ -7788,9 +7835,11 @@
                 var reversedInterceptors = [];
 
                 forEach(interceptorFactories, function (interceptorFactory) {
-                    reversedInterceptors.unshift(isString(interceptorFactory)
-                        ? $injector.get(interceptorFactory)
-                        : $injector.invoke(interceptorFactory));
+                    reversedInterceptors.unshift(
+                        isString(interceptorFactory)
+                            ? $injector.get(interceptorFactory)
+                            : $injector.invoke(interceptorFactory)
+                    );
                 });
 
                 forEach(responseInterceptorFactories, function (interceptorFactory, index) {
@@ -8665,9 +8714,11 @@
                         // normalize internal statuses to 0
                         status = Math.max(status, 0);
 
-                        (isSuccess(status)
-                            ? deferred.resolve
-                            : deferred.reject)(
+                        (
+                            isSuccess(status)
+                                ? deferred.resolve
+                                : deferred.reject
+                        )(
                             {config: config, data: response, headers: headersGetter(headers), status: status}
                         );
                     }
@@ -8704,9 +8755,11 @@
                             parts.push(encodeUriQuery(key) + "=" + encodeUriQuery(v));
                         });
                     });
-                    return url + ((url.indexOf("?") == -1)
-                        ? "?"
-                        : "&") + parts.join("&");
+                    return url + (
+                        (url.indexOf("?") == -1)
+                            ? "?"
+                            : "&"
+                    ) + parts.join("&");
                 }
 
 
@@ -8874,9 +8927,11 @@
                 // accessing file resources. On Android 4.1 stock browser it occurs while
                 // retrieving files from application cache.
                 status    = (status === 0)
-                    ? (response
-                        ? 200
-                        : 404)
+                    ? (
+                        response
+                            ? 200
+                            : 404
+                    )
                     : status;
 
                 // normalize IE bug (http://bugs.jquery.com/ticket/1450)
@@ -9586,9 +9641,11 @@
                     ? "#" + encodeUriSegment(this.$$hash)
                     : "";
 
-            this.$$url    = encodePath(this.$$path) + (search
-                ? "?" + search
-                : "") + hash;
+            this.$$url    = encodePath(this.$$path) + (
+                search
+                    ? "?" + search
+                    : ""
+            ) + hash;
             this.$$absUrl = appBaseNoFile + this
                 .$$url
                 .substr(1); // first char is always '/'
@@ -9706,12 +9763,16 @@
                     ? "#" + encodeUriSegment(this.$$hash)
                     : "";
 
-            this.$$url    = encodePath(this.$$path) + (search
-                ? "?" + search
-                : "") + hash;
-            this.$$absUrl = appBase + (this.$$url
-                ? hashPrefix + this.$$url
-                : "");
+            this.$$url    = encodePath(this.$$path) + (
+                search
+                    ? "?" + search
+                    : ""
+            ) + hash;
+            this.$$absUrl = appBase + (
+                this.$$url
+                    ? hashPrefix + this.$$url
+                    : ""
+            );
         };
 
         this.$$rewrite = function (url) {
@@ -10370,9 +10431,12 @@
                     // nothing, or we are IE where console.log doesn't have apply so we log at least
                     // first 2 args
                     return function (arg1, arg2) {
-                        logFn(arg1, arg2 == null
-                            ? ""
-                            : arg2);
+                        logFn(
+                            arg1,
+                            arg2 == null
+                                ? ""
+                                : arg2
+                        );
                     };
                 }
             }
@@ -10496,11 +10560,15 @@
         "-"      : function (self, locals, a, b) {
             a = a(self, locals);
             b = b(self, locals);
-            return (isDefined(a)
-                ? a
-                : 0) - (isDefined(b)
-                ? b
-                : 0);
+            return (
+                isDefined(a)
+                    ? a
+                    : 0
+            ) - (
+                isDefined(b)
+                    ? b
+                    : 0
+            );
         },
         "/"      : function (self, locals, a, b) {
             return a(self, locals) / b(self, locals);
@@ -10862,9 +10930,11 @@
 
         throwError   : function (error, start, end) {
             end = end || this.index;
-            var colStr = (isDefined(start)
-                ? "s " + start + "-" + this.index + " [" + this.text.substring(start, end) + "]"
-                : " " + end);
+            var colStr = (
+                isDefined(start)
+                    ? "s " + start + "-" + this.index + " [" + this.text.substring(start, end) + "]"
+                    : " " + end
+            );
             throw $parseMinErr(
                 "lexerr",
                 "Lexer Error: {0} at column{1} in expression [{2}].",
@@ -11568,9 +11638,11 @@
             if (scope == null) {
                 return undefined;
             }
-            return ((locals && locals.hasOwnProperty(key0))
-                ? locals
-                : scope)[key0];
+            return (
+                (locals && locals.hasOwnProperty(key0))
+                    ? locals
+                    : scope
+            )[key0];
         };
     }
 
@@ -11582,9 +11654,11 @@
             if (scope == null) {
                 return undefined;
             }
-            scope = ((locals && locals.hasOwnProperty(key0))
-                ? locals
-                : scope)[key0];
+            scope = (
+                (locals && locals.hasOwnProperty(key0))
+                    ? locals
+                    : scope
+            )[key0];
             return scope == null
                 ? undefined
                 : scope[key1];
@@ -11647,15 +11721,15 @@
                 ensureSafeMemberName(key, fullExp);
                 code = code + "if(s == null) return undefined;\ns=" + (
                     index
-                    // we simply dereference 's' on any .dot notation
+                        // we simply dereference 's' on any .dot notation
                         ? "s"
                         // but if we are first then we check locals first, and if so read it first
                         : "((k&&k.hasOwnProperty('" + key + "'))?k:s)"
                 ) + "['" + key + "'];\n" + (
                     options.unwrapPromises
                         ? "if (s && s.then) {\n pw('" + fullExp.replace(/(["\r\n])/g, "\\$1") + "');\n if" +
-                            " (!('$$v' in s)) {\n p=s;\n p.$$v = undefined;\n p.then(function(v) {p.$$v=v;}" +
-                            ");\n}\n s=s.$$v\n}\n"
+                                " (!('$$v' in s)) {\n p=s;\n p.$$v = undefined;\n p.then(function(v) {p.$$v=v;}" +
+                                ");\n}\n s=s.$$v\n}\n"
                         : ""
                 );
             });
@@ -12147,9 +12221,11 @@
 
                         var wrappedCallback = function (value) {
                             try {
-                                result.resolve((isFunction(callback)
-                                    ? callback
-                                    : defaultCallback)(value));
+                                result.resolve((
+                                    isFunction(callback)
+                                        ? callback
+                                        : defaultCallback
+                                )(value));
                             } catch (e) {
                                 result.reject(e);
                                 exceptionHandler(e);
@@ -12158,9 +12234,11 @@
 
                         var wrappedErrback = function (reason) {
                             try {
-                                result.resolve((isFunction(errback)
-                                    ? errback
-                                    : defaultErrback)(reason));
+                                result.resolve((
+                                    isFunction(errback)
+                                        ? errback
+                                        : defaultErrback
+                                )(reason));
                             } catch (e) {
                                 result.reject(e);
                                 exceptionHandler(e);
@@ -12169,9 +12247,11 @@
 
                         var wrappedProgressback = function (progress) {
                             try {
-                                result.notify((isFunction(progressback)
-                                    ? progressback
-                                    : defaultCallback)(progress));
+                                result.notify((
+                                    isFunction(progressback)
+                                        ? progressback
+                                        : defaultCallback
+                                )(progress));
                             } catch (e) {
                                 exceptionHandler(e);
                             }
@@ -12272,9 +12352,11 @@
                     var result = defer();
                     nextTick(function () {
                         try {
-                            result.resolve((isFunction(errback)
-                                ? errback
-                                : defaultErrback)(reason));
+                            result.resolve((
+                                isFunction(errback)
+                                    ? errback
+                                    : defaultErrback
+                            )(reason));
                         } catch (e) {
                             result.reject(e);
                             exceptionHandler(e);
@@ -12304,9 +12386,11 @@
 
             var wrappedCallback = function (value) {
                 try {
-                    return (isFunction(callback)
-                        ? callback
-                        : defaultCallback)(value);
+                    return (
+                        isFunction(callback)
+                            ? callback
+                            : defaultCallback
+                    )(value);
                 } catch (e) {
                     exceptionHandler(e);
                     return reject(e);
@@ -12315,9 +12399,11 @@
 
             var wrappedErrback = function (reason) {
                 try {
-                    return (isFunction(errback)
-                        ? errback
-                        : defaultErrback)(reason);
+                    return (
+                        isFunction(errback)
+                            ? errback
+                            : defaultErrback
+                    )(reason);
                 } catch (e) {
                     exceptionHandler(e);
                     return reject(e);
@@ -12326,9 +12412,11 @@
 
             var wrappedProgressback = function (progress) {
                 try {
-                    return (isFunction(progressback)
-                        ? progressback
-                        : defaultCallback)(progress);
+                    return (
+                        isFunction(progressback)
+                            ? progressback
+                            : defaultCallback
+                    )(progress);
                 } catch (e) {
                     exceptionHandler(e);
                 }
@@ -12880,17 +12968,23 @@
                                             // Most common watches are on primitives, in which case we can short circuit it
                                             // with === operator, only when === fails do we use .equals
                                             if (watch) {
-                                                if ((value = watch.get(current)) !== (last = watch.last) && !(watch.eq
-                                                    ? equals(value, last)
-                                                    : (typeof value == "number" && typeof last == "number" && isNaN(value) && isNaN(last)))) {
+                                                if ((value = watch.get(current)) !== (last = watch.last) && !(
+                                                    watch.eq
+                                                        ? equals(value, last)
+                                                        : (
+                                                            typeof value == "number" && typeof last == "number" && isNaN(value) && isNaN(last)
+                                                        )
+                                                )) {
                                                     dirty          = true;
                                                     lastDirtyWatch = watch;
                                                     watch.last     = watch.eq
                                                         ? copy(value)
                                                         : value;
-                                                    watch.fn(value, ((last === initWatchVal)
-                                                        ? value
-                                                        : last), current);
+                                                    watch.fn(value, (
+                                                        (last === initWatchVal)
+                                                            ? value
+                                                            : last
+                                                    ), current);
                                                     if (ttl < 5) {
                                                         logIdx = 4 - ttl;
                                                         if (!watchLog[logIdx]) {
@@ -13928,9 +14022,11 @@
      * where Angular expects a $sce.trustAs() return value.
      */
                 function trustAs(type, trustedValue) {
-                    var Constructor = (byType.hasOwnProperty(type)
-                        ? byType[type]
-                        : null);
+                    var Constructor = (
+                        byType.hasOwnProperty(type)
+                            ? byType[type]
+                            : null
+                    );
                     if (!Constructor) {
                         throw $sceMinErr(
                             "icontext",
@@ -14003,9 +14099,11 @@
                     if (maybeTrusted === null || maybeTrusted === undefined || maybeTrusted === "") {
                         return maybeTrusted;
                     }
-                    var constructor = (byType.hasOwnProperty(type)
-                        ? byType[type]
-                        : null);
+                    var constructor = (
+                        byType.hasOwnProperty(type)
+                            ? byType[type]
+                            : null
+                    );
                     if (constructor && maybeTrusted instanceof constructor) {
                         return maybeTrusted.$$unwrapTrustedValue();
                     }
@@ -15424,10 +15522,12 @@
                                 return;
                             }
                             predicates.push(function (value) {
-                                return search(path == "$"
-                                    ? value
-                                    : getter(value, path),
-                                expression[path]);
+                                return search(
+                                    path == "$"
+                                        ? value
+                                        : getter(value, path),
+                                    expression[path]
+                                );
                             });
                         })(key);
                     }
@@ -15647,13 +15747,17 @@
             }
         }
 
-        parts.push(isNegative
-            ? pattern.negPre
-            : pattern.posPre);
+        parts.push(
+            isNegative
+                ? pattern.negPre
+                : pattern.posPre
+        );
         parts.push(formatedText);
-        parts.push(isNegative
-            ? pattern.negSuf
-            : pattern.posSuf);
+        parts.push(
+            isNegative
+                ? pattern.negSuf
+                : pattern.posSuf
+        );
         return parts.join("");
     }
 
@@ -15691,9 +15795,11 @@
     function dateStrGetter(name, shortForm) {
         return function (date, formats) {
             var value = date["get" + name]();
-            var get = uppercase(shortForm
-                ? ("SHORT" + name)
-                : name);
+            var get = uppercase(
+                shortForm
+                    ? ("SHORT" + name)
+                    : name
+            );
 
             return formats[get][value];
         };
@@ -16746,12 +16852,16 @@
                 ? "-" + snake_case(validationErrorKey, "-")
                 : "";
             element
-                .removeClass((isValid
-                    ? INVALID_CLASS
-                    : VALID_CLASS) + validationErrorKey)
-                .addClass((isValid
-                    ? VALID_CLASS
-                    : INVALID_CLASS) + validationErrorKey);
+                .removeClass((
+                    isValid
+                        ? INVALID_CLASS
+                        : VALID_CLASS
+                ) + validationErrorKey)
+                .addClass((
+                    isValid
+                        ? VALID_CLASS
+                        : INVALID_CLASS
+                ) + validationErrorKey);
         }
 
         /**
@@ -17556,9 +17666,11 @@
         element.on("change", listener);
 
         ctrl.$render = function () {
-            element.val(ctrl.$isEmpty(ctrl.$viewValue)
-                ? ""
-                : ctrl.$viewValue);
+            element.val(
+                ctrl.$isEmpty(ctrl.$viewValue)
+                    ? ""
+                    : ctrl.$viewValue
+            );
         };
 
         // pattern validator
@@ -17658,9 +17770,11 @@
                     ctrl.$setValidity("number", true);
                     return value === ""
                         ? null
-                        : (empty
-                            ? value
-                            : parseFloat(value));
+                        : (
+                            empty
+                                ? value
+                                : parseFloat(value)
+                        );
                 } else {
                     ctrl.$setValidity("number", false);
                     return undefined;
@@ -18166,12 +18280,16 @@
                     ? "-" + snake_case(validationErrorKey, "-")
                     : "";
                 $element
-                    .removeClass((isValid
-                        ? INVALID_CLASS
-                        : VALID_CLASS) + validationErrorKey)
-                    .addClass((isValid
-                        ? VALID_CLASS
-                        : INVALID_CLASS) + validationErrorKey);
+                    .removeClass((
+                        isValid
+                            ? INVALID_CLASS
+                            : VALID_CLASS
+                    ) + validationErrorKey)
+                    .addClass((
+                        isValid
+                            ? VALID_CLASS
+                            : INVALID_CLASS
+                    ) + validationErrorKey);
             }
 
             /**
@@ -18701,9 +18819,11 @@
         scope.$watch(attr.ngBind, function ngBindWatchAction(value) {
             // We are purposefully using == here rather than === because we want to catch
             // when value is "null or undefined" jshint -W041
-            element.text(value == undefined
-                ? ""
-                : value);
+            element.text(
+                value == undefined
+                    ? ""
+                    : value
+            );
         });
     });
 
@@ -22051,9 +22171,11 @@
                             valueName         = match[4] || match[6],
                             keyName           = match[5],
                             groupByFn         = $parse(match[3] || ""),
-                            valueFn           = $parse(match[2]
-                                ? match[1]
-                                : valueName),
+                            valueFn           = $parse(
+                                match[2]
+                                    ? match[1]
+                                    : valueName
+                            ),
                             valuesFn          = $parse(match[7]),
                             track             = match[8],
                             trackFn           = track
@@ -22240,9 +22362,11 @@
                                     optionGroupNames.push(optionGroupName);
                                 }
                                 if (multiple) {
-                                    selected = isDefined(selectedSet.remove(trackFn
-                                        ? trackFn(scope, locals)
-                                        : valueFn(scope, locals)));
+                                    selected = isDefined(selectedSet.remove(
+                                        trackFn
+                                            ? trackFn(scope, locals)
+                                            : valueFn(scope, locals)
+                                    ));
                                 } else {
                                     if (trackFn) {
                                         var modelCast = {};
@@ -22263,9 +22387,11 @@
                                     // either the index into array or key from object
                                     id      : trackFn
                                         ? trackFn(scope, locals)
-                                        : (keyName
-                                            ? keys[index]
-                                            : index),
+                                        : (
+                                            keyName
+                                                ? keys[index]
+                                                : index
+                                        ),
                                     label   : label,
                                     selected: selected // determine if we should be selected
                                 });
