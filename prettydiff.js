@@ -339,7 +339,7 @@
             };
         return core(api);
     };
-    
+
     if (typeof global.prettydiff !== "object") {
         global.prettydiff = {};
     }
@@ -438,25 +438,25 @@
             ace: 160307
         },
         api          : {
-            dom      : 170408, //dom.js
-            nodeLocal: 170408 //node-local.js
+            dom      : 170514, //dom.js
+            nodeLocal: 170514 //node-local.js
         },
-        css          : 170327, //css files
-        csspretty    : 170408, //csspretty lib
-        csvpretty    : 170408, //csvpretty lib
-        diffview     : 170408, //diffview lib
-        documentation: 170408, //documentation.xhtml and various guide pages
-        finalFile    : 170408, //HTML report generator
-        jspretty     : 170408, //jspretty lib
-        language     : 170408, //language lib
+        css          : 170514, //css files
+        csspretty    : 170514, //csspretty lib
+        csvpretty    : 170514, //csvpretty lib
+        diffview     : 170514, //diffview lib
+        documentation: 170514, //documentation.xhtml and various guide pages
+        finalFile    : 170514, //HTML report generator
+        jspretty     : 170514, //jspretty lib
+        language     : 170514, //language lib
         latest       : 0,
-        lint         : 170408, //unit test and lint automation as test/lint.js
-        markuppretty : 170408, //markuppretty lib
-        options      : 170408, //options management
-        prettydiff   : 170408, //this file
-        safeSort     : 170408, //safeSort lib
+        lint         : 170514, //unit test and lint automation as test/lint.js
+        markuppretty : 170514, //markuppretty lib
+        options      : 170514, //options management
+        prettydiff   : 170514, //this file
+        safeSort     : 170514, //safeSort lib
         version      : "2.2.0", //version number
-        webtool      : 170408
+        webtool      : 170514
     };
     global.prettydiff.edition.latest = (function edition_latest() {
         return Math.max(
