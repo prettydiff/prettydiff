@@ -3043,7 +3043,7 @@ if (typeof jQuery == "undefined") {
                         ")\\3|(" + identifier + ")|)|)" + whitespace + "*\\]",
                 pseudos                 = ":(" + characterEncoding + ")(?:\\((?:(['\"])((?:\\\\.|[^\\\\])*?)\\2" +
                         "|([^()[\\]]*|(?:(?:" + attributes + ")|[^:]|\\\\.)*|.*))\\)|)",
-                pos                     = ":(even|odd|eq|gt|lt|nth|first|last)(?:\\(" + whitespace + "*((?:-\\d)?\" +
+                pos                     = ":(even|odd|eq|gt|lt|nth|first|last)(?:\\(" + whitespace + "*((?:-\\d)?\"" +
                         "\d*)" + whitespace + "*\\)|)(?=[^-]|$)",
                 rtrim                   = new RegExp(
                     "^" + whitespace + "+|((?:^|[^\\\\])(?:\\\\.)*)" + whitespace + "+$",

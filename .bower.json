@@ -1,18 +1,18 @@
 {
-    "name"        : "prettydiff",
-    "version"     : "2.1.18",
-    "description" : "Pretty Diff can minify, beautify (pretty print), or diff code to normalize white space and comments so that only code is being compared.",
-    "keywords"    : [
-        "pretty diff", "minify", "beautify", "pretty print", "white space", "whitespace", "diff", "compare", "html", "javascript", "xml", "json", "css", "less", "scss", "scope", "analysis", "node", "nodejs", "wsh"
-    ],
-    "homepage"    : "http://prettydiff.com/",
-    "repository"  : {
-        "type": "git",
-        "url" : "git://github.com/prettydiff/prettydiff.git"
-    },
-    "dependencies": {},
-    "main"        : "./",
-    "ignore"      : [
-        ".git", "cgi-bin", "diffview", "testlocation", "beta", "domtest", "jsgui", "400.shtml", "401.shtml", "403.shtml", "404.shtml", "500.shtml", ".htaccess", "500.php", "index2.php", "robots.txt", "labels.rdf", "index.php", "header.php", "documentation.php", "prettydiff.html", "samples.php", "slideshowdemo.xhtml", "slideshow", "jsl.txt", "robots.txt", "training.xhtml", "markup_beauty.wsf", "difflib.old", "prettydiff.com.html", "styleguide.php", "prettydiff-min.js", "api/dom-min.js"
-    ]
+  "name": "prettydiff",
+  "version": "2.2.0",
+  "description": "Pretty Diff can minify, beautify (pretty print), or diff code to normalize white space and comments so that only code is being compared.",
+  "keywords": [
+    "pretty diff", "minify", "beautify", "pretty print", "white space", "whitespace", "diff", "compare", "html", "javascript", "xml", "json", "css", "less", "scss", "scope", "analysis", "node", "nodejs", "wsh"
+  ],
+  "homepage": "http://prettydiff.com/",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/prettydiff/prettydiff.git"
+  },
+  "dependencies": {},
+  "main": "./",
+  "ignore": [
+    ".git", "cgi-bin", "diffview", "testlocation", "beta", "domtest", "jsgui", "400.shtml", "401.shtml", "403.shtml", "404.shtml", "500.shtml", ".htaccess", "500.php", "index2.php", "robots.txt", "labels.rdf", "index.php", "header.php", "documentation.php", "prettydiff.html", "samples.php", "slideshowdemo.xhtml", "slideshow", "jsl.txt", "robots.txt", "training.xhtml", "markup_beauty.wsf", "difflib.old", "prettydiff.com.html", "styleguide.php", "prettydiff-min.js", "api/dom-min.js"
+  ]
 }
