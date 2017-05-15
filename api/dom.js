@@ -4,7 +4,7 @@
 /*jslint for: true, this: true*/
 /***********************************************************************
  This is written by Austin Cheney on 3 Mar 2009.
- 
+
  Please see the license.txt file associated with the Pretty Diff
  application for license information.
  ***********************************************************************/
@@ -44,6 +44,7 @@ global.prettydiff.meta = {
                 jsscope     : pd.id("jsscope-yes"),
                 lang        : pd.id("language"),
                 langdefault : pd.id("lang-default"),
+                loadmask    : pd.id("loadmask"),
                 maxInputs   : pd.id("hideOptions"),
                 minn        : pd.id("Minify"),
                 minnOps     : pd.id("miniops"),
@@ -71,9 +72,16 @@ global.prettydiff.meta = {
                         box: pd.id("statreport")
                     }
                 },
-                save        : pd.id("diff-save")
+                save        : pd.id("diff-save"),
+                webtool     : pd.is("webtool")
             };
             load();
+            if (pd.data.node.loadmask !== null) {
+                pd.data.node.loadmask.style.display = "none";
+            }
+            if (pd.data.node.webtool !== null) {
+                pd.data.node.webtool.style.display = "block";
+            }
         };
 
     if (location.href.indexOf("codemirror=") > 0) {
@@ -2790,7 +2798,7 @@ global.prettydiff.meta = {
     // events: beaufold, colSliderGrab, difffold, minimize, save
     pd.event.recycle    = function dom__event_recycle(e) {
         var api         = {},
-            output      = [],
+            output      = "",
             domain      = (/^((https?:\/\/)|(file:\/\/\/))/),
             event       = e || window.event,
             lang        = "",
@@ -2803,46 +2811,25 @@ global.prettydiff.meta = {
             autotest    = false,
             crlf        = pd.id("lterminator-crlf"),
             textout     = ((pd.data.node.jsscope === null || pd.data.node.jsscope.checked === false) && (node === null || node.checked === false)),
-            app         = function dom__event_recycle_appInit() {
-                return;
-            },
             application = function dom__event_recycle_application(lang) {
                 if (typeof global.prettydiff.prettydiff === "function") {
-                    return global.prettydiff.prettydiff;
+                    return global.prettydiff.prettydiff(api);
                 }
                 if (pd.data.mode === "diff" && typeof global.prettydiff.diffview === "function") {
                     api.lang = "text";
-                    return global.prettydiff.diffview;
+                    return global.prettydiff.diffview(api);
                 }
                 if (typeof global.prettydiff.markuppretty === "function" && (lang === "markup" || lang === "html")) {
-                    return function dom__event_recycle_application_markuppretty() {
-                        var code = global.prettydiff.markuppretty(api),
-                            sum  = (global.prettydiff.report === undefined)
-                                ? ""
-                                : global.prettydiff.report;
-                        return [code, sum];
-                    };
+                    return global.prettydiff.markuppretty(api);
                 }
                 if (typeof global.prettydiff.csvpretty === "function" && lang === "csv") {
-                    return global.prettydiff.csvpretty;
+                    return global.prettydiff.csvpretty(api);
                 }
                 if (typeof global.prettydiff.csspretty === "function" && lang === "css") {
-                    return function dom__event_recycle_application_csspretty() {
-                        var code = global.prettydiff.csspretty(api),
-                            sum  = (global.prettydiff.report === undefined)
-                                ? ""
-                                : global.prettydiff.report;
-                        return [code, sum];
-                    };
+                    return global.prettydiff.csspretty(api);
                 }
                 if (typeof global.prettydiff.jspretty === "function") {
-                    return function dom__event_recycle_application_jspretty() {
-                        var code = global.prettydiff.jspretty(api),
-                            sum  = (global.prettydiff.report === undefined)
-                                ? ""
-                                : global.prettydiff.report;
-                        return [code, sum];
-                    };
+                    return global.prettydiff.jspretty(api);
                 }
             },
             execOutput  = function dom__event_recycle_execOutput() {
@@ -3808,6 +3795,7 @@ global.prettydiff.meta = {
                     conditional     = pd.id("conditionald-yes"),
                     content         = pd.id("diffcontentn"),
                     context         = pd.id("contextSize"),
+                    correct         = pd.id("djscorrect-yes"),
                     diffspaceignore = pd.id("diffspaceignorey"),
                     dustjs          = pd.id("ddustyes"),
                     elseline        = pd.id("jselselined-yes"),
@@ -3835,7 +3823,8 @@ global.prettydiff.meta = {
                     objsortm        = pd.id("dobjsort-markuponly"),
                     preserve        = pd.id("dpreserve"),
                     quantity        = pd.id("diff-quan"),
-                    quote           = pd.id("diffquoten"),
+                    quotecond       = pd.id("dquoteconvert-double"),
+                    quotecons       = pd.id("dquoteconvert-single"),
                     selectorlist    = pd.id("dselectorlist-yes"),
                     semicolon       = pd.id("diffscolonn"),
                     style           = pd.id("inscriptd-no"),
@@ -3877,6 +3866,7 @@ global.prettydiff.meta = {
                 api.context       = (context !== null)
                     ? context.value
                     : -1;
+                api.correct       = (correct !== null && correct.checked === true);
                 api.diffcomments  = (comments === null || comments.checked === true);
                 if (api.diffcomments === false) {
                     api.comments = "nocomment";
@@ -3931,10 +3921,16 @@ global.prettydiff.meta = {
                 } else {
                     api.objsort = "none";
                 }
+                if (quotecond !== null && quotecond.checked === true) {
+                    api.quoteConvert = "double";
+                } else if (quotecons !== null && quotecons.checked === true) {
+                    api.quoteConvert = "single";
+                } else {
+                    api.quoteConvert = "none";
+                }
                 if (preserve !== null) {
                     api.preserve = preserve.value;
                 }
-                api.quote        = (quote !== null && quote.checked === true);
                 api.selectorlist = (selectorlist !== null && selectorlist.checked === true);
                 api.semicolon    = (semicolon !== null && semicolon.checked === true);
                 api.sourcelabel  = (baseLabel === null)
@@ -3950,7 +3946,7 @@ global.prettydiff.meta = {
                 api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
                 api.unformatted  = (unformatted !== null && unformatted.checked === true);
                 api.wrap         = (wrap === null || isNaN(wrap.value) === true)
-                    ? 72
+                    ? 80
                     : Number(wrap.value);
                 if (chars === null || chars.checked === false) {
                     chars = pd.id("diff-tab");
@@ -4033,11 +4029,10 @@ global.prettydiff.meta = {
                         if (slashIndex > 0 || api.diff.indexOf("http") === 0) {
                             xhr.onreadystatechange = function dom__event_recycle_xhrDiff_stateChange() {
                                 var appDelay = function dom__event_recycle_xhrDiff_statechange_appDelay() {
-                                    var apptest = application(api.lang);
-                                    if (apptest === undefined) {
+                                    output = application(api.lang);
+                                    if (output === undefined) {
                                         setTimeout(dom__event_recycle_xhrDiff_statechange_appDelay, 100);
                                     } else {
-                                        output = apptest(api);
                                         execOutput();
                                     }
                                 };
@@ -4068,14 +4063,13 @@ global.prettydiff.meta = {
                                             } else {
                                                 pd.data.diff = "";
                                             }
-                                            app = application(api.lang);
-                                            if (app === undefined) {
+                                            output = application(api.lang);
+                                            if (output === undefined) {
                                                 if (pd.test.delayExecution === true) {
                                                     pd.test.delayExecution = false;
-                                                    setTimeout(appDelay, 100);
+                                                    setTimeout(appDelay, 2000);
                                                 }
                                             } else {
-                                                output = app(api);
                                                 execOutput();
                                             }
                                             return;
@@ -4270,11 +4264,10 @@ global.prettydiff.meta = {
                 if (slashIndex > 0 || api.source.indexOf("http") === 0) {
                     xhr.onreadystatechange = function dom__event_recycle_xhrSource_statechange() {
                         var appDelay = function dom__event_recycle_xhrSource_statechange_appDelay() {
-                            var apptest = application(api.lang);
-                            if (apptest === undefined) {
+                            output = application(api.lang);
+                            if (output === undefined) {
                                 setTimeout(dom__event_recycle_xhrSource_statechange_appDelay, 100);
                             } else {
-                                output = apptest(api);
                                 execOutput();
                             }
                         };
@@ -4311,14 +4304,13 @@ global.prettydiff.meta = {
                                     } else {
                                         pd.data.diff = "";
                                     }
-                                    app = application(api.lang);
-                                    if (app === undefined) {
+                                    output = application(api.lang);
+                                    if (output === undefined) {
                                         if (pd.test.delayExecution === true) {
                                             pd.test.delayExecution = false;
-                                            setTimeout(appDelay, 100);
+                                            setTimeout(appDelay, 2000);
                                         }
                                     } else {
-                                        output = app(api);
                                         execOutput();
                                     }
                                     return;
@@ -4429,10 +4421,7 @@ global.prettydiff.meta = {
                             : api.lang;
                         pd.data.source = api.source;
                         pd.data.diff   = "";
-                        app            = application(api.lang);
-                        if (app !== undefined) {
-                            output = app(api);
-                        }
+                        output         = application(api.lang);
                         execOutput();
                     }, 50);
                 }
@@ -4449,10 +4438,7 @@ global.prettydiff.meta = {
                             : api.lang;
                         pd.data.source = api.source;
                         pd.data.diff   = "";
-                        app            = application(api.lang);
-                        if (app !== undefined) {
-                            output = app(api);
-                        }
+                        output         = application(api.lang);
                         execOutput();
                     }, 50);
                 }
@@ -4469,10 +4455,7 @@ global.prettydiff.meta = {
                             : api.lang;
                         pd.data.source = api.source;
                         pd.data.diff   = "";
-                        app            = application(api.lang);
-                        if (app !== undefined) {
-                            output = app(api);
-                        }
+                        output         = application(api.lang);
                         execOutput();
                     }, 50);
                 }
@@ -4489,10 +4472,7 @@ global.prettydiff.meta = {
                             : api.lang;
                         pd.data.source = api.source;
                         pd.data.diff   = "";
-                        app            = application(api.lang);
-                        if (app !== undefined) {
-                            output = app(api);
-                        }
+                        output         = application(api.lang);
                         execOutput();
                     }, 50);
                 }
@@ -4518,10 +4498,7 @@ global.prettydiff.meta = {
                 } else {
                     pd.data.diff = "";
                 }
-                app = application(api.lang);
-                if (app !== undefined) {
-                    output = app(api);
-                }
+                output = application(api.lang);
                 execOutput();
             }
         }
@@ -5693,6 +5670,16 @@ global.prettydiff.meta = {
                 delay();
             };
         if (page === "webtool") {
+            (function dom__announcement() {
+                var ann         = document.getElementById("headline").getElementsByTagName("p")[0],
+                    x           = Math.random(),
+                    circulation = [
+                        "Looking for a JavaScript developer? Email me at <a href=\"mailto:info@prettydiff.com\">info@prettydiff.com</a>.",
+                        "<a href=\"license.txt\">License</a> change and new <a href=\"guide/unrelated_diff.xhtml\">diff algorithm</a> with version <a href=\"https://github.com/prettydiff/prettydiff/releases/tag/2.1.17\">2.1.17</a>.",
+                        "Version 2.2.0 brings complete biddle integration, <a href=\"https://asciinema.org/a/118428\">watch the video</a>."
+                    ];
+                ann.innerHTML = circulation[Math.floor(x * circulation.length)];
+            }());
             document.consolePrint = global.prettydiff.options.functions.consolePrint;
             pd.data.node.report.feed.body = (pd.data.node.report.feed.box === null)
                 ? null
@@ -8235,6 +8222,16 @@ global.prettydiff.meta = {
     if (pd.data.node.page === null || pd.data.node.page === undefined || pd.data.node.page.getAttribute("id") === null) {
         window.onload = loadPrep;
     } else {
-        load();
+        window.onload = function dom__pageload() {
+            var webtool  = pd.id("webtool"),
+                loadmask = pd.id("loadmask");
+            load();
+            if (loadmask !== null) {
+                loadmask.style.display = "none";
+            }
+            if (webtool !== null) {
+                webtool.style.display = "block";
+            }
+        };
     }
 }());

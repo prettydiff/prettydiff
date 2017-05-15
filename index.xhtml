@@ -40,14 +40,15 @@
         <meta content="images/pdlogo.svg" name="msapplication-TileImage"/>
     </head>
     <body class="white" id="prettydiff">
-        <div class="contentarea" id="webtool">
+        <p id="loadmask">Loading...</p>
+        <div class="contentarea" id="webtool" style="display:none">
             <h1 class="content-hide">Pretty Diff, a language aware file comparison tool, beautifier, minifier and
                 parser.</h1>
             <p aria-atomic="true" aria-live="assertive" id="arialive" role="alert"
                 style="display:none"></p>
             <div id="headline" style="display:block">
                 <h2>Announcement &mdash;</h2>
-                <p><a href="license.txt">License</a> change and new <a href="guide/unrelated_diff.xhtml">diff algorithm</a> with version <a href="https://github.com/prettydiff/prettydiff/releases/tag/2.1.17">2.1.17</a>.</p>
+                <p></p>
                 <span class="clear"></span>
             </div>
             <ul id="infolinks">
@@ -570,6 +571,21 @@
                             </span>
                         </p>
                         <p>
+                            <strong>Fix Sloppy Code, Markup / JavaScript
+                                <a class="apiname" href="documentation.xhtml#correct">(correct)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="djscorrect-no" name="djscorrect" type="radio"/>
+                                <label for="djscorrect-no">Ignore code correction</label>
+                            </span>
+                            <span>
+                                <input id="djscorrect-yes" name="djscorrect" type="radio"/>
+                                <label for="djscorrect-yes">Correct for sloppiness</label>
+                            </span>
+                            <span>Read the
+                                <a href="guide/jscorrect.xhtml">guide</a>.</span>
+                        </p>
+                        <p>
                             <strong>Code Comments
                                 <a class="apiname" href="documentation.xhtml#diffcomments">(diffcomments)</a>
                             </strong>
@@ -596,16 +612,20 @@
                             </span>
                         </p>
                         <p>
-                            <strong>Diff Quotes
-                                <a class="apiname" href="documentation.xhtml#quote">(quote)</a>
+                            <strong>Quotes
+                                <a class="apiname" href="documentation.xhtml#quoteconvert">(quoteconvert)</a>
                             </strong>
                             <span>
-                                <input checked="checked" id="diffquotey" name="diffquote" type="radio"/>
-                                <label for="diffquotey">Diff quotes literally</label>
+                                <input checked="checked" id="dquoteconvert-none" name="dquoteconvert" type="radio"/>
+                                <label for="dquoteconvert-none">Leave the quotes alone</label>
                             </span>
                             <span>
-                                <input id="diffquoten" name="diffquote" type="radio"/>
-                                <label for="diffquoten">Normalize single quote characters to double quote characters</label>
+                                <input id="dquoteconvert-double" name="dquoteconvert" type="radio"/>
+                                <label for="dquoteconvert-double">Convert to double quotes</label>
+                            </span>
+                            <span>
+                                <input id="dquoteconvert-single" name="dquoteconvert" type="radio"/>
+                                <label for="dquoteconvert-single">Convert to single quotes</label>
                             </span>
                         </p>
                         <p>
@@ -1149,23 +1169,23 @@
                             <span>
                                 <input id="bpreserve" type="text" value="1"/></span>
                         </p>
-                            <p>
-                                <strong>Quotes
-                                    <a class="apiname" href="documentation.xhtml#quoteconvert">(quoteconvert)</a>
-                                </strong>
-                                <span>
-                                    <input checked="checked" id="bquoteconvert-none" name="bquoteconvert" type="radio"/>
-                                    <label for="bquoteconvert-none">Leave the quotes alone</label>
-                                </span>
-                                <span>
-                                    <input id="bquoteconvert-double" name="bquoteconvert" type="radio"/>
-                                    <label for="bquoteconvert-double">Convert to double quotes</label>
-                                </span>
-                                <span>
-                                    <input id="bquoteconvert-single" name="bquoteconvert" type="radio"/>
-                                    <label for="bquoteconvert-single">Convert to single quotes</label>
-                                </span>
-                            </p>
+                        <p>
+                            <strong>Quotes
+                                <a class="apiname" href="documentation.xhtml#quoteconvert">(quoteconvert)</a>
+                            </strong>
+                            <span>
+                                <input checked="checked" id="bquoteconvert-none" name="bquoteconvert" type="radio"/>
+                                <label for="bquoteconvert-none">Leave the quotes alone</label>
+                            </span>
+                            <span>
+                                <input id="bquoteconvert-double" name="bquoteconvert" type="radio"/>
+                                <label for="bquoteconvert-double">Convert to double quotes</label>
+                            </span>
+                            <span>
+                                <input id="bquoteconvert-single" name="bquoteconvert" type="radio"/>
+                                <label for="bquoteconvert-single">Convert to single quotes</label>
+                            </span>
+                        </p>
                     </fieldset>
                     <fieldset>
                         <legend>Advanced Options</legend>

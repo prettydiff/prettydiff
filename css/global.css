@@ -39,7 +39,7 @@
 #prettydiff .analysis .good{font-weight:bold}
 
 /*global - headings*/
-#prettydiff h1{font-size:3em;font-weight:normal;margin-top:0}
+#prettydiff h1{font-size:3em;font-weight:normal;margin-top:0;width:22em}
 #prettydiff h1 span{font-size:0.5em}
 #prettydiff h1 svg{border-style:solid;border-width:0.05em;float:left;height:1.5em;margin-right:0.5em;width:1.5em}
 #prettydiff h2{border-style:none;background:transparent;font-size:1em;box-shadow:none;margin:0}
