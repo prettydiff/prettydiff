@@ -90,11 +90,7 @@ Manage with biddle
                 return pdresponse;
             }
             if (typeof pdresponse === "string") {
-                if (options.newline === true) {
-                    pdresponse = pdresponse.replace(/(\s+)$/, "\r\n");
-                } else {
-                    pdresponse = pdresponse.replace(/(\s+)$/, "");
-                }
+                pdresponse = pdresponse.replace(/(\s+)$/, "");
             }
             if (meta.error !== "") {
                 global.prettydiff.finalFile.order[9] = "<p><strong>Error:</strong> " + meta.error + "</p>";
