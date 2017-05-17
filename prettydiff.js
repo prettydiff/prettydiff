@@ -46,12 +46,7 @@
 (function prettydiff_init() {
     "use strict";
     var prettydiff = function prettydiff_(api) {
-        var startTime = (typeof Date.now === "function")
-                ? Date.now()
-                : (function prettydiff__dateShim() {
-                    var dateItem = new Date();
-                    return Date.parse(dateItem);
-                }()),
+        var startTime = performance.now(),
             core      = function core_(api) {
                 var spacetest    = (/^\s+$/g),
                     apioutput    = "",
@@ -111,13 +106,8 @@
                             hourString   = "",
                             minutes      = 0,
                             hours        = 0,
-                            elapsed      = (typeof Date.now === "function")
-                                ? ((Date.now() - startTime) / 1000)
-                                : (function core__proctime_dateShim() {
-                                    var dateitem = new Date();
-                                    return Date.parse(dateitem);
-                                }()),
-                            secondString = elapsed.toFixed(3),
+                            elapsed      = (performance.now() - startTime) / 1000,
+                            secondString = elapsed.toFixed(6),
                             plural       = function core__proctime_plural(x, y) {
                                 var a = x + y;
                                 if (x !== 1) {

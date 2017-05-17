@@ -40,7 +40,8 @@ Manage with biddle
 //difflines - number, difference lines
 (function pdNodeLocal() {
     "use strict";
-    var node           = {
+    var startTime      = process.hrtime(),
+        node           = {
             fs   : require("fs"),
             http : require("http"),
             https: require("https"),
@@ -118,7 +119,6 @@ Manage with biddle
             [], [], []
         ],
         lf             = "\n",
-        startTime      = Date.now(),
         dir            = [
             0, 0, 0
         ],
@@ -267,7 +267,14 @@ Manage with biddle
             } else {
                 log.push("Executed in ");
             }
-            time = (Date.now() - startTime) / 1000;
+            time = (function pdNodeLocal_ender_time() {
+                var endtime = process.hrtime(),
+                    dtime = [endtime[0] - startTime[0], endtime[1] - startTime[1]];
+                if (dtime[1] === 0) {
+                    return dtime[0];
+                }
+                return dtime[0] + "." + dtime[1];
+            }());
             log.push(time);
             log.push(" second");
             if (time !== 1) {
