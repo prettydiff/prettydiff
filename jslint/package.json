@@ -1,0 +1,27 @@
+{
+    "author": {
+        "email":"douglas@crockford.com",
+        "name": "Douglas Crockford",
+        "url": "http://crockford.com/"
+    },
+    "bugs": {
+        "Google+": "https://plus.google.com/communities/104441363299760713736"
+    },
+    "description": "JSLint is a JavaScript program that looks for problems in JavaScript programs. It is a code quality tool.",
+    "homepage": "http://jslint.com/",
+    "keywords": [
+        "lint",
+        "javascript",
+        "validation",
+        "validate",
+        "static analysis"
+    ],
+    "license": "MIT compatible",
+    "main": "jslint.js",
+    "name": "jslint",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/douglascrockford/jslint"
+    },
+    "version": "2017-04-10"
+}

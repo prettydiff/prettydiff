@@ -269,11 +269,23 @@ Manage with biddle
             }
             time = (function pdNodeLocal_ender_time() {
                 var endtime = process.hrtime(),
-                    dtime = [endtime[0] - startTime[0], endtime[1] - startTime[1]];
+                    dtime   = [endtime[0] - startTime[0], endtime[1] - startTime[1]],
+                    strTime = "";
                 if (dtime[1] === 0) {
-                    return dtime[0];
+                    return dtime[0] + "";
                 }
-                return dtime[0] + "." + dtime[1];
+                if (dtime[1] < 0) {
+                    dtime[1] = ((1000000000 + endtime[1]) - startTime[1]);
+                }
+                strTime = dtime[1] + "";
+                if (strTime.length < 9) {
+                    do {
+                        strTime = strTime + 0;
+                    } while (strTime.length < 9);
+                } else if (strTime.length > 9) {
+                    strTime = strTime.slice(0, 9);
+                }
+                return dtime[0] + "." + strTime;
             }());
             log.push(time);
             log.push(" second");

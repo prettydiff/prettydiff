@@ -11,7 +11,7 @@ module.exports = (function taskrunner() {
             //"diffunits",    - unit tests for the diff process
             "simulations" //  - simulate a variety of execution steps and options from the command line
         ],
-        startTime  = Date.now(),
+        startTime  = process.hrtime(),
         node       = {
             child: require("child_process").exec,
             fs   : require("fs"),
@@ -23,9 +23,20 @@ module.exports = (function taskrunner() {
                 secondString = "",
                 finalTime    = "",
                 finalMem     = "",
+                strSplit     = [],
                 minutes      = 0,
                 hours        = 0,
-                elapsed      = 0,
+                elapsed      = (function taskrunner_humantime_elapsed() {
+                    var endtime = process.hrtime(),
+                        dtime = [endtime[0] - startTime[0], endtime[1] - startTime[1]];
+                    if (dtime[1] === 0) {
+                        return dtime[0];
+                    }
+                    if (dtime[1] < 0) {
+                        dtime[1] = ((1000000000 + endtime[1]) - startTime[1]);
+                    }
+                    return dtime[0] + (dtime[1] / 1000000000);
+                }()),
                 memory       = {},
                 prettybytes  = function taskrunner_humantime_prettybytes(an_integer) {
                     //find the string length of input and divide into triplets
@@ -109,8 +120,16 @@ module.exports = (function taskrunner() {
             finalMem     = prettybytes(memory.rss);
 
             //last line for additional instructions without bias to the timer
-            elapsed      = (Date.now() - startTime) / 1000;
-            secondString = elapsed.toFixed(3);
+            secondString = elapsed + "";
+            strSplit     = secondString.split(".");
+            if (strSplit[1].length < 9) {
+                do {
+                    strSplit[1]  = strSplit[1] + 0;
+                } while (strSplit[1].length < 9);
+                secondString = strSplit[0] + "." + strSplit[1];
+            } else if (strSplit[1].length > 9) {
+                secondString = strSplit[0] + "." + strSplit[1].slice(0, 9);
+            }
             if (elapsed >= 60 && elapsed < 3600) {
                 minute();
             } else if (elapsed >= 3600) {
@@ -367,7 +386,7 @@ module.exports = (function taskrunner() {
                         "coverage",
                         "guide",
                         "ignore",
-                        "JSLint",
+                        "jslint",
                         "node_modules",
                         "test/barebones",
                         "test/samples_correct",
@@ -375,14 +394,10 @@ module.exports = (function taskrunner() {
                     ],
                     flag            = {
                         files: false,
-                        fs   : false,
-                        items: false,
-                        lint : false
+                        items: false
                     },
                     files           = [],
-                    jslint          = function taskrunner_declareJSLINT() {
-                        return;
-                    },
+                    jslint          = require(".." + node.path.sep + "jslint" + node.path.sep + "jslint"),
                     lintrun         = function taskrunner_lint_lintrun() {
                         var lintit = function taskrunner_lint_lintrun_lintit(val, ind, arr) {
                             var result = {},
@@ -471,112 +486,6 @@ module.exports = (function taskrunner() {
                     "** Note that line numbers of error messaging reflects beautified code line."
                 );
                 console.log("");
-                (function taskrunner_lint_install() {
-                    var dateobj = new Date(),
-                        day     = (dateobj.getDate() > 9)
-                            ? "" + dateobj.getDate()
-                            : "0" + dateobj.getDate(),
-                        month   = (dateobj.getMonth() > 8)
-                            ? "" + (
-                                dateobj.getMonth() + 1
-                            )
-                            : "0" + (
-                                dateobj.getMonth() + 1
-                            ),
-                        date    = Number("" + dateobj.getFullYear() + month + day),
-                        today   = require("./today.js"),
-                        version = "",
-                        appath  = "",
-                        newinstall = false,
-                        list    = function biddle_lint_install_list() {
-                            node.child("biddle list installed", function biddle_lint_install_list_child(ler, stdlout, stdler) {
-                                var apps = [],
-                                    item = [],
-                                    a    = 0,
-                                    len  = 0;
-                                if (ler !== null && ler !== undefined) {
-                                    if (stdlout.indexOf("\u001b[1m\u001b[36mFunction:\u001b[39m\u001b[0m") > -1) {
-                                        errout(stdlout);
-                                    } else {
-                                        errout(ler);
-                                    }
-                                }
-                                if (stdler !== null && stdler !== "") {
-                                    errout(stdler);
-                                }
-                                if (stdlout.indexOf("jslint") < 0) {
-                                    errout("jslint is not installed by biddle.");
-                                }
-                                apps = stdlout.split("*");
-                                len  = apps.length;
-                                do {
-                                    if (apps[a].indexOf("jslint") > 0) {
-                                        item    = apps[a].split(" - ");
-                                        version = item[1];
-                                        appath  = item[2].replace(/(\s+)$/, "");
-                                        if (newinstall === true) {
-                                            console.log("jslint updated to version " + version);
-                                        } else {
-                                            console.log("Using previously installed jslint version \u001b[1m\u001b[36m" + version + "\u001b[39m\u001b[0m");
-                                        }
-                                        jslint    = require(appath + "jslint.js");
-                                        flag.lint = true;
-                                        if (flag.fs === true) {
-                                            return lintrun();
-                                        }
-                                        break;
-                                    }
-                                    a = a + 1;
-                                } while (a < len);
-                                if (flag.lint === false) {
-                                    errout("Something is wrong with either biddle or its installation of jslint.");
-                                }
-                            });
-                        };
-
-                    node.child("biddle", function biddle_lint_install_biddle(ber, stdbout, stdber) {
-                        if (ber !== null && ber !== undefined) {
-                            errout(ber);
-                        }
-                        if (stdber !== null && stdber !== "") {
-                            errout(stdber);
-                        }
-                        if (stdbout.length < 100) {
-                            errout("It does not appear that biddle is installed with global settings.  The Pretty Diff build process requies biddle and jslint.");
-                        }
-                        if (date > today) {
-                            node.child("biddle update jslint", function biddle_lint_install_biddle_update(uer, stduout, stduer) {
-                                if (uer !== null && uer !== undefined) {
-                                    if (stduout.indexOf("\u001b[1m\u001b[36mFunction:\u001b[39m\u001b[0m") > -1) {
-                                        errout(stduout);
-                                    } else {
-                                        errout(uer);
-                                    }
-                                }
-                                if (stduer !== null && stduer !== "") {
-                                    errout(stduer);
-                                }
-                                if (stduout.indexOf("jslint matches published version") < 0) {
-                                    newinstall = true;
-                                }
-                                node
-                                    .fs
-                                    .writeFile(
-                                        "test" + node.path.sep + "today.js",
-                                        "/\u002aglobal module\u002a/(function () {\"use strict\";var today=" + date + ";module.exports=today;}());",
-                                        function biddle_test_moduleInstall_writeToday_writeFile(werr) {
-                                            if (werr !== null && werr !== undefined) {
-                                                return errout(werr);
-                                            }
-                                            list();
-                                        }
-                                    );
-                            });
-                        } else {
-                            list();
-                        }
-                    });
-                }());
                 (function taskrunner_lint_getFiles() {
                     var fc       = 0,
                         ft       = 0,
@@ -600,11 +509,7 @@ module.exports = (function taskrunner() {
                                         data
                                     ]);
                                     if (flag.files === true && flag.items === true) {
-                                        flag.fs = true;
-                                        if (flag.lint === true) {
-                                            flag.files = false;
-                                            lintrun();
-                                        }
+                                        lintrun();
                                     }
                                 }
                             );
@@ -642,11 +547,7 @@ module.exports = (function taskrunner() {
                                                     } while (a < idLen);
                                                     if (ignoreDir === true) {
                                                         if (flag.files === true && flag.items === true) {
-                                                            flag.fs = true;
-                                                            if (flag.lint === true) {
-                                                                flag.items = false;
-                                                                lintrun();
-                                                            }
+                                                            lintrun();
                                                         }
                                                     } else {
                                                         taskrunner_lint_getFiles_readDir(filename);

@@ -1,6 +1,6 @@
 /*prettydiff.com topcoms: true, insize: 4, inchar: " ", vertical: true */
 /*jshint laxbreak: true*/
-/*global __dirname, ace, console, define, global, module, options, process, require */
+/*global __dirname, ace, console, define, global, module, options, performance, process, require */
 /*
 
  Execute in a NodeJS app:
@@ -46,7 +46,9 @@
 (function prettydiff_init() {
     "use strict";
     var prettydiff = function prettydiff_(api) {
-        var startTime = performance.now(),
+        var startTime = (typeof performance === "object")
+                ? performance.now()
+                : 0,
             core      = function core_(api) {
                 var spacetest    = (/^\s+$/g),
                     apioutput    = "",
@@ -106,7 +108,9 @@
                             hourString   = "",
                             minutes      = 0,
                             hours        = 0,
-                            elapsed      = (performance.now() - startTime) / 1000,
+                            elapsed      = (typeof performance === "object")
+                                ? (performance.now() - startTime) / 1000
+                                : 0,
                             secondString = elapsed.toFixed(6),
                             plural       = function core__proctime_plural(x, y) {
                                 var a = x + y;
