@@ -3796,6 +3796,7 @@ global.prettydiff.meta = {
                     content         = pd.id("diffcontentn"),
                     context         = pd.id("contextSize"),
                     correct         = pd.id("djscorrect-yes"),
+                    diffcli         = pd.id("diffcli-true"),
                     diffspaceignore = pd.id("diffspaceignorey"),
                     dustjs          = pd.id("ddustyes"),
                     elseline        = pd.id("jselselined-yes"),
@@ -3867,6 +3868,7 @@ global.prettydiff.meta = {
                     ? context.value
                     : -1;
                 api.correct       = (correct !== null && correct.checked === true);
+                api.diffcli       = (diffcli !== null && diffcli.checked === true);
                 api.diffcomments  = (comments === null || comments.checked === true);
                 if (api.diffcomments === false) {
                     api.comments = "nocomment";

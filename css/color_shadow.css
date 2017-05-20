@@ -108,3 +108,8 @@
 #prettydiff.shadow .data .l15{background:#562}
 #prettydiff.shadow .data .l16{background:#600}
 #prettydiff.shadow .data .c0{background:inherit}
+#prettydiff.shadow .diffcli h3{color:#9cf}
+#prettydiff.shadow .diffcli del{background:#382222;color:#f63}
+#prettydiff.shadow .diffcli ins{background:#223822;color:#cf3}
+#prettydiff.shadow .diffcli p{color:#aaa}
+#prettydiff.shadow .diffcli li{border-bottom-color:#666}
