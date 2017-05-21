@@ -19528,9 +19528,9 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         .appendTo("body")
                         .wrap("<div></div>")
                         .css({
-                            left      : -*width,
+                            left      : -j * width,
                             position  : "absolute",
-                            top       : -*height,
+                            top       : -i * height,
                             visibility: "visible"
                         })
                         .parent()
@@ -19791,10 +19791,10 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                 from    : hide
                     ? original
                     : {
-                        height     : original.*factor,
-                        outerHeight: original.*factor,
-                        outerWidth : original.*factor,
-                        width      : original.*factor
+                        height     : original.height * factor,
+                        outerHeight: original.outerHeight * factor,
+                        outerWidth : original.outerWidth * factor,
+                        width      : original.width * factor
                     },
                 mode    : mode,
                 percent : hide
@@ -19853,10 +19853,10 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                     : original
             );
             options.to   = {
-                height     : original.*factor.y,
-                outerHeight: original.*factor.y,
-                outerWidth : original.*factor.x,
-                width      : original.*factor.x
+                height     : original.height * factor.y,
+                outerHeight: original.outerHeight * factor.y,
+                outerWidth : original.outerWidth * factor.x,
+                width      : original.width * factor.x
             };
             if (options.fade) {
                 if (mode === "show") {
@@ -20034,16 +20034,16 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                                 .save(child, props2);
                         }
                         child.from = {
-                            height     : c_original.*factor.from.y,
-                            outerHeight: c_original.*factor.from.y,
-                            outerWidth : c_original.*factor.from.x,
-                            width      : c_original.*factor.from.x
+                            height     : c_original.height * factor.from.y,
+                            outerHeight: c_original.outerHeight * factor.from.y,
+                            outerWidth : c_original.outerWidth * factor.from.x,
+                            width      : c_original.width * factor.from.x
                         };
                         child.to   = {
-                            height     : c_original.*factor.to.y,
-                            outerHeight: c_original.*factor.to.y,
-                            outerWidth : c_original.*factor.to.x,
-                            width      : c_original.*factor.to.x
+                            height     : c_original.height * factor.to.y,
+                            outerHeight: c_original.height * factor.to.y,
+                            outerWidth : c_original.width * factor.to.x,
+                            width      : c_original.width * factor.to.x
                         };
                         if (factor.from.y !== factor.to.y) {
                             child.from = $
@@ -24054,14 +24054,14 @@ if (typeof jQuery != "undefined" && typeof $.ui == "undefined") {
                         .$elts
                         .content
                         .css({
-                            height: env.*env.steps.count + "px"
+                            height: env.itemHeight * env.steps.count + "px"
                         });
                     env
                         .$elts
                         .content
                         .parent()
                         .css({
-                            height: env.*env.params.dispItems + "px"
+                            height: env.itemHeight * env.params.dispItems + "px"
                         });
                 } else {
                     env

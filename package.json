@@ -40,7 +40,14 @@
             "exclusions": ["api/node-local.js", "changelog.md", "favicon.ico", "jslint", "test"]
         },
         "browserNoAce": {
-            "exclusions": ["ace", "api/node-local.js", "changelog.md", "favicon.ico", "jslint", "test"]
+            "exclusions": [
+                "ace",
+                "api/node-local.js",
+                "changelog.md",
+                "favicon.ico",
+                "jslint",
+                "test"
+            ]
         },
         "cli"         : {
             "exclusions": [

@@ -3543,7 +3543,7 @@ module.exports = (function taskrunner() {
                                             verify: "{\"data\":{\"attrs\":[{},{},{},{},{},{}],\"begin\":[0,0,0,2,2,0],\"daddy\":[\"" +
                                                     "root\",\"person\",\"person\",\"name\",\"name\",\"person\"],\"jscom\":[false,fa" +
                                                     "lse,false,false,false,false],\"linen\":[1,2,3,3,3,4],\"lines\":[0,1,1,0,0,1]," +
-                                                    "\"presv\":[false,true,false,false,false,false],\"token\":[\"<person>\",\"<!-- " +
+                                                    "\"presv\":[false,false,false,false,false,false],\"token\":[\"<person>\",\"<!-- " +
                                                     "comment -->\",\"<name>\",\"bob\",\"</name>\",\"</person>\"],\"types\":[\"start" +
                                                     "\",\"comment\",\"start\",\"content\",\"end\",\"end\"]},\"definition\":{\"attrs" +
                                                     "\":\"array - List of attributes (if any) for the given token.\",\"begin\":\"nu" +

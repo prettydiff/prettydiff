@@ -432,25 +432,25 @@
             ace: 160307
         },
         api          : {
-            dom      : 170514, //dom.js
-            nodeLocal: 170514 //node-local.js
+            dom      : 170521, //dom.js
+            nodeLocal: 170521 //node-local.js
         },
-        css          : 170514, //css files
-        csspretty    : 170514, //csspretty lib
+        css          : 170521, //css files
+        csspretty    : 170521, //csspretty lib
         csvpretty    : 170514, //csvpretty lib
-        diffview     : 170514, //diffview lib
-        documentation: 170514, //documentation.xhtml and various guide pages
+        diffview     : 170521, //diffview lib
+        documentation: 170521, //documentation.xhtml and various guide pages
         finalFile    : 170514, //HTML report generator
-        jspretty     : 170514, //jspretty lib
+        jspretty     : 170521, //jspretty lib
         language     : 170514, //language lib
         latest       : 0,
-        lint         : 170514, //unit test and lint automation as test/lint.js
-        markuppretty : 170514, //markuppretty lib
-        options      : 170514, //options management
-        prettydiff   : 170514, //this file
+        lint         : 170521, //unit test and lint automation as test/lint.js
+        markuppretty : 170521, //markuppretty lib
+        options      : 170521, //options management
+        prettydiff   : 170521, //this file
         safeSort     : 170514, //safeSort lib
-        version      : "2.2.0", //version number
-        webtool      : 170514
+        version      : "2.2.1", //version number
+        webtool      : 170521
     };
     global.prettydiff.edition.latest = (function edition_latest() {
         return Math.max(
