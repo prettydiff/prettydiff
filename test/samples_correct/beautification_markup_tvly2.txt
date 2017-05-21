@@ -667,7 +667,8 @@
                 <!-- home -->
                 <div class="site-navigation all-in cf">
                     <ul class="utility-nav nav-group cf">
-                        <!-- jdbk-test: model.domain: www.travelocity.com - request.serverName: www.travelocity.com -->
+                        <!-- jdbk-test: model.domain: www.travelocity.com - request.serverName:
+                        www.travelocity.com -->
 
 
                         <li class="selected-tab " id="all-in-home-header-link">
@@ -1045,10 +1046,10 @@
                                             <div>
                                                 <h2 class="xp-w-wiztitle">Flight</h2>
 
-                                                <!-- error  panel -->
+                                                <!-- error panel -->
                                                 <fieldset id="errorPnl">
                                                     <div class="xp-b-noXpend xp-w-row" id="errDiv">
-                                                        <!-- div for error messages  -->
+                                                        <!-- div for error messages -->
                                                     </div>
                                                     <span class="xp-b-noXpend" id="requiredFieldMessage">
                                                         Please complete the highlighted fields below</span>
@@ -2085,7 +2086,7 @@
                                             <!-- end of additional options panel -->
 
 
-                                            <!-- search button  -->
+                                            <!-- search button -->
                                             <p class="xp-b-clearfix uw-submit-button" id="uw-flight-submit">
                                                 <span class="xp-b-right">
                                                     <span class="xp-b-leftSubmit2">
@@ -2104,7 +2105,7 @@
 
                                             <!-- AB testing -->
 
-                                            <!-- cross-sell search button  -->
+                                            <!-- cross-sell search button -->
                                             <br />
                                             <p class="xp-b-clearfix" id="uw-flight-fh-submit">
                                                 <span class="xp-b-right">
@@ -4547,13 +4548,12 @@
         </script>
 
 
-        <!-- PART 1: This is the code that will collect the dynamic values; must be placed above PART 2 -->
-        <!--
-PLEASE INCLUDE THIS COMMENT ON THE WEB PAGE WITH THE TAG
-Remarketing tags may not be associated with personally identifiable information
-or placed on pages related to sensitive categories.  For more information on
-this, see http://google.com/ads/remarketingsetup
--->
+        <!-- PART 1: This is the code that will collect the dynamic values; must be
+        placed above PART 2 -->
+        <!-- PLEASE INCLUDE THIS COMMENT ON THE WEB PAGE WITH THE TAG Remarketing tags
+        may not be associated with personally identifiable information or placed on
+        pages related to sensitive categories. For more information on this, see
+        http://google.com/ads/remarketingsetup -->
 
 
         <script type="text/javascript">

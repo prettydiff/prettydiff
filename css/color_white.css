@@ -98,3 +98,8 @@
 #prettydiff.white .data .c0{background:inherit}
 #prettydiff.white #report p em{color:#080}
 #prettydiff.white #report p strong{color:#009}
+#prettydiff.white .diffcli h3{color:#009}
+#prettydiff.white .diffcli del{background:#f8eeee;color:#c00}
+#prettydiff.white .diffcli ins{background:#eef8ee;color:#070}
+#prettydiff.white .diffcli p{color:#666}
+#prettydiff.white .diffcli li{border-bottom-color:#ccc}

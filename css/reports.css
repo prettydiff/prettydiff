@@ -42,6 +42,17 @@
 #prettydiff .analysis td,
 #prettydiff .analysis th{padding:0.5em}
 
+/*report - diffcli rendered into HTML*/
+#prettydiff .diffcli{font-size:Courier,'Courier New','Lucida Console',monospace;margin:0;padding:0;text-align:left;white-space:pre;}
+#prettydiff .diffcli li{border-bottom-style:solid;border-bottom-width:0.1em;list-style:none;padding-bottom:1em}
+#prettydiff #webtool .diffcli h3{font-size:1.4em;font-weight:normal;margin-top:2em}
+#prettydiff #webtool .diffcli p,
+#prettydiff .diffcli del,
+#prettydiff .diffcli ins{display:block;font-family:Courier,'Courier New','Lucida Console',monospace;font-size:1.2em;font-style:normal;margin:0;text-decoration:none}
+#prettydiff .diffcli em{color:inherit;font-style:normal;font-weight:bold}
+#prettydiff .diffcli del em,
+#prettydiff .diffcli ins em{text-decoration:underline}
+
 /*report - stat report*/
 #prettydiff #statreport div{border-style:none}
 

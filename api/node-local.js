@@ -40,7 +40,8 @@ Manage with biddle
 //difflines - number, difference lines
 (function pdNodeLocal() {
     "use strict";
-    var node           = {
+    var startTime      = process.hrtime(),
+        node           = {
             fs   : require("fs"),
             http : require("http"),
             https: require("https"),
@@ -90,11 +91,7 @@ Manage with biddle
                 return pdresponse;
             }
             if (typeof pdresponse === "string") {
-                if (options.newline === true) {
-                    pdresponse = pdresponse.replace(/(\s+)$/, "\r\n");
-                } else {
-                    pdresponse = pdresponse.replace(/(\s+)$/, "");
-                }
+                pdresponse = pdresponse.replace(/(\s+)$/, "");
             }
             if (meta.error !== "") {
                 global.prettydiff.finalFile.order[9] = "<p><strong>Error:</strong> " + meta.error + "</p>";
@@ -122,7 +119,6 @@ Manage with biddle
             [], [], []
         ],
         lf             = "\n",
-        startTime      = Date.now(),
         dir            = [
             0, 0, 0
         ],
@@ -271,7 +267,26 @@ Manage with biddle
             } else {
                 log.push("Executed in ");
             }
-            time = (Date.now() - startTime) / 1000;
+            time = (function pdNodeLocal_ender_time() {
+                var endtime = process.hrtime(),
+                    dtime   = [endtime[0] - startTime[0], endtime[1] - startTime[1]],
+                    strTime = "";
+                if (dtime[1] === 0) {
+                    return dtime[0] + "";
+                }
+                if (dtime[1] < 0) {
+                    dtime[1] = ((1000000000 + endtime[1]) - startTime[1]);
+                }
+                strTime = dtime[1] + "";
+                if (strTime.length < 9) {
+                    do {
+                        strTime = strTime + 0;
+                    } while (strTime.length < 9);
+                } else if (strTime.length > 9) {
+                    strTime = strTime.slice(0, 9);
+                }
+                return dtime[0] + "." + strTime;
+            }());
             log.push(time);
             log.push(" second");
             if (time !== 1) {

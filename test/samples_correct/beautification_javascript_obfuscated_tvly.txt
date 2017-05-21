@@ -7386,7 +7386,7 @@ jQuery.cookie = function (name, value, options) {
                     : this.scrollParent,
                 f = /(html|body)/i.test(c[0].tagName);
             return {
-                left: b.left + this.offset.relative.*a + this.offset.parent.*a - (
+                left: b.left + this.offset.relative.left * a + this.offset.parent.left * a - (
                     d.browser.safari && d.browser.version < 526 && this.cssPosition == "fixed"
                         ? 0
                         : (
@@ -7397,7 +7397,7 @@ jQuery.cookie = function (name, value, options) {
                                     : c.scrollLeft()
                         ) * a
                 ),
-                top : b.top + this.offset.relative.*a + this.offset.parent.*a - (
+                top : b.top + this.offset.relative.top * a + this.offset.parent.top * a - (
                     d.browser.safari && d.browser.version < 526 && this.cssPosition == "fixed"
                         ? 0
                         : (
