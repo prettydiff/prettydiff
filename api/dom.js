@@ -3511,6 +3511,7 @@ global.prettydiff.meta = {
                     objsortm       = pd.id("bobjsort-markuponly"),
                     offset         = pd.id("inlevel"),
                     preserve       = pd.id("bpreserve"),
+                    preserveComment = pd.id("bpreserveComment-true"),
                     quantity       = pd.id("beau-quan"),
                     quotecond      = pd.id("bquoteconvert-double"),
                     quotecons      = pd.id("bquoteconvert-single"),
@@ -3659,6 +3660,7 @@ global.prettydiff.meta = {
                 if (preserve !== null) {
                     api.preserve = preserve.value;
                 }
+                api.preserveComment = (preserveComment !== null && preserveComment.checked === true);
                 if (quotecond !== null && quotecond.checked === true) {
                     api.quoteConvert = "double";
                 } else if (quotecons !== null && quotecons.checked === true) {
@@ -3796,6 +3798,7 @@ global.prettydiff.meta = {
                     content         = pd.id("diffcontentn"),
                     context         = pd.id("contextSize"),
                     correct         = pd.id("djscorrect-yes"),
+                    diffcli         = pd.id("diffcli-true"),
                     diffspaceignore = pd.id("diffspaceignorey"),
                     dustjs          = pd.id("ddustyes"),
                     elseline        = pd.id("jselselined-yes"),
@@ -3822,6 +3825,7 @@ global.prettydiff.meta = {
                     objsortj        = pd.id("dobjsort-jsonly"),
                     objsortm        = pd.id("dobjsort-markuponly"),
                     preserve        = pd.id("dpreserve"),
+                    preserveComment = pd.id("dpreserveComment-true"),
                     quantity        = pd.id("diff-quan"),
                     quotecond       = pd.id("dquoteconvert-double"),
                     quotecons       = pd.id("dquoteconvert-single"),
@@ -3867,6 +3871,7 @@ global.prettydiff.meta = {
                     ? context.value
                     : -1;
                 api.correct       = (correct !== null && correct.checked === true);
+                api.diffcli       = (diffcli !== null && diffcli.checked === true);
                 api.diffcomments  = (comments === null || comments.checked === true);
                 if (api.diffcomments === false) {
                     api.comments = "nocomment";
@@ -3931,6 +3936,7 @@ global.prettydiff.meta = {
                 if (preserve !== null) {
                     api.preserve = preserve.value;
                 }
+                api.preserveComment = (preserveComment !== null && preserveComment.checked === true);
                 api.selectorlist = (selectorlist !== null && selectorlist.checked === true);
                 api.semicolon    = (semicolon !== null && semicolon.checked === true);
                 api.sourcelabel  = (baseLabel === null)

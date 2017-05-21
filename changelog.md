@@ -1,5 +1,17 @@
 # Pretty Diff change log
 
+## v2.2.1
+
+### Defects
+* Fixes poorly implemented *newline* option
+* Fixes #451, a word token between a period and an asterisk was skipped
+
+### Enhancements
+* The JSLint dependency is now directly contained in the application and managed remotely via biddle.
+* Fixes 433, all clocks were changed from *Data.now()* (milisecond time) to *performance.now()* (5 microsecond time in the browser) or *process.hrtime()* (nanosecond time in Node)
+* Fixes 438, added new option *preserveComment* to preserve comments from formatting due to option *wrap*.  Wrapping of standard XML comments is now default in markup.
+* Fixes 452, added the capabiliteis and formatting of option *diffcli* to the web tool
+
 ## v2.2.0
 
 ### Defects

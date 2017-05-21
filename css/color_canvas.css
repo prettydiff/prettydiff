@@ -104,3 +104,8 @@
 #prettydiff.canvas .data .c0{background:inherit}
 #prettydiff.canvas #report p em{color:#060}
 #prettydiff.canvas #report p strong{color:#009}
+#prettydiff.canvas .diffcli h3{color:#009}
+#prettydiff.canvas .diffcli del{background:#e8dddd;color:#a00}
+#prettydiff.canvas .diffcli ins{background:#dde8dd;color:#060}
+#prettydiff.canvas .diffcli p{color:#555}
+#prettydiff.canvas .diffcli li{border-bottom-color:#aaa}

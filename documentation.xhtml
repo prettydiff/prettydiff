@@ -197,11 +197,6 @@
                                 <li>Parse mode with
                                     <strong>parseFormat:htmltable</strong>
                                     will return a string of the parse data arranged in an HTML table.</li>
-                                <li>Diff mode with
-                                    <strong>diffcli:true</strong>
-                                    will return an array of numbers representing the locations of differences from
-                                    the supplied code samples for custom processing and formatting on the command
-                                    line.</li>
                                 <li>The option
                                     <strong>nodeasync</strong>
                                     returns an array where all prior described output is the first index and the
@@ -590,14 +585,12 @@
                                 <ul>
                                     <li>
                                         <h5>Description</h5>
-                                        An option only available from the node-local.js API file for Node.js. This
-                                        option will output a list of differences in color to the console. If more than
-                                        one file is compared it will indicate which files are deleted or new. If the
+                                        This option will output a list of differences similar to the Unix <em>diff</em>
+                                        command line utility. If more than one file is compared it will indicate which
+                                        files are deleted or new. If the
                                         <em>output</em>
-                                        option is not specified the node-local.js will convert the diffcli option to a
-                                        value of true. If the value of diffcli is true and the context option is omitted
-                                        the context option will be provided a value of 2. For additional information
-                                        please read the
+                                        If the value of diffcli is true and the context option is omitted the context
+                                        option will be provided a value of 2. For additional information please read the
                                         <a href="guide/diffcli.xhtml">diffcli guide</a>.</li>
                                     <li>
                                         <h5>Type</h5>
@@ -611,7 +604,7 @@
                                     </li>
                                     <li>
                                         <h5>As labeled in the HTML tool</h5>
-                                        not in the HTML tool</li>
+                                        Diff format</li>
                                 </ul>
                             </li>
                             <li id="diffcomments">
@@ -1352,6 +1345,23 @@
                                     <li>
                                         <h5>As labeled in the HTML tool</h5>
                                         Empty Lines</li>
+                                </ul>
+                            </li>
+                            <li id="preserveComment">
+                                <h4>preserveComment</h4>
+                                <ul>
+                                    <li>
+                                        <h5>Description</h5>
+                                        Preserves coments from reformatting due to option wrap.</li>
+                                    <li>
+                                        <h5>Type</h5>
+                                        boolean</li>
+                                    <li>
+                                        <h5>Default</h5>
+                                        false</li>
+                                    <li>
+                                        <h5>As labeled in the HTML tool</h5>
+                                        EPreserve Comments From Reformatting Due to Word Wrap</li>
                                 </ul>
                             </li>
                             <li id="qml">
