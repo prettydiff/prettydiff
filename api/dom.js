@@ -2855,10 +2855,12 @@ global.prettydiff.meta = {
                         }
                         return arr.join("");
                     };
-                if (api.newline === true) {
-                    output = output.replace(/(\s+)$/, "\r\n");
-                } else {
-                    output = output.replace(/(\s+)$/, "");
+                if (typeof output === "string") {
+                    if (api.newline === true) {
+                        output = output.replace(/(\s+)$/, "\r\n");
+                    } else {
+                        output = output.replace(/(\s+)$/, "");
+                    }
                 }
                 node = pd.id("showOptionsCallOut");
                 pd.data.zIndex = pd.data.zIndex + 1;

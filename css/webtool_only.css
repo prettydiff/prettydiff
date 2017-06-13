@@ -202,6 +202,8 @@
 #prettydiff #footer{padding:0 1em}
 
 /*webtool - headings*/
+#prettydiff #loadmask span{background:none;display:block;text-align:center;}
+#prettydiff #loadmask svg{border-style:none;float:none;height:5em;opacity:0.15;width:5em}
 #prettydiff #webtool h2{display:inline-block;font-size:1.8em;font-weight:bold;margin:0 0.5em 0.5em 0;padding:0 0.2em}
 #prettydiff #webtool h3{font-size:1.6em}
 #prettydiff #webtool h4{font-size:1.4em}
