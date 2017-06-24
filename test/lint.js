@@ -6,7 +6,6 @@ module.exports = (function taskrunner() {
     "use strict";
     var order      = [
             "lint", //        - run jslint on all unexcluded files in the repo
-            "packagejson", // - beautify the package.json file and compare it to itself
             "coreunits", //   - run a variety of files through the application and compare the result to a known good file
             //"diffunits",    - unit tests for the diff process
             "simulations" //  - simulate a variety of execution steps and options from the command line
@@ -566,58 +565,6 @@ module.exports = (function taskrunner() {
                         };
                     readDir(__dirname.replace(/((\/|\\)test)$/, ""));
                 }());
-            },
-            packagejson: function taskrunner_packagejson() {
-                node.fs.readFile(
-                    "package.json",
-                    "utf8",
-                    function taskrunner_packagejson_readFile(err, data) {
-                        var prettydata = "",
-                            globalmeta = "{\"difflines\":0,\"difftotal\":0,\"error\":\"\",\"insize\":xxx,\"lang\":[\"jso" +
-                                    "n\",\"json\",\"JSON\"],\"outsize\":xxx,\"time\":\"0.000 seconds\"}",
-                            strmeta    = "";
-                        if (err !== null && err !== undefined) {
-                            errout("Cannot read package.json");
-                        }
-                        if (data.indexOf("_requiredBy") > 0) {
-                            return next();
-                        }
-                        console.log("");
-                        console.log("\u001B[36mTesting package.json beautification...\u001B[39m");
-                        options.lang       = "auto";
-                        options.mode       = "beautify";
-                        options.objsort    = "all";
-                        options.source     = data;
-                        options.styleguide = "none";
-                        options.vertical   = "all";
-                        prettydata         = prettydiff(options);
-                        strmeta            = JSON
-                            .stringify(global.prettydiff.meta)
-                            .replace(/size":\d+/g, "size\":xxx")
-                            .replace(/\d+\.\d+\u0020seconds/, "0.000 seconds");
-                        if (data.replace(/(\s+)$/, "") !== prettydata.replace(/(\s+)$/, "")) {
-                            diffFiles("package.json", data, prettydata);
-                            errout("\u001B[31mPretty Diff corrupted package.json\u001B[36m");
-                        }
-                        console.log(
-                            humantime(false) + "\u001B[32mThe package.json file is beautified properly." +
-                            "\u001B[36m"
-                        );
-                        if (strmeta !== globalmeta) {
-                            diffFiles("package.json", strmeta, globalmeta);
-                            errout(
-                                "\u001B[31mglobal.prettydiff.meta is broken from package.json beautification.1B" +
-                                "[39m"
-                            );
-                            console.log("");
-                        }
-                        console.log(
-                            humantime(false) + "\u001B[32mglobal.prettydiff.meta global object is properly " +
-                            "constructed.\u001B[39m"
-                        );
-                        return next();
-                    }
-                );
             },
             simulations: function taskrunner_simulations() {
                 var passcount = [], //passing tests in local group

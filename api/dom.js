@@ -73,7 +73,7 @@ global.prettydiff.meta = {
                     }
                 },
                 save        : pd.id("diff-save"),
-                webtool     : pd.is("webtool")
+                webtool     : pd.id("webtool")
             };
             load();
             if (pd.data.node.loadmask !== null) {
