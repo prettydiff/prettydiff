@@ -425,7 +425,7 @@
 #prettydiff #webtool .metainfo{position:relative;}
 #prettydiff #update{clear:both;float:right;font-weight:bold;margin:0;padding:0.25em;position:absolute;right:0;top:0;z-index:2;}
 #prettydiff #update span{display:block}
-#prettydiff #update span span{display:inline-block;float:right}
+#prettydiff #update span span{display:block;float:right}
 
 /*webtool - overrides*/
 #prettydiff #webtool .beautify,
