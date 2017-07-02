@@ -1,6 +1,6 @@
 /*prettydiff.com topcoms: true, insize: 4, inchar: " ", vertical: true */
 /*jshint laxbreak: true*/
-/*global __dirname, ace, console, define, global, module, options, process, require */
+/*global __dirname, ace, console, define, global, module, options, performance, process, require */
 /*
 
  Execute in a NodeJS app:
@@ -46,12 +46,9 @@
 (function prettydiff_init() {
     "use strict";
     var prettydiff = function prettydiff_(api) {
-        var startTime = (typeof Date.now === "function")
-                ? Date.now()
-                : (function prettydiff__dateShim() {
-                    var dateItem = new Date();
-                    return Date.parse(dateItem);
-                }()),
+        var startTime = (typeof performance === "object")
+                ? performance.now()
+                : 0,
             core      = function core_(api) {
                 var spacetest    = (/^\s+$/g),
                     apioutput    = "",
@@ -111,13 +108,10 @@
                             hourString   = "",
                             minutes      = 0,
                             hours        = 0,
-                            elapsed      = (typeof Date.now === "function")
-                                ? ((Date.now() - startTime) / 1000)
-                                : (function core__proctime_dateShim() {
-                                    var dateitem = new Date();
-                                    return Date.parse(dateitem);
-                                }()),
-                            secondString = elapsed.toFixed(3),
+                            elapsed      = (typeof performance === "object")
+                                ? (performance.now() - startTime) / 1000
+                                : 0,
+                            secondString = elapsed.toFixed(6),
                             plural       = function core__proctime_plural(x, y) {
                                 var a = x + y;
                                 if (x !== 1) {
@@ -247,6 +241,10 @@
                         options.source = options.diff;
                         apidiffout     = jspretty();
                     }
+                    if (options.quote === true) {
+                        apioutput  = apioutput.replace(/'/g, "\"");
+                        apidiffout = apidiffout.replace(/'/g, "\"");
+                    }
                     if (options.semicolon === true) {
                         apioutput  = apioutput
                             .replace(/;\r\n/g, "\r\n")
@@ -335,7 +333,7 @@
             };
         return core(api);
     };
-    
+
     if (typeof global.prettydiff !== "object") {
         global.prettydiff = {};
     }
@@ -434,25 +432,25 @@
             ace: 160307
         },
         api          : {
-            dom      : 170408, //dom.js
-            nodeLocal: 170408 //node-local.js
+            dom      : 170521, //dom.js
+            nodeLocal: 170521 //node-local.js
         },
-        css          : 170327, //css files
-        csspretty    : 170408, //csspretty lib
-        csvpretty    : 170408, //csvpretty lib
-        diffview     : 170408, //diffview lib
-        documentation: 170408, //documentation.xhtml and various guide pages
-        finalFile    : 170408, //HTML report generator
-        jspretty     : 170408, //jspretty lib
-        language     : 170408, //language lib
+        css          : 170521, //css files
+        csspretty    : 170521, //csspretty lib
+        csvpretty    : 170514, //csvpretty lib
+        diffview     : 170521, //diffview lib
+        documentation: 170521, //documentation.xhtml and various guide pages
+        finalFile    : 170514, //HTML report generator
+        jspretty     : 170521, //jspretty lib
+        language     : 170514, //language lib
         latest       : 0,
-        lint         : 170408, //unit test and lint automation as test/lint.js
-        markuppretty : 170408, //markuppretty lib
-        options      : 170408, //options management
-        prettydiff   : 170408, //this file
-        safeSort     : 170408, //safeSort lib
-        version      : "2.2.0", //version number
-        webtool      : 170408
+        lint         : 170521, //unit test and lint automation as test/lint.js
+        markuppretty : 170521, //markuppretty lib
+        options      : 170521, //options management
+        prettydiff   : 170521, //this file
+        safeSort     : 170514, //safeSort lib
+        version      : "2.2.1", //version number
+        webtool      : 170521
     };
     global.prettydiff.edition.latest = (function edition_latest() {
         return Math.max(
