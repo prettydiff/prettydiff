@@ -26,7 +26,7 @@
         "es6",
         "javascript"
     ],
-    "license"             : "CC0",
+    "license"             : "CC0-1.0",
     "main"                : "prettydiff.js",
     "maintainers"         : [
         {
