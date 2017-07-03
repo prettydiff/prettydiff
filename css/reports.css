@@ -14,7 +14,7 @@
 #prettydiff #report blockquote,
 #prettydiff #report th{font-family:"Lucida Sans Unicode","Helvetica","Arial",sans-serif;font-size:1.2em}
 
-/*report - jspretty's jsscope output*/
+/*report - jsscope output*/
 #prettydiff div#webtool{background:transparent;font-size:inherit;margin:0;padding:0}
 
 /*report - error messaging in jspretty's report output*/
