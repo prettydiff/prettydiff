@@ -46,9 +46,7 @@
 (function prettydiff_init() {
     "use strict";
     var prettydiff = function prettydiff_(api) {
-        var startTime = (typeof performance === "object")
-                ? performance.now()
-                : 0,
+        var startTime = Date.now(),
             core      = function core_(api) {
                 var spacetest    = (/^\s+$/g),
                     apioutput    = "",
@@ -108,10 +106,8 @@
                             hourString   = "",
                             minutes      = 0,
                             hours        = 0,
-                            elapsed      = (typeof performance === "object")
-                                ? (performance.now() - startTime) / 1000
-                                : 0,
-                            secondString = elapsed.toFixed(6),
+                            elapsed      = (Date.now() - startTime) / 1000,
+                            secondString = elapsed + "",
                             plural       = function core__proctime_plural(x, y) {
                                 var a = x + y;
                                 if (x !== 1) {
@@ -432,25 +428,25 @@
             ace: 160307
         },
         api          : {
-            dom      : 170521, //dom.js
-            nodeLocal: 170521 //node-local.js
+            dom      : 170707, //dom.js
+            nodeLocal: 170707 //node-local.js
         },
-        css          : 170521, //css files
-        csspretty    : 170521, //csspretty lib
+        css          : 170707, //css files
+        csspretty    : 170707, //csspretty lib
         csvpretty    : 170514, //csvpretty lib
         diffview     : 170521, //diffview lib
-        documentation: 170521, //documentation.xhtml and various guide pages
+        documentation: 170707, //documentation.xhtml and various guide pages
         finalFile    : 170514, //HTML report generator
-        jspretty     : 170521, //jspretty lib
+        jspretty     : 170707, //jspretty lib
         language     : 170514, //language lib
         latest       : 0,
-        lint         : 170521, //unit test and lint automation as test/lint.js
-        markuppretty : 170521, //markuppretty lib
+        lint         : 170707, //unit test and lint automation as test/lint.js
+        markuppretty : 170707, //markuppretty lib
         options      : 170521, //options management
-        prettydiff   : 170521, //this file
+        prettydiff   : 170707, //this file
         safeSort     : 170514, //safeSort lib
-        version      : "2.2.1", //version number
-        webtool      : 170521
+        version      : "2.2.8", //version number
+        webtool      : 170707
     };
     global.prettydiff.edition.latest = (function edition_latest() {
         return Math.max(

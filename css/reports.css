@@ -14,14 +14,14 @@
 #prettydiff #report blockquote,
 #prettydiff #report th{font-family:"Lucida Sans Unicode","Helvetica","Arial",sans-serif;font-size:1.2em}
 
-/*report - jspretty's jsscope output*/
+/*report - jsscope output*/
 #prettydiff div#webtool{background:transparent;font-size:inherit;margin:0;padding:0}
 
 /*report - error messaging in jspretty's report output*/
 #prettydiff #jserror span{display:block}
 
 /*report - markuppretty's accessibility report*/
-#prettydiff #a11y{background:transparent;padding:0}
+#prettydiff #a11y{background:transparent;clear:both;padding:0}
 #prettydiff #a11y div{margin:0.5em 0;border-style:solid;border-width:0.1em}
 #prettydiff #a11y h4{margin:0.25em 0}
 #prettydiff #a11y ol{border-style:solid;border-width:0.1em}
