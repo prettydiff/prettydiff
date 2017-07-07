@@ -26,7 +26,7 @@
         "es6",
         "javascript"
     ],
-    "license"             : "CC0",
+    "license"             : "CC0-1.0",
     "main"                : "prettydiff.js",
     "maintainers"         : [
         {
@@ -69,5 +69,5 @@
         "url" : "https://github.com/prettydiff/prettydiff"
     },
     "test"                : "node test/lint.js",
-    "version"             : "2.2.1"
+    "version"             : "2.2.8"
 }

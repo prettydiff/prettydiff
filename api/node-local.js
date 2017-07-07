@@ -961,6 +961,10 @@ Manage with biddle
                         var tree  = cwd.split(node.path.sep),
                             ups   = [],
                             uplen = 0;
+                        if (node.path.isAbsolute(x) === true) {
+                            itempath = x;
+                            return x;
+                        }
                         if (itempath.indexOf("..") === 0) {
                             ups   = itempath
                                 .replace(/\.\.\//g, ".." + node.path.sep)
