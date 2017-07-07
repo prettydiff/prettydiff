@@ -1,5 +1,18 @@
 # Pretty Diff change log
 
+## v2.2.8
+
+### Defects
+* Fixes a regression issue in JSX regarding the *newline* option
+* Fixes a parse mode formatting defect in the webtool
+* Fixes a defect in loading the web tool
+* Fixes several minor defects when attempting to merge Pretty Diff 2.x into Atom Beautify
+* Fixes #463, incorrectly removing unit on 0 values in CSS transitions
+
+### Enhancements
+* Adding support for the 'u' regex flag
+* Pretty Diff 2 is on NPM with the package name **prettydiff2**. This is the minimum code to run Pretty Diff from Node.js.
+
 ## v2.2.1
 
 ### Defects
