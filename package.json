@@ -69,5 +69,5 @@
         "url" : "https://github.com/prettydiff/prettydiff"
     },
     "test"                : "node test/lint.js",
-    "version"             : "2.2.8"
+    "version"             : "2.2.9"
 }

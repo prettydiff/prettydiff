@@ -336,10 +336,10 @@ define("ace/lib/es5-shim", [
                     if (f < a) {
                         for (var h = 0; h < l; h = h + 1) {
                             this[f + h] = this[a + h];
-                        } else if (f > a) {
-                            for (h = l; h = h - 1;) {
-                                this[f + h] = this[a + h];
-                            }
+                        }
+                    } else if (f > a) {
+                        for (h = l; h = h - 1;) {
+                            this[f + h] = this[a + h];
                         }
                     }
                     if (s && e === c) {
@@ -356,21 +356,21 @@ define("ace/lib/es5-shim", [
                 }
                 return r;
             };
+        } else {
+            var v = Array.prototype.splice;
+            Array.prototype.splice = function (e, t) {
+                return arguments.length
+                    ? v.apply(this, [
+                        e === void 0
+                            ? 0
+                            : e,
+                        t === void 0
+                            ? this.length - e
+                            : t
+                    ].concat(u.call(arguments, 2)))
+                    : [];
+            };
         }
-    } else {
-        var v = Array.prototype.splice;
-        Array.prototype.splice = function (e, t) {
-            return arguments.length
-                ? v.apply(this, [
-                    e === void 0
-                        ? 0
-                        : e,
-                    t === void 0
-                        ? this.length - e
-                        : t
-                ].concat(u.call(arguments, 2)))
-                : [];
-        };
     }
     Array.isArray || (Array.isArray = function (t) {
         return a(t) == "[object Array]";
@@ -5041,9 +5041,9 @@ define("ace/mode/text_highlight_rules", [
             if (i) {
                 for (var u = 0; u < i.length; u = u + 1) {
                     i[u] = t + i[u];
-                } else {
-                    i = [];
                 }
+            } else {
+                i = [];
                 for (var a in o) {
                     i.push(t + a);
                 }
@@ -9122,40 +9122,35 @@ define("ace/edit_session", [
                         l.start.row >= i.row && l.shiftRow(-u);
                     }
                     o = s;
+                } else {
+                    var p = Array(u);
+                    p.unshift(s, 0);
+                    var d = t
+                        ? this.$wrapData
+                        : this.$rowLengthCache;
+                    d
+                        .splice
+                        .apply(d, p);
+                    var f = this.$foldData,
+                        l = this.getFoldLine(s),
+                        c = 0;
+                    if (l) {
+                        var v = l
+                            .range
+                            .compareInside(r.row, r.column);
+                        v == 0
+                            ? (
+                                l = l.split(r.row, r.column),
+                                l && (l.shiftRow(u), l.addRemoveChars(o, 0, i.column - r.column))
+                            )
+                            : v == -1 && (l.addRemoveChars(s, 0, i.column - r.column), l.shiftRow(u)),
+                        c = f.indexOf(l) + 1;
+                    }
+                    for (c; c < f.length; c = c + 1) {
+                        var l = f[c];
+                        l.start.row >= s && l.shiftRow(u);
+                    }
                 }
-            } else {
-                var p = Array(u);
-                p.unshift(s, 0);
-                var d = t
-                    ? this.$wrapData
-                    : this.$rowLengthCache;
-                d
-                    .splice
-                    .apply(d, p);
-                var f = this.$foldData,
-                    l = this.getFoldLine(s),
-                    c = 0;
-                if (l) {
-                    var v = l
-                        .range
-                        .compareInside(r.row, r.column);
-                    v == 0
-                        ? (
-                            l = l.split(r.row, r.column),
-                            l && (l.shiftRow(u), l.addRemoveChars(o, 0, i.column - r.column))
-                        )
-                        : v == -1 && (l.addRemoveChars(s, 0, i.column - r.column), l.shiftRow(u)),
-                    c = f.indexOf(l) + 1;
-                }
-                for (c; c < f.length; c = c + 1) {
-                    var l = f[c];
-                    l.start.row >= s && l.shiftRow(u);
-                }
-            } else {
-                u = Math.abs(e.start.column - e.end.column),
-                n === "remove" && (a = this.getFoldsInRange(e), this.removeFolds(a), u = -u);
-                var l = this.getFoldLine(s);
-                l && l.addRemoveChars(s, r.column, u);
             }
             return t && this.$wrapData.length != this
                 .doc
@@ -18513,14 +18508,14 @@ define("ace/line_widgets", [
                         e && this.removeLineWidget(e);
                     }, this),
                     this.$updateRows();
+                } else {
+                    var s = [r];
+                    s.unshift(n, 0),
+                    t
+                        .splice
+                        .apply(t, s),
+                    this.$updateRows();
                 }
-            } else {
-                var s = [r];
-                s.unshift(n, 0),
-                t
-                    .splice
-                    .apply(t, s),
-                this.$updateRows();
             }
         },
         this.$updateRows            = function () {
