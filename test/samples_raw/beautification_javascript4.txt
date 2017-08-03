@@ -129,3 +129,49 @@ if(!c||!d.contains(g,b))
     return c
         ?{top:c.top,left:c.left}
         :{top:0,left:0};
+
+function(){
+    if(2)
+        if(x)
+            xc = function(){
+                if(n)s;
+                else{
+                    if(f<a)
+                        for(h)x;
+                    else if(q)
+                        for(w)r;
+                    if(s)z;
+                    else{
+                        for(b)o
+                    }
+                }
+                return r
+            };
+        else{m}
+}
+
+if(a)for(;a;);else b
+
+do do do;while(0);while(0);while(0)
+
+function(e){
+    if(u!=0)
+        if(n==="remove"){
+            if(l){
+                Q
+            }
+            for(c){
+                W
+            }
+            o=s
+        }else{
+            var p=Array(u);p.unshift(s,0);
+            if(l){
+                E
+            }
+            for(A){
+                R
+            }
+        }
+        return T
+}

@@ -1,5 +1,10 @@
 # Pretty Diff change log
 
+## v2.2.9
+
+### Defects
+* Fixes #470, incorrect insertion of curly braces in complex nested operations
+
 ## v2.2.8
 
 ### Defects

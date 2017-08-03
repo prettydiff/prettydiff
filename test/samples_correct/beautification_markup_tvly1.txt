@@ -6399,15 +6399,15 @@
                                                 break;
                                             }
                                         }
-                                    } else if (i) {
-                                        for (f in a) {
-                                            if (c.call(a[f], f, a[f]) === !1) {
-                                                break;
-                                            }
-                                        }
-                                    } else {
-                                        for (var j = a[0]; g < h && c.call(j, g, j) !== !1; j = a[g = g + 1]) {}
                                     }
+                                } else if (i) {
+                                    for (f in a) {
+                                        if (c.call(a[f], f, a[f]) === !1) {
+                                            break;
+                                        }
+                                    }
+                                } else {
+                                    for (var j = a[0]; g < h && c.call(j, g, j) !== !1; j = a[g = g + 1]) {}
                                 }
                                 return a;
                             },
@@ -12289,17 +12289,17 @@
                                             .dequeue("tabs");
                                         this.blur();
                                         return false;
+                                    } else if (!i.length) {
+                                        c.cookie && a._cookie(c.selected, c.cookie);
+                                        a
+                                            .element
+                                            .queue("tabs", function () {
+                                                r(g, l);
+                                            });
+                                        a.load(a.anchors.index(this));
+                                        this.blur();
+                                        return false;
                                     }
-                                } else if (!i.length) {
-                                    c.cookie && a._cookie(c.selected, c.cookie);
-                                    a
-                                        .element
-                                        .queue("tabs", function () {
-                                            r(g, l);
-                                        });
-                                    a.load(a.anchors.index(this));
-                                    this.blur();
-                                    return false;
                                 }
                                 c.cookie && a._cookie(c.selected, c.cookie);
                                 if (l.length) {
