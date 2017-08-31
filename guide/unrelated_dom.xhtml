@@ -44,8 +44,18 @@
         <div class="contentarea" id="page">
             <section role="heading">
                 <h1>
-                    <svg height="2000.000000pt" id="pdlogo" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg">
-                        <g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
+                    <svg
+                        height="2000.000000pt"
+                        id="pdlogo"
+                        preserveaspectratio="xMidYMid meet"
+                        version="1.0"
+                        viewbox="0 0 2000.000000 2000.000000"
+                        width="2000.000000pt"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <g
+                            fill="#999"
+                            stroke="none"
+                            transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)">
                             <path
                                 d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g>
                     </svg>
@@ -127,21 +137,25 @@
                     <div class="segment" id="intro-domis">
                         <h4>What the DOM Is</h4>
                         <p>The DOM serves primarily as an API for JavaScript to access and interpret any
-                            markup language based upon the XML syntax, which still includes HTML. It is
-                            language agnostic so that it can be used and defined by a variety of languages
-                            in a variety of ways. As expressed in JavaScript, the DOM is a collection of
-                            objects that inherit from a master object named:
+                            markup language based upon the XML syntax, which still includes HTML. API
+                            (Application Programming Interface) is a common term to describe how one piece
+                            of software talks to another unrelated piece of software. The DOM is language
+                            agnostic so that it can be used and defined by a variety of languages in a
+                            variety of ways. As expressed in JavaScript, the DOM is a collection of objects
+                            that inherit from a master object named:
                             <em>document</em>. Each data facet conveyed by the DOM is an object. The
                             inheritance and relationships naturally demonstrated through the document
                             structure of the markup (functional inheritance) is defined in the DOM through
                             methods inherited from the document object.</p>
                         <p>It is important to recognize the DOM is the standard way that web browsers
                             interact with HTML. Every JavaScript framework, library, and abstraction that
-                            accesses the DOM ultimately does so through the standard DOM methods. A proper
-                            understanding of the DOM is critical for accessibility, performance, semantics,
-                            and basic problem solving.</p>
+                            accesses HTML or XML ultimately does so through the standard DOM methods. A
+                            proper understanding of the DOM is critical for accessibility, performance,
+                            semantics, and basic problem solving.</p>
                         <p>Every data facet expressed by the DOM is referred to as a
-                            <em>node</em>. Every node is defined of one of
+                            <em>node</em>. Each node represents a single unit of a markup document whether
+                            that unit comprises an HTML tag, attribute, comment, or anything else. Every
+                            node is defined of one of
                             <a href="http://www.w3.org/TR/DOM-Level-2-Core/core.html">twelve types</a>. Only
                             the types: element, text, and attribute are commonly used in the web though
                             every type is available in modern web browsers. The objects representative of
@@ -149,15 +163,15 @@
                             that can define their relationships, such as the parentNode property.</p>
                         <p>Because DOM Level 2, and later versions, are based upon XML syntax the DOM is
                             case-sensitive. When accessing HTML, which is not case-sensitive,
-                            case-sensitivity can vary browser and browser version. It is recommended to
+                            case-sensitivity can vary by browser and browser version. It is recommended to
                             always use lower case to access HTML from the DOM to eliminate minor conformance
                             differences by browser and also force HTML elements and attribute names to lower
                             case when interpreting names returned from the DOM.</p>
                         <p>There is a standard alternative to the DOM with a lighter memory footprint
                             and arguably far faster execution time called XPath. Unfortunately, XPath is not
-                            universally supported as native access method. This further reinforces the
-                            importance of learning the DOM as the only universally supported and standard
-                            API to access a markup document structure.</p>
+                            universally supported cross browser as a natively available method. This further
+                            reinforces the importance of learning the DOM as the only universally supported
+                            and standard API to access a markup document structure.</p>
                         <p>The well known
                             <em>innerHTML</em>
                             and
@@ -196,11 +210,12 @@
                             was released. Notice that DOM Level 3 extends DOM Level 2 but does not extend
                             DOM Level 1. DOM Level 3 is primarily concerned with namespaces, inheritance,
                             and extension of node names and definitions.</p>
-                        <p>At this time
+                        <p>
                             <a href="http://www.w3.org/TR/dom/">DOM Level 4</a>
-                            is nearing final review. DOM Level 4 is worthy of note in that it extends DOM
-                            Level 2 and 3 but is focused primarily upon interaction and events instead of
-                            anything related to structure or node relationships. A primary example is that
+                            became a published standard in late 2015. DOM Level 4 is worthy of note in that
+                            it extends DOM Level 2 and 3 but is focused primarily upon interaction and
+                            events instead of anything related to structure or node relationships. A primary
+                            example is that
                             <em>garbage collection</em>
                             is described in the specification where in the past these discussions were left
                             entirely to the implementation of JavaScript interpreters. In a purely desktop
@@ -217,20 +232,25 @@
                     <div class="segment">
                         <p>It is important to understand how the DOM is created. If a cached JavaScript
                             file is requested at the top of a document and is well written it is quite
-                            possible that it may request access to the DOM before objects of the DOM are
-                            created, which can result in unintended errors. For performance reasons it is
-                            often suggested that JavaScript be requested from the bottom of a document,
-                            which also provides the benefit of allowing the DOM to fully render before
-                            attempts to access it are executed.</p>
+                            possible that it may request access to DOM objects before they are created,
+                            which can result in unintended errors. For performance reasons it is often
+                            suggested that JavaScript be requested from the bottom of a document, which also
+                            provides the benefit of allowing the DOM to fully render before attempts to
+                            access it are executed.</p>
                         <p>The first thing modern browsers do when encountering any markup language,
                             such as HTML, is parse the markup. Parsing does not imply producing or rendering
-                            the DOM, which is a separate and later process. All modern documents use XML as
-                            a parsing foundation for any XML similar markup languages, which includes not
-                            well formed HTML. Because XML provides syntax rules that are terse and specific
-                            writing an XML parser is much faster, easier, and cheaper than writing an HTML
-                            parser. This means a smaller and faster executing parser, but more importantly
-                            it means a solid foundation on which to provide additional rules necessary for
-                            parsing HTML. An example of standard parsing guidance can be found in the
+                            the DOM, which is a separate and later process. Parsing is the process of
+                            transform strings of text, which is what is sent across the internet, into
+                            intrepreted code that computers use. As an example people parse language when
+                            they talk to each other or when they read books. All modern documents use XML as
+                            a parsing foundation for any XML similar markup languages. In web browsers
+                            poorly formatted HTML is generally considered close enough to XML to use the
+                            same parsing techniques but with some additional rules. Because XML provides
+                            syntax rules that are terse and specific writing an XML parser is much faster,
+                            easier, and cheaper than writing an HTML parser. This means a smaller and faster
+                            executing parser, but more importantly it means a solid foundation on which to
+                            provide additional rules necessary for parsing HTML. An example of standard
+                            parsing guidance can be found in the
                             <a href="http://www.w3.org/TR/xml-infoset/">XML Information Set</a>.</p>
                         <p>Once the markup is parsed requests for additional resources are identified
                             and those requests are executed. It is absolutely essential that the requests
@@ -246,7 +266,9 @@
                             executed, and all initially requested JavaScript is interpreted the load of the
                             page is complete. It is only at this time that the
                             <em>onload</em>
-                            executes. It is important to take note that older versions of Internet Explorer
+                            event executes. As a side note events are not formally addressed in this
+                            document, but are points of user interaction and are formally defined in DOM
+                            Level 3. It is important to take note that older versions of Internet Explorer
                             require receipt of an HTTP response for all requested resources, which means
                             that if an HTTP response is never returned the onload event never executes. It
                             is also important to notice that requests for JavaScript not made from the HTML
