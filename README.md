@@ -2,7 +2,8 @@ Try it online at [http://prettydiff.com/](http://prettydiff.com/).
 
 # ![Pretty Diff logo](http://prettydiff.com/images/pdlogoxs.svg) Pretty Diff
 
-[![Travis CI Build](https://travis-ci.org/prettydiff/prettydiff.svg)](https://travis-ci.org/prettydiff/prettydiff)
+[![Travis CI Build](https://travis-ci.org/prettydiff/prettydiff.svg)](https://travis-ci.org/prettydiff/prettydiff)[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fprettydiff%2Fprettydiff.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fprettydiff%2Fprettydiff?ref=badge_shield)
+
 [![AppVeyor Build](https://ci.appveyor.com/api/projects/status/github/prettydiff/prettydiff?branch=master&svg=true)](https://ci.appveyor.com/project/prettydiff/prettydiff)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/prettydiff/prettydiff?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Twitter Tweets](https://img.shields.io/twitter/url/http/prettydiff.com.svg?style=social)](https://twitter.com/intent/tweet?text=Handy%20web%20development%20tool:%20%20url=http%3A%2F%2Fprettydiff.com)
@@ -147,6 +148,9 @@ node test/lint.js
 ## License:
 
 This project is mostly written by and managed by Austin Cheney and licensed under CC0 as of version 2.1.17.  Please see license.txt for license langauge.
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fprettydiff%2Fprettydiff.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fprettydiff%2Fprettydiff?ref=badge_large)
 
 ## Acknowledgements
 
