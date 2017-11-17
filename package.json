@@ -1,0 +1,38 @@
+{
+    "author"         : "Austin Cheney",
+    "bugs"           : {
+        "url": "https://github.com/prettydiff/prettydiff/issues"
+    },
+    "dependencies"   : {
+        "@types/node": "latest",
+        "ws"         : "^3.2.0"
+    },
+    "description"    : "A language aware diff tool.",
+    "devDependencies": {},
+    "directories"    : {
+        "test": "test"
+    },
+    "homepage"       : "http://prettydiff.com/",
+    "keywords"       : [
+        "parser",
+        "lexer",
+        "framework",
+        "universal",
+        "language",
+        "parse",
+        "table"
+    ],
+    "license"        : "CC0-1.0",
+    "main"           : "js/prettydiff.js",
+    "name"           : "prettydiff3",
+    "repository"     : {
+        "type": "git",
+        "url" : "git+https://github.com/prettydiff/prettydiff.git"
+    },
+    "scripts"        : {
+        "start": "node js/services build --browser",
+        "test" : "node js/services validation"
+    },
+    "version"        : "3.0.0"
+  }
+  
