@@ -47,15 +47,15 @@
                 color: #000;
             }
             #prettydiff table caption {
-                font-size : 1.2em;
+                font-size: 1.2em;
                 font-style: italic;
-                height    : auto;
-                left      : 0;
-                overflow  : visible;
-                position  : relative;
+                height: auto;
+                left: 0;
+                overflow: visible;
+                position: relative;
                 text-align: left;
-                top       : 0;
-                width     : auto;
+                top: 0;
+                width: auto;
             }
             #prettydiff tr.markup.even {
                 background: #fdd;
@@ -71,7 +71,8 @@
             }
             #prettydiff #cited li {
                 list-style: none;
-                margin: 0 0 1em 2em;
+                margin: 0 0 1em 0;
+                padding: 0 0 0 2em;
                 text-indent: -2em;
             }
         </style>
@@ -118,25 +119,15 @@
                         code. This document proposes an idea to achieve such an object in an extensible
                         manner.</p>
                 </div>
-                <div class="segment" id="summary">
-                    <h2>Summary</h2>
-                    <p>Artificial intelligence is achievable not through data or data sciences, but
-                        through shared information and computed knowledge. All electronic computation
-                        occurs through various instructions supplied to computer hardware. Most commonly
-                        these instructions do not originate in a language the hardware understands, but
-                        in a wildly different format friendly to human authors. This difference of
-                        format requires a step commonly referred to as compilation (Bolton, 2017), which
-                        requires an internal task called parsing. Parsing breaks an instruction into
-                        small peices that have individual meaning so that a compiler translates the
-                        understood instructions into the different format.</p>
-                    <p>Achievement of artificial intelligence in a universal and extensible manner
-                        requires a shared understanding of the various instructions across a variety of
-                        unrelated application tasks. This sharing requires several uniform ingredients:
-                        format, storage, and distribution. Shared understanding allows software of
-                        computational devices to offload processing to domain specific tasks and consume
-                        the result in the same uniform manner. The result is a means of evaluating the
-                        output of another application's evaluation and thereby form or answer decisions
-                        not specifically available to the originating input and primary application.</p>
+                <div class="segment" id="preface">
+                    <h2>Preface</h2>
+                    <p>Please refrain from personal bias until the entirety of this paper is read.
+                        In a recent discusion readers stopped reading the paper 2 paragraphs in because
+                        their definition of artificial intelligence did not directly align with concepts
+                        briefly mentioned in a summary.
+                        <strong>Selection bias cost the world the greatest breakthrough in medical history
+                            <a href="#cite-mirkin">(Mirkin, 2013)</a>.</strong>
+                        Please don't allow your preconceptions to commit such a horrendous atrocity.</p>
                 </div>
                 <div class="segment" id="introduction">
                     <h2>Introduction</h2>
@@ -162,28 +153,31 @@
                     <div class="segment" id="introduction_neurophysiology">
                         <h3>A Brief Observation of Animal Neurophysiology</h3>
                         <p>Animals of various species and capabilities are so far observed making,
-                            modifying, and manipulating the results of tool formations (Pickrell, 2003).
-                            There is not a single area of animal brains responsible for any single step in
-                            this process. Animal brains are not a single organ, but rather a tool box of
-                            various tools acting in concert. These different neurological tools are
-                            specially modified and honed through the life experiences of the given animal in
-                            a condition called neuroplasticity.</p>
+                            modifying, and manipulating the results of tool formations
+                            <a href="#cite-pickrell">(Pickrell, 2003)</a>. There is not a single area of
+                            animal brains responsible for any single step in this process. Animal brains are
+                            not a single organ, but rather a tool box of various tools acting in concert.
+                            These different neurological tools are specially modified and honed through the
+                            life experiences of the given animal in a condition called neuroplasticity.</p>
                         <p>Ther are several important considerations relevant from the study of the brain.</p>
                         <ul>
                             <li>Intelligence is determined not by the size of the brain but by the variety
                                 of components that comprise the brain. Corvids are among the most intelligent
-                                animals on the planet (Owen, 2004), some posessing an intelligence almost
+                                animals on the planet
+                                <a href="#cite-owen">(Owen, 2004)</a>, some posessing an intelligence almost
                                 comparable to a human, and yet their brain is the size of a pecan nut, at
                                 largest. Contrarily elephant brains be three times heavier than a human brain
-                                without the benefit of three times the intelligence (Herculano-Houzel, et al.,
-                                2014).</li>
+                                without the benefit of three times the intelligence
+                                <a href="#cite-herculano">(Herculano-Houzel, et al., 2014)</a>.</li>
                             <li>Animal brains are neither a single organ nor a bag of isolated components
-                                (Newitz, 2015). Instead the brain is a mesh of different components performing
-                                specialized tasks and sharing their processing with other areas of the brain. It
-                                is the collectivized result of various different processing centers of the brain
-                                that results in a decision wherether cognitive or non-cognitive.</li>
+                                <a href="#cite-newitz">(Newitz, 2015)</a>. Instead the brain is a mesh of
+                                different components performing specialized tasks and sharing their processing
+                                with other areas of the brain. It is the collectivized result of various
+                                different processing centers of the brain that results in a decision wherether
+                                cognitive or non-cognitive.</li>
                             <li>Animal brains change and adapt in reflection to experiences at any point in
-                                the lifespan of the brain (Cherry, 2017).</li>
+                                the lifespan of the brain
+                                <a href="#cite-cherry">(Cherry, 2017)</a>.</li>
                         </ul>
                         <p>These observations identify some of the capabilities that allow intelligence
                             and responsiveness in animal brains, which are features software does not
@@ -221,7 +215,8 @@
                             making decisions that cast doubt on the system's prior assertions. According to
                             Cartesian logic a thinking machine is that which is sufficiently able to doubt
                             as the mere ability to doubt is a primal essence that cannot be reduced from an
-                            intelligent self (Descartes, 1993).</p>
+                            intelligent self
+                            <a href="#cite-descartes">(Descartes, 1993)</a>.</p>
                     </div>
                 </div>
                 <div class="segment" id="terms">
@@ -272,7 +267,7 @@
                             produce something new, either complementary or in contrasting collision. The
                             definition of wisdom is closely aligned to John Stuart Mill's definition of
                             <em>liberty</em>
-                            (Mill, 1869).</dd>
+                            <a href="#cite-mill">(Mill, 1869)</a>.</dd>
                     </dl>
                 </div>
                 <div class="segment" id="ai">
@@ -392,7 +387,7 @@
                         <p>An example of a parse table as a regular format for output is available from the
                             <a
                                 href="https://github.com/Unibeautify/parse-framework/blob/master/docs/tech-documentation.md#output">Parse-Framework</a>
-                            (Cheney, 2017).</p>
+                            <a href="#cite-cheney">(Cheney, 2017)</a>.</p>
                         <table>
                             <caption>Table 1, An example of a parse table expressed by the Parse-Framework
                                 using sample code:
@@ -600,11 +595,11 @@
                         <p>A strong candidate for a standard information sharing scheme comes from
                             Microsoft in the project
                             <em>Language Server Protocol</em>
-                            (Sourcegraph, 2017). The Language Server Protocol (LSP) provides an
-                            interconnection mechanism to allow a local application to act as a central
-                            authority to monitor the edit status of code in a variety of supported languages
-                            and issue helpful suggestions or errors immediately to the application where the
-                            edit originated.</p>
+                            <a href="#cite-sourcegraph">(Sourcegraph, 2017)</a>. The Language Server
+                            Protocol (LSP) provides an interconnection mechanism to allow a local
+                            application to act as a central authority to monitor the edit status of code in
+                            a variety of supported languages and issue helpful suggestions or errors
+                            immediately to the application where the edit originated.</p>
                         <p>There are a couple of strengths in this approach. One strength is that the
                             analysis occurs in near real-time using an asynchronous event model. This
                             benefits speed of processing without locking an execution thread in the OS
@@ -727,33 +722,39 @@
                 <div class="segment" id="cited">
                     <h2>Works Cited</h2>
                     <ul>
-                        <li>Bolton, D. (2017, August 28). The Definition and Purpose of a Compiler.
-                            Retrieved November 13, 2017, from ThoughtCo:
+                        <li id="cite-bolton">Bolton, D. (2017, August 28). The Definition and Purpose of
+                            a Compiler. Retrieved November 13, 2017, from ThoughtCo:
                             https://www.thoughtco.com/what-is-a-compiler-958322</li>
-                        <li>Cheney, A. (2017, September 7). Tech Documentation, Parse-Framework.
-                            Retrieved November 13, 2017, from Github:
+                        <li id="cite-cheney">Cheney, A. (2017, September 7). Tech Documentation,
+                            Parse-Framework. Retrieved November 13, 2017, from Github:
                             https://github.com/Unibeautify/parse-framework/blob/master/docs/tech-documentation.md#output</li>
-                        <li>Cherry, K. (2017, May 21). What is Brain Plasticity? Retrieved November 13,
-                            2017, from verywell: https://www.verywell.com/what-is-brain-plasticity-2794886</li>
-                        <li>Herculano-Houzel, S., Avelino-de-Souza, K., Neves, K., Porfirio, J.,
-                            Messeder, D., Feijo, L. M., . . . Manger, P. R. (2014, June 12). The elephant
-                            brain in numbers. Retrieved November 13, 2017, from frontiers in Neuroanatomy:
-                            https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4053853/</li>
-                        <li>Microsoft. (2017, November 15). Language Server Protocol. Retrieved November
-                            16, 2017, from Github: https://github.com/Microsoft/language-server-protocol</li>
-                        <li>Mill, J. S. (1869). On Liberty (4th Edition ed.). London: Longman, Roberts &amp;
-                            Green.</li>
-                        <li>Newitz, A. (2015, February 17). Why the Speech Center of Your Brain Shuts
-                            Down When You Talk. Retrieved November 13, 2017, from Gizmodo:
+                        <li id="cite-cherry">Cherry, K. (2017, May 21). What is Brain Plasticity?
+                            Retrieved November 13, 2017, from verywell:
+                            https://www.verywell.com/what-is-brain-plasticity-2794886</li>
+                        <li id="cite-herculano">Herculano-Houzel, S., Avelino-de-Souza, K., Neves, K.,
+                            Porfirio, J., Messeder, D., Feijo, L. M., . . . Manger, P. R. (2014, June 12).
+                            The elephant brain in numbers. Retrieved November 13, 2017, from frontiers in
+                            Neuroanatomy: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4053853/</li>
+                        <li id="cite-microsoft">Microsoft. (2017, November 15). Language Server
+                            Protocol. Retrieved November 16, 2017, from Github:
+                            https://github.com/Microsoft/language-server-protocol</li>
+                        <li id="cite-mirkin">Mirkin, Gabe. (2013, May 19). Ernest Duchesne, the Father
+                            of Antibiotics. Retrieved November 27, 2017, from DrMirkin.com:
+                            http://www.drmirkin.com/histories-and-mysteries/ernest-duchesne-the-father-of-antibiotics.html</li>
+                        <li id="cite-mill">Mill, J. S. (1869). On Liberty (4th Edition ed.). London:
+                            Longman, Roberts &amp; Green.</li>
+                        <li id="cite-newitz">Newitz, A. (2015, February 17). Why the Speech Center of
+                            Your Brain Shuts Down When You Talk. Retrieved November 13, 2017, from Gizmodo:
                             https://gizmodo.com/why-the-speech-center-of-your-brain-shuts-down-when-you-1686145474</li>
-                        <li>Owen, J. (2004, December 9). Crows as Clever as Great Apes, Study Says.
-                            Retrieved November 13, 2017, from National Geographic News:
-                            https://news.nationalgeographic.com/news/2004/12/1209_041209_crows_apes.html</li>
-                        <li>Pickrell, J. (2003, April 23). Crows Better at Tool Building Than Chimps,
+                        <li id="cite-owen">Owen, J. (2004, December 9). Crows as Clever as Great Apes,
                             Study Says. Retrieved November 13, 2017, from National Geographic News:
+                            https://news.nationalgeographic.com/news/2004/12/1209_041209_crows_apes.html</li>
+                        <li id="cite-pickrell">Pickrell, J. (2003, April 23). Crows Better at Tool
+                            Building Than Chimps, Study Says. Retrieved November 13, 2017, from National
+                            Geographic News:
                             https://news.nationalgeographic.com/news/2003/04/0423_030423_crowtools.html</li>
-                        <li>Sourcegraph. (2017, November 2). Langserver.org. Retrieved November 16,
-                            2017, from Langserver.org: https://langserver.org/</li>
+                        <li id="cite-sourcegraph">Sourcegraph. (2017, November 2). Langserver.org.
+                            Retrieved November 16, 2017, from Langserver.org: https://langserver.org/</li>
                     </ul>
                 </div>
             </section>
