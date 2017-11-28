@@ -1066,6 +1066,19 @@ global.prettydiff.meta = {
                     .analOut
                     .setTheme(theme);
             }
+            if (location.href.indexOf("guide/") > 0) {
+                (function dom__load_doc_hashy() {
+                    var hash = location.hash.slice(1),
+                        color = "#ffd",
+                        scheme = document.getElementsByTagName("body")[0].getAttribute("class");
+                    if (scheme === "shadow") {
+                        color = "#540";
+                    }
+                    if (document.getElementById(hash) !== null) {
+                        document.getElementById(hash).style.background = color;
+                    }
+                }());
+            }
             pd.data.color = color;
             if (logo !== null) {
                 if (color === "canvas") {
@@ -8166,7 +8179,22 @@ global.prettydiff.meta = {
                             .split("?")[1]
                         : "",
                     options    = [],
-                    olen       = 0;
+                    olen       = 0,
+                    hashy      = function dom__load_doc_hashy() {
+                        var hash = location.hash.slice(1),
+                            color = "#ffd",
+                            scheme = document.getElementsByTagName("body")[0].getAttribute("class");
+                        if (scheme === "shadow") {
+                            color = "#540";
+                        }
+                        if (document.getElementById(hash) !== null) {
+                            document.getElementById(hash).style.background = color;
+                        }
+                    };
+                if (location.href.indexOf("guide/") > 0) {
+                    hashy();
+                    window.onhashchange = hashy;
+                }
                 node    = pd.id("colorScheme");
                 options = node.getElementsByTagName("option");
                 olen    = options.length;
