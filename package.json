@@ -4,8 +4,9 @@
         "url": "https://github.com/prettydiff/prettydiff/issues"
     },
     "dependencies"   : {
-        "@types/node": "latest",
-        "ws"         : "^3.2.0"
+        "@types/node"    : "latest",
+        "parse-framework": "^1.x.x",
+        "ws"             : "^3.2.0"
     },
     "description"    : "A language aware diff tool.",
     "devDependencies": {},
@@ -34,5 +35,4 @@
         "test" : "node js/services validation"
     },
     "version"        : "3.0.0"
-  }
-  
+}

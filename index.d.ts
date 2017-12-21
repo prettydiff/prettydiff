@@ -1,3 +1,4 @@
+///<reference path="node_modules/parse-framework/index.d.ts" />
 interface record {
     begin: number;
     lexer: string;
@@ -21,25 +22,38 @@ interface parsedObject {
 }
 type mode = "analyze" | "beautify" | "diff" | "minify" | "parse";
 interface options {
-    comments: boolean;
-    correct: boolean;
-    crlf: boolean;
-    force_attribute: boolean;
-    force_indent: boolean;
-    inchar: string;
-    inlevel: number;
-    insize: number;
+    braces?: boolean;
+    bracepadding?: boolean;
+    comments?: boolean;
+    correct?: boolean;
+    crlf?: boolean;
+    elseline?: boolean;
+    formatArray?: "indent" | "inline" | "none";
+    formatObject?: "indent" | "inline" | "none";
+    force_attribute?: boolean;
+    force_indent?: boolean;
+    functionname?: boolean;
+    inchar?: string;
+    inlevel?: number;
+    insize?: number;
+    jsscope?: "none" | "html" | "report";
     lang: string;
-    mode: mode;
-    newline: boolean;
-    parsed: parsedArray;
+    methodchain?: "chain" | "none";
+    mode?: mode;
+    neverflatten?: boolean;
+    newline?: boolean;
+    nocaseindent?: boolean;
+    nochainindent?: boolean;
+    parsed?: parsedArray;
     source: string;
-    spaceclose: boolean;
-    style: boolean;
-    textpreserve: boolean;
-    unformatted: boolean;
-    vertical: boolean;
-    wrap: number;
+    space?: boolean;
+    spaceclose?: boolean;
+    style?: boolean;
+    ternaryline?: boolean;
+    textpreserve?: boolean;
+    unformatted?: boolean;
+    vertical?: boolean;
+    wrap?: number;
 }
 interface library {
     (options: options): string;
@@ -56,10 +70,18 @@ interface prettydiff {
     minify: {
         [key: string]: library;
     };
+    meta?: {};
+    dom?: {};
 }
+interface Window {
+    MyNamespace: any;
+    prettydiff: prettydiff;
+    parseFramework: parseFramework;
+}
+declare var window: Window;
 declare module NodeJS {
     interface Global {
-        parseFramework: object;
+        parseFramework: parseFramework;
         prettydiff: prettydiff
     }
 }

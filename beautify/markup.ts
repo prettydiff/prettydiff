@@ -188,11 +188,11 @@
                                 .replace(tab, "")
                                 .replace(/\)\s*and\s*\(/g, ") and (")
                                 .replace(/in\u0020?\(?\d+\.\u0020\.\d\(?/g, fixnumb);
-                            if (options.correct === true) {
+                            /*if (options.correct === true) {
                                 item = item.replace(/;$/, "") + " %}";
                             } else {
                                 item = item + " %}";
-                            }
+                            }*/
                             return "{% " + item;
                         };
                     if (twig === true) {
@@ -439,7 +439,7 @@
                                 }
                             }
                         },
-                        // JSX tags may contain comments, which are captured as attributes in this
+                        /*// JSX tags may contain comments, which are captured as attributes in this
                         // parser.  These attributes demand unique care to be correctly applied.
                         attrcom      = function beautify_markup_apply_attrcom():void {
                             const toke:string[]  = data.token[x].split(" "),
@@ -487,7 +487,7 @@
                             item.push(toke[1]);
                             build.push(item.join(""));
                         },
-                        /*jsxattribute = function beautify_markup_apply_jsxattribute():void {
+                        jsxattribute = function beautify_markup_apply_jsxattribute():void {
                             let attr     = Object.keys(attrs[x]),
                                 b:number        = 0,
                                 yy:number       = 0,
@@ -563,11 +563,12 @@
                         };
                     let x:number            = 0;
                     do {
-                        if (data.types[x] === "attribute" && options.lang === "jsx") {
+                        /*if (data.types[x] === "attribute" && options.lang === "jsx") {
                             if (data.token[x].slice(0, 2) === "//" || data.token[x].slice(0, 2) === "/*") {
                                 attrcom();
                             }
-                        } else if (data.types[x] === "content" && x < y - 1) {
+                        } else */
+                        if (data.types[x] === "content" && x < y - 1) {
                             if (data.presv[x] === true) {
                                 linepreserve();
                             } else if (options.wrap > 0 && data.token[x].length > options.wrap && (options.mode === "beautify" || options.mode === "diff")) {
@@ -596,8 +597,6 @@
                             )
                         ) {
                             wrapper();
-                        //} else if (options.unformatted === false && data.types[x] === "attribute") {
-                            //addAttribute();
                         } else if (data.types[x] === "singleton") {
                             if (options.spaceclose === true) {
                                 data.token[x] = data.token[x].replace(/(\u0020*\/>)$/, " />");
@@ -605,9 +604,9 @@
                                 data.token[x] = data.token[x].replace(/(\u0020*\/>)$/, "/>");
                             }
                         }
-                        if (data.token[x] === "</prettydiffli>" && options.correct === true) {
+                        /*if (data.token[x] === "</prettydiffli>" && options.correct === true) {
                             data.token[x] = "</li>";
-                        }
+                        }*/
                         if (data.token[x] !== "</prettydiffli>" && (data.types[x] !== "attribute" || (data.token[x].slice(0, 2) !== "//" && data.token[x].slice(0, 2) !== "/*"))) {
                             if ((data.types[x] === "template" || data.types[x] === "template_start") && data.types[x - 1] === "content" && data.presv[x - 1] === true && options.mode === "beautify" && level[x] === -20) {
                                 build.push(" ");

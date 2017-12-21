@@ -19,7 +19,7 @@
             console.log("Missing required option: lexer.");
             return "Missing required option: lexer.";
         }
-        options.parsed = window.parseFramework.parserArrays({
+        options.parsed = global.parseFramework.parserArrays({
             correct: options.correct,
             crlf: options.crlf,
             lang: options.lang,
