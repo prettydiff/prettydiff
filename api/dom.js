@@ -1068,14 +1068,14 @@ global.prettydiff.meta = {
             }
             if (location.href.indexOf("guide/") > 0) {
                 (function dom__load_doc_hashy() {
-                    var hash = location.hash.slice(1),
-                        color = "#ffd",
-                        scheme = document.getElementsByTagName("body")[0].getAttribute("class");
+                    var hash      = location.hash.slice(1),
+                        hashcolor = "#ffd",
+                        scheme    = document.getElementsByTagName("body")[0].getAttribute("class");
                     if (scheme === "shadow") {
-                        color = "#540";
+                        hashcolor = "#540";
                     }
                     if (document.getElementById(hash) !== null) {
-                        document.getElementById(hash).style.background = color;
+                        document.getElementById(hash).style.background = hashcolor;
                     }
                 }());
             }
