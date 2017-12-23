@@ -225,6 +225,11 @@
                             implementation of those events to achieve conformance, such as when the two
                             largest mobile platform developers cannot produce interfaces that execute to the
                             standards they helped write.</p>
+			<p>The DOM Level 4 specification as, published by the W3C, is a snapshot of work from
+			    the <a href="https://dom.spec.whatwg.org/">WHATWG DOM</a> specification. This
+			    snapshot allows an evolving artifact from the WHATWG to be published against a
+			    fixed date and version number such that consuming parties have a static
+			    reference to serve as a standard for conformance.</p>
                     </div>
                 </div>
                 <div class="segment" id="define">
@@ -431,23 +436,46 @@
                                     <em>nextSibling</em>
                                     - DOM Level 2</h5>
                                 <p>The nextSibling property is available to every DOM node and returns the next
-                                    child element of the parent node. If the current node is the last child of its
+                                    child node of the parent node. If the current node is the last child of its
                                     parent this property will return null.</p>
                                 <code>myNode.nextSibling;
                                     <span>//returns next adjacent node</span>
                                 </code>
                             </li>
+			    <li>
+		                <h5 class="code">
+				    <em>nextElementSibling</em>
+				    - WHATWG DOM</h5>
+				<p>The nextElementSibling property is available to every DOM node and returns
+				    the next child node of type element of the parent node. If the parent node
+				    contains no element child nodes following the current node this property will
+				    return null.</p>
+				<code>myNode.nextElementSibling;
+				    <span>//returns next element sibling</span>
+				</code>
+			    </li>
                             <li>
                                 <h5 class="code">
                                     <em>previousSibling</em>
                                     - DOM Level 2</h5>
-                                <p>The perviousSibling property is available to every DOM node and returns the
-                                    previous child element of the parent node. If the current node is the first
+                                <p>The previousSibling property is available to every DOM node and returns the
+                                    previous child node of the parent node. If the current node is the first
                                     child of its parent this property will return null.</p>
                                 <code>myNode.nextSibling;
                                     <span>//returns prior adjacent node</span>
                                 </code>
                             </li>
+			    <li>
+			        <h5 class="code">
+				    <em>previousElementSibling</em>
+				    - WHATWG DOM</h5>
+				<p>The previousElementSibling property is avialable to every DOM node and returns
+				    the previous child node of type element of the parent node. If the parent node
+				    contains no element child nodes preceding the current node this property will
+				    return null.</p>
+				<code>myNode.previousElementSibling;
+				    <span>//returns prior element sibling</span>
+		            </li>
                             <li>
                                 <h5 class="code">
                                     <em>attributes</em>
