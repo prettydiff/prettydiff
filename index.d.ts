@@ -59,6 +59,16 @@ interface library {
     (options: options): string;
 }
 type app = string | parsedArray | parsedObject;
+interface dom {
+    [key: string]: any;
+}
+declare var ace: any;
+type languageAuto = [string, string, string];
+interface language {
+    auto(sample:string, defaultLang:string): languageAuto;
+    nameproper(input:string): string;
+    setlangmode(input:string): string;
+}
 interface prettydiff {
     analyze: {
         [key: string]: library;
@@ -67,11 +77,37 @@ interface prettydiff {
     beautify: {
         [key: string]: library;
     };
+    finalFile?: {
+        css: {
+            color: {
+                canvas: string;
+                shadow: string;
+                white: string;
+            };
+            global: string;
+            reports: string;
+        };
+        html: {
+            body: string;
+            color: string;
+            end: string;
+            head: string;
+            intro: string;
+            script: string;
+        };
+        order: string[];
+        script: {
+            beautify: string;
+            diff: string;
+            minimal: string;
+        };
+    };
     minify: {
         [key: string]: library;
     };
     meta?: {};
-    dom?: {};
+    dom?: dom;
+    language?: language;
 }
 interface Window {
     MyNamespace: any;
