@@ -5,8 +5,8 @@
 (function prettydiff_init() {
     "use strict";
 
-    const prettydiff = function prettydiff_(options):app {
-        const mode = (
+    const prettydiff = function prettydiff_(options):string {
+        const mode:mode = (
                 options.mode === "analyze" ||
                 options.mode === "beautify" ||
                 options.mode === "diff" ||
@@ -15,21 +15,12 @@
             )
                 ? options.mode
                 : "diff";
+        let prettyout:string = "";
         if (options.lexer === undefined) {
             console.log("Missing required option: lexer.");
             return "Missing required option: lexer.";
         }
-        options.parsed = global.parseFramework.parserArrays({
-            correct: options.correct,
-            crlf: options.crlf,
-            lang: options.lang,
-            lexer: options.lexer,
-            lexerOptions: {},
-            outputFormat: (options.mode === "parse" && options.parsedFormat === "objects")
-                ? "objects"
-                : "arrays",
-            source: options.source
-        });
+        options.parsed = window.parseFramework.parserArrays(options);
         if (options.mode === "parse") {
             return options.parsed;
         }
@@ -46,7 +37,8 @@
         }
         options.insize = 4;
         options.inchar = " ";
-        console.log(fun(options));
+        prettyout = fun(options);
+        console.log(prettyout.slice(prettyout.length - 100));
     };
     global.prettydiff = {
         analyze: {},

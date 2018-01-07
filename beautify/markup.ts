@@ -15,7 +15,7 @@
                 commentS:string     = "",
                 commentE:string     = "",
                 tabs:string         = "",
-                lf                  = (options.crlf)
+                lf                  = (options.crlf === true)
                     ? "\r\n"
                     : "\n";
             const data:parsedArray = options.parsed,
@@ -188,11 +188,11 @@
                                 .replace(tab, "")
                                 .replace(/\)\s*and\s*\(/g, ") and (")
                                 .replace(/in\u0020?\(?\d+\.\u0020\.\d\(?/g, fixnumb);
-                            /*if (options.correct === true) {
+                            if (options.correct === true) {
                                 item = item.replace(/;$/, "") + " %}";
                             } else {
                                 item = item + " %}";
-                            }*/
+                            }
                             return "{% " + item;
                         };
                     if (twig === true) {
@@ -604,9 +604,9 @@
                                 data.token[x] = data.token[x].replace(/(\u0020*\/>)$/, "/>");
                             }
                         }
-                        /*if (data.token[x] === "</prettydiffli>" && options.correct === true) {
+                        if (data.token[x] === "</prettydiffli>" && options.correct === true) {
                             data.token[x] = "</li>";
-                        }*/
+                        }
                         if (data.token[x] !== "</prettydiffli>" && (data.types[x] !== "attribute" || (data.token[x].slice(0, 2) !== "//" && data.token[x].slice(0, 2) !== "/*"))) {
                             if ((data.types[x] === "template" || data.types[x] === "template_start") && data.types[x - 1] === "content" && data.presv[x - 1] === true && options.mode === "beautify" && level[x] === -20) {
                                 build.push(" ");

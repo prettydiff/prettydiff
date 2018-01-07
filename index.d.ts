@@ -57,6 +57,7 @@ interface options {
     jsscope?: "none" | "html" | "report";
     lang: string;
     langdefault?: string;
+    lexer: string;
     methodchain?: "chain" | "indent" | "none";
     miniwrap?: boolean;
     mode?: mode;
@@ -65,6 +66,7 @@ interface options {
     nocaseindent?: boolean;
     nochainindent?: boolean;
     noleadzero?: boolean;
+    objsort?: boolean;
     parsed?: parsedArray;
     parseFormat?: "htmltable" | "parallel" | "sequential";
     parseSpace?: boolean;
@@ -88,6 +90,15 @@ interface options {
     varword?: "each" | "list" | "none";
     vertical?: boolean;
     wrap?: number;
+}
+interface parseOptions extends options {
+    lexer: "string";
+    lexerOptions: {
+        [key: string]: {
+            [key: string]: any;
+        }
+    };
+    outputFormat: "objects" | "arrays";
 }
 interface library {
     (options: options): string;

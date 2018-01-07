@@ -9,7 +9,9 @@
         "ws": "^3.2.0"
     },
     "description": "A language aware diff tool.",
-    "devDependencies": {},
+    "devDependencies": {
+        "ace-builds": "^1.x.x"
+    },
     "directories": {
         "test": "test"
     },
