@@ -111,7 +111,32 @@ type languageAuto = [string, string, string];
 interface language {
     auto(sample:string, defaultLang:string): languageAuto;
     nameproper(input:string): string;
-    setlangmode(input:string): string;
+    setlangmode(input:string):string;
+}
+interface finalFile {
+    css: {
+        color: {
+            canvas: string;
+            shadow: string;
+            white: string;
+        };
+        global: string;
+        reports: string;
+    };
+    html: {
+        body: string;
+        color: string;
+        end: string;
+        head: string;
+        intro: string;
+        script: string;
+    };
+    order: string[];
+    script: {
+        beautify: string;
+        diff: string;
+        minimal: string;
+    };
 }
 interface prettydiff {
     analyze: {
@@ -121,31 +146,7 @@ interface prettydiff {
     beautify: {
         [key: string]: library;
     };
-    finalFile?: {
-        css: {
-            color: {
-                canvas: string;
-                shadow: string;
-                white: string;
-            };
-            global: string;
-            reports: string;
-        };
-        html: {
-            body: string;
-            color: string;
-            end: string;
-            head: string;
-            intro: string;
-            script: string;
-        };
-        order: string[];
-        script: {
-            beautify: string;
-            diff: string;
-            minimal: string;
-        };
-    };
+    finalFile?: finalFile;
     minify: {
         [key: string]: library;
     };

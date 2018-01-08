@@ -2023,7 +2023,6 @@
                         } else {
                             level.push(-10);
                         }
-                        if ((a+1) !== level.length){console.log((a+1)+" "+level.length);console.log(data.types[a]+" - "+data.token[a]);return level;}
                         if (ctype !== "comment" && ctype !== "comment-inline") {
                             ltype = ctype;
                             ltoke = ctoke;

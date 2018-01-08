@@ -5,36 +5,36 @@
 */
 (function language_init() {
     "use strict";
-    const language = {
+    const language:language = {
         setlangmode: function language_setlangmode(input:string):string {
             const langmap = {
-                c_cpp     : "javascript",
+                c_cpp     : "script",
                 coldfusion: "markup",
-                csharp    : "javascript",
-                css       : "css",
+                csharp    : "script",
+                css       : "style",
                 csv       : "csv",
-                dustjs    : "html",
-                ejs       : "html",
-                go        : "html",
-                handlebars: "html",
-                html      : "html",
-                html_ruby : "html",
-                java      : "javascript",
-                javascript: "javascript",
-                json      : "json",
+                dustjs    : "markup",
+                ejs       : "markup",
+                go        : "markup",
+                handlebars: "markup",
+                html      : "markup",
+                html_ruby : "markup",
+                java      : "script",
+                javascript: "script",
+                json      : "script",
                 jsp       : "markup",
-                jsx       : "javascript",
-                less      : "css",
+                jsx       : "script",
+                less      : "style",
                 markup    : "markup",
-                php       : "html",
-                qml       : "qml",
-                scss      : "css",
-                swig      : "html",
+                php       : "script",
+                qml       : "style",
+                scss      : "style",
+                swig      : "markup",
                 text      : "text",
-                titanium  : "tss",
-                tss       : "tss",
-                twig      : "html",
-                typescript: "typescript",
+                titanium  : "script",
+                tss       : "script",
+                twig      : "markup",
+                typescript: "script",
                 velocity  : "velocity",
                 xhtml     : "markup",
                 xml       : "markup"
@@ -81,8 +81,9 @@
             }
             return langmap[input];
         },
-        // [0] = language value for ace mode [1] = prettydiff language category from [0]
-        // [2] = pretty formatting for text output to user
+        // * [0] = language value for ace mode
+        // * [1] = prettydiff language category from [0]
+        // * [2] = pretty formatting for text output to user
         auto: function language_auto(sample:string, defaultLang:string):languageAuto {
             let b:string[]           = [],
                 c:number           = 0;

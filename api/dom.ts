@@ -11,7 +11,7 @@
 
 (function dom__init():void {
     "use strict";
-    const prettydiff = global.prettydiff,
+    const prettydiff:prettydiff = global.prettydiff,
         meta:meta = {
             error: "",
             lang: ["", "", ""],
@@ -29,9 +29,6 @@
                 color        : "white", //for use with HTML themes
                 commentString: [],
                 diff         : "",
-                finalFile    : (typeof prettydiff.finalFile === "object")
-                    ? prettydiff.finalFile
-                    : {},
                 html         : [],
                 langvalue    : [],
                 mode         : "diff",
@@ -3251,14 +3248,14 @@
         // modes? comes from pd.codeops, which is      fired on change of language
         // select list obj - the ace obj passed in. {} empty object if `all` is true
         // lang - a language passed in. "" empty string means auto detect
-        langkey  : function dom__app_langkey(all:boolean, obj:any, lang:string):string {
+        langkey  : function dom__app_langkey(all:boolean, obj:any, lang:string):[string, string, string] {
             let sample:string      = "",
                 // defaultt      = actual default lang value from the select list
                 defaultt:string    = "",
                 value:languageAuto;
             const language    = prettydiff.language;
             if (typeof language !== "object") {
-                return "";
+                return ["", "", ""];
             }
             defaultt = (pd.data.node.langdefault === null || pd.data.node.langdefault.nodeName.toLowerCase() !== "select")
                 ? "javascript"
@@ -3325,13 +3322,6 @@
                     if (all === true && lang === "") {
                         value             = language.auto(pd.ace.beauIn.getValue(), defaultt);
                         pd.data.langvalue = value;
-                    }
-                    if (value[0] === "tss") {
-                        value[0] = "javascript";
-                    } else if (value[0] === "dustjs") {
-                        value[0] = "html";
-                    } else if (value[0] === "markup") {
-                        value[0] = "xml";
                     }
                     if (pd.data.node.codeBeauIn !== null) {
                         pd
@@ -3431,7 +3421,7 @@
                 }
             }
             if (all === true && lang !== "") {
-                return value[1];
+                return value;
             }
             if (value.length < 1 && lang === "") {
                 if (pd.data.mode === "beau" && pd.data.node.codeBeauIn !== null) {
@@ -3448,17 +3438,14 @@
                     }
                 }
                 if (value.length < 1) {
-                    return "javascript";
+                    return ["javascript", "script", "JavaScript"];
                 }
                 pd.data.langvalue = value;
             }
             if (lang === "text") {
-                return "text";
+                return ["text", "text", "Plain Text"];
             }
-            if (lang !== "") {
-                return language.setlangmode(lang);
-            }
-            return pd.data.langvalue[1];
+            return value;
         },
         //store tool changes into localStorage to maintain state
         options  : function dom__app_options(x?:HTMLElement):void {
@@ -3682,14 +3669,17 @@
         },
         //change the color scheme of the web UI
         colorScheme  : function dom__event_colorScheme(node:HTMLSelectElement):void {
-            const option:NodeListOf<HTMLOptionElement>    = node.getElementsByTagName("option"),
+            const item = (node.nodeType === 1)
+                    ? node
+                    : node.target,
+                option:NodeListOf<HTMLOptionElement>    = item.getElementsByTagName("option"),
                 optionLen:number = option.length,
                 index:number     = (function dom__event_colorScheme_indexLen():number {
-                    if (node.selectedIndex < 0 || node.selectedIndex > optionLen) {
-                        node.selectedIndex = optionLen - 1;
+                    if (item.selectedIndex < 0 || item.selectedIndex > optionLen) {
+                        item.selectedIndex = optionLen - 1;
                         return optionLen - 1;
                     }
-                    return node.selectedIndex;
+                    return item.selectedIndex;
                 }()),
                 color:string     = option[index]
                     .innerHTML
@@ -3709,7 +3699,7 @@
                     theme = "ace/theme/idle_fingers";
                 }
                 if (color === "canvas") {
-                    theme = "ace/theme/canvas";
+                    theme = "ace/theme/textmate";
                 }
                 pd
                     .ace
@@ -3769,7 +3759,7 @@
             if (pd.test.load === false) {
                 pd
                     .app
-                    .options(node);
+                    .options(item);
             }
         },
         // allows grabbing and resizing columns (from the third column) in the diff
@@ -5292,7 +5282,7 @@
                 if (reportonly === true) {
                     x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(bodyInner));
                 } else {
-                    x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(pd.data.finalFile.order.join("")));
+                    x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(prettydiff.finalFile.order.join("")));
                 }
                 x.onclick = function dom__event_save_rebind() {
                     pd
@@ -5333,13 +5323,13 @@
             pd
                 .app
                 .zTop(top);
-            pd.data.finalFile.order[7] = pd.data.color;
+            prettydiff.finalFile.order[7] = pd.data.color;
             if (pd.data.mode === "diff") {
-                pd.data.finalFile.order[12] = pd.data.finalFile.script.diff;
+                prettydiff.finalFile.order[12] = prettydiff.finalFile.script.diff;
             } else if (pd.data.mode === "beau" && pd.data.langvalue[0] === "javascript" && ((pd.id("jsscope-yes") !== null && pd.id("jsscope-yes").checked === true) || (pd.id("jsscope-html") !== null && pd.id("jsscope-html").checked === true))) {
-                pd.data.finalFile.order[12] = pd.data.finalFile.script.beautify;
+                prettydiff.finalFile.order[12] = prettydiff.finalFile.script.beautify;
             } else {
-                pd.data.finalFile.order[12] = pd.data.finalFile.script.minimal;
+                prettydiff.finalFile.order[12] = prettydiff.finalFile.script.minimal;
             }
             if (button.innerHTML === "S") {
                 if (pd.data.mode === "diff") {
@@ -5361,7 +5351,7 @@
             }
             button.innerHTML = "S";
             button.setAttribute("title", "Convert report to text that can be saved.");
-            body.innerHTML = pd.data.finalFile.order[10];
+            body.innerHTML = prettydiff.finalFile.order[10];
             content        = body.getElementsByTagName("ol");
             if (content.length > 0) {
                 if (pd.data.mode === "diff") {
@@ -5482,7 +5472,7 @@
     pd.event.recycle    = function dom__event_recycle(event:KeyboardEvent):boolean {
         let output:string = "",
             dataObject:any,
-            lang:string        = "",
+            lang:[string, string, string],
             errortext:string   = "",
             requests:boolean    = false,
             requestd:boolean    = false,
@@ -5753,7 +5743,7 @@
                         }
                     }
                 } else if (api.mode === "beautify") {
-                    pd.data.finalFile.order[11] = pd.data.finalFile.script.beautify;
+                    prettydiff.finalFile.order[11] = prettydiff.finalFile.script.beautify;
                     if (pd.data.node.codeBeauOut !== null && api.jsscope !== "report") {
                         if (pd.test.ace === true) {
                             pd
@@ -5814,7 +5804,7 @@
                         .box
                         .getElementsByTagName("p")[0]
                         .getElementsByTagName("button");
-                    pd.data.finalFile.order[11] = pd.data.finalFile.script.diff;
+                    prettydiff.finalFile.order[11] = prettydiff.finalFile.script.diff;
                     if (output.length > 0 && output.length > 125000) {
                         pd.test.filled.code = true;
                     } else {
@@ -5989,13 +5979,13 @@
                     }
                 }
                 parent = <HTMLElement>buttons[1].parentNode;
-                if (parent.style.display === "none" && (pd.data.mode === "diff" || (pd.data.mode === "beau" && api.jsscope === "report" && lang === "javascript"))) {
+                if (parent.style.display === "none" && (pd.data.mode === "diff" || (pd.data.mode === "beau" && api.jsscope === "report" && lang[1] === "javascript"))) {
                     pd
                         .event
                         .minimize(buttons[1].onclick, 1, buttons[1]);
                 }
                 let size:number = 0;
-                lang = lang.toLowerCase();
+                lang[0] = lang[0].toLowerCase();
                 if (pd.data.langvalue[1] === "csv") {
                     pd.data.stat.csv = pd.data.stat.csv + 1;
                     node             = pd.id("stcsv");
@@ -6614,16 +6604,18 @@
                                         api.lang = "text";
                                     } else {
                                         if (pd.test.ace === true) {
-                                            api.lang = pd
+                                            lang = pd
                                                 .app
                                                 .langkey(false, pd.ace.diffBase, "");
                                         } else {
-                                            api.lang = pd
+                                            lang = pd
                                                 .app
                                                 .langkey(false, {
                                                     value: pd.data.source
                                                 }, "");
                                         }
+                                        api.lang = lang[0];
+                                        api.lexer = lang[1];
                                     }
                                     if (pd.data.mode === "diff") {
                                         pd.data.diff = api.diff;
@@ -6809,25 +6801,27 @@
                                 pd.data.source = api.source;
                                 if (pd.test.ace === true) {
                                     if (pd.data.mode !== "diff") {
-                                        api.lang = pd
+                                        lang = pd
                                             .app
                                             .langkey(false, pd.ace[pd.data.mode + "In"], "");
                                     } else if (pd.data.langvalue[1] === "text") {
-                                        api.lang = "text";
+                                        lang = ["text", "text", "Plain Text"];
                                     } else {
-                                        api.lang = pd
+                                        lang = pd
                                             .app
                                             .langkey(false, pd.ace.diffBase, "");
                                     }
                                 } else if (pd.data.mode === "diff" && pd.data.langvalue[1] === "text") {
-                                    api.lang = "text";
+                                    lang = ["text", "text", "Plain Text"];
                                 } else {
-                                    api.lang = pd
+                                    lang = pd
                                         .app
                                         .langkey(false, {
                                             value: pd.data.source
                                         }, "");
                                 }
+                                api.lang = lang[0];
+                                api.lexer = lang[1];
                                 if (pd.data.mode === "diff") {
                                     pd.data.diff = api.diff;
                                 } else {
@@ -6938,11 +6932,13 @@
                             .ace
                             .beauIn
                             .getValue();
-                        api.lang       = (pd.data.langvalue[0] !== "plain_text")
+                        lang       = (pd.data.langvalue[0] !== "plain_text")
                             ? pd
                                 .app
                                 .langkey(false, pd.ace.beauIn, "")
-                            : api.lang;
+                            : lang;
+                        api.lang = lang[0];
+                        api.lexer = lang[1];
                         pd.data.source = api.source;
                         pd.data.diff   = "";
                         output         = prettydiff.app(api);
@@ -6955,11 +6951,13 @@
                             .ace
                             .minnIn
                             .getValue();
-                        api.lang       = (pd.data.langvalue[0] !== "plain_text")
+                        lang       = (pd.data.langvalue[0] !== "plain_text")
                             ? pd
                                 .app
-                                .langkey(false, pd.ace.minnIn, "")
-                            : api.lang;
+                                .langkey(false, pd.ace.beauIn, "")
+                            : lang;
+                        api.lang = lang[0];
+                        api.lexer = lang[1];
                         pd.data.source = api.source;
                         pd.data.diff   = "";
                         output         = prettydiff.app(api);
@@ -6972,11 +6970,13 @@
                             .ace
                             .parsIn
                             .getValue();
-                        api.lang       = (pd.data.langvalue[0] !== "plain_text")
+                        lang       = (pd.data.langvalue[0] !== "plain_text")
                             ? pd
                                 .app
-                                .langkey(false, pd.ace.parsIn, "")
-                            : api.lang;
+                                .langkey(false, pd.ace.beauIn, "")
+                            : lang;
+                        api.lang = lang[0];
+                        api.lexer = lang[1];
                         pd.data.source = api.source;
                         pd.data.diff   = "";
                         output         = prettydiff.app(api);
@@ -6989,11 +6989,13 @@
                             .ace
                             .analIn
                             .getValue();
-                        api.lang       = (pd.data.langvalue[0] !== "plain_text")
+                        lang       = (pd.data.langvalue[0] !== "plain_text")
                             ? pd
                                 .app
-                                .langkey(false, pd.ace.analIn, "")
-                            : api.lang;
+                                .langkey(false, pd.ace.beauIn, "")
+                            : lang;
+                        api.lang = lang[0];
+                        api.lexer = lang[1];
                         pd.data.source = api.source;
                         pd.data.diff   = "";
                         output         = prettydiff.app(api);
@@ -7003,20 +7005,22 @@
             } else {
                 pd.data.source = api.source;
                 if (pd.data.langvalue[1] === "text") {
-                    api.lang = "text";
+                    lang = ["text", "text", "Plain Text"];
                 } else if (pd.data.langvalue[1] === "csv") {
-                    api.lang = "csv";
+                    lang = ["csv", "csv", "CSV"];
                 } else if (pd.test.ace === true) {
-                    api.lang = pd
+                    lang = pd
                         .app
                         .langkey(false, pd.ace.diffBase, "");
                 } else {
-                    api.lang = pd
+                    lang = pd
                         .app
                         .langkey(false, {
                             value: api.source
                         }, "");
                 }
+                api.lang = lang[0];
+                api.lexer = lang[1];
                 if (pd.data.mode === "diff") {
                     pd.data.diff = api.diff;
                 } else {
