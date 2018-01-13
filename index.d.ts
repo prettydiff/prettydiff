@@ -168,6 +168,12 @@ interface Window {
     prettydiff: prettydiff;
     parseFramework: parseFramework;
 }
+interface pdNode {
+    fs: "fs";
+    http: "http";
+    https: "https";
+    path: "path";
+}
 declare var window: Window;
 declare module NodeJS {
     interface Global {

@@ -345,6 +345,9 @@
             fileblur        = function dom__load_fileblur():void {
                 this.removeAttribute("class");
             },
+            optionswrapper  = function dom__load_optionswrapper(x:HTMLElement, event:string):void {
+                x[event] = pd.app.options(x);
+            },
             savecheck       = function dom__load_savecheck():void {
                 let button:HTMLElement;
                 if (pd.data.node.report.code.box === null) {
@@ -367,10 +370,13 @@
                 }
             },
             headerfocus     = function dom__load_headerfocus():void {
-                this.onclick = pd.event.minimize;
+                pd.event.minimize(this.onclick, 50, this);
             },
             headerblur      = function dom__load_headerblur():void {
                 this.onclick = null;
+            },
+            maximize = function dom_load_maximize():void {
+                pd.event.maximize(this);
             };
         if (page === "webtool") {
             {
@@ -995,7 +1001,7 @@
                             inputs[a].click();
                         }
                     } else {
-                        inputs[a].onclick = pd.app.options;
+                        optionswrapper(inputs[a], "onclick");
                     }
                 } else if (type === "text") {
                     if (pd.test.ace === true && (id === "diff-quan" || id === "beau-quan" || id === "minn-quan")) {
@@ -1079,7 +1085,7 @@
                             }
                         }
                     } else {
-                        inputs[a].onkeyup = pd.app.options;
+                        optionswrapper(inputs[a], "onkeyup");
                     }
                     if (pd.data.settings[id] !== undefined) {
                         inputs[a].value = pd.data.settings[id];
@@ -1128,7 +1134,7 @@
                     if (typeof pd.data.settings[id] === "number") {
                         selects[a].selectedIndex = pd.data.settings[id];
                     }
-                    selects[a].onchange = pd.app.options;
+                    optionswrapper(selects[a], "onchange");
                 }
                 a = a + 1;
             } while (a < inputsLen);
@@ -1145,9 +1151,9 @@
                         buttons[a].onclick = pd.event.reset;
                     }
                 } else if (name === "minimize") {
-                    buttons[a].onclick = pd.event.minimize;
+                    buttons[a].onclick = headerfocus;
                 } else if (name === "maximize") {
-                    buttons[a].onclick = pd.event.maximize;
+                    buttons[a].onclick = maximize;
                     parent = <HTMLElement>buttons[a].parentNode.parentNode;
                     if (pd.data.settings[parent.getAttribute("id")] !== undefined && pd.data.settings[parent.getAttribute("id")].max === true) {
                         buttons[a].click();
@@ -3464,11 +3470,14 @@
             }
             xname = x.nodeName.toLowerCase();
             if (xname === "div") {
-                if (x.getElementsByTagName("input")[0] === undefined) {
-                    return;
+                if (x.getAttribute("class") === "box") {
+                    item = x;
+                } else {
+                    if (x.getElementsByTagName("input")[0] === undefined) {
+                        return;
+                    }
+                    item = x.getElementsByTagName("input")[0];
                 }
-                input = x.getElementsByTagName("input")[0];
-                item = input;
             } else if (xname === "input") {
                 input = <HTMLInputElement>x;
                 item = input;
@@ -3546,6 +3555,9 @@
                     .replace(/\s+/g, " ");
             }
             localStorage.settings = JSON.stringify(pd.data.settings);
+            if (classy === "box") {
+                return;
+            }
             if (pd.data.node.comment !== null && id !== null) {
                 if (item.nodeName.toLowerCase() === "select") {
                     node = select[select.selectedIndex].value;
@@ -4325,6 +4337,7 @@
         //minimize report windows to the default size and location
         minimize     : function dom__event_minimize(e:Event, steps:number, node:HTMLElement):boolean {
             let parent:HTMLElement,
+                parentNode:HTMLElement,
                 box:HTMLElement,
                 final:number    = 0,
                 id:string        = "",
@@ -4439,11 +4452,10 @@
                     return false;
                 },
                 shrinkage = function dom__event_minimize_shrinkage():boolean {
-                    let topmin       = 0,
-                        width        = body.clientWidth / 10,
+                    let width        = body.clientWidth / 10,
                         height       = body.clientHeight / 10,
                         incL         = (((window.innerWidth / 10) - final - 17) - left) / step,
-                        incT         = (((topmin / 10) - top) / step),
+                        incT         = 0,
                         incW         = (width === 17)
                             ? 0
                             : (width > 17)
@@ -4478,8 +4490,8 @@
                             }
                             return true;
                         };
-                    parent = <HTMLElement>box.parentNode;
-                    topmin = parent.offsetTop;
+                    parentNode = <HTMLElement>box.parentNode;
+                    incT = (((parentNode.offsetTop / 10) - top) / step);
                     buttonMin.innerHTML = "\u2191";
                     //if a maximized window is minimized
                     if (buttonMax.innerHTML === "\u2191") {
@@ -4531,11 +4543,11 @@
                 ? buttons[2]
                 : buttons[1];
             left                    = (box.offsetLeft / 10 > 1)
-                ? 1
-                : box.offsetLeft / 10;
+                ? box.offsetLeft / 10
+                : 1;
             top                     = (box.offsetTop / 10 > 1)
-                ? 1
-                : box.offsetTop / 10;
+                ? box.offsetTop / 10
+                : 1;
             buttonRes               = (save === true)
                 ? buttons[3]
                 : buttons[2];
@@ -5210,8 +5222,8 @@
                 save:boolean       = (parent.innerHTML.indexOf("save") > -1),
                 box:HTMLElement        = <HTMLElement>parent.parentNode,
                 body:HTMLDivElement       = box.getElementsByTagName("div")[0],
-                offX:number = e.screenX,
-                offY:number = e.screenY,
+                offX:number = e.clientX,
+                offY:number = e.clientY,
                 heading:HTMLHeadingElement    = box.getElementsByTagName("h3")[0],
                 mac:boolean        = (pd.test.agent.indexOf("macintosh") > 0),
                 offsetw:number    = (mac === true)
@@ -7697,6 +7709,16 @@
                 ? buttons[3]
                 : buttons[2],
             touch:boolean      = (event !== null && event.type === "touchstart"),
+            mouseEvent = <MouseEvent>event,
+            touchEvent = <TouchEvent>event,
+            mouseX = mouseEvent.clientX,
+            mouseY = mouseEvent.clientY,
+            touchX = (touch === true)
+                ? touchEvent.touches[0].clientX
+                : 0,
+            touchY = (touch === true)
+                ? touchEvent.touches[0].clientY
+                : 0,
             filled:boolean     = ((box === pd.data.node.report.stat.box && pd.test.filled.stat === true) || (box === pd.data.node.report.feed.box && pd.test.filled.feed === true) || (box === pd.data.node.report.code.box && pd.test.filled.code === true)),    
             drop       = function dom__event_grab_drop(e:Event):boolean {
                 var headingWidth = box.getElementsByTagName("h3")[0].clientWidth;
@@ -7730,18 +7752,14 @@
                 return false;
             },
             boxmoveTouch    = function dom__event_grab_boxmoveTouch(f:TouchEvent):boolean {
-                const touchXNow             = f.touches[0].clientX,
-                    touchYNow             = f.touches[0].clientY;
                 f.preventDefault();
                 box.style.right = "auto";
-                box.style.left      = ((boxLeft + (f.touches[0].clientX - touchXNow)) / 10) + "em";
-                box.style.top       = ((boxTop + (f.touches[0].clientY - touchYNow)) / 10) + "em";
+                box.style.left      = ((boxLeft + (f.touches[0].clientX - touchX)) / 10) + "em";
+                box.style.top       = ((boxTop + (f.touches[0].clientY - touchY)) / 10) + "em";
                 document.ontouchend = drop;
                 return false;
             },
             boxmoveClick = function dom__event_grab_boxmoveClick(f:MouseEvent):boolean {
-                const mouseX:number = f.screenX,
-                    mouseY:number = f.screenY;
                 f.preventDefault();
                 box.style.right = "auto";
                 box.style.left     = ((boxLeft + (f.clientX - mouseX)) / 10) + "em";
@@ -7749,9 +7767,7 @@
                 document.onmouseup = drop;
                 return false;
             };
-        let touchXNow:number  = 0,
-            touchYNow:number  = 0,
-            boxLeft:number    = box.offsetLeft,
+        let boxLeft:number    = box.offsetLeft,
             boxTop:number     = box.offsetTop,
             body:HTMLElement       = box.getElementsByTagName("div")[0],
             heading:HTMLElement    = (box.firstChild.nodeType > 1)

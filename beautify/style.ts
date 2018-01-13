@@ -270,25 +270,6 @@
             //beautification loop
             a = 0;
             do {
-                if (data.lines[a] > 1 && options.compressedcss === false && (data.types[a] === "start" || data.types[a] === "end" || data.types[a] === "selector" || data.types[a] === "comment" || data.types[a] === "property" || data.types[a] === "propvar" || data.types[a].indexOf("external") > -1)) {
-                    if (options.cssinsertlines === true && data.types[a] === "selector" && data.types[a - 1] !== "comment") {
-                        data.lines[a] = data.lines[a] - 1;
-                    }
-                    if (build[build.length - 1] === tab) {
-                        do {
-                            build.pop();
-                        } while (build[build.length - 1] === tab);
-                    }
-                    if (data.lines[a] > 1) {
-                        if (data.lines[a] > 2) {
-                            do {
-                                data.lines[a] = data.lines[a] - 1;
-                                build.push(lf);
-                            } while (data.lines[a] > 2);
-                        }
-                        nl(indent);
-                    }
-                }
                 if (data.types[a] === "start") {
                     if (data.types[a - 1] === "propvar" && options.compressedcss === false) {
                         build.push(" ");
