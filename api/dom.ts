@@ -6198,7 +6198,7 @@
                         : "none";
             api.braceline    = (braceline === null || braceline.checked === false);
             api.bracepadding = (bracepadding !== null && bracepadding.checked === true);
-            api.braces       = (braces === null || braces.checked === false);
+            api.braces       = (braces !== null && braces.checked === true);
             if (chars === null || chars.checked === false) {
                 chars = pd.id("beau-tab");
                 if (chars === null || chars.checked === false) {

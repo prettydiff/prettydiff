@@ -20,6 +20,10 @@ interface parsedArray {
 interface parsedObject {
     [index: number]: record;
 }
+interface optionFunctions {
+    definitions?: {};
+
+}
 type mode = "analysis" | "beautify" | "diff" | "minify" | "parse";
 interface options {
     accessibility?: boolean;
@@ -146,13 +150,15 @@ interface prettydiff {
     beautify: {
         [key: string]: library;
     };
+    diffview?: [string|string[], number, number];
+    dom?: dom;
     finalFile?: finalFile;
+    language?: language;
     minify: {
         [key: string]: library;
     };
     meta?: {};
-    dom?: dom;
-    language?: language;
+    options?: {};
 }
 interface meta {
     error: string;
@@ -163,6 +169,17 @@ interface meta {
     difftotal: number;
     difflines: number;
 }
+type codes = [string, number, number, number, number];
+interface opcodes extends Array<codes> {
+    [index: number]: codes;
+}
+interface difftable {
+    [key: string]: [number, number];
+}
+interface compareStore extends Array<[number, number]>{
+    [index:number]: [number, number];
+}
+
 interface Window {
     MyNamespace: any;
     prettydiff: prettydiff;

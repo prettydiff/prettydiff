@@ -6,7 +6,9 @@
     "use strict";
 
     const prettydiff = function prettydiff_(options):string {
-        let prettyout:string = "";
+        let prettyout:string = "",
+            sourceout:string = "",
+            diffout:string = "";
         if (options.lexer === undefined) {
             console.log("Missing required option: lexer.");
             return "Missing required option: lexer.";
@@ -29,8 +31,6 @@
             console.log(str);
             return str;
         }
-        options.insize = 4;
-        options.inchar = " ";
         prettyout = fun(options);
         return prettyout;
     };
@@ -38,6 +38,7 @@
         analyze: {},
         app: prettydiff,
         beautify: {},
-        minify: {}
+        minify: {},
+        options: {}
     };
 }());
