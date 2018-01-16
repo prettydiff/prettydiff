@@ -157,7 +157,7 @@
                     yellow              : 0.9278,
                     yellowgreen         : 0.5076295720870697
                 },
-                lf         = (options.crlf === true)
+                lf         = (options.cr === true)
                     ? "\r\n"
                     : "\n",
                 len:number      = data.token.length,
@@ -391,7 +391,7 @@
                 a = a + 1;
             } while (a < len);
             if (options.newline === true) {
-                if (options.crlf === true) {
+                if (options.cr === true) {
                     build.push("\r\n");
                 } else {
                     build.push("\n");

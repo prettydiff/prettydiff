@@ -38,8 +38,7 @@ interface options {
     conditional?: boolean;
     content?: boolean;
     context?: number;
-    correct?: boolean;
-    crlf?: boolean;
+    cr?: boolean;
     cssinsertlines?: boolean;
     csvchar?: string;
     diff?: string;
@@ -50,6 +49,7 @@ interface options {
     diffview?: "inline" | "sidebyside";
     elseline?: boolean;
     endcomma?: "always" | "multiline" | "never";
+    fix?: boolean;
     formatArray?: "default" | "indent" | "inline";
     formatObject?: "default" | "indent" | "inline";
     force_attribute?: boolean;
@@ -142,6 +142,9 @@ interface finalFile {
         minimal: string;
     };
 }
+interface diffview {
+    (options:options): [string, number, number]
+}
 interface prettydiff {
     analyze: {
         [key: string]: library;
@@ -150,7 +153,7 @@ interface prettydiff {
     beautify: {
         [key: string]: library;
     };
-    diffview?: [string|string[], number, number];
+    diffview?: diffview;
     dom?: dom;
     finalFile?: finalFile;
     language?: language;

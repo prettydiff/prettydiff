@@ -2,7 +2,7 @@
 (function () {
     "use strict";
     const prettydiff = global.prettydiff,
-        diffview = function diffview_(options) {
+        diffview = function diffview_(options:options):[string, number, number] {
             let errorout:number      = 0,
                 //diffline is a count of lines that are not equal
                 diffline:number      = 0,
@@ -328,10 +328,10 @@
                 };
 
             if (Array.isArray(options.source) === false && typeof options.source !== "string") {
-                return "Error: source value is not a string or array!";
+                return ["Error: source value is not a string or array!", 0, 0];
             }
             if (Array.isArray(options.diff) === false && typeof options.diff !== "string") {
-                return "Error: diff value is not a string or array!";
+                return ["Error: diff value is not a string or array!", 0, 0];
             }
 
             opcodes = codeBuild();
@@ -344,7 +344,7 @@
             // 3.  The construction of the output into the 'node' array errorout is a count
             // of differences after the opcodes generate the other two core pieces of logic
             // are quaranteened into an anonymous function.
-            return (function diffview__report():[string|string[], number, number] {
+            return (function diffview__report():[string, number, number] {
                 let a:number              = 0,
                     i:number              = 0,
                     node:string[]           = ["<div class='diff'>"],
@@ -1272,7 +1272,7 @@
                         clidata.push("</li></ol>");
                         return [data.join("").replace("</li>", "<ol class=\"diffcli\">"), foldstart, diffline];
                     }
-                    return [clidata, foldstart, diffline];
+                    return [clidata.join(""), foldstart, diffline];
                 }
                 if (foldstart > -1) {
                     data[0][foldstart] = data[0][foldstart].replace("xxx", String(foldcount + rcount));

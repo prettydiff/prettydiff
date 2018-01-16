@@ -6054,7 +6054,7 @@
         if (pd.test.accessibility === true) {
             api.accessibility = true;
         }
-        api.crlf = (lf !== null && lf.checked === true);
+        //api.crlf = (lf !== null && lf.checked === true);
         if (typeof event === "object" && event !== null && event.type === "keyup") {
             // jsscope does not get the convenience of keypress execution, because its
             // overhead is costly do not execute keypress from alt, home, end, or arrow keys
