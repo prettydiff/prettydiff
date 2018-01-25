@@ -1107,37 +1107,39 @@
             selects    = document.getElementsByTagName("select");
             inputsLen = selects.length;
             a = 0;
-            do {
-                id = selects[a].getAttribute("id");
-                if (id === "colorScheme") {
-                    selects[a].onchange = pd.event.colorScheme;
-                    if (pd.data.settings.colorScheme !== undefined) {
-                        selects[a].selectedIndex = Number(pd.data.settings.colorScheme);
-                        pd
-                            .event
-                            .colorScheme(selects[a]);
-                    }
-                } else if (id === "language") {
-                    selects[a].onchange = pd.event.langOps;
-                    if (pd.data.settings.language !== undefined) {
-                        selects[a].selectedIndex = Number(pd.data.settings.language);
-                        if (pd.data.node.lang[pd.data.node.lang.selectedIndex].value === "text" && pd.data.mode !== "diff") {
-                            selects[a].selectedIndex = 0;
-                        }
-                        if (pd.data.node.lang[pd.data.node.lang.selectedIndex].value === "csv" && pd.data.mode !== "diff") {
+            if (inputsLen > 0) { 
+                do {
+                    id = selects[a].getAttribute("id");
+                    if (id === "colorScheme") {
+                        selects[a].onchange = pd.event.colorScheme;
+                        if (pd.data.settings.colorScheme !== undefined) {
+                            selects[a].selectedIndex = Number(pd.data.settings.colorScheme);
                             pd
-                                .app
-                                .hideOutput(selects[a]);
+                                .event
+                                .colorScheme(selects[a]);
                         }
+                    } else if (id === "language") {
+                        selects[a].onchange = pd.event.langOps;
+                        if (pd.data.settings.language !== undefined) {
+                            selects[a].selectedIndex = Number(pd.data.settings.language);
+                            if (pd.data.node.lang[pd.data.node.lang.selectedIndex].value === "text" && pd.data.mode !== "diff") {
+                                selects[a].selectedIndex = 0;
+                            }
+                            if (pd.data.node.lang[pd.data.node.lang.selectedIndex].value === "csv" && pd.data.mode !== "diff") {
+                                pd
+                                    .app
+                                    .hideOutput(selects[a]);
+                            }
+                        }
+                    } else {
+                        if (typeof pd.data.settings[id] === "number") {
+                            selects[a].selectedIndex = pd.data.settings[id];
+                        }
+                        optionswrapper(selects[a], "onchange");
                     }
-                } else {
-                    if (typeof pd.data.settings[id] === "number") {
-                        selects[a].selectedIndex = pd.data.settings[id];
-                    }
-                    optionswrapper(selects[a], "onchange");
-                }
-                a = a + 1;
-            } while (a < inputsLen);
+                    a = a + 1;
+                } while (a < inputsLen);
+            }
             buttons    = document.getElementsByTagName("button");
             inputsLen = buttons.length;
             a = 0;
@@ -1397,8 +1399,8 @@
                         pd
                             .app
                             .hideOutput(pd.data.node.jsscope);
-                    } else if (param[0] === "jscorrect" || param[0] === "correct") {
-                        param[0] = "correct";
+                    } else if (param[0] === "jscorrect" || param[0] === "correct" || param[0] === "fix") {
+                        param[0] = "fix";
                         param[1] = "true";
                         node = pd.id("jscorrect-yes");
                         if (node !== null) {
@@ -5492,13 +5494,7 @@
             completed:boolean   = false,
             autotest:boolean    = false,
             node:HTMLInputElement        = pd.id("jsscope-html");
-        const api:options = {
-                lang: "javascript",
-                lexer: "script",
-                lexerOptions: {},
-                outputFormat: "arrays",
-                source: ""
-            },
+        const options:options = global.prettydiff.options,
             domain:RegExp      = (/^((https?:\/\/)|(file:\/\/\/))/),
             lf:HTMLInputElement        = pd.id("lterminator-crlf"),
             textout:boolean     = ((pd.data.node.jsscope === null || pd.data.node.jsscope.checked === false) && (node === null || node.checked === false)),
@@ -5528,7 +5524,7 @@
                         } while (len > -1);
                         return arr.join("");
                     };
-                if (api.newline === true) {
+                if (options.newline === true) {
                     output = output.replace(/(\s+)$/, "\r\n");
                 } else {
                     output = output.replace(/(\s+)$/, "");
@@ -5536,7 +5532,7 @@
                 node = pd.id("showOptionsCallOut");
                 pd.data.zIndex = pd.data.zIndex + 1;
                 if (autotest === true) {
-                    api.lang = "auto";
+                    options.lang = "auto";
                 }
                 button           = pd
                     .data
@@ -5550,7 +5546,7 @@
                     chromeSave       = true;
                     button.innerHTML = "S";
                 }
-                if (api.mode === "parse" || (api.lang === "csv" && pd.data.mode !== "diff")) {
+                if (options.mode === "parse" || (options.lang === "csv" && pd.data.mode !== "diff")) {
                     pdlang = JSON.stringify(output);
                     if (pdlang.length > 125000) {
                         pd.test.filled.code = true;
@@ -5558,7 +5554,7 @@
                         pd.test.filled.code = false;
                     }
                     if (pd.data.node.report.code.box !== null) {
-                        if (api.lang === "csv") {
+                        if (options.lang === "csv") {
                             let a:number       = 0,
                                 b:number       = output.length,
                                 c:number       = 0,
@@ -5681,17 +5677,17 @@
                                     node.innerHTML = pd.data.stat.pars;
                                 }
                             }
-                        } else if (api.mode === "parse") {
+                        } else if (options.mode === "parse") {
                             let table:string[] = [],
                                 keys  = [],
                                 klen:number  = 0,
                                 a:number     = 0,
                                 build:string = "",
                                 render:HTMLInputElement = pd.id("parsehtml-yes");
-                            if (api.parseFormat !== "htmltable" || render === null || (api.parseFormat === "htmltable" && render.checked === false)) {
-                                if (pd.data.node.codeParsOut !== null && api.lang !== "csv") {
+                            if (options.parseFormat !== "htmltable" || render === null || (options.parseFormat === "htmltable" && render.checked === false)) {
+                                if (pd.data.node.codeParsOut !== null && options.lang !== "csv") {
                                     build = JSON.stringify(JSON.parse(output).data);
-                                    if (api.parseFormat === "htmltable") {
+                                    if (options.parseFormat === "htmltable") {
                                         build = build.slice(1, build.length - 1).replace(/\\"/g, "\"");
                                     }
                                     if (pd.test.ace === true) {
@@ -5740,7 +5736,7 @@
                                 node.innerHTML = pd.data.stat.pars;
                             }
                         }
-                    } else if (pd.data.node.codeParsOut !== null && api.lang !== "csv") {
+                    } else if (pd.data.node.codeParsOut !== null && options.lang !== "csv") {
                         if (pd.test.ace === true) {
                             pd
                                 .ace
@@ -5754,9 +5750,9 @@
                             pd.data.node.codeParsOut.value = pdlang;
                         }
                     }
-                } else if (api.mode === "beautify") {
+                } else if (options.mode === "beautify") {
                     prettydiff.finalFile.order[11] = prettydiff.finalFile.script.beautify;
-                    if (pd.data.node.codeBeauOut !== null && api.jsscope !== "report") {
+                    if (pd.data.node.codeBeauOut !== null && options.jsscope !== "report") {
                         if (pd.test.ace === true) {
                             pd
                                 .ace
@@ -5771,7 +5767,7 @@
                         }
                     }
                     if (pd.data.node.report.code.box !== null) {
-                        if (api.jsscope === "report" && pd.data.langvalue[1] === "javascript" && output.indexOf("Error:") !== 0) {
+                        if (options.jsscope === "report" && pd.data.langvalue[1] === "javascript" && output.indexOf("Error:") !== 0) {
                             pd.data.node.report.code.body.innerHTML = output;
                             if (pd.data.node.report.code.body.style.display === "none") {
                                 pd
@@ -5807,7 +5803,7 @@
                     if (node !== null) {
                         node.innerHTML = pd.data.stat.beau;
                     }
-                } else if (api.mode === "diff" && pd.data.node.report.code.box !== null) {
+                } else if (options.mode === "diff" && pd.data.node.report.code.box !== null) {
                     buttons          = pd
                         .data
                         .node
@@ -5853,7 +5849,7 @@
                                 a = a + 1;
                             } while (a < len);
                         }
-                        if (api.diffview === "sidebyside" && diffList.length > 2) {
+                        if (options.diffview === "sidebyside" && diffList.length > 2) {
                             diffList[2].onmousedown  = pd.event.colSliderGrab;
                             diffList[2].ontouchstart = pd.event.colSliderGrab;
                         }
@@ -5863,7 +5859,7 @@
                     if (node !== null) {
                         node.innerHTML = pd.data.stat.diff;
                     }
-                } else if (api.mode === "minify") {
+                } else if (options.mode === "minify") {
                     if (output.length > 125000) {
                         pd.test.filled.code = true;
                     } else {
@@ -5888,7 +5884,7 @@
                     if (node !== null) {
                         node.innerHTML = pd.data.stat.minn;
                     }
-                } else if (api.mode === "analysis") {
+                } else if (options.mode === "analysis") {
                     if (output.length > 125000) {
                         pd.test.filled.code = true;
                     } else {
@@ -5955,7 +5951,7 @@
                         } else {
                             pd.data.node.announce.innerHTML = "Language set to <strong>" + pd.data.langvalue[2] + "</strong>.";
                         }
-                        if (api.mode === "parse" && api.parseFormat !== "htmltable") {
+                        if (options.mode === "parse" && options.parseFormat !== "htmltable") {
                             pdlang = "tokens";
                         } else {
                             pdlang = "characters";
@@ -5991,7 +5987,7 @@
                     }
                 }
                 parent = <HTMLElement>buttons[1].parentNode;
-                if (parent.style.display === "none" && (pd.data.mode === "diff" || (pd.data.mode === "beau" && api.jsscope === "report" && lang[1] === "javascript"))) {
+                if (parent.style.display === "none" && (pd.data.mode === "diff" || (pd.data.mode === "beau" && options.jsscope === "report" && lang[1] === "javascript"))) {
                     pd
                         .event
                         .minimize(buttons[1].onclick, 1, buttons[1]);
@@ -6029,10 +6025,10 @@
                         node.innerHTML = pd.data.stat.css;
                     }
                 }
-                if (api.mode === "diff" && api.source !== undefined && api.diff !== undefined && api.diff.length > api.source.length) {
-                    size = api.diff.length;
-                } else if (api.source !== undefined) {
-                    size = api.source.length;
+                if (options.mode === "diff" && options.source !== undefined && options.diff !== undefined && options.diff.length > options.source.length) {
+                    size = options.diff.length;
+                } else if (options.source !== undefined) {
+                    size = options.source.length;
                 }
                 if (size > pd.data.stat.large) {
                     pd.data.stat.large = size;
@@ -6052,9 +6048,9 @@
                 .removeChild(node);
         }
         if (pd.test.accessibility === true) {
-            api.accessibility = true;
+            options.accessibility = true;
         }
-        //api.crlf = (lf !== null && lf.checked === true);
+        options.crlf = (lf !== null && lf.checked === true);
         if (typeof event === "object" && event !== null && event.type === "keyup") {
             // jsscope does not get the convenience of keypress execution, because its
             // overhead is costly do not execute keypress from alt, home, end, or arrow keys
@@ -6085,12 +6081,12 @@
         }
 
         //gather updated dom nodes
-        api.api         = "dom";
+        options.api         = "dom";
         node            = pd.id("csvchar");
-        api.csvchar     = (node === null || node.value.length === 0)
+        options.csvchar     = (node === null || node.value.length === 0)
             ? ","
             : node.value;
-        api.lang        = (pd.data.node.lang === null)
+        options.lang        = (pd.data.node.lang === null)
             ? "javascript"
             : (pd.data.node.lang.nodeName.toLowerCase() === "select")
                 ? pd
@@ -6105,699 +6101,44 @@
                     .lang
                     .value
                     .toLowerCase();
-        api.langdefault = (pd.data.node.langdefault !== null)
+        options.langdefault = (pd.data.node.langdefault !== null)
             ? pd.data.node.langdefault[pd.data.node.langdefault.selectedIndex].value
             : "javascript";
-        api.newline     = (pd.id("newline-yes") !== null && pd.id("newline-yes").checked === true);
-        if (api.lang === "auto") {
+        options.newline     = (pd.id("newline-yes") !== null && pd.id("newline-yes").checked === true);
+        if (options.lang === "auto") {
             autotest = true;
         }
 
         //determine options based upon mode of operations
-        if (pd.data.mode === "beau") {
-            let chars:HTMLInputElement          = pd.id("beau-space");
-            const brace_stylec:HTMLInputElement   = pd.id("bbracestyle-collapse"),
-                brace_stylee:HTMLInputElement   = pd.id("bbracestyle-expand"),
-                brace_stylei:HTMLInputElement   = pd.id("bbracestyle-inline"),
-                braceline:HTMLInputElement      = pd.id("bbraceline-no"),
-                bracepadding:HTMLInputElement   = pd.id("bbracepadding-yes"),
-                braces:HTMLInputElement         = pd.id("jsindent-all"),
-                comments:HTMLInputElement       = pd.id("incomment-no"),
-                commline:HTMLInputElement       = pd.id("bcommline-yes"),
-                compressedcss:HTMLInputElement  = pd.id("bcompressedcss-yes"),
-                csslines:HTMLInputElement       = pd.id("cssinsertlines-yes"),
-                elseline:HTMLInputElement       = pd.id("jselseline-yes"),
-                endcommaa:HTMLInputElement      = pd.id("bendcomma-always"),
-                endcommam:HTMLInputElement      = pd.id("bendcomma-multiline"),
-                forceAttribute:HTMLInputElement = pd.id("bforce_attribute-yes"),
-                forceIndent:HTMLInputElement    = pd.id("bforce_indent-yes"),
-                formatADefault:HTMLInputElement = pd.id("bformatarray-default"),
-                formatAIndent:HTMLInputElement  = pd.id("bformatarray-indent"),
-                formatAInline:HTMLInputElement  = pd.id("bformatarray-inline"),
-                formatODefault:HTMLInputElement = pd.id("bformatobject-default"),
-                formatOIndent:HTMLInputElement  = pd.id("bformatobject-indent"),
-                formatOInline:HTMLInputElement  = pd.id("bformatobject-inline"),
-                functionname:HTMLInputElement   = pd.id("bfunctionname-yes"),
-                jscorrect:HTMLInputElement      = pd.id("jscorrect-yes"),
-                jshtml:HTMLInputElement         = pd.id("jsscope-html"),
-                jsspace:HTMLInputElement        = pd.id("jsspace-no"),
-                methodchainc:HTMLInputElement   = pd.id("bmethodchain-chain"),
-                methodchaini:HTMLInputElement   = pd.id("bmethodchain-indent"),
-                methodchainn:HTMLInputElement   = pd.id("bmethodchain-none"),
-                neverflatten:HTMLInputElement   = pd.id("bneverflatten-yes"),
-                nocaseindent:HTMLInputElement   = pd.id("bnocaseindent-yes"),
-                nochainindent:HTMLInputElement  = pd.id("bnochainindent-yes"),
-                noleadzero:HTMLInputElement     = pd.id("bnoleadzero-yes"),
-                objsort:HTMLInputElement       = pd.id("bobjsort-yes"),
-                offset:HTMLInputElement         = pd.id("inlevel"),
-                preserve:HTMLInputElement       = pd.id("bpreserve"),
-                preserveComment:HTMLInputElement = pd.id("bpreserveComment-true"),
-                quantity:HTMLInputElement       = pd.id("beau-quan"),
-                quotecond:HTMLInputElement      = pd.id("bquoteconvert-double"),
-                quotecons:HTMLInputElement      = pd.id("bquoteconvert-single"),
-                selectorlist:HTMLInputElement   = pd.id("bselectorlist-yes"),
-                spaceclose:HTMLInputElement     = pd.id("bspaceclose-yes"),
-                style:HTMLInputElement          = pd.id("inscript-no"),
-                styleguide:HTMLSelectElement     = pd.id("bstyleguide"),
-                tagmerge:HTMLInputElement       = pd.id("btagmerge-yes"),
-                tagsort:HTMLInputElement        = pd.id("btagsort-yes"),
-                ternaryline:HTMLInputElement    = pd.id("bternaryline-yes"),
-                textpreserve:HTMLInputElement   = pd.id("btextpreserveyes"),
-                unformatted:HTMLInputElement    = pd.id("bunformatted-yes"),
-                varworde:HTMLInputElement       = pd.id("bvarword-each"),
-                varwordl:HTMLInputElement       = pd.id("bvarword-list"),
-                vertical:HTMLInputElement      = pd.id("vertical-yes"),
-                wrap:HTMLInputElement           = pd.id("beau-wrap");
-            if (pd.data.node.codeBeauIn !== null) {
-                if (api.lang === "auto" && pd.data.langvalue.length === 0) {
-                    if (pd.test.ace === true) {
-                        pd
-                            .app
-                            .langkey(false, pd.ace.beauIn, "");
-                    } else {
-                        pd
-                            .app
-                            .langkey(false, pd.data.node.codeBeauIn, "");
-                    }
-                }
-                if (pd.test.ace === true) {
-                    api.source = pd
-                        .ace
-                        .beauIn
-                        .getValue();
-                } else {
-                    api.source = pd.data.node.codeBeauIn.value;
-                }
-            }
-            api.brace_style  = (brace_stylec !== null && brace_stylec.checked === true)
-                ? "collapse"
-                : (brace_stylee !== null && brace_stylee.checked === true)
-                    ? "expand"
-                    : (brace_stylei !== null && brace_stylei.checked === true)
-                        ? "collapse-preserve-inline"
-                        : "none";
-            api.braceline    = (braceline === null || braceline.checked === false);
-            api.bracepadding = (bracepadding !== null && bracepadding.checked === true);
-            api.braces       = (braces !== null && braces.checked === true);
-            if (chars === null || chars.checked === false) {
-                chars = pd.id("beau-tab");
-                if (chars === null || chars.checked === false) {
-                    chars = pd.id("beau-line");
-                    if (chars === null || chars.checked === false) {
-                        chars = pd.id("beau-other");
-                        if (chars === null || chars.checked === false) {
-                            api.inchar = " ";
-                        } else {
-                            chars = pd.id("beau-char");
-                            if (chars === null) {
-                                api.inchar = " ";
-                            } else {
-                                api.inchar = chars.value;
-                            }
-                        }
-                    } else {
-                        api.inchar = "\n";
-                    }
-                } else {
-                    api.inchar = "\t";
-                }
-            } else {
-                api.inchar = " ";
-            }
-            api.comments        = (comments !== null && comments.checked === true);
-            api.commline        = (commline !== null && commline.checked === true);
-            api.compressedcss   = (compressedcss !== null && compressedcss.checked === true);
-            api.correct         = (jscorrect !== null && jscorrect.checked === true);
-            api.cssinsertlines  = (csslines !== null && csslines.checked === true);
-            api.elseline        = (elseline !== null && elseline.checked === true);
-            api.endcomma        = (endcommaa !== null && endcommaa.checked === true)
-                ? "always"
-                : (endcommam !== null && endcommam.checked === true)
-                    ? "multiline"
-                    : "never";
-            api.force_attribute = (forceAttribute !== null && forceAttribute.checked === true);
-            api.force_indent    = (forceIndent !== null && forceIndent.checked === true);
-            if (formatADefault !== null && formatADefault.checked === true) {
-                api.formatArray = "default";
-            } else if (formatAIndent !== null && formatAIndent.checked === true) {
-                api.formatArray = "indent";
-            } else if (formatAInline !== null && formatAInline.checked === true) {
-                api.formatArray = "inline";
-            }
-            if (formatODefault !== null && formatODefault.checked === true) {
-                api.formatObject = "default";
-            } else if (formatOIndent !== null && formatOIndent.checked === true) {
-                api.formatObject = "indent";
-            } else if (formatOInline !== null && formatOInline.checked === true) {
-                api.formatObject = "inline";
-            }
-            api.functionname    = (functionname !== null && functionname.checked === true);
-            api.inlevel         = (offset === null || isNaN(Number(offset.value)) === true)
-                ? 0
-                : Number(offset.value);
-            api.insize          = (quantity === null || isNaN(Number(quantity.value)) === true)
-                ? 4
-                : Number(quantity.value);
-            if (pd.data.node.jsscope !== null && pd.data.node.jsscope.checked === true) {
-                api.jsscope = "report";
-            } else if (jshtml !== null && jshtml.checked === true) {
-                api.jsscope = "html";
-            } else {
-                api.jsscope = "none";
-            }
-            if (methodchainc !== null && methodchainc.checked === true) {
-                api.methodchain = "chain";
-            } else if (methodchaini !== null && methodchaini.checked === true) {
-                api.methodchain = "indent";
-            } else if (methodchainn !== null && methodchainn.checked === true) {
-                api.methodchain = "none";
-            }
-            api.neverflatten = (neverflatten !== null && neverflatten.checked === true);
-            api.nocaseindent = (nocaseindent !== null && nocaseindent.checked === true);
-            api.nochainindent = (nochainindent !== null && nochainindent.checked === true);
-            api.noleadzero   = (noleadzero !== null && noleadzero.checked === true);
-            api.objsort = (objsort !== null && objsort.checked === true);
-            if (preserve !== null) {
-                api.preserve = Number(preserve.value);
-            }
-            api.preserveComment = (preserveComment !== null && preserveComment.checked === true);
-            if (quotecond !== null && quotecond.checked === true) {
-                api.quoteConvert = "double";
-            } else if (quotecons !== null && quotecons.checked === true) {
-                api.quoteConvert = "single";
-            } else {
-                api.quoteConvert = "none";
-            }
-            api.selectorlist = (selectorlist !== null && selectorlist.checked === true);
-            api.space        = (jsspace === null || jsspace.checked === false);
-            api.spaceclose   = (spaceclose !== null && spaceclose.checked === true);
-            api.style        = (style === null || style.checked === false);
-            api.styleguide   = (styleguide !== null)
-                ? styleguide[styleguide.selectedIndex].value
-                : "";
-            api.tagmerge     = (tagmerge !== null && tagmerge.checked === true);
-            api.tagsort      = (tagsort !== null && tagsort.checked === true);
-            api.ternaryline  = (ternaryline !== null && ternaryline.checked === true);
-            api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
-            api.unformatted  = (unformatted !== null && unformatted.checked === true);
-            if (varworde !== null && varworde.checked === true) {
-                api.varword = "each";
-            } else if (varwordl !== null && varwordl.checked === true) {
-                api.varword = "list";
-            } else {
-                api.varword = "none";
-            }
-            api.vertical = (vertical !== null && vertical.checked === true);
-            api.wrap = (wrap === null || isNaN(Number(wrap.value)) === true)
-                ? 80
-                : Number(wrap.value);
-            api.mode = "beautify";
-        }
-        if (pd.data.mode === "minn") {
-            const conditional:HTMLInputElement  = pd.id("conditionalm-yes"),
-                correct:HTMLInputElement      = pd.id("mjscorrect-yes"),
-                miniwrap:HTMLInputElement     = pd.id("miniwrapm-yes"),
-                objsort:HTMLInputElement     = pd.id("mobjsort-yes"),
-                quotecond:HTMLInputElement    = pd.id("mquoteconvert-double"),
-                quotecons:HTMLInputElement    = pd.id("mquoteconvert-single"),
-                tagmerge:HTMLInputElement     = pd.id("mtagmerge-yes"),
-                tagsort:HTMLInputElement      = pd.id("mtagsort-yes"),
-                textpreserve:HTMLInputElement = pd.id("mtextpreserveyes"),
-                topcoms:HTMLInputElement      = pd.id("topcoms-yes"),
-                unformatted:HTMLInputElement  = pd.id("munformatted-yes"),
-                wrap:HTMLInputElement         = pd.id("mini-wrap");
-            if (pd.data.node.codeMinnIn !== null) {
-                if (api.lang === "auto" && pd.data.langvalue.length === 0) {
-                    if (pd.test.ace === true) {
-                        pd
-                            .app
-                            .langkey(false, pd.ace.minnIn, "");
-                    } else {
-                        pd
-                            .app
-                            .langkey(false, pd.data.node.codeMinnIn, "");
-                    }
-                }
-                pd.data.node.codeMinnIn = pd.id("minifyinput");
-                if (pd.test.ace === true) {
-                    api.source = pd
-                        .ace
-                        .minnIn
-                        .getValue();
-                } else {
-                    api.source = pd.data.node.codeMinnIn.value;
-                }
-            }
-            api.objsort = (objsort !== null && objsort.checked === true);
-            if (quotecond !== null && quotecond.checked === true) {
-                api.quoteConvert = "double";
-            } else if (quotecons !== null && quotecons.checked === true) {
-                api.quoteConvert = "single";
-            } else {
-                api.quoteConvert = "none";
-            }
-            api.conditional  = (conditional !== null && conditional.checked === true);
-            api.correct      = (correct !== null && correct.checked === true);
-            api.miniwrap     = (miniwrap !== null && miniwrap.checked === true);
-            api.tagmerge     = (tagmerge !== null && tagmerge.checked === true);
-            api.tagsort      = (tagsort !== null && tagsort.checked === true);
-            api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
-            api.topcoms      = (topcoms !== null && topcoms.checked === true);
-            api.unformatted  = (unformatted !== null && unformatted.checked === true);
-            api.wrap         = (wrap !== null && isNaN(Number(wrap.value)) === false)
-                ? Number(wrap.value)
-                : -1;
-            api.mode = "minify";
-        }
-        if (pd.data.mode === "diff") {
-            api.jsscope = "none";
-            let chars:HTMLInputElement           = pd.id("diff-space");
-            const brace_stylec:HTMLInputElement    = pd.id("dbracestyle-collapse"),
-                brace_stylee:HTMLInputElement    = pd.id("dbracestyle-expand"),
-                brace_stylei:HTMLInputElement    = pd.id("dbracestyle-inline"),
-                braceline:HTMLInputElement       = pd.id("dbraceline-no"),
-                bracepadding:HTMLInputElement    = pd.id("dbracepadding-no"),
-                braces:HTMLInputElement          = pd.id("jsindentd-all"),
-                baseLabel:HTMLInputElement       = pd.id("baselabel"),
-                comments:HTMLInputElement        = pd.id("diffcommentsy"),
-                compressedcss:HTMLInputElement   = pd.id("compressedcss-yes"),
-                conditional:HTMLInputElement     = pd.id("conditionald-yes"),
-                content:HTMLInputElement         = pd.id("diffcontentn"),
-                context:HTMLInputElement         = pd.id("contextSize"),
-                correct:HTMLInputElement         = pd.id("djscorrect-yes"),
-                diffcli:HTMLInputElement         = pd.id("diffcli-true"),
-                diffspaceignore:HTMLInputElement = pd.id("diffspaceignorey"),
-                elseline:HTMLInputElement        = pd.id("jselselined-yes"),
-                endcommaa:HTMLInputElement       = pd.id("dendcomma-always"),
-                endcommam:HTMLInputElement       = pd.id("dendcomma-multiline"),
-                forceAttribute:HTMLInputElement  = pd.id("dforce_attribute-yes"),
-                forceIndent:HTMLInputElement     = pd.id("dforce_indent-yes"),
-                formatADefault:HTMLInputElement  = pd.id("dformatarray-default"),
-                formatAIndent:HTMLInputElement   = pd.id("dformatarray-indent"),
-                formatAInline:HTMLInputElement   = pd.id("dformatarray-inline"),
-                formatODefault:HTMLInputElement  = pd.id("dformatarray-default"),
-                formatOIndent:HTMLInputElement   = pd.id("dformatarray-indent"),
-                formatOInline:HTMLInputElement   = pd.id("dformatarray-inline"),
-                functionname:HTMLInputElement    = pd.id("dfunctionname-yes"),
-                inline:HTMLInputElement          = pd.id("inline"),
-                methodchainChain:HTMLInputElement     = pd.id("dmethodchain-chain"),
-                methodchainIndent:HTMLInputElement     = pd.id("dmethodchain-indent"),
-                methodchainNone:HTMLInputElement     = pd.id("dmethodchain-none"),
-                newLabel:HTMLInputElement        = pd.id("newlabel"),
-                nocaseindent:HTMLInputElement    = pd.id("dnocaseindent-yes"),
-                nochainindent:HTMLInputElement   = pd.id("dnochainindent-yes"),
-                objsort:HTMLInputElement        = pd.id("dobjsort-yes"),
-                preserve:HTMLInputElement        = pd.id("dpreserve"),
-                preserveComment:HTMLInputElement = pd.id("dpreserveComment-true"),
-                quantity:HTMLInputElement        = pd.id("diff-quan"),
-                quotecond:HTMLInputElement       = pd.id("dquoteconvert-double"),
-                quotecons:HTMLInputElement       = pd.id("dquoteconvert-single"),
-                selectorlist:HTMLInputElement    = pd.id("dselectorlist-yes"),
-                semicolon:HTMLInputElement       = pd.id("diffscolonn"),
-                style:HTMLInputElement           = pd.id("inscriptd-no"),
-                space:HTMLInputElement           = pd.id("jsspaced-no"),
-                tagmerge:HTMLInputElement        = pd.id("dtagmerge-yes"),
-                tagsort:HTMLInputElement         = pd.id("dtagsort-yes"),
-                ternaryline:HTMLInputElement     = pd.id("dternaryline-yes"),
-                textpreserve:HTMLInputElement    = pd.id("dtextpreserveyes"),
-                unformatted:HTMLInputElement     = pd.id("dunformatted-yes"),
-                wrap:HTMLInputElement            = pd.id("diff-wrap");
-            pd.data.node.codeDiffBase = pd.id("baseText");
-            pd.data.node.codeDiffNew  = pd.id("newText");
-            if (pd.data.node.codeDiffBase !== null && api.lang === "auto" && pd.data.langvalue.length === 0) {
-                if (pd.test.ace === true) {
-                    pd
-                        .app
-                        .langkey(false, pd.ace.diffBase, "");
-                } else {
-                    pd
-                        .app
-                        .langkey(false, pd.data.node.codeDiffBase, "");
-                }
-            }
-            api.brace_style  = (brace_stylec !== null && brace_stylec.checked === true)
-                ? "collapse"
-                : (brace_stylee !== null && brace_stylee.checked === true)
-                    ? "expand"
-                    : (brace_stylei !== null && brace_stylei.checked === true)
-                        ? "collapse-preserve-inline"
-                        : "none";
-            api.braceline     = (braceline === null || braceline.checked === false);
-            api.bracepadding  = (bracepadding === null || bracepadding.checked === false);
-            api.braces        = (braces === null || braces.checked === false);
-            api.compressedcss = (compressedcss !== null && compressedcss.checked === true);
-            api.conditional   = (conditional !== null && conditional.checked === true);
-            api.content       = (content !== null && content.checked !== false);
-            api.context       = (context !== null && isNaN(Number(context.value)) === false)
-                ? Number(context.value)
-                : -1;
-            api.correct       = (correct !== null && correct.checked === true);
-            api.diffcli       = (diffcli !== null && diffcli.checked === true);
-            api.diffcomments  = (comments === null || comments.checked === true);
-            api.difflabel       = (newLabel === null)
-                ? "new"
-                : newLabel.value;
-            api.diffspaceignore = (diffspaceignore !== null && diffspaceignore.checked === true);
-            api.diffview        = (inline === null || inline.checked === false)
-                ? "sidebyside"
-                : "inline";
-            api.elseline        = (elseline !== null && elseline.checked !== false);
-            api.endcomma        = (endcommaa !== null && endcommaa.checked === true)
-                ? "always"
-                : (endcommam !== null && endcommam.checked === true)
-                    ? "multiline"
-                    : "never";
-            api.force_attribute = (forceAttribute !== null && forceAttribute.checked === true);
-            api.force_indent    = (forceIndent !== null && forceIndent.checked === true);
-            if (formatADefault !== null && formatADefault.checked === true) {
-                api.formatArray = "default";
-            } else if (formatAIndent !== null && formatAIndent.checked === true) {
-                api.formatArray = "indent";
-            } else if (formatAInline !== null && formatAInline.checked === true) {
-                api.formatArray = "inline";
-            }
-            if (formatODefault !== null && formatODefault.checked === true) {
-                api.formatObject = "default";
-            } else if (formatOIndent !== null && formatOIndent.checked === true) {
-                api.formatObject = "indent";
-            } else if (formatOInline !== null && formatOInline.checked === true) {
-                api.formatObject = "inline";
-            }
-            api.functionname    = (functionname !== null && functionname.checked === true);
-            api.insize          = (quantity === null || isNaN(Number(quantity.value)) === true)
-                ? 4
-                : Number(quantity.value);
-            if (methodchainChain !== null && methodchainChain.checked === true) {
-                api.methodchain = "chain";
-            } else if (methodchainIndent !== null && methodchainIndent.checked === true) {
-                api.methodchain = "indent";
-            } else if (methodchainNone !== null && methodchainNone.checked === true) {
-                api.methodchain = "none";
-            }
-            api.nocaseindent    = (nocaseindent !== null && nocaseindent.checked === true);
-            api.nochainindent   = (nochainindent !== null && nochainindent.checked === true);
-            api.objsort = (objsort !== null && objsort.checked === true);
-            if (quotecond !== null && quotecond.checked === true) {
-                api.quoteConvert = "double";
-            } else if (quotecons !== null && quotecons.checked === true) {
-                api.quoteConvert = "single";
-            } else {
-                api.quoteConvert = "none";
-            }
-            if (preserve !== null) {
-                api.preserve = Number(preserve.value);
-            }
-            api.preserveComment = (preserveComment !== null && preserveComment.checked === true);
-            api.selectorlist = (selectorlist !== null && selectorlist.checked === true);
-            api.semicolon    = (semicolon !== null && semicolon.checked === true);
-            api.sourcelabel  = (baseLabel === null)
-                ? "base"
-                : baseLabel.value;
-            api.space        = (space === null || space.checked === false);
-            api.style        = (style === null || style.checked === false);
-            api.tagmerge     = (tagmerge !== null && tagmerge.checked === true);
-            api.tagsort      = (tagsort !== null && tagsort.checked === true);
-            api.ternaryline  = (ternaryline !== null && ternaryline.checked === true);
-            api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
-            api.unformatted  = (unformatted !== null && unformatted.checked === true);
-            api.wrap         = (wrap === null || isNaN(Number(wrap.value)) === true)
-                ? 80
-                : Number(wrap.value);
-            if (chars === null || chars.checked === false) {
-                chars = pd.id("diff-tab");
-                if (chars === null || chars.checked === false) {
-                    chars = pd.id("diff-line");
-                    if (chars === null || chars.checked === false) {
-                        chars = pd.id("diff-other");
-                        if (chars === null || chars.checked === false) {
-                            api.inchar = " ";
-                        } else {
-                            chars = pd.id("diff-char");
-                            if (chars === null) {
-                                api.inchar = " ";
-                            } else {
-                                api.inchar = chars.value;
-                            }
-                        }
-                    } else {
-                        api.inchar = "\n";
-                    }
-                } else {
-                    api.inchar = "\t";
-                }
-            } else {
-                api.inchar = " ";
-            }
-            if (pd.data.node.codeDiffBase !== null && (pd.data.node.codeDiffBase.value === "" || pd.data.node.codeDiffBase.value === "Error: source code is missing.")) {
-                pd.data.node.codeDiffBase.value = "Error: source code is missing.";
-                return;
-            }
-            if (pd.data.node.codeDiffNew !== null && (pd.data.node.codeDiffNew.value === "" || pd.data.node.codeDiffNew.value === "Error: diff code is missing.")) {
-                pd.data.node.codeDiffNew.value = "Error: diff code is missing.";
-                return;
-            }
-            if (pd.data.node.codeDiffBase !== null) {
-                if (pd.test.ace === true) {
-                    api.source = pd
-                        .ace
-                        .diffBase
-                        .getValue();
-                } else {
-                    api.source = pd.data.node.codeDiffBase.value;
-                }
-            } else {
-                api.source = "";
-            }
-            if (pd.data.node.codeDiffNew !== null) {
-                if (pd.test.ace === true) {
-                    api.diff = pd
-                        .ace
-                        .diffNew
-                        .getValue();
-                } else {
-                    api.diff = pd.data.node.codeDiffNew.value;
-                }
-            } else {
-                api.diff = "";
-            }
-            api.mode = "diff";
-            if (domain.test(api.diff) === true && pd.test.xhr === true) {
-                const filetest:boolean       = (api.diff.indexOf("file:///") === 0),
-                    protocolRemove:string = (filetest === true)
-                        ? api
-                            .diff
-                            .split(":///")[1]
-                        : api
-                            .diff
-                            .split("://")[1],
-                    slashIndex:number     = (protocolRemove !== undefined)
-                        ? protocolRemove.indexOf("/")
-                        : 0,
-                    xhr:XMLHttpRequest            = new XMLHttpRequest();
-                if ((slashIndex > 0 || api.diff.indexOf("http") === 0) && typeof protocolRemove === "string" && protocolRemove.length > 0) {
-                    requestd = true;
-                    xhr.onreadystatechange = function dom__event_recycle_xhrDiff_stateChange():void {
-                        var appDelay = function dom__event_recycle_xhrDiff_statechange_appDelay():void {
-                            output = prettydiff.app(api);
-                            if (output === undefined) {
-                                setTimeout(dom__event_recycle_xhrDiff_statechange_appDelay, 100);
-                            } else {
-                                execOutput();
-                            }
-                        };
-                        if (xhr.readyState === 4) {
-                            if (xhr.status === 200 || xhr.status === 0) {
-                                api.diff = xhr
-                                    .responseText
-                                    .replace(/\r\n/g, "\n");
-                                if (requests === false || completes === true) {
-                                    pd.data.source = api.source;
-                                    if (pd.data.langvalue[1] === "text") {
-                                        api.lang = "text";
-                                    } else {
-                                        if (pd.test.ace === true) {
-                                            lang = pd
-                                                .app
-                                                .langkey(false, pd.ace.diffBase, "");
-                                        } else {
-                                            lang = pd
-                                                .app
-                                                .langkey(false, {
-                                                    value: pd.data.source
-                                                }, "");
-                                        }
-                                        api.lang = lang[0];
-                                        api.lexer = lang[1];
-                                    }
-                                    if (pd.data.mode === "diff") {
-                                        pd.data.diff = api.diff;
-                                    } else {
-                                        pd.data.diff = "";
-                                    }
-                                    output = prettydiff.app(api);
-                                    if (output === undefined) {
-                                        if (pd.test.delayExecution === true) {
-                                            pd.test.delayExecution = false;
-                                            setTimeout(appDelay, 2000);
-                                        }
-                                    } else {
-                                        execOutput();
-                                    }
-                                    return;
-                                }
-                                completed = true;
-                            } else {
-                                api.diff = "Error: transmission failure receiving diff code from address.";
-                            }
-                        }
-                    };
-                    if (filetest === true) {
-                        xhr.open("GET", api.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
-                    } else {
-                        xhr.open("GET", "proxy.php?x=" + api.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
-                    }
-                    xhr.send();
-                }
-            }
-        }
-        if (pd.data.mode === "pars") {
-            if (pd.data.node.codeParsIn !== null) {
-                if (api.lang === "auto" && pd.data.langvalue.length === 0) {
-                    if (pd.test.ace === true) {
-                        pd
-                            .app
-                            .langkey(false, pd.ace.parsIn, "");
-                    } else {
-                        pd
-                            .app
-                            .langkey(false, pd.data.node.codeParsIn, "");
-                    }
-                } else if (api.lang === "csv") {
-                    if (pd.test.ace === true) {
-                        pd
-                            .ace
-                            .parsIn
-                            .setValue("CSV is not supported in 'Parse Tree' mode.");
-                    } else {
-                        pd.data.node.codeParsIn.value = "CSV is not supported in 'Parse Tree' mode.";
-                    }
-                    return;
-                }
-            }
-            const jscorrect:HTMLInputElement    = pd.id("pjscorrect-yes"),
-                objsort:HTMLInputElement     = pd.id("pobjsort-yes"),
-                parseFh:HTMLInputElement      = pd.id("parseFormat-htmltable"),
-                parseFs:HTMLInputElement      = pd.id("parseFormat-sequential"),
-                parseSpace:HTMLInputElement   = pd.id("parsespace-yes"),
-                quotecond:HTMLInputElement    = pd.id("pquoteconvert-double"),
-                quotecons:HTMLInputElement    = pd.id("pquoteconvert-single"),
-                tagmerge:HTMLInputElement     = pd.id("ptagmerge-yes"),
-                tagsort:HTMLInputElement      = pd.id("ptagsort-yes"),
-                textpreserve:HTMLInputElement = pd.id("ptextpreserveyes"),
-                unformatted:HTMLInputElement  = pd.id("punformatted-yes"),
-                varworde:HTMLInputElement     = pd.id("pvarword-each"),
-                varwordl:HTMLInputElement     = pd.id("pvarword-list");
-            if (pd.data.node.codeParsIn !== null) {
-                if (pd.test.ace === true) {
-                    api.source = pd
-                        .ace
-                        .parsIn
-                        .getValue();
-                } else {
-                    api.source = pd.data.node.codeParsIn.value;
-                }
-            }
-            api.correct      = (jscorrect !== null && jscorrect.checked === true);
-            api.tagmerge     = (tagmerge !== null && tagmerge.checked === true);
-            api.tagsort      = (tagsort !== null && tagsort.checked === true);
-            api.textpreserve = (textpreserve !== null && textpreserve.checked === true);
-            api.unformatted  = (unformatted !== null && unformatted.checked === true);
-            api.objsort = (objsort !== null && objsort.checked === true);
-            if (parseFh !== null && parseFh.checked === true) {
-                api.parseFormat = "htmltable";
-            } else if (parseFs !== null && parseFs.checked === true) {
-                api.parseFormat = "sequential";
-            }
-            api.parseSpace = (parseSpace !== null && parseSpace.checked === true);
-            if (quotecond !== null && quotecond.checked === true) {
-                api.quoteConvert = "double";
-            } else if (quotecons !== null && quotecons.checked === true) {
-                api.quoteConvert = "single";
-            } else {
-                api.quoteConvert = "none";
-            }
-            if (varworde !== null && varworde.checked === true) {
-                api.varword = "each";
-            } else if (varwordl !== null && varwordl.checked === true) {
-                api.varword = "list";
-            } else {
-                api.varword = "none";
-            }
-            api.mode = "parse";
-        }
-        if (pd.data.mode === "anal") {
-            if (pd.data.node.codeAnalIn !== null) {
-                if (api.lang === "auto" && pd.data.langvalue.length === 0) {
-                    if (pd.test.ace === true) {
-                        pd
-                            .app
-                            .langkey(false, pd.ace.analIn, "");
-                    } else {
-                        pd
-                            .app
-                            .langkey(false, pd.data.node.codeAnalIn, "");
-                    }
-                } else if (api.lang === "csv") {
-                    if (pd.test.ace === true) {
-                        pd
-                            .ace
-                            .analIn
-                            .setValue("CSV is not supported in 'Analysis' mode.");
-                    } else {
-                        pd.data.node.codeAnalIn.value = "CSV is not supported in 'Analysis' mode.";
-                    }
-                    return;
-                }
-            }
-            if (pd.test.ace === true) {
-                api.source = pd
-                    .ace
-                    .analIn
-                    .getValue();
-            } else {
-                api.source = pd.data.node.codeAnalIn.value;
-            }
-            api.mode = "analysis";
-        }
         if (pd.param !== undefined) {
             (function dom__event_recycle_parameters() {
                 var keys = Object.keys(pd.param),
                     a = 0,
                     len = keys.length;
                 do {
-                    api[keys[a]] = pd.param[keys[a]];
+                    options[keys[a]] = pd.param[keys[a]];
                     a = a + 1;
                 } while (a < len);
             }());
         }
-        if (domain.test(api.source) === true && pd.test.xhr === true) {
-            const filetest:boolean       = (api.source.indexOf("file:///") === 0),
+        if (domain.test(options.source) === true && pd.test.xhr === true) {
+            const filetest:boolean       = (options.source.indexOf("file:///") === 0),
                 protocolRemove:string = (filetest === true)
-                    ? api
+                    ? options
                         .source
                         .split(":///")[1]
-                    : api
+                    : options
                         .source
                         .split("://")[1],
                 slashIndex:number     = (protocolRemove !== undefined)
                     ? protocolRemove.indexOf("/")
                     : 0,
                 xhr:XMLHttpRequest            = new XMLHttpRequest();
-            if ((slashIndex > 0 || api.source.indexOf("http") === 0) && typeof protocolRemove === "string" && protocolRemove.length > 0) {
+            if ((slashIndex > 0 || options.source.indexOf("http") === 0) && typeof protocolRemove === "string" && protocolRemove.length > 0) {
                 requests = true;
                 xhr.onreadystatechange = function dom__event_recycle_xhrSource_statechange() {
                     var appDelay = function dom__event_recycle_xhrSource_statechange_appDelay() {
-                        output = prettydiff.app(api);
+                        output = prettydiff.app();
                         if (output === undefined) {
                             setTimeout(dom__event_recycle_xhrSource_statechange_appDelay, 100);
                         } else {
@@ -6806,11 +6147,11 @@
                     };
                     if (xhr.readyState === 4) {
                         if (xhr.status === 200 || xhr.status === 0) {
-                            api.source = xhr
+                            options.source = xhr
                                 .responseText
                                 .replace(/\r\n/g, "\n");
                             if (pd.data.mode !== "diff" || requestd === false || (requestd === true && completed === true)) {
-                                pd.data.source = api.source;
+                                pd.data.source = options.source;
                                 if (pd.test.ace === true) {
                                     if (pd.data.mode !== "diff") {
                                         lang = pd
@@ -6832,14 +6173,14 @@
                                             value: pd.data.source
                                         }, "");
                                 }
-                                api.lang = lang[0];
-                                api.lexer = lang[1];
+                                options.lang = lang[0];
+                                options.lexer = lang[1];
                                 if (pd.data.mode === "diff") {
-                                    pd.data.diff = api.diff;
+                                    pd.data.diff = options.diff;
                                 } else {
                                     pd.data.diff = "";
                                 }
-                                output = prettydiff.app(api);
+                                output = prettydiff.app();
                                 if (output === undefined) {
                                     if (pd.test.delayExecution === true) {
                                         pd.test.delayExecution = false;
@@ -6852,14 +6193,14 @@
                             }
                             completes = true;
                         } else {
-                            api.source = "Error: transmission failure receiving source code from address.";
+                            options.source = "Error: transmission failure receiving source code from address.";
                         }
                     }
                 };
                 if (filetest === true) {
-                    xhr.open("GET", api.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                    xhr.open("GET", options.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
                 } else {
-                    xhr.open("GET", "proxy.php?x=" + api.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                    xhr.open("GET", "proxy.php?x=" + options.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
                 }
                 xhr.send();
             }
@@ -6877,55 +6218,55 @@
             }
         }
         let codesize:number = 0;
-        if (api.source === undefined || (pd.data.mode === "diff" && api.diff === undefined)) {
+        if (options.source === undefined || (pd.data.mode === "diff" && options.diff === undefined)) {
             return;
         }
         // this logic attempts to prevent writes to localStorage if they are likely to
         // exceed 5mb of storage
 
-        if (api.mode === "beautify") {
-            codesize = api.source.length + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.pars + pd.data.sourceLength.anal;
-            if (api.source.length < 2096000 && codesize < 4800000) {
-                localStorage.codeBeautify = api.source;
-                pd.data.sourceLength.beau = api.source.length;
+        if (options.mode === "beautify") {
+            codesize = options.source.length + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.pars + pd.data.sourceLength.anal;
+            if (options.source.length < 2096000 && codesize < 4800000) {
+                localStorage.codeBeautify = options.source;
+                pd.data.sourceLength.beau = options.source.length;
             } else {
                 localStorage.codeBeautify = "";
                 pd.data.sourceLength.beau = 0;
             }
-        } else if (api.mode === "minify") {
-            codesize = api.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.pars + pd.data.sourceLength.anal;
-            if (api.source.length < 2096000 && codesize < 4800000) {
-                localStorage.codeMinify   = api.source;
-                pd.data.sourceLength.minn = api.source.length;
+        } else if (options.mode === "minify") {
+            codesize = options.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.pars + pd.data.sourceLength.anal;
+            if (options.source.length < 2096000 && codesize < 4800000) {
+                localStorage.codeMinify   = options.source;
+                pd.data.sourceLength.minn = options.source.length;
             } else {
                 localStorage.codeMinify   = "";
                 pd.data.sourceLength.minn = 0;
             }
-        } else if (api.mode === "parse") {
-            codesize = api.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.anal;
-            if (api.source.length < 2096000 && codesize < 4800000) {
-                localStorage.codeParse    = api.source;
-                pd.data.sourceLength.pars = api.source.length;
+        } else if (options.mode === "parse") {
+            codesize = options.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.anal;
+            if (options.source.length < 2096000 && codesize < 4800000) {
+                localStorage.codeParse    = options.source;
+                pd.data.sourceLength.pars = options.source.length;
             } else {
                 localStorage.codeParse    = "";
                 pd.data.sourceLength.pars = 0;
             }
-        } else if (api.mode === "analysis") {
-            codesize = api.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.pars;
-            if (api.source.length < 2096000 && codesize < 4800000) {
-                localStorage.codeAnalysis = api.source;
-                pd.data.sourceLength.anal = api.source.length;
+        } else if (options.mode === "analysis") {
+            codesize = options.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.pars;
+            if (options.source.length < 2096000 && codesize < 4800000) {
+                localStorage.codeAnalysis = options.source;
+                pd.data.sourceLength.anal = options.source.length;
             } else {
                 localStorage.codeAnalysis = "";
                 pd.data.sourceLength.anal = 0;
             }
-        } else if (api.mode === "diff") {
-            codesize = pd.data.sourceLength.beau + pd.data.sourceLength.minn + pd.data.sourceLength.pars + pd.data.sourceLength.anal + api.source.length + api.diff.length;
-            if (api.source.length < 2096000 && api.diff.length < 2096000 && codesize < 4800000) {
-                localStorage.codeDiffBase     = api.source;
-                localStorage.codeDiffNew      = api.diff;
-                pd.data.sourceLength.diffBase = api.source.length;
-                pd.data.sourceLength.diffNew  = api.diff.length;
+        } else if (options.mode === "diff") {
+            codesize = pd.data.sourceLength.beau + pd.data.sourceLength.minn + pd.data.sourceLength.pars + pd.data.sourceLength.anal + options.source.length + options.diff.length;
+            if (options.source.length < 2096000 && options.diff.length < 2096000 && codesize < 4800000) {
+                localStorage.codeDiffBase     = options.source;
+                localStorage.codeDiffNew      = options.diff;
+                pd.data.sourceLength.diffBase = options.source.length;
+                pd.data.sourceLength.diffNew  = options.diff.length;
             } else {
                 localStorage.codeDiffBase     = "";
                 localStorage.codeDiffNew      = "";
@@ -6937,10 +6278,10 @@
             // sometimes the Ace getValue method fires too early on copy/paste.  I put in a
             // 50ms delay in this case to prevent operations from old input
 
-            if (pd.test.ace === true && api.mode !== "diff") {
-                if (api.mode === "beautify") {
+            if (pd.test.ace === true && options.mode !== "diff") {
+                if (options.mode === "beautify") {
                     setTimeout(function dom__event_recycle_beautifyPromise():void {
-                        api.source     = pd
+                        options.source     = pd
                             .ace
                             .beauIn
                             .getValue();
@@ -6949,17 +6290,17 @@
                                 .app
                                 .langkey(false, pd.ace.beauIn, "")
                             : lang;
-                        api.lang = lang[0];
-                        api.lexer = lang[1];
-                        pd.data.source = api.source;
+                        options.lang = lang[0];
+                        options.lexer = lang[1];
+                        pd.data.source = options.source;
                         pd.data.diff   = "";
-                        output         = prettydiff.app(api);
+                        output         = prettydiff.app();
                         execOutput();
                     }, 50);
                 }
-                if (api.mode === "minify") {
+                if (options.mode === "minify") {
                     setTimeout(function dom__event_recycle_minifyPromise():void {
-                        api.source     = pd
+                        options.source     = pd
                             .ace
                             .minnIn
                             .getValue();
@@ -6968,17 +6309,17 @@
                                 .app
                                 .langkey(false, pd.ace.beauIn, "")
                             : lang;
-                        api.lang = lang[0];
-                        api.lexer = lang[1];
-                        pd.data.source = api.source;
+                        options.lang = lang[0];
+                        options.lexer = lang[1];
+                        pd.data.source = options.source;
                         pd.data.diff   = "";
-                        output         = prettydiff.app(api);
+                        output         = prettydiff.app();
                         execOutput();
                     }, 50);
                 }
-                if (api.mode === "parse") {
+                if (options.mode === "parse") {
                     setTimeout(function dom__event_recycle_parsePromise():void {
-                        api.source     = pd
+                        options.source     = pd
                             .ace
                             .parsIn
                             .getValue();
@@ -6987,17 +6328,17 @@
                                 .app
                                 .langkey(false, pd.ace.beauIn, "")
                             : lang;
-                        api.lang = lang[0];
-                        api.lexer = lang[1];
-                        pd.data.source = api.source;
+                        options.lang = lang[0];
+                        options.lexer = lang[1];
+                        pd.data.source = options.source;
                         pd.data.diff   = "";
-                        output         = prettydiff.app(api);
+                        output         = prettydiff.app();
                         execOutput();
                     }, 50);
                 }
-                if (api.mode === "analysis") {
+                if (options.mode === "analysis") {
                     setTimeout(function dom__event_recycle_analysisPromise():void {
-                        api.source     = pd
+                        options.source     = pd
                             .ace
                             .analIn
                             .getValue();
@@ -7006,16 +6347,16 @@
                                 .app
                                 .langkey(false, pd.ace.beauIn, "")
                             : lang;
-                        api.lang = lang[0];
-                        api.lexer = lang[1];
-                        pd.data.source = api.source;
+                        options.lang = lang[0];
+                        options.lexer = lang[1];
+                        pd.data.source = options.source;
                         pd.data.diff   = "";
-                        output         = prettydiff.app(api);
+                        output         = prettydiff.app();
                         execOutput();
                     }, 50);
                 }
             } else {
-                pd.data.source = api.source;
+                pd.data.source = options.source;
                 if (pd.data.langvalue[1] === "text") {
                     lang = ["text", "text", "Plain Text"];
                 } else if (pd.data.langvalue[1] === "csv") {
@@ -7028,17 +6369,17 @@
                     lang = pd
                         .app
                         .langkey(false, {
-                            value: api.source
+                            value: options.source
                         }, "");
                 }
-                api.lang = lang[0];
-                api.lexer = lang[1];
+                options.lang = lang[0];
+                options.lexer = lang[1];
                 if (pd.data.mode === "diff") {
-                    pd.data.diff = api.diff;
+                    pd.data.diff = options.diff;
                 } else {
                     pd.data.diff = "";
                 }
-                output = prettydiff.app(api);
+                output = prettydiff.app();
                 execOutput();
             }
         }

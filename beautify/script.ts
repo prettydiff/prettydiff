@@ -3,6 +3,118 @@
     "use strict";
     const prettydiff = global.prettydiff,
         script = function beautify_script(options: options):string {
+            (function beautify_script_options() {
+                let styleguide = {
+                        airbnb: function jspretty__options_styleairbnb() {
+                            options.bracepadding = true;
+                            options.correct      = true;
+                            options.endcomma     = "always";
+                            options.inchar       = " ";
+                            options.insize       = 2;
+                            options.preserve     = 1;
+                            options.quoteConvert = "single";
+                            options.varword      = "each";
+                            options.wrap         = 80;
+                        },
+                        crockford: function jspretty__options_stylecrockford() {
+                            options.bracepadding  = false;
+                            options.correct       = true;
+                            options.elseline      = false;
+                            options.endcomma      = "never";
+                            options.inchar        = " ";
+                            options.insize        = 4;
+                            options.nocaseindent  = true;
+                            options.nochainindent = false;
+                            options.space         = true;
+                            options.varword       = "each";
+                            options.vertical            = false;
+                        },
+                        google: function jspretty__options_stylegoogle() {
+                            options.correct      = true;
+                            options.inchar       = " ";
+                            options.insize       = 4;
+                            options.preserve     = 1;
+                            options.quoteConvert = "single";
+                            options.vertical           = false;
+                            options.wrap         = -1;
+                        },
+                        jquery: function jspretty__options_stylejquery() {
+                            options.bracepadding = true;
+                            options.correct      = true;
+                            options.inchar       = "\u0009";
+                            options.insize       = 1;
+                            options.quoteConvert = "double";
+                            options.varword      = "each";
+                            options.wrap         = 80;
+                        },
+                        jslint: this.crockford,
+                        mrdoobs: function jspretty__options_stylemrdoobs() {
+                            options.braceline    = true;
+                            options.bracepadding = true;
+                            options.correct      = true;
+                            options.inchar       = "\u0009";
+                            options.insize       = 1;
+                            options.vertical           = false;
+                        },
+                        mediawiki: function jspretty__options_stylemediawiki() {
+                            options.bracepadding = true;
+                            options.correct      = true;
+                            options.inchar       = "\u0009";
+                            options.insize       = 1;
+                            options.preserve     = 1;
+                            options.quoteConvert = "single";
+                            options.space        = false;
+                            options.wrap         = 80;
+                        },
+                        meteor: function jspretty__options_stylemeteor() {
+                            options.correct = true;
+                            options.inchar  = " ";
+                            options.insize  = 2;
+                            options.wrap    = 80;
+                        },
+                        yandex: function jspretty__options_styleyandex() {
+                            options.bracepadding = false;
+                            options.correct      = true;
+                            options.quoteConvert = "single";
+                            options.varword      = "each";
+                            options.vertical           = false;
+                        }
+                    },
+                    brace_style = {
+                        collapse: function jspretty__options_collapse() {
+                            options.braceline    = false;
+                            options.bracepadding = false;
+                            options.braces       = false;
+                            options.formatObject = "indent";
+                            options.neverflatten = true;
+                        },
+                        "collapse-preserve-inline": function jspretty__options_collapseInline() {
+                            options.braceline    = false;
+                            options.bracepadding = true;
+                            options.braces       = false;
+                            options.formatObject = "inline";
+                            options.neverflatten = false;
+                        },
+                        expand: function jspretty__options_expand() {
+                            options.braceline    = false;
+                            options.bracepadding = false;
+                            options.braces       = true;
+                            options.formatObject = "indent";
+                            options.neverflatten = true;
+                        }
+                    };
+                if (styleguide[options.styleguide] !== undefined) {
+                    styleguide[options.styleguide]();
+                }
+                if (brace_style[options.brace_style] !== undefined) {
+                    brace_style[options.brace_style]();
+                }
+                if (options.lang === "json") {
+                    options.wrap = 0;
+                } else if (options.lang === "titanium") {
+                    options.correct = false;
+                }
+            }());
             const data:parsedArray = options.parsed,
                 levels:number[] = (function beautify_script_level():number[] {
                     let a             = 0, //will store the current level of indentation

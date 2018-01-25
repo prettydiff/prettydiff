@@ -1,4 +1,4 @@
-///<reference path="node_modules/parse-framework/index.d.ts" />
+
 interface record {
     begin: number;
     lexer: string;
@@ -38,7 +38,8 @@ interface options {
     conditional?: boolean;
     content?: boolean;
     context?: number;
-    cr?: boolean;
+    correct?: boolean;
+    crlf?: boolean;
     cssinsertlines?: boolean;
     csvchar?: string;
     diff?: string;
@@ -49,12 +50,12 @@ interface options {
     diffview?: "inline" | "sidebyside";
     elseline?: boolean;
     endcomma?: "always" | "multiline" | "never";
-    fix?: boolean;
     formatArray?: "default" | "indent" | "inline";
     formatObject?: "default" | "indent" | "inline";
     force_attribute?: boolean;
     force_indent?: boolean;
     functionname?: boolean;
+    functions: any;
     inchar?: string;
     inlevel?: number;
     insize?: number;
@@ -149,7 +150,7 @@ interface prettydiff {
     analyze: {
         [key: string]: library;
     };
-    app(options:options): string;
+    app(): string;
     beautify: {
         [key: string]: library;
     };
@@ -161,7 +162,7 @@ interface prettydiff {
         [key: string]: library;
     };
     meta?: {};
-    options?: {};
+    options?: options;
 }
 interface meta {
     error: string;
@@ -184,9 +185,8 @@ interface compareStore extends Array<[number, number]>{
 }
 
 interface Window {
-    MyNamespace: any;
     prettydiff: prettydiff;
-    parseFramework: parseFramework;
+    parseFramework: any;
 }
 interface pdNode {
     fs: "fs";
@@ -197,7 +197,7 @@ interface pdNode {
 declare var window: Window;
 declare module NodeJS {
     interface Global {
-        parseFramework: parseFramework;
+        parseFramework: any;
         prettydiff: prettydiff
     }
 }
