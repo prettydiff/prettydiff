@@ -8,7 +8,7 @@
                 mixin:boolean    = false,
                 a:number        = 0;
             const data:parsedArray = options.parsed,
-                colorNames:any = {
+                /*colorNames:any = {
                     aliceblue           : 0.9288006825347457,
                     antiquewhite        : 0.8464695170775405,
                     aqua                : 0.7874,
@@ -156,7 +156,7 @@
                     whitesmoke          : 0.913098651793419,
                     yellow              : 0.9278,
                     yellowgreen         : 0.5076295720870697
-                },
+                },*/
                 lf         = (options.crlf === true)
                     ? "\r\n"
                     : "\n",

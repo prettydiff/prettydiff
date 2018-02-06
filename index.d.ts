@@ -25,6 +25,10 @@ interface optionFunctions {
 
 }
 type mode = "analysis" | "beautify" | "diff" | "minify" | "parse";
+interface optionDef {
+    definitions: any;
+    binaryCheck: RegExp;
+}
 interface options {
     accessibility?: boolean;
     api?: "dom" | "node";
@@ -55,7 +59,6 @@ interface options {
     force_attribute?: boolean;
     force_indent?: boolean;
     functionname?: boolean;
-    functions: any;
     inchar?: string;
     inlevel?: number;
     insize?: number;
@@ -162,7 +165,7 @@ interface prettydiff {
         [key: string]: library;
     };
     meta?: {};
-    options?: options;
+    optionDef?: optionDef;
 }
 interface meta {
     error: string;

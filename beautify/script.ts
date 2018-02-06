@@ -5,7 +5,7 @@
         script = function beautify_script(options: options):string {
             (function beautify_script_options() {
                 let styleguide = {
-                        airbnb: function jspretty__options_styleairbnb() {
+                        airbnb: function beautify_script_options_styleairbnb() {
                             options.bracepadding = true;
                             options.correct      = true;
                             options.endcomma     = "always";
@@ -16,7 +16,7 @@
                             options.varword      = "each";
                             options.wrap         = 80;
                         },
-                        crockford: function jspretty__options_stylecrockford() {
+                        crockford: function beautify_script_options_stylecrockford() {
                             options.bracepadding  = false;
                             options.correct       = true;
                             options.elseline      = false;
@@ -29,7 +29,7 @@
                             options.varword       = "each";
                             options.vertical            = false;
                         },
-                        google: function jspretty__options_stylegoogle() {
+                        google: function beautify_script_options_stylegoogle() {
                             options.correct      = true;
                             options.inchar       = " ";
                             options.insize       = 4;
@@ -38,7 +38,7 @@
                             options.vertical           = false;
                             options.wrap         = -1;
                         },
-                        jquery: function jspretty__options_stylejquery() {
+                        jquery: function beautify_script_options_stylejquery() {
                             options.bracepadding = true;
                             options.correct      = true;
                             options.inchar       = "\u0009";
@@ -47,8 +47,20 @@
                             options.varword      = "each";
                             options.wrap         = 80;
                         },
-                        jslint: this.crockford,
-                        mrdoobs: function jspretty__options_stylemrdoobs() {
+                        jslint: function beautify_script_options_stylejslint() {
+                            options.bracepadding  = false;
+                            options.correct       = true;
+                            options.elseline      = false;
+                            options.endcomma      = "never";
+                            options.inchar        = " ";
+                            options.insize        = 4;
+                            options.nocaseindent  = true;
+                            options.nochainindent = false;
+                            options.space         = true;
+                            options.varword       = "each";
+                            options.vertical            = false;
+                        },
+                        mrdoobs: function beautify_script_options_stylemrdoobs() {
                             options.braceline    = true;
                             options.bracepadding = true;
                             options.correct      = true;
@@ -56,7 +68,7 @@
                             options.insize       = 1;
                             options.vertical           = false;
                         },
-                        mediawiki: function jspretty__options_stylemediawiki() {
+                        mediawiki: function beautify_script_options_stylemediawiki() {
                             options.bracepadding = true;
                             options.correct      = true;
                             options.inchar       = "\u0009";
@@ -66,13 +78,13 @@
                             options.space        = false;
                             options.wrap         = 80;
                         },
-                        meteor: function jspretty__options_stylemeteor() {
+                        meteor: function beautify_script_options_stylemeteor() {
                             options.correct = true;
                             options.inchar  = " ";
                             options.insize  = 2;
                             options.wrap    = 80;
                         },
-                        yandex: function jspretty__options_styleyandex() {
+                        yandex: function beautify_script_options_styleyandex() {
                             options.bracepadding = false;
                             options.correct      = true;
                             options.quoteConvert = "single";
@@ -81,21 +93,21 @@
                         }
                     },
                     brace_style = {
-                        collapse: function jspretty__options_collapse() {
+                        collapse: function beautify_brace_options_collapse() {
                             options.braceline    = false;
                             options.bracepadding = false;
                             options.braces       = false;
                             options.formatObject = "indent";
                             options.neverflatten = true;
                         },
-                        "collapse-preserve-inline": function jspretty__options_collapseInline() {
+                        "collapse-preserve-inline": function beautify_brace_options_collapseInline() {
                             options.braceline    = false;
                             options.bracepadding = true;
                             options.braces       = false;
                             options.formatObject = "inline";
                             options.neverflatten = false;
                         },
-                        expand: function jspretty__options_expand() {
+                        expand: function beautify_brace_options_expand() {
                             options.braceline    = false;
                             options.bracepadding = false;
                             options.braces       = true;
@@ -258,7 +270,7 @@
                                     b   = b + 1;
                                     x   = x + 1;
                                 },
-                                tokenpush = function jspretty_beautify_strwrap_tokenpush(toke:string, type:string):void {
+                                tokenpush = function beautify_script_strwrap_tokenpush(toke:string, type:string):void {
                                     data.token.splice(a, 0, toke);
                                     data.types.splice(a, 0, type);
                                     data.lines.splice(a, 0, lin);
@@ -559,7 +571,7 @@
                             const ei:number[]           = (extraindent[extraindent.length - 1] === undefined)
                                     ? []
                                     : extraindent[extraindent.length - 1],
-                                propertybreak = function jspretty__beautify_separator_propertybreak():void {
+                                propertybreak = function beautify_script_separator_propertybreak():void {
                                     let c:number = a - 2,
                                         d:number = data.begin[a],
                                         e:number = 1;
@@ -1433,7 +1445,7 @@
                             assignlist.pop();
                         },
                         operator      = function beautify_script_operator():void {
-                            var ei:number[] = (extraindent[extraindent.length - 1] === undefined)
+                            const ei:number[] = (extraindent[extraindent.length - 1] === undefined)
                                 ? []
                                 : extraindent[extraindent.length - 1];
                             if (ei.length > 0 && ei[ei.length - 1] > -1 && data.stack[a] === "array") {
@@ -1755,14 +1767,12 @@
                                         }
                                         level.push(-10);
                                         return;
-                                    } else {
-                                        level.push(ind);
-                                        return;
                                     }
-                                } else {
-                                    level.push(-10);
+                                    level.push(ind);
                                     return;
                                 }
+                                level.push(-10);
+                                return;
                             }
                             if (data.types[a - 1] !== "comment" && data.types[a - 1] !== "comment-inline") {
                                 if (ltoke === "(") {
@@ -1873,7 +1883,7 @@
                             level.push(-10);
                         },
                         word          = function beautify_script_word():void {
-                            var next    = data.token[a + 1],
+                            const next    = data.token[a + 1],
                                 compare = (
                                     next !== undefined && next !== "==" && next !== "===" && next !== "!=" && next !== "!==" && next !== ">=" && next !== "<=" && next.indexOf("=") > -1
                                 );
@@ -2010,26 +2020,25 @@
                                 }
                             } else if (ctoke === "while" && (ltoke === "}" || ltoke === "x}")) {
                                 //verify if this is a do/while block
-                                (function jspretty__beautify_word_curlyBrace() {
-                                    var c = 0,
-                                        d = 0;
-                                    for (c = a - 1; c > -1; c = c - 1) {
-                                        if (data.token[c] === "}" || data.token[c] === "x}") {
-                                            d = d + 1;
-                                        }
-                                        if (data.token[c] === "{" || data.token[c] === "x{") {
-                                            d = d - 1;
-                                        }
-                                        if (d === 0) {
-                                            if (data.token[c - 1] === "do") {
-                                                level[a - 1] = -10;
-                                                break;
-                                            }
-                                            level[a - 1] = indent;
+                                let c = a - 1,
+                                    d = 0;
+                                do {
+                                    if (data.token[c] === "}" || data.token[c] === "x}") {
+                                        d = d + 1;
+                                    }
+                                    if (data.token[c] === "{" || data.token[c] === "x{") {
+                                        d = d - 1;
+                                    }
+                                    if (d === 0) {
+                                        if (data.token[c - 1] === "do") {
+                                            level[a - 1] = -10;
                                             break;
                                         }
+                                        level[a - 1] = indent;
+                                        break;
                                     }
-                                }());
+                                    c = c - 1;
+                                } while (c > -1);
                             } else if (ctoke === "in" || (((ctoke === "else" && options.elseline === false) || ctoke === "catch") && (ltoke === "}" || ltoke === "x}"))) {
                                 level[a - 1] = -10;
                             } else if (ctoke === "var" || ctoke === "let" || ctoke === "const") {

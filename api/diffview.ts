@@ -1,8 +1,7 @@
 /*global global*/
 (function () {
     "use strict";
-    const prettydiff = global.prettydiff,
-        diffview = function diffview_(options:options):[string, number, number] {
+    const diffview = function diffview_(options:options):[string, number, number] {
             let errorout:number      = 0,
                 //diffline is a count of lines that are not equal
                 diffline:number      = 0,
@@ -1272,7 +1271,10 @@
                         clidata.push("</li></ol>");
                         return [data.join("").replace("</li>", "<ol class=\"diffcli\">"), foldstart, diffline];
                     }
-                    return [clidata.join(""), foldstart, diffline];
+                    if (options.crlf === true) {
+                        return [clidata.join("\r\n"), foldstart, diffline];
+                    } 
+                    return [clidata.join("\n"), foldstart, diffline];
                 }
                 if (foldstart > -1) {
                     data[0][foldstart] = data[0][foldstart].replace("xxx", String(foldcount + rcount));

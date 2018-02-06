@@ -1,0 +1,45 @@
+{
+    "env": {
+        "browser": true,
+        "es6": true,
+        "node": true
+    },
+    "extends": "eslint:recommended",
+    "rules": {
+        "curly": "error",
+        "eqeqeq": "error",
+        "max-params": [
+            "error",
+            3
+        ],
+        "one-var": [
+            "error",
+            "always"
+        ],
+        "operator-assignment": [
+            "error",
+            "never"
+        ],
+        "no-console": "error",
+        "no-continue": "error",
+        "no-else-return": "error",
+        "no-empty": "error",
+        "no-invalid-this": "error",
+        "no-new": "error",
+        "no-plusplus": "error",
+        "no-var": "error",
+        "semi": [
+            "error",
+            "always"
+        ],
+        "strict": [
+            "error",
+            "function"
+        ],
+        "wrap-iife": [
+            "error",
+            "outside"
+        ],
+        "wrap-regex": "error"
+    }
+}

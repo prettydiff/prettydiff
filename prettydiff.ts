@@ -6,8 +6,7 @@
     "use strict";
 
     const prettydiff = function prettydiff_():string {
-        const options:options = global.prettydiff.options;
-        let prettyout:string = "",
+       /* let prettyout:string = "",
             sourceout:string = "",
             diffout:string = "",
             parseOptions = {
@@ -41,7 +40,8 @@
             return str;
         }
         prettyout = fun(options);
-        return prettyout;
+        return prettyout;*/
+        return "";
     };
     global.prettydiff = {
         analyze: {},

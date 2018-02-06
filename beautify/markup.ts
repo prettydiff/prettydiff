@@ -374,16 +374,13 @@
                         // populates attributes onto start and singleton tags it also checks to see if a
                         // tag or content should wrap
                         wrapper      = function beautify_markup_apply_wrapper():void {
-                            const tname:string  = tagName(data.token[x]),
-                                list:string[] = data.token[x].replace(/\s+/g, " ").split(" "),
+                            const list:string[] = data.token[x].replace(/\s+/g, " ").split(" "),
                                 len:number = list.length;
+                                //tname:string  = tagName(data.token[x]),
                             let b:number      = 0,
                                 xlen:number   = 0,
                                 lev:number    = level[x],
-                                atty:string   = "",
                                 string:string = "",
-                                indy:string   = "",
-                                name:string   = "",
                                 text:string[]   = [];
                             if (lev === -20) {
                                 b = x;
