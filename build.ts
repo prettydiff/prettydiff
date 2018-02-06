@@ -1,4 +1,7 @@
-(function build() {
+/*jslint node:true*/
+/*eslint-env node*/
+/*eslint no-console: 0*/
+(function build():void {
     "use strict";
     const order = [
             "typescript",
@@ -323,5 +326,4 @@
     require(`${js}prettydiff`);
     console.log("");
     next();
-    return "";
 }());

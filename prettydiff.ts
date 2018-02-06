@@ -2,7 +2,7 @@
 /*eslint-env node*/
 /*global global, window*/
 
-(function prettydiff_init() {
+(function prettydiff_init():void {
     "use strict";
 
     const prettydiff = function prettydiff_():string {

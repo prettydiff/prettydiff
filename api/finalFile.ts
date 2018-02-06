@@ -1,5 +1,5 @@
 /*global global*/
-(function finalFile_init() {
+(function finalFile_init():void {
     "use strict";
     const finalFile:finalFile = {
         css   : {
@@ -1258,7 +1258,7 @@
                     "ort .diff h3,#prettydiff #report .beautify h3{margin:0}"
         },
         html  : {
-            body  : "/*]]>*\/</style></head><body id=\"prettydiff\" class=\"",
+            body  : "/\u002a]]>\u002a/</style></head><body id=\"prettydiff\" class=\"",
             color : "white",
             end   : "//]]>\r\n</script></body></html>",
             head  : "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><!DOCTYPE html PUBLIC \"-//W3C//DTD" +
@@ -1269,7 +1269,7 @@
                     "=\"canonical\" href=\"http://prettydiff.com/\" type=\"application/xhtml+xml\"/" +
                     "><meta http-equiv=\"Content-Type\" content=\"application/xhtml+xml;charset=UTF" +
                     "-8\"/><meta http-equiv=\"Content-Style-Type\" content=\"text/css\"/><style typ" +
-                    "e=\"text/css\">/*<![CDATA[*\/",
+                    "e=\"text/css\">/\u002a<![CDATA[\u002a/",
             intro : "\"><div class=\"contentarea\" id=\"report\"><section role=\"heading\"><h1><svg" +
                     " height=\"2000.000000pt\" id=\"pdlogo\" preserveAspectRatio=\"xMidYMid meet\" " +
                     "version=\"1.0\" viewBox=\"0 0 2000.000000 2000.000000\" width=\"2000.000000pt" +

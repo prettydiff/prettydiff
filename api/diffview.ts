@@ -1,5 +1,5 @@
 /*global global*/
-(function () {
+(function diffview_init():void {
     "use strict";
     const diffview = function diffview_(options:options):[string, number, number] {
             let errorout:number      = 0,

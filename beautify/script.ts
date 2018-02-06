@@ -1,5 +1,5 @@
 /*global global*/
-(function beautify_script_init() {
+(function beautify_script_init():void {
     "use strict";
     const prettydiff = global.prettydiff,
         script = function beautify_script(options: options):string {

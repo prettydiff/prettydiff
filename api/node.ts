@@ -2,9 +2,9 @@
 /*eslint-env node*/
 /*eslint no-console: 0*/
 /*global global */
-(function pdNodeLocal() {
+(function pdNodeLocal():void {
     "use strict";
-    const startTime:[number, number]      = process.hrtime(),
+    /*const startTime:[number, number]      = process.hrtime(),
         node:pdNode           = {
             fs   : require("fs"),
             http : require("http"),
@@ -19,7 +19,14 @@
             if (input.indexOf(":") > -1) {
                 input = input.slice(input.indexOf(":") + 1);
             }
+            if (input.charAt(input.length - 1) === "\"" || input.charAt(input.length - 1) === "'") {
+                input = input.slice(0, input.length - 1);
+            }
+            if (input.indexOf("http") === 0) {
+                return "http";
+            }
+            
         };
-    let sourcetype:string = "file",
-        difftype:string = "file";
+    let sourcetype:string = "",
+        difftype:string = "";*/
 }());

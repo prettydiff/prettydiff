@@ -1,4 +1,4 @@
-/*global __dirname, ace, define, global, module, process, require, WScript*/
+/*global __dirname, global, process, require*/
 /*jslint for: true, this: true*/
 /*
 
@@ -26,7 +26,7 @@
  * node          - parses node arguments into options for submission to the validate function
  * binary        - a handy dandy tool to remove control characters from text output
 */
-(function options_init() {
+(function options_init():void {
     "use strict";
     const optionDef:optionDef = {
             definitions: {
