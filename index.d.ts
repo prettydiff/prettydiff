@@ -27,6 +27,7 @@ interface optionFunctions {
 type mode = "analysis" | "beautify" | "diff" | "minify" | "parse";
 interface optionDef {
     binaryCheck: RegExp;
+    buildDocumentation: string;
     buildDomDefaults: string;
     buildDomInterface: string;
     buildNodeDefaults: string;

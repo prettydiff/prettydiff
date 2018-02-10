@@ -122,91 +122,26 @@
                     key twice to focus on the previous element or press
                     <em>control</em>
                     twice to focus away from this textarea.</p>
-                <div id="diffBase">
-                    <h2>Base Text</h2>
-                    <p class="labeltext"><input id="baselabel" type="text" value="base"/>
-                        <label for="baselabel">Base label (optional)</label>
+                <h2>Compare Code</h2>
+                <div class="input">
+                    <p class="file">
+                        <label for="inputfile">Compare base file</label>
+                        <input id="inputfile" multiple="multiple" type="file"/>
                     </p>
-                    <p class="file"><input id="diffbasefile" multiple="multiple" type="file"/>
-                        <label for="diffbasefile">Base source file</label>
-                    </p>
-                    <p class="input">
-                        <label class="difflabel" for="baseText">Base code for diff</label>
-                        <textarea cols="80" id="baseText" rows="10" wrap="off"></textarea>
+                    <p>
+                        <label for="input">Compare base code</label>
+                        <textarea cols="80" id="input" rows="10" wrap="off"></textarea>
                     </p>
                 </div>
-                <div id="diffNew">
-                    <h2>New Text</h2>
-                    <p class="labeltext"><input id="newlabel" type="text" value="new"/>
-                        <label for="newlabel">New label (optional)</label>
+                <div class="output">
+                    <p class="file">
+                        <label for="outputfile">Compare new file</label>
+                        <input id="outputfile" multiple="multiple" type="file"/>
                     </p>
-                    <p class="file"><input id="diffnewfile" multiple="multiple" type="file"/>
-                        <label for="diffnewfile">New source file</label>
+                    <p>
+                        <label class="outputlabel" for="output">Compare new code</label>
+                        <textarea cols="40" id="output" rows="10" wrap="off"></textarea>
                     </p>
-                    <p class="input">
-                        <label class="difflabel" for="newText">New code for diff</label>
-                        <textarea cols="80" id="newText" rows="10" wrap="off"></textarea>
-                    </p>
-                </div>
-                <div id="Beautify" style="display:none;">
-                    <h2>Beautify Code</h2>
-                    <p class="file"><input id="beautyfile" multiple="multiple" type="file"/>
-                        <label for="beautyfile">Beautify local file</label>
-                    </p>
-                    <p class="input">
-                        <label for="beautyinput">Beautification input</label>
-                        <textarea cols="80" id="beautyinput" rows="10" wrap="off"></textarea>
-                    </p>
-                    <p class="output">
-                        <label class="outputlabel" for="beautyoutput">Beautification output (read only)</label>
-                        <textarea cols="40" id="beautyoutput" readonly="readonly" rows="10" wrap="off"></textarea>
-                    </p>
-                    <span class="clear"></span>
-                </div>
-                <div id="Minify" style="display:none;">
-                    <h2>Minify Code</h2>
-                    <p class="file"><input id="minifyfile" multiple="multiple" type="file"/>
-                        <label for="minifyfile">Minify local file</label>
-                    </p>
-                    <p class="input">
-                        <label for="minifyinput">Minification input</label>
-                        <textarea cols="80" id="minifyinput" rows="10" wrap="off"></textarea>
-                    </p>
-                    <p class="output">
-                        <label class="outputlabel" for="minifyoutput">Minification output (read only)</label>
-                        <textarea cols="40" id="minifyoutput" readonly="readonly" rows="10" wrap="off"></textarea>
-                    </p>
-                    <span class="clear"></span>
-                </div>
-                <div id="Parse" style="display:none;">
-                    <h2>Parse Code</h2>
-                    <p class="file"><input id="parsefile" multiple="multiple" type="file"/>
-                        <label for="parsefile">Parse local file</label>
-                    </p>
-                    <p class="input">
-                        <label for="parseinput">Parse input</label>
-                        <textarea cols="80" id="parseinput" rows="10" wrap="off"></textarea>
-                    </p>
-                    <p class="output">
-                        <label class="outputlabel" for="parseoutput">Parse output (read only)</label>
-                        <textarea cols="40" id="parseoutput" readonly="readonly" rows="10" wrap="off"></textarea>
-                    </p>
-                    <span class="clear"></span>
-                </div>
-                <div id="Analysis" style="display:none;">
-                    <h2>Analyze Code</h2>
-                    <p class="file"><input id="analysisfile" multiple="multiple" type="file"/>
-                        <label for="analysisfile">Parse local file</label>
-                    </p>
-                    <p class="input">
-                        <label for="analysisinput">Parse input</label>
-                        <textarea cols="80" id="analysisinput" rows="10" wrap="off"></textarea>
-                    </p>
-                    <p class="output">
-                        <label class="outputlabel" for="analysisoutput">Parse output (read only)</label>
-                        <textarea cols="40" id="analysisoutput" readonly="readonly" rows="10" wrap="off"></textarea>
-                    </p>
-                    <span class="clear"></span>
                 </div>
                 <span class="clear"></span>
             </div>
@@ -412,8 +347,10 @@
                 </p>
             </div>
             <div id="addOptions" role="toolbar">
+                <ul>
                 <!-- documented options start -->
                 <!-- documented options end -->
+                </ul>
                 <p class="button">
                     <button type="button" value="Execute">Execute</button>
                 </p>

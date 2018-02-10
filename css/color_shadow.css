@@ -62,7 +62,8 @@
 #prettydiff.shadow .diff-right{border-color:#444}
 #prettydiff.shadow .count li{border-color:#333}
 #prettydiff.shadow .count{background:#555;border-color:#333}
-#prettydiff.shadow li h4{color:#ff0}
+#prettydiff.shadow li h4,
+#prettydiff.shadow li h5{color:#ff0}
 #prettydiff.shadow code{background:#000;border-color:#000;color:#ddd}
 #prettydiff.shadow ol.segment h4 strong{color:#c00}
 #prettydiff.shadow .data .delete{background:#300}

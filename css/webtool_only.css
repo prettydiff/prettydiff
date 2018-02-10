@@ -1,3 +1,7 @@
+/*#prettydiff.white #webtool .output textarea{background:#ddd} #eee
+#prettydiff.canvas #webtool .output textarea{background:#ccccc8} #ddddd8
+#prettydiff.shadow #webtool .output textarea{background:#333} #222*/
+
 /*color - white, webtool only*/
 #prettydiff.white .filefocus,
 #prettydiff.white #feedreportbody .focus,
@@ -31,7 +35,6 @@
 #prettydiff.white .ace_gutter{background:#ddd;border-color:#999}
 #prettydiff.white #update{background:#ddd;border-color:#999}
 #prettydiff.white #reports h3 button{background:#ddd;border-color:#999;color:#555}
-#prettydiff.white #webtool .output textarea{background:#ddd}
 #prettydiff.white #reports h3 button:hover{background:#eee;border-color:#999;box-shadow:0 0.25em 0.5em #ccc;color:#666}
 #prettydiff.white .save{background:#fc0;border-color:#a30;color:#a30}
 #prettydiff.white .minimize{background:#fcc;border-color:#c00;color:#c00}
@@ -85,7 +88,6 @@
 #prettydiff.canvas #parseoutput,
 #prettydiff.canvas #analysisoutput{background:#ccccc8;border-color:#999}
 #prettydiff.canvas #update{background:#ddd;border-color:#999}
-#prettydiff.canvas #webtool .output textarea{background:#ccccc8}
 #prettydiff.canvas .save{background:#fc0;border-color:#a30;color:#a30}
 #prettydiff.canvas .minimize{background:#fcc;border-color:#c00;color:#c00}
 #prettydiff.canvas .maximize{background:#beb;border-color:#060;color:#060}
@@ -144,7 +146,6 @@
 #prettydiff.shadow #analysisoutput{background:#333;border-color:#666}
 #prettydiff.shadow #textareaTabKey,
 #prettydiff.shadow #update{background:#666;border-color:#999}
-#prettydiff.shadow #webtool .output textarea{background:#333}
 #prettydiff.shadow .save{background:#fc0;border-color:#a30;color:#a30}
 #prettydiff.shadow .minimize{background:#fcc;border-color:#c00;color:#c00}
 #prettydiff.shadow .maximize{background:#beb;border-color:#060;color:#060}
@@ -227,12 +228,6 @@
 #prettydiff #doc-content > div,
 #prettydiff #doc-content > div > div,
 #prettydiff #webtool #reports{border-style:none}
-#prettydiff #diffBase,
-#prettydiff #diffNew,
-#prettydiff #Beautify,
-#prettydiff #Minify,
-#prettydiff #Parse,
-#prettydiff #Analysis,
 #prettydiff #option_comment,
 #prettydiff #functionGroup,
 #prettydiff #headline,
@@ -322,27 +317,17 @@
 
 /*webtool - paragraphs containing textareas for code input/output*/
 #prettydiff #webtool .input,
-#prettydiff #webtool .output,
-#prettydiff #diffBase,
-#prettydiff #diffNew{clear:none;width:49%}
-#prettydiff #webtool .input,
-#prettydiff #diffBase{float:left}
-#prettydiff #webtool .output,
-#prettydiff #diffNew{float:right}
-#prettydiff #diffBase .input,
-#prettydiff #diffNew .input{float:none;width:100%}
-#prettydiff #webtool .output textarea,
-#prettydiff #diffNew textarea{margin-left:-0.2em}
+#prettydiff #webtool .output{clear:none;width:49%}
+#prettydiff #webtool .input{float:left}
+#prettydiff #webtool .output{float:right}
+#prettydiff #webtool .output textarea{margin-left:-0.2em}
 
 /*webtool - labels to textareas for code input/output*/
 #prettydiff #webtool .input label,
 #prettydiff #webtool .output label{display:block;font-weight:bold}
 
 /*webtool - file input*/
-#prettydiff #Beautify p.file,
-#prettydiff #Minify p.file,
-#prettydiff #Parse p.file,
-#prettydiff #Analysis p.file{clear:none;float:none;margin:0.5em 0 1em}
+#prettydiff p.file{clear:none;float:none;margin:0.5em 0 1em}
 #prettydiff .file input{padding:0 0.1em}
 #prettydiff .file input,
 #prettydiff .labeltext input{display:inline-block;margin:0 0.7em 0 0;width:16em}
@@ -350,11 +335,11 @@
 
 /*webtool - major section to contain textarea sections*/
 #prettydiff #codeInput{margin-bottom:1em;padding:1.2em}
-#prettydiff #codeInput #diffBase p,#codeInput #diffNew p{clear:both;float:none}
 #prettydiff #codeInput .input,
 #prettydiff #codeInput .output{margin:0}
 #prettydiff #codeInput label{font-size:1em}
 #prettydiff #codeInput textarea{font-size:1em;line-height:1.2em}
+#prettydiff #codeInput h2{display:block}
 
 /*webtool - accessibility alternate navigation messaging for keyboard users when a textarea gains focus*/
 #prettydiff #textareaTabKey{border-style:solid;border-width:0.1em;left:51%;margin:-1.1em 0 0 -0.2em;padding:0.5em;position:absolute;width:28em}

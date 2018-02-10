@@ -19,6 +19,11 @@
 #prettydiff .content-show {height:auto;position:static;width:auto}
 #prettydiff #documentation code{font-size:1em}
 #prettydiff #documentation li#report{background:transparent;line-height:inherit}
+#prettydiff #documentation li dt,
+#prettydiff #documentation li dd,
 #prettydiff #documentation li#report li,
 #prettydiff #documentation li#report h4{font-family:inherit;font-size:1em}
 #prettydiff #documentation li li em {font-weight:bold}
+#prettydiff #documentation #options ul {padding: 0 0 0 2em}
+#prettydiff #documentation #options ul li {padding: 0 0 0 2em}
+

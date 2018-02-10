@@ -57,7 +57,8 @@
 #prettydiff.canvas .count{background:#eed;border-color:#999}
 #prettydiff.canvas .count li.fold{color:#900}
 #prettydiff.canvas h2 button{background:#f8f8f8;box-shadow:0.1em 0.1em 0.25em #ddd}
-#prettydiff.canvas li h4{color:#00f}
+#prettydiff.canvas li h4,
+#prettydiff.canvas li h5{color:#06c}
 #prettydiff.canvas code{background:#eee;border-color:#eee;color:#009}
 #prettydiff.canvas ol.segment h4 strong{color:#c00}
 #prettydiff.canvas .data .delete{background:#ffd8d8}

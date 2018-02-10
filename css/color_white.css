@@ -51,7 +51,8 @@
 #prettydiff.white .count li.fold{color:#900}
 #prettydiff.white .count{background:#eed;border-color:#999}
 #prettydiff.white h2 button{background:#f8f8f8;box-shadow:0.1em 0.1em 0.25em #ddd}
-#prettydiff.white li h4{color:#00f}
+#prettydiff.white li h4,
+#prettydiff.white li h5{color:#33c}
 #prettydiff.white code{background:#eee;border-color:#eee;color:#009}
 #prettydiff.white ol.segment h4 strong{color:#c00}
 #prettydiff.white .data .delete{background:#ffd8d8}

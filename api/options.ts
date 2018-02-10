@@ -28,23 +28,76 @@
 */
 (function options_init():void {
     "use strict";
-    const binaryCheck   = (
+    const binaryCheck:RegExp   = (
             /\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u000b|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g
         ),
-        buildDefaults = function options_buildDefault(api):options {
-            const keys:string[] = Object.keys(optionDef.definitions),
-                keyslen:number = keys.length,
-                obj:any = {};
+        buildDefaults = function options_buildDefault(api):string {
+            const obj:any = {};
             let a:number = 0,
                 apikey = "";
             do {
-                apikey = optionDef.definitions[keys[a]].api;
+                apikey = definitions[keys[a]].api;
                 if (apikey === "any" || apikey === api) {
-                    obj[keys[a]] = optionDef.definitions[keys[a]].default;
+                    obj[keys[a]] = definitions[keys[a]].default;
                 }
                 a = a + 1;
             } while (a < keyslen);
-            return obj;
+            return JSON.stringify(obj);
+        },
+        buildDocumentation = function options_buildDocumentation():string {
+            const allOptions:string[] = [];
+            let a:number = 0,
+                b:number = 0,
+                vals:string[],
+                vallen:number,
+                item:string[],
+                optName:string,
+                opt;
+            do {
+                optName = keys[a];
+                opt = definitions[optName];
+                item = [`<li id="${optName}"> `];
+                item.push(`<h4>${optName}</h4> `);
+                item.push(`<ul><li><h5>Description</h5> `);
+                item.push(opt.definition);
+                item.push(`</li><li><h5>Environment</h5> `);
+                item.push(opt.api);
+                item.push(`</li><li><h5>Type</h5> `);
+                item.push(opt.type);
+                item.push(`</li><li><h5>Mode</h5> `);
+                item.push(opt.mode);
+                item.push(`</li><li><h5>Lexer</h5> `);
+                item.push(opt.lexer);
+                if (opt.values !== undefined) {
+                    b = 0;
+                    vals = Object.keys(opt.values);
+                    vallen = vals.length;
+                    item.push(`</li><li><h5>Accepted Values</h5><dl>`);
+                    do {
+                        item.push(`<dt>${vals[b]}</dt><dd>${opt.values[vals[b]]}</dd>`);
+                        b = b + 1;
+                    } while (b < vallen);
+                    item.push(`</dl>`);
+                }
+                item.push(`</li><li><h5>Default</h5> `);
+                item.push(opt.default);
+                item.push(`</li><li><h5>As labeled in the HTML tool</h5> `);
+                item.push(opt.label);
+                item.push(`</li></ul></li>`);
+                allOptions.push(item.join(""));
+                a = a + 1;
+            } while (a < keyslen);
+            return allOptions.join("");
+        },
+        buildDomInterface = function options_buildDomInterface():string {
+            const allItems:string[] = [];
+            let a:number = 0,
+                item:string[];
+            do {
+                item = [``];
+                a = a + 1;
+            } while (a < keyslen);
+            return "";
         },
         definitions = {
             accessibility    : {
@@ -104,7 +157,7 @@
                 default   : false
             },
             color          : {
-                api       : "node",
+                api       : "any",
                 mode      : "any",
                 lexer     : "any",
                 label     : "Color",
@@ -839,9 +892,13 @@
                 default   : 0
             }
         },
+        keys:string[] = Object.keys(definitions),
+        keyslen: number = keys.length,
         optionDef:optionDef = {
             binaryCheck: binaryCheck,
+            buildDocumentation: buildDocumentation(),
             buildDomDefaults: buildDefaults("dom"),
+            buildDomInterface: buildDomInterface(),
             buildNodeDefaults: buildDefaults("node"),
             definitions: definitions
         };

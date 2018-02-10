@@ -71,6 +71,13 @@
                 }
                 return document.getElementById(x);
             },
+            // start option defaults
+            options: {
+                lang: "",
+                lexer: "",
+                source: ""
+            },
+            // end option defaults
             test: {
                 // accessibility analysis is locked behind a flag, this param will bypass the
                 // flag
@@ -262,70 +269,18 @@
 
                 if (pd.test.ace === true) {
                     if (pd.data.node.codeDiffBase !== null) {
-                        pd.ace.diffBase = pd
+                        pd.ace.codeIn = pd
                             .app
-                            .aceApply("codeDiffBase", "input", true);
+                            .aceApply("codeIn", true);
                     }
-                    if (pd.data.node.codeDiffNew !== null) {
-                        pd.ace.diffNew = pd
+                    if (pd.data.node.output !== null) {
+                        pd.ace.codeOut = pd
                             .app
-                            .aceApply("codeDiffNew", "input", true);
-                    }
-                    if (pd.data.node.codeBeauIn !== null) {
-                        pd.ace.beauIn = pd
-                            .app
-                            .aceApply("codeBeauIn", "input", false);
-                    }
-                    if (pd.data.node.codeBeauOut !== null) {
-                        pd.ace.beauOut = pd
-                            .app
-                            .aceApply("codeBeauOut", "output", false);
-                        pd
-                            .ace
-                            .beauOut
-                            .setReadOnly(true);
-                    }
-                    if (pd.data.node.codeMinnIn !== null) {
-                        pd.ace.minnIn = pd
-                            .app
-                            .aceApply("codeMinnIn", "input", false);
-                    }
-                    if (pd.data.node.codeMinnOut !== null) {
-                        pd.ace.minnOut = pd
-                            .app
-                            .aceApply("codeMinnOut", "output", false);
-                        pd
-                            .ace
-                            .minnOut
-                            .setReadOnly(true);
-                    }
-                    if (pd.data.node.codeParsIn !== null) {
-                        pd.ace.parsIn = pd
-                            .app
-                            .aceApply("codeParsIn", "input", false);
-                    }
-                    if (pd.data.node.codeParsOut !== null) {
-                        pd.ace.parsOut = pd
-                            .app
-                            .aceApply("codeParsOut", "output", false);
-                        pd
-                            .ace
-                            .parsOut
-                            .setReadOnly(true);
-                    }
-                    if (pd.data.node.codeAnalIn !== null) {
-                        pd.ace.analIn = pd
-                            .app
-                            .aceApply("codeAnalIn", "input", false);
-                    }
-                    if (pd.data.node.codeAnalOut !== null) {
-                        pd.ace.analOut = pd
-                            .app
-                            .aceApply("codeAnalOut", "output", false);
-                        pd
-                            .ace
-                            .analOut
-                            .setReadOnly(true);
+                            .aceApply("codeOut", true);
+                            /*pd
+                                .ace
+                                .beauOut
+                                .setReadOnly(true);*/
                     }
                 }
 
@@ -972,81 +927,19 @@
                                 pd.app.insize(inputs[a]);
                             };
                             if (pd.data.settings[id] !== undefined && pd.data.settings[id] !== "4" && isNaN(pd.data.settings[id]) === false) {
-                                if (id === "diff-quan") {
-                                    if (pd.data.node.codeDiffBase !== null) {
-                                        pd
-                                            .ace
-                                            .diffBase
-                                            .getSession()
-                                            .setTabSize(Number(pd.data.settings[id]));
-                                    }
-                                    if (pd.data.node.codeDiffNew !== null) {
-                                        pd
-                                            .ace
-                                            .diffNew
-                                            .getSession()
-                                            .setTabSize(Number(pd.data.settings[id]));
-                                    }
-                                } else if (id === "beau-quan") {
-                                    if (pd.data.node.codeBeauIn !== null) {
-                                        pd
-                                            .ace
-                                            .beauIn
-                                            .getSession()
-                                            .setTabSize(Number(pd.data.settings[id]));
-                                    }
-                                    if (pd.data.node.codeBeauOut !== null) {
-                                        pd
-                                            .ace
-                                            .beauOut
-                                            .getSession()
-                                            .setTabSize(Number(pd.data.settings[id]));
-                                    }
-                                } else if (id === "minn-quan") {
-                                    if (pd.data.node.codeMinnIn !== null) {
-                                        pd
-                                            .ace
-                                            .minnIn
-                                            .getSession()
-                                            .setTabSize(Number(pd.data.settings[id]));
-                                    }
-                                    if (pd.data.node.codeMinnOut !== null) {
-                                        pd
-                                            .ace
-                                            .minnOut
-                                            .getSession()
-                                            .setTabSize(Number(pd.data.settings[id]));
-                                    }
-                                } else if (id === "pars-quan") {
-                                    if (pd.data.node.codeParsIn !== null) {
-                                        pd
-                                            .ace
-                                            .parsIn
-                                            .getSession()
-                                            .setTabSize(Number(pd.data.settings[id]));
-                                    }
-                                    if (pd.data.node.codeParsOut !== null) {
-                                        pd
-                                            .ace
-                                            .parsOut
-                                            .getSession()
-                                            .setTabSize(Number(pd.data.settings[id]));
-                                    }
-                                } else if (id === "anal-quan") {
-                                    if (pd.data.node.codeAnalIn !== null) {
-                                        pd
-                                            .ace
-                                            .analIn
-                                            .getSession()
-                                            .setTabSize(Number(pd.data.settings[id]));
-                                    }
-                                    if (pd.data.node.codeAnalOut !== null) {
-                                        pd
-                                            .ace
-                                            .analOut
-                                            .getSession()
-                                            .setTabSize(Number(pd.data.settings[id]));
-                                    }
+                                if (pd.data.node.codeIn !== null) {
+                                    pd
+                                        .ace
+                                        .codeIn
+                                        .getSession()
+                                        .setTabSize(Number(pd.data.settings[id]));
+                                }
+                                if (pd.data.node.codeOut !== null) {
+                                    pd
+                                        .ace
+                                        .codeOut
+                                        .getSession()
+                                        .setTabSize(Number(pd.data.settings[id]));
                                 }
                             }
                         } else {
@@ -1314,52 +1207,12 @@
                             if (pd.test.ace === true && c > -1) {
                                 pd
                                     .ace
-                                    .diffBase
+                                    .codeIn
                                     .getSession()
                                     .setMode("ace/mode/" + param[1]);
                                 pd
                                     .ace
-                                    .diffNew
-                                    .getSession()
-                                    .setMode("ace/mode/" + param[1]);
-                                pd
-                                    .ace
-                                    .beauIn
-                                    .getSession()
-                                    .setMode("ace/mode/" + param[1]);
-                                pd
-                                    .ace
-                                    .beauOut
-                                    .getSession()
-                                    .setMode("ace/mode/" + param[1]);
-                                pd
-                                    .ace
-                                    .minnIn
-                                    .getSession()
-                                    .setMode("ace/mode/" + param[1]);
-                                pd
-                                    .ace
-                                    .minnOut
-                                    .getSession()
-                                    .setMode("ace/mode/" + param[1]);
-                                pd
-                                    .ace
-                                    .parsIn
-                                    .getSession()
-                                    .setMode("ace/mode/" + param[1]);
-                                pd
-                                    .ace
-                                    .parsOut
-                                    .getSession()
-                                    .setMode("ace/mode/" + param[1]);
-                                pd
-                                    .ace
-                                    .analIn
-                                    .getSession()
-                                    .setMode("ace/mode/" + param[1]);
-                                pd
-                                    .ace
-                                    .analOut
+                                    .codeOut
                                     .getSession()
                                     .setMode("ace/mode/" + param[1]);
                             }
@@ -1427,42 +1280,12 @@
                             if (pd.test.ace === true) {
                                 pd
                                     .ace
-                                    .diffBase
+                                    .codeIn
                                     .getSession()
                                     .setMode("ace/mode/html");
                                 pd
                                     .ace
-                                    .diffNew
-                                    .getSession()
-                                    .setMode("ace/mode/html");
-                                pd
-                                    .ace
-                                    .beauIn
-                                    .getSession()
-                                    .setMode("ace/mode/html");
-                                pd
-                                    .ace
-                                    .beauOut
-                                    .getSession()
-                                    .setMode("ace/mode/html");
-                                pd
-                                    .ace
-                                    .minnIn
-                                    .getSession()
-                                    .setMode("ace/mode/html");
-                                pd
-                                    .ace
-                                    .minnOut
-                                    .getSession()
-                                    .setMode("ace/mode/html");
-                                pd
-                                    .ace
-                                    .parsIn
-                                    .getSession()
-                                    .setMode("ace/mode/html");
-                                pd
-                                    .ace
-                                    .parsOut
+                                    .codeOut
                                     .getSession()
                                     .setMode("ace/mode/html");
                             }
@@ -1471,93 +1294,23 @@
                         b = b + 1;
                     } while (b < paramLen);
                     if (source !== "") {
-                        if (pd.data.node.codeBeauIn !== null && pd.data.mode === "beau") {
+                        if (pd.data.node.codeIn !== null) {
                             if (pd.test.ace === true) {
                                 pd
                                     .ace
-                                    .beauIn
+                                    .codeIn
                                     .setValue(source);
                                 pd
                                     .ace
-                                    .beauIn
+                                    .codeIn
                                     .clearSelection();
                             } else {
-                                pd.data.node.codeBeauIn.value = source;
+                                pd.data.node.codeIn.value = source;
                             }
                             pd
                                 .event
                                 .recycle();
                             pd.test.delayExecution = true;
-                        } else if (pd.data.node.codeMinnIn !== null && pd.data.mode === "minn") {
-                            if (pd.test.ace === true) {
-                                pd
-                                    .ace
-                                    .minnIn
-                                    .setValue(source);
-                                pd
-                                    .ace
-                                    .minnIn
-                                    .clearSelection();
-                            } else {
-                                pd.data.node.codeMinnIn.value = source;
-                            }
-                            pd
-                                .event
-                                .recycle();
-                            pd.test.delayExecution = true;
-                        } else if (pd.data.node.codeParsIn !== null && pd.data.mode === "pars") {
-                            if (pd.test.ace === true) {
-                                pd
-                                    .ace
-                                    .parsIn
-                                    .setValue(source);
-                                pd
-                                    .ace
-                                    .parsIn
-                                    .clearSelection();
-                            } else {
-                                pd.data.node.codeParsIn.value = source;
-                            }
-                            pd
-                                .event
-                                .recycle();
-                            pd.test.delayExecution = true;
-                        } else if (pd.data.node.codeAnalIn !== null && pd.data.mode === "anal") {
-                            if (pd.test.ace === true) {
-                                pd
-                                    .ace
-                                    .analIn
-                                    .setValue(source);
-                                pd
-                                    .ace
-                                    .analIn
-                                    .clearSelection();
-                            } else {
-                                pd.data.node.codeAnalIn.value = source;
-                            }
-                            pd
-                                .event
-                                .recycle();
-                            pd.test.delayExecution = true;
-                        } else if (pd.data.node.codeDiffBase !== null && pd.data.mode === "diff") {
-                            if (pd.test.ace === true) {
-                                pd
-                                    .ace
-                                    .diffBase
-                                    .setValue(source);
-                                pd
-                                    .ace
-                                    .diffBase
-                                    .clearSelection();
-                            } else {
-                                pd.data.node.codeDiffBase.value = source;
-                            }
-                            if (diff !== "") {
-                                pd
-                                    .event
-                                    .recycle();
-                                pd.test.delayExecution = true;
-                            }
                         }
                     }
                 }
@@ -2520,7 +2273,7 @@
                         pd
                             .test
                             .audio
-                            .decodeAudioData(buff, function dom__load_audio_decode(buffer:AudioBuffer):void {
+                            .decodeAudioData(buff, function dom_load_audio_decode(buffer:AudioBuffer):void {
                                 source.buffer = buffer;
                                 source.loop   = false;
                                 source.connect(pd.test.audio.destination);
@@ -2530,215 +2283,57 @@
                             });
                     };
                 }
-                if (pd.data.node.codeBeauIn !== null) {
-                    pd.data.node.codeBeauIn.onkeyup = function dom__load_bindBeauInUp(event:Event):void {
+                if (pd.data.node.codeIn !== null) {
+                    pd.data.node.codeIn.onkeyup = function dom_load_bindInUp(event:Event):void {
                         pd
                             .event
                             .recycle(event);
                     };
                     if (pd.test.ace === true) {
-                        pd.data.node.codeBeauIn.onfocus   = textareafocus;
-                        pd.data.node.codeBeauIn.onblur    = textareablur;
-                        pd.data.node.codeBeauIn.onkeydown = function dom__load_bindBeauInDownCM(event:Event):void {
+                        pd.data.node.codeIn.onfocus   = function dom_load_bindInFocus():void {
+                            textareafocus(pd.data.node.codeIn);
+                        };
+                        pd.data.node.codeIn.onblur    = function dom_load_bindInBlur():void {
+                            textareablur(pd.data.node.codeIn);
+                        };
+                        pd.data.node.codeIn.onkeydown = function dom_load_bindInDownCM(event:Event):void {
                             pd
                                 .event
-                                .areaTabOut(event, pd.data.node.codeBeauIn);
+                                .areaTabOut(event, pd.data.node.codeIn);
                             pd
                                 .event
                                 .keydown(event);
                         };
                     } else {
-                        pd.data.node.codeBeauIn.onfocus   = textareafocus;
-                        pd.data.node.codeBeauIn.onblur    = textareablur;
-                        pd.data.node.codeBeauIn.onkeydown = function dom__load_bindBeauInDown(event:Event):void {
+                        pd.data.node.codeIn.onfocus   = function dom_load_bindInFocus():void {
+                            textareafocus(pd.data.node.codeIn);
+                        };
+                        pd.data.node.codeIn.onblur    = function dom_load_bindInBlur():void {
+                            textareablur(pd.data.node.codeIn);
+                        };
+                        pd.data.node.codeIn.onkeydown = function dom_load_bindInDown(event:Event):void {
                             pd
                                 .event
-                                .fixtabs(event, pd.data.node.codeBeauIn);
+                                .fixtabs(event, pd.data.node.codeIn);
                             pd
                                 .event
-                                .areaTabOut(event, pd.data.node.codeBeauIn);
+                                .areaTabOut(event, pd.data.node.codeIn);
                             pd
                                 .event
                                 .keydown(event);
                         };
                     }
                 }
-                if (pd.data.node.codeBeauOut !== null && pd.test.ace === true) {
-                    pd.data.node.codeBeauOut.onfocus   = textareafocus;
-                    pd.data.node.codeBeauOut.onblur    = textareablur;
-                    pd.data.node.codeBeauOut.onkeydown = function dom_load_bindBeauTabOut() {
-                        pd.event.areaTabOut(pd.data.node.codeBeauOut);
+                if (pd.data.node.codeOut !== null && pd.test.ace === true) {
+                    pd.data.node.codeOut.onfocus   = function dom_load_bindOutFocus():void {
+                        textareafocus(pd.data.node.codeOut);
                     };
-                }
-                if (pd.data.node.codeMinnIn !== null) {
-                    pd.data.node.codeMinnIn.onkeyup = function dom__load_bindMinnInUp(event:Event):void {
-                        pd
-                            .event
-                            .recycle(event);
+                    pd.data.node.codeOut.onblur    = function dom_load_bindOutBlur():void {
+                        textareablur(pd.data.node.codeOut);
                     };
-                    if (pd.test.ace === true) {
-                        pd.data.node.codeMinnIn.onfocus   = textareafocus;
-                        pd.data.node.codeMinnIn.onblur    = textareablur;
-                        pd.data.node.codeMinnIn.onkeydown = function dom__load_bindMinnInDownCM(event:Event):void {
-                            pd
-                                .event
-                                .areaTabOut(event, pd.data.node.codeMinnIn);
-                            pd
-                                .event
-                                .keydown(event);
-                        };
-                    } else {
-                        pd.data.node.codeMinnIn.onfocus   = textareafocus;
-                        pd.data.node.codeMinnIn.onblur    = textareablur;
-                        pd.data.node.codeMinnIn.onkeydown = function dom__load_bindMinnInDown(event:Event):void {
-                            pd
-                                .event
-                                .fixtabs(event, pd.data.node.codeMinnIn);
-                            pd
-                                .event
-                                .areaTabOut(event, pd.data.node.codeMinnIn);
-                            pd
-                                .event
-                                .keydown(event);
-                        };
-                    }
-                }
-                if (pd.data.node.codeMinnOut !== null && pd.test.ace === true) {
-                    pd.data.node.codeMinnOut.onfocus   = textareafocus;
-                    pd.data.node.codeMinnOut.onblur    = textareablur;
-                    pd.data.node.codeMinnOut.onkeydown = function dom_load_bindMinnTabOut() {
-                        pd.event.areaTabOut(pd.data.node.codeMinnOut);
+                    pd.data.node.codeOut.onkeydown = function dom_load_bindTabOut() {
+                        pd.event.areaTabOut(pd.data.node.codeOut);
                     };
-                }
-                if (pd.data.node.codeParsIn !== null) {
-                    pd.data.node.codeParsIn.onkeyup = function dom__load_bindParsInUp(event:Event):void {
-                        pd
-                            .event
-                            .recycle(event);
-                    };
-                    if (pd.test.ace === true) {
-                        pd.data.node.codeParsIn.onfocus   = textareafocus;
-                        pd.data.node.codeParsIn.onblur    = textareablur;
-                        pd.data.node.codeParsIn.onkeydown = function dom__load_bindParsInDownCM(event:Event):void {
-                            pd
-                                .event
-                                .areaTabOut(event, pd.data.node.codeParsIn);
-                            pd
-                                .event
-                                .keydown(event);
-                        };
-                    } else {
-                        pd.data.node.codeParsIn.onfocus   = textareafocus;
-                        pd.data.node.codeParsIn.onblur    = textareablur;
-                        pd.data.node.codeParsIn.onkeydown = function dom__load_bindParsInDown(event:Event):void {
-                            pd
-                                .event
-                                .fixtabs(event, pd.data.node.codeParsIn);
-                            pd
-                                .event
-                                .areaTabOut(event, pd.data.node.codeParsIn);
-                            pd
-                                .event
-                                .keydown(event);
-                        };
-                    }
-                }
-                if (pd.data.node.codeParsOut !== null && pd.test.ace === true) {
-                    pd.data.node.codeParsOut.onfocus   = textareafocus;
-                    pd.data.node.codeParsOut.onblur    = textareablur;
-                    pd.data.node.codeParsOut.onkeydown = function dom_load_bindParsTabOut() {
-                        pd.event.areaTabOut(pd.data.node.codeParsOut);
-                    };
-                }
-                if (pd.data.node.codeAnalIn !== null) {
-                    pd.data.node.codeAnalIn.onkeyup = function dom__load_bindAnalInUp(event:Event):void {
-                        pd
-                            .event
-                            .recycle(event);
-                    };
-                    if (pd.test.ace === true) {
-                        pd.data.node.codeAnalIn.onfocus   = textareafocus;
-                        pd.data.node.codeAnalIn.onblur    = textareablur;
-                        pd.data.node.codeAnalIn.onkeydown = function dom__load_bindAnalInDownCM(event:Event):void {
-                            pd
-                                .event
-                                .areaTabOut(event, pd.data.node.codeAnalIn);
-                            pd
-                                .event
-                                .keydown(event);
-                        };
-                    } else {
-                        pd.data.node.codeAnalIn.onfocus   = textareafocus;
-                        pd.data.node.codeAnalIn.onblur    = textareablur;
-                        pd.data.node.codeAnalIn.onkeydown = function dom__load_bindAnalInDown(event:Event):void {
-                            pd
-                                .event
-                                .fixtabs(event, pd.data.node.codeAnalIn);
-                            pd
-                                .event
-                                .areaTabOut(event, pd.data.node.codeAnalIn);
-                            pd
-                                .event
-                                .keydown(event);
-                        };
-                    }
-                }
-                if (pd.data.node.codeAnalOut !== null && pd.test.ace === true) {
-                    pd.data.node.codeAnalOut.onfocus   = textareafocus;
-                    pd.data.node.codeAnalOut.onblur    = textareablur;
-                    pd.data.node.codeAnalOut.onkeydown = function dom_load_bindAnalTabOut() {
-                        pd.event.areaTabOut(pd.data.node.codeAnalOut);
-                    };
-                }
-                if (pd.data.node.codeDiffBase !== null) {
-                    if (pd.test.ace === true) {
-                        pd.data.node.codeDiffBase.onkeyup   = function dom__load_bindAutoDiffBase():void {
-                            pd
-                                .app
-                                .langkey(false, pd.ace.diffBase, "");
-                        };
-                        pd.data.node.codeDiffBase.onfocus   = textareafocus;
-                        pd.data.node.codeDiffBase.onblur    = textareablur;
-                        pd.data.node.codeDiffBase.onkeydown = function dom_load_bindDiffBaseTabOut() {
-                            pd.event.areaTabOut(pd.data.node.codeDiffBase);
-                        };
-                    } else {
-                        pd.data.node.codeDiffBase.onfocus   = textareafocus;
-                        pd.data.node.codeDiffBase.onblur    = textareablur;
-                        pd.data.node.codeDiffBase.onkeydown = function dom__load_bindDiffBaseDown(event:Event):void {
-                            pd
-                                .event
-                                .fixtabs(event, pd.data.node.codeDiffBase);
-                            pd
-                                .event
-                                .areaTabOut(event, pd.data.node.codeDiffBase);
-                        };
-                    }
-                }
-                if (pd.data.node.codeDiffNew !== null) {
-                    if (pd.test.ace === true) {
-                        pd.data.node.codeDiffNew.onkeyup   = function dom__load_bindAutoDiffNew():void {
-                            pd
-                                .app
-                                .langkey(false, pd.ace.diffNew, "");
-                        };
-                        pd.data.node.codeDiffNew.onfocus   = textareafocus;
-                        pd.data.node.codeDiffNew.onblur    = textareablur;
-                        pd.data.node.codeDiffNew.onkeydown = function dom_load_bindDiffNewTabOut() {
-                            pd.event.areaTabOut(pd.data.node.codeDiffNew);
-                        };
-                    } else {
-                        pd.data.node.codeDiffNew.onfocus   = textareafocus;
-                        pd.data.node.codeDiffNew.onblur    = textareablur;
-                        pd.data.node.codeDiffNew.onkeydown = function dom__load_bindDiffNewDown(event:Event):void {
-                            pd
-                                .event
-                                .fixtabs(event, pd.data.node.codeDiffNew);
-                            pd
-                                .event
-                                .areaTabOut(event, pd.data.node.codeDiffNew);
-                        };
-                    }
                 }
                 window.onresize     = pd.app.fixHeight;
                 window.onkeyup      = pd.event.areaShiftUp;
@@ -2754,6 +2349,24 @@
                             .split("?")[1]
                         : "";
                 const docbuttons:NodeListOf<HTMLButtonElement>  = document.getElementsByTagName("button"),
+                    docbuttonClick = function dom_load_documentation_showhide(event:Event):void {
+                        const x:HTMLElement = <HTMLElement>event.target || <HTMLElement>event.srcElement,
+                            span:HTMLSpanElement = x.getElementsByTagName("span")[0],
+                            parent:HTMLElement = <HTMLElement>x
+                                .parentNode
+                                .parentNode,
+                            target:HTMLDivElement = parent.getElementsByTagName("div")[0];
+                        if (target === undefined) {
+                            return;
+                        }
+                        if (span.innerHTML === "Show") {
+                            target.setAttribute("class", "content-show");
+                            span.innerHTML = "Hide";
+                        } else {
+                            target.setAttribute("class", "content-hide");
+                            span.innerHTML = "Show";
+                        }
+                    },
                     colorScheme:HTMLSelectElement = pd.id("colorScheme"),
                     hashgo      = function dom__load_documentation_hashgo():void {
                         let hash:string     = "",
@@ -2825,23 +2438,7 @@
                 a = 0;
                 do {
                     if (docbuttons[a].parentNode.nodeName.toLowerCase() === "h2") {
-                        docbuttons[a].onclick = function dom__load_documentation_showhide():void {
-                            const span:HTMLSpanElement = docbuttons[a].getElementsByTagName("span")[0],
-                                parent:HTMLElement = <HTMLElement>docbuttons[a]
-                                    .parentNode
-                                    .parentNode,
-                                target:HTMLDivElement = parent.getElementsByTagName("div")[0];
-                            if (target === undefined) {
-                                return;
-                            }
-                            if (span.innerHTML === "Show") {
-                                target.setAttribute("class", "content-show");
-                                span.innerHTML = "Hide";
-                            } else {
-                                target.setAttribute("class", "content-hide");
-                                span.innerHTML = "Show";
-                            }
-                        };
+                        docbuttons[a].onclick = docbuttonClick;
                     }
                     a = a + 1;
                 } while (a < b);
@@ -2934,28 +2531,15 @@
         loadPrep = function dom__loadPrep():void {
             pd.data.node = {
                 announce    : pd.id("announcement"),
-                beau        : pd.id("Beautify"),
-                beauOps     : pd.id("beauops"),
-                codeBeauIn  : pd.id("beautyinput"),
-                codeBeauOut : pd.id("beautyoutput"),
-                codeDiffBase: pd.id("baseText"),
-                codeDiffNew : pd.id("newText"),
-                codeMinnIn  : pd.id("minifyinput"),
-                codeMinnOut : pd.id("minifyoutput"),
-                codeParsIn  : pd.id("parseinput"),
-                codeParsOut : pd.id("parseoutput"),
+                codeIn      : pd.id("input"),
+                codeOut     : pd.id("output"),
                 comment     : pd.id("option_comment"),
-                diffBase    : pd.id("diffBase"),
-                diffNew     : pd.id("diffNew"),
-                diffOps     : pd.id("diffops"),
                 headline    : pd.id("headline"),
                 jsscope     : pd.id("jsscope-yes"),
                 lang        : pd.id("language"),
                 langdefault : pd.id("lang-default"),
                 loadmask    : pd.id("loadmask"),
                 maxInputs   : pd.id("hideOptions"),
-                minn        : pd.id("Minify"),
-                minnOps     : pd.id("miniops"),
                 modeBeau    : pd.id("modebeautify"),
                 modeDiff    : pd.id("modediff"),
                 modeMinn    : pd.id("modeminify"),
@@ -2996,32 +2580,16 @@
     prettydiff.dom = pd;
     //namespace for data points and dom nodes
     pd.data.node = {
-        anal        : pd.id("Analysis"),
         analOps     : pd.id("analysisops"),
         announce    : pd.id("announcement"),
-        beau        : pd.id("Beautify"),
-        beauOps     : pd.id("beauops"),
-        codeAnalIn  : pd.id("analysisinput"),
-        codeAnalOut : pd.id("analysisoutput"),
-        codeBeauIn  : pd.id("beautyinput"),
-        codeBeauOut : pd.id("beautyoutput"),
-        codeDiffBase: pd.id("baseText"),
-        codeDiffNew : pd.id("newText"),
-        codeMinnIn  : pd.id("minifyinput"),
-        codeMinnOut : pd.id("minifyoutput"),
-        codeParsIn  : pd.id("parseinput"),
-        codeParsOut : pd.id("parseoutput"),
+        codeIn      : pd.id("input"),
+        codeOut     : pd.id("output"),
         comment     : pd.id("option_comment"),
-        diffBase    : pd.id("diffBase"),
-        diffNew     : pd.id("diffNew"),
-        diffOps     : pd.id("diffops"),
         headline    : pd.id("headline"),
         jsscope     : pd.id("jsscope-yes"),
         lang        : pd.id("language"),
         langdefault : pd.id("lang-default"),
         maxInputs   : pd.id("hideOptions"),
-        minn        : pd.id("Minify"),
-        minnOps     : pd.id("miniops"),
         modeBeau    : pd.id("modebeautify"),
         modeDiff    : pd.id("modediff"),
         modeMinn    : pd.id("modeminify"),
@@ -3056,7 +2624,7 @@
     //namespace for internal functions
     pd.app              = {
         //builds the Ace editors
-        aceApply : function dom__app_aceApply(nodeName:string, className:string, maxWidth:boolean):any {
+        aceApply : function dom__app_aceApply(nodeName:string, maxWidth:boolean):any {
             const div:HTMLDivElement        = document.createElement("div"),
                 span:HTMLSpanElement       = document.createElement("span"),
                 node:HTMLDivElement       = pd.data.node[nodeName],
@@ -3073,12 +2641,7 @@
                 a = a + 1;
             } while (a < len);
             parent.appendChild(div);
-            if (className === "output") {
-                span.setAttribute("class", "clear");
-                parent.appendChild(span);
-            }
             parent.removeChild(node.parentNode);
-            div.setAttribute("class", className);
             if (maxWidth === true) {
                 div.style.width = "100%";
             }
@@ -3091,16 +2654,8 @@
         // Readjusts the heights of the editors to compensate for various changes to the
         // interface, like screen resize
         fixHeight: function dom__app_fixHeight():void {
-            const baseText:HTMLElement = pd.id("baseText"),
-                newText:HTMLElement  = pd.id("newText"),
-                beauIn:HTMLElement   = pd.id("beautyinput"),
-                beauOut:HTMLElement  = pd.id("beautyoutput"),
-                minnIn:HTMLElement   = pd.id("minifyinput"),
-                minnOut:HTMLElement  = pd.id("minifyoutput"),
-                parsIn:HTMLElement   = pd.id("parseinput"),
-                parsOut:HTMLElement  = pd.id("parseoutput"),
-                analIn:HTMLElement   = pd.id("analysisinput"),
-                analOut:HTMLElement  = pd.id("analysisoutput"),
+            const input:HTMLElement = pd.id("input"),
+                output:HTMLElement = pd.id("output"),
                 height:number   = window.innerHeight || document.getElementsByTagName("body")[0].clientHeight;
             let math:number     = 0,
                 headline:number = 0;
@@ -3108,212 +2663,55 @@
                 headline = 3.8;
             }
             if (pd.test.ace === true) {
-                if (baseText !== null && newText !== null) {
-                    math                  = (height / 14) - (16.5 + headline);
-                    baseText.style.height = math + "em";
-                    newText.style.height  = math + "em";
-                    pd
-                        .ace
-                        .diffBase
-                        .setStyle("height:" + math + "em");
-                    pd
-                        .ace
-                        .diffNew
-                        .setStyle("height:" + math + "em");
-                    pd
-                        .ace
-                        .diffBase
-                        .resize();
-                    pd
-                        .ace
-                        .diffNew
-                        .resize();
-                }
                 math = (height / 14) - (14.31 + headline);
-                if (pd.data.node.codeBeauIn !== null) {
-                    beauIn.style.height = math + "em";
+                if (input !== null) {
+                    input.style.height = math + "em";
                     pd
                         .ace
-                        .beauIn
+                        .codeIn
                         .setStyle("height:" + math + "em");
                     pd
                         .ace
-                        .beauIn
+                        .codeIn
                         .resize();
                 }
-                if (pd.data.node.codeMinnIn !== null) {
-                    minnIn.style.height = math + "em";
+                if (output !== null) {
+                    output.style.height = math + "em";
                     pd
                         .ace
-                        .minnIn
+                        .codeOut
                         .setStyle("height:" + math + "em");
                     pd
                         .ace
-                        .minnIn
-                        .resize();
-                }
-                if (pd.data.node.codeParsIn !== null) {
-                    parsIn.style.height = math + "em";
-                    pd
-                        .ace
-                        .parsIn
-                        .setStyle("height:" + math + "em");
-                    pd
-                        .ace
-                        .parsIn
-                        .resize();
-                }
-                if (pd.data.node.codeAnalIn !== null) {
-                    analIn.style.height = math + "em";
-                    pd
-                        .ace
-                        .analIn
-                        .setStyle("height:" + math + "em");
-                    pd
-                        .ace
-                        .analIn
-                        .resize();
-                }
-                if (pd.data.node.codeBeauOut !== null) {
-                    beauOut.style.height = math + "em";
-                    pd
-                        .ace
-                        .beauOut
-                        .setStyle("height:" + math + "em");
-                    pd
-                        .ace
-                        .beauOut
-                        .resize();
-                }
-                if (pd.data.node.codeMinnOut !== null) {
-                    minnOut.style.height = math + "em";
-                    pd
-                        .ace
-                        .minnOut
-                        .setStyle("height:" + math + "em");
-                    pd
-                        .ace
-                        .minnOut
-                        .resize();
-                }
-                if (pd.data.node.codeParsOut !== null) {
-                    parsOut.style.height = math + "em";
-                    pd
-                        .ace
-                        .parsOut
-                        .setStyle("height:" + math + "em");
-                    pd
-                        .ace
-                        .parsOut
-                        .resize();
-                }
-                if (pd.data.node.codeAnalOut !== null) {
-                    analOut.style.height = math + "em";
-                    pd
-                        .ace
-                        .analOut
-                        .setStyle("height:" + math + "em");
-                    pd
-                        .ace
-                        .analOut
+                        .codeOut
                         .resize();
                 }
             } else {
-                if (baseText !== null && newText !== null) {
-                    math                  = (height / 14.4) - (16.25 + headline);
-                    baseText.style.height = math + "em";
-                    newText.style.height  = math + "em";
-                }
                 math = (height / 14.4) - (15.425 + headline);
-                if (pd.data.node.codeBeauIn !== null) {
-                    pd.data.node.codeBeauIn.style.height = math + "em";
+                if (input !== null) {
+                    input.style.height = math + "em";
                 }
-                if (pd.data.node.codeMinnIn !== null) {
-                    pd.data.node.codeMinnIn.style.height = math + "em";
-                }
-                if (pd.data.node.codeParsIn !== null) {
-                    pd.data.node.codeParsIn.style.height = math + "em";
-                }
-                if (pd.data.node.codeAnalIn !== null) {
-                    pd.data.node.codeAnalIn.style.height = math + "em";
-                }
-                if (pd.data.node.codeBeauOut !== null) {
-                    pd.data.node.codeBeauOut.style.height = math + "em";
-                }
-                if (pd.data.node.codeMinnOut !== null) {
-                    pd.data.node.codeMinnOut.style.height = math + "em";
-                }
-                if (pd.data.node.codeParsOut !== null) {
-                    pd.data.node.codeParsOut.style.height = math + "em";
-                }
-                if (pd.data.node.codeAnalOut !== null) {
-                    pd.data.node.codeAnalOut.style.height = math + "em";
+                if (output !== null) {
+                    output.style.height = math + "em";
                 }
             }
         },
         //sets indentation size in Ace editors
         insize   : function dom__app_insize(el:HTMLInputElement):void {
             const value = Number(el.value);
-            if (el === pd.id("diff-quan")) {
-                if (pd.data.node.codeDiffBase !== null) {
-                    pd
-                        .ace
-                        .diffBase
-                        .getSession()
-                        .setTabSize(value);
-                }
-                if (pd.data.node.codeDiffNew !== null) {
-                    pd
-                        .ace
-                        .diffNew
-                        .getSession()
-                        .setTabSize(value);
-                }
-            } else if (el === pd.id("beau-quan")) {
-                if (pd.data.node.codeBeauIn !== null) {
-                    pd
-                        .ace
-                        .beauIn
-                        .getSession()
-                        .setTabSize(value);
-                }
-                if (pd.data.node.codeBeauOut !== null) {
-                    pd
-                        .ace
-                        .beauOut
-                        .getSession()
-                        .setTabSize(value);
-                }
-            } else if (el === pd.id("minn-quan")) {
-                if (pd.data.node.codeMinnIn !== null) {
-                    pd
-                        .ace
-                        .minnIn
-                        .getSession()
-                        .setTabSize(value);
-                }
-                if (pd.data.node.codeMinnOut !== null) {
-                    pd
-                        .ace
-                        .minnOut
-                        .getSession()
-                        .setTabSize(value);
-                }
-            } else if (el === pd.id("pars-quan")) {
-                if (pd.data.node.codeMinnIn !== null) {
-                    pd
-                        .ace
-                        .minnIn
-                        .getSession()
-                        .setTabSize(value);
-                }
-                if (pd.data.node.codeMinnOut !== null) {
-                    pd
-                        .ace
-                        .minnOut
-                        .getSession()
-                        .setTabSize(value);
-                }
+            if (pd.data.node.codeIn !== null) {
+                pd
+                    .ace
+                    .codeIn
+                    .getSession()
+                    .setTabSize(value);
+            }
+            if (pd.data.node.codeOut !== null) {
+                pd
+                    .ace
+                    .codeOut
+                    .getSession()
+                    .setTabSize(value);
             }
         },
         // determine the specific language if auto or unknown all - change all language
@@ -3363,9 +2761,9 @@
             }
             value = pd.data.langvalue;
             if (pd.test.ace === true) {
-                if (all === true || pd.data.mode === "anal") {
+                if (all === true) {
                     if (all === true && lang === "") {
-                        value             = language.auto(pd.ace.analIn.getValue(), defaultt);
+                        value             = language.auto(pd.ace.codeIn.getValue(), defaultt);
                         pd.data.langvalue = value;
                     }
                     if (value[0] === "tss") {
@@ -3375,118 +2773,17 @@
                     } else if (value[0] === "markup") {
                         value[0] = "xml";
                     }
-                    if (pd.data.node.codeAnalIn !== null) {
+                    if (pd.data.node.codeIn !== null) {
                         pd
                             .ace
-                            .analIn
+                            .codeIn
                             .getSession()
                             .setMode("ace/mode/" + value[0]);
                     }
-                    if (pd.data.node.codeAnalOut !== null) {
+                    if (pd.data.node.codeOut !== null) {
                         pd
                             .ace
-                            .analOut
-                            .getSession()
-                            .setMode("ace/mode/" + value[0]);
-                    }
-                }
-                if (all === true || pd.data.mode === "beau") {
-                    if (all === true && lang === "") {
-                        value             = language.auto(pd.ace.beauIn.getValue(), defaultt);
-                        pd.data.langvalue = value;
-                    }
-                    if (pd.data.node.codeBeauIn !== null) {
-                        pd
-                            .ace
-                            .beauIn
-                            .getSession()
-                            .setMode("ace/mode/" + value[0]);
-                    }
-                    if (pd.data.node.codeBeauOut !== null) {
-                        pd
-                            .ace
-                            .beauOut
-                            .getSession()
-                            .setMode("ace/mode/" + value[0]);
-                    }
-                }
-                if (all === true || pd.data.mode === "minn") {
-                    if (all === true && lang === "") {
-                        value             = language.auto(pd.ace.minnIn.getValue(), defaultt);
-                        pd.data.langvalue = value;
-                    }
-                    if (value[0] === "tss") {
-                        value[0] = "javascript";
-                    } else if (value[0] === "dustjs") {
-                        value[0] = "html";
-                    } else if (value[0] === "markup") {
-                        value[0] = "xml";
-                    }
-                    if (pd.data.node.codeMinnIn !== null) {
-                        pd
-                            .ace
-                            .minnIn
-                            .getSession()
-                            .setMode("ace/mode/" + value[0]);
-                    }
-                    if (pd.data.node.codeMinnOut !== null) {
-                        pd
-                            .ace
-                            .minnOut
-                            .getSession()
-                            .setMode("ace/mode/" + value[0]);
-                    }
-                }
-                if (all === true || pd.data.mode === "pars") {
-                    if (all === true && lang === "") {
-                        value             = language.auto(pd.ace.parsIn.getValue(), defaultt);
-                        pd.data.langvalue = value;
-                    }
-                    if (value[0] === "tss") {
-                        value[0] = "javascript";
-                    } else if (value[0] === "dustjs") {
-                        value[0] = "html";
-                    } else if (value[0] === "markup") {
-                        value[0] = "xml";
-                    }
-                    if (pd.data.node.codeParsIn !== null) {
-                        pd
-                            .ace
-                            .parsIn
-                            .getSession()
-                            .setMode("ace/mode/" + value[0]);
-                    }
-                    if (pd.data.node.codeParsOut !== null) {
-                        pd
-                            .ace
-                            .parsOut
-                            .getSession()
-                            .setMode("ace/mode/" + value[0]);
-                    }
-                }
-                if (all === true || pd.data.mode === "diff") {
-                    if (all === true && lang === "") {
-                        value             = language.auto(pd.ace.diffBase.getValue(), defaultt);
-                        pd.data.langvalue = value;
-                    }
-                    if (value[0] === "tss") {
-                        value[0] = "javascript";
-                    } else if (value[0] === "dustjs") {
-                        value[0] = "html";
-                    } else if (value[0] === "markup") {
-                        value[0] = "xml";
-                    }
-                    if (pd.data.node.codeDiffBase !== null) {
-                        pd
-                            .ace
-                            .diffBase
-                            .getSession()
-                            .setMode("ace/mode/" + value[0]);
-                    }
-                    if (pd.data.node.codeDiffNew !== null) {
-                        pd
-                            .ace
-                            .diffNew
+                            .codeOut
                             .getSession()
                             .setMode("ace/mode/" + value[0]);
                     }
@@ -3496,18 +2793,8 @@
                 return value;
             }
             if (value.length < 1 && lang === "") {
-                if (pd.data.mode === "beau" && pd.data.node.codeBeauIn !== null) {
-                    value = language.auto(pd.data.node.codeBeauIn.value, defaultt);
-                } else if (pd.data.mode === "minn" && pd.data.node.codeMinnIn !== null) {
-                    value = language.auto(pd.data.node.codeMinnIn.value, defaultt);
-                } else if (pd.data.mode === "pars" && pd.data.node.codeParsIn !== null) {
-                    value = language.auto(pd.data.node.codeParsIn.value, defaultt);
-                } else {
-                    if (pd.data.node.codeDiffBase !== null) {
-                        value = language.auto(pd.data.node.codeDiffBase.value, defaultt);
-                    } else if (pd.data.node.codeDiffNew !== null) {
-                        value = language.auto(pd.data.node.codeDiffNew.value, defaultt);
-                    }
+                if (pd.data.node.codeIn !== null) {
+                    value = language.auto(pd.data.node.codeIn.value, defaultt);
                 }
                 if (value.length < 1) {
                     return ["javascript", "script", "JavaScript"];
@@ -3777,43 +3064,11 @@
                 }
                 pd
                     .ace
-                    .diffBase
+                    .codeIn
                     .setTheme(theme);
                 pd
                     .ace
-                    .diffNew
-                    .setTheme(theme);
-                pd
-                    .ace
-                    .beauIn
-                    .setTheme(theme);
-                pd
-                    .ace
-                    .beauOut
-                    .setTheme(theme);
-                pd
-                    .ace
-                    .minnIn
-                    .setTheme(theme);
-                pd
-                    .ace
-                    .minnOut
-                    .setTheme(theme);
-                pd
-                    .ace
-                    .parsIn
-                    .setTheme(theme);
-                pd
-                    .ace
-                    .parsOut
-                    .setTheme(theme);
-                pd
-                    .ace
-                    .analIn
-                    .setTheme(theme);
-                pd
-                    .ace
-                    .analOut
+                    .codeOut
                     .setTheme(theme);
             }
             pd.data.color = color;
@@ -4636,6 +3891,14 @@
         },
         //toggles between modes
         modeToggle   : function dom__event_modeToggle(x:HTMLInputElement):void {
+            /*
+            
+        codeHeading : pd.id("codeInput").getElementsByTagName("h2")[0],
+        inputFile   : pd.id("codeInput").getElementsByTagName("label")[0],
+        inputLabel  : pd.id("codeInput").getElementsByTagName("label")[1],
+        outputLabel : pd.id("codeInput").getElementsByTagName("label")[2],
+        outputFile  : pd.id("codeInput").getElementsByTagName("label")[3],
+            */
             let a:HTMLInputElement = (x.nodeName.toLowerCase() === "input")
                     ? x
                     : x.getElementsByTagName("input")[0],
@@ -4685,50 +3948,8 @@
                 if (langtest === true) {
                     optioncheck();
                 }
-                if (pd.data.node.codeBeauIn !== null) {
-                    if (pd.data.node.codeBeauIn.value === "" && pd.data.node.codeMinnIn !== null && pd.data.node.codeMinnIn.value !== "") {
-                        pd.data.node.codeBeauIn.value = pd.data.node.codeMinnIn.value;
-                    } else if (pd.data.node.codeBeauIn.value === "" && pd.data.node.codeBeauOut !== null && pd.data.node.codeBeauOut.value !== "") {
-                        pd.data.node.codeBeauIn.value = pd.data.node.codeBeauOut.value;
-                    }
-                }
-                if (pd.data.node.beau !== null) {
-                    pd.data.node.beau.style.display = "block";
-                }
-                if (pd.data.node.minn !== null) {
-                    pd.data.node.minn.style.display = "none";
-                }
-                if (pd.data.node.pars !== null) {
-                    pd.data.node.pars.style.display = "none";
-                }
-                if (pd.data.node.anal !== null) {
-                    pd.data.node.anal.style.display = "none";
-                }
-                if (pd.data.node.diffBase !== null) {
-                    pd.data.node.diffBase.style.display = "none";
-                }
-                if (pd.data.node.diffNew !== null) {
-                    pd.data.node.diffNew.style.display = "none";
-                }
-                if (pd.data.node.diffOps !== null) {
-                    pd.data.node.diffOps.style.display = "none";
-                }
-                if (pd.data.node.minnOps !== null) {
-                    pd.data.node.minnOps.style.display = "none";
-                }
-                if (pd.data.node.parsOps !== null) {
-                    pd.data.node.parsOps.style.display = "none";
-                }
-                if (pd.data.node.analOps !== null) {
-                    pd.data.node.analOps.style.display = "none";
-                }
-                if (lang === "csv" && pd.data.node.beauOps !== null) {
-                    pd.data.node.beauOps.style.display = "none";
-                } else if (pd.data.node.beauOps !== null) {
-                    pd.data.node.beauOps.style.display = "block";
-                }
                 if (pd.test.render.beau === false) {
-                    if (pd.data.node.codeBeauIn !== null) {
+                    if (pd.data.node.codeIn !== null) {
                         if (localStorage.codeBeautify !== undefined) {
                             storage = localStorage.codeBeautify;
                             if ((/^(\s+)$/).test(storage) === true) {
@@ -4737,29 +3958,29 @@
                             if (pd.test.ace === true) {
                                 pd
                                     .ace
-                                    .beauIn
+                                    .codeIn
                                     .setValue(storage);
                                 pd
                                     .ace
-                                    .beauIn
+                                    .codeIn
                                     .clearSelection();
                                 pd
                                     .app
-                                    .langkey(false, pd.ace.beauIn, "");
+                                    .langkey(false, pd.ace.codeIn, "");
                             } else {
-                                pd.data.node.codeBeauIn.value = storage;
+                                pd.data.node.codeIn.value = storage;
                             }
                         } else if (pd.test.ace === true) {
                             pd
                                 .ace
-                                .beauIn
+                                .codeIn
                                 .setValue(" ");
                         }
                     }
-                    if (pd.test.ace === true && pd.data.node.codeBeauOut !== null) {
+                    if (pd.test.ace === true && pd.data.node.codeOut !== null) {
                         pd
                             .ace
-                            .beauOut
+                            .codeOut
                             .setValue(" ");
                     }
                 }
@@ -4774,50 +3995,6 @@
                 pd.data.mode = "minn";
                 if (langtest === true) {
                     optioncheck();
-                }
-                if (pd.data.node.codeMinnIn !== null) {
-                    if (pd.data.node.codeMinnIn.value === "" && pd.data.node.codeBeauIn !== null && pd.data.node.codeBeauIn.value !== "") {
-                        pd.data.node.codeMinnIn.value = pd.data.node.codeBeauIn.value;
-                    } else if (pd.data.node.codeMinnIn.value === "" && pd.data.node.codeBeauOut !== null && pd.data.node.codeBeauOut.value !== "") {
-                        pd.data.node.codeMinnIn.value = pd.data.node.codeBeauOut.value;
-                    }
-                }
-                if (pd.data.node.minnOps !== null) {
-                    if (lang === "text" || lang === "csv") {
-                        pd.data.node.minnOps.style.display = "none";
-                    } else {
-                        pd.data.node.minnOps.style.display = "block";
-                    }
-                }
-                if (pd.data.node.minn !== null) {
-                    pd.data.node.minn.style.display = "block";
-                }
-                if (pd.data.node.beau !== null) {
-                    pd.data.node.beau.style.display = "none";
-                }
-                if (pd.data.node.pars !== null) {
-                    pd.data.node.pars.style.display = "none";
-                }
-                if (pd.data.node.anal !== null) {
-                    pd.data.node.anal.style.display = "none";
-                }
-                if (pd.data.node.diffBase !== null) {
-                    pd.data.node.diffBase.style.display = "none";
-                }
-                if (pd.data.node.diffNew !== null) {
-                    pd.data.node.diffNew.style.display = "none";
-                }
-                if (pd.data.node.diffOps !== null) {
-                    pd.data.node.diffOps.style.display = "none";
-                }
-                if (pd.data.node.beauOps !== null) {
-                    pd.data.node.beauOps.style.display = "none";
-                }
-                if (pd.data.node.parsOps !== null) {
-                    pd.data.node.parsOps.style.display = "none";
-                }
-                if (pd.data.node.analOps !== null) {
-                    pd.data.node.analOps.style.display = "none";
                 }
                 if (pd.test.render.minn === false) {
                     if (pd.data.node.codeMinnIn !== null) {
@@ -4870,46 +4047,6 @@
                         b = b - 1;
                         langOps[b].disabled = false;
                     } while (b > 0);
-                }
-                if (pd.data.node.codeBeauOut !== null) {
-                    if (pd.data.node.codeBeauOut.value === "" && pd.data.node.codeBeauIn !== null && pd.data.node.codeBeauIn.value !== "") {
-                        pd.data.node.codeBeauOut.value = pd.data.node.codeBeauIn.value;
-                    } else if (pd.data.node.codeBeauOut.value === "" && pd.data.node.codeMinnIn !== null && pd.data.node.codeMinnIn.value !== "") {
-                        pd.data.node.codeBeauOut.value = pd.data.node.codeMinnIn.value;
-                    }
-                }
-                if (pd.data.node.diffBase !== null) {
-                    pd.data.node.diffBase.style.display = "block";
-                }
-                if (pd.data.node.diffNew !== null) {
-                    pd.data.node.diffNew.style.display = "block";
-                }
-                if (pd.data.node.beau !== null) {
-                    pd.data.node.beau.style.display = "none";
-                }
-                if (pd.data.node.minn !== null) {
-                    pd.data.node.minn.style.display = "none";
-                }
-                if (pd.data.node.pars !== null) {
-                    pd.data.node.pars.style.display = "none";
-                }
-                if (pd.data.node.anal !== null) {
-                    pd.data.node.anal.style.display = "none";
-                }
-                if (pd.data.node.diffOps !== null) {
-                    pd.data.node.diffOps.style.display = "block";
-                }
-                if (pd.data.node.beauOps !== null) {
-                    pd.data.node.beauOps.style.display = "none";
-                }
-                if (pd.data.node.minnOps !== null) {
-                    pd.data.node.minnOps.style.display = "none";
-                }
-                if (pd.data.node.parsOps !== null) {
-                    pd.data.node.parsOps.style.display = "none";
-                }
-                if (pd.data.node.analOps !== null) {
-                    pd.data.node.analOps.style.display = "none";
                 }
                 if (lang === "csv" || lang === "text") {
                     node = pd.id("diffquanp");
@@ -5007,50 +4144,6 @@
                 if (langtest === true) {
                     optioncheck();
                 }
-                if (pd.data.node.codeParsIn !== null) {
-                    if (pd.data.node.codeParsIn.value === "" && pd.data.node.codeBeauIn !== null && pd.data.node.codeBeauIn.value !== "") {
-                        pd.data.node.codeParsIn.value = pd.data.node.codeBeauIn.value;
-                    } else if (pd.data.node.codeParsIn.value === "" && pd.data.node.codeBeauOut !== null && pd.data.node.codeBeauOut.value !== "") {
-                        pd.data.node.codeParsIn.value = pd.data.node.codeBeauOut.value;
-                    }
-                }
-                if (pd.data.node.parsOps !== null) {
-                    if (lang === "text" || lang === "csv") {
-                        pd.data.node.parsOps.style.display = "none";
-                    } else {
-                        pd.data.node.parsOps.style.display = "block";
-                    }
-                }
-                if (pd.data.node.minn !== null) {
-                    pd.data.node.minn.style.display = "none";
-                }
-                if (pd.data.node.beau !== null) {
-                    pd.data.node.beau.style.display = "none";
-                }
-                if (pd.data.node.anal !== null) {
-                    pd.data.node.anal.style.display = "none";
-                }
-                if (pd.data.node.pars !== null) {
-                    pd.data.node.pars.style.display = "block";
-                }
-                if (pd.data.node.diffBase !== null) {
-                    pd.data.node.diffBase.style.display = "none";
-                }
-                if (pd.data.node.diffNew !== null) {
-                    pd.data.node.diffNew.style.display = "none";
-                }
-                if (pd.data.node.diffOps !== null) {
-                    pd.data.node.diffOps.style.display = "none";
-                }
-                if (pd.data.node.beauOps !== null) {
-                    pd.data.node.beauOps.style.display = "none";
-                }
-                if (pd.data.node.minnOps !== null) {
-                    pd.data.node.minnOps.style.display = "none";
-                }
-                if (pd.data.node.analOps !== null) {
-                    pd.data.node.analOps.style.display = "none";
-                }
                 if (pd.test.render.pars === false) {
                     if (pd.data.node.codeParsIn !== null) {
                         if (localStorage.codeParse !== undefined) {
@@ -5093,50 +4186,6 @@
                 pd.data.mode = "anal";
                 if (langtest === true) {
                     optioncheck();
-                }
-                if (pd.data.node.codeAnalIn !== null) {
-                    if (pd.data.node.codeAnalIn.value === "" && pd.data.node.codeBeauIn !== null && pd.data.node.codeBeauIn.value !== "") {
-                        pd.data.node.codeAnalIn.value = pd.data.node.codeAnalIn.value;
-                    } else if (pd.data.node.codeAnalIn.value === "" && pd.data.node.codeBeauOut !== null && pd.data.node.codeBeauOut.value !== "") {
-                        pd.data.node.codeAnalIn.value = pd.data.node.codeBeauOut.value;
-                    }
-                }
-                if (pd.data.node.analOps !== null) {
-                    if (lang === "text" || lang === "csv") {
-                        pd.data.node.analOps.style.display = "none";
-                    } else {
-                        pd.data.node.analOps.style.display = "block";
-                    }
-                }
-                if (pd.data.node.minn !== null) {
-                    pd.data.node.minn.style.display = "none";
-                }
-                if (pd.data.node.beau !== null) {
-                    pd.data.node.beau.style.display = "none";
-                }
-                if (pd.data.node.pars !== null) {
-                    pd.data.node.pars.style.display = "none";
-                }
-                if (pd.data.node.anal !== null) {
-                    pd.data.node.anal.style.display = "block";
-                }
-                if (pd.data.node.diffBase !== null) {
-                    pd.data.node.diffBase.style.display = "none";
-                }
-                if (pd.data.node.diffNew !== null) {
-                    pd.data.node.diffNew.style.display = "none";
-                }
-                if (pd.data.node.diffOps !== null) {
-                    pd.data.node.diffOps.style.display = "none";
-                }
-                if (pd.data.node.beauOps !== null) {
-                    pd.data.node.beauOps.style.display = "none";
-                }
-                if (pd.data.node.minnOps !== null) {
-                    pd.data.node.minnOps.style.display = "none";
-                }
-                if (pd.data.node.parsOps !== null) {
-                    pd.data.node.parsOps.style.display = "none";
                 }
                 if (pd.test.render.anal === false) {
                     if (pd.data.node.codeAnalIn !== null) {
@@ -5544,14 +4593,7 @@
             autotest:boolean    = false,
             node:HTMLInputElement        = pd.id("jsscope-html"),
             codesize:number = 0;
-        // start options
-        const options:options = {
-            lang: "",
-            lexer: "",
-            source: ""
-        },
-        // end options
-            domain:RegExp      = (/^((https?:\/\/)|(file:\/\/\/))/),
+        const domain:RegExp      = (/^((https?:\/\/)|(file:\/\/\/))/),
             lf:HTMLInputElement        = pd.id("lterminator-crlf"),
             textout:boolean     = ((pd.data.node.jsscope === null || pd.data.node.jsscope.checked === false) && (node === null || node.checked === false)),
             execOutput  = function dom__event_recycle_execOutput():void {
@@ -5581,7 +4623,7 @@
                         } while (len > -1);
                         return arr.join("");
                     };
-                if (options.newline === true) {
+                if (pd.options.newline === true) {
                     output = output.replace(/(\s+)$/, "\r\n");
                 } else {
                     output = output.replace(/(\s+)$/, "");
@@ -5589,7 +4631,7 @@
                 node = pd.id("showOptionsCallOut");
                 pd.data.zIndex = pd.data.zIndex + 1;
                 if (autotest === true) {
-                    options.lang = "auto";
+                    pd.options.lang = "auto";
                 }
                 button           = pd
                     .data
@@ -5603,7 +4645,7 @@
                     chromeSave       = true;
                     button.innerHTML = "S";
                 }
-                if (options.mode === "parse" || (options.lang === "csv" && pd.data.mode !== "diff")) {
+                if (pd.options.mode === "parse" || (pd.options.lang === "csv" && pd.data.mode !== "diff")) {
                     pdlang = JSON.stringify(output);
                     if (pdlang.length > 125000) {
                         pd.test.filled.code = true;
@@ -5611,7 +4653,7 @@
                         pd.test.filled.code = false;
                     }
                     if (pd.data.node.report.code.box !== null) {
-                        if (options.lang === "csv") {
+                        if (pd.options.lang === "csv") {
                             let a:number       = 0,
                                 b:number       = output.length,
                                 c:number       = 0,
@@ -5734,14 +4776,14 @@
                                     node.innerHTML = pd.data.stat.pars;
                                 }
                             }
-                        } else if (options.mode === "parse") {
+                        } else if (pd.options.mode === "parse") {
                             let table:string[] = [],
                                 build:string = "",
                                 render:HTMLInputElement = pd.id("parsehtml-yes");
-                            if (options.parseFormat !== "htmltable" || render === null || (options.parseFormat === "htmltable" && render.checked === false)) {
-                                if (pd.data.node.codeParsOut !== null && options.lang !== "csv") {
+                            if (pd.options.parseFormat !== "htmltable" || render === null || (pd.options.parseFormat === "htmltable" && render.checked === false)) {
+                                if (pd.data.node.codeParsOut !== null && pd.options.lang !== "csv") {
                                     build = JSON.stringify(JSON.parse(output).data);
-                                    if (options.parseFormat === "htmltable") {
+                                    if (pd.options.parseFormat === "htmltable") {
                                         build = build.slice(1, build.length - 1).replace(/\\"/g, "\"");
                                     }
                                     if (pd.test.ace === true) {
@@ -5790,7 +4832,7 @@
                                 node.innerHTML = pd.data.stat.pars;
                             }
                         }
-                    } else if (pd.data.node.codeParsOut !== null && options.lang !== "csv") {
+                    } else if (pd.data.node.codeParsOut !== null && pd.options.lang !== "csv") {
                         if (pd.test.ace === true) {
                             pd
                                 .ace
@@ -5804,9 +4846,9 @@
                             pd.data.node.codeParsOut.value = pdlang;
                         }
                     }
-                } else if (options.mode === "beautify") {
+                } else if (pd.options.mode === "beautify") {
                     prettydiff.finalFile.order[11] = prettydiff.finalFile.script.beautify;
-                    if (pd.data.node.codeBeauOut !== null && options.jsscope !== "report") {
+                    if (pd.data.node.codeOut !== null && pd.options.jsscope !== "report") {
                         if (pd.test.ace === true) {
                             pd
                                 .ace
@@ -5817,11 +4859,11 @@
                                 .beauOut
                                 .clearSelection();
                         } else {
-                            pd.data.node.codeBeauOut.value = output;
+                            pd.data.node.codeOut.value = output;
                         }
                     }
                     if (pd.data.node.report.code.box !== null) {
-                        if (options.jsscope === "report" && pd.data.langvalue[1] === "javascript" && output.indexOf("Error:") !== 0) {
+                        if (pd.options.jsscope === "report" && pd.data.langvalue[1] === "javascript" && output.indexOf("Error:") !== 0) {
                             pd.data.node.report.code.body.innerHTML = output;
                             if (pd.data.node.report.code.body.style.display === "none") {
                                 pd
@@ -5859,7 +4901,7 @@
                     if (node !== null) {
                         node.innerHTML = pd.data.stat.beau;
                     }
-                } else if (options.mode === "diff" && pd.data.node.report.code.box !== null) {
+                } else if (pd.options.mode === "diff" && pd.data.node.report.code.box !== null) {
                     buttons          = pd
                         .data
                         .node
@@ -5907,7 +4949,7 @@
                                 a = a + 1;
                             } while (a < len);
                         }
-                        if (options.diffview === "sidebyside" && diffList.length > 2) {
+                        if (pd.options.diffview === "sidebyside" && diffList.length > 2) {
                             diffList[2].onmousedown  = function dom_event_save_mousedown() {
                                 pd.event.colSliderGrab(diffList[2].onmousedown, diffList[2]);
                             };
@@ -5921,7 +4963,7 @@
                     if (node !== null) {
                         node.innerHTML = pd.data.stat.diff;
                     }
-                } else if (options.mode === "minify") {
+                } else if (pd.options.mode === "minify") {
                     if (output.length > 125000) {
                         pd.test.filled.code = true;
                     } else {
@@ -5946,7 +4988,7 @@
                     if (node !== null) {
                         node.innerHTML = pd.data.stat.minn;
                     }
-                } else if (options.mode === "analysis") {
+                } else if (pd.options.mode === "analysis") {
                     if (output.length > 125000) {
                         pd.test.filled.code = true;
                     } else {
@@ -6013,7 +5055,7 @@
                         } else {
                             pd.data.node.announce.innerHTML = "Language set to <strong>" + pd.data.langvalue[2] + "</strong>.";
                         }
-                        if (options.mode === "parse" && options.parseFormat !== "htmltable") {
+                        if (pd.options.mode === "parse" && pd.options.parseFormat !== "htmltable") {
                             pdlang = "tokens";
                         } else {
                             pdlang = "characters";
@@ -6049,7 +5091,7 @@
                     }
                 }
                 parent = <HTMLElement>buttons[1].parentNode;
-                if (parent.style.display === "none" && (pd.data.mode === "diff" || (pd.data.mode === "beau" && options.jsscope === "report" && lang[1] === "javascript"))) {
+                if (parent.style.display === "none" && (pd.data.mode === "diff" || (pd.data.mode === "beau" && pd.options.jsscope === "report" && lang[1] === "javascript"))) {
                     pd
                         .event
                         .minimize(buttons[1].onclick, 1, buttons[1]);
@@ -6086,10 +5128,10 @@
                         node.innerHTML = pd.data.stat.css;
                     }
                 }
-                if (options.mode === "diff" && options.source !== undefined && options.diff !== undefined && options.diff.length > options.source.length) {
-                    size = options.diff.length;
-                } else if (options.source !== undefined) {
-                    size = options.source.length;
+                if (pd.options.mode === "diff" && pd.options.source !== undefined && pd.options.diff !== undefined && pd.options.diff.length > pd.options.source.length) {
+                    size = pd.options.diff.length;
+                } else if (pd.options.source !== undefined) {
+                    size = pd.options.source.length;
                 }
                 if (size > pd.data.stat.large) {
                     pd.data.stat.large = size;
@@ -6109,9 +5151,9 @@
                 .removeChild(node);
         }
         if (pd.test.accessibility === true) {
-            options.accessibility = true;
+            pd.options.accessibility = true;
         }
-        options.crlf = (lf !== null && lf.checked === true);
+        pd.options.crlf = (lf !== null && lf.checked === true);
         if (typeof event === "object" && event !== null && event.type === "keyup") {
             // jsscope does not get the convenience of keypress execution, because its
             // overhead is costly do not execute keypress from alt, home, end, or arrow keys
@@ -6142,12 +5184,12 @@
         }
 
         //gather updated dom nodes
-        options.api         = "dom";
+        pd.options.api         = "dom";
         node            = pd.id("csvchar");
-        options.csvchar     = (node === null || node.value.length === 0)
+        pd.options.csvchar     = (node === null || node.value.length === 0)
             ? ","
             : node.value;
-        options.lang        = (pd.data.node.lang === null)
+        pd.options.lang        = (pd.data.node.lang === null)
             ? "javascript"
             : (pd.data.node.lang.nodeName.toLowerCase() === "select")
                 ? pd
@@ -6162,11 +5204,11 @@
                     .lang
                     .value
                     .toLowerCase();
-        options.langdefault = (pd.data.node.langdefault !== null)
+        pd.options.langdefault = (pd.data.node.langdefault !== null)
             ? pd.data.node.langdefault[pd.data.node.langdefault.selectedIndex].value
             : "javascript";
-        options.newline     = (pd.id("newline-yes") !== null && pd.id("newline-yes").checked === true);
-        if (options.lang === "auto") {
+        pd.options.newline     = (pd.id("newline-yes") !== null && pd.id("newline-yes").checked === true);
+        if (pd.options.lang === "auto") {
             autotest = true;
         }
 
@@ -6176,24 +5218,35 @@
                 len = keys.length;
             let a = 0;
             do {
-                options[keys[a]] = pd.param[keys[a]];
+                pd.options[keys[a]] = pd.param[keys[a]];
                 a = a + 1;
             } while (a < len);
         }
-        if (domain.test(options.source) === true && pd.test.xhr === true) {
-            const filetest:boolean       = (options.source.indexOf("file:///") === 0),
+        if (pd.data.mode === "beau") {
+            pd.options.mode = "beautify";
+        } else if (pd.data.mode === "minn") {
+            pd.options.mode = "minify";
+        } else if (pd.data.mode === "pars") {
+            pd.options.mode = "parse";
+        } else if (pd.data.mode === "anal") {
+            pd.options.mode = "analysis";
+        } else {
+            pd.options.mode = "diff";
+        }
+        if (domain.test(pd.options.source) === true && pd.test.xhr === true) {
+            const filetest:boolean       = (pd.options.source.indexOf("file:///") === 0),
                 protocolRemove:string = (filetest === true)
-                    ? options
+                    ? pd.options
                         .source
                         .split(":///")[1]
-                    : options
+                    : pd.options
                         .source
                         .split("://")[1],
                 slashIndex:number     = (protocolRemove !== undefined)
                     ? protocolRemove.indexOf("/")
                     : 0,
                 xhr:XMLHttpRequest            = new XMLHttpRequest();
-            if ((slashIndex > 0 || options.source.indexOf("http") === 0) && typeof protocolRemove === "string" && protocolRemove.length > 0) {
+            if ((slashIndex > 0 || pd.options.source.indexOf("http") === 0) && typeof protocolRemove === "string" && protocolRemove.length > 0) {
                 requests = true;
                 xhr.onreadystatechange = function dom__event_recycle_xhrSource_statechange() {
                     const appDelay = function dom__event_recycle_xhrSource_statechange_appDelay() {
@@ -6206,11 +5259,11 @@
                     };
                     if (xhr.readyState === 4) {
                         if (xhr.status === 200 || xhr.status === 0) {
-                            options.source = xhr
+                            pd.options.source = xhr
                                 .responseText
                                 .replace(/\r\n/g, "\n");
                             if (pd.data.mode !== "diff" || requestd === false || (requestd === true && completed === true)) {
-                                pd.data.source = options.source;
+                                pd.data.source = pd.options.source;
                                 if (pd.test.ace === true) {
                                     if (pd.data.mode !== "diff") {
                                         lang = pd
@@ -6232,10 +5285,10 @@
                                             value: pd.data.source
                                         }, "");
                                 }
-                                options.lang = lang[0];
-                                options.lexer = lang[1];
+                                pd.options.lang = lang[0];
+                                pd.options.lexer = lang[1];
                                 if (pd.data.mode === "diff") {
-                                    pd.data.diff = options.diff;
+                                    pd.data.diff = pd.options.diff;
                                 } else {
                                     pd.data.diff = "";
                                 }
@@ -6251,14 +5304,14 @@
                                 return;
                             }
                         } else {
-                            options.source = "Error: transmission failure receiving source code from address.";
+                            pd.options.source = "Error: transmission failure receiving source code from address.";
                         }
                     }
                 };
                 if (filetest === true) {
-                    xhr.open("GET", options.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                    xhr.open("GET", pd.options.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
                 } else {
-                    xhr.open("GET", "proxy.php?x=" + options.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                    xhr.open("GET", "proxy.php?x=" + pd.options.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
                 }
                 xhr.send();
             }
@@ -6275,55 +5328,55 @@
                 node.innerHTML = pd.data.stat.useday;
             }
         }
-        if (options.source === undefined || (pd.data.mode === "diff" && options.diff === undefined)) {
+        if (pd.options.source === undefined || (pd.data.mode === "diff" && pd.options.diff === undefined)) {
             return;
         }
         // this logic attempts to prevent writes to localStorage if they are likely to
         // exceed 5mb of storage
 
-        if (options.mode === "beautify") {
-            codesize = options.source.length + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.pars + pd.data.sourceLength.anal;
-            if (options.source.length < 2096000 && codesize < 4800000) {
-                localStorage.codeBeautify = options.source;
-                pd.data.sourceLength.beau = options.source.length;
+        if (pd.options.mode === "beautify") {
+            codesize = pd.options.source.length + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.pars + pd.data.sourceLength.anal;
+            if (pd.options.source.length < 2096000 && codesize < 4800000) {
+                localStorage.codeBeautify = pd.options.source;
+                pd.data.sourceLength.beau = pd.options.source.length;
             } else {
                 localStorage.codeBeautify = "";
                 pd.data.sourceLength.beau = 0;
             }
-        } else if (options.mode === "minify") {
-            codesize = options.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.pars + pd.data.sourceLength.anal;
-            if (options.source.length < 2096000 && codesize < 4800000) {
-                localStorage.codeMinify   = options.source;
-                pd.data.sourceLength.minn = options.source.length;
+        } else if (pd.options.mode === "minify") {
+            codesize = pd.options.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.pars + pd.data.sourceLength.anal;
+            if (pd.options.source.length < 2096000 && codesize < 4800000) {
+                localStorage.codeMinify   = pd.options.source;
+                pd.data.sourceLength.minn = pd.options.source.length;
             } else {
                 localStorage.codeMinify   = "";
                 pd.data.sourceLength.minn = 0;
             }
-        } else if (options.mode === "parse") {
-            codesize = options.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.anal;
-            if (options.source.length < 2096000 && codesize < 4800000) {
-                localStorage.codeParse    = options.source;
-                pd.data.sourceLength.pars = options.source.length;
+        } else if (pd.options.mode === "parse") {
+            codesize = pd.options.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.anal;
+            if (pd.options.source.length < 2096000 && codesize < 4800000) {
+                localStorage.codeParse    = pd.options.source;
+                pd.data.sourceLength.pars = pd.options.source.length;
             } else {
                 localStorage.codeParse    = "";
                 pd.data.sourceLength.pars = 0;
             }
-        } else if (options.mode === "analysis") {
-            codesize = options.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.pars;
-            if (options.source.length < 2096000 && codesize < 4800000) {
-                localStorage.codeAnalysis = options.source;
-                pd.data.sourceLength.anal = options.source.length;
+        } else if (pd.options.mode === "analysis") {
+            codesize = pd.options.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.pars;
+            if (pd.options.source.length < 2096000 && codesize < 4800000) {
+                localStorage.codeAnalysis = pd.options.source;
+                pd.data.sourceLength.anal = pd.options.source.length;
             } else {
                 localStorage.codeAnalysis = "";
                 pd.data.sourceLength.anal = 0;
             }
-        } else if (options.mode === "diff") {
-            codesize = pd.data.sourceLength.beau + pd.data.sourceLength.minn + pd.data.sourceLength.pars + pd.data.sourceLength.anal + options.source.length + options.diff.length;
-            if (options.source.length < 2096000 && options.diff.length < 2096000 && codesize < 4800000) {
-                localStorage.codeDiffBase     = options.source;
-                localStorage.codeDiffNew      = options.diff;
-                pd.data.sourceLength.diffBase = options.source.length;
-                pd.data.sourceLength.diffNew  = options.diff.length;
+        } else if (pd.options.mode === "diff") {
+            codesize = pd.data.sourceLength.beau + pd.data.sourceLength.minn + pd.data.sourceLength.pars + pd.data.sourceLength.anal + pd.options.source.length + pd.options.diff.length;
+            if (pd.options.source.length < 2096000 && pd.options.diff.length < 2096000 && codesize < 4800000) {
+                localStorage.codeDiffBase     = pd.options.source;
+                localStorage.codeDiffNew      = pd.options.diff;
+                pd.data.sourceLength.diffBase = pd.options.source.length;
+                pd.data.sourceLength.diffNew  = pd.options.diff.length;
             } else {
                 localStorage.codeDiffBase     = "";
                 localStorage.codeDiffNew      = "";
@@ -6335,85 +5388,24 @@
             // sometimes the Ace getValue method fires too early on copy/paste.  I put in a
             // 50ms delay in this case to prevent operations from old input
 
-            if (pd.test.ace === true && options.mode !== "diff") {
-                if (options.mode === "beautify") {
-                    setTimeout(function dom__event_recycle_beautifyPromise():void {
-                        options.source     = pd
-                            .ace
-                            .beauIn
-                            .getValue();
-                        lang       = (pd.data.langvalue[0] !== "plain_text")
-                            ? pd
-                                .app
-                                .langkey(false, pd.ace.beauIn, "")
-                            : lang;
-                        options.lang = lang[0];
-                        options.lexer = lang[1];
-                        pd.data.source = options.source;
-                        pd.data.diff   = "";
-                        output         = prettydiff.app();
-                        execOutput();
-                    }, 50);
-                }
-                if (options.mode === "minify") {
-                    setTimeout(function dom__event_recycle_minifyPromise():void {
-                        options.source     = pd
-                            .ace
-                            .minnIn
-                            .getValue();
-                        lang       = (pd.data.langvalue[0] !== "plain_text")
-                            ? pd
-                                .app
-                                .langkey(false, pd.ace.beauIn, "")
-                            : lang;
-                        options.lang = lang[0];
-                        options.lexer = lang[1];
-                        pd.data.source = options.source;
-                        pd.data.diff   = "";
-                        output         = prettydiff.app();
-                        execOutput();
-                    }, 50);
-                }
-                if (options.mode === "parse") {
-                    setTimeout(function dom__event_recycle_parsePromise():void {
-                        options.source     = pd
-                            .ace
-                            .parsIn
-                            .getValue();
-                        lang       = (pd.data.langvalue[0] !== "plain_text")
-                            ? pd
-                                .app
-                                .langkey(false, pd.ace.beauIn, "")
-                            : lang;
-                        options.lang = lang[0];
-                        options.lexer = lang[1];
-                        pd.data.source = options.source;
-                        pd.data.diff   = "";
-                        output         = prettydiff.app();
-                        execOutput();
-                    }, 50);
-                }
-                if (options.mode === "analysis") {
-                    setTimeout(function dom__event_recycle_analysisPromise():void {
-                        options.source     = pd
-                            .ace
-                            .analIn
-                            .getValue();
-                        lang       = (pd.data.langvalue[0] !== "plain_text")
-                            ? pd
-                                .app
-                                .langkey(false, pd.ace.beauIn, "")
-                            : lang;
-                        options.lang = lang[0];
-                        options.lexer = lang[1];
-                        pd.data.source = options.source;
-                        pd.data.diff   = "";
-                        output         = prettydiff.app();
-                        execOutput();
-                    }, 50);
-                }
+            if (pd.test.ace === true && pd.options.mode !== "diff") {
+                pd.options.source     = pd
+                    .ace
+                    .codeIn
+                    .getValue();
+                lang       = (pd.data.langvalue[0] !== "plain_text")
+                    ? pd
+                        .app
+                        .langkey(false, pd.ace.codeIn, "")
+                    : lang;
+                pd.options.lang = lang[0];
+                pd.options.lexer = lang[1];
+                pd.data.source = pd.options.source;
+                pd.data.diff   = "";
+                output         = prettydiff.app();
+                execOutput();
             } else {
-                pd.data.source = options.source;
+                pd.data.source = pd.options.source;
                 if (pd.data.langvalue[1] === "text") {
                     lang = ["text", "text", "Plain Text"];
                 } else if (pd.data.langvalue[1] === "csv") {
@@ -6421,18 +5413,18 @@
                 } else if (pd.test.ace === true) {
                     lang = pd
                         .app
-                        .langkey(false, pd.ace.diffBase, "");
+                        .langkey(false, pd.ace.codeIn, "");
                 } else {
                     lang = pd
                         .app
                         .langkey(false, {
-                            value: options.source
+                            value: pd.options.source
                         }, "");
                 }
-                options.lang = lang[0];
-                options.lexer = lang[1];
+                pd.options.lang = lang[0];
+                pd.options.lexer = lang[1];
                 if (pd.data.mode === "diff") {
-                    pd.data.diff = options.diff;
+                    pd.data.diff = pd.options.diff;
                 } else {
                     pd.data.diff = "";
                 }
@@ -6449,8 +5441,7 @@
             parent:HTMLElement,
             state:boolean     = false,
             targetOut:HTMLElement,
-            targetIn:HTMLElement,
-            inprop:string    = "";
+            targetIn:HTMLElement;
         const restore   = function dom__app_hideOutput_restore():void {
                 parent = <HTMLElement>targetOut.parentNode;
                 parent.style.display = "block";
@@ -6459,7 +5450,8 @@
                     node.style.width = "49%";
                     if (pd.test.ace === true) {
                         pd
-                            .ace[inprop]
+                            .ace
+                            .codeIn
                             .resize();
                     }
                     targetIn.onkeyup   = pd.event.recycle;
@@ -6493,23 +5485,8 @@
             x = x.getElementsByTagName("input")[0];
         }
         state = (x === pd.data.node.jsscope || langval === "csv");
-        if (pd.data.mode === "minn") {
-            targetOut = pd.data.node.codeMinnOut;
-            targetIn  = pd.data.node.codeMinnIn;
-            inprop    = "minnIn";
-        } else if (pd.data.mode === "pars") {
-            targetOut = pd.data.node.codeParsOut;
-            targetIn  = pd.data.node.codeParsIn;
-            inprop    = "parsIn";
-        } else if (pd.data.mode === "anal") {
-            targetOut = pd.data.node.codeAnalOut;
-            targetIn  = pd.data.node.codeAnalIn;
-            inprop    = "analIn";
-        } else {
-            targetOut = pd.data.node.codeBeauOut;
-            targetIn  = pd.data.node.codeBeauIn;
-            inprop    = "beauIn";
-        }
+        targetOut = pd.data.node.codeOut;
+        targetIn  = pd.data.node.codeIn;
         parent = <HTMLElement>targetOut.parentNode;
         if (targetOut === null || (state === true && parent.style.display === "none") || (state === false && parent.style.display === "block")) {
             if (pd.test.load === false) {
@@ -6530,14 +5507,15 @@
                     node.style.width = "100%";
                     if (pd.test.ace === true) {
                         pd
-                            .ace[inprop]
+                            .ace
+                            .codeIn
                             .resize();
                     }
                     if (pd.test.ace === true) {
                         targetIn.onkeyup = function dom__app_hideOutput_langkeyEditor(event:Event):void {
                             pd
                                 .app
-                                .langkey(false, pd.ace[inprop], "");
+                                .langkey(false, pd.ace.codeIn, "");
                             pd
                                 .event
                                 .recycle(event);
@@ -6717,96 +5695,36 @@
                 if (node === pd.id("beau-space")) {
                     pd
                         .ace
-                        .beauIn
+                        .codeIn
                         .getSession()
                         .setUseSoftTabs(true);
                     pd
                         .ace
-                        .beauOut
-                        .getSession()
-                        .setUseSoftTabs(true);
-                    pd
-                        .ace
-                        .minnIn
-                        .getSession()
-                        .setUseSoftTabs(true);
-                    pd
-                        .ace
-                        .minnOut
-                        .getSession()
-                        .setUseSoftTabs(true);
-                    pd
-                        .ace
-                        .parsIn
-                        .getSession()
-                        .setUseSoftTabs(true);
-                    pd
-                        .ace
-                        .parsOut
+                        .codeOut
                         .getSession()
                         .setUseSoftTabs(true);
                     quan = pd.id("beau-quan");
                     if (quan !== null && isNaN(Number(quan.value)) === false) {
                         pd
                             .ace
-                            .beauIn
+                            .codeIn
                             .getSession()
                             .setTabSize(Number(node.value));
                         pd
                             .ace
-                            .beauOut
-                            .getSession()
-                            .setTabSize(Number(node.value));
-                        pd
-                            .ace
-                            .minnIn
-                            .getSession()
-                            .setTabSize(Number(node.value));
-                        pd
-                            .ace
-                            .minnOut
-                            .getSession()
-                            .setTabSize(Number(node.value));
-                        pd
-                            .ace
-                            .parsIn
-                            .getSession()
-                            .setTabSize(Number(node.value));
-                        pd
-                            .ace
-                            .parsOut
+                            .codeOut
                             .getSession()
                             .setTabSize(Number(node.value));
                     }
                 } else {
                     pd
                         .ace
-                        .beauIn
+                        .codeIn
                         .getSession()
                         .setUseSoftTabs(false);
                     pd
                         .ace
-                        .beauOut
-                        .getSession()
-                        .setUseSoftTabs(false);
-                    pd
-                        .ace
-                        .minnIn
-                        .getSession()
-                        .setUseSoftTabs(false);
-                    pd
-                        .ace
-                        .minnOut
-                        .getSession()
-                        .setUseSoftTabs(false);
-                    pd
-                        .ace
-                        .parsIn
-                        .getSession()
-                        .setUseSoftTabs(false);
-                    pd
-                        .ace
-                        .parsOut
+                        .codeOut
                         .getSession()
                         .setUseSoftTabs(false);
                 }
@@ -6844,11 +5762,11 @@
         }
         if (node.nodeName.toLowerCase() === "textarea") {
             if (pd.test.ace === true) {
-                if (node === pd.data.node.codeBeauOut || node === pd.data.node.codeMinnOut || node === pd.data.node.codeParsOut) {
+                if (node === pd.data.node.codeOut) {
                     esc = true;
                 }
             }
-            if (node === pd.data.node.codeDiffBase || node === pd.data.node.codeDiffNew || node === pd.data.node.codeBeauIn || node === pd.data.node.codeMinnIn || node === pd.data.node.codeParsIn) {
+            if (node === pd.data.node.codeIn) {
                 esc = true;
             }
         }
@@ -6883,74 +5801,30 @@
                 if (len === 2) {
                     //back tab
 
-                    if (node === pd.data.node.codeDiffBase) {
+                    if (node === pd.data.node.codeIn) {
                         pd
-                            .id("diffbasefile")
+                            .id("inputfile")
                             .focus();
-                    } else if (node === pd.data.node.codeDiffNew) {
-                        pd
-                            .id("diffnewfile")
-                            .focus();
-                    } else if (node === pd.data.node.codeBeauIn) {
-                        pd
-                            .id("beautyfile")
-                            .focus();
-                    } else if (node === pd.data.node.codeBeauOut) {
+                    } else if (node === pd.data.node.codeOut) {
                         pd
                             .data
                             .node
-                            .codeBeauIn
-                            .focus();
-                    } else if (node === pd.data.node.codeMinnIn) {
-                        pd
-                            .id("minifyfile")
-                            .focus();
-                    } else if (node === pd.data.node.codeMinnOut) {
-                        pd
-                            .data
-                            .node
-                            .codeMinnIn
-                            .focus();
-                    } else if (node === pd.data.node.codeParsIn) {
-                        pd
-                            .id("parsefile")
-                            .focus();
-                    } else if (node === pd.data.node.codeParsOut) {
-                        pd
-                            .data
-                            .node
-                            .codeParsIn
+                            .codeIn
                             .focus();
                     }
                 } else {
                     //forward tab
 
-                    if (node === pd.data.node.codeDiffBase) {
-                        pd
-                            .id("newlabel")
-                            .focus();
-                    } else if (node === pd.data.node.codeDiffNew || node === pd.data.node.codeBeauOut || node === pd.data.node.codeMinnOut) {
+                    if (node === pd.data.node.codeOut) {
                         pd
                             .id("button-primary")
                             .getElementsByTagName("button")[0]
                             .focus();
-                    } else if (node === pd.data.node.codeBeauIn) {
+                    } else if (node === pd.data.node.codeIn) {
                         pd
                             .data
                             .node
-                            .codeBeauOut
-                            .focus();
-                    } else if (node === pd.data.node.codeMinnIn) {
-                        pd
-                            .data
-                            .node
-                            .codeMinnOut
-                            .focus();
-                    } else if (node === pd.data.node.codeParsIn) {
-                        pd
-                            .data
-                            .node
-                            .codeParsOut
+                            .codeOut
                             .focus();
                     }
                 }
@@ -6990,53 +5864,27 @@
                     fileStore.push(event.target.result);
                     if (a === fileCount) {
                         if (pd.test.ace === true) {
-                            if (id === "beautyfile") {
+                            if (id === "outputfile") {
                                 pd
                                     .ace
-                                    .beauIn
+                                    .codeOut
                                     .setValue(fileStore.join("\n\n"));
                                 pd
                                     .ace
-                                    .beauIn
+                                    .codeOut
                                     .clearSelection();
-                            } else if (id === "minifyfile") {
+                            } else {
                                 pd
                                     .ace
-                                    .minnIn
+                                    .codeIn
                                     .setValue(fileStore.join("\n\n"));
                                 pd
                                     .ace
-                                    .minnIn
-                                    .clearSelection();
-                            } else if (id === "diffbasefile") {
-                                pd
-                                    .ace
-                                    .diffBase
-                                    .setValue(fileStore.join("\n\n"));
-                                pd
-                                    .ace
-                                    .diffBase
-                                    .clearSelection();
-                            } else if (id === "diffnewfile") {
-                                pd
-                                    .ace
-                                    .diffNew
-                                    .setValue(fileStore.join("\n\n"));
-                                pd
-                                    .ace
-                                    .diffNew
+                                    .codeIn
                                     .clearSelection();
                             }
                         } else {
-                            if (id === "beautyfile") {
-                                pd.data.node.codeBeauIn.value = fileStore.join("\n\n");
-                            } else if (id === "minifyfile") {
-                                pd.data.node.codeMinnIn.value = fileStore.join("\n\n");
-                            } else if (id === "diffbasefile") {
-                                pd.data.node.codeDiffBase.value = fileStore.join("\n\n");
-                            } else if (id === "diffnewfile") {
-                                pd.data.node.codeDiffNew.value = fileStore.join("\n\n");
-                            }
+                            pd.data.node.codeIn.value = fileStore.join("\n\n");
                         }
                         if (pd.data.mode !== "diff") {
                             pd

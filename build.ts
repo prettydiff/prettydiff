@@ -5,7 +5,7 @@
     "use strict";
     const order = [
             "typescript",
-            //"options",
+            "options",
             //"dom",
             "lint"
         ],
@@ -165,16 +165,26 @@
                 return `\u001b[36m[${hourString}:${minuteString}:${secondString}]\u001b[39m `;
             }
         },
-        errout     = function build_errout(errtext):void {
+        errout     = function build_errout(errtext:string):void {
+            let stack:string = new Error().stack;
             console.log("");
-            console.error(errtext);
-            console.log("");
-            humantime(true);
-            if (process.argv[1].indexOf("validate.js") > -1) {
-                process.exit(1);
+            console.log("\u001b[31mScript error\u001b[39m");
+            console.log("------------");
+            if (errtext === "") {
+                console.log("\u001b[33mNo error message supplied\u001b[39m");
+            } else {
+                console.log(errtext);
             }
+            console.log("");
+            if (process.platform.toLowerCase() === "win32") {
+                stack = stack.replace("Error", "\u001b[36mStack trace\u001b[39m\r\n-----------");
+            } else {
+                stack = stack.replace("Error", "\u001b[36mStack trace\u001b[39m\n-----------");
+            }
+            console.log(stack);
+            process.exit(1);
         },
-        next = function build_next() {
+        next = function build_next():void {
             let phase = order[0];
             const complete = function build_complete() {
                     console.log("");
@@ -195,7 +205,7 @@
             phases[phase]();
         },
         phases = {
-            lint     : function build_lint() {
+            lint     : function build_lint():void {
                 const ignoreDirectory = [
                         ".git",
                         ".vscode",
@@ -298,6 +308,49 @@
                         };
                     readDir(js);
                 }());
+            },
+            options: function build_options():void {
+                const flag = {
+                        documentation: false,
+                        dom: false,
+                        html: false,
+                        node: false
+                    },
+                    modifyFile = function build_options_modifyFile(file:string, fileFlag:string):void {
+                        node.fs.readFile(file, "utf8", function build_options_documentation(err:Error, data:string):void {
+                            let start:number = 0,
+                                end: number = 0,
+                                built:string = "";
+                            if (err !== null && err.toString() !== "") {
+                                errout(err.toString());
+                                return;
+                            }
+                            if (fileFlag === "documentation") {
+                                start = data.indexOf("<!-- option list start -->") + 26;
+                                end = data.indexOf("<!-- option list end -->");
+                                built = [data.slice(0, start), global.prettydiff.optionDef.buildDocumentation, data.slice(end)].join("");
+                            } else if (fileFlag === "dom") {
+                                data = data.replace("// start option defaults\s+", "// start option defaults\n");
+                                data = data.replace("// end option defaults\s+", "// end option defaults\n");
+                                start = data.indexOf("// start option defaults\n") + 17;
+                                end = data.indexOf("// end option defaults\n");
+                                built = [data.slice(0, start), global.prettydiff.optionDef.buildDomDefaults, data.slice(end)].join("");
+                            }
+                            node.fs.writeFile(file, built, function build_options_documentation_write(errw:Error) {
+                                if (errw !== null && errw.toString() !== "") {
+                                    errout(errw.toString());
+                                    return;
+                                }
+                                flag[fileFlag] = true;
+                                if (flag.documentation === true && flag.dom === true && flag.html === true && flag.node === true) {
+                                    next();
+                                }
+                            });
+                        });
+                    };
+                require(`${js}api${node.path.sep}options`);
+                modifyFile(`${projectPath}documentation.xhtml`, "documentation");
+                modifyFile(`${js}api${node.path.sep}dom.js`, "dom");
             },
             typescript: function build_typescript():void {
                 console.log("\u001b[36mTypeScript Compilation\u001b[39m");
