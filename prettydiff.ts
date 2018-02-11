@@ -47,6 +47,9 @@
         analyze: {},
         app: prettydiff,
         beautify: {},
-        minify: {}
+        minify: {},
+        options: {
+            source: ""
+        }
     };
 }());

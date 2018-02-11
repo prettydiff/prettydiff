@@ -317,7 +317,16 @@
                         node: false
                     },
                     modifyFile = function build_options_modifyFile(file:string, fileFlag:string):void {
-                        node.fs.readFile(file, "utf8", function build_options_documentation(err:Error, data:string):void {
+                        node.fs.readFile(file, "utf8", function build_options_modifyFile(err:Error, data:string):void {
+                            const startBuild = function build_options_modifyFile_startBuild(searchstr:string):number {
+                                    const len = (searchstr.indexOf("//") === 0)
+                                        ? searchstr.length + 1
+                                        : searchstr.length;
+                                    return data.indexOf(searchstr) + len;
+                                },
+                                modify = function build_options_modifyFile_modify(inject:string):string {
+                                    return [data.slice(0, start), global.prettydiff.optionDef[inject], data.slice(end)].join("");
+                                };
                             let start:number = 0,
                                 end: number = 0,
                                 built:string = "";
@@ -326,15 +335,19 @@
                                 return;
                             }
                             if (fileFlag === "documentation") {
-                                start = data.indexOf("<!-- option list start -->") + 26;
+                                start = startBuild("<!-- option list start -->");
                                 end = data.indexOf("<!-- option list end -->");
-                                built = [data.slice(0, start), global.prettydiff.optionDef.buildDocumentation, data.slice(end)].join("");
+                                built = modify("buildDocumentation");
+                            } else if (fileFlag === "html") {
+                                start = startBuild("<!-- documented options start -->");
+                                end = data.indexOf("<!-- documented options end -->");
+                                built = modify("buildDomInterface");
                             } else if (fileFlag === "dom") {
                                 data = data.replace("// start option defaults\s+", "// start option defaults\n");
                                 data = data.replace("// end option defaults\s+", "// end option defaults\n");
-                                start = data.indexOf("// start option defaults\n") + 17;
-                                end = data.indexOf("// end option defaults\n");
-                                built = [data.slice(0, start), global.prettydiff.optionDef.buildDomDefaults, data.slice(end)].join("");
+                                start = startBuild("// start option defaults");
+                                end = data.indexOf("// end option defaults");
+                                built = modify("buildDomDefaults");
                             }
                             node.fs.writeFile(file, built, function build_options_documentation_write(errw:Error) {
                                 if (errw !== null && errw.toString() !== "") {
@@ -350,6 +363,7 @@
                     };
                 require(`${js}api${node.path.sep}options`);
                 modifyFile(`${projectPath}documentation.xhtml`, "documentation");
+                modifyFile(`${projectPath}index.xhtml`, "html");
                 modifyFile(`${js}api${node.path.sep}dom.js`, "dom");
             },
             typescript: function build_typescript():void {

@@ -42,7 +42,7 @@
                 }
                 a = a + 1;
             } while (a < keyslen);
-            return JSON.stringify(obj);
+            return "options:" + JSON.stringify(obj) + ",";
         },
         buildDocumentation = function options_buildDocumentation():string {
             const allOptions:string[] = [];
@@ -52,21 +52,21 @@
                 vallen:number,
                 item:string[],
                 optName:string,
-                opt;
+                opt:option;
             do {
                 optName = keys[a];
                 opt = definitions[optName];
-                item = [`<li id="${optName}"> `];
-                item.push(`<h4>${optName}</h4> `);
-                item.push(`<ul><li><h5>Description</h5> `);
+                item = [`<li id="${optName}">`];
+                item.push(`<h4>${optName}</h4>`);
+                item.push(`<ul><li><h5>Description</h5>`);
                 item.push(opt.definition);
-                item.push(`</li><li><h5>Environment</h5> `);
+                item.push(`</li><li><h5>Environment</h5>`);
                 item.push(opt.api);
-                item.push(`</li><li><h5>Type</h5> `);
+                item.push(`</li><li><h5>Type</h5>`);
                 item.push(opt.type);
-                item.push(`</li><li><h5>Mode</h5> `);
+                item.push(`</li><li><h5>Mode</h5>`);
                 item.push(opt.mode);
-                item.push(`</li><li><h5>Lexer</h5> `);
+                item.push(`</li><li><h5>Lexer</h5>`);
                 item.push(opt.lexer);
                 if (opt.values !== undefined) {
                     b = 0;
@@ -79,9 +79,9 @@
                     } while (b < vallen);
                     item.push(`</dl>`);
                 }
-                item.push(`</li><li><h5>Default</h5> `);
-                item.push(opt.default);
-                item.push(`</li><li><h5>As labeled in the HTML tool</h5> `);
+                item.push(`</li><li><h5>Default</h5>`);
+                item.push(String(opt.default));
+                item.push(`</li><li><h5>As labeled in the HTML tool</h5>`);
                 item.push(opt.label);
                 item.push(`</li></ul></li>`);
                 allOptions.push(item.join(""));
@@ -92,12 +92,53 @@
         buildDomInterface = function options_buildDomInterface():string {
             const allItems:string[] = [];
             let a:number = 0,
-                item:string[];
+                b:number = 0,
+                item:string[],
+                optName:string,
+                opt:option,
+                vals:string[],
+                vallen:number;
             do {
-                item = [``];
+                optName = keys[a];
+                opt = definitions[optName];
+                if (opt.api === "any" || opt.api === "dom") {
+                    item = [`<li data-mode="${opt.mode}">`];
+                    item.push(`<label for="option-${optName}" class="label">${opt.label}`);
+                    item.push(` <a href="documentation.xhtml#${optName}">(${optName})</a>`);
+                    item.push(`</label>`);
+                    if (opt.type === "number" || (opt.type === "string" && opt.values === undefined)) {
+                        item.push(`<input type="text" id="option-${optName}" value="${opt.default}" data-description="${opt.definition.replace(/"/g, "&quot;")}"/>`);
+                    } else {
+                        item.push(`<select id="option-${optName}" data-description="${opt.definition.replace(/"/g, "&quot;")}">`);
+                        if (opt.type === "string") {
+                            vals = Object.keys(opt.values);
+                            vallen = vals.length;
+                            b = 0;
+                            do {
+                                item.push(`<option data-description="${opt.values[vals[b]].replace(/"/g, "&quot;")}" ${
+                                    (opt.default === vals[b])
+                                        ? "selected=\"selected\""
+                                        : ""
+                                }>${vals[b]}</option>`);
+                                b = b + 1;
+                            } while (b < vallen);
+                        } else {
+                            if (opt.default === false) {
+                                item.push(`<option selected="selected">false</option>`);
+                                item.push(`<option>true</option>`);
+                            } else {
+                                item.push(`<option>false</option>`);
+                                item.push(`<option selected="selected">true</option>`);
+                            }
+                        }
+                        item.push(`</select>`);
+                    }
+                    item.push("</li>");
+                    allItems.push(item.join(""));
+                }
                 a = a + 1;
             } while (a < keyslen);
-            return "";
+            return allItems.join("");
         },
         definitions = {
             accessibility    : {
@@ -303,7 +344,7 @@
                 api       : "any",
                 mode      : "diff",
                 lexer     : "any",
-                label     : "",
+                label     : "Label for Diff Sample",
                 type      : "string",
                 definition: "This allows for a descriptive label for the diff file code of the diff HTML ou" +
                         "tput.",
@@ -313,7 +354,7 @@
                 api       : "any",
                 mode      : "diff",
                 lexer     : "any",
-                label     : "",
+                label     : "Remove White Space",
                 type      : "boolean",
                 definition: "If white space only differences should be ignored by the diff tool.",
                 default   : false
@@ -737,7 +778,7 @@
                 api       : "any",
                 mode      : "diff",
                 lexer     : "any",
-                label     : "Source Label",
+                label     : "Label for Source Sample",
                 type      : "string",
                 definition: "This allows for a descriptive label of the source file code for the diff HTML o" +
                         "utput.",

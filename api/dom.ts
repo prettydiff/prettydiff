@@ -35,14 +35,7 @@
                 node: {},
                 settings     : {},
                 source       : "",
-                sourceLength : {
-                    anal    : 0,
-                    beau    : 0,
-                    diffBase: 0,
-                    diffNew : 0,
-                    minn    : 0,
-                    pars    : 0
-                },
+                sourceLength : 0,
                 stat         : {
                     avday : 1,
                     anal  : 0,
@@ -268,7 +261,7 @@
                         .getElementsByTagName("div")[0];
 
                 if (pd.test.ace === true) {
-                    if (pd.data.node.codeDiffBase !== null) {
+                    if (pd.data.node.codeIn !== null) {
                         pd.ace.codeIn = pd
                             .app
                             .aceApply("codeIn", true);
@@ -344,39 +337,6 @@
                         node.disabled = true;
                     }
                 }
-                if (localStorage.webtool !== undefined) {
-                    delete localStorage.webtool;
-                    delete localStorage.optionString;
-                }
-                if (localStorage.bl !== undefined) {
-                    delete localStorage.bl;
-                }
-                if (localStorage.nl !== undefined) {
-                    delete localStorage.nl;
-                }
-                if (localStorage.bo !== undefined) {
-                    name = localStorage.bo;
-                    delete localStorage.bo;
-                    localStorage.codeDiffBase = name;
-                }
-                if (localStorage.nx !== undefined) {
-                    name = localStorage.nx;
-                    delete localStorage.nx;
-                    localStorage.codeDiffNew = name;
-                }
-                if (localStorage.bi !== undefined) {
-                    name = localStorage.bi;
-                    delete localStorage.bi;
-                    localStorage.codeBeautify = name;
-                }
-                if (localStorage.mi !== undefined) {
-                    name = localStorage.mi;
-                    delete localStorage.mi;
-                    localStorage.codeMinify = name;
-                }
-                if (localStorage.statdata !== undefined) {
-                    delete localStorage.statdata;
-                }
                 if (pd.data.stat.fdate === 0) {
                     pd.data.stat.fdate = Date.now();
                 }
@@ -401,9 +361,6 @@
                         localStorage.settings      = JSON.stringify(pd.data.settings);
                     }
                     if (pd.data.settings.diffreport !== undefined) {
-                        delete pd.data.settings.diffreport;
-                        delete pd.data.settings.beaureport;
-                        delete pd.data.settings.minnreport;
                         pd.data.settings.feedreport = {};
                         pd.data.settings.codereport = {};
                     }
@@ -1159,22 +1116,20 @@
                         } else if (param[0] === "s" || param[1] === "source") {
                             param[0] = "source";
                             source = param[1];
-                        } else if ((param[0] === "d" || param[1] === "diff") && pd.data.node.codeDiffNew !== null) {
+                        } else if ((param[0] === "d" || param[1] === "diff") && pd.data.node.codeOut !== null) {
                             param[0] = "diff";
                             diff = param[1];
-                            if (pd.data.node.codeDiffNew !== null) {
-                                if (pd.test.ace === true) {
-                                    pd
-                                        .ace
-                                        .diffNew
-                                        .setValue(diff);
-                                    pd
-                                        .ace
-                                        .diffNew
-                                        .clearSelection();
-                                } else {
-                                    pd.data.node.codeDiffNew.value = diff;
-                                }
+                            if (pd.test.ace === true) {
+                                pd
+                                    .ace
+                                    .codeIn
+                                    .setValue(diff);
+                                pd
+                                    .ace
+                                    .codeOut
+                                    .clearSelection();
+                            } else {
+                                pd.data.node.codeIn.value = diff;
                             }
                         } else if ((param[0] === "l" || param[0] === "lang" || param[0] === "language") && pd.data.node.lang !== null) {
                             param[0] = "lang";
@@ -2734,7 +2689,7 @@
                 if (pd.test.ace === true && obj.getValue !== undefined) {
                     sample = obj.getValue();
                     if (sample.indexOf("http") === 0 || sample.indexOf("file:///") === 0) {
-                        if (obj === pd.ace.diffNew) {
+                        if (obj === pd.ace.codeOut) {
                             sample = pd.data.diff;
                         } else {
                             sample = pd.data.source;
@@ -4076,63 +4031,63 @@
                     }
                 }
                 if (pd.test.render.diff === false) {
-                    if (pd.data.node.codeDiffBase !== null) {
-                        if (localStorage.codeDiffBase !== undefined) {
-                            storage = localStorage.codeDiffBase;
+                    if (pd.data.node.codeIn !== null) {
+                        if (localStorage.codeIn !== undefined) {
+                            storage = localStorage.codeIn;
                             if ((/^(\s+)$/).test(storage) === true) {
                                 storage = "";
                             }
                             if (pd.test.ace === true) {
                                 pd
                                     .ace
-                                    .diffBase
+                                    .codeIn
                                     .setValue(storage);
                                 pd
                                     .ace
-                                    .diffBase
+                                    .codeIn
                                     .clearSelection();
                                 if (lang !== "text") {
                                     pd
                                         .app
-                                        .langkey(false, pd.ace.diffBase, "");
+                                        .langkey(false, pd.ace.codeIn, "");
                                 }
                             } else {
-                                pd.data.node.codeDiffBase.value = storage;
+                                pd.data.node.codeIn.value = storage;
                             }
                         } else if (pd.test.ace === true) {
                             pd
                                 .ace
-                                .diffBase
+                                .codeIn
                                 .setValue(" ");
                         }
                     }
-                    if (pd.data.node.codeDiffNew !== null) {
-                        if (localStorage.codeDiffNew !== undefined) {
-                            storage = localStorage.codeDiffNew;
+                    if (pd.data.node.codeOut !== null) {
+                        if (localStorage.codeOut !== undefined) {
+                            storage = localStorage.codeOut;
                             if ((/^(\s+)$/).test(storage) === true) {
                                 storage = "";
                             }
                             if (pd.test.ace === true) {
                                 pd
                                     .ace
-                                    .diffNew
+                                    .codeIn
                                     .setValue(storage);
                                 pd
                                     .ace
-                                    .diffNew
+                                    .codeOut
                                     .clearSelection();
                                 if (lang !== "text") {
                                     pd
                                         .app
-                                        .langkey(false, pd.ace.diffNew, "");
+                                        .langkey(false, pd.ace.codeOut, "");
                                 }
                             } else {
-                                pd.data.node.codeDiffNew.value = storage;
+                                pd.data.node.codeOut.value = storage;
                             }
                         } else if (pd.test.ace === true) {
                             pd
                                 .ace
-                                .diffNew
+                                .codeOut
                                 .setValue(" ");
                         }
                     }
@@ -4264,12 +4219,8 @@
         reset        : function dom__event_reset():void {
             let nametry:string = "",
                 name:string    = "";
-            localStorage.codeBeautify  = "";
-            localStorage.codeDiffBase  = "";
-            localStorage.codeDiffNew   = "";
-            localStorage.codeMinify    = "";
-            localStorage.codeParse     = "";
-            localStorage.codeAnalysis  = "";
+            localStorage.codeIn  = "";
+            localStorage.codeOut  = "";
             localStorage.commentString = "[]";
             if (pd.data.settings === undefined || pd.data.settings.knownname === undefined) {
                 if (pd.data.settings === undefined) {
@@ -5274,7 +5225,7 @@
                                     } else {
                                         lang = pd
                                             .app
-                                            .langkey(false, pd.ace.diffBase, "");
+                                            .langkey(false, pd.ace.codeIn, "");
                                     }
                                 } else if (pd.data.mode === "diff" && pd.data.langvalue[1] === "text") {
                                     lang = ["text", "text", "Plain Text"];
@@ -5330,59 +5281,6 @@
         }
         if (pd.options.source === undefined || (pd.data.mode === "diff" && pd.options.diff === undefined)) {
             return;
-        }
-        // this logic attempts to prevent writes to localStorage if they are likely to
-        // exceed 5mb of storage
-
-        if (pd.options.mode === "beautify") {
-            codesize = pd.options.source.length + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.pars + pd.data.sourceLength.anal;
-            if (pd.options.source.length < 2096000 && codesize < 4800000) {
-                localStorage.codeBeautify = pd.options.source;
-                pd.data.sourceLength.beau = pd.options.source.length;
-            } else {
-                localStorage.codeBeautify = "";
-                pd.data.sourceLength.beau = 0;
-            }
-        } else if (pd.options.mode === "minify") {
-            codesize = pd.options.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.pars + pd.data.sourceLength.anal;
-            if (pd.options.source.length < 2096000 && codesize < 4800000) {
-                localStorage.codeMinify   = pd.options.source;
-                pd.data.sourceLength.minn = pd.options.source.length;
-            } else {
-                localStorage.codeMinify   = "";
-                pd.data.sourceLength.minn = 0;
-            }
-        } else if (pd.options.mode === "parse") {
-            codesize = pd.options.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.anal;
-            if (pd.options.source.length < 2096000 && codesize < 4800000) {
-                localStorage.codeParse    = pd.options.source;
-                pd.data.sourceLength.pars = pd.options.source.length;
-            } else {
-                localStorage.codeParse    = "";
-                pd.data.sourceLength.pars = 0;
-            }
-        } else if (pd.options.mode === "analysis") {
-            codesize = pd.options.source.length + pd.data.sourceLength.beau + pd.data.sourceLength.diffBase + pd.data.sourceLength.diffNew + pd.data.sourceLength.minn + pd.data.sourceLength.pars;
-            if (pd.options.source.length < 2096000 && codesize < 4800000) {
-                localStorage.codeAnalysis = pd.options.source;
-                pd.data.sourceLength.anal = pd.options.source.length;
-            } else {
-                localStorage.codeAnalysis = "";
-                pd.data.sourceLength.anal = 0;
-            }
-        } else if (pd.options.mode === "diff") {
-            codesize = pd.data.sourceLength.beau + pd.data.sourceLength.minn + pd.data.sourceLength.pars + pd.data.sourceLength.anal + pd.options.source.length + pd.options.diff.length;
-            if (pd.options.source.length < 2096000 && pd.options.diff.length < 2096000 && codesize < 4800000) {
-                localStorage.codeDiffBase     = pd.options.source;
-                localStorage.codeDiffNew      = pd.options.diff;
-                pd.data.sourceLength.diffBase = pd.options.source.length;
-                pd.data.sourceLength.diffNew  = pd.options.diff.length;
-            } else {
-                localStorage.codeDiffBase     = "";
-                localStorage.codeDiffNew      = "";
-                pd.data.sourceLength.diffBase = 0;
-                pd.data.sourceLength.diffNew  = 0;
-            }
         }
         if (requests === false && requestd === false) {
             // sometimes the Ace getValue method fires too early on copy/paste.  I put in a
@@ -5597,76 +5495,36 @@
                 if (node === pd.id("diff-space")) {
                     pd
                         .ace
-                        .diffBase
+                        .codeIn
                         .getSession()
                         .setUseSoftTabs(true);
                     pd
                         .ace
-                        .diffNew
-                        .getSession()
-                        .setUseSoftTabs(true);
-                    pd
-                        .ace
-                        .minnIn
-                        .getSession()
-                        .setUseSoftTabs(true);
-                    pd
-                        .ace
-                        .minnOut
-                        .getSession()
-                        .setUseSoftTabs(true);
-                    pd
-                        .ace
-                        .parsIn
-                        .getSession()
-                        .setUseSoftTabs(true);
-                    pd
-                        .ace
-                        .parsOut
+                        .codeOut
                         .getSession()
                         .setUseSoftTabs(true);
                     quan = pd.id("diff-quan");
                     if (quan !== null && isNaN(Number(quan.value)) === false) {
                         pd
                             .ace
-                            .diffBase
+                            .codeIn
                             .getSession()
                             .setTabSize(Number(node.value));
                         pd
                             .ace
-                            .diffNew
-                            .getSession()
-                            .setTabSize(Number(node.value));
-                        pd
-                            .ace
-                            .minnIn
-                            .getSession()
-                            .setTabSize(Number(node.value));
-                        pd
-                            .ace
-                            .minnOut
-                            .getSession()
-                            .setTabSize(Number(node.value));
-                        pd
-                            .ace
-                            .parsIn
-                            .getSession()
-                            .setTabSize(Number(node.value));
-                        pd
-                            .ace
-                            .parsOut
+                            .codeOut
                             .getSession()
                             .setTabSize(Number(node.value));
                     }
                 } else {
                     pd
                         .ace
-                        .diffBase
+                        .codeIn
                         .getSession()
                         .setUseSoftTabs(false);
                     pd
                         .ace
-                        .diffNew
+                        .codeOut
                         .getSession()
                         .setUseSoftTabs(false);
                     pd

@@ -2,23 +2,9 @@
 (function beautify_markup_init():void {
     "use strict";
     const prettydiff = global.prettydiff,
-        markup = function beautify_markup(options: options):string {
-            let a:number     = 0,
-                indent:number       = (isNaN(options.inlevel) === true)
-                    ? 0
-                    : Number(options.inlevel),
-                lprescount:string[]   = [],
-                ltype:string        = "",
-                lline:number        = 0,
-                cdataS:string       = "",
-                cdataE:string       = "",
-                commentS:string     = "",
-                commentE:string     = "",
-                tabs:string         = "",
-                lf                  = (options.crlf === true)
-                    ? "\r\n"
-                    : "\n";
-            const data:parsedArray = options.parsed,
+        markup = function beautify_markup():string {
+            const options = global.prettydiff.options,
+                data:parsedArray = options.parsed,
                 c:number            = data.token.length,
                 cdataStart:RegExp   = (/^(\s*(\/)*<!?\[+[A-Z]+\[+)/),
                 cdataEnd:RegExp     = (/((\/)*\]+>\s*)$/),
@@ -44,7 +30,7 @@
                         return options.source;
                     }
                     options.newline = false;
-                    result = prettydiff.beautify[type](options);
+                    result = prettydiff.beautify[type]();
                     options.newline = newline;
                     return result;
                 },
@@ -633,6 +619,21 @@
                     }
                     return build.join("");
                 };
+            let a:number     = 0,
+                indent:number       = (isNaN(options.inlevel) === true)
+                    ? 0
+                    : Number(options.inlevel),
+                lprescount:string[]   = [],
+                ltype:string        = "",
+                lline:number        = 0,
+                cdataS:string       = "",
+                cdataE:string       = "",
+                commentS:string     = "",
+                commentE:string     = "",
+                tabs:string         = "",
+                lf                  = (options.crlf === true)
+                    ? "\r\n"
+                    : "\n";
 
             do {
                 if (twigStart.test(data.token[a]) === true && twigEnd.test(data.token[a]) === true && (a === 0 || (tagName(data.token[a - 1]) !== "script" && tagName(data.token[a - 1]) !== "style")) && (/\D-+\D/).test(data.token[a]) === false && (/^(\{%\s*((comment)|(else))\s*)/).test(data.token[a]) === false) {

@@ -2,12 +2,9 @@
 (function beautify_style_init():void {
     "use strict";
     const prettydiff = global.prettydiff,
-        style = function beautify_style(options:options):string {
-            let output:string     = "",
-                indent:number   = options.inlevel,
-                mixin:boolean    = false,
-                a:number        = 0;
-            const data:parsedArray = options.parsed,
+        style = function beautify_style():string {
+            const options = global.prettydiff.options,
+                data:parsedArray = options.parsed,
                 /*colorNames:any = {
                     aliceblue           : 0.9288006825347457,
                     antiquewhite        : 0.8464695170775405,
@@ -259,6 +256,10 @@
                         build.push(" ");
                     }
                 };
+            let output:string     = "",
+                indent:number   = options.inlevel,
+                mixin:boolean    = false,
+                a:number        = 0;
             if (options.inlevel > 0) {
                 a = options.inlevel;
                 do {

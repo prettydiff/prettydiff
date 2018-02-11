@@ -2,7 +2,8 @@
 (function beautify_script_init():void {
     "use strict";
     const prettydiff = global.prettydiff,
-        script = function beautify_script(options: options):string {
+        script = function beautify_script():string {
+            const options = global.prettydiff.options;
             (function beautify_script_options() {
                 let styleguide = {
                         airbnb: function beautify_script_options_styleairbnb() {

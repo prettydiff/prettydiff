@@ -24,6 +24,8 @@ interface optionFunctions {
     definitions?: {};
 
 }
+type api = "any" | "dom" | "node";
+type lexer = "markup" | "script" | "style";
 type mode = "analysis" | "beautify" | "diff" | "minify" | "parse";
 interface optionDef {
     binaryCheck: RegExp;
@@ -33,77 +35,7 @@ interface optionDef {
     buildNodeDefaults: string;
     definitions: any;
 }
-interface options {
-    accessibility?: boolean;
-    api?: "dom" | "node";
-    brace_style?: "collapse" | "collapse-preserve-inline" | "expand" | "none";
-    braceline?: boolean;
-    braces?: boolean;
-    bracepadding?: boolean;
-    comments?: boolean;
-    commline?: boolean;
-    compressedcss?: boolean;
-    conditional?: boolean;
-    content?: boolean;
-    context?: number;
-    correct?: boolean;
-    crlf?: boolean;
-    cssinsertlines?: boolean;
-    csvchar?: string;
-    diff?: string;
-    diffcli?: boolean;
-    diffcomments?: boolean;
-    difflabel?: string;
-    diffspaceignore?: boolean;
-    diffview?: "inline" | "sidebyside";
-    elseline?: boolean;
-    endcomma?: "always" | "multiline" | "never";
-    formatArray?: "default" | "indent" | "inline";
-    formatObject?: "default" | "indent" | "inline";
-    force_attribute?: boolean;
-    force_indent?: boolean;
-    functionname?: boolean;
-    inchar?: string;
-    inlevel?: number;
-    insize?: number;
-    jsscope?: "none" | "html" | "report";
-    lang: string;
-    langdefault?: string;
-    lexer: string;
-    methodchain?: "chain" | "indent" | "none";
-    miniwrap?: boolean;
-    mode?: mode;
-    neverflatten?: boolean;
-    newline?: boolean;
-    nocaseindent?: boolean;
-    nochainindent?: boolean;
-    noleadzero?: boolean;
-    objsort?: boolean;
-    parsed?: parsedArray;
-    parseFormat?: "htmltable" | "parallel" | "sequential";
-    parseSpace?: boolean;
-    preserve?: number;
-    preserveComment?: boolean;
-    quoteConvert?: "double" | "none" | "single";
-    selectorlist?: boolean;
-    semicolon?: boolean;
-    source: string;
-    sourcelabel?: string;
-    space?: boolean;
-    spaceclose?: boolean;
-    style?: boolean;
-    styleguide?: string;
-    tagmerge?: boolean;
-    tagsort?: boolean;
-    ternaryline?: boolean;
-    textpreserve?: boolean;
-    topcoms?: boolean;
-    unformatted?: boolean;
-    varword?: "each" | "list" | "none";
-    vertical?: boolean;
-    wrap?: number;
-}
-interface parseOptions extends options {
+interface parseOptions {
     lexer: "string";
     lexerOptions: {
         [key: string]: {
@@ -111,9 +43,10 @@ interface parseOptions extends options {
         }
     };
     outputFormat: "objects" | "arrays";
+    source: "string";
 }
 interface library {
-    (options: options): string;
+    (): string;
 }
 interface dom {
     [key: string]: any;
@@ -151,7 +84,19 @@ interface finalFile {
     };
 }
 interface diffview {
-    (options:options): [string, number, number]
+    (): [string, number, number]
+}
+interface option {
+    api: api;
+    default: boolean | number | string;
+    definition: string;
+    label: string;
+    lexer: lexer;
+    mode: mode;
+    type: "boolean" | "number" | "string";
+    values?: {
+        [key: string]: string;
+    }
 }
 interface prettydiff {
     analyze: {
@@ -170,6 +115,10 @@ interface prettydiff {
     };
     meta?: {};
     optionDef?: optionDef;
+    options: {
+        source:string;
+        [key: string]: any;
+    }
 }
 interface meta {
     error: string;
