@@ -90,7 +90,13 @@
             return allOptions.join("");
         },
         buildDomInterface = function options_buildDomInterface():string {
-            const allItems:string[] = [];
+            const allItems:string[] = [],
+                exclusions = {
+                    "diff": "",
+                    "difflabel": "",
+                    "source": "",
+                    "sourcelabel": ""
+                };
             let a:number = 0,
                 b:number = 0,
                 item:string[],
@@ -101,16 +107,25 @@
             do {
                 optName = keys[a];
                 opt = definitions[optName];
-                if (opt.api === "any" || opt.api === "dom") {
+                if (exclusions[optName] !== "" && (opt.api === "any" || opt.api === "dom")) {
                     item = [`<li data-mode="${opt.mode}">`];
-                    item.push(`<label for="option-${optName}" class="label">${opt.label}`);
-                    item.push(` <a href="documentation.xhtml#${optName}">(${optName})</a>`);
-                    item.push(`</label>`);
-                    if (opt.type === "number" || (opt.type === "string" && opt.values === undefined)) {
-                        item.push(`<input type="text" id="option-${optName}" value="${opt.default}" data-description="${opt.definition.replace(/"/g, "&quot;")}"/>`);
+                    if (opt.type === "boolean") {
+                        item.push(`<p class="label">${opt.label} <a class="apiname" href="documentation.xhtml#${optName}">(${optName})</a></p>`);
+                        if (opt.default === true) {
+                            item.push(`<span><input type="radio" id="option-false-${optName}" name="option-${optName}" value="false"/> <label for="option-false-${optName}">false</label></span>`);
+                            item.push(`<span><input type="radio" checked="checked" id="option-true-${optName}" name="option-${optName}" value="true"/> <label for="option-true-${optName}">true</label></span>`);
+                        } else {
+                            item.push(`<span><input type="radio" checked="checked" id="option-false-${optName}" name="option-${optName}" value="false"/> <label for="option-false-${optName}">false</label></span>`);
+                            item.push(`<span><input type="radio" id="option-true-${optName}" name="option-${optName}" value="true"/> <label for="option-true-${optName}">true</label></span>`);
+                        }
                     } else {
-                        item.push(`<select id="option-${optName}" data-description="${opt.definition.replace(/"/g, "&quot;")}">`);
-                        if (opt.type === "string") {
+                        item.push(`<label for="option-${optName}" class="label">${opt.label}`);
+                        item.push(` <a class="apiname" href="documentation.xhtml#${optName}">(${optName})</a>`);
+                        item.push(`</label>`);
+                        if (opt.type === "number" || (opt.type === "string" && opt.values === undefined)) {
+                            item.push(`<input type="text" id="option-${optName}" value="${opt.default}"/>`);
+                        } else {
+                            item.push(`<select id="option-${optName}">`);
                             vals = Object.keys(opt.values);
                             vallen = vals.length;
                             b = 0;
@@ -122,18 +137,12 @@
                                 }>${vals[b]}</option>`);
                                 b = b + 1;
                             } while (b < vallen);
-                        } else {
-                            if (opt.default === false) {
-                                item.push(`<option selected="selected">false</option>`);
-                                item.push(`<option>true</option>`);
-                            } else {
-                                item.push(`<option>false</option>`);
-                                item.push(`<option selected="selected">true</option>`);
-                            }
+                            item.push(`</select>`);
                         }
-                        item.push(`</select>`);
                     }
-                    item.push("</li>");
+                    item.push(`<p class="option-description">${opt.definition.replace(/"/g, "&quot;")}</p>`);
+                    item.push(`<div class="disabled" style="display:none"></div>`);
+                    item.push(`</li>`);
                     allItems.push(item.join(""));
                 }
                 a = a + 1;
@@ -146,7 +155,7 @@
                 mode      : "analysis",
                 lexer     : "markup",
                 label     : "Accessibility Analysis",
-                type      : "string",
+                type      : "boolean",
                 definition: "Whether analysis of HTML should include an accessibility report.",
                 default   : false
             },
@@ -180,7 +189,7 @@
                 mode      : "beautify",
                 lexer     : "script",
                 type      : "boolean",
-                label     : "Brace Lines",
+                label     : "Brace Padding",
                 definition: "Inserts a space after the start of a container and before the end of the contain" +
                         "er if the contents of that container are not indented; such as: " +
                         "conditions, function arguments, and escaped sequences of template strings.",

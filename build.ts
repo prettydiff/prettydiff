@@ -316,16 +316,23 @@
                         html: false,
                         node: false
                     },
+                    versionData = {
+                        number: "",
+                        date: ""
+                    },
                     modifyFile = function build_options_modifyFile(file:string, fileFlag:string):void {
                         node.fs.readFile(file, "utf8", function build_options_modifyFile(err:Error, data:string):void {
-                            const startBuild = function build_options_modifyFile_startBuild(searchstr:string):number {
+                            const startBuild = function build_options_modifyFile_startBuild(searchstr:string, source:string):number {
                                     const len = (searchstr.indexOf("//") === 0)
                                         ? searchstr.length + 1
                                         : searchstr.length;
-                                    return data.indexOf(searchstr) + len;
+                                    return source.indexOf(searchstr) + len;
                                 },
-                                modify = function build_options_modifyFile_modify(inject:string):string {
-                                    return [data.slice(0, start), global.prettydiff.optionDef[inject], data.slice(end)].join("");
+                                modify = function build_options_modifyFile_modify(inject:string, source:string):string {
+                                    if (global.prettydiff.optionDef[inject] === undefined) {
+                                        return [source.slice(0, start), inject, source.slice(end)].join("");
+                                    }
+                                    return [source.slice(0, start), global.prettydiff.optionDef[inject], source.slice(end)].join("");
                                 };
                             let start:number = 0,
                                 end: number = 0,
@@ -335,19 +342,23 @@
                                 return;
                             }
                             if (fileFlag === "documentation") {
-                                start = startBuild("<!-- option list start -->");
+                                start = startBuild("<!-- option list start -->", data);
                                 end = data.indexOf("<!-- option list end -->");
-                                built = modify("buildDocumentation");
+                                built = modify("buildDocumentation", data);
                             } else if (fileFlag === "html") {
-                                start = startBuild("<!-- documented options start -->");
+                                const ver = `${versionData.date} <span>Version: <span>${versionData.number}</span></span>`;
+                                start = startBuild("<!-- documented options start -->", data);
                                 end = data.indexOf("<!-- documented options end -->");
-                                built = modify("buildDomInterface");
+                                built = modify("buildDomInterface", data);
+                                start = startBuild("<!-- start version data -->", built);
+                                end = built.indexOf("<!-- end version data -->");
+                                built = modify(ver, built);
                             } else if (fileFlag === "dom") {
                                 data = data.replace("// start option defaults\s+", "// start option defaults\n");
                                 data = data.replace("// end option defaults\s+", "// end option defaults\n");
-                                start = startBuild("// start option defaults");
+                                start = startBuild("// start option defaults", data);
                                 end = data.indexOf("// end option defaults");
-                                built = modify("buildDomDefaults");
+                                built = modify("buildDomDefaults", data);
                             }
                             node.fs.writeFile(file, built, function build_options_documentation_write(errw:Error) {
                                 if (errw !== null && errw.toString() !== "") {
@@ -360,10 +371,28 @@
                                 }
                             });
                         });
+                    },
+                    version = function build_options_version():void {
+                        node.child(`git log -1 --branches`, function build_options_version_child(err:Error, stderr:string):void {
+                            if (err !== null) {
+                                errout(err.toString());
+                                return;
+                            }
+                            const date:string[] = stderr.slice(stderr.indexOf("Date:") + 12).split(" ");
+                            versionData.date = `${date[1]} ${date[0]} ${date[3]}`;
+                            node.fs.readFile(`${projectPath}package.json`, "utf8", function build_options_version_child_readPackage(errp:Error, data:string):void {
+                                if (errp !== null) {
+                                    errout(errp.toString());
+                                    return;
+                                }
+                                versionData.number = JSON.parse(data).version;
+                                modifyFile(`${projectPath}index.xhtml`, "html");
+                            });
+                        })
                     };
                 require(`${js}api${node.path.sep}options`);
+                version();
                 modifyFile(`${projectPath}documentation.xhtml`, "documentation");
-                modifyFile(`${projectPath}index.xhtml`, "html");
                 modifyFile(`${js}api${node.path.sep}dom.js`, "dom");
             },
             typescript: function build_typescript():void {

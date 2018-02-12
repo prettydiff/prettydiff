@@ -36,6 +36,7 @@
 #prettydiff.shadow select,
 #prettydiff.shadow legend{color: #ccc}
 #prettydiff.shadow .contentarea{box-shadow:0 1em 1em #000}
+#prettydiff.shadow .options li,
 #prettydiff.shadow h2 button,
 #prettydiff.shadow td,
 #prettydiff.shadow th,
@@ -65,6 +66,7 @@
 #prettydiff.shadow li h4,
 #prettydiff.shadow li h5{color:#ff0}
 #prettydiff.shadow code{background:#000;border-color:#000;color:#ddd}
+#prettydiff.shadow #addOptions .disabled{background:#300;color:#fdd}
 #prettydiff.shadow ol.segment h4 strong{color:#c00}
 #prettydiff.shadow .data .delete{background:#300}
 #prettydiff.shadow .data .delete em{background:#200;border-color:#c63;color:#c66}

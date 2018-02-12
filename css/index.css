@@ -46,4 +46,6 @@ This is written by Austin Cheney on 3 Mar 2009.
     #prettydiff #webtool #functionGroup{height:6em}
     #prettydiff #webtool #functionGroup span{height: 2.5em}
     #prettydiff #webtool #infolinks{float:left;margin:6em 0 -12em;padding:0}
+    #prettydiff #webtool .apiname,
+    #prettydiff #webtool .option-description{display:none}
 }

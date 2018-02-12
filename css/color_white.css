@@ -38,6 +38,7 @@
 #prettydiff.white thead th{background:#eef}
 #prettydiff.white .report strong{color:#009}
 #prettydiff.white .report em{color:#080}
+#prettydiff.white .options li,
 #prettydiff.white h2 button,
 #prettydiff.white td,
 #prettydiff.white .segment,
@@ -50,6 +51,7 @@
 #prettydiff.white th.nested{background:#eee}
 #prettydiff.white .count li.fold{color:#900}
 #prettydiff.white .count{background:#eed;border-color:#999}
+#prettydiff.white #addOptions .disabled{background:#fee;color:#300}
 #prettydiff.white h2 button{background:#f8f8f8;box-shadow:0.1em 0.1em 0.25em #ddd}
 #prettydiff.white li h4,
 #prettydiff.white li h5{color:#33c}

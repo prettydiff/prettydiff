@@ -9,7 +9,7 @@
  application for license information.
  ***********************************************************************/
 
-(function dom__init():void {
+(function dom_init():void {
     "use strict";
     const prettydiff:prettydiff = global.prettydiff,
         meta:meta = {
@@ -58,7 +58,7 @@
                 tabtrue      : false,
                 zIndex       : 10
             },
-            id: function dom__id(x):any {
+            id: function dom_id(x):any {
                 if (document.getElementById === undefined) {
                     return;
                 }
@@ -108,21 +108,13 @@
                 keystore      : [],
                 //some operations should not occur as the page is initially loading
                 load          : true,
-                // Ace will only render correctly if the parent container is visible, this test
-                // solves for this problem
-                render        : {
-                    anal: false,
-                    beau: false,
-                    diff: false,
-                    minn: false,
-                    pars: false
-                },
                 //supplies alternate keyboard navigation to editable text areas
                 tabesc        : []
             }
         },
-        load                = function dom__load():void {
+        load                = function dom_load():void {
             let a:number               = 0,
+                x:HTMLInputElement,
                 inputs:NodeListOf<HTMLInputElement>,
                 selects:NodeListOf<HTMLSelectElement>,
                 buttons:NodeListOf<HTMLButtonElement>,
@@ -143,13 +135,13 @@
                     .node
                     .page
                     .getAttribute("id"),
-                top             = function dom__load_top(el:Element):void {
+                top             = function dom_load_top(el:Element):void {
                     pd
                         .app
                         .zTop(el.parentNode);
                 },
-                backspace       = function dom__load_backspace(event:KeyboardEvent):boolean {
-                    const bb:Element = event.srcElement;
+                backspace       = function dom_load_backspace(event:KeyboardEvent):boolean {
+                    const bb:Element = event.srcElement || <Element>event.target;
                     if (event.keyCode === 8) {
                         if (bb.nodeName === "textarea" || (bb.nodeName === "input" && (bb.getAttribute("type") === "text" || bb.getAttribute("type") === "password"))) {
                             return true;
@@ -163,7 +155,7 @@
                     }
                     return true;
                 },
-                textareafocus   = function dom__load_textareafocus(el:Element):void {
+                textareafocus   = function dom_load_textareafocus(el:Element):void {
                     const tabkey = pd.id("textareaTabKey"),
                         aria   = pd.id("arialive");
                     if (tabkey === null) {
@@ -186,7 +178,7 @@
                         item.setAttribute("class", item.getAttribute("class") + " filefocus");
                     }
                 },
-                textareablur    = function dom__load_textareablur(el:Element):void {
+                textareablur    = function dom_load_textareablur(el:Element):void {
                     const tabkey = pd.id("textareaTabKey");
                     if (tabkey === null) {
                         return;
@@ -197,10 +189,10 @@
                         item.setAttribute("class", item.getAttribute("class").replace(" filefocus", ""));
                     }
                 },
-                optionswrapper  = function dom__load_optionswrapper(el:HTMLElement, event:string):void {
+                optionswrapper  = function dom_load_optionswrapper(el:HTMLElement, event:string):void {
                     el[event] = pd.app.options(el);
                 },
-                savecheck       = function dom__load_savecheck(el:HTMLInputElement):void {
+                savecheck       = function dom_load_savecheck(el:HTMLInputElement):void {
                     let button:HTMLElement;
                     if (pd.data.node.report.code.box === null) {
                         return;
@@ -266,14 +258,10 @@
                             .app
                             .aceApply("codeIn", true);
                     }
-                    if (pd.data.node.output !== null) {
+                    if (pd.data.node.codeOut !== null) {
                         pd.ace.codeOut = pd
                             .app
                             .aceApply("codeOut", true);
-                            /*pd
-                                .ace
-                                .beauOut
-                                .setReadOnly(true);*/
                     }
                 }
 
@@ -709,20 +697,21 @@
                 inputsLen = inputs.length;
                 a = 0;
                 do {
-                    type = inputs[a].getAttribute("type");
-                    id   = inputs[a].getAttribute("id");
+                    x = inputs[a];
+                    type = x.getAttribute("type");
+                    id   = x.getAttribute("id");
                     if (type === "radio") {
-                        name = inputs[a].getAttribute("name");
+                        name = x.getAttribute("name");
                         if (id === pd.data.settings[name]) {
-                            inputs[a].checked = true;
+                            x.checked = true;
                             if (name === "beauchar" || name === "diffchar") {
                                 pd
                                     .app
-                                    .indentchar(inputs[a]);
+                                    .indentchar(x);
                             }
                         }
                         if (id.indexOf("feedradio") === 0) {
-                            const feedradio       = function dom__load_feedradio(el:HTMLElement):boolean {
+                            const feedradio       = function dom_load_feedradio(el:HTMLElement):boolean {
                                 let parent:HTMLElement,
                                     aa:number,
                                     radios:NodeListOf<HTMLInputElement>;
@@ -743,44 +732,44 @@
                                 event.preventDefault();
                                 return false;
                             };
-                            inputs[a].onfocus = function dom_load_feedFocus() {
-                                const item:HTMLElement = inputs[a];
-                                feedradio(item);
+                            x.onfocus = function dom_load_feedFocus() {
+                                feedradio(x);
                             };
-                            inputs[a].onblur  = function dom__load_feedblur():void {
-                                const item = <HTMLElement>inputs[a].parentNode;
+                            x.onblur  = function dom_load_feedblur():void {
+                                const item = <HTMLElement>x.parentNode;
                                 item.setAttribute("class", "active");
                             },
-                            inputs[a].onclick =function dom_load_feedClick() {
-                                const item:HTMLElement = inputs[a];
-                                feedradio(item);
+                            x.onclick =function dom_load_feedClick() {
+                                feedradio(x);
                             };
-                            parent = <HTMLElement>inputs[a].parentNode;
+                            parent = <HTMLElement>x.parentNode;
                             parent = parent.getElementsByTagName("label")[0];
                             parent.onclick = function dom_load_feedParent() {
                                 feedradio(parent);
                             };
                         }
                         if (name === "mode") {
-                            inputs[a].onclick = function dom_load_modeToggle() {
-                                pd.event.modeToggle(inputs[a]);
+                            x.onclick = function dom_load_modeToggle(event:Event) {
+                                const el:HTMLElement = <HTMLElement>event.target || <HTMLElement>event.srcElement,
+                                    mode = el.getAttribute("id").replace("mode", "");
+                                pd.event.modeToggle(mode);
                             };
                             if (pd.data.settings.mode === id) {
                                 pd
                                     .event
-                                    .modeToggle(inputs[a]);
+                                    .modeToggle(id.replace("mode", ""));
                             } else if (pd.data.settings.mode === undefined) {
                                 pd
                                     .event
-                                    .modeToggle(pd.data.node.modeDiff);
+                                    .modeToggle("diff");
                             }
                         } else if (name === "diffchar") {
-                            inputs[a].onclick = function dom_load_indentcharDiff() {
-                                pd.app.indentchar(inputs[a]);
+                            x.onclick = function dom_load_indentcharDiff() {
+                                pd.app.indentchar(x);
                             }
-                            if (pd.data.settings.diffchar === inputs[a].getAttribute("id")) {
-                                inputs[a].checked = true;
-                                inputs[a].click();
+                            if (pd.data.settings.diffchar === x.getAttribute("id")) {
+                                x.checked = true;
+                                x.click();
                             } else if (pd.data.settings.diffchar !== undefined && pd.data.settings.diffchar !== "diff-space" && pd.data.settings.diffchar !== "diff-tab" && pd.data.settings.diffchar !== "diff-line") {
                                 node = pd.id("diff-char");
                                 if (node !== null) {
@@ -793,12 +782,12 @@
                                 }
                             }
                         } else if (name === "beauchar") {
-                            inputs[a].onclick = function dom_load_indentcharBeau() {
-                                pd.app.indentchar(inputs[a]);
+                            x.onclick = function dom_load_indentcharBeau() {
+                                pd.app.indentchar(x);
                             }
-                            if (pd.data.settings.beauchar === inputs[a].getAttribute("id")) {
-                                inputs[a].checked = true;
-                                inputs[a].click();
+                            if (pd.data.settings.beauchar === x.getAttribute("id")) {
+                                x.checked = true;
+                                x.click();
                             } else if (pd.data.settings.beauchar !== undefined && pd.data.settings.beauchar !== "beau-space" && pd.data.settings.beauchar !== "beau-tab" && pd.data.settings.beauchar !== "beau-line") {
                                 node = pd.id("beau-char");
                                 if (node !== null) {
@@ -811,20 +800,20 @@
                                 }
                             }
                         } else if (name === "jsscope") {
-                            inputs[a].onclick = function dom__load_hideOutput():void {
+                            x.onclick = function dom_load_hideOutput():void {
                                 pd
                                     .app
-                                    .hideOutput(inputs[a]);
+                                    .hideOutput(x);
                             };
-                            if (id === "jsscope-yes" && inputs[a].checked === true) {
+                            if (id === "jsscope-yes" && x.checked === true) {
                                 pd
                                     .app
-                                    .hideOutput(inputs[a]);
+                                    .hideOutput(x);
                             }
                         } else if (name === "ace-radio") {
-                            const acedisable      = function dom__load_acedisable():void {
+                            const acedisable      = function dom_load_acedisable():void {
                                 let addy:string   = "",
-                                    elId:string   = inputs[a].getAttribute("id"),
+                                    elId:string   = x.getAttribute("id"),
                                     loc:number    = location
                                         .href
                                         .indexOf("ace=false"),
@@ -832,7 +821,7 @@
                                     symbol:string = "?";
                                 pd
                                     .app
-                                    .options(inputs[a]);
+                                    .options(x);
                                 if (elId.indexOf("-yes") > 0 && loc > 0) {
                                     place = location
                                         .href
@@ -850,38 +839,38 @@
                                     location.href = addy + symbol + "ace=false";
                                 }
                             };
-                            if (id === "ace-no" && inputs[a].checked === true && pd.test.ace === true) {
+                            if (id === "ace-no" && x.checked === true && pd.test.ace === true) {
                                 acedisable();
                             }
-                            if (id === "ace-yes" && inputs[a].checked === true && pd.test.ace === false) {
+                            if (id === "ace-yes" && x.checked === true && pd.test.ace === false) {
                                 pd
                                     .id("ace-no")
                                     .checked = true;
                             }
-                            inputs[a].onclick = acedisable;
+                            x.onclick = acedisable;
                         } else if (name === "parseFormat") {
-                            inputs[a].onclick = function dom__load_parsehtml():void {
+                            x.onclick = function dom_load_parsehtml():void {
                                 const para:HTMLElement = pd.id("parsehtml-para");
                                 if (para === null) {
-                                    return pd.app.options(inputs[a]);
+                                    return pd.app.options(x);
                                 }
                                 if (node.getAttribute("id") === "parseFormat-htmltable") {
                                     para.style.display = "block";
                                 } else {
                                     para.style.display = "none";
                                 }
-                                pd.app.options(inputs[a]);
+                                pd.app.options(x);
                             };
-                            if (id === "parseFormat-htmltable" && inputs[a].checked === true) {
-                                inputs[a].click();
+                            if (id === "parseFormat-htmltable" && x.checked === true) {
+                                x.click();
                             }
                         } else {
-                            optionswrapper(inputs[a], "onclick");
+                            optionswrapper(x, "onclick");
                         }
                     } else if (type === "text") {
                         if (pd.test.ace === true && (id === "diff-quan" || id === "beau-quan" || id === "minn-quan")) {
-                            inputs[a].onkeyup = function dom_load_aceSize() {
-                                pd.app.insize(inputs[a]);
+                            x.onkeyup = function dom_load_aceSize() {
+                                pd.app.insize(x);
                             };
                             if (pd.data.settings[id] !== undefined && pd.data.settings[id] !== "4" && isNaN(pd.data.settings[id]) === false) {
                                 if (pd.data.node.codeIn !== null) {
@@ -900,25 +889,25 @@
                                 }
                             }
                         } else {
-                            optionswrapper(inputs[a], "onkeyup");
+                            optionswrapper(x, "onkeyup");
                         }
                         if (pd.data.settings[id] !== undefined) {
-                            inputs[a].value = pd.data.settings[id];
+                            x.value = pd.data.settings[id];
                         }
                         if (id === "diff-char" || id === "beau-char") {
-                            inputs[a].onclick = function dom_load_indentcharDiffBeau() {
-                                pd.app.indentchar(inputs[a]);
+                            x.onclick = function dom_load_indentcharDiffBeau() {
+                                pd.app.indentchar(x);
                             }
                         }
                     } else if (type === "file") {
-                        inputs[a].onchange = function dom_load_file() {
-                            pd.event.file(inputs[a]);
+                        x.onchange = function dom_load_file() {
+                            pd.event.file(x);
                         };
-                        inputs[a].onfocus  = function dom__load_filefocus():void {
-                            inputs[a].setAttribute("class", "filefocus");
+                        x.onfocus  = function dom_load_filefocus():void {
+                            x.setAttribute("class", "filefocus");
                         };
-                        inputs[a].onblur   = function dom__load_fileblur():void {
-                            inputs[a].removeAttribute("class");
+                        x.onblur   = function dom_load_fileblur():void {
+                            x.removeAttribute("class");
                         };
                     }
                     a = a + 1;
@@ -933,13 +922,13 @@
                 if (inputsLen > 0) { 
                     do {
                         id = selects[a].getAttribute("id");
-                        if (id === "colorScheme") {
+                        if (id === "option-color") {
                             selects[a].onchange = pd.event.colorScheme;
                             if (pd.data.settings.colorScheme !== undefined) {
                                 selects[a].selectedIndex = Number(pd.data.settings.colorScheme);
                                 pd
                                     .event
-                                    .colorScheme(selects[a]);
+                                    .colorScheme();
                             }
                         } else if (id === "language") {
                             selects[a].onchange = pd.event.langOps;
@@ -988,7 +977,7 @@
                             buttons[a].click();
                         }
                     } else if (name === "resize") {
-                        buttons[a].onmousedown = function dom__load_resize():void {
+                        buttons[a].onmousedown = function dom_load_resize():void {
                             pd
                                 .event
                                 .resize(buttons[a].onmousedown, buttons[a]);
@@ -1056,7 +1045,7 @@
                         options:NodeListOf<HTMLOptionElement>,
                         source:string   = "",
                         diff:string     = "";
-                    const color:HTMLSelectElement    = pd.id("colorScheme"),
+                    const color:HTMLSelectElement    = pd.id("option-color"),
                         params   = location
                             .href
                             .split("?")[1]
@@ -1086,27 +1075,27 @@
                             if (param[1] === "beautify" && pd.data.node.modeBeau !== null) {
                                 pd
                                     .event
-                                    .modeToggle(pd.data.node.modeBeau);
+                                    .modeToggle("beautify");
                                 pd.data.node.modeBeau.checked = true;
                             } else if (param[1] === "minify" && pd.data.node.modeMinn !== null) {
                                 pd
                                     .event
-                                    .modeToggle(pd.data.node.modeMinn);
+                                    .modeToggle("minify");
                                 pd.data.node.modeMinn.checked = true;
                             } else if (param[1] === "diff" && pd.data.node.modeDiff !== null) {
                                 pd
                                     .event
-                                    .modeToggle(pd.data.node.modeDiff);
+                                    .modeToggle("diff");
                                 pd.data.node.modeDiff.checked = true;
                             } else if (param[1] === "parse" && pd.data.node.modePars !== null) {
                                 pd
                                     .event
-                                    .modeToggle(pd.data.node.modePars);
+                                    .modeToggle("parse");
                                 pd.data.node.modePars.checked = true;
                             } else if (param[1] === "analysis" && pd.data.node.modeAnal !== null) {
                                 pd
                                     .event
-                                    .modeToggle(pd.data.node.modeAnal);
+                                    .modeToggle("analysis");
                                 pd.data.node.modeAnal.checked = true;
                             } else {
                                 params.splice(b, 1);
@@ -1137,7 +1126,7 @@
                                 param[1] = "text";
                                 pd
                                     .event
-                                    .modeToggle(pd.data.node.modeDiff);
+                                    .modeToggle("diff");
                             } else if (param[1] === "js" || param[1] === "") {
                                 param[1] = "javascript";
                             } else if (param[1] === "markup") {
@@ -1182,7 +1171,7 @@
                                     color.selectedIndex = c;
                                     pd
                                         .event
-                                        .colorScheme(color);
+                                        .colorScheme();
                                     break;
                                 }
                                 c = c - 1;
@@ -2208,7 +2197,7 @@
                         "6wrRGLJCsIU5TEFNRTMuOTkgKGFscGhhKao="
                     ];
                     pd.data.audio.binary = window.atob(audioString.join(""));
-                    pd.data.audio.play   = function dom__load_audio():void {
+                    pd.data.audio.play   = function dom_load_audio():void {
                         const source:AudioBufferSourceNode  = pd
                                 .test
                                 .audio
@@ -2322,8 +2311,8 @@
                             span.innerHTML = "Show";
                         }
                     },
-                    colorScheme:HTMLSelectElement = pd.id("colorScheme"),
-                    hashgo      = function dom__load_documentation_hashgo():void {
+                    colorScheme:HTMLSelectElement = pd.id("option-color"),
+                    hashgo      = function dom_load_documentation_hashgo():void {
                         let hash:string     = "",
                             test:boolean     = false,
                             hashnode:HTMLElement,
@@ -2355,7 +2344,7 @@
                             }
                         }
                     },
-                    colorChange = function dom__load_documentation_colorChange():void {
+                    colorChange = function dom_load_documentation_colorChange():void {
                         const options:NodeListOf<HTMLOptionElement> = colorScheme.getElementsByTagName("option"),
                             olen:number = options.length;
                         if (localStorage !== null && localStorage.settings !== undefined && localStorage.settings !== null && localStorage.settings.indexOf(":undefined") > 0) {
@@ -2386,7 +2375,7 @@
                         }
                         pd
                             .event
-                            .colorScheme(colorScheme);
+                            .colorScheme();
                         colorScheme.onchange = pd.event.colorScheme;
                     };
                 b = docbuttons.length;
@@ -2413,7 +2402,7 @@
                             .toLowerCase()
                             .split("?")[1]
                         : "";
-                node    = pd.id("colorScheme");
+                node    = pd.id("option-color");
                 options = node.getElementsByTagName("option");
                 olen    = options.length;
                 if (node !== null) {
@@ -2445,7 +2434,7 @@
                     }
                     pd
                         .event
-                        .colorScheme(node);
+                        .colorScheme();
                     node.onchange = pd.event.colorScheme;
                 }
                 {
@@ -2483,7 +2472,7 @@
             }
             pd.test.load = false;
         },
-        loadPrep = function dom__loadPrep():void {
+        loadPrep = function dom_loadPrep():void {
             pd.data.node = {
                 announce    : pd.id("announcement"),
                 codeIn      : pd.id("input"),
@@ -2493,13 +2482,12 @@
                 jsscope     : pd.id("jsscope-yes"),
                 lang        : pd.id("language"),
                 langdefault : pd.id("lang-default"),
-                loadmask    : pd.id("loadmask"),
                 maxInputs   : pd.id("hideOptions"),
                 modeBeau    : pd.id("modebeautify"),
                 modeDiff    : pd.id("modediff"),
                 modeMinn    : pd.id("modeminify"),
                 modePars    : pd.id("modeparse"),
-                page        : (function dom__dataPage():HTMLDivElement {
+                page        : (function dom_dataPage():HTMLDivElement {
                     const divs:NodeListOf<HTMLDivElement> = document.getElementsByTagName("div");
                     if (divs.length === 0) {
                         return null;
@@ -2523,9 +2511,6 @@
                 webtool     : pd.id("webtool")
             };
             load();
-            if (pd.data.node.loadmask !== null) {
-                pd.data.node.loadmask.style.display = "none";
-            }
             if (pd.data.node.webtool !== null) {
                 pd.data.node.webtool.style.display = "block";
             }
@@ -2579,12 +2564,15 @@
     //namespace for internal functions
     pd.app              = {
         //builds the Ace editors
-        aceApply : function dom__app_aceApply(nodeName:string, maxWidth:boolean):any {
+        aceApply : function dom_app_aceApply(nodeName:string, maxWidth:boolean):any {
             const div:HTMLDivElement        = document.createElement("div"),
                 span:HTMLSpanElement       = document.createElement("span"),
                 node:HTMLDivElement       = pd.data.node[nodeName],
                 parent:HTMLElement     = <HTMLElement>node.parentNode.parentNode,
+                labels:NodeListOf<HTMLLabelElement> = parent.getElementsByTagName("label"),
+                label:HTMLLabelElement = labels[labels.length - 1],
                 attributes:NamedNodeMap = node.attributes,
+                p:HTMLParagraphElement = document.createElement("p"),
                 dollar:string     = "$",
                 len:number        = attributes.length;
             let a:number          = 0,
@@ -2595,6 +2583,10 @@
                 }
                 a = a + 1;
             } while (a < len);
+            label.parentNode.removeChild(label);
+            p.appendChild(label);
+            p.setAttribute("class", "inputLabel");
+            parent.appendChild(p);
             parent.appendChild(div);
             parent.removeChild(node.parentNode);
             if (maxWidth === true) {
@@ -2608,7 +2600,7 @@
         },
         // Readjusts the heights of the editors to compensate for various changes to the
         // interface, like screen resize
-        fixHeight: function dom__app_fixHeight():void {
+        fixHeight: function dom_app_fixHeight():void {
             const input:HTMLElement = pd.id("input"),
                 output:HTMLElement = pd.id("output"),
                 height:number   = window.innerHeight || document.getElementsByTagName("body")[0].clientHeight;
@@ -2652,7 +2644,7 @@
             }
         },
         //sets indentation size in Ace editors
-        insize   : function dom__app_insize(el:HTMLInputElement):void {
+        insize   : function dom_app_insize(el:HTMLInputElement):void {
             const value = Number(el.value);
             if (pd.data.node.codeIn !== null) {
                 pd
@@ -2673,7 +2665,7 @@
         // modes? comes from pd.codeops, which is      fired on change of language
         // select list obj - the ace obj passed in. {} empty object if `all` is true
         // lang - a language passed in. "" empty string means auto detect
-        langkey  : function dom__app_langkey(all:boolean, obj:any, lang:string):[string, string, string] {
+        langkey  : function dom_app_langkey(all:boolean, obj:any, lang:string):[string, string, string] {
             let sample:string      = "",
                 // defaultt      = actual default lang value from the select list
                 defaultt:string    = "",
@@ -2762,7 +2754,7 @@
             return value;
         },
         //store tool changes into localStorage to maintain state
-        options  : function dom__app_options(x?:HTMLElement):void {
+        options  : function dom_app_options(x?:HTMLElement):void {
             let input:HTMLInputElement,
                 select:HTMLSelectElement,
                 item:HTMLElement,
@@ -2901,7 +2893,7 @@
             }
         },
         //intelligently raise the z-index of the report windows
-        zTop     : function dom__app_top(x:HTMLElement):void {
+        zTop     : function dom_app_top(x:HTMLElement):void {
             const indexListed = pd.data.zIndex,
                 indexes     = [
                     (pd.data.node.report.feed.box === null)
@@ -2927,7 +2919,7 @@
     //namespace for event handlers
     pd.event            = {
         //fixing areaTabOut in the case of unintentional back tabs
-        areaShiftUp  : function dom__event_areaShiftUp(event:KeyboardEvent):void {
+        areaShiftUp  : function dom_event_areaShiftUp(event:KeyboardEvent):void {
             if (event.keyCode === 16 && pd.test.tabesc.length > 0) {
                 pd.test.tabesc = [];
             }
@@ -2936,7 +2928,7 @@
             }
         },
         //allows visual folding of function in the JSPretty jsscope HTML output
-        beaufold     : function dom__event_beaufold(el:HTMLElement):void {
+        beaufold     : function dom_event_beaufold(el:HTMLElement):void {
             let a:number     = 0,
                 b:string     = "";
             const title:string[] = el
@@ -2976,7 +2968,7 @@
             }
         },
         //clears the Pretty Diff comment string
-        clearComment : function dom__event_clearComment():void {
+        clearComment : function dom_event_clearComment():void {
             localStorage.commentString = "[]";
             pd.data.commentString      = [];
             if (pd.data.node.comment !== null) {
@@ -2984,13 +2976,11 @@
             }
         },
         //change the color scheme of the web UI
-        colorScheme  : function dom__event_colorScheme(node:HTMLSelectElement):void {
-            const item = (node.nodeType === 1)
-                    ? node
-                    : node.target,
+        colorScheme  : function dom_event_colorScheme():void {
+            const item:HTMLSelectElement = pd.id("option-color"),
                 option:NodeListOf<HTMLOptionElement>    = item.getElementsByTagName("option"),
                 optionLen:number = option.length,
-                index:number     = (function dom__event_colorScheme_indexLen():number {
+                index:number     = (function dom_event_colorScheme_indexLen():number {
                     if (item.selectedIndex < 0 || item.selectedIndex > optionLen) {
                         item.selectedIndex = optionLen - 1;
                         return optionLen - 1;
@@ -3048,7 +3038,7 @@
         },
         // allows grabbing and resizing columns (from the third column) in the diff
         // side-by-side report
-        colSliderGrab: function dom__event_colSliderGrab(event:Event, node:HTMLElement):boolean {
+        colSliderGrab: function dom_event_colSliderGrab(event:Event, node:HTMLElement):boolean {
             let subOffset:number   = 0,
                 withinRange:boolean = false,
                 offset:number      = 0,
@@ -3098,7 +3088,7 @@
             diffRight.style.width    = (diffRight.clientWidth / 10) + "em";
             diffRight.style.position = "absolute";
             if (touch === true) {
-                document.ontouchmove  = function dom__event_colSliderGrab_Touchboxmove(f:TouchEvent):void {
+                document.ontouchmove  = function dom_event_colSliderGrab_Touchboxmove(f:TouchEvent):void {
                     f.preventDefault();
                     subOffset = offset - f.touches[0].clientX;
                     if (subOffset > minAdjust && subOffset < maxAdjust) {
@@ -3114,7 +3104,7 @@
                         diffRight.style.width = ((width + subOffset) / 10) + "em";
                         status                = "ew";
                     }
-                    document.ontouchend = function dom__event_colSliderGrab_Touchboxmove_drop(f:TouchEvent):void {
+                    document.ontouchend = function dom_event_colSliderGrab_Touchboxmove_drop(f:TouchEvent):void {
                         f.preventDefault();
                         node.style.cursor = status + "-resize";
                         document.ontouchmove = null;
@@ -3123,7 +3113,7 @@
                 };
                 document.ontouchstart = null;
             } else {
-                document.onmousemove = function dom__event_colSliderGrab_Mouseboxmove(f:MouseEvent):void {
+                document.onmousemove = function dom_event_colSliderGrab_Mouseboxmove(f:MouseEvent):void {
                     f.preventDefault();
                     subOffset = offset - f.clientX;
                     if (subOffset > minAdjust && subOffset < maxAdjust) {
@@ -3139,7 +3129,7 @@
                         diffRight.style.width = ((width + subOffset) / 10) + "em";
                         status                = "ew";
                     }
-                    document.onmouseup = function dom__event_colSliderGrab_Mouseboxmove_drop(f:MouseEvent):void {
+                    document.onmouseup = function dom_event_colSliderGrab_Mouseboxmove_drop(f:MouseEvent):void {
                         f.preventDefault();
                         node.style.cursor = status + "-resize";
                         document.onmousemove = null;
@@ -3151,7 +3141,7 @@
             return false;
         },
         //allows visual folding of consecutive equal lines in a diff report
-        difffold     : function dom__event_difffold(node:HTMLElement):void {
+        difffold     : function dom_event_difffold(node:HTMLElement):void {
             let a:number         = 0,
                 b:number         = 0,
                 max:number,
@@ -3203,7 +3193,7 @@
             }
         },
         //submits the comment card
-        feedsubmit   : function dom__event_feedsubmit(auto:boolean):void {
+        feedsubmit   : function dom_event_feedsubmit(auto:boolean):void {
             let a:number = 0;
             const datapack:any  = {},
                 namecheck:any = (localStorage.settings !== undefined)
@@ -3225,7 +3215,7 @@
                         .id("feedemail")
                         .value,
                 xhr:XMLHttpRequest = new XMLHttpRequest(),
-                sendit    = function dom__event_feedsubmit_sendit():void {
+                sendit    = function dom_event_feedsubmit_sendit():void {
                     const node:HTMLElement = pd.id("feedintro");
                     xhr.withCredentials = true;
                     xhr.open("POST", "http://prettydiff.com:8000/feedback/", true);
@@ -3277,13 +3267,13 @@
             sendit();
         },
         //nullifies the current "file" event
-        filenull     : function dom__event_filenull(event:Event):void {
+        filenull     : function dom_event_filenull(event:Event):void {
             event.stopPropagation();
             event.preventDefault();
         },
         // this function allows typing of tab characters into textareas without the
         // textarea loosing focus
-        fixtabs      : function dom__event_fixtabs(event:KeyboardEvent, node:HTMLInputElement):boolean {
+        fixtabs      : function dom_event_fixtabs(event:KeyboardEvent, node:HTMLInputElement):boolean {
             let start:string = "",
                 end:string   = "",
                 val:string   = "",
@@ -3302,7 +3292,7 @@
             return false;
         },
         //tests if a key press is a short command
-        keydown      : function dom__event_keydown(event:KeyboardEvent):void {
+        keydown      : function dom_event_keydown(event:KeyboardEvent):void {
             if (pd.test.keypress === true && (pd.test.keystore.length === 0 || event.keyCode !== pd.test.keystore[pd.test.keystore.length - 1]) && event.keyCode !== 17 && event.keyCode !== 224) {
                 pd
                     .test
@@ -3314,7 +3304,7 @@
             }
         },
         //alters available options depending upon language selection
-        langOps      : function dom__event_langOps(node:HTMLElement):void {
+        langOps      : function dom_event_langOps(node:HTMLElement):void {
             let name:string = node.nodeName.toLowerCase(),
                 select:HTMLSelectElement,
                 lang:string = "",
@@ -3519,7 +3509,7 @@
             }
         },
         //maximize report window to available browser window
-        maximize     : function dom__event_maximize(node:HTMLElement):void {
+        maximize     : function dom_event_maximize(node:HTMLElement):void {
             let parent:HTMLElement,
                 save:boolean    = false,
                 box:HTMLElement,
@@ -3599,7 +3589,7 @@
             }
         },
         //minimize report windows to the default size and location
-        minimize     : function dom__event_minimize(e:Event, steps:number, node:HTMLElement):boolean {
+        minimize     : function dom_event_minimize(e:Event, steps:number, node:HTMLElement):boolean {
             let parent:HTMLElement,
                 parentNode:HTMLElement,
                 box:HTMLElement,
@@ -3617,7 +3607,7 @@
                 step:number      = (steps < 1)
                     ? 1
                     : steps,
-                growth    = function dom__event_minimize_growth():boolean {
+                growth    = function dom_event_minimize_growth():boolean {
                     let width:number        = 17,
                         height:number       = 3,
                         leftTarget:number   = 0,
@@ -3631,7 +3621,7 @@
                         saveSpace:number    = (save === true)
                             ? 9.45
                             : 6.45,
-                        grow         = function dom__event_minimize_growth_grow():boolean {
+                        grow         = function dom_event_minimize_growth_grow():boolean {
                             width                    = width + incW;
                             height                   = height + incH;
                             left                = left + incL;
@@ -3642,7 +3632,7 @@
                             box.style.left      = left + "em";
                             box.style.top       = top + "em";
                             if (width + incW < widthTarget || height + incH < heightTarget) {
-                                setTimeout(dom__event_minimize_growth_grow, 1);
+                                setTimeout(dom_event_minimize_growth_grow, 1);
                             } else {
                                 box.style.left      = leftTarget + "em";
                                 box.style.top       = topTarget + "em";
@@ -3715,7 +3705,7 @@
                     grow();
                     return false;
                 },
-                shrinkage = function dom__event_minimize_shrinkage():boolean {
+                shrinkage = function dom_event_minimize_shrinkage():boolean {
                     let width        = body.clientWidth / 10,
                         height       = body.clientHeight / 10,
                         incL         = (((window.innerWidth / 10) - final - 17) - left) / step,
@@ -3726,7 +3716,7 @@
                                 ? ((width - 17) / step)
                                 : ((17 - width) / step),
                         incH         = height / step,
-                        shrink       = function dom__event_minimize_shrinkage_shrink():boolean {
+                        shrink       = function dom_event_minimize_shrinkage_shrink():boolean {
                             left                = left + incL;
                             top                 = top + incT;
                             width                    = width - incW;
@@ -3737,7 +3727,7 @@
                             box.style.left      = left + "em";
                             box.style.top       = top + "em";
                             if (width - incW > 16.8) {
-                                setTimeout(dom__event_minimize_shrinkage_shrink, 1);
+                                setTimeout(dom_event_minimize_shrinkage_shrink, 1);
                             } else {
                                 box.style.left      = "auto";
                                 box.style.top       = "auto";
@@ -3845,378 +3835,104 @@
             return false;
         },
         //toggles between modes
-        modeToggle   : function dom__event_modeToggle(x:HTMLInputElement):void {
-            /*
-            
-        codeHeading : pd.id("codeInput").getElementsByTagName("h2")[0],
-        inputFile   : pd.id("codeInput").getElementsByTagName("label")[0],
-        inputLabel  : pd.id("codeInput").getElementsByTagName("label")[1],
-        outputLabel : pd.id("codeInput").getElementsByTagName("label")[2],
-        outputFile  : pd.id("codeInput").getElementsByTagName("label")[3],
-            */
-            let a:HTMLInputElement = (x.nodeName.toLowerCase() === "input")
-                    ? x
-                    : x.getElementsByTagName("input")[0],
-                b:number           = 0,
-                lang:string        = (pd.data.node.lang === null)
-                    ? "javascript"
-                    : ((pd.data.node.lang.nodeName === "select")
-                        ? pd.data.node.lang[pd.data.node.lang.selectedIndex].value
-                        : pd.data.node.lang.value),
-                langOps:NodeListOf<HTMLOptionElement>,
-                node:HTMLElement,
-                parent:HTMLElement,
-                storage:string     = "",
-                db:HTMLElement          = pd.id("diffbeautify"),
-                csvp:HTMLElement        = pd.id("csvcharp"),
-                langtest:boolean    = (pd.data.node.lang !== null && pd.data.node.lang.nodeName.toLowerCase() === "select"),
-                optioncheck = function dom__event_modeToggle_optioncheck():void {
-                    const langs:NodeListOf<HTMLOptionElement> = pd
-                            .data
-                            .node
-                            .lang
-                            .getElementsByTagName("option");
-                    let c:number     = langs.length - 1;
+        modeToggle   : function dom_event_modeToggle(mode:string):void {
+            const cycleOptions = function dom_event_modeToggle_cycleOptions():void {
+                    const li:HTMLLIElement[] = pd.id("addOptions").getElementsByTagName("li"),
+                        lilen:number = li.length;
+                    let a:number = 0,
+                        div:HTMLDivElement,
+                        modeat:string;
                     do {
-                        c = c - 1;
-                        if (langs[c].value === "text") {
-                            if (pd.data.node.lang.selectedIndex === c) {
-                                pd.data.node.lang.selectedIndex = 0;
-                                pd
-                                    .app
-                                    .langkey(true, null, "auto");
-                            }
-                            langs[c].disabled = true;
-                        }
-                    } while (c > 0);
-                };
-            if (x === null) {
-                return;
-            }
-            node = pd.id("showOptionsCallOut");
-            if (node !== null) {
-                parent = <HTMLElement>node.parentNode;
-                parent.removeChild(node);
-            }
-            if (a === pd.data.node.modeBeau) {
-                pd.data.mode = "beau";
-                if (langtest === true) {
-                    optioncheck();
-                }
-                if (pd.test.render.beau === false) {
-                    if (pd.data.node.codeIn !== null) {
-                        if (localStorage.codeBeautify !== undefined) {
-                            storage = localStorage.codeBeautify;
-                            if ((/^(\s+)$/).test(storage) === true) {
-                                storage = "";
-                            }
-                            if (pd.test.ace === true) {
-                                pd
-                                    .ace
-                                    .codeIn
-                                    .setValue(storage);
-                                pd
-                                    .ace
-                                    .codeIn
-                                    .clearSelection();
-                                pd
-                                    .app
-                                    .langkey(false, pd.ace.codeIn, "");
+                        if (li[a].getAttribute("data-mode") !== "any") {
+                            div = li[a].getElementsByTagName("div")[0];
+                            modeat = li[a].getAttribute("data-mode");
+                            if (modeat !== mode && mode !== "diff") {
+                                div.innerHTML = `This option is not available in mode '${mode}'.`;
+                                div.style.display = "block";
+                            } else if (mode === "diff" && modeat !== "diff" && modeat !== "beautify") {
+                                div.innerHTML = `This option is not available in mode '${mode}'.`;
+                                div.style.display = "block";
                             } else {
-                                pd.data.node.codeIn.value = storage;
+                                div.style.display = "none";
                             }
-                        } else if (pd.test.ace === true) {
-                            pd
-                                .ace
-                                .codeIn
-                                .setValue(" ");
                         }
-                    }
-                    if (pd.test.ace === true && pd.data.node.codeOut !== null) {
-                        pd
-                            .ace
-                            .codeOut
-                            .setValue(" ");
-                    }
-                }
-                if (pd.test.load === false && pd.data.node.jsscope !== null && pd.data.node.jsscope.checked === true) {
-                    pd
-                        .app
-                        .hideOutput(pd.data.node.jsscope);
-                }
-                pd.test.render.beau = true;
-            }
-            if (a === pd.data.node.modeMinn) {
-                pd.data.mode = "minn";
-                if (langtest === true) {
-                    optioncheck();
-                }
-                if (pd.test.render.minn === false) {
-                    if (pd.data.node.codeMinnIn !== null) {
-                        if (localStorage.codeMinify !== undefined) {
-                            storage = localStorage.codeMinify;
-                            if ((/^(\s+)$/).test(storage) === true) {
-                                storage = "";
-                            }
-                            if (pd.test.ace === true) {
-                                pd
-                                    .ace
-                                    .minnIn
-                                    .setValue(storage);
-                                pd
-                                    .ace
-                                    .minnIn
-                                    .clearSelection();
-                                pd
-                                    .app
-                                    .langkey(false, pd.ace.minnIn, "");
-                            } else {
-                                pd.data.node.codeMinnIn.value = storage;
-                            }
-                        } else if (pd.test.ace === true) {
-                            pd
-                                .ace
-                                .minnIn
-                                .setValue(" ");
-                        }
-                    }
-                    if (pd.test.ace === true && pd.data.node.codeMinnOut !== null) {
-                        pd
-                            .ace
-                            .minnOut
-                            .setValue(" ");
-                    }
-                }
-                pd.test.render.minn = true;
-            }
-            if (a === pd.data.node.modeDiff) {
-                pd.data.mode = "diff";
-                if (langtest === true) {
-                    langOps = pd
-                        .data
-                        .node
-                        .lang
-                        .getElementsByTagName("option");
-                    b = langOps.length;
-                    do {
-                        b = b - 1;
-                        langOps[b].disabled = false;
-                    } while (b > 0);
-                }
-                if (lang === "csv" || lang === "text") {
-                    node = pd.id("diffquanp");
-                    if (node !== null) {
-                        node.style.display = "none";
-                    }
-                    node = pd.id("difftypep");
-                    if (node !== null) {
-                        node.style.display = "none";
-                    }
-                    node = pd.id("diffbeautify");
-                    if (node !== null) {
-                        node.style.display = "none";
-                    }
-                } else {
-                    node = pd.id("diffquanp");
-                    if (node !== null) {
-                        node.style.display = "block";
-                    }
-                    node = pd.id("difftypep");
-                    if (node !== null) {
-                        node.style.display = "block";
-                    }
-                    node = pd.id("diffbeautify");
-                    if (node !== null) {
-                        node.style.display = "block";
-                    }
-                }
-                if (pd.test.render.diff === false) {
-                    if (pd.data.node.codeIn !== null) {
-                        if (localStorage.codeIn !== undefined) {
-                            storage = localStorage.codeIn;
-                            if ((/^(\s+)$/).test(storage) === true) {
-                                storage = "";
-                            }
-                            if (pd.test.ace === true) {
-                                pd
-                                    .ace
-                                    .codeIn
-                                    .setValue(storage);
-                                pd
-                                    .ace
-                                    .codeIn
-                                    .clearSelection();
-                                if (lang !== "text") {
-                                    pd
-                                        .app
-                                        .langkey(false, pd.ace.codeIn, "");
-                                }
-                            } else {
-                                pd.data.node.codeIn.value = storage;
-                            }
-                        } else if (pd.test.ace === true) {
-                            pd
-                                .ace
-                                .codeIn
-                                .setValue(" ");
-                        }
-                    }
-                    if (pd.data.node.codeOut !== null) {
-                        if (localStorage.codeOut !== undefined) {
-                            storage = localStorage.codeOut;
-                            if ((/^(\s+)$/).test(storage) === true) {
-                                storage = "";
-                            }
-                            if (pd.test.ace === true) {
-                                pd
-                                    .ace
-                                    .codeIn
-                                    .setValue(storage);
-                                pd
-                                    .ace
-                                    .codeOut
-                                    .clearSelection();
-                                if (lang !== "text") {
-                                    pd
-                                        .app
-                                        .langkey(false, pd.ace.codeOut, "");
-                                }
-                            } else {
-                                pd.data.node.codeOut.value = storage;
-                            }
-                        } else if (pd.test.ace === true) {
+                        a = a + 1;
+                    } while (a < lilen);
+                },
+                makeChanges = function dom_event_modeToggle_makeChanges():void {
+                    const text:string = mode.charAt(0).toUpperCase() + mode.slice(1),
+                        ci:HTMLElement = pd.id("codeInput"),
+                        cilabel:NodeListOf<HTMLLabelElement> = ci.getElementsByTagName("label"),
+                        output:HTMLElement = pd.id("output"),
+                        outLabel:HTMLElement = <HTMLElement>ci.getElementsByClassName("inputLabel")[1],
+                        sourceLabel:HTMLElement = pd.id("inputlabel").parentNode,
+                        outputLabel:HTMLElement = pd.id("outputlabel").parentNode,
+                        outputFile:HTMLElement = pd.id("outputfile").parentNode;
+                    if (mode === "diff") {
+                        ci.getElementsByTagName("h2")[0].innerHTML = "Compare Code";
+                        cilabel[0].innerHTML = "Base File";
+                        cilabel[2].innerHTML = "Compare code sample";
+                        cilabel[5].innerHTML = " Compare new code"
+                        outLabel.style.marginTop = "0";
+                        sourceLabel.style.display = "block";
+                        outputLabel.style.display = "block";
+                        outputFile.style.display = "block";
+                        if (pd.test.ace === true) {
                             pd
                                 .ace
                                 .codeOut
-                                .setValue(" ");
+                                .setReadOnly(false);
+                            parent = <HTMLElement>output.parentNode;
+                            parent.setAttribute("class", "output");
+                        } else {
+                            output.getElementsByTagName("textarea")[0].readOnly = false;
+                            parent = <HTMLElement>output.parentNode.parentNode;
+                            parent.setAttribute("class", "output");
                         }
-                    }
-                    pd.test.render.diff = true;
-                }
-            }
-            if (a === pd.data.node.modePars) {
-                pd.data.mode = "pars";
-                if (langtest === true) {
-                    optioncheck();
-                }
-                if (pd.test.render.pars === false) {
-                    if (pd.data.node.codeParsIn !== null) {
-                        if (localStorage.codeParse !== undefined) {
-                            storage = localStorage.codeParse;
-                            if ((/^(\s+)$/).test(storage) === true) {
-                                storage = "";
-                            }
-                            if (pd.test.ace === true) {
-                                pd
-                                    .ace
-                                    .parsIn
-                                    .setValue(storage);
-                                pd
-                                    .ace
-                                    .parsIn
-                                    .clearSelection();
-                                pd
-                                    .app
-                                    .langkey(false, pd.ace.parsIn, "");
-                            } else {
-                                pd.data.node.codeParsIn.value = storage;
-                            }
-                        } else if (pd.test.ace === true) {
+                    } else {
+                        ci.getElementsByTagName("h2")[0].innerHTML = text;
+                        cilabel[0].innerHTML = `${text} file`;
+                        cilabel[2].innerHTML = `${text} code sample`;
+                        cilabel[5].innerHTML = `${text} output`;
+                        outLabel.style.marginTop = "3.6em";
+                        sourceLabel.style.display = "none";
+                        outputLabel.style.display = "none";
+                        outputFile.style.display = "none";
+                        if (pd.test.ace === true) {
                             pd
                                 .ace
-                                .parsIn
-                                .setValue(" ");
+                                .codeOut
+                                .setReadOnly(true);
+                            parent = <HTMLElement>output.parentNode;
+                            parent.setAttribute("class", "readonly");
+                        } else {
+                            output.getElementsByTagName("textarea")[0].readOnly = false;
+                            parent = <HTMLElement>output.parentNode.parentNode;
+                            parent.setAttribute("class", "readonly");
                         }
                     }
-                    if (pd.test.ace === true && pd.data.node.codeParsOut !== null) {
-                        pd
-                            .ace
-                            .parsOut
-                            .setValue(" ");
-                    }
-                }
-                pd.test.render.pars = true;
-            }
-            if (a === pd.data.node.modeAnal) {
+                };
+            let parent:HTMLElement;
+            if (mode === "analysis") {
                 pd.data.mode = "anal";
-                if (langtest === true) {
-                    optioncheck();
-                }
-                if (pd.test.render.anal === false) {
-                    if (pd.data.node.codeAnalIn !== null) {
-                        if (localStorage.codeAnalysis !== undefined) {
-                            storage = localStorage.codeAnalysis;
-                            if ((/^(\s+)$/).test(storage) === true) {
-                                storage = "";
-                            }
-                            if (pd.test.ace === true) {
-                                pd
-                                    .ace
-                                    .analIn
-                                    .setValue(storage);
-                                pd
-                                    .ace
-                                    .analIn
-                                    .clearSelection();
-                                pd
-                                    .app
-                                    .langkey(false, pd.ace.analIn, "");
-                            } else {
-                                pd.data.node.codeAnalIn.value = storage;
-                            }
-                        } else if (pd.test.ace === true) {
-                            pd
-                                .ace
-                                .analIn
-                                .setValue(" ");
-                        }
-                    }
-                    if (pd.test.ace === true && pd.data.node.codeAnalOut !== null) {
-                        pd
-                            .ace
-                            .analOut
-                            .setValue(" ");
-                    }
-                }
-                pd.test.render.anal = true;
             }
-            if (pd.data.node.announce !== null && (a === pd.data.node.modeBeau || a === pd.data.node.modeMinn || a === pd.data.node.modeDiff)) {
-                pd.data.node.announce.innerHTML = "";
+            if (mode === "beautify") {
+                pd.data.mode = "beau";
             }
-            if (a.nodeType === undefined) {
-                return;
+            if (mode === "diff") {
+                pd.data.mode = "diff";
             }
-            if (pd.test.load === true && (lang === "csv" || lang === "text")) {
-                if (csvp !== null && lang === "csv") {
-                    csvp.style.display = "block";
-                    if (csvp.previousSibling !== null) {
-                        csvp = <HTMLElement>csvp.previousSibling;
-                        if (csvp.nodeType > 1 && csvp.previousSibling !== null) {
-                            csvp = <HTMLElement>csvp.previousSibling;
-                        }
-                        if (csvp.nodeType === 1) {
-                            csvp.style.display = "none";
-                        }
-                    }
-                }
-                if (db !== null) {
-                    db.style.display = "none";
-                }
+            if (mode === "minify") {
+                pd.data.mode = "minn";
             }
-            if (pd.test.load === false) {
-                if (a !== pd.data.node.modeDiff) {
-                    pd
-                        .app
-                        .hideOutput(a);
-                } else {
-                    pd
-                        .app
-                        .options(a);
-                }
+            if (mode === "parse") {
+                pd.data.mode = "pars";
             }
+            makeChanges();
+            cycleOptions();
         },
         //reset tool to default configuration
-        reset        : function dom__event_reset():void {
+        reset        : function dom_event_reset():void {
             let nametry:string = "",
                 name:string    = "";
             localStorage.codeIn  = "";
@@ -4260,7 +3976,7 @@
             location.reload();
         },
         //resize report window to custom width and height on drag
-        resize       : function dom__event_resize(e:MouseEvent, x:HTMLElement):void {
+        resize       : function dom_event_resize(e:MouseEvent, x:HTMLElement):void {
             let bodyWidth:number  = 0,
                 bodyHeight:number = 0;
             const parent:HTMLElement     = <HTMLElement>x.parentNode,
@@ -4277,7 +3993,7 @@
                 offseth:number    = (mac === true)
                     ? 54
                     : 36,
-                drop       = function dom__event_resize_drop():void {
+                drop       = function dom_event_resize_drop():void {
                     document.onmousemove = null;
                     bodyWidth            = body.clientWidth;
                     bodyHeight           = body.clientHeight;
@@ -4286,7 +4002,7 @@
                         .options(box);
                     document.onmouseup = null;
                 },
-                boxsize    = function dom__event_resize_boxsize(f:MouseEvent):void {
+                boxsize    = function dom_event_resize_boxsize(f:MouseEvent):void {
                     body.style.width = ((bodyWidth + ((f.clientX - offsetw) - offX)) / 10) + "em";
                     if (save === true) {
                         heading.style.width = (((bodyWidth + (f.clientX - offX)) / 10) - 10.15) + "em";
@@ -4305,7 +4021,7 @@
             document.onmousedown = null;
         },
         //toggle between parsed html diff report and raw text representation
-        save         : function dom__event_save(x:HTMLElement):boolean {
+        save         : function dom_event_save(x:HTMLElement):boolean {
             const anchor:boolean     = (x.nodeName.toLowerCase() === "a"),
                 top:HTMLElement        = (x.parentNode.parentNode.nodeName.toLowerCase() === "p")
                     ? <HTMLElement>x.parentNode.parentNode.parentNode
@@ -4341,7 +4057,7 @@
                 } else {
                     x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(prettydiff.finalFile.order.join("")));
                 }
-                x.onclick = function dom__event_save_rebind() {
+                x.onclick = function dom_event_save_rebind() {
                     pd
                         .event
                         .save(x);
@@ -4442,7 +4158,7 @@
             return false;
         },
         //analyzes combinations of consecutive key presses
-        sequence     : function dom__event_sequence(event:KeyboardEvent):void {
+        sequence     : function dom_event_sequence(event:KeyboardEvent):void {
             const seq   = pd.test.keysequence,
                 len   = seq.length,
                 key   = event.keyCode;
@@ -4500,15 +4216,15 @@
                             .play();
                     }
                     const active:HTMLElement = <HTMLElement>document.activeElement,
-                        color:HTMLSelectElement  = pd.id("colorScheme"),
+                        color:HTMLSelectElement  = pd.id("option-color"),
                         max:number    = color
                             .getElementsByTagName("option")
                             .length - 1,
-                        change = function dom__event_sequence_colorChange_change():void {
+                        change = function dom_event_sequence_colorChange_change():void {
                             color.selectedIndex = ind;
                             pd
                                 .event
-                                .colorScheme(color);
+                                .colorScheme();
                             if (active === document.documentElement || active === null || active === document.getElementsByTagName("body")[0]) {
                                 color.blur();
                             } else {
@@ -4534,7 +4250,7 @@
 
     // recycle bundles arguments in preparation for executing prettydiff references
     // events: beaufold, colSliderGrab, difffold, minimize, save
-    pd.event.recycle    = function dom__event_recycle(event:KeyboardEvent):boolean {
+    pd.event.recycle    = function dom_event_recycle(event:KeyboardEvent):boolean {
         let output:string = "",
             lang:[string, string, string],
             errortext:string   = "",
@@ -4547,7 +4263,7 @@
         const domain:RegExp      = (/^((https?:\/\/)|(file:\/\/\/))/),
             lf:HTMLInputElement        = pd.id("lterminator-crlf"),
             textout:boolean     = ((pd.data.node.jsscope === null || pd.data.node.jsscope.checked === false) && (node === null || node.checked === false)),
-            execOutput  = function dom__event_recycle_execOutput():void {
+            execOutput  = function dom_event_recycle_execOutput():void {
                 let diffList:NodeListOf<HTMLOListElement>,
                     button:HTMLButtonElement,
                     buttons:NodeListOf<HTMLButtonElement>,
@@ -4555,7 +4271,7 @@
                     parent:HTMLElement,
                     chromeSave:boolean = false,
                     size:number = 0;
-                const commanumb  = function dom__event_recycle_execOutput_commanumb(numb):string {
+                const commanumb  = function dom_event_recycle_execOutput_commanumb(numb):string {
                         let str:string = "",
                             len:number = 0,
                             arr:string[] = [];
@@ -4838,7 +4554,7 @@
                                     b:number    = list.length;
                                 do {
                                     if (list[a].getAttribute("class") === "fold") {
-                                        list[a].onclick = function dom__event_recycle_execOutput_beaufold() {
+                                        list[a].onclick = function dom_event_recycle_execOutput_beaufold() {
                                             pd.event.beaufold(list[a]);
                                         }
                                     }
@@ -4893,7 +4609,7 @@
                             let a:number     = 0;
                             do {
                                 if (cells[a].getAttribute("class") === "fold") {
-                                    cells[a].onclick = function dom__event_recycle_execOutput_() {
+                                    cells[a].onclick = function dom_event_recycle_execOutput_() {
                                         pd.event.difffold(cells[a]);
                                     }
                                 }
@@ -5199,11 +4915,11 @@
                 xhr:XMLHttpRequest            = new XMLHttpRequest();
             if ((slashIndex > 0 || pd.options.source.indexOf("http") === 0) && typeof protocolRemove === "string" && protocolRemove.length > 0) {
                 requests = true;
-                xhr.onreadystatechange = function dom__event_recycle_xhrSource_statechange() {
-                    const appDelay = function dom__event_recycle_xhrSource_statechange_appDelay() {
+                xhr.onreadystatechange = function dom_event_recycle_xhrSource_statechange() {
+                    const appDelay = function dom_event_recycle_xhrSource_statechange_appDelay() {
                         output = prettydiff.app();
                         if (output === undefined) {
-                            setTimeout(dom__event_recycle_xhrSource_statechange_appDelay, 100);
+                            setTimeout(dom_event_recycle_xhrSource_statechange_appDelay, 100);
                         } else {
                             execOutput();
                         }
@@ -5334,13 +5050,13 @@
 
     // toggles an editor between 100% and 50% width if the output isn't textual
     // references apps: langkey, options references events: recycle
-    pd.app.hideOutput   = function dom__app_hideOutput(x:HTMLElement):void {
+    pd.app.hideOutput   = function dom_app_hideOutput(x:HTMLElement):void {
         let node:HTMLElement,
             parent:HTMLElement,
             state:boolean     = false,
             targetOut:HTMLElement,
             targetIn:HTMLElement;
-        const restore   = function dom__app_hideOutput_restore():void {
+        const restore   = function dom_app_hideOutput_restore():void {
                 parent = <HTMLElement>targetOut.parentNode;
                 parent.style.display = "block";
                 if (targetOut !== null) {
@@ -5410,7 +5126,7 @@
                             .resize();
                     }
                     if (pd.test.ace === true) {
-                        targetIn.onkeyup = function dom__app_hideOutput_langkeyEditor(event:Event):void {
+                        targetIn.onkeyup = function dom_app_hideOutput_langkeyEditor(event:Event):void {
                             pd
                                 .app
                                 .langkey(false, pd.ace.codeIn, "");
@@ -5419,7 +5135,7 @@
                                 .recycle(event);
                         };
                     } else {
-                        targetIn.onkeyup = function dom__app_hideOutput_langkeyTextarea(event:Event):void {
+                        targetIn.onkeyup = function dom_app_hideOutput_langkeyTextarea(event:Event):void {
                             pd
                                 .event
                                 .recycle(event);
@@ -5452,7 +5168,7 @@
 
     // provides interaction to simulate a text input into a radio buttonset with
     // appropriate accessibility response references app: options
-    pd.app.indentchar   = function dom__app_indentchar(x:HTMLInputElement):void {
+    pd.app.indentchar   = function dom_app_indentchar(x:HTMLInputElement):void {
         let node:HTMLInputElement = (x.nodeName.toLowerCase() === "input")
                 ? x
                 : x.getElementsByTagName("input")[0],
@@ -5607,7 +5323,7 @@
 
     // provide a means for keyboard users to escape a textarea references events:
     // sequence
-    pd.event.areaTabOut = function dom__event_areaTabOut(event:KeyboardEvent, node:HTMLElement):void {
+    pd.event.areaTabOut = function dom_event_areaTabOut(event:KeyboardEvent, node:HTMLElement):void {
         let len:number   = pd.test.tabesc.length,
             esc:boolean   = false,
             key:number   = 0;
@@ -5699,7 +5415,7 @@
     };
 
     //read from files if the W3C File API is supported references events: recycle
-    pd.event.file       = function dom__event_file(input:HTMLInputElement):void {
+    pd.event.file       = function dom_event_file(input:HTMLInputElement):void {
         let a:number         = 0,
             id:string        = "",
             files:FileList,
@@ -5718,7 +5434,7 @@
                 parent = <HTMLElement>input.parentNode.parentNode;
                 textarea = parent.getElementsByTagName("textarea")[0];
             }
-            const fileLoad  = function dom__event_file_onload(event:Event):void {
+            const fileLoad  = function dom_event_file_onload(event:Event):void {
                     fileStore.push(event.target.result);
                     if (a === fileCount) {
                         if (pd.test.ace === true) {
@@ -5751,7 +5467,7 @@
                         }
                     }
                 },
-                fileError = function dom__event_file_onerror(event:ErrorEvent):void {
+                fileError = function dom_event_file_onerror(event:ErrorEvent):void {
                     if (textarea !== undefined) {
                         textarea.value = "Error reading file:\n\nThis is the browser's descriptiong: " + event.error.name;
                     }
@@ -5776,7 +5492,7 @@
     };
 
     //callback for filedrop event references events: file
-    pd.event.filedrop   = function dom__event_filedrop(event:Event):void {
+    pd.event.filedrop   = function dom_event_filedrop(event:Event):void {
         event.stopPropagation();
         event.preventDefault();
         pd
@@ -5785,7 +5501,7 @@
     };
 
     //basic drag and drop for the report windows references events: minimize
-    pd.event.grab       = function dom__event_grab(event:Event, x:HTMLElement):boolean {
+    pd.event.grab       = function dom_event_grab(event:Event, x:HTMLElement):boolean {
         const box:HTMLElement        = (x.nodeName.toLowerCase() === "h3")
                 ? <HTMLElement>x.parentNode
                 : <HTMLElement>x.parentNode.parentNode,
@@ -5813,7 +5529,7 @@
                 ? touchEvent.touches[0].clientY
                 : 0,
             filled:boolean     = ((box === pd.data.node.report.stat.box && pd.test.filled.stat === true) || (box === pd.data.node.report.feed.box && pd.test.filled.feed === true) || (box === pd.data.node.report.code.box && pd.test.filled.code === true)),    
-            drop       = function dom__event_grab_drop(e:Event):boolean {
+            drop       = function dom_event_grab_drop(e:Event):boolean {
                 const headingWidth = box.getElementsByTagName("h3")[0].clientWidth;
                 boxLeft = box.offsetLeft;
                 boxTop  = box.offsetTop;
@@ -5844,7 +5560,7 @@
                 e.preventDefault();
                 return false;
             },
-            boxmoveTouch    = function dom__event_grab_boxmoveTouch(f:TouchEvent):boolean {
+            boxmoveTouch    = function dom_event_grab_boxmoveTouch(f:TouchEvent):boolean {
                 f.preventDefault();
                 box.style.right = "auto";
                 box.style.left      = ((boxLeft + (f.touches[0].clientX - touchX)) / 10) + "em";
@@ -5852,7 +5568,7 @@
                 document.ontouchend = drop;
                 return false;
             },
-            boxmoveClick = function dom__event_grab_boxmoveClick(f:MouseEvent):boolean {
+            boxmoveClick = function dom_event_grab_boxmoveClick(f:MouseEvent):boolean {
                 f.preventDefault();
                 box.style.right = "auto";
                 box.style.left     = ((boxLeft + (f.clientX - mouseX)) / 10) + "em";
@@ -5918,16 +5634,6 @@
     if (pd.data.node.page === null || pd.data.node.page === undefined || pd.data.node.page.getAttribute("id") === null) {
         window.onload = loadPrep;
     } else {
-        window.onload = function dom__pageload() {
-            const webtool  = pd.id("webtool"),
-                loadmask = pd.id("loadmask");
-            load();
-            if (loadmask !== null) {
-                loadmask.style.display = "none";
-            }
-            if (webtool !== null) {
-                webtool.style.display = "block";
-            }
-        };
+        load();
     }
 }());

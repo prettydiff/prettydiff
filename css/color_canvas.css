@@ -29,8 +29,10 @@
 #prettydiff.canvas h2 button,
 #prettydiff.canvas h3,
 #prettydiff.canvas legend{color: #900}
+#prettydiff.canvas #addOptions .disabled{background:#ccbbb8;color:#300}
 #prettydiff.canvas .contentarea{box-shadow:0 1em 1em #b8a899}
 #prettydiff.canvas .segment{background:#fff}
+#prettydiff.canvas .options li,
 #prettydiff.canvas h2 button,
 #prettydiff.canvas .segment,
 #prettydiff.canvas th,
@@ -112,7 +114,6 @@
 #prettydiff.canvas .diffcli li{border-bottom-color:#aaa}
 
 /*ace theme colors*/
-#prettydiff.canvas .ace-canvas .ace_gutter {background: #c8c8bb;color: #333;}
 #prettydiff.canvas .ace-canvas .ace_identifier{color:#930;}
 #prettydiff.canvas .ace-canvas .ace_print-margin {width: 1px;background: #e8e8e8;}
 #prettydiff.canvas .ace-canvas .ace_fold {background-color: #6B72E6;}

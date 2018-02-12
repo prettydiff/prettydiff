@@ -1,7 +1,3 @@
-/*#prettydiff.white #webtool .output textarea{background:#ddd} #eee
-#prettydiff.canvas #webtool .output textarea{background:#ccccc8} #ddddd8
-#prettydiff.shadow #webtool .output textarea{background:#333} #222*/
-
 /*color - white, webtool only*/
 #prettydiff.white .filefocus,
 #prettydiff.white #feedreportbody .focus,
@@ -47,6 +43,8 @@
 #prettydiff.white #webtool td.nested .header th,
 #prettydiff.white #webtool .header th{background:#eef}
 #prettydiff.white #webtool thead th{background:#eef}
+#prettydiff.white #webtool .readonly textarea,
+#prettydiff.white #webtool .readonly .ace_scroller,
 #prettydiff.white #webtool td.nested th{background:#eee}
 #prettydiff.white #textareaTabKey em{color:#00f}
 #prettydiff.white #announcement strong,
@@ -97,7 +95,7 @@
 #prettydiff.canvas .maximize:hover{background:#efe;border-color:#010;color:#010}
 #prettydiff.canvas .resize:hover{background:#eef8ff;border-color:#006;color:#006}
 #prettydiff.canvas .ace_marker-layer .ace_start{background:#9f9}
-#prettydiff.canvas .ace_gutter{background:#ddddd8;border-color:#999}
+#prettydiff.canvas .ace_gutter{background:#ccccc8;border-color:#999;color:#333}
 #prettydiff.canvas .ace-tm .ace_marker-layer .ace_selection,
 #prettydiff.canvas .ace-canvas .ace_marker-layer .ace_selection,
 #prettydiff.canvas .ace_selection.ace_start{background:#ffe}
@@ -107,6 +105,8 @@
 #prettydiff.canvas #textareaTabKey em{color:#060}
 #prettydiff.canvas #announcement strong,
 #prettydiff.canvas #textareaTabKey strong{color:#900}
+#prettydiff.canvas #webtool .readonly textarea,
+#prettydiff.canvas #webtool .readonly .ace_scroller,
 #prettydiff.canvas .box .body{background:#ddddd8}
 #prettydiff.canvas .box .body p em{color:#060}
 #prettydiff.canvas .box .body p strong{color:#009}
@@ -138,8 +138,8 @@
 #prettydiff.shadow #minifyinput,
 #prettydiff.shadow #parseoinput,
 #prettydiff.shadow #analysisinput,
-#prettydiff.shadow #baseText,
-#prettydiff.shadow #newText{background:#111;border-color:#666}
+#prettydiff.shadow #input.ace_editor,
+#prettydiff.shadow #output.ace_editor{background:#111;border-color:#666}
 #prettydiff.shadow #beautyoutput,
 #prettydiff.shadow #minifyoutput,
 #prettydiff.shadow #parseoutput,
@@ -176,6 +176,8 @@
 #prettydiff.shadow .ace-idle-fingers .ace_support.ace_constant{color:#8cc9fb}
 #prettydiff.shadow .unchecked{background:#666}
 #prettydiff.shadow #textareaTabKey em{color:#cf3}
+#prettydiff.shadow #webtool .readonly textarea,
+#prettydiff.shadow #webtool .readonly .ace_scroller,
 #prettydiff.shadow .box .body{background:#222}
 #prettydiff.shadow #announcement em,
 #prettydiff.shadow .box .body p em{color:#cf3}
@@ -317,14 +319,18 @@
 
 /*webtool - paragraphs containing textareas for code input/output*/
 #prettydiff #webtool .input,
+#prettydiff #webtool .readonly,
 #prettydiff #webtool .output{clear:none;width:49%}
 #prettydiff #webtool .input{float:left}
-#prettydiff #webtool .output{float:right}
-#prettydiff #webtool .output textarea{margin-left:-0.2em}
+#prettydiff #webtool .output,
+#prettydiff #webtool .readonly{float:right}
+#prettydiff #webtool .output textarea,
+#prettydiff #webtool .readonly{margin-left:-0.2em}
 
 /*webtool - labels to textareas for code input/output*/
 #prettydiff #webtool .input label,
-#prettydiff #webtool .output label{display:block;font-weight:bold}
+#prettydiff #webtool .readonly label,
+#prettydiff #webtool .output label{display:inline-block;font-weight:bold}
 
 /*webtool - file input*/
 #prettydiff p.file{clear:none;float:none;margin:0.5em 0 1em}
@@ -336,10 +342,12 @@
 /*webtool - major section to contain textarea sections*/
 #prettydiff #codeInput{margin-bottom:1em;padding:1.2em}
 #prettydiff #codeInput .input,
+#prettydiff #codeInput .readonly,
 #prettydiff #codeInput .output{margin:0}
 #prettydiff #codeInput label{font-size:1em}
 #prettydiff #codeInput textarea{font-size:1em;line-height:1.2em}
 #prettydiff #codeInput h2{display:block}
+#prettydiff #codeInput .inputLabel{margin-bottom:0}
 
 /*webtool - accessibility alternate navigation messaging for keyboard users when a textarea gains focus*/
 #prettydiff #textareaTabKey{border-style:solid;border-width:0.1em;left:51%;margin:-1.1em 0 0 -0.2em;padding:0.5em;position:absolute;width:28em}
@@ -349,32 +357,27 @@
 /*webtool - option styles*/
 #prettydiff #webtool #options,
 #prettydiff #webtool #addOptions{margin:0 0 1.2em}
-#prettydiff #addOptions div{border-style:none}
-#prettydiff #addOptions p.button{margin:0 0 1em}
-#prettydiff #resetOptions{margin:0 0 -6em}
-#prettydiff #options p.apiname,
-#prettydiff #addOptions p.apiname{float:left;font-size:1.2em;line-height:2.4;margin:0 -40em 0 15em;padding:0}
-#prettydiff span.apiname{display:inline-block;float:none;font-size:1em;margin:0 0 0 1em;width:auto}
+#prettydiff #webtool .option-description{font-size:1em;margin:-1.6em 0 0 29em}
+#prettydiff .options p.button{margin:0 0 1em}
+#prettydiff .options span{display:inline-block;min-width:16.5em}
+#prettydiff .options span label,
+#prettydiff .options span input{display:inline;font-weight:normal;margin:0}
+#prettydiff .options p{margin:0}
+#prettydiff .options label,
+#prettydiff #options p.label,
+#prettydiff #addOptions p.label{display:block;font-size:1em;font-weight:bold;margin:0 0 1em -1em}
+#prettydiff .options ul{margin:0 -1em;padding:0}
+#prettydiff .options li{border-style:dashed;border-width:0 0 0.1em;list-style:none;margin:0;padding:1em 2em;position:relative}
+#prettydiff #addOptions li .disabled{border-style:none;font-weight:bold;height:100%;left:0;opacity:0.5;position:absolute;text-align:right;top:0;width:100%;z-index:5;}
+#prettydiff #addOptions a.apiname{float:left;font-weight:normal;margin:0 -80em 0 30em;padding:0}
 #prettydiff .resetbutton{padding:0}
+#prettydiff #resetOptions{margin:-2em 0.65em -6em 0}
 #prettydiff #options button{float:right;height:2em;padding:0;width:15em}
-#prettydiff #options label{width:auto}
-#prettydiff #options p,
-#prettydiff #addOptions p{clear:both;font-size:1em;margin:0;padding:2em 0 0}
 #prettydiff #webtool .resetbutton,
 #prettydiff #webtool p.button{padding:0}
 #prettydiff #button-primary{margin:1em 0 0}
-#prettydiff #options p span{height:2em;margin:0 0 0 1em}
-#prettydiff fieldset{clear:both;margin:1em 0 0;padding:0 1em 1em}
-#prettydiff fieldset{clear:both;margin:1em 0 0;padding:0 1em 1em}
-#prettydiff .options select,
-#prettydiff .options fieldset select{float:left;margin:0 1em 0 0}
 #prettydiff .options{clear:both;margin-bottom:1em;padding:1em;width:auto}
-#prettydiff .options input[type=text]{margin-right:1em;width:11.6em}
-#prettydiff #webtool .options p span label,
-#prettydiff .options p span{font-size:1.1em;font-weight:normal}
-#prettydiff .options p span{display:block;float:left;margin-left:1em;min-width:16.5em;padding-bottom:0.5em}
-#prettydiff #webtool .options label,
-#prettydiff #webtool .options strong{font-size:1.2em}
+#prettydiff .options input[type=text]{margin-right:1em;width:13.1em}
 #prettydiff p button,
 #prettydiff h3 button,
 #prettydiff a.button{display:block;font-weight:bold;padding:0.2em 0;width:100%}
