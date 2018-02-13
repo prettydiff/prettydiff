@@ -467,7 +467,9 @@
                         pd.data.node.report.feed.box.ondragleave = pd.event.filenull;
                         pd.data.node.report.feed.box.ondrop      = pd.event.filedrop;
                     }
-                    pd.data.node.report.feed.body.onmousedown = top;
+                    pd.data.node.report.feed.body.onmousedown = function dom_load_feedTop():void {
+                        top(pd.data.node.report.feed.body);
+                    };
                     title                                     = pd
                         .data
                         .node
@@ -477,19 +479,9 @@
                         .getElementsByTagName("h3")[0]
                         .getElementsByTagName("button")[0];
                     parent = <HTMLElement>title.parentNode;
-                    title.onmousedown                         = function dom_load_titleFeedMouse():void {
-                        pd
-                            .event
-                            .grab(title.onmousedown, title);
-                    };
-                    title.ontouchstart                        = function dom_load_titleFeedTouch():void {
-                        pd
-                            .event
-                            .grab(title.onmousedown, title);
-                    };
-                    title.onfocus                             = function dom_load_titleFeedFocus():void {
-                        pd.event.minimize(title.onclick, 50, title);
-                    };
+                    title.onmousedown                         = pd.event.grab;
+                    title.ontouchstart                        = pd.event.grab;
+                    title.onfocus                             = pd.event.minimize;
                     title.onblur                              = function dom_load_titleFeedBlur():void {
                         title.onclick = null;
                     };
@@ -541,7 +533,9 @@
                         pd.data.node.report.code.box.ondragleave = pd.event.filenull;
                         pd.data.node.report.code.box.ondrop      = pd.event.filedrop;
                     }
-                    pd.data.node.report.code.body.onmousedown = top;
+                    pd.data.node.report.code.body.onmousedown = function dom_load_codeTop():void {
+                        top(pd.data.node.report.code.body);
+                    };
                     title                                     = pd
                         .data
                         .node
@@ -551,19 +545,9 @@
                         .getElementsByTagName("h3")[0]
                         .getElementsByTagName("button")[0];
                     parent = <HTMLElement>title.parentNode;
-                    title.onmousedown                         = function dom_load_titleCodeMouse():void {
-                        pd
-                            .event
-                            .grab(title.onmousedown, title);
-                    };
-                    title.ontouchstart                        = function dom_load_titleCodeTouch():void {
-                        pd
-                            .event
-                            .grab(title.onmousedown, title);
-                    };
-                    title.onfocus                             = function dom_load_titleCodeFocus():void {
-                        pd.event.minimize(title.onclick, 50, title);
-                    };
+                    title.onmousedown                         = pd.event.grab;
+                    title.ontouchstart                        = pd.event.grab;
+                    title.onfocus                             = pd.event.minimize;
                     title.onblur                              = function dom_load_titleCodeBlur():void {
                         title.onclick = null;
                     };
@@ -631,7 +615,9 @@
                         pd.data.node.report.stat.box.ondragleave = pd.event.filenull;
                         pd.data.node.report.stat.box.ondrop      = pd.event.filedrop;
                     }
-                    pd.data.node.report.stat.body.onmousedown = top;
+                    pd.data.node.report.stat.body.onmousedown = function dom_load_statTop():void {
+                        top(pd.data.node.report.stat.body);
+                    };
                     title                                     = pd
                         .data
                         .node
@@ -641,19 +627,9 @@
                         .getElementsByTagName("h3")[0]
                         .getElementsByTagName("button")[0];
                     parent = <HTMLElement>title.parentNode;
-                    title.onmousedown                         = function dom_load_titleStatMouse():void {
-                        pd
-                            .event
-                            .grab(title.onmousedown, title);
-                    };
-                    title.ontouchstart                        = function dom_load_titleStatTouch():void {
-                        pd
-                            .event
-                            .grab(title.onmousedown, title);
-                    };
-                    title.onfocus                             = function dom_load_titleStatFocus():void {
-                        pd.event.minimize(title.onclick, 50, title);
-                    };
+                    title.onmousedown                         = pd.event.grab;
+                    title.ontouchstart                        = pd.event.grab;
+                    title.onfocus                             = pd.event.minimize;
                     title.onblur                              = function dom_load_titleStatBlur():void {
                         title.onclick = null;
                     };
@@ -3589,7 +3565,8 @@
             }
         },
         //minimize report windows to the default size and location
-        minimize     : function dom_event_minimize(e:Event, steps:number, node:HTMLElement):boolean {
+        minimize     : function dom_event_minimize(e:Event, steps:number):boolean {
+            const node:HTMLElement = <HTMLElement>e.srcElement || <HTMLElement>e.target;
             let parent:HTMLElement,
                 parentNode:HTMLElement,
                 box:HTMLElement,
@@ -4484,11 +4461,7 @@
                                     pd.data.node.report.code.body.innerHTML = build;
                                 }
                                 if (pd.data.node.report.code.body.style.display === "none") {
-                                    pd
-                                        .event
-                                        .grab({
-                                            type: "onmousedown"
-                                        }, pd.data.node.report.code.box.getElementsByTagName("h3")[0]);
+                                    pd.data.node.report.code.box.getElementsByTagName("h3")[0].click();
                                 }
                                 pd.data.node.report.code.box.style.top   = (pd.data.settings.codereport.top / 10) + "em";
                                 pd.data.node.report.code.box.style.right = "auto";
@@ -4533,11 +4506,7 @@
                         if (pd.options.jsscope === "report" && pd.data.langvalue[1] === "javascript" && output.indexOf("Error:") !== 0) {
                             pd.data.node.report.code.body.innerHTML = output;
                             if (pd.data.node.report.code.body.style.display === "none") {
-                                pd
-                                    .event
-                                    .grab({
-                                        type: "onmousedown"
-                                    }, pd.data.node.report.code.box.getElementsByTagName("h3")[0]);
+                                pd.data.node.report.code.box.getElementsByTagName("h3")[0].click();
                             }
                             pd.data.node.report.code.box.style.top   = (pd.data.settings.codereport.top / 10) + "em";
                             pd.data.node.report.code.box.style.right = "auto";
@@ -4668,11 +4637,7 @@
                             pd.data.node.report.code.body.innerHTML = output;
                         }
                         if (pd.data.node.report.code.body.style.display === "none") {
-                            pd
-                                .event
-                                .grab({
-                                    type: "onmousedown"
-                                }, pd.data.node.report.code.box.getElementsByTagName("h3")[0]);
+                            pd.data.node.report.code.box.getElementsByTagName("h3")[0].click();
                         }
                         pd.data.node.report.code.box.style.top   = (pd.data.settings.codereport.top / 10) + "em";
                         pd.data.node.report.code.box.style.right = "auto";
@@ -5168,156 +5133,50 @@
 
     // provides interaction to simulate a text input into a radio buttonset with
     // appropriate accessibility response references app: options
-    pd.app.indentchar   = function dom_app_indentchar(x:HTMLInputElement):void {
-        let node:HTMLInputElement = (x.nodeName.toLowerCase() === "input")
-                ? x
-                : x.getElementsByTagName("input")[0],
-            quan:HTMLInputElement;
-        const beauChar:HTMLInputElement  = pd.id("beau-char"),
-            diffChar:HTMLInputElement  = pd.id("diff-char"),
-            beauOther:HTMLInputElement = pd.id("beau-other"),
-            diffOther:HTMLInputElement = pd.id("diff-other");
-        if (pd.data.mode === "beau" && beauOther !== null && beauChar !== null) {
-            if (node === beauOther || node === beauChar) {
-                beauOther.checked = true;
-                beauChar.setAttribute("class", "checked");
-                if (beauChar.value === "Click me for custom input") {
-                    beauChar.value = "";
-                }
-            } else {
-                beauOther.checked = false;
-                beauChar.setAttribute("class", "unchecked");
-                if (beauChar.value === "") {
-                    beauChar.value = "Click me for custom input";
-                }
-            }
-        } else if (pd.data.mode === "diff" && diffOther !== null && diffChar !== null) {
-            if (node === diffOther || node === diffChar) {
-                diffOther.checked = true;
-                diffChar.setAttribute("class", "checked");
-                if (diffChar.value === "Click me for custom input") {
-                    diffChar.value = "";
-                }
-            } else {
-                diffOther.checked = false;
-                diffChar.setAttribute("class", "unchecked");
-                if (diffChar.value === "") {
-                    diffChar.value = "Click me for custom input";
-                }
-            }
-        }
+    pd.app.indentchar   = function dom_app_indentchar():void {
+        const insize:HTMLInputElement = pd.id("option-insize"),
+            inchar:HTMLInputElement = pd.id("option-inchar");
         if (pd.test.ace === true) {
-            if (pd.data.mode === "diff") {
-                if (node === pd.id("diff-space")) {
+            if (inchar !== null && inchar.value === " ") {
+                pd
+                    .ace
+                    .codeIn
+                    .getSession()
+                    .setUseSoftTabs(true);
+                pd
+                    .ace
+                    .codeOut
+                    .getSession()
+                    .setUseSoftTabs(true);
+                if (insize !== null && isNaN(Number(insize.value)) === false) {
                     pd
                         .ace
                         .codeIn
                         .getSession()
-                        .setUseSoftTabs(true);
+                        .setTabSize(Number(inchar.value));
                     pd
                         .ace
                         .codeOut
                         .getSession()
-                        .setUseSoftTabs(true);
-                    quan = pd.id("diff-quan");
-                    if (quan !== null && isNaN(Number(quan.value)) === false) {
-                        pd
-                            .ace
-                            .codeIn
-                            .getSession()
-                            .setTabSize(Number(node.value));
-                        pd
-                            .ace
-                            .codeOut
-                            .getSession()
-                            .setTabSize(Number(node.value));
-                    }
-                } else {
-                    pd
-                        .ace
-                        .codeIn
-                        .getSession()
-                        .setUseSoftTabs(false);
-                    pd
-                        .ace
-                        .codeOut
-                        .getSession()
-                        .setUseSoftTabs(false);
-                    pd
-                        .ace
-                        .minnIn
-                        .getSession()
-                        .setUseSoftTabs(false);
-                    pd
-                        .ace
-                        .minnOut
-                        .getSession()
-                        .setUseSoftTabs(false);
-                    pd
-                        .ace
-                        .parsIn
-                        .getSession()
-                        .setUseSoftTabs(false);
-                    pd
-                        .ace
-                        .parsOut
-                        .getSession()
-                        .setUseSoftTabs(false);
+                        .setTabSize(Number(inchar.value));
                 }
-            }
-            if (pd.data.mode === "beau") {
-                if (node === pd.id("beau-space")) {
-                    pd
-                        .ace
-                        .codeIn
-                        .getSession()
-                        .setUseSoftTabs(true);
-                    pd
-                        .ace
-                        .codeOut
-                        .getSession()
-                        .setUseSoftTabs(true);
-                    quan = pd.id("beau-quan");
-                    if (quan !== null && isNaN(Number(quan.value)) === false) {
-                        pd
-                            .ace
-                            .codeIn
-                            .getSession()
-                            .setTabSize(Number(node.value));
-                        pd
-                            .ace
-                            .codeOut
-                            .getSession()
-                            .setTabSize(Number(node.value));
-                    }
-                } else {
-                    pd
-                        .ace
-                        .codeIn
-                        .getSession()
-                        .setUseSoftTabs(false);
-                    pd
-                        .ace
-                        .codeOut
-                        .getSession()
-                        .setUseSoftTabs(false);
-                }
+            } else {
+                pd
+                    .ace
+                    .codeIn
+                    .getSession()
+                    .setUseSoftTabs(false);
+                pd
+                    .ace
+                    .codeOut
+                    .getSession()
+                    .setUseSoftTabs(false);
             }
         }
         if (pd.test.load === false) {
-            if (node === beauChar) {
-                pd
-                    .app
-                    .options(beauChar);
-            } else if (node === diffChar) {
-                pd
-                    .app
-                    .options(diffChar);
-            } else {
-                pd
-                    .app
-                    .options(node);
-            }
+            pd
+                .app
+                .options(inchar);
         }
     };
 
@@ -5424,9 +5283,6 @@
             reader:FileReader,
             fileStore:string[] = [],
             fileCount:number = 0;
-        if (input === null || typeof input !== "object" || input.nodeType > 1 || files === undefined || input.nodeType !== 1) {
-            return;
-        }
         id    = input.getAttribute("id");
         files = input.files;
         if (pd.test.fs === true && files[0] !== null && typeof files[0] === "object") {
@@ -5435,7 +5291,8 @@
                 textarea = parent.getElementsByTagName("textarea")[0];
             }
             const fileLoad  = function dom_event_file_onload(event:Event):void {
-                    fileStore.push(event.target.result);
+                    const tscheat:string = "result";
+                    fileStore.push(event.target[tscheat]);
                     if (a === fileCount) {
                         if (pd.test.ace === true) {
                             if (id === "outputfile") {
@@ -5501,8 +5358,9 @@
     };
 
     //basic drag and drop for the report windows references events: minimize
-    pd.event.grab       = function dom_event_grab(event:Event, x:HTMLElement):boolean {
-        const box:HTMLElement        = (x.nodeName.toLowerCase() === "h3")
+    pd.event.grab       = function dom_event_grab(event:Event):boolean {
+        const x:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
+            box:HTMLElement        = (x.nodeName.toLowerCase() === "h3")
                 ? <HTMLElement>x.parentNode
                 : <HTMLElement>x.parentNode.parentNode,
             parent:HTMLElement     = box.getElementsByTagName("p")[0],
@@ -5520,8 +5378,12 @@
             touch:boolean      = (event !== null && event.type === "touchstart"),
             mouseEvent = <MouseEvent>event,
             touchEvent = <TouchEvent>event,
-            mouseX = mouseEvent.clientX,
-            mouseY = mouseEvent.clientY,
+            mouseX = (touch === true)
+                ? 0
+                : mouseEvent.clientX,
+            mouseY = (touch === true)
+                ? 0
+                : mouseEvent.clientY,
             touchX = (touch === true)
                 ? touchEvent.touches[0].clientX
                 : 0,
