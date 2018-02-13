@@ -564,11 +564,7 @@
                         if (pd.test.agent.indexOf("firefox") > 0 || pd.test.agent.indexOf("presto") > 0) {
                             saveNode = document.createElement("a");
                             saveNode.setAttribute("href", "#");
-                            saveNode.onclick   = function dom_load_saveNode() {
-                                pd
-                                    .event
-                                    .save(saveNode);
-                            };
+                            saveNode.onclick   = pd.event.save;
                             saveNode.innerHTML = "<button class='save' title='Convert report to text that can be saved.' tabindex=" +
                                                 "'-1'>S</button>";
                             buttonGroup.insertBefore(node, buttonGroup.firstChild);
@@ -906,7 +902,7 @@
                                     .event
                                     .colorScheme();
                             }
-                        } else if (id === "language") {
+                        } else if (id === "option-lang") {
                             selects[a].onchange = pd.event.langOps;
                             if (pd.data.settings.language !== undefined) {
                                 selects[a].selectedIndex = Number(pd.data.settings.language);
@@ -941,58 +937,35 @@
                             buttons[a].onclick = pd.event.reset;
                         }
                     } else if (name === "minimize") {
-                        buttons[a].onclick = function dom_load_titleButtonFocus():void {
-                            pd.event.minimize(buttons[a].onclick, 50, buttons[a]);
-                        };
+                        buttons[a].onclick = pd.event.minimize;
                     } else if (name === "maximize") {
-                        buttons[a].onclick = function dom_load_maximize():void {
-                            pd.event.maximize(buttons[a]);
-                        };
+                        buttons[a].onclick = pd.event.maximize;
                         parent = <HTMLElement>buttons[a].parentNode.parentNode;
                         if (pd.data.settings[parent.getAttribute("id")] !== undefined && pd.data.settings[parent.getAttribute("id")].max === true) {
                             buttons[a].click();
                         }
                     } else if (name === "resize") {
-                        buttons[a].onmousedown = function dom_load_resize():void {
-                            pd
-                                .event
-                                .resize(buttons[a].onmousedown, buttons[a]);
-                        };
+                        buttons[a].onmousedown = pd.event.resize;
                     } else if (name === "save") {
                         button  = buttons[a];
                         title = <HTMLElement>button.parentNode;
                         if (title.nodeName.toLowerCase() === "a") {
                             if (pd.test.agent.indexOf("firefox") < 0 && pd.test.agent.indexOf("presto") < 0) {
                                 parent = <HTMLElement>title.parentNode;
-                                button.onclick = function dom_load_buttonSave() {
-                                    pd
-                                        .event
-                                        .save(button);
-                                };
+                                button.onclick = pd.event.save;
                                 title.removeChild(node);
                                 parent.removeChild(title);
                                 parent.insertBefore(node, parent.firstChild);
                                 buttons[a].removeAttribute("tabindex");
                             } else {
-                                title.onclick = function dom_load_titleSave() {
-                                    pd
-                                        .event
-                                        .save(title);
-                                };
+                                title.onclick = pd.event.save;
                             }
                         } else {
-                            node.onclick = function dom_load_nodeSave() {
-                                pd
-                                    .event
-                                    .save(node);
-                            };
+                            node.onclick = pd.event.save;
                         }
                     }
                     a = a + 1;
                 } while (a < inputsLen);
-                if (pd.data.node.save !== null) {
-                    pd.data.node.save.onclick = savecheck;
-                }
                 if (pd.data.node.comment !== null) {
                     if (pd.data.commentString.length === 0) {
                         pd.data.node.comment.innerHTML = "/*prettydiff.com \u002a/";
@@ -1030,7 +1003,7 @@
                     if (color !== null) {
                         colors = color.getElementsByTagName("option");
                     }
-                    if (pd.data.node.lang !== null) {
+                    if (pd.data.node.lang !== null && pd.data.node.lang.nodeName === "select") {
                         options = pd
                         .data
                         .node
@@ -1159,9 +1132,6 @@
                             }
                         } else if (param[0] === "jsscope") {
                             param[1] = "report";
-                            if (pd.data.node.jsscope !== null) {
-                                pd.data.node.jsscope.checked = true;
-                            }
                             pd
                                 .app
                                 .hideOutput(pd.data.node.jsscope);
@@ -2496,16 +2466,14 @@
     prettydiff.dom = pd;
     //namespace for data points and dom nodes
     pd.data.node = {
-        analOps     : pd.id("analysisops"),
         announce    : pd.id("announcement"),
         codeIn      : pd.id("input"),
         codeOut     : pd.id("output"),
         comment     : pd.id("option_comment"),
         headline    : pd.id("headline"),
-        jsscope     : pd.id("jsscope-yes"),
-        lang        : pd.id("language"),
-        langdefault : pd.id("lang-default"),
-        maxInputs   : pd.id("hideOptions"),
+        jsscope     : pd.id("option-jsscope"),
+        lang        : pd.id("option-language"),
+        langdefault : pd.id("option-langdefault"),
         modeBeau    : pd.id("modebeautify"),
         modeDiff    : pd.id("modediff"),
         modeMinn    : pd.id("modeminify"),
@@ -2514,8 +2482,6 @@
         page        : (document.getElementsByTagName("div").length > 0)
             ? document.getElementsByTagName("div")[0]
             : null,
-        pars        : pd.id("Parse"),
-        parsOps     : pd.id("parseops"),
         report      : {
             code: {
                 box: pd.id("codereport")
@@ -2526,8 +2492,7 @@
             stat: {
                 box: pd.id("statreport")
             }
-        },
-        save        : pd.id("diff-save")
+        }
     };
     if (pd.test.agent.indexOf("msie 8.0;") > 0) {
         document.getElementsByTagName("body")[0].innerHTML = "<h1>Pretty Diff</h1> <p>Sorry, but Pretty Diff no longer supports IE8. <a href='" +
@@ -2644,15 +2609,19 @@
         langkey  : function dom_app_langkey(all:boolean, obj:any, lang:string):[string, string, string] {
             let sample:string      = "",
                 // defaultt      = actual default lang value from the select list
+                defaultval:string  = "",
                 defaultt:string    = "",
                 value:languageAuto;
             const language    = prettydiff.language;
             if (typeof language !== "object") {
                 return ["", "", ""];
             }
-            defaultt = (pd.data.node.langdefault === null || pd.data.node.langdefault.nodeName.toLowerCase() !== "select")
+            defaultval = (pd.data.node.langdefault === null)
                 ? "javascript"
-                : language.setlangmode(pd.data.node.langdefault[pd.data.node.langdefault.selectedIndex].value);
+                : (pd.data.node.langdefault.nodeName.toLowerCase() !== "select")
+                    ? pd.data.node.langdefault.value
+                    : pd.data.node.langdefault[pd.data.node.langdefault.selectedIndex].value;
+            defaultt = language.setlangmode(defaultval);
             if (obj !== undefined && obj !== null) {
                 if (pd.test.ace === true && obj.getValue !== undefined) {
                     sample = obj.getValue();
@@ -2667,9 +2636,9 @@
                     sample = obj.value;
                 }
             }
-            if (pd.data.node.lang !== null && pd.data.node.lang.selectedIndex > 0) {
+            if (defaultval === "auto") {
                 all  = true;
-                lang = pd.data.node.lang[pd.data.node.lang.selectedIndex].value;
+                lang = "auto";
             }
             if (lang === "csv") {
                 pd.data.langvalue = ["plain_text", "csv", "CSV"];
@@ -3285,18 +3254,7 @@
                 select:HTMLSelectElement,
                 lang:string = "",
                 xml:boolean  = false,
-                dqp:HTMLElement  = pd.id("diffquanp"),
-                dqt:HTMLElement  = pd.id("difftypep"),
-                db:HTMLElement   = pd.id("diffbeautify"),
-                csvp:HTMLElement = pd.id("csvcharp"),
-                hd:HTMLInputElement   = pd.id("htmld-yes"),
-                he:HTMLInputElement   = pd.id("htmld-no"),
-                hm:HTMLInputElement   = pd.id("htmlm-yes"),
-                hn:HTMLInputElement   = pd.id("htmlm-no"),
-                hp:HTMLInputElement   = pd.id("phtml-yes"),
-                hq:HTMLInputElement   = pd.id("phtml-no"),
-                hy:HTMLInputElement   = pd.id("html-yes"),
-                hz:HTMLInputElement   = pd.id("html-no");
+                csvp:HTMLElement = pd.id("csvcharp");
             if (node.nodeType === 1 && name === "select") {
                 select = <HTMLSelectElement>node;
                 xml  = (select.getElementsByTagName("option")[select.selectedIndex].innerHTML === "XML" || select.getElementsByTagName("option")[select.selectedIndex].innerHTML === "JSTL");
@@ -3308,149 +3266,6 @@
                     : pd.data.node.lang.value;
             if (pd.data.langvalue[0] === undefined) {
                 pd.data.langvalue[0] = lang;
-            }
-            if (pd.data.node.modeDiff !== null && pd.data.node.modeDiff.checked === true) {
-                if (pd.data.node.minnOps !== null) {
-                    pd.data.node.minnOps.style.display = "none";
-                }
-                if (pd.data.node.beauOps !== null) {
-                    pd.data.node.beauOps.style.display = "none";
-                }
-                if (pd.data.node.parsOps !== null) {
-                    pd.data.node.parsOps.style.display = "none";
-                }
-                if (lang === "text" || lang === "csv") {
-                    if (dqp !== null) {
-                        dqp.style.display = "none";
-                    }
-                    if (dqt !== null) {
-                        dqt.style.display = "none";
-                    }
-                } else {
-                    if (dqp !== null) {
-                        dqp.style.display = "block";
-                    }
-                    if (dqt !== null) {
-                        dqt.style.display = "block";
-                    }
-                }
-            } else if (pd.data.node.modeBeau !== null && pd.data.node.modeBeau.checked === true) {
-                if (pd.data.node.minnOps !== null) {
-                    pd.data.node.minnOps.style.display = "none";
-                }
-                if (pd.data.node.diffOps !== null) {
-                    pd.data.node.diffOps.style.display = "none";
-                }
-                if (pd.data.node.parsOps !== null) {
-                    pd.data.node.parsOps.style.display = "none";
-                }
-                if (pd.data.node.beauOps !== null) {
-                    if (lang === "csv") {
-                        pd.data.node.beauOps.style.display = "none";
-                    } else {
-                        pd.data.node.beauOps.style.display = "block";
-                    }
-                }
-            } else if (pd.data.node.modeMinn !== null && pd.data.node.modeMinn.checked === true) {
-                if (pd.data.node.beauOps !== null) {
-                    pd.data.node.beauOps.style.display = "none";
-                }
-                if (pd.data.node.diffOps !== null) {
-                    pd.data.node.diffOps.style.display = "none";
-                }
-                if (pd.data.node.parsOps !== null) {
-                    pd.data.node.parsOps.style.display = "none";
-                }
-                if (pd.data.node.minnOps !== null) {
-                    if (lang === "csv") {
-                        pd.data.node.minnOps.style.display = "none";
-                    } else {
-                        pd.data.node.minnOps.style.display = "block";
-                    }
-                }
-            } else if (pd.data.node.modePars !== null && pd.data.node.modePars.checked === true) {
-                if (pd.data.node.beauOps !== null) {
-                    pd.data.node.beauOps.style.display = "none";
-                }
-                if (pd.data.node.diffOps !== null) {
-                    pd.data.node.diffOps.style.display = "none";
-                }
-                if (pd.data.node.minnOps !== null) {
-                    pd.data.node.minnOps.style.display = "none";
-                }
-                if (pd.data.node.minnOps !== null) {
-                    if (lang === "csv") {
-                        pd.data.node.parsOps.style.display = "none";
-                    } else {
-                        pd.data.node.parsOps.style.display = "block";
-                    }
-                }
-            }
-            if (csvp !== null) {
-                if (lang === "csv") {
-                    csvp.style.display = "block";
-                } else {
-                    csvp.style.display = "none";
-                }
-            }
-            if (db !== null) {
-                if (lang === "csv" || lang === "text") {
-                    db.style.display = "none";
-                } else {
-                    db.style.display = "block";
-                }
-            }
-            if (lang === "html") {
-                if (hd !== null) {
-                    hd.checked = true;
-                }
-                if (hm !== null) {
-                    hm.checked = true;
-                }
-                if (hy !== null) {
-                    hy.checked = true;
-                }
-                if (hp !== null) {
-                    hp.checked = true;
-                }
-            } else if (xml === true) {
-                if (he !== null) {
-                    he.checked = true;
-                }
-                if (hn !== null) {
-                    hn.checked = true;
-                }
-                if (hz !== null) {
-                    hz.checked = true;
-                }
-                if (hq !== null) {
-                    hq.checked = true;
-                }
-            } else {
-                if (pd.data.settings.presumehtmld === "htmld-no" && he !== null) {
-                    he.checked = true;
-                }
-                if (pd.data.settings.presumehtmlm === "htmlm-no" && hn !== null) {
-                    hn.checked = true;
-                }
-                if (pd.data.settings.presumehtml === "html-no" && hz !== null) {
-                    hz.checked = true;
-                }
-                if (pd.data.settings.presumehtml === "phtml-no" && hq !== null) {
-                    hq.checked = true;
-                }
-                if (pd.data.settings.presumehtmld === "htmld-yes" && hd !== null) {
-                    hd.checked = true;
-                }
-                if (pd.data.settings.presumehtmlm === "htmlm-yes" && hm !== null) {
-                    hm.checked = true;
-                }
-                if (pd.data.settings.presumehtml === "html-yes" && hy !== null) {
-                    hy.checked = true;
-                }
-                if (pd.data.settings.presumehtml === "phtml-yes" && hp !== null) {
-                    hp.checked = true;
-                }
             }
             if (select === pd.data.node.lang) {
                 if (pd.data.node.langdefault !== null) {
@@ -3485,8 +3300,9 @@
             }
         },
         //maximize report window to available browser window
-        maximize     : function dom_event_maximize(node:HTMLElement):void {
-            let parent:HTMLElement,
+        maximize     : function dom_event_maximize(event:Event):void {
+            let node:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
+                parent:HTMLElement,
                 save:boolean    = false,
                 box:HTMLElement,
                 id:string      = "",
@@ -3565,9 +3381,9 @@
             }
         },
         //minimize report windows to the default size and location
-        minimize     : function dom_event_minimize(e:Event, steps:number):boolean {
+        minimize     : function dom_event_minimize(e:Event):boolean {
             const node:HTMLElement = <HTMLElement>e.srcElement || <HTMLElement>e.target;
-            let parent:HTMLElement,
+            let parent:HTMLElement = <HTMLElement>node.parentNode,
                 parentNode:HTMLElement,
                 box:HTMLElement,
                 final:number    = 0,
@@ -3581,9 +3397,9 @@
                 left:number      = 0,
                 top:number       = 0,
                 buttonRes:HTMLButtonElement,
-                step:number      = (steps < 1)
+                step:number      = (parent.style.display === "none" && (pd.data.mode === "diff" || (pd.data.mode === "beau" && pd.options.jsscope === "report" && pd.options.lang === "javascript")))
                     ? 1
-                    : steps,
+                    : 50,
                 growth    = function dom_event_minimize_growth():boolean {
                     let width:number        = 17,
                         height:number       = 3,
@@ -4034,11 +3850,7 @@
                 } else {
                     x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(prettydiff.finalFile.order.join("")));
                 }
-                x.onclick = function dom_event_save_rebind() {
-                    pd
-                        .event
-                        .save(x);
-                };
+                x.onclick = pd.event.save;
 
                 // prompt to save file created above.  below is the creation of the modal with
                 // instructions about file extension.
@@ -4084,9 +3896,6 @@
                 prettydiff.finalFile.order[12] = prettydiff.finalFile.script.minimal;
             }
             if (button.innerHTML === "S") {
-                if (pd.data.mode === "diff") {
-                    pd.data.node.save.checked = true;
-                }
                 button.innerHTML = "H";
                 button.setAttribute("title", "Convert output to rendered HTML.");
                 body.innerHTML = "<textarea rows='40' cols='80'>" + pd
@@ -4097,9 +3906,6 @@
                     .replace(/</g, "&lt;")
                     .replace(/>/g, "&gt;") + "</textarea>";
                 return false;
-            }
-            if (pd.data.mode === "diff") {
-                pd.data.node.save.checked = false;
             }
             button.innerHTML = "S";
             button.setAttribute("title", "Convert report to text that can be saved.");
@@ -4239,7 +4045,7 @@
             codesize:number = 0;
         const domain:RegExp      = (/^((https?:\/\/)|(file:\/\/\/))/),
             lf:HTMLInputElement        = pd.id("lterminator-crlf"),
-            textout:boolean     = ((pd.data.node.jsscope === null || pd.data.node.jsscope.checked === false) && (node === null || node.checked === false)),
+            textout:boolean     = (pd.options.jsscope !== "report" && (node === null || node.checked === false)),
             execOutput  = function dom_event_recycle_execOutput():void {
                 let diffList:NodeListOf<HTMLOListElement>,
                     button:HTMLButtonElement,
@@ -4708,25 +4514,11 @@
                     .getElementsByTagName("p")[0]
                     .getElementsByTagName("button");
                 if (chromeSave === true) {
-                    pd
-                        .event
-                        .save(buttons[0]);
-                } else if (pd.data.node.save !== null && pd.data.node.save.checked === true) {
-                    if (buttons[0].parentNode.nodeName.toLowerCase() === "a") {
-                        pd
-                            .event
-                            .save(buttons[0].parentNode);
-                    } else {
-                        pd
-                            .event
-                            .save(buttons[0]);
-                    }
+                    buttons[0].click();
                 }
                 parent = <HTMLElement>buttons[1].parentNode;
                 if (parent.style.display === "none" && (pd.data.mode === "diff" || (pd.data.mode === "beau" && pd.options.jsscope === "report" && lang[1] === "javascript"))) {
-                    pd
-                        .event
-                        .minimize(buttons[1].onclick, 1, buttons[1]);
+                    buttons[1].click();
                 }
                 lang[0] = lang[0].toLowerCase();
                 if (pd.data.langvalue[1] === "csv") {
@@ -4836,9 +4628,11 @@
                     .lang
                     .value
                     .toLowerCase();
-        pd.options.langdefault = (pd.data.node.langdefault !== null)
-            ? pd.data.node.langdefault[pd.data.node.langdefault.selectedIndex].value
-            : "javascript";
+        pd.options.langdefault = (pd.data.node.langdefault === null)
+            ? "javascript"
+            : (pd.data.node.lang.nodeName.toLowerCase() === "select")
+                ? pd.data.node.langdefault[pd.data.node.langdefault.selectedIndex].value.toLowerCase()
+                : pd.data.node.langdefault.value.toLowerCase();
         pd.options.newline     = (pd.id("newline-yes") !== null && pd.id("newline-yes").checked === true);
         if (pd.options.lang === "auto") {
             autotest = true;
@@ -5063,7 +4857,7 @@
         if (x.nodeType === 1 && x.nodeName.toLowerCase() !== "input" && x !== pd.data.node.lang) {
             x = x.getElementsByTagName("input")[0];
         }
-        state = (x === pd.data.node.jsscope || langval === "csv");
+        state = (pd.options.jsscope === "report" || langval === "csv");
         targetOut = pd.data.node.codeOut;
         targetIn  = pd.data.node.codeIn;
         parent = <HTMLElement>targetOut.parentNode;
@@ -5451,9 +5245,7 @@
             } else {
                 box.style.left = "auto";
             }
-            pd
-                .event
-                .minimize(event, 50, minButton);
+            minButton.click();
             return false;
         }
         pd
