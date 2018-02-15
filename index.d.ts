@@ -58,6 +58,14 @@ interface language {
     nameproper(input:string): string;
     setlangmode(input:string):string;
 }
+interface domMethods {
+    app: {
+        [key: string]: any;
+    };
+    event: {
+        [key: string]: any;
+    };
+}
 interface finalFile {
     css: {
         color: {

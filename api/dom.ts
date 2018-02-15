@@ -21,769 +21,157 @@
             difftotal: 0,
             difflines: 0
         },
-        pd:dom       = {
-            data: {
-                announcetext : "",
-                audio        : {},
-                builder      : {},
-                color        : "white", //for use with HTML themes
-                commentString: [],
-                diff         : "",
-                html         : [],
-                langvalue    : [],
-                mode         : "diff",
-                node: {},
-                settings     : {},
-                source       : "",
-                sourceLength : 0,
-                stat         : {
-                    avday : 1,
-                    anal  : 0,
-                    beau  : 0,
-                    css   : 0,
-                    csv   : 0,
-                    diff  : 0,
-                    fdate : 0,
-                    js    : 0,
-                    large : 0,
-                    markup: 0,
-                    minn  : 0,
-                    pars  : 0,
-                    pdate : "",
-                    text  : 0,
-                    usage : 0,
-                    useday: 0,
-                    visit : 0
-                },
-                tabtrue      : false,
-                zIndex       : 10
-            },
-            id: function dom_id(x):any {
-                if (document.getElementById === undefined) {
-                    return;
-                }
-                return document.getElementById(x);
-            },
-            // start option defaults
-            options: {
-                lang: "",
-                lexer: "",
-                source: ""
-            },
-            // end option defaults
-            test: {
-                // accessibility analysis is locked behind a flag, this param will bypass the
-                // flag
-                accessibility : (location.href.toLowerCase().indexOf("accessibility=true") > 0),
-                //delect if Ace Code Editor is supported
-                ace           : (location.href.toLowerCase().indexOf("ace=false") < 0 && typeof ace === "object"),
-                //get the lowercase useragent string
-                agent         : (typeof navigator === "object")
-                    ? navigator
-                        .userAgent
-                        .toLowerCase()
-                    : "",
-                //test for standard web audio support
-                audio         : ((typeof AudioContext === "function" || typeof AudioContext === "object") && AudioContext !== null)
-                    ? new AudioContext()
-                    : null,
-                //delays the toggling of pd.test.load to false for asynchronous code sources
-                delayExecution: false,
-                //am I served from the Pretty Diff domain
-                domain        : (location.href.indexOf("prettydiff.com") < 15 && location.href.indexOf("prettydiff.com") > -1),
-                //If the output is too large the report must open and minimize in a single step
-                filled        : {
-                    code: false,
-                    feed: false,
-                    stat: false
-                },
-                //test for support of the file api
-                fs            : (typeof FileReader === "function"),
-                // stores keypress state to avoid execution of pd.event.recycle from certain key
-                // combinations
-                keypress      : false,
-                keysequence   : [],
-                // supplement to ensure keypress is returned to false only after other keys
-                // other than ctrl are released
-                keystore      : [],
-                //some operations should not occur as the page is initially loading
-                load          : true,
-                //supplies alternate keyboard navigation to editable text areas
-                tabesc        : []
+        id = function dom_id(x:string):any {
+            if (document.getElementById === undefined) {
+                return;
             }
+            return document.getElementById(x);
+        },
+        page = (function dom__dataPage():HTMLDivElement {
+            const divs:NodeListOf<HTMLDivElement> = document.getElementsByTagName("div");
+            if (divs.length === 0) {
+                return null;
+            }
+            return divs[0];
+        }()),
+        textarea = {
+            codeIn: id("input"),
+            codeOut: id("output"),
+        },
+        // start option defaults
+        options:any = {
+            lang: "",
+            lexer: "",
+            source: ""
+        },
+        // end option defaults
+        aceStore:any = {
+            codeIn: {},
+            codeOut: {}
+        },
+        method:domMethods = {
+            app: {},
+            event: {}
+        },
+        data:any = {
+            commentString: {},
+            html: [],
+            langvalue: ["javascript", "javascript", "JavaScript"],
+            mode: "diff",
+            settings: {
+                report: {
+                    code: {},
+                    feed: {},
+                    stat: {}
+                }
+            },
+            tabtrue: false,
+            zIndex: 0
+        },
+        report = {
+            code: {
+                body: null,
+                box: id("codereport")
+            },
+            feed: {
+                body: null,
+                box: id("feedreport")
+            },
+            stat: {
+                body: null,
+                box: id("statreport")
+            }
+        },
+        test = {
+            //delect if Ace Code Editor is supported
+            ace           : (location.href.toLowerCase().indexOf("ace=false") < 0 && typeof ace === "object"),
+            //get the lowercase useragent string
+            agent         : (typeof navigator === "object")
+                ? navigator
+                    .userAgent
+                    .toLowerCase()
+                : "",
+            //test for standard web audio support
+            audio         : ((typeof AudioContext === "function" || typeof AudioContext === "object") && AudioContext !== null)
+                ? new AudioContext()
+                : null,
+            //delays the toggling of test.load to false for asynchronous code sources
+            delayExecution: false,
+            //am I served from the Pretty Diff domain
+            domain        : (location.href.indexOf("prettydiff.com") < 15 && location.href.indexOf("prettydiff.com") > -1),
+            //If the output is too large the report must open and minimize in a single step
+            filled        : {
+                code: false,
+                feed: false,
+                stat: false
+            },
+            //test for support of the file api
+            fs            : (typeof FileReader === "function"),
+            // stores keypress state to avoid execution of event.execute from certain key
+            // combinations
+            keypress      : false,
+            keysequence   : [],
+            // supplement to ensure keypress is returned to false only after other keys
+            // other than ctrl are released
+            keystore      : [],
+            //some operations should not occur as the page is initially loading
+            load          : true,
+            //supplies alternate keyboard navigation to editable text areas
+            tabesc        : []
         },
         load                = function dom_load():void {
             let a:number               = 0,
-                x:HTMLInputElement,
-                inputs:NodeListOf<HTMLInputElement>,
-                selects:NodeListOf<HTMLSelectElement>,
-                buttons:NodeListOf<HTMLButtonElement>,
-                inputsLen:number       = 0,
-                id:string              = "",
-                name:string            = "",
-                type:string            = "",
-                node:HTMLFormElement,
-                button:HTMLButtonElement,
-                buttonGroup:HTMLElement,
-                title:HTMLElement,
-                parent:HTMLElement,
-                statdump:number[]        = [];
-            const page:string            = (pd.data.node.page === null || pd.data.node.page === undefined || pd.data.node.page.getAttribute("id") === null)
+                node:HTMLFormElement;
+            const pages:string            = (page === null || page === undefined || page.getAttribute("id") === null)
                 ? ""
-                : pd
-                    .data
-                    .node
-                    .page
-                    .getAttribute("id"),
-                top             = function dom_load_top(el:Element):void {
-                    pd
-                        .app
-                        .zTop(el.parentNode);
-                },
-                backspace       = function dom_load_backspace(event:KeyboardEvent):boolean {
-                    const bb:Element = event.srcElement || <Element>event.target;
-                    if (event.keyCode === 8) {
-                        if (bb.nodeName === "textarea" || (bb.nodeName === "input" && (bb.getAttribute("type") === "text" || bb.getAttribute("type") === "password"))) {
-                            return true;
-                        }
-                        return false;
-                    }
-                    if (event.type === "keydown") {
-                        pd
-                            .event
-                            .sequence(event);
-                    }
-                    return true;
-                },
-                textareafocus   = function dom_load_textareafocus(el:Element):void {
-                    const tabkey = pd.id("textareaTabKey"),
-                        aria   = pd.id("arialive");
-                    if (tabkey === null) {
-                        return;
-                    }
-                    tabkey.style.zIndex = pd.data.zIndex + 10;
-                    if (aria !== null) {
-                        aria.innerHTML = tabkey.innerHTML;
-                    }
-                    if (pd.data.mode === "diff") {
-                        tabkey.style.right = "51%";
-                        tabkey.style.left  = "auto";
-                    } else {
-                        tabkey.style.left  = "51%";
-                        tabkey.style.right = "auto";
-                    }
-                    tabkey.style.display = "block";
-                    if (pd.test.ace === true) {
-                        let item = <HTMLElement>el.parentNode;
-                        item.setAttribute("class", item.getAttribute("class") + " filefocus");
-                    }
-                },
-                textareablur    = function dom_load_textareablur(el:Element):void {
-                    const tabkey = pd.id("textareaTabKey");
-                    if (tabkey === null) {
-                        return;
-                    }
-                    tabkey.style.display = "none";
-                    if (pd.test.ace === true) {
-                        const item = <HTMLElement>el.parentNode;
-                        item.setAttribute("class", item.getAttribute("class").replace(" filefocus", ""));
-                    }
-                },
-                optionswrapper  = function dom_load_optionswrapper(el:HTMLElement, event:string):void {
-                    el[event] = pd.app.options(el);
-                },
-                savecheck       = function dom_load_savecheck(el:HTMLInputElement):void {
-                    let button:HTMLElement;
-                    if (pd.data.node.report.code.box === null) {
-                        return;
-                    }
-                    button = pd
-                        .data
-                        .node
-                        .report
-                        .code
-                        .box
-                        .getElementsByTagName("button")[0];
-                    if (button.getAttribute("class") !== "save") {
-                        return;
-                    }
-                    if (el.checked === true) {
-                        button.innerHTML = "H";
-                    } else {
-                        button.innerHTML = "S";
-                    }
-                };
-            if (page === "webtool") {
-                {
-                    const ann         = document.getElementById("headline").getElementsByTagName("p")[0],
-                        x           = Math.random(),
-                        circulation = [
-                            "Looking for a JavaScript developer? Email me at <a href=\"mailto:info@prettydiff.com\">info@prettydiff.com</a>.",
-                            "<a href=\"license.txt\">License</a> change and new <a href=\"guide/unrelated_diff.xhtml\">diff algorithm</a> with version <a href=\"https://github.com/prettydiff/prettydiff/releases/tag/2.1.17\">2.1.17</a>.",
-                            "Version 2.2.0 brings complete biddle integration, <a href=\"https://asciinema.org/a/118428\">watch the video</a>."
-                        ];
-                    ann.innerHTML = circulation[Math.floor(x * circulation.length)];
-                }
-                pd.data.node.report.feed.body = (pd.data.node.report.feed.box === null)
-                    ? null
-                    : pd
-                        .data
-                        .node
-                        .report
-                        .feed
-                        .box
-                        .getElementsByTagName("div")[0];
-                pd.data.node.report.code.body = (pd.data.node.report.code.box === null)
-                    ? null
-                    : pd
-                        .data
-                        .node
-                        .report
-                        .code
-                        .box
-                        .getElementsByTagName("div")[0];
-                pd.data.node.report.stat.body = (pd.data.node.report.stat.box === null)
-                    ? null
-                    : pd
-                        .data
-                        .node
-                        .report
-                        .stat
-                        .box
-                        .getElementsByTagName("div")[0];
-
-                if (pd.test.ace === true) {
-                    if (pd.data.node.codeIn !== null) {
-                        pd.ace.codeIn = pd
-                            .app
-                            .aceApply("codeIn", true);
-                    }
-                    if (pd.data.node.codeOut !== null) {
-                        pd.ace.codeOut = pd
-                            .app
-                            .aceApply("codeOut", true);
-                    }
-                }
-
-                pd
-                    .app
-                    .fixHeight();
-                if (location.href.indexOf("ignore") > 0 && pd.id("headline") !== null) {
-                    pd.id("headline").innerHTML = "<h2>BETA TEST SITE.</h2> <p>Official Pretty Diff is at <a href=\"http://prettydiff.com/\">http://prettydiff.com/</a></p> <span class=\"clear\"></span>";
-                }
-                if (pd.data.node.announce !== null) {
-                    pd.data.announcetext = pd.data.node.announce.innerHTML;
-                }
-                node = pd.id("hideOptions");
-                if (pd.id("option_commentClear") !== null) {
-                    pd
-                        .id("option_commentClear")
-                        .onclick = pd.event.clearComment;
-                }
-                pd.data.settings.feedreport       = {};
-                pd.data.settings.codereport       = {};
-                pd.data.settings.statreport       = {};
-                pd.data.settings.feedback         = {};
-                pd.data.settings.feedback.newb    = false;
-                pd.data.settings.feedback.veteran = false;
-                pd.data.settings.knownname        = "\"" + Math
-                    .random()
-                    .toString()
-                    .slice(2) + Math
-                    .random()
-                    .toString()
-                    .slice(2) + "\"";
-                pd.keypress                       = {
-                    date    : {},
-                    keys    : [],
-                    state   : false,
-                    throttle: 0
-                };
-                if (pd.test.fs === false) {
-                    node = pd.id("diffbasefile");
-                    if (node !== null) {
-                        node.disabled = true;
-                    }
-                    node = pd.id("diffnewfile");
-                    if (node !== null) {
-                        node.disabled = true;
-                    }
-                    node = pd.id("beautyfile");
-                    if (node !== null) {
-                        node.disabled = true;
-                    }
-                    node = pd.id("minifyfile");
-                    if (node !== null) {
-                        node.disabled = true;
-                    }
-                    node = pd.id("parsefile");
-                    if (node !== null) {
-                        node.disabled = true;
-                    }
-                    node = pd.id("analysisfile");
-                    if (node !== null) {
-                        node.disabled = true;
-                    }
-                }
-                if (pd.data.stat.fdate === 0) {
-                    pd.data.stat.fdate = Date.now();
-                }
-                if (localStorage.commentString !== undefined && localStorage.commentString !== null && localStorage.commentString !== "") {
-                    pd.data.commentString = JSON.parse(localStorage.commentString.replace(/api\./g, ""));
-                }
-                if (localStorage.settings !== undefined && localStorage.settings !== null) {
-                    if (localStorage.settings.indexOf(":undefined") > 0) {
-                        localStorage.settings = localStorage
-                            .settings
-                            .replace(/:undefined/g, ":false");
-                    }
-                    pd.data.settings = JSON.parse(localStorage.settings);
-                    if (pd.data.settings.knownname === undefined || typeof pd.data.settings.knownname === "number") {
-                        pd.data.settings.knownname = "\"" + Math
-                            .random()
-                            .toString()
-                            .slice(2) + Math
-                            .random()
-                            .toString()
-                            .slice(2) + "\"";
-                        localStorage.settings      = JSON.stringify(pd.data.settings);
-                    }
-                    if (pd.data.settings.diffreport !== undefined) {
-                        pd.data.settings.feedreport = {};
-                        pd.data.settings.codereport = {};
-                    }
-                } else if (pd.data.settings.knownname === undefined || typeof pd.data.settings.knownname === "number") {
-                    pd.data.settings.knownname = "\"" + Math
-                        .random()
-                        .toString()
-                        .slice(2) + Math
-                        .random()
-                        .toString()
-                        .slice(2) + "\"";
-                    localStorage.settings      = JSON.stringify(pd.data.settings);
-                }
-                if (localStorage.stat !== undefined) {
-                    if (statdump.length === 0) {
-                        pd.data.stat       = JSON.parse(localStorage.stat);
-                        pd.data.stat.visit = Number(pd.data.stat.visit) + 1;
-                        if (typeof pd.data.stat.fdate === "string") {
-                            pd.data.stat.fdate = Date.parse(pd.data.stat.fdate);
-                        }
-                        if (pd.data.stat.fdate === 0 || pd.data.stat.fdate === null || isNaN(pd.data.stat.fdate) === true) {
-                            pd.data.stat.fdate = Date.now();
-                        }
-                        a = (Date.now() - pd.data.stat.fdate) / 86400000;
-                        if (a < 1) {
-                            a = 1;
-                        }
-                        pd.data.stat.avday  = Math.round(pd.data.stat.visit / a);
-                        pd.data.stat.useday = Math.round(pd.data.stat.usage / a);
-                    }
-                    node = pd.id("stvisit");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.visit;
-                    }
-                    node = pd.id("stusage");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.usage;
-                    }
-                    node = pd.id("stuseday");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.useday;
-                    }
-                    node = pd.id("stfdate");
-                    if (node !== null) {
-                        node.innerHTML = new Date(pd.data.stat.fdate).toLocaleDateString();
-                    }
-                    node = pd.id("stavday");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.avday;
-                    }
-                    node = pd.id("stlarge");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.large;
-                    }
-                    node = pd.id("stdiff");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.diff;
-                    }
-                    node = pd.id("stbeau");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.beau;
-                    }
-                    node = pd.id("stminn");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.minn;
-                    }
-                    node = pd.id("stpars");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.pars;
-                    }
-                    node = pd.id("stanal");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.anal;
-                    }
-                    node = pd.id("stmarkup");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.markup;
-                    }
-                    node = pd.id("stjs");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.js;
-                    }
-                    node = pd.id("stcss");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.css;
-                    }
-                    node = pd.id("stcsv");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.csv;
-                    }
-                    node = pd.id("sttext");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.text;
-                    }
-                }
-                localStorage.stat = JSON.stringify(pd.data.stat);
-                if (statdump.length > 0) {
-                    delete localStorage.statdata;
-                }
-                if (pd.test.agent.indexOf("webkit") > 0 || pd.test.agent.indexOf("blink") > 0) {
-                    const textarea:NodeListOf<HTMLTextAreaElement> = document.getElementsByTagName("textarea"),
-                        talen:number = textarea.length;
-                    let a:number = 0;
-                    if (talen > 0) {
+                : page.getAttribute("id");
+            if (pages === "webtool") {
+                let x:HTMLInputElement,
+                    inputs:NodeListOf<HTMLInputElement>,
+                    selects:NodeListOf<HTMLSelectElement>,
+                    buttons:NodeListOf<HTMLButtonElement>,
+                    inputsLen:number       = 0,
+                    idval:string              = "",
+                    name:string            = "",
+                    type:string            = "",
+                    button:HTMLButtonElement,
+                    parent:HTMLElement;
+                const aceApply = function dom_load_aceApply(nodeName:string, maxWidth:boolean):any {
+                        const div:HTMLDivElement        = document.createElement("div"),
+                            span:HTMLSpanElement       = document.createElement("span"),
+                            node:HTMLDivElement       = textarea[nodeName],
+                            parent:HTMLElement     = <HTMLElement>node.parentNode.parentNode,
+                            labels:NodeListOf<HTMLLabelElement> = parent.getElementsByTagName("label"),
+                            label:HTMLLabelElement = labels[labels.length - 1],
+                            attributes:NamedNodeMap = node.attributes,
+                            p:HTMLParagraphElement = document.createElement("p"),
+                            dollar:string     = "$",
+                            len:number        = attributes.length;
+                        let a:number          = 0,
+                            edit:any       = {};
                         do {
-                            textarea[a].removeAttribute("wrap");
+                            if (attributes[a].name !== "rows" && attributes[a].name !== "cols" && attributes[a].name !== "wrap") {
+                                div.setAttribute(attributes[a].name, attributes[a].value);
+                            }
                             a = a + 1;
-                        } while (a < talen);
-                    }
-                }
-                if (pd.test.domain === false) {
-                    pd.data.node.report.feed.box.style.display = "none";
-                } else if (pd.data.node.report.feed.box !== null) {
-                    if (pd.test.fs === true) {
-                        pd.data.node.report.feed.box.ondragover  = pd.event.filenull;
-                        pd.data.node.report.feed.box.ondragleave = pd.event.filenull;
-                        pd.data.node.report.feed.box.ondrop      = pd.event.filedrop;
-                    }
-                    pd.data.node.report.feed.body.onmousedown = function dom_load_feedTop():void {
-                        top(pd.data.node.report.feed.body);
-                    };
-                    title                                     = pd
-                        .data
-                        .node
-                        .report
-                        .feed
-                        .box
-                        .getElementsByTagName("h3")[0]
-                        .getElementsByTagName("button")[0];
-                    parent = <HTMLElement>title.parentNode;
-                    title.onmousedown                         = pd.event.grab;
-                    title.ontouchstart                        = pd.event.grab;
-                    title.onfocus                             = pd.event.minimize;
-                    title.onblur                              = function dom_load_titleFeedBlur():void {
-                        title.onclick = null;
-                    };
-                    if (pd.data.settings.feedreport === undefined) {
-                        pd.data.settings.feedreport = {};
-                    }
-                    if (pd.data.settings.feedreport !== undefined && pd.data.settings.feedreport.min === false) {
-                        buttonGroup               = pd
-                            .data
-                            .node
-                            .report
-                            .feed
-                            .box
-                            .getElementsByTagName("p")[0];
-                        buttonGroup.style.display = "block";
-                        title.style.cursor    = "move";
-                        if (buttonGroup.innerHTML.indexOf("save") > 0) {
-                            buttonGroup.getElementsByTagName("button")[1].innerHTML = "\u035f";
-                            if (pd.test.agent.indexOf("macintosh") > 0) {
-                                parent.style.width = ((pd.data.settings.feedreport.width / 10) - 8.15) + "em";
-                            } else {
-                                parent.style.width = ((pd.data.settings.feedreport.width / 10) - 9.75) + "em";
-                            }
-                        } else {
-                            buttonGroup.getElementsByTagName("button")[0].innerHTML = "\u035f";
-                            if (pd.test.agent.indexOf("macintosh") > 0) {
-                                parent.style.width = ((pd.data.settings.feedreport.width / 10) - 5.15) + "em";
-                            } else {
-                                parent.style.width = ((pd.data.settings.feedreport.width / 10) - 6.75) + "em";
-                            }
+                        } while (a < len);
+                        label.parentNode.removeChild(label);
+                        p.appendChild(label);
+                        p.setAttribute("class", "inputLabel");
+                        parent.appendChild(p);
+                        parent.appendChild(div);
+                        parent.removeChild(node.parentNode);
+                        if (maxWidth === true) {
+                            div.style.width = "100%";
                         }
-                        if (pd.data.settings.feedreport.top < 15) {
-                            pd.data.settings.feedreport.top = 15;
-                        }
-                        pd.data.node.report.feed.box.style.right    = "auto";
-                        pd.data.node.report.feed.box.style.left     = (pd.data.settings.feedreport.left / 10) + "em";
-                        pd.data.node.report.feed.box.style.top      = (pd.data.settings.feedreport.top / 10) + "em";
-                        pd.data.node.report.feed.body.style.width   = (pd.data.settings.feedreport.width / 10) + "em";
-                        pd.data.node.report.feed.body.style.height  = (pd.data.settings.feedreport.height / 10) + "em";
-                        pd.data.node.report.feed.body.style.display = "block";
-                    }
-                    pd
-                        .id("feedsubmit")
-                        .onclick = pd.event.feedsubmit;
-                }
-                if (pd.data.node.report.code.box !== null) {
-                    if (pd.test.fs === true) {
-                        pd.data.node.report.code.box.ondragover  = pd.event.filenull;
-                        pd.data.node.report.code.box.ondragleave = pd.event.filenull;
-                        pd.data.node.report.code.box.ondrop      = pd.event.filedrop;
-                    }
-                    pd.data.node.report.code.body.onmousedown = function dom_load_codeTop():void {
-                        top(pd.data.node.report.code.body);
-                    };
-                    title                                     = pd
-                        .data
-                        .node
-                        .report
-                        .code
-                        .box
-                        .getElementsByTagName("h3")[0]
-                        .getElementsByTagName("button")[0];
-                    parent = <HTMLElement>title.parentNode;
-                    title.onmousedown                         = pd.event.grab;
-                    title.ontouchstart                        = pd.event.grab;
-                    title.onfocus                             = pd.event.minimize;
-                    title.onblur                              = function dom_load_titleCodeBlur():void {
-                        title.onclick = null;
-                    };
-                    buttonGroup                                   = pd
-                        .data
-                        .node
-                        .report
-                        .code
-                        .box
-                        .getElementsByTagName("p")[0];
-                    node                                      = pd.id("jsscope-yes");
-                    if (node !== null && node.checked === true && buttonGroup.innerHTML.indexOf("save") < 0) {
-                        let saveNode:HTMLElement;
-                        if (pd.test.agent.indexOf("firefox") > 0 || pd.test.agent.indexOf("presto") > 0) {
-                            saveNode = document.createElement("a");
-                            saveNode.setAttribute("href", "#");
-                            saveNode.onclick   = pd.event.save;
-                            saveNode.innerHTML = "<button class='save' title='Convert report to text that can be saved.' tabindex=" +
-                                                "'-1'>S</button>";
-                            buttonGroup.insertBefore(node, buttonGroup.firstChild);
-                        } else {
-                            saveNode = document.createElement("button");
-                            saveNode.setAttribute("class", "save");
-                            saveNode.setAttribute("title", "Convert report to text that can be saved.");
-                            saveNode.innerHTML = "S";
-                            buttonGroup.insertBefore(node, buttonGroup.firstChild);
-                        }
-                    }
-                    if (pd.data.settings.codereport !== undefined && pd.data.settings.codereport.min === false) {
-                        buttonGroup.style.display = "block";
-                        title.style.cursor    = "move";
-                        if (buttonGroup.innerHTML.indexOf("save") > 0) {
-                            buttonGroup.getElementsByTagName("button")[1].innerHTML = "\u035f";
-                            if (pd.test.agent.indexOf("macintosh") > 0) {
-                                parent.style.width = ((pd.data.settings.codereport.width / 10) - 8.15) + "em";
-                            } else {
-                                parent.style.width = ((pd.data.settings.codereport.width / 10) - 9.75) + "em";
-                            }
-                        } else {
-                            buttonGroup.getElementsByTagName("button")[0].innerHTML = "\u035f";
-                            if (pd.test.agent.indexOf("macintosh") > 0) {
-                                parent.style.width = ((pd.data.settings.codereport.width / 10) - 5.15) + "em";
-                            } else {
-                                parent.style.width = ((pd.data.settings.codereport.width / 10) - 6.75) + "em";
-                            }
-                        }
-                        if (pd.data.settings.codereport.top < 15) {
-                            pd.data.settings.codereport.top = 15;
-                        }
-                        pd.data.node.report.code.box.style.right    = "auto";
-                        pd.data.node.report.code.box.style.left     = (pd.data.settings.codereport.left / 10) + "em";
-                        pd.data.node.report.code.box.style.top      = (pd.data.settings.codereport.top / 10) + "em";
-                        pd.data.node.report.code.body.style.width   = (pd.data.settings.codereport.width / 10) + "em";
-                        pd.data.node.report.code.body.style.height  = (pd.data.settings.codereport.height / 10) + "em";
-                        pd.data.node.report.code.body.style.display = "block";
-                    }
-                }
-                if (pd.data.node.report.stat.box !== null) {
-                    if (pd.test.fs === true) {
-                        pd.data.node.report.stat.box.ondragover  = pd.event.filenull;
-                        pd.data.node.report.stat.box.ondragleave = pd.event.filenull;
-                        pd.data.node.report.stat.box.ondrop      = pd.event.filedrop;
-                    }
-                    pd.data.node.report.stat.body.onmousedown = function dom_load_statTop():void {
-                        top(pd.data.node.report.stat.body);
-                    };
-                    title                                     = pd
-                        .data
-                        .node
-                        .report
-                        .stat
-                        .box
-                        .getElementsByTagName("h3")[0]
-                        .getElementsByTagName("button")[0];
-                    parent = <HTMLElement>title.parentNode;
-                    title.onmousedown                         = pd.event.grab;
-                    title.ontouchstart                        = pd.event.grab;
-                    title.onfocus                             = pd.event.minimize;
-                    title.onblur                              = function dom_load_titleStatBlur():void {
-                        title.onclick = null;
-                    };
-                    if (pd.data.settings.statreport !== undefined && pd.data.settings.statreport.min === false) {
-                        buttonGroup               = pd
-                            .data
-                            .node
-                            .report
-                            .stat
-                            .box
-                            .getElementsByTagName("p")[0];
-                        buttonGroup.style.display = "block";
-                        title.style.cursor    = "move";
-                        if (buttonGroup.innerHTML.indexOf("save") > 0) {
-                            buttonGroup.getElementsByTagName("button")[1].innerHTML = "\u035f";
-                            if (pd.test.agent.indexOf("macintosh") > 0) {
-                                parent.style.width = ((pd.data.settings.statreport.width / 10) - 8.15) + "em";
-                            } else {
-                                parent.style.width = ((pd.data.settings.statreport.width / 10) - 6.75) + "em";
-                            }
-                        } else {
-                            buttonGroup.getElementsByTagName("button")[0].innerHTML = "\u035f";
-                            if (pd.test.agent.indexOf("macintosh") > 0) {
-                                parent.style.width = ((pd.data.settings.statreport.width / 10) - 5.15) + "em";
-                            } else {
-                                parent.style.width = ((pd.data.settings.statreport.width / 10) - 6.75) + "em";
-                            }
-                        }
-                        if (pd.data.settings.statreport.top < 15) {
-                            pd.data.settings.statreport.top = 15;
-                        }
-                        pd.data.node.report.stat.box.style.right    = "auto";
-                        pd.data.node.report.stat.box.style.left     = (pd.data.settings.statreport.left / 10) + "em";
-                        pd.data.node.report.stat.box.style.top      = (pd.data.settings.statreport.top / 10) + "em";
-                        pd.data.node.report.stat.body.style.width   = (pd.data.settings.statreport.width / 10) + "em";
-                        pd.data.node.report.stat.body.style.height  = (pd.data.settings.statreport.height / 10) + "em";
-                        pd.data.node.report.stat.body.style.display = "block";
-                    }
-                }
-                inputs    = document.getElementsByTagName("input");
-                inputsLen = inputs.length;
-                a = 0;
-                do {
-                    x = inputs[a];
-                    type = x.getAttribute("type");
-                    id   = x.getAttribute("id");
-                    if (type === "radio") {
-                        name = x.getAttribute("name");
-                        if (id === pd.data.settings[name]) {
-                            x.checked = true;
-                            if (name === "beauchar" || name === "diffchar") {
-                                pd
-                                    .app
-                                    .indentchar(x);
-                            }
-                        }
-                        if (id.indexOf("feedradio") === 0) {
-                            const feedradio       = function dom_load_feedradio(el:HTMLElement):boolean {
-                                let parent:HTMLElement,
-                                    aa:number,
-                                    radios:NodeListOf<HTMLInputElement>;
-                                const item:HTMLElement   = <HTMLElement>el.parentNode,
-                                    radio:HTMLInputElement  = item.getElementsByTagName("input")[0];
-                                parent = <HTMLElement>item.parentNode;
-                                radios = parent.getElementsByTagName("input");
-                                aa     = radios.length - 1;
-                                do {
-                                    parent = <HTMLElement>radios[aa].parentNode;
-                                    parent.removeAttribute("class");
-                                    radios[aa].checked = false;
-                                    aa = aa - 1;
-                                } while (aa > -1);
-                                radio.checked = true;
-                                radio.focus();
-                                item.setAttribute("class", "active-focus");
-                                event.preventDefault();
-                                return false;
-                            };
-                            x.onfocus = function dom_load_feedFocus() {
-                                feedradio(x);
-                            };
-                            x.onblur  = function dom_load_feedblur():void {
-                                const item = <HTMLElement>x.parentNode;
-                                item.setAttribute("class", "active");
-                            },
-                            x.onclick =function dom_load_feedClick() {
-                                feedradio(x);
-                            };
-                            parent = <HTMLElement>x.parentNode;
-                            parent = parent.getElementsByTagName("label")[0];
-                            parent.onclick = function dom_load_feedParent() {
-                                feedradio(parent);
-                            };
-                        }
-                        if (name === "mode") {
-                            x.onclick = function dom_load_modeToggle(event:Event) {
-                                const el:HTMLElement = <HTMLElement>event.target || <HTMLElement>event.srcElement,
-                                    mode = el.getAttribute("id").replace("mode", "");
-                                pd.event.modeToggle(mode);
-                            };
-                            if (pd.data.settings.mode === id) {
-                                pd
-                                    .event
-                                    .modeToggle(id.replace("mode", ""));
-                            } else if (pd.data.settings.mode === undefined) {
-                                pd
-                                    .event
-                                    .modeToggle("diff");
-                            }
-                        } else if (name === "diffchar") {
-                            x.onclick = function dom_load_indentcharDiff() {
-                                pd.app.indentchar(x);
-                            }
-                            if (pd.data.settings.diffchar === x.getAttribute("id")) {
-                                x.checked = true;
-                                x.click();
-                            } else if (pd.data.settings.diffchar !== undefined && pd.data.settings.diffchar !== "diff-space" && pd.data.settings.diffchar !== "diff-tab" && pd.data.settings.diffchar !== "diff-line") {
-                                node = pd.id("diff-char");
-                                if (node !== null) {
-                                    node.value = pd.data.settings.diffchar;
-                                }
-                                node = pd.id("diff-other");
-                                if (node !== null) {
-                                    node.checked = true;
-                                    node.click();
-                                }
-                            }
-                        } else if (name === "beauchar") {
-                            x.onclick = function dom_load_indentcharBeau() {
-                                pd.app.indentchar(x);
-                            }
-                            if (pd.data.settings.beauchar === x.getAttribute("id")) {
-                                x.checked = true;
-                                x.click();
-                            } else if (pd.data.settings.beauchar !== undefined && pd.data.settings.beauchar !== "beau-space" && pd.data.settings.beauchar !== "beau-tab" && pd.data.settings.beauchar !== "beau-line") {
-                                node = pd.id("beau-char");
-                                if (node !== null) {
-                                    node.value = pd.data.settings.beauchar;
-                                }
-                                node = pd.id("beau-other");
-                                if (node !== null) {
-                                    node.checked = true;
-                                    node.click();
-                                }
-                            }
-                        } else if (name === "jsscope") {
-                            x.onclick = function dom_load_hideOutput():void {
-                                pd
-                                    .app
-                                    .hideOutput(x);
-                            };
-                            if (id === "jsscope-yes" && x.checked === true) {
-                                pd
-                                    .app
-                                    .hideOutput(x);
-                            }
-                        } else if (name === "ace-radio") {
-                            const acedisable      = function dom_load_acedisable():void {
+                        div.style.fontSize              = "1.4em";
+                        edit                            = ace.edit(div);
+                        textarea[nodeName]          = div.getElementsByTagName("textarea")[0];
+                        edit[dollar + "blockScrolling"] = Infinity;
+                        return edit;
+                    },
+                    aces = function dom_load_aces(el:HTMLInputElement):void {
+                        const acedisable      = function dom_load_acedisable():void {
                                 let addy:string   = "",
                                     elId:string   = x.getAttribute("id"),
                                     loc:number    = location
@@ -791,9 +179,9 @@
                                         .indexOf("ace=false"),
                                     place:string[]  = [],
                                     symbol:string = "?";
-                                pd
+                                method
                                     .app
-                                    .options(x);
+                                    .options(el);
                                 if (elId.indexOf("-yes") > 0 && loc > 0) {
                                     place = location
                                         .href
@@ -810,181 +198,824 @@
                                     }
                                     location.href = addy + symbol + "ace=false";
                                 }
-                            };
-                            if (id === "ace-no" && x.checked === true && pd.test.ace === true) {
-                                acedisable();
+                            },
+                            aceid = el.getAttribute("id");
+                        if (aceid === "ace-no" && x.checked === true && test.ace === true) {
+                            acedisable();
+                        }
+                        if (aceid === "ace-yes" && x.checked === true && test.ace === false) {
+                            id("ace-no").checked = true;
+                        }
+                        el.onclick = acedisable;
+                    },
+                    areaShiftUp = function dom_load_areaShiftUp(event:KeyboardEvent):void {
+                        if (event.keyCode === 16 && test.tabesc.length > 0) {
+                            test.tabesc = [];
+                        }
+                        if (event.keyCode === 17 || event.keyCode === 224) {
+                            data.tabtrue = true;
+                        }
+                    },
+                    areaTabOut = function dom_load_areaTabOut(event:KeyboardEvent, node:HTMLElement):void {
+                        let len:number   = test.tabesc.length,
+                            esc:boolean   = false,
+                            key:number   = 0;
+                        key  = event.keyCode;
+                        if (key === 17 || key === 224) {
+                            if (data.tabtrue === false && (test.tabesc[0] === 17 || test.tabesc[0] === 224 || len > 1)) {
+                                return;
                             }
-                            if (id === "ace-yes" && x.checked === true && pd.test.ace === false) {
-                                pd
-                                    .id("ace-no")
-                                    .checked = true;
-                            }
-                            x.onclick = acedisable;
-                        } else if (name === "parseFormat") {
-                            x.onclick = function dom_load_parsehtml():void {
-                                const para:HTMLElement = pd.id("parsehtml-para");
-                                if (para === null) {
-                                    return pd.app.options(x);
+                            data.tabtrue = false;
+                        }
+                        if (node.nodeName.toLowerCase() === "textarea") {
+                            if (test.ace === true) {
+                                if (node === textarea.codeOut) {
+                                    esc = true;
                                 }
-                                if (node.getAttribute("id") === "parseFormat-htmltable") {
-                                    para.style.display = "block";
+                            }
+                            if (node === textarea.codeIn) {
+                                esc = true;
+                            }
+                        }
+                        if (esc === true) {
+                            esc             = false;
+                            data.tabtrue = false;
+                            if ((len === 1 && test.tabesc[0] !== 16 && key !== test.tabesc[0]) || (len === 2 && key !== test.tabesc[1])) {
+                                test.tabesc = [];
+                                return;
+                            }
+                            if (len === 0 && (key === 16 || key === 17 || key === 224)) {
+                                test
+                                    .tabesc
+                                    .push(key);
+                                return;
+                            }
+                            if (len === 1 && (key === 17 || key === 224)) {
+                                if (test.tabesc[0] === 17 || test.tabesc[0] === 224) {
+                                    esc = true;
                                 } else {
-                                    para.style.display = "none";
+                                    test
+                                        .tabesc
+                                        .push(key);
+                                    return;
                                 }
-                                pd.app.options(x);
-                            };
-                            if (id === "parseFormat-htmltable" && x.checked === true) {
-                                x.click();
+                            } else if (len === 2 && (key === 17 || key === 224)) {
+                                esc = true;
+                            } else if (len > 0) {
+                                test.tabesc = [];
                             }
+                            if (esc === true) {
+                                if (len === 2) {
+                                    //back tab
+                
+                                    if (node === textarea.codeIn) {
+                                        id("inputfile").focus();
+                                    } else if (node === textarea.codeOut) {
+                                        textarea
+                                            .codeIn
+                                            .focus();
+                                    }
+                                } else {
+                                    //forward tab
+                
+                                    if (node === textarea.codeOut) {
+                                        id("button-primary")
+                                            .getElementsByTagName("button")[0]
+                                            .focus();
+                                    } else if (node === textarea.codeIn) {
+                                        textarea
+                                            .codeOut
+                                            .focus();
+                                    }
+                                }
+                                if (test.tabesc[0] === 16) {
+                                    test.tabesc = [16];
+                                } else {
+                                    test.tabesc = [];
+                                }
+                            }
+                        }
+                        method
+                            .event
+                            .sequence(event);
+                    },
+                    backspace       = function dom_load_backspace(event:KeyboardEvent):boolean {
+                        const bb:Element = event.srcElement || <Element>event.target;
+                        if (event.keyCode === 8) {
+                            if (bb.nodeName === "textarea" || (bb.nodeName === "input" && (bb.getAttribute("type") === "text" || bb.getAttribute("type") === "password"))) {
+                                return true;
+                            }
+                            return false;
+                        }
+                        if (event.type === "keydown") {
+                            method.event.sequence(event);
+                        }
+                        return true;
+                    },
+                    clearComment = function dom_load_clearComment():void {
+                        const comment = id("commentString");
+                        localStorage.commentString = "[]";
+                        data.commentString      = [];
+                        if (comment !== null) {
+                            comment.innerHTML = "/*prettydiff.com \u002a/";
+                        }
+                    },
+                    feeds = function dom_load_feeds(el:HTMLInputElement):void {
+                        const feedradio       = function dom_load_feedradio(elly:HTMLElement):boolean {
+                            let parent:HTMLElement,
+                                aa:number,
+                                radios:NodeListOf<HTMLInputElement>;
+                            const item:HTMLElement   = <HTMLElement>elly.parentNode,
+                                radio:HTMLInputElement  = item.getElementsByTagName("input")[0];
+                            parent = <HTMLElement>item.parentNode;
+                            radios = parent.getElementsByTagName("input");
+                            aa     = radios.length - 1;
+                            do {
+                                parent = <HTMLElement>radios[aa].parentNode;
+                                parent.removeAttribute("class");
+                                radios[aa].checked = false;
+                                aa = aa - 1;
+                            } while (aa > -1);
+                            radio.checked = true;
+                            radio.focus();
+                            item.setAttribute("class", "active-focus");
+                            event.preventDefault();
+                            return false;
+                        };
+                        el.onfocus = function dom_load_feedFocus() {
+                            feedradio(x);
+                        };
+                        el.onblur  = function dom_load_feedblur():void {
+                            const item = <HTMLElement>el.parentNode;
+                            item.setAttribute("class", "active");
+                        },
+                        el.onclick =function dom_load_feedClick() {
+                            feedradio(x);
+                        };
+                        parent = <HTMLElement>x.parentNode;
+                        parent = parent.getElementsByTagName("label")[0];
+                        parent.onclick = function dom_load_feedParent() {
+                            feedradio(parent);
+                        };
+                    },
+                    feedsubmit = function dom_load_feedsubmit():void {
+                        let a:number = 0;
+                        const datapack:any  = {},
+                            namecheck:any = (localStorage.settings !== undefined)
+                                ? JSON.parse(localStorage.settings)
+                                : {},
+                            radios:NodeListOf<HTMLInputElement> = id("feedradio1")
+                                .parentNode
+                                .parentNode
+                                .getElementsByTagName("input"),
+                            text      = (id("feedtextarea") === null)
+                                ? ""
+                                :id("feedtextarea")
+                                    .value,
+                            email:string     = (id("feedemail") === null)
+                                ? ""
+                                : id("feedemail")
+                                    .value,
+                            xhr:XMLHttpRequest = new XMLHttpRequest(),
+                            sendit    = function dom_load_feedsubmit_sendit():void {
+                                const node:HTMLElement = id("feedintro");
+                                xhr.withCredentials = true;
+                                xhr.open("POST", "http://prettydiff.com:8000/feedback/", true);
+                                xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
+                                xhr.send(JSON.stringify(datapack));
+                                report
+                                    .feed
+                                    .box
+                                    .getElementsByTagName("button")[1]
+                                    .click();
+                                if (node !== null) {
+                                    node.innerHTML = "Please feel free to submit feedback about Pretty Diff at any time by answering t" +
+                                            "he following questions.";
+                                }
+                            };
+                        if (id("feedradio1") === null || namecheck.knownname !== data.settings.knownname) {
+                            return;
+                        }
+                        a = radios.length - 1;
+                        if (a > 0) {
+                            do {
+                                if (radios[a].checked === true) {
+                                    break;
+                                }
+                                a = a - 1;
+                            } while (a > -1);
+                        }
+                        if (a < 0) {
+                            return;
+                        }
+                        datapack.comment  = text;
+                        datapack.email    = email;
+                        datapack.name     = data.settings.knownname;
+                        datapack.rating   = a + 1;
+                        datapack.settings = data.settings;
+                        datapack.type     = "feedback";
+                        sendit();
+                    },
+                    file = function dom_load_file(input:HTMLInputElement):void {
+                        let a:number         = 0,
+                            id:string        = "",
+                            files:FileList,
+                            textareaEl:HTMLTextAreaElement,
+                            parent:HTMLElement,
+                            reader:FileReader,
+                            fileStore:string[] = [],
+                            fileCount:number = 0;
+                        id    = input.getAttribute("id");
+                        files = input.files;
+                        if (test.fs === true && files[0] !== null && typeof files[0] === "object") {
+                            if (input.nodeName === "input") {
+                                parent = <HTMLElement>input.parentNode.parentNode;
+                                textareaEl = parent.getElementsByTagName("textarea")[0];
+                            }
+                            const fileLoad  = function dom_event_file_onload(event:Event):void {
+                                    const tscheat:string = "result";
+                                    fileStore.push(event.target[tscheat]);
+                                    if (a === fileCount) {
+                                        if (test.ace === true) {
+                                            if (id === "outputfile") {
+                                                aceStore
+                                                    .codeOut
+                                                    .setValue(fileStore.join("\n\n"));
+                                                aceStore
+                                                    .codeOut
+                                                    .clearSelection();
+                                            } else {
+                                                aceStore
+                                                    .codeIn
+                                                    .setValue(fileStore.join("\n\n"));
+                                                aceStore
+                                                    .codeIn
+                                                    .clearSelection();
+                                            }
+                                        } else {
+                                            textarea.codeIn.value = fileStore.join("\n\n");
+                                        }
+                                        if (options.mode !== "diff") {
+                                            method
+                                                .event
+                                                .execute();
+                                        }
+                                    }
+                                },
+                                fileError = function dom_event_file_onerror(event:ErrorEvent):void {
+                                    if (textareaEl !== undefined) {
+                                        textareaEl.value = "Error reading file:\n\nThis is the browser's descriptiong: " + event.error.name;
+                                    }
+                                    fileCount   = -1;
+                                };
+                            fileCount = files.length;
+                            do {
+                                reader         = new FileReader();
+                                reader.onload  = fileLoad;
+                                reader.onerror = fileError;
+                                if (files[a] !== undefined) {
+                                    reader.readAsText(files[a], "UTF-8");
+                                }
+                                a = a + 1;
+                            } while (a < fileCount);
+                            if (options.mode !== "diff") {
+                                method
+                                    .event
+                                    .execute();
+                            }
+                        }
+                    },
+                    fileWrapper = function dom_load_fileWrapper(el:HTMLElement) {
+                        el.onchange = function dom_load_file() {
+                            file(x);
+                        };
+                        el.onfocus  = function dom_load_filefocus():void {
+                            el.setAttribute("class", "filefocus");
+                        };
+                        el.onblur   = function dom_load_fileblur():void {
+                            el.removeAttribute("class");
+                        };
+                    },
+                    fixHeight = function dom_load_fixHeight():void {
+                        const input:HTMLElement = id("input"),
+                            output:HTMLElement = id("output"),
+                            headlineNode:HTMLElement = id("headline"),
+                            height:number   = window.innerHeight || document.getElementsByTagName("body")[0].clientHeight;
+                        let math:number     = 0,
+                            headline:number = 0;
+                        if (headlineNode !== null && headlineNode.style.display === "block") {
+                            headline = 3.8;
+                        }
+                        if (test.ace === true) {
+                            math = (height / 14) - (14.31 + headline);
+                            if (input !== null) {
+                                input.style.height = math + "em";
+                                aceStore
+                                    .codeIn
+                                    .setStyle("height:" + math + "em");
+                                aceStore
+                                    .codeIn
+                                    .resize();
+                            }
+                            if (output !== null) {
+                                output.style.height = math + "em";
+                                aceStore
+                                    .codeOut
+                                    .setStyle("height:" + math + "em");
+                                aceStore
+                                    .codeOut
+                                    .resize();
+                            }
+                        } else {
+                            math = (height / 14.4) - (15.425 + headline);
+                            if (input !== null) {
+                                input.style.height = math + "em";
+                            }
+                            if (output !== null) {
+                                output.style.height = math + "em";
+                            }
+                        }
+                    },
+                    indentchar   = function dom_load_indentchar():void {
+                        const insize:HTMLInputElement = id("option-insize"),
+                            inchar:HTMLInputElement = id("option-inchar");
+                        if (test.ace === true) {
+                            if (inchar !== null && inchar.value === " ") {
+                                aceStore
+                                    .codeIn
+                                    .getSession()
+                                    .setUseSoftTabs(true);
+                                aceStore
+                                    .codeOut
+                                    .getSession()
+                                    .setUseSoftTabs(true);
+                                if (insize !== null && isNaN(Number(insize.value)) === false) {
+                                    aceStore
+                                        .codeIn
+                                        .getSession()
+                                        .setTabSize(Number(inchar.value));
+                                    aceStore
+                                        .codeOut
+                                        .getSession()
+                                        .setTabSize(Number(inchar.value));
+                                }
+                            } else {
+                                aceStore
+                                    .codeIn
+                                    .getSession()
+                                    .setUseSoftTabs(false);
+                                aceStore
+                                    .codeOut
+                                    .getSession()
+                                    .setUseSoftTabs(false);
+                            }
+                        }
+                        if (test.load === false) {
+                            method
+                                .app
+                                .options(inchar);
+                        }
+                    },
+                    insize   = function dom_load_insize():void {
+                        const el:HTMLInputElement = id("option-insize");
+                        if (textarea.codeIn !== null) {
+                            aceStore
+                                .codeIn
+                                .getSession()
+                                .setTabSize(el.value);
+                        }
+                        if (textarea.codeOut !== null) {
+                            aceStore
+                                .codeOut
+                                .getSession()
+                                .setTabSize(el.value);
+                        }
+                    },
+                    modes = function dom_load_modes(el:HTMLInputElement):void {
+                        el.onclick = function dom_load_modeToggle(event:Event) {
+                            const elly:HTMLElement = <HTMLElement>event.target || <HTMLElement>event.srcElement,
+                                mode = elly.getAttribute("id").replace("mode", "");
+                            method.event.modeToggle(mode);
+                        };
+                        if (data.settings.mode === el.getAttribute("id")) {
+                            method
+                                .event
+                                .modeToggle(idval.replace("mode", ""));
+                        } else if (data.settings.mode === undefined) {
+                            method
+                                .event
+                                .modeToggle("diff");
+                        }
+                    },
+                    optionswrapper  = function dom_load_optionswrapper(el:HTMLElement, event:string):void {
+                        el[event] = method.app.options(el);
+                    },
+                    parseTable = function dom_load_parseTable(event:Event):void {
+                        const item:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
+                            parseFormat = id("option-parseFormat"),
+                            html = id("parseTable-html");
+                        if (
+                            options.mode === "pars" &&
+                            parseFormat !== null &&
+                            html !== null &&
+                            parseFormat[parseFormat.selectedIndex].value === "htmltable" &&
+                            html.checked === true
+                        ) {
+                            method.app.hideOutput(true);
+                        } else {
+                            method.app.hideOutput(false);
+                        }
+                        method.app.options(item);
+                    },
+                    prepBox = function dom_load_prepBox(boxName:string):void {
+                        if (report[boxName].box === null || (test.domain === false && boxName === "feed")) {
+                            return;
+                        }
+                        const jsscope = id("option-jsscope"),
+                            buttonGroup:HTMLElement = report[boxName]
+                                .box
+                                .getElementsByTagName("p")[0],
+                            title:HTMLButtonElement = report[boxName]
+                                .box
+                                .getElementsByTagName("h3")[0]
+                                .getElementsByTagName("button")[0],
+                            filedrop = function dom_load_prepBox_filedrop(event:Event):void {
+                                const el:HTMLInputElement = <HTMLInputElement>event.srcElement || <HTMLInputElement>event.target;
+                                event.stopPropagation();
+                                event.preventDefault();
+                                file(el);
+                            },
+                            filenull = function dom_load_prepBox_filenull(event:Event):void {
+                                event.stopPropagation();
+                                event.preventDefault();
+                            };
+                        if (test.fs === true) {
+                            report[boxName].box.ondragover  = filenull;
+                            report[boxName].box.ondragleave = filenull;
+                            report[boxName].box.ondrop      = filedrop;
+                        }
+                        report[boxName].body.onmousedown = function dom_load_prepBox_top():void {
+                            method.app.zTop(report[boxName].body.parentNode);
+                        };
+                        parent = <HTMLElement>title.parentNode;
+                        title.onmousedown                         = method.event.grab;
+                        title.ontouchstart                        = method.event.grab;
+                        title.onfocus                             = method.event.minimize;
+                        title.onblur                              = function dom_load_prepBox_blur():void {
+                            title.onclick = null;
+                        };
+                        if (data.settings.report[boxName] === undefined) {
+                            data.settings.report[boxName] = {};
+                        }
+                        if (boxName === "code" && jsscope !== null && jsscope[jsscope.selectedIndex].value === "report" && buttonGroup.innerHTML.indexOf("save") < 0) {
+                            if (test.agent.indexOf("firefox") > 0 || test.agent.indexOf("presto") > 0) {
+                                let saveNode:HTMLElement = document.createElement("a");
+                                saveNode.setAttribute("href", "#");
+                                saveNode.onclick   = method.event.save;
+                                saveNode.innerHTML = "<button class='save' title='Convert report to text that can be saved.' tabindex=" +
+                                                    "'-1'>S</button>";
+                                buttonGroup.insertBefore(saveNode, buttonGroup.firstChild);
+                            } else {
+                                let saveNode:HTMLElement = document.createElement("button");
+                                saveNode.setAttribute("class", "save");
+                                saveNode.setAttribute("title", "Convert report to text that can be saved.");
+                                saveNode.innerHTML = "S";
+                                buttonGroup.insertBefore(saveNode, buttonGroup.firstChild);
+                            }
+                        }
+                        if (data.settings.report[boxName].min === false) {
+                            buttonGroup.style.display = "block";
+                            title.style.cursor    = "move";
+                            if (buttonGroup.innerHTML.indexOf("save") > 0) {
+                                buttonGroup.getElementsByTagName("button")[1].innerHTML = "\u035f";
+                                if (test.agent.indexOf("macintosh") > 0) {
+                                    parent.style.width = ((data.settings.report[boxName].width / 10) - 8.15) + "em";
+                                } else {
+                                    parent.style.width = ((data.settings.report[boxName].width / 10) - 9.75) + "em";
+                                }
+                            } else {
+                                buttonGroup.getElementsByTagName("button")[0].innerHTML = "\u035f";
+                                if (test.agent.indexOf("macintosh") > 0) {
+                                    parent.style.width = ((data.settings.report[boxName].width / 10) - 5.15) + "em";
+                                } else {
+                                    parent.style.width = ((data.settings.report[boxName].width / 10) - 6.75) + "em";
+                                }
+                            }
+                            if (data.settings.report[boxName].top < 15) {
+                                data.settings.report[boxName].top = 15;
+                            }
+                            report[boxName].box.style.right    = "auto";
+                            report[boxName].box.style.left     = (data.settings.report[boxName].left / 10) + "em";
+                            report[boxName].box.style.top      = (data.settings.report[boxName].top / 10) + "em";
+                            report[boxName].body.style.width   = (data.settings.report[boxName].width / 10) + "em";
+                            report[boxName].body.style.height  = (data.settings.report[boxName].height / 10) + "em";
+                            report[boxName].body.style.display = "block";
+                        }
+                        if (boxName === "feed") {
+                            id("feedsubmit").onclick = feedsubmit;
+                        }
+                    },
+                    textareablur    = function dom_load_textareablur(event:Event):void {
+                        const el:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
+                            tabkey = id("textareaTabKey");
+                        if (tabkey === null) {
+                            return;
+                        }
+                        tabkey.style.display = "none";
+                        if (test.ace === true) {
+                            const item = <HTMLElement>el.parentNode;
+                            item.setAttribute("class", item.getAttribute("class").replace(" filefocus", ""));
+                        }
+                    },
+                    textareafocus   = function dom_load_textareafocus(event:Event):void {
+                        const el:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
+                            tabkey:HTMLElement = id("textareaTabKey"),
+                            aria:HTMLElement   = id("arialive");
+                        if (tabkey === null) {
+                            return;
+                        }
+                        tabkey.style.zIndex = String(data.zIndex + 10);
+                        if (aria !== null) {
+                            aria.innerHTML = tabkey.innerHTML;
+                        }
+                        if (options.mode === "diff") {
+                            tabkey.style.right = "51%";
+                            tabkey.style.left  = "auto";
+                        } else {
+                            tabkey.style.left  = "51%";
+                            tabkey.style.right = "auto";
+                        }
+                        tabkey.style.display = "block";
+                        if (test.ace === true) {
+                            let item = <HTMLElement>el.parentNode;
+                            item.setAttribute("class", item.getAttribute("class") + " filefocus");
+                        }
+                    };
+
+                // prep default announcement text
+                {
+                    const headline  = id("headline"),
+                        ann         = (headline === null)
+                            ? null
+                            : headline.getElementsByTagName("p")[0],
+                        x           = Math.random(),
+                        circulation = [
+                            "<a href=\"license.txt\">License</a> change and new <a href=\"guide/unrelated_diff.xhtml\">diff algorithm</a> with version <a href=\"https://github.com/prettydiff/prettydiff/releases/tag/2.1.17\">2.1.17</a>.",
+                            "Version 2.2.0 brings complete biddle integration, <a href=\"https://asciinema.org/a/118428\">watch the video</a>."
+                        ];
+                    if (headline !== null) {
+                        ann.innerHTML = circulation[Math.floor(x * circulation.length)];
+                        if (location.href.indexOf("ignore") > 0) {
+                            headline.innerHTML = "<h2>BETA TEST SITE.</h2> <p>Official Pretty Diff is at <a href=\"http://prettydiff.com/\">http://prettydiff.com/</a></p> <span class=\"clear\"></span>";
+                        }
+                    }
+                    keypress                       = {
+                        date    : {},
+                        keys    : [],
+                        state   : false,
+                        throttle: 0
+                    };
+                }
+
+                // build the Ace editors
+                if (test.ace === true) {
+                    if (textarea.codeIn !== null) {
+                        aceStore.codeIn = aceApply("codeIn", true);
+                    }
+                    if (textarea.codeOut !== null) {
+                        aceStore.codeOut = aceApply("codeOut", true);
+                    }
+                    if (data.settings[idval] !== undefined && data.settings[idval] !== "4" && isNaN(data.settings[idval]) === false) {
+                        aceStore
+                            .codeIn
+                            .getSession()
+                            .setTabSize(Number(data.settings[idval]));
+                        aceStore
+                            .codeOut
+                            .getSession()
+                            .setTabSize(Number(data.settings[idval]));
+                    }
+                }
+                node = id("ace-no");
+                if (test.ace === false && node !== null && node.checked === false) {
+                    node.checked = true;
+                }
+
+                // prep the floating GUI windows
+                report.feed.body = (report.feed.box === null)
+                    ? null
+                    : report
+                        .feed
+                        .box
+                        .getElementsByTagName("div")[0];
+                report.code.body = (report.code.box === null)
+                    ? null
+                    : report
+                        .code
+                        .box
+                        .getElementsByTagName("div")[0];
+                report.stat.body = (report.stat.box === null)
+                    ? null
+                    : report
+                        .stat
+                        .box
+                        .getElementsByTagName("div")[0];
+                prepBox("feed");
+                prepBox("code");
+                prepBox("stat");
+
+                // preps stored settings
+                if (localStorage.settings !== undefined && localStorage.settings !== null) {
+                    if (localStorage.settings.indexOf(":undefined") > 0) {
+                        localStorage.settings = localStorage
+                            .settings
+                            .replace(/:undefined/g, ":false");
+                    }
+                    data.settings = JSON.parse(localStorage.settings);
+                    if (data.settings.report === undefined) {
+                        data.settings.report = {
+                            code: {},
+                            feed: {},
+                            stat: {}
+                        };
+                    }
+                    if (data.settings.knownname === undefined) {
+                        data.settings.knownname = `${Math
+                            .random()
+                            .toString()
+                            .slice(2) + Math
+                            .random()
+                            .toString()
+                            .slice(2)}`;
+                        localStorage.settings      = JSON.stringify(data.settings);
+                    }
+                } else {
+                    data.settings.knownname = `${Math
+                        .random()
+                        .toString()
+                        .slice(2) + Math
+                        .random()
+                        .toString()
+                        .slice(2)}`;
+                }
+
+                //  feedback dialogue config data (current disabled)
+                if (data.settings.feedback === undefined) {
+                    data.settings.feedback         = {};
+                    data.settings.feedback.newb    = false;
+                    data.settings.feedback.veteran = false;
+                }
+                node = id("feedsubmit");
+                if (node !== null) {
+                    node.onclick = feedsubmit;
+                }
+
+                // assigns event handlers to input elements
+                inputs    = document.getElementsByTagName("input");
+                inputsLen = inputs.length;
+                a = 0;
+                do {
+                    x = inputs[a];
+                    type = x.getAttribute("type");
+                    idval   = x.getAttribute("id");
+                    if (type === "radio") {
+                        name = x.getAttribute("name");
+                        if (id === data.settings[name]) {
+                            x.checked = true;
+                        }
+                        if (idval.indexOf("feedradio") === 0) {
+                            feeds(x);
+                        } else if (name === "mode") {
+                            modes(x);
+                        } else if (name === "ace-radio") {
+                            aces(x);
+                        } else if (name === "parseTable") {
+                            x.onclick = parseTable;
                         } else {
                             optionswrapper(x, "onclick");
                         }
                     } else if (type === "text") {
-                        if (pd.test.ace === true && (id === "diff-quan" || id === "beau-quan" || id === "minn-quan")) {
-                            x.onkeyup = function dom_load_aceSize() {
-                                pd.app.insize(x);
-                            };
-                            if (pd.data.settings[id] !== undefined && pd.data.settings[id] !== "4" && isNaN(pd.data.settings[id]) === false) {
-                                if (pd.data.node.codeIn !== null) {
-                                    pd
-                                        .ace
-                                        .codeIn
-                                        .getSession()
-                                        .setTabSize(Number(pd.data.settings[id]));
-                                }
-                                if (pd.data.node.codeOut !== null) {
-                                    pd
-                                        .ace
-                                        .codeOut
-                                        .getSession()
-                                        .setTabSize(Number(pd.data.settings[id]));
-                                }
-                            }
-                        } else {
-                            optionswrapper(x, "onkeyup");
+                        optionswrapper(x, "onkeyup");
+                        if (data.settings[idval] !== undefined) {
+                            x.value = data.settings[idval];
                         }
-                        if (pd.data.settings[id] !== undefined) {
-                            x.value = pd.data.settings[id];
-                        }
-                        if (id === "diff-char" || id === "beau-char") {
-                            x.onclick = function dom_load_indentcharDiffBeau() {
-                                pd.app.indentchar(x);
+                        if (idval === "option-lang") {
+                            if (options.mode !== "diff") {
+                                if (x.value === "text") {
+                                    x.value = "auto";
+                                } else if (x.value === "csv") {
+                                    method.app.hideOutput(x);
+                                }
                             }
                         }
                     } else if (type === "file") {
-                        x.onchange = function dom_load_file() {
-                            pd.event.file(x);
-                        };
-                        x.onfocus  = function dom_load_filefocus():void {
-                            x.setAttribute("class", "filefocus");
-                        };
-                        x.onblur   = function dom_load_fileblur():void {
-                            x.removeAttribute("class");
-                        };
+                        fileWrapper(x);
                     }
                     a = a + 1;
                 } while (a < inputsLen);
-                node = pd.id("ace-no");
-                if (pd.test.ace === false && node !== null && node.checked === false) {
-                    node.checked = true;
-                }
+
+                // assigns event handlers to select elements
                 selects    = document.getElementsByTagName("select");
                 inputsLen = selects.length;
                 a = 0;
                 if (inputsLen > 0) { 
                     do {
-                        id = selects[a].getAttribute("id");
-                        if (id === "option-color") {
-                            selects[a].onchange = pd.event.colorScheme;
-                            if (pd.data.settings.colorScheme !== undefined) {
-                                selects[a].selectedIndex = Number(pd.data.settings.colorScheme);
-                                pd
+                        idval = selects[a].getAttribute("id");
+                        if (idval === "option-color") {
+                            selects[a].onchange = method.event.colorScheme;
+                            if (data.settings["option-color"] !== undefined) {
+                                selects[a].selectedIndex = Number(data.settings["option-color"]);
+                                method
                                     .event
                                     .colorScheme();
                             }
-                        } else if (id === "option-lang") {
-                            selects[a].onchange = pd.event.langOps;
-                            if (pd.data.settings.language !== undefined) {
-                                selects[a].selectedIndex = Number(pd.data.settings.language);
-                                if (pd.data.node.lang[pd.data.node.lang.selectedIndex].value === "text" && pd.data.mode !== "diff") {
-                                    selects[a].selectedIndex = 0;
-                                }
-                                if (pd.data.node.lang[pd.data.node.lang.selectedIndex].value === "csv" && pd.data.mode !== "diff") {
-                                    pd
-                                        .app
-                                        .hideOutput(selects[a]);
-                                }
-                            }
                         } else {
-                            if (typeof pd.data.settings[id] === "number") {
-                                selects[a].selectedIndex = pd.data.settings[id];
+                            if (typeof data.settings[idval] === "number") {
+                                selects[a].selectedIndex = data.settings[idval];
                             }
                             optionswrapper(selects[a], "onchange");
                         }
                         a = a + 1;
                     } while (a < inputsLen);
                 }
+
+                // assigns event handlers to buttons
                 buttons    = document.getElementsByTagName("button");
                 inputsLen = buttons.length;
                 a = 0;
                 do {
-                    name = buttons[a].getAttribute("class");
-                    id   = buttons[a].getAttribute("id");
+                    name  = buttons[a].getAttribute("class");
+                    idval = buttons[a].getAttribute("id");
                     if (name === null) {
                         if (buttons[a].value === "Execute") {
-                            buttons[a].onclick = pd.event.recycle;
-                        } else if (id === "resetOptions") {
-                            buttons[a].onclick = pd.event.reset;
+                            buttons[a].onclick = method.event.execute;
+                        } else if (idval === "resetOptions") {
+                            buttons[a].onclick = method.event.reset;
                         }
                     } else if (name === "minimize") {
-                        buttons[a].onclick = pd.event.minimize;
+                        buttons[a].onclick = method.event.minimize;
                     } else if (name === "maximize") {
-                        buttons[a].onclick = pd.event.maximize;
+                        buttons[a].onclick = method.event.maximize;
                         parent = <HTMLElement>buttons[a].parentNode.parentNode;
-                        if (pd.data.settings[parent.getAttribute("id")] !== undefined && pd.data.settings[parent.getAttribute("id")].max === true) {
+                        if (data.settings[parent.getAttribute("id")] !== undefined && data.settings[parent.getAttribute("id")].max === true) {
                             buttons[a].click();
                         }
                     } else if (name === "resize") {
-                        buttons[a].onmousedown = pd.event.resize;
+                        buttons[a].onmousedown = method.event.resize;
                     } else if (name === "save") {
                         button  = buttons[a];
-                        title = <HTMLElement>button.parentNode;
+                        const title = <HTMLElement>button.parentNode;
                         if (title.nodeName.toLowerCase() === "a") {
-                            if (pd.test.agent.indexOf("firefox") < 0 && pd.test.agent.indexOf("presto") < 0) {
+                            if (test.agent.indexOf("firefox") < 0 && test.agent.indexOf("presto") < 0) {
                                 parent = <HTMLElement>title.parentNode;
-                                button.onclick = pd.event.save;
+                                button.onclick = method.event.save;
                                 title.removeChild(node);
                                 parent.removeChild(title);
                                 parent.insertBefore(node, parent.firstChild);
                                 buttons[a].removeAttribute("tabindex");
                             } else {
-                                title.onclick = pd.event.save;
+                                title.onclick = method.event.save;
                             }
                         } else {
-                            node.onclick = pd.event.save;
+                            node.onclick = method.event.save;
                         }
                     }
                     a = a + 1;
                 } while (a < inputsLen);
-                if (pd.data.node.comment !== null) {
-                    if (pd.data.commentString.length === 0) {
-                        pd.data.node.comment.innerHTML = "/*prettydiff.com \u002a/";
+
+                // preps the file inputs
+                if (test.fs === false) {
+                    node = id("inputfile");
+                    if (node !== null) {
+                        node.disabled = true;
+                    }
+                    node = id("outputfile");
+                    if (node !== null) {
+                        node.disabled = true;
+                    }
+                }
+
+                // sets up the option comment string
+                if (localStorage.commentString !== undefined && localStorage.commentString !== null && localStorage.commentString !== "") {
+                    data.commentString = JSON.parse(localStorage.commentString.replace(/api\./g, ""));
+                }
+                node = id("commentClear");
+                if (node !== null) {
+                    node.onclick = clearComment;
+                }
+                node = id("commentString");
+                if (node !== null) {
+                    if (node.value.length === 0) {
+                        node.innerHTML = "/*prettydiff.com \u002a/";
                     } else {
-                        pd.data.node.comment.innerHTML = "/*prettydiff.com " + pd
-                            .data
+                        node.innerHTML = "/*prettydiff.com " + data
                             .commentString
                             .join(", ")
                             .replace(/api\./g, "") + " \u002a/";
                     }
                 }
-                node = pd.id("button-primary");
-                if (node !== null) {
-                    node.onmouseover = pd.comment;
-                }
-                node = pd.id("feedsubmit");
-                if (node !== null) {
-                    node.onclick = pd.event.feedsubmit;
-                }
+
+                // sets default configurations from URI query string
                 if (typeof location === "object" && typeof location.href === "string" && location.href.indexOf("?") > -1) {
                     let b:number        = 0,
                         c:number        = 0,
@@ -992,23 +1023,17 @@
                         param:string[]    = [],
                         colors:NodeListOf<HTMLOptionElement>,
                         options:NodeListOf<HTMLOptionElement>,
+                        lang:HTMLInputElement = id("option-lang"),
                         source:string   = "",
-                        diff:string     = "";
-                    const color:HTMLSelectElement    = pd.id("option-color"),
+                        diff:string     = "",
+                        modes;
+                    const color:HTMLSelectElement    = id("option-color"),
                         params   = location
                             .href
                             .split("?")[1]
                             .split("&");
-                    pd.param = {};
                     if (color !== null) {
                         colors = color.getElementsByTagName("option");
-                    }
-                    if (pd.data.node.lang !== null && pd.data.node.lang.nodeName === "select") {
-                        options = pd
-                        .data
-                        .node
-                        .lang
-                        .getElementsByTagName("option");
                     }
                     paramLen = params.length;
                     b = 0;
@@ -1021,59 +1046,57 @@
                         }
                         if (param[0] === "m" || param[0] === "mode") {
                             param[0] = "mode";
-                            if (param[1] === "beautify" && pd.data.node.modeBeau !== null) {
-                                pd
-                                    .event
-                                    .modeToggle("beautify");
-                                pd.data.node.modeBeau.checked = true;
-                            } else if (param[1] === "minify" && pd.data.node.modeMinn !== null) {
-                                pd
-                                    .event
-                                    .modeToggle("minify");
-                                pd.data.node.modeMinn.checked = true;
-                            } else if (param[1] === "diff" && pd.data.node.modeDiff !== null) {
-                                pd
-                                    .event
-                                    .modeToggle("diff");
-                                pd.data.node.modeDiff.checked = true;
-                            } else if (param[1] === "parse" && pd.data.node.modePars !== null) {
-                                pd
-                                    .event
-                                    .modeToggle("parse");
-                                pd.data.node.modePars.checked = true;
-                            } else if (param[1] === "analysis" && pd.data.node.modeAnal !== null) {
-                                pd
+                            if (param[1] === "analysis" && id("modeanalysis") !== null) {
+                                method
                                     .event
                                     .modeToggle("analysis");
-                                pd.data.node.modeAnal.checked = true;
+                                id("modeanalysis").checked = true;
+                            } else if (param[1] === "beautify" && id("modebeautify") !== null) {
+                                method
+                                    .event
+                                    .modeToggle("beautify");
+                                id("modebeautify").checked = true;
+                            } else if (param[1] === "diff" && id("modediff") !== null) {
+                                method
+                                    .event
+                                    .modeToggle("diff");
+                                id("modediff").checked = true;
+                            } else if (param[1] === "minify" && id("modeminify") !== null) {
+                                method
+                                    .event
+                                    .modeToggle("minify");
+                                id("modeminify").checked = true;
+                            } else if (param[1] === "parse" && id("modeparse") !== null) {
+                                method
+                                    .event
+                                    .modeToggle("parse");
+                                id("modeparse").checked = true;
                             } else {
                                 params.splice(b, 1);
                                 b = b - 1;
                                 paramLen = paramLen - 1;
                             }
-                        } else if (param[0] === "s" || param[1] === "source") {
+                        } else if (param[0] === "s" || param[0] === "source") {
                             param[0] = "source";
                             source = param[1];
-                        } else if ((param[0] === "d" || param[1] === "diff") && pd.data.node.codeOut !== null) {
+                        } else if ((param[0] === "d" || param[0] === "diff") && textarea.codeOut !== null) {
                             param[0] = "diff";
                             diff = param[1];
-                            if (pd.test.ace === true) {
-                                pd
-                                    .ace
-                                    .codeIn
+                            if (test.ace === true) {
+                                aceStore
+                                    .codeOut
                                     .setValue(diff);
-                                pd
-                                    .ace
+                                aceStore
                                     .codeOut
                                     .clearSelection();
                             } else {
-                                pd.data.node.codeIn.value = diff;
+                                textarea.codeOut.value = diff;
                             }
-                        } else if ((param[0] === "l" || param[0] === "lang" || param[0] === "language") && pd.data.node.lang !== null) {
+                        } else if ((param[0] === "l" || param[0] === "lang" || param[0] === "language") && lang !== null) {
                             param[0] = "lang";
                             if (param[1] === "text" || param[1] === "plain" || param[1] === "plaintext") {
                                 param[1] = "text";
-                                pd
+                                method
                                     .event
                                     .modeToggle("diff");
                             } else if (param[1] === "js" || param[1] === "") {
@@ -1087,38 +1110,27 @@
                             } else if (param[1] === "tss" || param[1] === "titanium") {
                                 param[1] = "tss";
                             }
-                            c = options.length - 1;
-                            if (c > -1) {
-                                do {
-                                    if (options[c].value === param[1]) {
-                                        pd.data.node.lang.selectedIndex = c;
-                                        break;
-                                    }
-                                    c = c - 1;
-                                } while (c > -1);
-                            }
-                            if (pd.test.ace === true && c > -1) {
-                                pd
-                                    .ace
+                            lang.value = param[1];
+                            if (test.ace === true && c > -1) {
+                                aceStore
                                     .codeIn
                                     .getSession()
                                     .setMode("ace/mode/" + param[1]);
-                                pd
-                                    .ace
+                                aceStore
                                     .codeOut
                                     .getSession()
                                     .setMode("ace/mode/" + param[1]);
                             }
-                            pd
+                            method
                                 .event
-                                .langOps(pd.data.node.lang);
+                                .langOps(lang);
                         } else if (param[0] === "c" || param[0] === "color") {
                             param[0] = "color";
                             c = colors.length - 1;
                             do {
                                 if (colors[c].innerHTML.toLowerCase() === param[1]) {
                                     color.selectedIndex = c;
-                                    pd
+                                    method
                                         .event
                                         .colorScheme();
                                     break;
@@ -1132,130 +1144,55 @@
                             }
                         } else if (param[0] === "jsscope") {
                             param[1] = "report";
-                            pd
+                            method
                                 .app
-                                .hideOutput(pd.data.node.jsscope);
+                                .hideOutput(id("option-jsscope"));
                         } else if (param[0] === "jscorrect" || param[0] === "correct" || param[0] === "fix") {
-                            param[0] = "fix";
+                            param[0] = "correct";
                             param[1] = "true";
-                            node = pd.id("jscorrect-yes");
+                            node = id("option-true-correct");
                             if (node !== null) {
                                 node.checked = true;
                             }
                         } else if (param[0] === "html") {
                             param[1] = "true";
-                            node = pd.id("html-yes");
-                            if (node !== null) {
-                                pd
-                                    .app
-                                    .options(node);
+                            if (lang !== null) {
+                                lang.value = "html";
                             }
-                            node = pd.id("htmld-yes");
-                            if (node !== null) {
-                                pd
-                                    .app
-                                    .options(node);
-                            }
-                            c = options.length = 1;
-                            do {
-                                if (options[c].value === "html") {
-                                    pd.data.node.lang.selectedIndex = c;
-                                    pd
-                                        .event
-                                        .langOps(pd.data.node.lang);
-                                    break;
-                                }
-                                c = c - 1;
-                            } while (c > -1);
-                            if (pd.test.ace === true) {
-                                pd
-                                    .ace
+                            if (test.ace === true) {
+                                aceStore
                                     .codeIn
                                     .getSession()
                                     .setMode("ace/mode/html");
-                                pd
-                                    .ace
+                                aceStore
                                     .codeOut
                                     .getSession()
                                     .setMode("ace/mode/html");
                             }
                         }
-                        pd.param[param[0]] = param[1];
                         b = b + 1;
                     } while (b < paramLen);
                     if (source !== "") {
-                        if (pd.data.node.codeIn !== null) {
-                            if (pd.test.ace === true) {
-                                pd
-                                    .ace
+                        if (textarea.codeIn !== null) {
+                            if (test.ace === true) {
+                                aceStore
                                     .codeIn
                                     .setValue(source);
-                                pd
-                                    .ace
+                                aceStore
                                     .codeIn
                                     .clearSelection();
                             } else {
-                                pd.data.node.codeIn.value = source;
+                                textarea.codeIn.value = source;
                             }
-                            pd
+                            method
                                 .event
-                                .recycle();
-                            pd.test.delayExecution = true;
+                                .execute();
                         }
                     }
                 }
-                if (pd.test.ace === true) {
-                    node = pd.id("minn-quan");
-                    if (node !== null) {
-                        parent = <HTMLElement>node.parentNode.parentNode;
-                        parent.style.display = "block";
-                    }
-                    node = pd.id("minn-space");
-                    if (node !== null) {
-                        parent = <HTMLElement>node.parentNode.parentNode;
-                        parent.style.display = "block";
-                    }
-                }
-                if (pd.data.settings.feedback === undefined) {
-                    pd.data.settings.feedback = {
-                        newb   : false,
-                        veteran: false
-                    };
-                }
-                if (pd.data.settings.feedback.newb === false && pd.data.stat.usage > 2 && pd.data.stat.visit < 5 && pd.test.domain === true && pd.data.node.report.feed.box !== null) {
-                    pd.data.settings.feedback.newb = true;
-                    node                           = pd.id("feedintro");
-                    if (node !== null) {
-                        node.innerHTML = "Thank you for trying Pretty Diff. Please let me know what you think of this tool" +
-                                ".";
-                    }
-                    localStorage.settings = JSON.stringify(pd.data.settings);
-                    pd
-                        .data
-                        .node
-                        .report
-                        .feed
-                        .box
-                        .getElementsByTagName("button")[0]
-                        .click();
-                }
-                if (pd.data.settings.feedback.veteran === false && pd.data.stat.usage > 2500 && pd.test.domain === true && pd.data.node.report.feed.box !== null) {
-                    pd.data.settings.feedback.veteran = true;
-                    if (node !== null) {
-                        node.innerHTML = "Thank you for the loyal and frequent use of this tool. Would you mind sparing a " +
-                                "few seconds on a brief survey?";
-                    }
-                    localStorage.settings = JSON.stringify(pd.data.settings);
-                    pd
-                        .data
-                        .node
-                        .report
-                        .feed
-                        .box
-                        .getElementsByTagName("button")[0]
-                        .click();
-                }
-                if (pd.test.audio !== null) {
+
+                // sets audio configuration
+                if (test.audio !== null) {
                     const audioString:string[] = [
                         "SUQzBAAAAAAAFlRFTkMAAAAMAAADTGF2ZjUyLjMxLjD/+9RkAA/wAABpAAAACAAADSAAAAEAAAGkAAAA",
                         "IAAANIAAAARMQU1FMy45OSAoYWxwaGEpVQA9wAChVSyrkSX4folg8BYiJjMKc1SuX4pepo4ETrVZqIv8",
@@ -2142,95 +2079,96 @@
                         "q3KbT6yiBpTZoH6XK2NzYaizgv406AYS4MAPM7NFDUja6zKBGdRN+aBymxq9LrJtK1qavVCozjOtabE5",
                         "6wrRGLJCsIU5TEFNRTMuOTkgKGFscGhhKao="
                     ];
-                    pd.data.audio.binary = window.atob(audioString.join(""));
-                    pd.data.audio.play   = function dom_load_audio():void {
-                        const source:AudioBufferSourceNode  = pd
-                                .test
+                    data.audio = {};
+                    data.audio.binary = window.atob(audioString.join(""));
+                    data.audio.play   = function dom_load_audio():void {
+                        const source:AudioBufferSourceNode  = test
                                 .audio
                                 .createBufferSource(),
-                            buff:ArrayBuffer    = new ArrayBuffer(pd.data.audio.binary.length),
+                            buff:ArrayBuffer   = new ArrayBuffer(data.audio.binary.length),
                             bytes:Uint8Array   = new Uint8Array(buff),
                             bytelen:number = buff.byteLength;
                         let z:number       = 0;
                         do {
-                            bytes[z] = pd
-                                .data
+                            bytes[z] = data
                                 .audio
                                 .binary
                                 .charCodeAt(z);
                             z = z + 1;
                         } while (z < bytelen);
-                        pd
-                            .test
+                        test
                             .audio
                             .decodeAudioData(buff, function dom_load_audio_decode(buffer:AudioBuffer):void {
                                 source.buffer = buffer;
                                 source.loop   = false;
-                                source.connect(pd.test.audio.destination);
+                                source.connect(test.audio.destination);
                                 source.start(0, 0, 1.8);
                                 // eslint-disable-next-line
                                 console.log("You found a secret!");
                             });
                     };
                 }
-                if (pd.data.node.codeIn !== null) {
-                    pd.data.node.codeIn.onkeyup = function dom_load_bindInUp(event:Event):void {
-                        pd
+
+                // sets some default event configurations
+                if (textarea.codeIn !== null) {
+                    textarea.codeIn.onkeyup = function dom_load_bindInUp(event:Event):void {
+                        method
                             .event
-                            .recycle(event);
+                            .execute(event);
                     };
-                    if (pd.test.ace === true) {
-                        pd.data.node.codeIn.onfocus   = function dom_load_bindInFocus():void {
-                            textareafocus(pd.data.node.codeIn);
-                        };
-                        pd.data.node.codeIn.onblur    = function dom_load_bindInBlur():void {
-                            textareablur(pd.data.node.codeIn);
-                        };
-                        pd.data.node.codeIn.onkeydown = function dom_load_bindInDownCM(event:Event):void {
-                            pd
+                    textarea.codeIn.onfocus   = textareafocus;
+                    textarea.codeIn.onblur    = textareablur;
+                    if (test.ace === true) {
+                        textarea.codeIn.onkeydown = function dom_load_bindInDownCM(event:Event):void {
+                            method
                                 .event
-                                .areaTabOut(event, pd.data.node.codeIn);
-                            pd
+                                .areaTabOut(event, textarea.codeIn);
+                            method
                                 .event
                                 .keydown(event);
                         };
                     } else {
-                        pd.data.node.codeIn.onfocus   = function dom_load_bindInFocus():void {
-                            textareafocus(pd.data.node.codeIn);
-                        };
-                        pd.data.node.codeIn.onblur    = function dom_load_bindInBlur():void {
-                            textareablur(pd.data.node.codeIn);
-                        };
-                        pd.data.node.codeIn.onkeydown = function dom_load_bindInDown(event:Event):void {
-                            pd
+                        textarea.codeIn.onkeydown = function dom_load_bindInDown(event:Event):void {
+                            method
                                 .event
-                                .fixtabs(event, pd.data.node.codeIn);
-                            pd
+                                .fixtabs(event, textarea.codeIn);
+                            method
                                 .event
-                                .areaTabOut(event, pd.data.node.codeIn);
-                            pd
+                                .areaTabOut(event, textarea.codeIn);
+                            method
                                 .event
                                 .keydown(event);
                         };
                     }
                 }
-                if (pd.data.node.codeOut !== null && pd.test.ace === true) {
-                    pd.data.node.codeOut.onfocus   = function dom_load_bindOutFocus():void {
-                        textareafocus(pd.data.node.codeOut);
-                    };
-                    pd.data.node.codeOut.onblur    = function dom_load_bindOutBlur():void {
-                        textareablur(pd.data.node.codeOut);
-                    };
-                    pd.data.node.codeOut.onkeydown = function dom_load_bindTabOut() {
-                        pd.event.areaTabOut(pd.data.node.codeOut);
+                if (textarea.codeOut !== null && test.ace === true) {
+                    textarea.codeOut.onfocus   = textareafocus;
+                    textarea.codeOut.onblur    = textareablur;
+                    textarea.codeOut.onkeydown = function dom_load_bindTabOut() {
+                        method.event.areaTabOut(textarea.codeOut);
                     };
                 }
-                window.onresize     = pd.app.fixHeight;
-                window.onkeyup      = pd.event.areaShiftUp;
+                node = id("option-inchar");
+                if (node !== null) {
+                    node.onkeyup = indentchar;
+                }
+                node = id("option-insize");
+                if (node !== null) {
+                    node.onkeyup = insize;
+                }
+                node = id("option-parseFormat");
+                if (node !== null) {
+                    node.onchange = parseTable;
+                }
+                window.onresize     = fixHeight;
+                window.onkeyup      = areaShiftUp;
                 document.onkeypress = backspace;
                 document.onkeydown  = backspace;
+
+                // sets vertical responsive design layout
+                fixHeight();
             }
-            if (page === "documentation") {
+            if (pages === "documentation") {
                 let b:number           = 0,
                     colorParam:string  = (typeof location === "object" && typeof location.href === "string" && location.href.indexOf("?") > -1)
                         ? location
@@ -2257,7 +2195,7 @@
                             span.innerHTML = "Show";
                         }
                     },
-                    colorScheme:HTMLSelectElement = pd.id("option-color"),
+                    colorScheme:HTMLSelectElement = id("colorScheme"),
                     hashgo      = function dom_load_documentation_hashgo():void {
                         let hash:string     = "",
                             test:boolean     = false,
@@ -2298,7 +2236,7 @@
                                 .settings
                                 .replace(/:undefined/g, ":false");
                         }
-                        pd.data.settings = (localStorage.settings !== undefined)
+                        data.settings = (localStorage.settings !== undefined)
                             ? JSON.parse(localStorage.settings)
                             : {};
                         if (colorParam.indexOf("c=") === 0 || colorParam.indexOf("&c=") > -1) {
@@ -2316,13 +2254,13 @@
                                 b = b + 1;
                             } while (b < olen);
                         }
-                        if (((olen > 0 && b !== olen) || olen === 0) && pd.data.settings.colorScheme !== undefined) {
-                            colorScheme.selectedIndex = pd.data.settings.colorScheme;
+                        if (((olen > 0 && b !== olen) || olen === 0) && data.settings["option-color"] !== undefined) {
+                            colorScheme.selectedIndex = data.settings["option-color"];
                         }
-                        pd
+                        method
                             .event
                             .colorScheme();
-                        colorScheme.onchange = pd.event.colorScheme;
+                        colorScheme.onchange = method.event.colorScheme;
                     };
                 b = docbuttons.length;
                 a = 0;
@@ -2338,7 +2276,7 @@
                 window.onhashchange = hashgo;
                 hashgo();
             }
-            if (page === "page") {
+            if (pages === "page") {
                 let b:number          = 0,
                     options:NodeListOf<HTMLOptionElement>,
                     olen:number       = 0,
@@ -2348,7 +2286,7 @@
                             .toLowerCase()
                             .split("?")[1]
                         : "";
-                node    = pd.id("option-color");
+                node    = id("colorScheme");
                 options = node.getElementsByTagName("option");
                 olen    = options.length;
                 if (node !== null) {
@@ -2357,7 +2295,7 @@
                             .settings
                             .replace(/:undefined/g, ":false");
                     }
-                    pd.data.settings = (localStorage.settings !== undefined)
+                    data.settings = (localStorage.settings !== undefined)
                         ? JSON.parse(localStorage.settings)
                         : {};
                     if (colorParam.indexOf("c=") === 0 || colorParam.indexOf("&c=") > -1) {
@@ -2375,13 +2313,13 @@
                             b = b + 1;
                         } while (b < olen);
                     }
-                    if (((olen > 0 && b !== olen) || olen === 0) && pd.data.settings.colorScheme !== undefined) {
-                        node.selectedIndex = pd.data.settings.colorScheme;
+                    if (((olen > 0 && b !== olen) || olen === 0) && data.settings["option-color"] !== undefined) {
+                        node.selectedIndex = data.settings["option-color"];
                     }
-                    pd
+                    method
                         .event
                         .colorScheme();
-                    node.onchange = pd.event.colorScheme;
+                    node.onchange = method.event.colorScheme;
                 }
                 {
                     let inca:number  = 0,
@@ -2393,7 +2331,7 @@
                     const div:NodeListOf<HTMLDivElement> = document.getElementsByTagName("div"),
                         len:number   = div.length,
                         foldwrapper = function dom_load_pagefold() {
-                            x.onclick = pd.event.beaufold(x);
+                            x.onclick = method.event.beaufold(x);
                         };
                     inca = 0;
                     do {
@@ -2416,1624 +2354,592 @@
                     } while (inca < len);
                 }
             }
-            pd.test.load = false;
-        },
-        loadPrep = function dom_loadPrep():void {
-            pd.data.node = {
-                announce    : pd.id("announcement"),
-                codeIn      : pd.id("input"),
-                codeOut     : pd.id("output"),
-                comment     : pd.id("option_comment"),
-                headline    : pd.id("headline"),
-                jsscope     : pd.id("jsscope-yes"),
-                lang        : pd.id("language"),
-                langdefault : pd.id("lang-default"),
-                maxInputs   : pd.id("hideOptions"),
-                modeBeau    : pd.id("modebeautify"),
-                modeDiff    : pd.id("modediff"),
-                modeMinn    : pd.id("modeminify"),
-                modePars    : pd.id("modeparse"),
-                page        : (function dom_dataPage():HTMLDivElement {
-                    const divs:NodeListOf<HTMLDivElement> = document.getElementsByTagName("div");
-                    if (divs.length === 0) {
-                        return null;
-                    }
-                    return divs[0];
-                }()),
-                pars        : pd.id("Parse"),
-                parsOps     : pd.id("parseops"),
-                report      : {
-                    code: {
-                        box: pd.id("codereport")
-                    },
-                    feed: {
-                        box: pd.id("feedreport")
-                    },
-                    stat: {
-                        box: pd.id("statreport")
-                    }
-                },
-                save        : pd.id("diff-save"),
-                webtool     : pd.id("webtool")
-            };
-            load();
-            if (pd.data.node.webtool !== null) {
-                pd.data.node.webtool.style.display = "block";
-            }
+            test.load = false;
         };
-    
+    let keypress:any = {};
     prettydiff.meta = meta;
-    prettydiff.dom = pd;
-    //namespace for data points and dom nodes
-    pd.data.node = {
-        announce    : pd.id("announcement"),
-        codeIn      : pd.id("input"),
-        codeOut     : pd.id("output"),
-        comment     : pd.id("option_comment"),
-        headline    : pd.id("headline"),
-        jsscope     : pd.id("option-jsscope"),
-        lang        : pd.id("option-language"),
-        langdefault : pd.id("option-langdefault"),
-        modeBeau    : pd.id("modebeautify"),
-        modeDiff    : pd.id("modediff"),
-        modeMinn    : pd.id("modeminify"),
-        modePars    : pd.id("modeparse"),
-        modeAnal    : pd.id("modeanalysis"),
-        page        : (document.getElementsByTagName("div").length > 0)
-            ? document.getElementsByTagName("div")[0]
-            : null,
-        report      : {
-            code: {
-                box: pd.id("codereport")
-            },
-            feed: {
-                box: pd.id("feedreport")
-            },
-            stat: {
-                box: pd.id("statreport")
-            }
-        }
-    };
-    if (pd.test.agent.indexOf("msie 8.0;") > 0) {
-        document.getElementsByTagName("body")[0].innerHTML = "<h1>Pretty Diff</h1> <p>Sorry, but Pretty Diff no longer supports IE8. <a href='" +
-                "http://www.microsoft.com/en-us/download/internet-explorer.aspx'>Please upgrade</";
-        return;
-    }
-
-    //namespace for Ace editors
-    pd.ace              = {};
-    //namespace for internal functions
-    pd.app              = {
-        //builds the Ace editors
-        aceApply : function dom_app_aceApply(nodeName:string, maxWidth:boolean):any {
-            const div:HTMLDivElement        = document.createElement("div"),
-                span:HTMLSpanElement       = document.createElement("span"),
-                node:HTMLDivElement       = pd.data.node[nodeName],
-                parent:HTMLElement     = <HTMLElement>node.parentNode.parentNode,
-                labels:NodeListOf<HTMLLabelElement> = parent.getElementsByTagName("label"),
-                label:HTMLLabelElement = labels[labels.length - 1],
-                attributes:NamedNodeMap = node.attributes,
-                p:HTMLParagraphElement = document.createElement("p"),
-                dollar:string     = "$",
-                len:number        = attributes.length;
-            let a:number          = 0,
-                edit:any       = {};
-            do {
-                if (attributes[a].name !== "rows" && attributes[a].name !== "cols" && attributes[a].name !== "wrap") {
-                    div.setAttribute(attributes[a].name, attributes[a].value);
-                }
-                a = a + 1;
-            } while (a < len);
-            label.parentNode.removeChild(label);
-            p.appendChild(label);
-            p.setAttribute("class", "inputLabel");
-            parent.appendChild(p);
-            parent.appendChild(div);
-            parent.removeChild(node.parentNode);
-            if (maxWidth === true) {
-                div.style.width = "100%";
-            }
-            div.style.fontSize              = "1.4em";
-            edit                            = ace.edit(div);
-            pd.data.node[nodeName]          = div.getElementsByTagName("textarea")[0];
-            edit[dollar + "blockScrolling"] = Infinity;
-            return edit;
-        },
-        // Readjusts the heights of the editors to compensate for various changes to the
-        // interface, like screen resize
-        fixHeight: function dom_app_fixHeight():void {
-            const input:HTMLElement = pd.id("input"),
-                output:HTMLElement = pd.id("output"),
-                height:number   = window.innerHeight || document.getElementsByTagName("body")[0].clientHeight;
-            let math:number     = 0,
-                headline:number = 0;
-            if (pd.data.node.headline !== null && pd.data.node.headline.style.display === "block") {
-                headline = 3.8;
-            }
-            if (pd.test.ace === true) {
-                math = (height / 14) - (14.31 + headline);
-                if (input !== null) {
-                    input.style.height = math + "em";
-                    pd
-                        .ace
-                        .codeIn
-                        .setStyle("height:" + math + "em");
-                    pd
-                        .ace
-                        .codeIn
-                        .resize();
-                }
-                if (output !== null) {
-                    output.style.height = math + "em";
-                    pd
-                        .ace
-                        .codeOut
-                        .setStyle("height:" + math + "em");
-                    pd
-                        .ace
-                        .codeOut
-                        .resize();
-                }
-            } else {
-                math = (height / 14.4) - (15.425 + headline);
-                if (input !== null) {
-                    input.style.height = math + "em";
-                }
-                if (output !== null) {
-                    output.style.height = math + "em";
-                }
-            }
-        },
-        //sets indentation size in Ace editors
-        insize   : function dom_app_insize(el:HTMLInputElement):void {
-            const value = Number(el.value);
-            if (pd.data.node.codeIn !== null) {
-                pd
-                    .ace
-                    .codeIn
-                    .getSession()
-                    .setTabSize(value);
-            }
-            if (pd.data.node.codeOut !== null) {
-                pd
-                    .ace
-                    .codeOut
-                    .getSession()
-                    .setTabSize(value);
-            }
-        },
-        // determine the specific language if auto or unknown all - change all language
-        // modes? comes from pd.codeops, which is      fired on change of language
-        // select list obj - the ace obj passed in. {} empty object if `all` is true
-        // lang - a language passed in. "" empty string means auto detect
-        langkey  : function dom_app_langkey(all:boolean, obj:any, lang:string):[string, string, string] {
-            let sample:string      = "",
-                // defaultt      = actual default lang value from the select list
-                defaultval:string  = "",
-                defaultt:string    = "",
-                value:languageAuto;
-            const language    = prettydiff.language;
-            if (typeof language !== "object") {
-                return ["", "", ""];
-            }
-            defaultval = (pd.data.node.langdefault === null)
-                ? "javascript"
-                : (pd.data.node.langdefault.nodeName.toLowerCase() !== "select")
-                    ? pd.data.node.langdefault.value
-                    : pd.data.node.langdefault[pd.data.node.langdefault.selectedIndex].value;
-            defaultt = language.setlangmode(defaultval);
-            if (obj !== undefined && obj !== null) {
-                if (pd.test.ace === true && obj.getValue !== undefined) {
-                    sample = obj.getValue();
-                    if (sample.indexOf("http") === 0 || sample.indexOf("file:///") === 0) {
-                        if (obj === pd.ace.codeOut) {
-                            sample = pd.data.diff;
-                        } else {
-                            sample = pd.data.source;
-                        }
-                    }
-                } else if (typeof obj.value === "string") {
-                    sample = obj.value;
-                }
-            }
-            if (defaultval === "auto") {
-                all  = true;
-                lang = "auto";
-            }
-            if (lang === "csv") {
-                pd.data.langvalue = ["plain_text", "csv", "CSV"];
-            } else if (lang === "text") {
-                pd.data.langvalue = ["plain_text", "text", "Plain Text"];
-            } else if (lang !== "") {
-                pd.data.langvalue = [lang, language.setlangmode(lang), language.nameproper(lang)];
-            } else if (sample !== "" || pd.test.ace === false) {
-                pd.data.langvalue = language.auto(sample, defaultt);
-            } else {
-                pd.data.langvalue = [defaultt, language.setlangmode(defaultt), language.nameproper(defaultt)];
-            }
-            value = pd.data.langvalue;
-            if (pd.test.ace === true) {
-                if (all === true) {
-                    if (all === true && lang === "") {
-                        value             = language.auto(pd.ace.codeIn.getValue(), defaultt);
-                        pd.data.langvalue = value;
-                    }
-                    if (value[0] === "tss") {
-                        value[0] = "javascript";
-                    } else if (value[0] === "dustjs") {
-                        value[0] = "html";
-                    } else if (value[0] === "markup") {
-                        value[0] = "xml";
-                    }
-                    if (pd.data.node.codeIn !== null) {
-                        pd
-                            .ace
+    // toggles an editor between 100% and 50% width if the output isn't textual
+    // references apps: langkey, options references events: execute
+    method.app.hideOutput   = function dom_app_hideOutput(x:HTMLElement):void {
+        let node:HTMLElement,
+            parent:HTMLElement,
+            state:boolean     = false,
+            targetOut:HTMLElement,
+            targetIn:HTMLElement;
+        const restore   = function dom_app_hideOutput_restore():void {
+                parent = <HTMLElement>targetOut.parentNode;
+                parent.style.display = "block";
+                if (targetOut !== null) {
+                    node             = <HTMLElement>targetIn.parentNode;
+                    node.style.width = "49%";
+                    if (test.ace === true) {
+                        aceStore
                             .codeIn
-                            .getSession()
-                            .setMode("ace/mode/" + value[0]);
+                            .resize();
                     }
-                    if (pd.data.node.codeOut !== null) {
-                        pd
-                            .ace
-                            .codeOut
-                            .getSession()
-                            .setMode("ace/mode/" + value[0]);
+                    targetIn.onkeyup   = method.event.execute;
+                    targetIn.onkeydown = function dom_app_hideOutput_restore_bindTargetInDown(event:Event):void {
+                        if (test.ace === false) {
+                            method
+                                .event
+                                .fixtabs(event, targetIn);
+                        }
+                        method
+                            .event
+                            .keydown(event);
+                        method
+                            .event
+                            .execute(event);
+                    };
+                }
+                if (x === undefined) {
+                    return;
+                }
+                method
+                    .app
+                    .options(x);
+            },
+            lang:HTMLInputElement = id("option-lang"),
+            jsscope:HTMLInputElement = id("option-jsscope"),
+            scopeval:string = (jsscope === null)
+                ? "none"
+                : jsscope.value,
+            langval:string   = (lang === null)
+                ? "javascript"
+                : lang.value;
+        if (x.nodeType === 1 && x.nodeName.toLowerCase() !== "input" && x !== lang) {
+            x = x.getElementsByTagName("input")[0];
+        }
+        state = (scopeval === "report" || langval === "csv");
+        targetOut = textarea.codeOut;
+        targetIn  = textarea.codeIn;
+        parent = <HTMLElement>targetOut.parentNode;
+        if (targetOut === null || (state === true && parent.style.display === "none") || (state === false && parent.style.display === "block")) {
+            if (test.load === false) {
+                method
+                    .app
+                    .options(x);
+            }
+            return;
+        }
+        if (langval !== "csv" && options.mode !== "beau") {
+            state = false;
+        }
+        if (langval === "auto" || langval === "javascript" || langval === "csv") {
+            if (state === true) {
+                parent.style.display = "none";
+                if (targetIn !== null) {
+                    node             = <HTMLElement>targetIn.parentNode;
+                    node.style.width = "100%";
+                    if (test.ace === true) {
+                        aceStore
+                            .codeIn
+                            .resize();
+                    }
+                    if (test.ace === true) {
+                        targetIn.onkeyup = function dom_app_hideOutput_langkeyEditor(event:Event):void {
+                            method
+                                .app
+                                .langkey(false, aceStore.codeIn, "");
+                            method
+                                .event
+                                .execute(event);
+                        };
+                    } else {
+                        targetIn.onkeyup = function dom_app_hideOutput_langkeyTextarea(event:Event):void {
+                            method
+                                .event
+                                .execute(event);
+                        };
                     }
                 }
-            }
-            if (all === true && lang !== "") {
-                return value;
-            }
-            if (value.length < 1 && lang === "") {
-                if (pd.data.node.codeIn !== null) {
-                    value = language.auto(pd.data.node.codeIn.value, defaultt);
+                if (langval === "csv") {
+                    x = lang;
                 }
-                if (value.length < 1) {
-                    return ["javascript", "script", "JavaScript"];
+                if (test.load === false) {
+                    method
+                        .app
+                        .options(x);
                 }
-                pd.data.langvalue = value;
-            }
-            if (lang === "text") {
-                return ["text", "text", "Plain Text"];
-            }
-            return value;
-        },
-        //store tool changes into localStorage to maintain state
-        options  : function dom_app_options(x?:HTMLElement):void {
-            let input:HTMLInputElement,
-                select:HTMLSelectElement,
-                item:HTMLElement,
-                node:string   = "",
-                xname:string  = "",
-                type:string   = "",
-                id:string     = "",
-                classy:string = "",
-                h3:HTMLElement,
-                body:HTMLElement;
-            if (x === undefined || x.nodeType > 1) {
-                return;
-            }
-            xname = x.nodeName.toLowerCase();
-            if (xname === "div") {
-                if (x.getAttribute("class") === "box") {
-                    item = x;
-                } else {
-                    if (x.getElementsByTagName("input")[0] === undefined) {
-                        return;
-                    }
-                    item = x.getElementsByTagName("input")[0];
-                }
-            } else if (xname === "input") {
-                input = <HTMLInputElement>x;
-                item = input;
-            } else if (xname === "select") {
-                select = <HTMLSelectElement>x;
-                item = select;
+            } else if (x === id("modebeautify") || scopeval === "none") {
+                restore();
             } else {
-                input = <HTMLInputElement>x.getElementsByTagName("input")[0];
-                item = input;
+                method
+                    .app
+                    .options(x);
             }
-            if (pd.test.load === false && item !== pd.data.node.lang) {
-                item.focus();
-            }
-            node   = item
-                .nodeName
-                .toLowerCase();
-            xname  = item.getAttribute("name");
-            type   = item.getAttribute("type");
-            id     = item.getAttribute("id");
-            classy = item.getAttribute("class");
-            if (pd.test.load === true) {
-                return;
-            }
-            if (node === "input") {
-                if (type === "radio") {
-                    if (id === "beau-other") {
-                        pd.data.settings.beauchar = pd
-                            .id("beau-char")
-                            .value;
-                    } else {
-                        pd.data.settings[xname] = id;
-                    }
-                    if (id === "diff-other") {
-                        pd.data.settings.diffchar = pd
-                            .id("diff-char")
-                            .value;
-                    } else {
-                        pd.data.settings[xname] = id;
-                    }
-                } else if (type === "text") {
-                    if (id === "beau-char") {
-                        pd.data.settings.beauchar = input.value;
-                    } else if (id === "diff-char") {
-                        pd.data.settings.diffchar = input.value;
-                    } else {
-                        pd.data.settings[id] = input.value;
-                    }
-                }
-            } else if (node === "select") {
-                pd.data.settings[id] = select.selectedIndex;
-            } else if (node === "div" && classy === "box") {
-                h3   = item.getElementsByTagName("h3")[0];
-                body = item.getElementsByTagName("div")[0];
-                if (pd.data.settings[id] === undefined) {
-                    pd.data.settings[id] = {};
-                }
-                if (body.style.display === "none" && h3.clientWidth < 175) {
-                    pd.data.settings[id].min = true;
-                    pd.data.settings[id].max = false;
-                } else if (pd.data.settings[id].max === false || pd.data.settings[id].max === undefined) {
-                    pd.data.settings[id].min  = false;
-                    pd.data.settings[id].left = item.offsetLeft;
-                    pd.data.settings[id].top  = item.offsetTop;
-                    if (pd.test.agent.indexOf("macintosh") > 0) {
-                        pd.data.settings[id].width  = (body.clientWidth - 20);
-                        pd.data.settings[id].height = (body.clientHeight - 53);
-                    } else {
-                        pd.data.settings[id].width  = (body.clientWidth - 4);
-                        pd.data.settings[id].height = (body.clientHeight - 36);
-                    }
-                }
-            } else if (node === "button" && id !== null) {
-                pd.data.settings[id] = item
-                    .innerHTML
-                    .replace(/\s+/g, " ");
-            }
-            localStorage.settings = JSON.stringify(pd.data.settings);
-            if (classy === "box") {
-                return;
-            }
-            if (pd.data.node.comment !== null && id !== null) {
-                if (item.nodeName.toLowerCase() === "select") {
-                    node = select[select.selectedIndex].value;
-                } else {
-                    node = input.value;
-                }
-                //pd.data.commentString = prettydiff.options.functions.domops(id, node, pd.data.commentString);
-                if (pd.data.node.comment !== null) {
-                    if (pd.data.commentString.length === 0) {
-                        pd.data.node.comment.innerHTML = "/*prettydiff.com \u002a/";
-                    } else if (pd.data.commentString.length === 1) {
-                        pd.data.node.comment.innerHTML = "/*prettydiff.com " + pd
-                            .data
-                            .commentString[0]
-                            .replace(/&/g, "&amp;")
-                            .replace(/</g, "&lt;")
-                            .replace(/>/g, "&gt;")
-                            .replace(/api\./g, "") + " \u002a/";
-                    } else {
-                        pd.data.node.comment.innerHTML = "/*prettydiff.com " + pd
-                            .data
-                            .commentString
-                            .join(", ")
-                            .replace(/&/g, "&amp;")
-                            .replace(/</g, "&lt;")
-                            .replace(/>/g, "&gt;")
-                            .replace(/api\./g, "") + " \u002a/";
-                    }
-                }
-                localStorage.commentString = JSON
-                    .stringify(pd.data.commentString)
-                    .replace(/api\./g, "");
-            }
-        },
-        //intelligently raise the z-index of the report windows
-        zTop     : function dom_app_top(x:HTMLElement):void {
-            const indexListed = pd.data.zIndex,
-                indexes     = [
-                    (pd.data.node.report.feed.box === null)
-                        ? 0
-                        : Number(pd.data.node.report.feed.box.style.zIndex),
-                    (pd.data.node.report.code.box === null)
-                        ? 0
-                        : Number(pd.data.node.report.code.box.style.zIndex),
-                    (pd.data.node.report.stat.box === null)
-                        ? 0
-                        : Number(pd.data.node.report.stat.box.style.zIndex)
-                ];
-            let indexMax    = Math.max(indexListed, indexes[0], indexes[1], indexes[2]) + 1;
-            if (indexMax < 11) {
-                indexMax = 11;
-            }
-            pd.data.zIndex = indexMax;
-            if (x.nodeType === 1) {
-                x.style.zIndex = String(indexMax);
-            }
+        } else if (x === id("modebeautify")) {
+            restore();
+        } else {
+            method
+                .app
+                .options(x);
         }
     };
-    //namespace for event handlers
-    pd.event            = {
-        //fixing areaTabOut in the case of unintentional back tabs
-        areaShiftUp  : function dom_event_areaShiftUp(event:KeyboardEvent):void {
-            if (event.keyCode === 16 && pd.test.tabesc.length > 0) {
-                pd.test.tabesc = [];
+    // determine the specific language if auto or unknown all - change all language
+    // modes? comes from pd.codeops, which is      fired on change of language
+    // select list obj - the ace obj passed in. {} empty object if `all` is true
+    // lang - a language passed in. "" empty string means auto detect
+    method.app.langkey  = function dom_app_langkey(all:boolean, obj:any, lang:string):[string, string, string] {
+        let sample:string      = "",
+            // defaultt      = actual default lang value from the select list
+            defaultval:string  = "",
+            defaultt:string    = "",
+            value:languageAuto;
+        const language:language    = prettydiff.language,
+            langdefault:HTMLInputElement = id("option-langdefault");
+        if (typeof language !== "object") {
+            return ["", "", ""];
+        }
+        defaultval = (langdefault === null)
+            ? "javascript"
+            : langdefault.value;
+        defaultt = language.setlangmode(defaultval);
+        if (obj !== undefined && obj !== null) {
+            if (test.ace === true && obj.getValue !== undefined) {
+                sample = obj.getValue();
+                if (sample.indexOf("http") === 0 || sample.indexOf("file:///") === 0) {
+                    if (obj === aceStore.codeOut) {
+                        sample = options.diff;
+                    } else {
+                        sample = options.source;
+                    }
+                }
+            } else if (typeof obj.value === "string") {
+                sample = obj.value;
             }
-            if (event.keyCode === 17 || event.keyCode === 224) {
-                pd.data.tabtrue = true;
+        }
+        if (defaultval === "auto") {
+            all  = true;
+            lang = "auto";
+        }
+        if (lang === "csv") {
+            data.langvalue = ["plain_text", "csv", "CSV"];
+        } else if (lang === "text") {
+            data.langvalue = ["plain_text", "text", "Plain Text"];
+        } else if (lang !== "") {
+            data.langvalue = [lang, language.setlangmode(lang), language.nameproper(lang)];
+        } else if (sample !== "" || test.ace === false) {
+            data.langvalue = language.auto(sample, defaultt);
+        } else {
+            data.langvalue = [defaultt, language.setlangmode(defaultt), language.nameproper(defaultt)];
+        }
+        value = data.langvalue;
+        if (test.ace === true) {
+            if (all === true) {
+                if (all === true && lang === "") {
+                    value          = language.auto(aceStore.codeIn.getValue(), defaultt);
+                    data.langvalue = value;
+                }
+                if (value[0] === "tss") {
+                    value[0] = "javascript";
+                } else if (value[0] === "dustjs") {
+                    value[0] = "html";
+                } else if (value[0] === "markup") {
+                    value[0] = "xml";
+                }
+                if (textarea.codeIn !== null) {
+                    aceStore
+                        .codeIn
+                        .getSession()
+                        .setMode("ace/mode/" + value[0]);
+                }
+                if (textarea.codeOut !== null) {
+                    aceStore
+                        .codeOut
+                        .getSession()
+                        .setMode("ace/mode/" + value[0]);
+                }
             }
-        },
-        //allows visual folding of function in the JSPretty jsscope HTML output
-        beaufold     : function dom_event_beaufold(el:HTMLElement):void {
-            let a:number     = 0,
-                b:string     = "";
-            const title:string[] = el
-                    .getAttribute("title")
-                    .split("line "),
-                parent:[HTMLElement, HTMLElement] = [<HTMLElement>el.parentNode, <HTMLElement>el.parentNode.nextSibling],
-                min:number   = Number(title[1].substr(0, title[1].indexOf(" "))),
-                max:number   = Number(title[2]),
-                list:[NodeListOf<HTMLLIElement>, NodeListOf<HTMLLIElement>]  = [
-                    parent[0].getElementsByTagName("li"),
-                    parent[1].getElementsByTagName("li")
-                ];
-            a = min;
-            if (el.innerHTML.charAt(0) === "-") {
-                do {
-                    list[0][a].style.display = "none";
-                    list[1][a].style.display = "none";
-                    a = a + 1;
-                } while (a < max);
-                el.innerHTML = "+" + el
-                    .innerHTML
-                    .substr(1);
+        }
+        if (all === true && lang !== "") {
+            return value;
+        }
+        if (value.length < 1 && lang === "") {
+            if (textarea.codeIn !== null) {
+                value = language.auto(textarea.codeIn.value, defaultt);
+            }
+            if (value.length < 1) {
+                return ["javascript", "script", "JavaScript"];
+            }
+            data.langvalue = value;
+        }
+        if (lang === "text") {
+            return ["text", "text", "Plain Text"];
+        }
+        return value;
+    };
+    //store tool changes into localStorage to maintain state
+    method.app.options  = function dom_app_options(x:HTMLElement):void {
+        let input:HTMLInputElement,
+            select:HTMLSelectElement,
+            item:HTMLElement,
+            node:string   = "",
+            xname:string  = "",
+            type:string   = "",
+            idval:string     = "",
+            classy:string = "",
+            h3:HTMLElement,
+            body:HTMLElement;
+        const comment:HTMLElement = id("commentString");
+        xname = x.nodeName.toLowerCase();
+        if (xname === "div") {
+            if (x.getAttribute("class") === "box") {
+                item = x;
             } else {
-                do {
-                    list[0][a].style.display = "block";
-                    list[1][a].style.display = "block";
-                    if (list[0][a].getAttribute("class") === "fold" && list[0][a].innerHTML.charAt(0) === "+") {
-                        b = list[0][a].getAttribute("title");
-                        b = b.substring(b.indexOf("to line ") + 1);
-                        a = Number(b) - 1;
-                    }
-                    a = a + 1;
-                } while (a < max);
-                el.innerHTML = "-" + el
-                    .innerHTML
-                    .substr(1);
-            }
-        },
-        //clears the Pretty Diff comment string
-        clearComment : function dom_event_clearComment():void {
-            localStorage.commentString = "[]";
-            pd.data.commentString      = [];
-            if (pd.data.node.comment !== null) {
-                pd.data.node.comment.innerHTML = "/*prettydiff.com \u002a/";
-            }
-        },
-        //change the color scheme of the web UI
-        colorScheme  : function dom_event_colorScheme():void {
-            const item:HTMLSelectElement = pd.id("option-color"),
-                option:NodeListOf<HTMLOptionElement>    = item.getElementsByTagName("option"),
-                optionLen:number = option.length,
-                index:number     = (function dom_event_colorScheme_indexLen():number {
-                    if (item.selectedIndex < 0 || item.selectedIndex > optionLen) {
-                        item.selectedIndex = optionLen - 1;
-                        return optionLen - 1;
-                    }
-                    return item.selectedIndex;
-                }()),
-                color:string     = option[index]
-                    .innerHTML
-                    .toLowerCase()
-                    .replace(/\s+/g, ""),
-                logo      = pd.id("pdlogo");
-            let theme:string     = "",
-                logoColor:string = "";
-            document
-                .getElementsByTagName("body")[0]
-                .setAttribute("class", color);
-            if (pd.test.ace === true) {
-                if (color === "white") {
-                    theme = "ace/theme/textmate";
+                if (x.getElementsByTagName("input")[0] === undefined) {
+                    return;
                 }
-                if (color === "shadow") {
-                    theme = "ace/theme/idle_fingers";
-                }
-                if (color === "canvas") {
-                    theme = "ace/theme/textmate";
-                }
-                pd
-                    .ace
-                    .codeIn
-                    .setTheme(theme);
-                pd
-                    .ace
-                    .codeOut
-                    .setTheme(theme);
+                item = x.getElementsByTagName("input")[0];
             }
-            pd.data.color = color;
-            if (logo !== null) {
-                if (color === "canvas") {
-                    logoColor = "664";
-                } else if (color === "shadow") {
-                    logoColor = "999";
+        } else if (xname === "input") {
+            input = <HTMLInputElement>x;
+            item = input;
+        } else if (xname === "select") {
+            select = <HTMLSelectElement>x;
+            item = select;
+        } else {
+            input = <HTMLInputElement>x.getElementsByTagName("input")[0];
+            item = input;
+        }
+        if (test.load === false && item !== id("option-lang")) {
+            item.focus();
+        }
+        node   = item
+            .nodeName
+            .toLowerCase();
+        xname  = item.getAttribute("name");
+        type   = item.getAttribute("type");
+        idval  = item.getAttribute("id");
+        classy = item.getAttribute("class");
+        if (test.load === true) {
+            return;
+        }
+        if (node === "input") {
+            if (type === "radio") {
+                data.settings[xname] = idval;
+            } else if (type === "text") {
+                data.settings[idval] = input.value;
+            }
+        } else if (node === "select") {
+            data.settings[idval] = select.selectedIndex;
+        } else if (node === "div" && classy === "box") {
+            h3   = item.getElementsByTagName("h3")[0];
+            body = item.getElementsByTagName("div")[0];
+            idval = idval.replace("report", "");
+            if (data.settings.report[idval] === undefined) {
+                data.settings.report[idval] = {};
+            }
+            if (body.style.display === "none" && h3.clientWidth < 175) {
+                data.settings.report[idval].min = true;
+                data.settings.report[idval].max = false;
+            } else if (data.settings.report[idval].max === false || data.settings.report[idval].max === undefined) {
+                data.settings.report[idval].min  = false;
+                data.settings.report[idval].left = item.offsetLeft;
+                data.settings.report[idval].top  = item.offsetTop;
+                if (test.agent.indexOf("macintosh") > 0) {
+                    data.settings.report[idval].width  = (body.clientWidth - 20);
+                    data.settings.report[idval].height = (body.clientHeight - 53);
                 } else {
-                    logoColor = "666";
+                    data.settings.report[idval].width  = (body.clientWidth - 4);
+                    data.settings.report[idval].height = (body.clientHeight - 36);
                 }
-                logo.style.borderColor = "#" + logoColor;
-                logo
-                    .getElementsByTagName("g")[0]
-                    .setAttribute("fill", "#" + logoColor);
             }
-            if (pd.test.load === false) {
-                pd
-                    .app
-                    .options(item);
-            }
-        },
-        // allows grabbing and resizing columns (from the third column) in the diff
-        // side-by-side report
-        colSliderGrab: function dom_event_colSliderGrab(event:Event, node:HTMLElement):boolean {
-            let subOffset:number   = 0,
-                withinRange:boolean = false,
-                offset:number      = 0,
-                status:string      = "ew",
-                width:number       = 0,
-                total:number       = 0,
-                diffLeft:HTMLElement,
-                par1:HTMLElement,
-                par2:HTMLElement;
-            const touch:boolean       = (event !== null && event.type === "touchstart"),
-                diffRight:HTMLElement   = <HTMLElement>node.parentNode,
-                diff:HTMLElement        = <HTMLElement>diffRight.parentNode,
-                lists:NodeListOf<HTMLOListElement>       = diff.getElementsByTagName("ol"),
-                counter:number     = lists[0].clientWidth,
-                data:number        = lists[1].clientWidth,
-                min:number         = ((total - counter - data - 2) - width),
-                max:number         = (total - width - counter),
-                minAdjust:number   = min + 15,
-                maxAdjust:number   = max - 15;
-            diffLeft = <HTMLElement>diffRight.previousSibling;
-            par1 = <HTMLElement>lists[2].parentNode;
-            par2 = <HTMLElement>lists[2].parentNode.parentNode;
-            offset = par1.offsetLeft - par2.offsetLeft;
-            width = par1.clientWidth;
-            total = par2.clientWidth;
-            event.preventDefault();
-            if (typeof pd.data.node === "object" && pd.data.node.report.code.box !== null) {
-                offset = offset + pd.data.node.report.code.box.offsetLeft;
-                offset = offset - pd.data.node.report.code.body.scrollLeft;
+        } else if (node === "button" && idval !== null) {
+            data.settings[idval] = item
+                .innerHTML
+                .replace(/\s+/g, " ");
+        }
+        localStorage.settings = JSON.stringify(data.settings);
+        if (classy === "box") {
+            return;
+        }
+        if (comment !== null && idval !== null) {
+            if (item.nodeName.toLowerCase() === "select") {
+                node = select[select.selectedIndex].value;
             } else {
-                par1 = <HTMLElement>document.body.parentNode;
-                subOffset = (par1.scrollLeft > document.body.scrollLeft)
-                    ? par1.scrollLeft
-                    : document.body.scrollLeft;
-                offset    = offset - subOffset;
+                node = input.value;
             }
-            offset             = offset + node.clientWidth;
-            node.style.cursor  = "ew-resize";
-            diff.style.width   = (total / 10) + "em";
-            diff.style.display = "inline-block";
-            if (diffLeft.nodeType !== 1) {
-                do {
-                    diffLeft = <HTMLElement>diffLeft.previousSibling;
-                } while (diffLeft.nodeType !== 1);
-            }
-            diffLeft.style.display   = "block";
-            diffRight.style.width    = (diffRight.clientWidth / 10) + "em";
-            diffRight.style.position = "absolute";
-            if (touch === true) {
-                document.ontouchmove  = function dom_event_colSliderGrab_Touchboxmove(f:TouchEvent):void {
-                    f.preventDefault();
-                    subOffset = offset - f.touches[0].clientX;
-                    if (subOffset > minAdjust && subOffset < maxAdjust) {
-                        withinRange = true;
-                    }
-                    if (withinRange === true && subOffset > maxAdjust) {
-                        diffRight.style.width = ((total - counter - 2) / 10) + "em";
-                        status                = "e";
-                    } else if (withinRange === true && subOffset < minAdjust) {
-                        diffRight.style.width = ((total - counter - data - 2) / 10) + "em";
-                        status                = "w";
-                    } else if (subOffset < max && subOffset > min) {
-                        diffRight.style.width = ((width + subOffset) / 10) + "em";
-                        status                = "ew";
-                    }
-                    document.ontouchend = function dom_event_colSliderGrab_Touchboxmove_drop(f:TouchEvent):void {
-                        f.preventDefault();
-                        node.style.cursor = status + "-resize";
-                        document.ontouchmove = null;
-                        document.ontouchend  = null;
-                    };
-                };
-                document.ontouchstart = null;
-            } else {
-                document.onmousemove = function dom_event_colSliderGrab_Mouseboxmove(f:MouseEvent):void {
-                    f.preventDefault();
-                    subOffset = offset - f.clientX;
-                    if (subOffset > minAdjust && subOffset < maxAdjust) {
-                        withinRange = true;
-                    }
-                    if (withinRange === true && subOffset > maxAdjust) {
-                        diffRight.style.width = ((total - counter - 2) / 10) + "em";
-                        status                = "e";
-                    } else if (withinRange === true && subOffset < minAdjust) {
-                        diffRight.style.width = ((total - counter - data - 2) / 10) + "em";
-                        status                = "w";
-                    } else if (subOffset < max && subOffset > min) {
-                        diffRight.style.width = ((width + subOffset) / 10) + "em";
-                        status                = "ew";
-                    }
-                    document.onmouseup = function dom_event_colSliderGrab_Mouseboxmove_drop(f:MouseEvent):void {
-                        f.preventDefault();
-                        node.style.cursor = status + "-resize";
-                        document.onmousemove = null;
-                        document.onmouseup   = null;
-                    };
-                };
-                document.onmousedown = null;
-            }
-            return false;
-        },
-        //allows visual folding of consecutive equal lines in a diff report
-        difffold     : function dom_event_difffold(node:HTMLElement):void {
-            let a:number         = 0,
-                b:number         = 0,
-                max:number,
-                lists:NodeListOf<HTMLLIElement>[];
-            const title:string[]     = node
-                    .getAttribute("title")
-                    .split("line "),
-                min:number       = Number(title[1].substr(0, title[1].indexOf(" "))),
-                inner:string     = node.innerHTML,
-                parent:HTMLElement    = <HTMLElement>node.parentNode.parentNode,
-                par1:HTMLElement = <HTMLElement>parent.parentNode,
-                listnodes:NodeListOf<HTMLOListElement> = (parent.getAttribute("class") === "diff")
-                    ? parent.getElementsByTagName("ol")
-                    : par1.getElementsByTagName("ol"),
-                listLen:number   = listnodes.length;
-            do {
-                lists.push(listnodes[a].getElementsByTagName("li"));
-                a = a + 1;
-            } while (a < listLen);
-            max = (max >= lists[0].length)
-                ? lists[0].length
-                : Number(title[2]);
-            if (inner.charAt(0) === "-") {
-                node.innerHTML = "+" + inner.substr(1);
-                a = min;
-                if (min < max) {
-                    do {
-                        b = 0;
-                        do {
-                            lists[b][a].style.display = "none";
-                            b = b + 1;
-                        } while (b < listLen);
-                        a = a + 1;
-                    } while (a < max);
-                }
-            } else {
-                node.innerHTML = "-" + inner.substr(1);
-                a = min;
-                if (min < max) {
-                    do {
-                        b = 0;
-                        do {
-                            lists[b][a].style.display = "block";
-                            b = b + 1;
-                        } while (b < listLen);
-                        a = a + 1;
-                    } while (a < max);
-                }
-            }
-        },
-        //submits the comment card
-        feedsubmit   : function dom_event_feedsubmit(auto:boolean):void {
-            let a:number = 0;
-            const datapack:any  = {},
-                namecheck:any = (localStorage.settings !== undefined)
-                    ? JSON.parse(localStorage.settings)
-                    : {},
-                radios:NodeListOf<HTMLInputElement> = pd
-                    .id("feedradio1")
-                    .parentNode
-                    .parentNode
-                    .getElementsByTagName("input"),
-                text      = (pd.id("feedtextarea") === null)
-                    ? ""
-                    : pd
-                        .id("feedtextarea")
-                        .value,
-                email:string     = (pd.id("feedemail") === null)
-                    ? ""
-                    : pd
-                        .id("feedemail")
-                        .value,
-                xhr:XMLHttpRequest = new XMLHttpRequest(),
-                sendit    = function dom_event_feedsubmit_sendit():void {
-                    const node:HTMLElement = pd.id("feedintro");
-                    xhr.withCredentials = true;
-                    xhr.open("POST", "http://prettydiff.com:8000/feedback/", true);
-                    xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
-                    xhr.send(JSON.stringify(datapack));
-                    pd
-                        .data
-                        .node
-                        .report
-                        .feed
-                        .box
-                        .getElementsByTagName("button")[1]
-                        .click();
-                    if (node !== null) {
-                        node.innerHTML = "Please feel free to submit feedback about Pretty Diff at any time by answering t" +
-                                "he following questions.";
-                    }
-                };
-            if (auto === true) {
-                datapack.name     = pd.data.settings.knownname;
-                datapack.settings = pd.data.settings;
-                datapack.stats    = pd.data.stat;
-                datapack.type     = "auto";
-                sendit();
-                return;
-            }
-            if (pd.id("feedradio1") === null || namecheck.knownname !== pd.data.settings.knownname) {
-                return;
-            }
-            a = radios.length - 1;
-            if (a > 0) {
-                do {
-                    if (radios[a].checked === true) {
-                        break;
-                    }
-                    a = a - 1;
-                } while (a > -1);
-            }
-            if (a < 0) {
-                return;
-            }
-            datapack.comment  = text;
-            datapack.email    = email;
-            datapack.name     = pd.data.settings.knownname;
-            datapack.rating   = a + 1;
-            datapack.settings = pd.data.settings;
-            datapack.stats    = pd.data.stat;
-            datapack.type     = "feedback";
-            sendit();
-        },
-        //nullifies the current "file" event
-        filenull     : function dom_event_filenull(event:Event):void {
-            event.stopPropagation();
-            event.preventDefault();
-        },
-        // this function allows typing of tab characters into textareas without the
-        // textarea loosing focus
-        fixtabs      : function dom_event_fixtabs(event:KeyboardEvent, node:HTMLInputElement):boolean {
-            let start:string = "",
-                end:string   = "",
-                val:string   = "",
-                sel:number   = 0;
-            if (typeof event !== "object" || event === null || event.type !== "keydown" || event.keyCode !== 9 || typeof node.selectionStart !== "number" || typeof node.selectionEnd !== "number") {
-                return true;
-            }
-            val              = node.value;
-            sel              = node.selectionStart;
-            start            = val.substring(0, sel);
-            end              = val.substring(sel, val.length);
-            node.value          = start + "\t" + end;
-            node.selectionStart = sel + 1;
-            node.selectionEnd   = sel + 1;
-            event.preventDefault();
-            return false;
-        },
-        //tests if a key press is a short command
-        keydown      : function dom_event_keydown(event:KeyboardEvent):void {
-            if (pd.test.keypress === true && (pd.test.keystore.length === 0 || event.keyCode !== pd.test.keystore[pd.test.keystore.length - 1]) && event.keyCode !== 17 && event.keyCode !== 224) {
-                pd
-                    .test
-                    .keystore
-                    .push(event.keyCode);
-            }
-            if (event.keyCode === 17 || event.ctrlKey === true || event.keyCode === 224) {
-                pd.test.keypress = true;
-            }
-        },
-        //alters available options depending upon language selection
-        langOps      : function dom_event_langOps(node:HTMLElement):void {
-            let name:string = node.nodeName.toLowerCase(),
-                select:HTMLSelectElement,
-                lang:string = "",
-                xml:boolean  = false,
-                csvp:HTMLElement = pd.id("csvcharp");
-            if (node.nodeType === 1 && name === "select") {
-                select = <HTMLSelectElement>node;
-                xml  = (select.getElementsByTagName("option")[select.selectedIndex].innerHTML === "XML" || select.getElementsByTagName("option")[select.selectedIndex].innerHTML === "JSTL");
-            }
-            lang = (pd.data.node.lang === null)
-                ? "javascript"
-                : (pd.data.node.lang.nodeName === "select")
-                    ? pd.data.node.lang[pd.data.node.lang.selectedIndex].value
-                    : pd.data.node.lang.value;
-            if (pd.data.langvalue[0] === undefined) {
-                pd.data.langvalue[0] = lang;
-            }
-            if (select === pd.data.node.lang) {
-                if (pd.data.node.langdefault !== null) {
-                    if (lang === "auto") {
-                        pd.data.node.langdefault.parentNode.parentNode.style.display = "block";
-                        pd.data.node.langdefault.disabled                 = false;
-                    } else {
-                        pd.data.node.langdefault.parentNode.parentNode.style.display = "none";
-                    }
-                }
-                if (lang === "auto") {
-                    pd
-                        .app
-                        .langkey(true, {}, "");
-                } else {
-                    pd
-                        .app
-                        .langkey(true, {}, lang);
-                }
-                if (pd.test.load === false && pd.data.mode !== "diff") {
-                    pd
-                        .app
-                        .hideOutput(select);
-                }
-                pd
-                    .app
-                    .options(select);
-            } else {
-                pd
-                    .app
-                    .options(select);
-            }
-        },
-        //maximize report window to available browser window
-        maximize     : function dom_event_maximize(event:Event):void {
-            let node:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
-                parent:HTMLElement,
-                save:boolean    = false,
-                box:HTMLElement,
-                id:string      = "",
-                heading:HTMLElement,
-                body:HTMLElement,
-                top:number,
-                left:number,
-                buttons:NodeListOf<HTMLButtonElement>,
-                resize:HTMLButtonElement;
-            if (node.nodeType !== 1) {
-                return;
-            }
-            parent = <HTMLElement>document.body.parentNode;
-            left = (parent.scrollLeft > document.body.scrollLeft)
-                ? parent.scrollLeft
-                : document.body.scrollLeft;
-            top = (parent.scrollTop > document.body.scrollTop)
-                ? parent.scrollTop
-                : document.body.scrollTop;
-            parent = <HTMLElement>node.parentNode;
-            buttons = parent.getElementsByTagName("button");
-            resize  = buttons[buttons.length - 1];
-            save    = (parent.innerHTML.indexOf("save") > -1);
-            box     = <HTMLElement>parent.parentNode;
-            id      = box.getAttribute("id");
-            heading = box.getElementsByTagName("h3")[0];
-            body    = box.getElementsByTagName("div")[0];
-            pd
-                .app
-                .zTop(box);
-
-            //maximize
-            if (node.innerHTML === "\u2191") {
-                node.innerHTML = "\u2193";
-                node.setAttribute("title", "Return this dialogue to its prior size and location.");
-                pd.data.settings[id].max = true;
-                pd.data.settings[id].min = false;
-                localStorage.settings = JSON.stringify(pd.data.settings);
-                pd.data.settings[id].top    = box.offsetTop;
-                pd.data.settings[id].left   = box.offsetLeft;
-                pd.data.settings[id].height = body.clientHeight - 36;
-                pd.data.settings[id].width  = body.clientWidth - 3;
-                pd.data.settings[id].zindex = box.style.zIndex;
-                box.style.top               = (top / 10) + "em";
-                box.style.left              = (left / 10) + "em";
-                if (typeof window.innerHeight === "number") {
-                    body.style.height = ((window.innerHeight / 10) - 5.5) + "em";
-                    if (save === true) {
-                        heading.style.width = ((window.innerWidth / 10) - 13.76) + "em";
-                    } else {
-                        heading.style.width = ((window.innerWidth / 10) - 10.76) + "em";
-                    }
-                    body.style.width = ((window.innerWidth / 10) - 4.1) + "em";
-                }
-                resize.style.display = "none";
-
-                //return to normal size
-            } else {
-                pd.data.settings[id].max = false;
-                node.innerHTML              = "\u2191";
-                node.setAttribute("title", "Maximize this dialogue to the browser window.");
-                box.style.top  = (pd.data.settings[id].top / 10) + "em";
-                box.style.left = (pd.data.settings[id].left / 10) + "em";
-                if (save === true) {
-                    heading.style.width = ((pd.data.settings[id].width / 10) - 9.76) + "em";
-                } else {
-                    heading.style.width = ((pd.data.settings[id].width / 10) - 6.76) + "em";
-                }
-                body.style.width     = (pd.data.settings[id].width / 10) + "em";
-                body.style.height    = (pd.data.settings[id].height / 10) + "em";
-                box.style.zIndex     = pd.data.settings[id].zindex;
-                resize.style.display = "block";
-                pd
-                    .app
-                    .options(box);
-            }
-        },
-        //minimize report windows to the default size and location
-        minimize     : function dom_event_minimize(e:Event):boolean {
-            const node:HTMLElement = <HTMLElement>e.srcElement || <HTMLElement>e.target;
-            let parent:HTMLElement = <HTMLElement>node.parentNode,
-                parentNode:HTMLElement,
-                box:HTMLElement,
-                final:number    = 0,
-                id:string        = "",
-                body:HTMLElement,
-                heading:HTMLElement,
-                buttons:NodeListOf<HTMLButtonElement>,
-                save:boolean      = false,
-                buttonMin:HTMLButtonElement,
-                buttonMax:HTMLButtonElement,
-                left:number      = 0,
-                top:number       = 0,
-                buttonRes:HTMLButtonElement,
-                step:number      = (parent.style.display === "none" && (pd.data.mode === "diff" || (pd.data.mode === "beau" && pd.options.jsscope === "report" && pd.options.lang === "javascript")))
-                    ? 1
-                    : 50,
-                growth    = function dom_event_minimize_growth():boolean {
-                    let width:number        = 17,
-                        height:number       = 3,
-                        leftTarget:number   = 0,
-                        topTarget:number    = 0,
-                        widthTarget:number  = 0,
-                        heightTarget:number = 0,
-                        incW:number         = 0,
-                        incH:number         = 0,
-                        incL:number         = 0,
-                        incT:number         = 0,
-                        saveSpace:number    = (save === true)
-                            ? 9.45
-                            : 6.45,
-                        grow         = function dom_event_minimize_growth_grow():boolean {
-                            width                    = width + incW;
-                            height                   = height + incH;
-                            left                = left + incL;
-                            top                 = top + incT;
-                            body.style.width    = width + "em";
-                            body.style.height   = height + "em";
-                            heading.style.width = (width - saveSpace) + "em";
-                            box.style.left      = left + "em";
-                            box.style.top       = top + "em";
-                            if (width + incW < widthTarget || height + incH < heightTarget) {
-                                setTimeout(dom_event_minimize_growth_grow, 1);
-                            } else {
-                                box.style.left      = leftTarget + "em";
-                                box.style.top       = topTarget + "em";
-                                body.style.width    = widthTarget + "em";
-                                body.style.height   = heightTarget + "em";
-                                heading.style.width = (widthTarget - saveSpace) + "em";
-                                pd
-                                    .app
-                                    .options(box);
-                                return false;
-                            }
-                            return true;
-                        };
-                    pd
-                        .app
-                        .zTop(box);
-                    buttonMin.innerHTML   = "\u035f";
-                    parent.style.display  = "block";
-                    box.style.borderWidth = ".1em";
-                    box.style.right       = "auto";
-                    body.style.display    = "block";
-                    heading.getElementsByTagName("button")[0].style.cursor = "move";
-                    heading.style.borderLeftStyle                          = "none";
-                    heading.style.borderTopStyle                           = "none";
-                    heading.style.margin                                   = "-0.1em 1.7em -3.2em -0.1em";
-                    if (pd.test.agent.indexOf("macintosh") > 0) {
-                        saveSpace = (save === true)
-                            ? 8
-                            : 5;
-                    }
-                    if (typeof pd.data.settings[id].left === "number") {
-                        leftTarget   = (pd.data.settings[id].left / 10);
-                        topTarget    = (pd.data.settings[id].top / 10);
-                        widthTarget  = (pd.data.settings[id].width / 10);
-                        heightTarget = (pd.data.settings[id].height / 10);
-                    } else {
-                        top                    = top + 4;
-                        pd.data.settings[id].left   = 200;
-                        pd.data.settings[id].top    = (top * 10);
-                        pd.data.settings[id].width  = 550;
-                        pd.data.settings[id].height = 450;
-                        leftTarget                  = 10;
-                        topTarget                   = 2;
-                        widthTarget                 = 55;
-                        heightTarget                = 45;
-                    }
-                    widthTarget  = widthTarget - 0.3;
-                    heightTarget = heightTarget - 3.55;
-                    if (step === 1) {
-                        box.style.left    = leftTarget + "em";
-                        box.style.top     = ((window.innerHeight / 10) - 30) + "em";
-                        body.style.width  = widthTarget + "em";
-                        body.style.height = heightTarget + "em";
-                        heading.style.width    = (widthTarget - saveSpace) + "em";
-                        pd
-                            .app
-                            .options(box);
-                        return false;
-                    }
-                    incW                    = (widthTarget > width)
-                        ? ((widthTarget - width) / step)
-                        : ((width - widthTarget) / step);
-                    incH                    = (heightTarget > height)
-                        ? ((heightTarget - height) / step)
-                        : ((height - heightTarget) / step);
-                    incL                    = (leftTarget - left) / step;
-                    incT                    = (topTarget - top) / step;
-                    box.style.right    = "auto";
-                    body.style.display = "block";
-                    grow();
-                    return false;
-                },
-                shrinkage = function dom_event_minimize_shrinkage():boolean {
-                    let width        = body.clientWidth / 10,
-                        height       = body.clientHeight / 10,
-                        incL         = (((window.innerWidth / 10) - final - 17) - left) / step,
-                        incT         = 0,
-                        incW         = (width === 17)
-                            ? 0
-                            : (width > 17)
-                                ? ((width - 17) / step)
-                                : ((17 - width) / step),
-                        incH         = height / step,
-                        shrink       = function dom_event_minimize_shrinkage_shrink():boolean {
-                            left                = left + incL;
-                            top                 = top + incT;
-                            width                    = width - incW;
-                            height                   = height - incH;
-                            body.style.width    = width + "em";
-                            heading.style.width = width + "em";
-                            body.style.height   = height + "em";
-                            box.style.left      = left + "em";
-                            box.style.top       = top + "em";
-                            if (width - incW > 16.8) {
-                                setTimeout(dom_event_minimize_shrinkage_shrink, 1);
-                            } else {
-                                box.style.left      = "auto";
-                                box.style.top       = "auto";
-                                box.style.right     = final + "em";
-                                pd.data.settings[id].max = false;
-                                body.style.display  = "none";
-                                heading.getElementsByTagName("button")[0].style.cursor = "pointer";
-                                heading.style.margin                                   = "-0.1em 0em -3.2em -0.1em";
-                                box.style.zIndex                                            = "2";
-                                pd
-                                    .app
-                                    .options(box);
-                                return false;
-                            }
-                            return true;
-                        };
-                    parentNode = <HTMLElement>box.parentNode;
-                    incT = (((parentNode.offsetTop / 10) - top) / step);
-                    buttonMin.innerHTML = "\u2191";
-                    //if a maximized window is minimized
-                    if (buttonMax.innerHTML === "\u2191") {
-                        if (pd.test.agent.indexOf("macintosh") > 0) {
-                            pd.data.settings[id].top    = box.offsetTop;
-                            pd.data.settings[id].left   = box.offsetLeft;
-                            pd.data.settings[id].height = body.clientHeight - 17;
-                            pd.data.settings[id].width  = body.clientWidth - 17;
-                        } else {
-                            pd.data.settings[id].top    = box.offsetTop;
-                            pd.data.settings[id].left   = box.offsetLeft;
-                            pd.data.settings[id].height = body.clientHeight;
-                            pd.data.settings[id].width  = body.clientWidth;
-                        }
-                        if (pd.data.zIndex > 2) {
-                            pd.data.zIndex      = pd.data.zIndex - 3;
-                            parent.style.zIndex = pd.data.zIndex;
-                        }
-                    } else {
-                        buttonMax.innerHTML         = "\u2191";
-                        pd.data.settings[id].top    = pd.data.settings[id].top + 1;
-                        pd.data.settings[id].left   = pd.data.settings[id].left - 7;
-                        pd.data.settings[id].height = pd.data.settings[id].height + 35.5;
-                        pd.data.settings[id].width  = pd.data.settings[id].width + 3;
-                    }
-                    parent.style.display = "none";
-                    shrink();
-                    return false;
-                };
-            if (node.parentNode.nodeName.toLowerCase() === "h3") {
-                heading = <HTMLElement>node.parentNode;
-                box     = <HTMLElement>heading.parentNode;
-                parent  = box.getElementsByTagName("p")[0];
-            } else {
-                parent  = (node.parentNode.nodeName.toLowerCase() === "a")
-                    ? <HTMLElement>node.parentNode.parentNode
-                    : <HTMLElement>node.parentNode;
-                box     = <HTMLElement>parent.parentNode;
-                heading = box.getElementsByTagName("h3")[0];
-            }
-            id                      = box.getAttribute("id");
-            body                    = box.getElementsByTagName("div")[0];
-            buttons                 = parent.getElementsByTagName("button");
-            save                    = (parent.innerHTML.indexOf("save") > -1);
-            buttonMin               = (save === true)
-                ? buttons[1]
-                : buttons[0];
-            buttonMax               = (save === true)
-                ? buttons[2]
-                : buttons[1];
-            left                    = (box.offsetLeft / 10 > 1)
-                ? box.offsetLeft / 10
-                : 1;
-            top                     = (box.offsetTop / 10 > 1)
-                ? box.offsetTop / 10
-                : 1;
-            buttonRes               = (save === true)
-                ? buttons[3]
-                : buttons[2];
-            buttonRes.style.display = "block";
-            if (box === pd.data.node.report.feed.box) {
-                if (pd.test.filled.feed === true) {
-                    step = 1;
-                }
-                final = 38.8;
-            }
-            if (box === pd.data.node.report.code.box) {
-                if (pd.test.filled.code === true) {
-                    step = 1;
-                }
-                final = 19.8;
-            }
-            if (box === pd.data.node.report.stat.box) {
-                if (pd.test.filled.stat === true) {
-                    step = 1;
-                }
-                final = 0.8;
-            }
-            if (typeof e.preventDefault === "function") {
-                e.preventDefault();
-            }
-            if (buttonMin.innerHTML === "\u035f") {
-                shrinkage();
-            } else {
-                growth();
-            }
-            return false;
-        },
-        //toggles between modes
-        modeToggle   : function dom_event_modeToggle(mode:string):void {
-            const cycleOptions = function dom_event_modeToggle_cycleOptions():void {
-                    const li:HTMLLIElement[] = pd.id("addOptions").getElementsByTagName("li"),
-                        lilen:number = li.length;
-                    let a:number = 0,
-                        div:HTMLDivElement,
-                        modeat:string;
-                    do {
-                        if (li[a].getAttribute("data-mode") !== "any") {
-                            div = li[a].getElementsByTagName("div")[0];
-                            modeat = li[a].getAttribute("data-mode");
-                            if (modeat !== mode && mode !== "diff") {
-                                div.innerHTML = `This option is not available in mode '${mode}'.`;
-                                div.style.display = "block";
-                            } else if (mode === "diff" && modeat !== "diff" && modeat !== "beautify") {
-                                div.innerHTML = `This option is not available in mode '${mode}'.`;
-                                div.style.display = "block";
-                            } else {
-                                div.style.display = "none";
-                            }
-                        }
-                        a = a + 1;
-                    } while (a < lilen);
-                },
-                makeChanges = function dom_event_modeToggle_makeChanges():void {
-                    const text:string = mode.charAt(0).toUpperCase() + mode.slice(1),
-                        ci:HTMLElement = pd.id("codeInput"),
-                        cilabel:NodeListOf<HTMLLabelElement> = ci.getElementsByTagName("label"),
-                        output:HTMLElement = pd.id("output"),
-                        outLabel:HTMLElement = <HTMLElement>ci.getElementsByClassName("inputLabel")[1],
-                        sourceLabel:HTMLElement = pd.id("inputlabel").parentNode,
-                        outputLabel:HTMLElement = pd.id("outputlabel").parentNode,
-                        outputFile:HTMLElement = pd.id("outputfile").parentNode;
-                    if (mode === "diff") {
-                        ci.getElementsByTagName("h2")[0].innerHTML = "Compare Code";
-                        cilabel[0].innerHTML = "Base File";
-                        cilabel[2].innerHTML = "Compare code sample";
-                        cilabel[5].innerHTML = " Compare new code"
-                        outLabel.style.marginTop = "0";
-                        sourceLabel.style.display = "block";
-                        outputLabel.style.display = "block";
-                        outputFile.style.display = "block";
-                        if (pd.test.ace === true) {
-                            pd
-                                .ace
-                                .codeOut
-                                .setReadOnly(false);
-                            parent = <HTMLElement>output.parentNode;
-                            parent.setAttribute("class", "output");
-                        } else {
-                            output.getElementsByTagName("textarea")[0].readOnly = false;
-                            parent = <HTMLElement>output.parentNode.parentNode;
-                            parent.setAttribute("class", "output");
-                        }
-                    } else {
-                        ci.getElementsByTagName("h2")[0].innerHTML = text;
-                        cilabel[0].innerHTML = `${text} file`;
-                        cilabel[2].innerHTML = `${text} code sample`;
-                        cilabel[5].innerHTML = `${text} output`;
-                        outLabel.style.marginTop = "3.6em";
-                        sourceLabel.style.display = "none";
-                        outputLabel.style.display = "none";
-                        outputFile.style.display = "none";
-                        if (pd.test.ace === true) {
-                            pd
-                                .ace
-                                .codeOut
-                                .setReadOnly(true);
-                            parent = <HTMLElement>output.parentNode;
-                            parent.setAttribute("class", "readonly");
-                        } else {
-                            output.getElementsByTagName("textarea")[0].readOnly = false;
-                            parent = <HTMLElement>output.parentNode.parentNode;
-                            parent.setAttribute("class", "readonly");
-                        }
-                    }
-                };
-            let parent:HTMLElement;
-            if (mode === "analysis") {
-                pd.data.mode = "anal";
-            }
-            if (mode === "beautify") {
-                pd.data.mode = "beau";
-            }
-            if (mode === "diff") {
-                pd.data.mode = "diff";
-            }
-            if (mode === "minify") {
-                pd.data.mode = "minn";
-            }
-            if (mode === "parse") {
-                pd.data.mode = "pars";
-            }
-            makeChanges();
-            cycleOptions();
-        },
-        //reset tool to default configuration
-        reset        : function dom_event_reset():void {
-            let nametry:string = "",
-                name:string    = "";
-            localStorage.codeIn  = "";
-            localStorage.codeOut  = "";
-            localStorage.commentString = "[]";
-            if (pd.data.settings === undefined || pd.data.settings.knownname === undefined) {
-                if (pd.data.settings === undefined) {
-                    pd.data.settings = {
-                        feedback: {
-                            newb   : false,
-                            veteran: false
-                        }
-                    };
-                }
-                if (localStorage.settings !== undefined) {
-                    nametry = JSON.stringify(localStorage.settings);
-                }
-                if (localStorage.settings === undefined || nametry === "" || nametry.indexOf("knownname") < 0) {
-                    name = "\"" + Math
-                        .random()
-                        .toString()
-                        .slice(2) + Math
-                        .random()
-                        .toString()
-                        .slice(2) + "\"";
-                }
-                pd.data.settings.knownname = name;
-            }
-            if (pd.data.settings.feedback === undefined) {
-                pd.data.settings.feedback = {
-                    newb   : false,
-                    veteran: false
-                };
-            }
-            localStorage.settings = "{\"feedback\":{\"newb\":" + pd.data.settings.feedback.newb + ",\"veteran\":" + pd.data.settings.feedback.veteran + "},\"codereport\":{},\"statreport\":{},\"knownname\":" + pd.data.settings.knownname + "}";
-            pd.data.commentString = [];
-            if (pd.data.node.comment !== null) {
-                pd.data.node.comment.innerHTML = "/*prettydiff.com \u002a/";
-            }
-            pd.data.node.modeDiff.checked = true;
-            location.reload();
-        },
-        //resize report window to custom width and height on drag
-        resize       : function dom_event_resize(e:MouseEvent, x:HTMLElement):void {
-            let bodyWidth:number  = 0,
-                bodyHeight:number = 0;
-            const parent:HTMLElement     = <HTMLElement>x.parentNode,
-                save:boolean       = (parent.innerHTML.indexOf("save") > -1),
-                box:HTMLElement        = <HTMLElement>parent.parentNode,
-                body:HTMLDivElement       = box.getElementsByTagName("div")[0],
-                offX:number = e.clientX,
-                offY:number = e.clientY,
-                heading:HTMLHeadingElement    = box.getElementsByTagName("h3")[0],
-                mac:boolean        = (pd.test.agent.indexOf("macintosh") > 0),
-                offsetw:number    = (mac === true)
-                    ? 20
-                    : 4,
-                offseth:number    = (mac === true)
-                    ? 54
-                    : 36,
-                drop       = function dom_event_resize_drop():void {
-                    document.onmousemove = null;
-                    bodyWidth            = body.clientWidth;
-                    bodyHeight           = body.clientHeight;
-                    pd
-                        .app
-                        .options(box);
-                    document.onmouseup = null;
-                },
-                boxsize    = function dom_event_resize_boxsize(f:MouseEvent):void {
-                    body.style.width = ((bodyWidth + ((f.clientX - offsetw) - offX)) / 10) + "em";
-                    if (save === true) {
-                        heading.style.width = (((bodyWidth + (f.clientX - offX)) / 10) - 10.15) + "em";
-                    } else {
-                        heading.style.width = (((bodyWidth + (f.clientX - offX)) / 10) - 7.15) + "em";
-                    }
-                    body.style.height  = ((bodyHeight + ((f.clientY - offseth) - offY)) / 10) + "em";
-                    document.onmouseup = drop;
-                };
-            bodyWidth  = body.clientWidth,
-            bodyHeight = body.clientHeight
-            pd
-                .app
-                .zTop(box);
-            document.onmousemove = boxsize;
-            document.onmousedown = null;
-        },
-        //toggle between parsed html diff report and raw text representation
-        save         : function dom_event_save(x:HTMLElement):boolean {
-            const anchor:boolean     = (x.nodeName.toLowerCase() === "a"),
-                top:HTMLElement        = (x.parentNode.parentNode.nodeName.toLowerCase() === "p")
-                    ? <HTMLElement>x.parentNode.parentNode.parentNode
-                    : <HTMLElement>x.parentNode.parentNode,
-                button:HTMLElement     = (anchor === true)
-                    ? x.getElementsByTagName("button")[0]
-                    : x,
-                body:HTMLElement       = top.getElementsByTagName("div")[0],
-                bodyInner:string  = body
-                    .innerHTML
-                    .replace(/\u0020xmlns=("|')http:\/\/www\.w3\.org\/1999\/xhtml("|')/g, ""),
-                ro:HTMLInputElement         = pd.id("savepref-report"),
-                reportonly:boolean = (ro !== null && ro.checked === true);
-            let pageHeight = 0,
-                content:NodeListOf<HTMLElement>,
-                span:HTMLElement       = pd.id("inline"),
-                lastChild:HTMLElement;
-            if (bodyInner === "") {
-                return;
-            }
-            if (reportonly === true && anchor === true) {
-                x.removeAttribute("href");
-            }
-
-            // added support for Firefox and Opera because they support long URIs.  This
-            // extra support allows for local file creation.
-            if (anchor === true && button.innerHTML === "S") {
-                if (bodyInner === "" || ((/Please\u0020try\u0020using\u0020the\u0020option\u0020labeled\u0020((&lt;)|<)em((&gt;)|>)Plain\u0020Text\u0020\(diff\u0020only\)((&lt;)|<)\/em((&gt;)|>)\./).test(bodyInner) === true && (/div\u0020class=("|')diff("|')/).test(bodyInner) === false)) {
-                    return false;
-                }
-                if (reportonly === true) {
-                    x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(bodyInner));
-                } else {
-                    x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(prettydiff.finalFile.order.join("")));
-                }
-                x.onclick = pd.event.save;
-
-                // prompt to save file created above.  below is the creation of the modal with
-                // instructions about file extension.
-                lastChild = pd.data.node.page.lastChild;
-                if (lastChild.nodeType > 1 || lastChild.nodeName.toLowerCase() === "script") {
-                    do {
-                        lastChild = <HTMLElement>lastChild.previousSibling;
-                    } while (lastChild.nodeType > 1 || lastChild.nodeName.toLowerCase() === "script");
-                }
-                pageHeight = lastChild.offsetTop + lastChild.clientHeight + 20;
-                lastChild  = document.createElement("div");
-                lastChild.onmousedown = function dom_event_save_remove() {
-                    lastChild.parentNode.removeChild(lastChild);
-                };
-                lastChild.setAttribute("id", "modalSave");
-                span              = document.createElement("span");
-                span.style.width  = (pd.data.node.page.clientWidth + 10) + "px";
-                span.style.height = pageHeight + "px";
-                lastChild.appendChild(span);
-                span           = document.createElement("p");
-                span.innerHTML = "Just rename the file extension from '<strong>.part</strong>' to '<strong>.xhtml<" +
-                                     "/strong>'. <em>Click anywhere to close this reminder.</em>";
-                lastChild.appendChild(span);
-                pd
-                    .data
-                    .node
-                    .page
-                    .appendChild(lastChild);
-                span.style.left = (((pd.data.node.page.clientWidth + 10) - span.clientWidth) / 2) + "px";
-                return false;
-            }
-            // Webkit and IE get the old functionality of a textarea with HTML text content
-            // to copy and paste into a text file.
-            pd
-                .app
-                .zTop(top);
-            prettydiff.finalFile.order[7] = pd.data.color;
-            if (pd.data.mode === "diff") {
-                prettydiff.finalFile.order[12] = prettydiff.finalFile.script.diff;
-            } else if (pd.data.mode === "beau" && pd.data.langvalue[0] === "javascript" && ((pd.id("jsscope-yes") !== null && pd.id("jsscope-yes").checked === true) || (pd.id("jsscope-html") !== null && pd.id("jsscope-html").checked === true))) {
-                prettydiff.finalFile.order[12] = prettydiff.finalFile.script.beautify;
-            } else {
-                prettydiff.finalFile.order[12] = prettydiff.finalFile.script.minimal;
-            }
-            if (button.innerHTML === "S") {
-                button.innerHTML = "H";
-                button.setAttribute("title", "Convert output to rendered HTML.");
-                body.innerHTML = "<textarea rows='40' cols='80'>" + pd
-                    .data
-                    .html
-                    .join("")
+            if (data.commentString.length === 0) {
+                comment.innerHTML = "/*prettydiff.com \u002a/";
+            } else if (data.commentString.length === 1) {
+                comment.innerHTML = "/*prettydiff.com " + data
+                    .commentString[0]
                     .replace(/&/g, "&amp;")
                     .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;") + "</textarea>";
-                return false;
+                    .replace(/>/g, "&gt;")
+                    .replace(/api\./g, "") + " \u002a/";
+            } else {
+                comment.innerHTML = "/*prettydiff.com " + data
+                    .commentString
+                    .join(", ")
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/api\./g, "") + " \u002a/";
             }
-            button.innerHTML = "S";
-            button.setAttribute("title", "Convert report to text that can be saved.");
-            body.innerHTML = prettydiff.finalFile.order[10];
-            content        = body.getElementsByTagName("ol");
-            if (content.length > 0) {
-                if (pd.data.mode === "diff") {
-                    content[2].onmousedown  = function dom_event_save_mousedown() {
-                        pd.event.colSliderGrab(content[2].onmousedown, content[2]);
-                    };
-                    content[2].ontouchstart = function dom_event_save_touchstart() {
-                        pd.event.colSliderGrab(content[2].ontouchstart, content[2]);
-                    };
+            localStorage.commentString = JSON
+                .stringify(data.commentString)
+                .replace(/api\./g, "");
+        }
+    };
+    //allows visual folding of function in the JSPretty jsscope HTML output
+    method.event.beaufold = function dom_event_beaufold(el:HTMLElement):void {
+        let a:number     = 0,
+            b:string     = "";
+        const title:string[] = el
+                .getAttribute("title")
+                .split("line "),
+            parent:[HTMLElement, HTMLElement] = [<HTMLElement>el.parentNode, <HTMLElement>el.parentNode.nextSibling],
+            min:number   = Number(title[1].substr(0, title[1].indexOf(" "))),
+            max:number   = Number(title[2]),
+            list:[NodeListOf<HTMLLIElement>, NodeListOf<HTMLLIElement>]  = [
+                parent[0].getElementsByTagName("li"),
+                parent[1].getElementsByTagName("li")
+            ];
+        a = min;
+        if (el.innerHTML.charAt(0) === "-") {
+            do {
+                list[0][a].style.display = "none";
+                list[1][a].style.display = "none";
+                a = a + 1;
+            } while (a < max);
+            el.innerHTML = "+" + el
+                .innerHTML
+                .substr(1);
+        } else {
+            do {
+                list[0][a].style.display = "block";
+                list[1][a].style.display = "block";
+                if (list[0][a].getAttribute("class") === "fold" && list[0][a].innerHTML.charAt(0) === "+") {
+                    b = list[0][a].getAttribute("title");
+                    b = b.substring(b.indexOf("to line ") + 1);
+                    a = Number(b) - 1;
                 }
-                content = content[0].getElementsByTagName("li");
-                pageHeight = content.length - 1;
-                do {
-                    if (content[pageHeight].getAttribute("class") === "fold") {
-                        if (pd.data.mode === "beau") {
-                            content[pageHeight].onclick = pd.event.beaufold;
-                        } else if (pd.data.mode === "diff") {
-                            content[pageHeight].onclick = function dom_event_save_difffold() {
-                                pd.event.difffold(content[pageHeight]);
-                            }
-                        }
-                    }
-                    pageHeight = pageHeight - 1;
-                } while (pageHeight > -1);
+                a = a + 1;
+            } while (a < max);
+            el.innerHTML = "-" + el
+                .innerHTML
+                .substr(1);
+        }
+    };
+    //change the color scheme of the web UI
+    method.event.colorScheme = function dom_event_colorScheme():void {
+        const item:HTMLSelectElement = id("option-color"),
+            option:NodeListOf<HTMLOptionElement>    = item.getElementsByTagName("option"),
+            optionLen:number = option.length,
+            index:number     = (function dom_event_colorScheme_indexLen():number {
+                if (item.selectedIndex < 0 || item.selectedIndex > optionLen) {
+                    item.selectedIndex = optionLen - 1;
+                    return optionLen - 1;
+                }
+                return item.selectedIndex;
+            }()),
+            color:string     = option[index]
+                .innerHTML
+                .toLowerCase()
+                .replace(/\s+/g, ""),
+            logo      = id("pdlogo");
+        let theme:string     = "",
+            logoColor:string = "";
+        document
+            .getElementsByTagName("body")[0]
+            .setAttribute("class", color);
+        if (test.ace === true) {
+            if (color === "white") {
+                theme = "ace/theme/textmate";
             }
-            pd
+            if (color === "shadow") {
+                theme = "ace/theme/idle_fingers";
+            }
+            if (color === "canvas") {
+                theme = "ace/theme/textmate";
+            }
+            aceStore
+                .codeIn
+                .setTheme(theme);
+            aceStore
+                .codeOut
+                .setTheme(theme);
+        }
+        if (logo !== null) {
+            if (color === "canvas") {
+                logoColor = "664";
+            } else if (color === "shadow") {
+                logoColor = "999";
+            } else {
+                logoColor = "666";
+            }
+            logo.style.borderColor = "#" + logoColor;
+            logo
+                .getElementsByTagName("g")[0]
+                .setAttribute("fill", "#" + logoColor);
+        }
+        if (test.load === false) {
+            method
                 .app
-                .options(x.parentNode);
-            return false;
-        },
-        //analyzes combinations of consecutive key presses
-        sequence     : function dom_event_sequence(event:KeyboardEvent):void {
-            const seq   = pd.test.keysequence,
-                len   = seq.length,
-                key   = event.keyCode;
-            if (len === 0 || len === 1) {
-                if (key === 38) {
-                    pd
-                        .test
-                        .keysequence
-                        .push(true);
-                } else {
-                    pd.test.keysequence = [];
+                .options(item);
+        }
+    };
+    // allows grabbing and resizing columns (from the third column) in the diff
+    // side-by-side report
+    method.event.colSliderGrab = function dom_event_colSliderGrab(event:Event, node:HTMLElement):boolean {
+        let subOffset:number   = 0,
+            withinRange:boolean = false,
+            offset:number      = 0,
+            status:string      = "ew",
+            width:number       = 0,
+            total:number       = 0,
+            diffLeft:HTMLElement,
+            par1:HTMLElement,
+            par2:HTMLElement;
+        const touch:boolean       = (event !== null && event.type === "touchstart"),
+            diffRight:HTMLElement   = <HTMLElement>node.parentNode,
+            diff:HTMLElement        = <HTMLElement>diffRight.parentNode,
+            lists:NodeListOf<HTMLOListElement>       = diff.getElementsByTagName("ol"),
+            counter:number     = lists[0].clientWidth,
+            data:number        = lists[1].clientWidth,
+            min:number         = ((total - counter - data - 2) - width),
+            max:number         = (total - width - counter),
+            minAdjust:number   = min + 15,
+            maxAdjust:number   = max - 15;
+        diffLeft = <HTMLElement>diffRight.previousSibling;
+        par1 = <HTMLElement>lists[2].parentNode;
+        par2 = <HTMLElement>lists[2].parentNode.parentNode;
+        offset = par1.offsetLeft - par2.offsetLeft;
+        width = par1.clientWidth;
+        total = par2.clientWidth;
+        event.preventDefault();
+        if (report.code.box !== null) {
+            offset = offset + report.code.box.offsetLeft;
+            offset = offset - report.code.body.scrollLeft;
+        } else {
+            par1 = <HTMLElement>document.body.parentNode;
+            subOffset = (par1.scrollLeft > document.body.scrollLeft)
+                ? par1.scrollLeft
+                : document.body.scrollLeft;
+            offset    = offset - subOffset;
+        }
+        offset             = offset + node.clientWidth;
+        node.style.cursor  = "ew-resize";
+        diff.style.width   = (total / 10) + "em";
+        diff.style.display = "inline-block";
+        if (diffLeft.nodeType !== 1) {
+            do {
+                diffLeft = <HTMLElement>diffLeft.previousSibling;
+            } while (diffLeft.nodeType !== 1);
+        }
+        diffLeft.style.display   = "block";
+        diffRight.style.width    = (diffRight.clientWidth / 10) + "em";
+        diffRight.style.position = "absolute";
+        if (touch === true) {
+            document.ontouchmove  = function dom_event_colSliderGrab_Touchboxmove(f:TouchEvent):void {
+                f.preventDefault();
+                subOffset = offset - f.touches[0].clientX;
+                if (subOffset > minAdjust && subOffset < maxAdjust) {
+                    withinRange = true;
                 }
-            } else if (len === 2 || len === 3) {
-                if (key === 40) {
-                    pd
-                        .test
-                        .keysequence
-                        .push(true);
-                } else {
-                    pd.test.keysequence = [];
+                if (withinRange === true && subOffset > maxAdjust) {
+                    diffRight.style.width = ((total - counter - 2) / 10) + "em";
+                    status                = "e";
+                } else if (withinRange === true && subOffset < minAdjust) {
+                    diffRight.style.width = ((total - counter - data - 2) / 10) + "em";
+                    status                = "w";
+                } else if (subOffset < max && subOffset > min) {
+                    diffRight.style.width = ((width + subOffset) / 10) + "em";
+                    status                = "ew";
                 }
-            } else if (len === 4 || len === 6) {
-                if (key === 37) {
-                    pd
-                        .test
-                        .keysequence
-                        .push(true);
-                } else {
-                    pd.test.keysequence = [];
+                document.ontouchend = function dom_event_colSliderGrab_Touchboxmove_drop(f:TouchEvent):void {
+                    f.preventDefault();
+                    node.style.cursor = status + "-resize";
+                    document.ontouchmove = null;
+                    document.ontouchend  = null;
+                };
+            };
+            document.ontouchstart = null;
+        } else {
+            document.onmousemove = function dom_event_colSliderGrab_Mouseboxmove(f:MouseEvent):void {
+                f.preventDefault();
+                subOffset = offset - f.clientX;
+                if (subOffset > minAdjust && subOffset < maxAdjust) {
+                    withinRange = true;
                 }
-            } else if (len === 5 || len === 7) {
-                if (key === 39) {
-                    pd
-                        .test
-                        .keysequence
-                        .push(true);
-                } else {
-                    pd.test.keysequence = [];
+                if (withinRange === true && subOffset > maxAdjust) {
+                    diffRight.style.width = ((total - counter - 2) / 10) + "em";
+                    status                = "e";
+                } else if (withinRange === true && subOffset < minAdjust) {
+                    diffRight.style.width = ((total - counter - data - 2) / 10) + "em";
+                    status                = "w";
+                } else if (subOffset < max && subOffset > min) {
+                    diffRight.style.width = ((width + subOffset) / 10) + "em";
+                    status                = "ew";
                 }
-            } else if (len === 8) {
-                if (key === 66) {
-                    pd
-                        .test
-                        .keysequence
-                        .push(true);
-                } else {
-                    pd.test.keysequence = [];
-                }
-            } else if (len === 9) {
-                if (key === 65) {
-                    if (pd.data.audio !== undefined) {
-                        pd
-                            .data
-                            .audio
-                            .play();
-                    }
-                    const active:HTMLElement = <HTMLElement>document.activeElement,
-                        color:HTMLSelectElement  = pd.id("option-color"),
-                        max:number    = color
-                            .getElementsByTagName("option")
-                            .length - 1,
-                        change = function dom_event_sequence_colorChange_change():void {
-                            color.selectedIndex = ind;
-                            pd
-                                .event
-                                .colorScheme();
-                            if (active === document.documentElement || active === null || active === document.getElementsByTagName("body")[0]) {
-                                color.blur();
-                            } else {
-                                active.focus();
-                            }
-                        };
-                    let ind:number    = color.selectedIndex;
-                    ind = ind - 1;
-                    if (ind < 0) {
-                        ind = max;
-                    }
-                    change();
-                    ind = ind + 1;
-                    if (ind > max) {
-                        ind = 0;
-                    }
-                    setTimeout(change, 1500);
-                }
-                pd.test.keysequence = [];
+                document.onmouseup = function dom_event_colSliderGrab_Mouseboxmove_drop(f:MouseEvent):void {
+                    f.preventDefault();
+                    node.style.cursor = status + "-resize";
+                    document.onmousemove = null;
+                    document.onmouseup   = null;
+                };
+            };
+            document.onmousedown = null;
+        }
+        return false;
+    };
+    //allows visual folding of consecutive equal lines in a diff report
+    method.event.difffold = function dom_event_difffold(node:HTMLElement):void {
+        let a:number         = 0,
+            b:number         = 0,
+            max:number,
+            lists:NodeListOf<HTMLLIElement>[];
+        const title:string[]     = node
+                .getAttribute("title")
+                .split("line "),
+            min:number       = Number(title[1].substr(0, title[1].indexOf(" "))),
+            inner:string     = node.innerHTML,
+            parent:HTMLElement    = <HTMLElement>node.parentNode.parentNode,
+            par1:HTMLElement = <HTMLElement>parent.parentNode,
+            listnodes:NodeListOf<HTMLOListElement> = (parent.getAttribute("class") === "diff")
+                ? parent.getElementsByTagName("ol")
+                : par1.getElementsByTagName("ol"),
+            listLen:number   = listnodes.length;
+        do {
+            lists.push(listnodes[a].getElementsByTagName("li"));
+            a = a + 1;
+        } while (a < listLen);
+        max = (max >= lists[0].length)
+            ? lists[0].length
+            : Number(title[2]);
+        if (inner.charAt(0) === "-") {
+            node.innerHTML = "+" + inner.substr(1);
+            a = min;
+            if (min < max) {
+                do {
+                    b = 0;
+                    do {
+                        lists[b][a].style.display = "none";
+                        b = b + 1;
+                    } while (b < listLen);
+                    a = a + 1;
+                } while (a < max);
+            }
+        } else {
+            node.innerHTML = "-" + inner.substr(1);
+            a = min;
+            if (min < max) {
+                do {
+                    b = 0;
+                    do {
+                        lists[b][a].style.display = "block";
+                        b = b + 1;
+                    } while (b < listLen);
+                    a = a + 1;
+                } while (a < max);
             }
         }
     };
-
-    // recycle bundles arguments in preparation for executing prettydiff references
+    // execute bundles arguments in preparation for executing prettydiff references
     // events: beaufold, colSliderGrab, difffold, minimize, save
-    pd.event.recycle    = function dom_event_recycle(event:KeyboardEvent):boolean {
+    method.event.execute = function dom_event_execute(event:KeyboardEvent):boolean {
         let output:string = "",
             lang:[string, string, string],
             errortext:string   = "",
@@ -4041,12 +2947,12 @@
             requestd:boolean    = false,
             completed:boolean   = false,
             autotest:boolean    = false,
-            node:HTMLInputElement        = pd.id("jsscope-html"),
+            node:HTMLSelectElement        = id("jsscope"),
             codesize:number = 0;
         const domain:RegExp      = (/^((https?:\/\/)|(file:\/\/\/))/),
-            lf:HTMLInputElement        = pd.id("lterminator-crlf"),
-            textout:boolean     = (pd.options.jsscope !== "report" && (node === null || node.checked === false)),
-            execOutput  = function dom_event_recycle_execOutput():void {
+            lf:HTMLInputElement        = id("lterminator-crlf"),
+            textout:boolean     = (options.jsscope !== "report" && (node === null || node[node.selectedIndex].value !== "report")),
+            execOutput  = function dom_event_execute_execOutput():void {
                 let diffList:NodeListOf<HTMLOListElement>,
                     button:HTMLButtonElement,
                     buttons:NodeListOf<HTMLButtonElement>,
@@ -4054,7 +2960,7 @@
                     parent:HTMLElement,
                     chromeSave:boolean = false,
                     size:number = 0;
-                const commanumb  = function dom_event_recycle_execOutput_commanumb(numb):string {
+                const commanumb  = function dom_event_execute_execOutput_commanumb(numb):string {
                         let str:string = "",
                             len:number = 0,
                             arr:string[] = [];
@@ -4073,20 +2979,17 @@
                         } while (len > -1);
                         return arr.join("");
                     };
-                if (pd.options.newline === true) {
+                if (options.newline === true) {
                     output = output.replace(/(\s+)$/, "\r\n");
                 } else {
                     output = output.replace(/(\s+)$/, "");
                 }
-                node = pd.id("showOptionsCallOut");
-                pd.data.zIndex = pd.data.zIndex + 1;
+                node = id("showOptionsCallOut");
+                data.zIndex = data.zIndex + 1;
                 if (autotest === true) {
-                    pd.options.lang = "auto";
+                    options.lang = "auto";
                 }
-                button           = pd
-                    .data
-                    .node
-                    .report
+                button           = report
                     .code
                     .box
                     .getElementsByTagName("p")[0]
@@ -4095,15 +2998,15 @@
                     chromeSave       = true;
                     button.innerHTML = "S";
                 }
-                if (pd.options.mode === "parse" || (pd.options.lang === "csv" && pd.data.mode !== "diff")) {
+                if (output.length > 125000) {
+                    test.filled.code = true;
+                } else {
+                    test.filled.code = false;
+                }
+                if (options.mode === "parse" || (options.lang === "csv" && options.mode !== "diff")) {
                     pdlang = JSON.stringify(output);
-                    if (pdlang.length > 125000) {
-                        pd.test.filled.code = true;
-                    } else {
-                        pd.test.filled.code = false;
-                    }
-                    if (pd.data.node.report.code.box !== null) {
-                        if (pd.options.lang === "csv") {
+                    if (report.code.box !== null) {
+                        if (options.lang === "csv") {
                             let a:number       = 0,
                                 b:number       = output.length,
                                 c:number       = 0,
@@ -4200,126 +3103,85 @@
                             } while (a < b);
                             table.appendChild(body);
                             div.appendChild(table);
-                            pd
-                                .data
-                                .node
-                                .report
+                            report
                                 .code
                                 .body
                                 .appendChild(div);
-                            if (pd.data.mode === "beau") {
-                                pd.data.stat.beau = pd.data.stat.beau + 1;
-                                node              = pd.id("stbeau");
-                                if (node !== null) {
-                                    node.innerHTML = pd.data.stat.beau;
-                                }
-                            } else if (pd.data.mode === "minn") {
-                                pd.data.stat.minn = pd.data.stat.minn + 1;
-                                node              = pd.id("stminn");
-                                if (node !== null) {
-                                    node.innerHTML = pd.data.stat.minn;
-                                }
-                            } else if (pd.data.mode === "pars") {
-                                pd.data.stat.pars = pd.data.stat.pars + 1;
-                                node              = pd.id("stpars");
-                                if (node !== null) {
-                                    node.innerHTML = pd.data.stat.pars;
-                                }
-                            }
-                        } else if (pd.options.mode === "parse") {
+                        } else if (options.mode === "parse") {
                             let table:string[] = [],
                                 build:string = "",
-                                render:HTMLInputElement = pd.id("parsehtml-yes");
-                            if (pd.options.parseFormat !== "htmltable" || render === null || (pd.options.parseFormat === "htmltable" && render.checked === false)) {
-                                if (pd.data.node.codeParsOut !== null && pd.options.lang !== "csv") {
+                                render:HTMLInputElement = id("parseTable-html");
+                            if (options.parseFormat !== "htmltable" || render === null || (options.parseFormat === "htmltable" && render.checked === false)) {
+                                if (options.lang !== "csv") {
                                     build = JSON.stringify(JSON.parse(output).data);
-                                    if (pd.options.parseFormat === "htmltable") {
+                                    if (options.parseFormat === "htmltable") {
                                         build = build.slice(1, build.length - 1).replace(/\\"/g, "\"");
                                     }
-                                    if (pd.test.ace === true) {
-                                        pd
-                                            .ace
+                                    if (test.ace === true) {
+                                        aceStore
                                             .parsOut
                                             .setValue(build);
-                                        pd
-                                            .ace
+                                        aceStore
                                             .parsOut
                                             .clearSelection();
                                     } else {
-                                        pd.data.node.codeParsOut.value = build;
+                                        textarea.codeOut.value = build;
                                     }
                                 }
                                 return;
                             }
-                            if (pd.data.node.report.code.box !== null) {
+                            if (report.code.box !== null) {
                                 table.push("<div class='report'><h4>Parsed Output</h4>");
                                 table.push(JSON.parse(output).data);
                                 table.push("</div>");
                                 build = table.join("");
-                                if (build.length > 75000) {
-                                    pd.test.filled.code = true;
-                                } else {
-                                    pd.test.filled.code = false;
-                                }
                                 if (autotest === true) {
-                                    pd.data.node.report.code.body.innerHTML = "<p>Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</span></p>" + build;
+                                    report.code.body.innerHTML = `<p>Code type is set to <strong>auto</strong>. <span>Presumed language is <em>${data.langvalue[2]}</em>.</span></p>${build}`;
                                 } else {
-                                    pd.data.node.report.code.body.innerHTML = build;
+                                    report.code.body.innerHTML = build;
                                 }
-                                if (pd.data.node.report.code.body.style.display === "none") {
-                                    pd.data.node.report.code.box.getElementsByTagName("h3")[0].click();
+                                if (report.code.body.style.display === "none") {
+                                    report.code.box.getElementsByTagName("h3")[0].click();
                                 }
-                                pd.data.node.report.code.box.style.top   = (pd.data.settings.codereport.top / 10) + "em";
-                                pd.data.node.report.code.box.style.right = "auto";
-                            }
-                            pd.data.stat.pars = pd.data.stat.pars + 1;
-                            node              = pd.id("stpars");
-                            if (node !== null) {
-                                node.innerHTML = pd.data.stat.pars;
+                                report.code.box.style.top   = (data.settings.codereport.top / 10) + "em";
+                                report.code.box.style.right = "auto";
                             }
                         }
-                    } else if (pd.data.node.codeParsOut !== null && pd.options.lang !== "csv") {
-                        if (pd.test.ace === true) {
-                            pd
-                                .ace
+                    } else if (options.lang !== "csv") {
+                        if (test.ace === true) {
+                            aceStore
                                 .parsOut
                                 .setValue(pdlang);
-                            pd
-                                .ace
+                            aceStore
                                 .parsOut
                                 .clearSelection();
                         } else {
-                            pd.data.node.codeParsOut.value = pdlang;
+                            textarea.codeOut.value = pdlang;
                         }
                     }
-                } else if (pd.options.mode === "beautify") {
+                } else if (options.mode === "beautify") {
                     prettydiff.finalFile.order[11] = prettydiff.finalFile.script.beautify;
-                    if (pd.data.node.codeOut !== null && pd.options.jsscope !== "report") {
-                        if (pd.test.ace === true) {
-                            pd
-                                .ace
+                    if (options.jsscope !== "report") {
+                        if (test.ace === true) {
+                            aceStore
                                 .beauOut
                                 .setValue(output);
-                            pd
-                                .ace
+                            aceStore
                                 .beauOut
                                 .clearSelection();
                         } else {
-                            pd.data.node.codeOut.value = output;
+                            textarea.codeOut.value = output;
                         }
                     }
-                    if (pd.data.node.report.code.box !== null) {
-                        if (pd.options.jsscope === "report" && pd.data.langvalue[1] === "javascript" && output.indexOf("Error:") !== 0) {
-                            pd.data.node.report.code.body.innerHTML = output;
-                            if (pd.data.node.report.code.body.style.display === "none") {
-                                pd.data.node.report.code.box.getElementsByTagName("h3")[0].click();
+                    if (report.code.box !== null) {
+                        if (options.jsscope === "report" && data.langvalue[1] === "javascript" && output.indexOf("Error:") !== 0) {
+                            report.code.body.innerHTML = output;
+                            if (report.code.body.style.display === "none") {
+                                report.code.box.getElementsByTagName("h3")[0].click();
                             }
-                            pd.data.node.report.code.box.style.top   = (pd.data.settings.codereport.top / 10) + "em";
-                            pd.data.node.report.code.box.style.right = "auto";
-                            diffList                                 = pd
-                                .data
-                                .node
-                                .report
+                            report.code.box.style.top   = (data.settings.codereport.top / 10) + "em";
+                            report.code.box.style.right = "auto";
+                            diffList                                 = report
                                 .code
                                 .body
                                 .getElementsByTagName("ol");
@@ -4329,8 +3191,8 @@
                                     b:number    = list.length;
                                 do {
                                     if (list[a].getAttribute("class") === "fold") {
-                                        list[a].onclick = function dom_event_recycle_execOutput_beaufold() {
-                                            pd.event.beaufold(list[a]);
+                                        list[a].onclick = function dom_event_execute_execOutput_beaufold() {
+                                            method.event.beaufold(list[a]);
                                         }
                                     }
                                     a = a + 1;
@@ -4338,43 +3200,24 @@
                             }
                         }
                     }
-                    pd.data.stat.beau = pd.data.stat.beau + 1;
-                    node              = pd.id("stbeau");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.beau;
-                    }
-                } else if (pd.options.mode === "diff" && pd.data.node.report.code.box !== null) {
-                    buttons          = pd
-                        .data
-                        .node
-                        .report
+                } else if (options.mode === "diff" && report.code.box !== null) {
+                    buttons          = report
                         .code
                         .box
                         .getElementsByTagName("p")[0]
                         .getElementsByTagName("button");
                     prettydiff.finalFile.order[11] = prettydiff.finalFile.script.diff;
-                    if (output.length > 0 && output.length > 125000) {
-                        pd.test.filled.code = true;
-                    } else {
-                        pd.test.filled.code = false;
-                    }
-                    pd.data.node.report.code.body.innerHTML = "<p>Code type is set to <strong>auto</strong>. Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</p><p><strong>Execution time:</strong> <em>" + meta.time + "</em></p>" + output;
-                    if (autotest === true && pd.data.node.report.code.body.firstChild !== null) {
-                        if (pd.data.node.report.code.body.firstChild.nodeType > 1) {
-                            pd
-                                .data
-                                .node
-                                .report
+                    report.code.body.innerHTML = `<p>Code type is set to <strong>auto</strong>. Presumed language is <em>${data.langvalue[2]}</em>.</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
+                    if (autotest === true && report.code.body.firstChild !== null) {
+                        if (report.code.body.firstChild.nodeType > 1) {
+                            report
                                 .code
                                 .body
-                                .removeChild(pd.data.node.report.code.body.firstChild);
+                                .removeChild(report.code.body.firstChild);
                         }
                     }
-                    if (pd.data.node.report.code.body.innerHTML.toLowerCase().indexOf("<textarea") === -1) {
-                        diffList = pd
-                            .data
-                            .node
-                            .report
+                    if (report.code.body.innerHTML.toLowerCase().indexOf("<textarea") === -1) {
+                        diffList = report
                             .code
                             .body
                             .getElementsByTagName("ol");
@@ -4384,131 +3227,87 @@
                             let a:number     = 0;
                             do {
                                 if (cells[a].getAttribute("class") === "fold") {
-                                    cells[a].onclick = function dom_event_recycle_execOutput_() {
-                                        pd.event.difffold(cells[a]);
+                                    cells[a].onclick = function dom_event_execute_execOutput_() {
+                                        method.event.difffold(cells[a]);
                                     }
                                 }
                                 a = a + 1;
                             } while (a < len);
                         }
-                        if (pd.options.diffview === "sidebyside" && diffList.length > 2) {
+                        if (options.diffview === "sidebyside" && diffList.length > 2) {
                             diffList[2].onmousedown  = function dom_event_save_mousedown() {
-                                pd.event.colSliderGrab(diffList[2].onmousedown, diffList[2]);
+                                method.event.colSliderGrab(diffList[2].onmousedown, diffList[2]);
                             };
                             diffList[2].ontouchstart = function dom_event_save_touchstart() {
-                                pd.event.colSliderGrab(diffList[2].ontouchstart, diffList[2]);
+                                method.event.colSliderGrab(diffList[2].ontouchstart, diffList[2]);
                             };
                         }
                     }
-                    pd.data.stat.diff = pd.data.stat.diff + 1;
-                    node              = pd.id("stdiff");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.diff;
-                    }
-                } else if (pd.options.mode === "minify") {
-                    if (output.length > 125000) {
-                        pd.test.filled.code = true;
+                } else if (options.mode === "minify") {
+                    if (test.ace === true) {
+                        aceStore
+                            .minnOut
+                            .setValue(output);
+                        aceStore
+                            .minnOut
+                            .clearSelection();
                     } else {
-                        pd.test.filled.code = false;
+                        textarea.codeOut.value = output;
                     }
-                    if (pd.data.node.codeMinnOut !== null) {
-                        if (pd.test.ace === true) {
-                            pd
-                                .ace
-                                .minnOut
-                                .setValue(output);
-                            pd
-                                .ace
-                                .minnOut
-                                .clearSelection();
-                        } else {
-                            pd.data.node.codeMinnOut.value = output;
-                        }
-                    }
-                    pd.data.stat.minn = pd.data.stat.minn + 1;
-                    node              = pd.id("stminn");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.minn;
-                    }
-                } else if (pd.options.mode === "analysis") {
-                    if (output.length > 125000) {
-                        pd.test.filled.code = true;
-                    } else {
-                        pd.test.filled.code = false;
-                    }
-                    if (pd.id("analysishtml-yes") !== null && pd.id("analysishtml-yes").checked === true && pd.data.node.report.code.box !== null) {
+                } else if (options.mode === "analysis") {
+                    if (id("analysishtml-yes") !== null && id("analysishtml-yes").checked === true && report.code.box !== null) {
                         if (autotest === true) {
-                            pd.data.node.report.code.body.innerHTML = "<p>Code type is set to <strong>auto</strong>. <span>Presumed language is <em>" + pd.data.langvalue[2] + "</em>.</span></p>" + output;
+                            report.code.body.innerHTML = `<p>Code type is set to <strong>auto</strong>. <span>Presumed language is <em>${data.langvalue[2]}</em>.</span></p>${output}`;
                         } else {
-                            pd.data.node.report.code.body.innerHTML = output;
+                            report.code.body.innerHTML = output;
                         }
-                        if (pd.data.node.report.code.body.style.display === "none") {
-                            pd.data.node.report.code.box.getElementsByTagName("h3")[0].click();
+                        if (report.code.body.style.display === "none") {
+                            report.code.box.getElementsByTagName("h3")[0].click();
                         }
-                        pd.data.node.report.code.box.style.top   = (pd.data.settings.codereport.top / 10) + "em";
-                        pd.data.node.report.code.box.style.right = "auto";
-                    } else if (pd.data.node.codeAnalOut !== null) {
-                        if (pd.test.ace === true) {
-                            pd
-                                .ace
-                                .analOut
-                                .setValue(output);
-                            pd
-                                .ace
-                                .analOut
-                                .clearSelection();
-                        } else {
-                            pd.data.node.codeAnalOut.value = output.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-                        }
-                    }
-                    pd.data.stat.anal = pd.data.stat.anal + 1;
-                    node              = pd.id("stanal");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.anal;
+                        report.code.box.style.top   = (data.settings.report.code.top / 10) + "em";
+                        report.code.box.style.right = "auto";
+                    } else if (test.ace === true) {
+                        aceStore
+                            .analOut
+                            .setValue(output);
+                        aceStore
+                            .analOut
+                            .clearSelection();
+                    } else {
+                        textarea.codeOut.value = output.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
                     }
                 }
-                if (pd.data.node.announce !== null) {
+                if (id("announcement") !== null) {
+                    const announce = id("announcement");
                     if (errortext.indexOf("end tag") > 0 || errortext.indexOf("Duplicate id") > 0) {
-                        pd
-                            .data
-                            .node
-                            .announce
-                            .setAttribute("class", "error");
-                        pd.data.node.announce.innerHTML = errortext;
-                    } else if (pd.id("jserror") !== null) {
-                        pd
-                            .data
-                            .node
-                            .announce
-                            .removeAttribute("class");
-                        pd.data.node.announce.innerHTML = "<strong>" + pd
-                            .id("jserror")
+                        announce.setAttribute("class", "error");
+                        announce.innerHTML = errortext;
+                    } else if (id("jserror") !== null) {
+                        announce.removeAttribute("class");
+                        announce.innerHTML = "<strong>" + id("jserror")
                             .getElementsByTagName("strong")[0]
                             .innerHTML + "</strong> <span>See 'Code Report' for details</span>";
                     } else {
                         if (meta.lang[0] === "jsx") {
-                            pd.data.node.announce.innerHTML = "Presumed language is <strong>React JSX</strong>.";
+                            announce.innerHTML = "Presumed language is <strong>React JSX</strong>.";
                         } else if (autotest === true) {
-                            pd.data.node.announce.innerHTML = "Code type is set to <em>auto</em>. Presumed language is <strong>" + pd.data.langvalue[2] + "</strong>.";
+                            announce.innerHTML = `Code type is set to <em>auto</em>. Presumed language is <strong>${data.langvalue[2]}</strong>.`;
                         } else {
-                            pd.data.node.announce.innerHTML = "Language set to <strong>" + pd.data.langvalue[2] + "</strong>.";
+                            announce.innerHTML = "Language set to <strong>" + data.langvalue[2] + "</strong>.";
                         }
-                        if (pd.options.mode === "parse" && pd.options.parseFormat !== "htmltable") {
+                        if (options.mode === "parse" && options.parseFormat !== "htmltable") {
                             pdlang = "tokens";
                         } else {
                             pdlang = "characters";
                         }
                         if (meta.error === "" || meta.error === undefined) {
-                            pd.data.node.announce.innerHTML = pd.data.node.announce.innerHTML + "<span><em>Execution time:</em> <strong>" + meta.time.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</strong>. <em>Output size:</em> <strong>" + commanumb(meta.outsize) + " " + pdlang + "</strong></span>";
+                            announce.innerHTML = `${announce.innerHTML}<span><em>Execution time:</em> <strong>${meta.time.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</strong>. <em>Output size:</em> <strong>${commanumb(meta.outsize)} ${pdlang}</strong></span>`;
                         } else {
-                            pd.data.node.announce.innerHTML = pd.data.node.announce.innerHTML + "<span><strong>" + meta.error.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</strong></span>";
+                            announce.innerHTML = `${announce.innerHTML}<span><strong>${meta.error.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</strong></span>`;
                         }
                     }
                 }
-                buttons = pd
-                    .data
-                    .node
-                    .report
+                buttons = report
                     .code
                     .box
                     .getElementsByTagName("p")[0]
@@ -4517,211 +3316,116 @@
                     buttons[0].click();
                 }
                 parent = <HTMLElement>buttons[1].parentNode;
-                if (parent.style.display === "none" && (pd.data.mode === "diff" || (pd.data.mode === "beau" && pd.options.jsscope === "report" && lang[1] === "javascript"))) {
+                if (parent.style.display === "none" && (options.mode === "diff" || (options.mode === "beau" && options.jsscope === "report" && lang[1] === "javascript"))) {
                     buttons[1].click();
                 }
-                lang[0] = lang[0].toLowerCase();
-                if (pd.data.langvalue[1] === "csv") {
-                    pd.data.stat.csv = pd.data.stat.csv + 1;
-                    node             = pd.id("stcsv");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.csv;
-                    }
-                } else if (pd.data.langvalue[1] === "plain text") {
-                    pd.data.stat.text = pd.data.stat.text + 1;
-                    node              = pd.id("sttext");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.text;
-                    }
-                } else if (pd.data.langvalue[1] === "javascript") {
-                    pd.data.stat.js = pd.data.stat.js + 1;
-                    node            = pd.id("stjs");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.js;
-                    }
-                } else if (pd.data.langvalue[1] === "markup" || pd.data.langvalue[1] === "html" || pd.data.langvalue[1] === "xml" || pd.data.langvalue[1] === "xhtml") {
-                    pd.data.stat.markup = pd.data.stat.markup + 1;
-                    node                = pd.id("stmarkup");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.markup;
-                    }
-                } else if (pd.data.langvalue[1] === "css") {
-                    pd.data.stat.css = pd.data.stat.css + 1;
-                    node             = pd.id("stcss");
-                    if (node !== null) {
-                        node.innerHTML = pd.data.stat.css;
-                    }
-                }
-                if (pd.options.mode === "diff" && pd.options.source !== undefined && pd.options.diff !== undefined && pd.options.diff.length > pd.options.source.length) {
-                    size = pd.options.diff.length;
-                } else if (pd.options.source !== undefined) {
-                    size = pd.options.source.length;
-                }
-                if (size > pd.data.stat.large) {
-                    pd.data.stat.large = size;
-                    const td = pd.id("stlarge");
-                    if (td !== null) {
-                        td.innerHTML = String(size);
-                    }
-                }
-                localStorage.stat = JSON.stringify(pd.data.stat);
             };
 
         meta.error = "";
-        node = pd.id("showOptionsCallOut");
+        node = id("showOptionsCallOut");
         if (node !== null) {
             node
                 .parentNode
                 .removeChild(node);
         }
-        if (pd.test.accessibility === true) {
-            pd.options.accessibility = true;
-        }
-        pd.options.crlf = (lf !== null && lf.checked === true);
+        options.crlf = (lf !== null && lf.checked === true);
         if (typeof event === "object" && event !== null && event.type === "keyup") {
             // jsscope does not get the convenience of keypress execution, because its
             // overhead is costly do not execute keypress from alt, home, end, or arrow keys
-            if ((textout === false && pd.data.mode === "beau") || event.altKey === true || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) {
+            if ((textout === false && options.mode === "beau") || event.altKey === true || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) {
                 return false;
             }
-            if (pd.test.keypress === true) {
-                if (pd.test.keystore.length > 0) {
-                    pd
-                        .test
+            if (test.keypress === true) {
+                if (test.keystore.length > 0) {
+                    test
                         .keystore
                         .pop();
                     if (event.keyCode === 17 || event.ctrlKey === true || event.keyCode === 224) {
-                        pd.test.keypress = false;
-                        pd.test.keystore = [];
+                        test.keypress = false;
+                        test.keystore = [];
                     } else {
-                        if (pd.test.keystore.length === 0) {
-                            pd.test.keypress = false;
+                        if (test.keystore.length === 0) {
+                            test.keypress = false;
                         }
                         return false;
                     }
                 }
             }
-            if ((event.keyCode === 17 || event.ctrlKey === true || event.keyCode === 224) && pd.test.keypress === true && pd.test.keystore.length === 0) {
-                pd.test.keypress = false;
+            if ((event.keyCode === 17 || event.ctrlKey === true || event.keyCode === 224) && test.keypress === true && test.keystore.length === 0) {
+                test.keypress = false;
                 return false;
             }
         }
 
         //gather updated dom nodes
-        pd.options.api         = "dom";
-        node            = pd.id("csvchar");
-        pd.options.csvchar     = (node === null || node.value.length === 0)
+        options.api         = "dom";
+        node            = id("option-csvchar");
+        options.csvchar     = (node === null || node.value.length === 0)
             ? ","
             : node.value;
-        pd.options.lang        = (pd.data.node.lang === null)
-            ? "javascript"
-            : (pd.data.node.lang.nodeName.toLowerCase() === "select")
-                ? pd
-                    .data
-                    .node
-                    .lang[pd.data.node.lang.selectedIndex]
-                    .value
-                    .toLowerCase()
-                : pd
-                    .data
-                    .node
-                    .lang
-                    .value
-                    .toLowerCase();
-        pd.options.langdefault = (pd.data.node.langdefault === null)
-            ? "javascript"
-            : (pd.data.node.lang.nodeName.toLowerCase() === "select")
-                ? pd.data.node.langdefault[pd.data.node.langdefault.selectedIndex].value.toLowerCase()
-                : pd.data.node.langdefault.value.toLowerCase();
-        pd.options.newline     = (pd.id("newline-yes") !== null && pd.id("newline-yes").checked === true);
-        if (pd.options.lang === "auto") {
+        options.lang        = id("option-lang").value;
+        options.langdefault = id("option-langdefault").value;
+        options.newline     = (id("newline-yes") !== null && id("newline-yes").checked === true);
+        if (options.lang === "auto") {
             autotest = true;
         }
-
-        //determine options based upon mode of operations
-        if (pd.param !== undefined) {
-            const keys = Object.keys(pd.param),
-                len = keys.length;
-            let a = 0;
-            do {
-                pd.options[keys[a]] = pd.param[keys[a]];
-                a = a + 1;
-            } while (a < len);
-        }
-        if (pd.data.mode === "beau") {
-            pd.options.mode = "beautify";
-        } else if (pd.data.mode === "minn") {
-            pd.options.mode = "minify";
-        } else if (pd.data.mode === "pars") {
-            pd.options.mode = "parse";
-        } else if (pd.data.mode === "anal") {
-            pd.options.mode = "analysis";
-        } else {
-            pd.options.mode = "diff";
-        }
-        if (domain.test(pd.options.source) === true && pd.test.xhr === true) {
-            const filetest:boolean       = (pd.options.source.indexOf("file:///") === 0),
+        if (domain.test(options.source) === true) {
+            const filetest:boolean       = (options.source.indexOf("file:///") === 0),
                 protocolRemove:string = (filetest === true)
-                    ? pd.options
+                    ? options
                         .source
                         .split(":///")[1]
-                    : pd.options
+                    : options
                         .source
                         .split("://")[1],
                 slashIndex:number     = (protocolRemove !== undefined)
                     ? protocolRemove.indexOf("/")
                     : 0,
                 xhr:XMLHttpRequest            = new XMLHttpRequest();
-            if ((slashIndex > 0 || pd.options.source.indexOf("http") === 0) && typeof protocolRemove === "string" && protocolRemove.length > 0) {
+            if ((slashIndex > 0 || options.source.indexOf("http") === 0) && typeof protocolRemove === "string" && protocolRemove.length > 0) {
                 requests = true;
-                xhr.onreadystatechange = function dom_event_recycle_xhrSource_statechange() {
-                    const appDelay = function dom_event_recycle_xhrSource_statechange_appDelay() {
+                xhr.onreadystatechange = function dom_event_execute_xhrSource_statechange() {
+                    const appDelay = function dom_event_execute_xhrSource_statechange_appDelay() {
                         output = prettydiff.app();
                         if (output === undefined) {
-                            setTimeout(dom_event_recycle_xhrSource_statechange_appDelay, 100);
+                            setTimeout(dom_event_execute_xhrSource_statechange_appDelay, 100);
                         } else {
                             execOutput();
                         }
                     };
                     if (xhr.readyState === 4) {
                         if (xhr.status === 200 || xhr.status === 0) {
-                            pd.options.source = xhr
+                            options.source = xhr
                                 .responseText
                                 .replace(/\r\n/g, "\n");
-                            if (pd.data.mode !== "diff" || requestd === false || (requestd === true && completed === true)) {
-                                pd.data.source = pd.options.source;
-                                if (pd.test.ace === true) {
-                                    if (pd.data.mode !== "diff") {
-                                        lang = pd
+                            if (options.mode !== "diff" || requestd === false || (requestd === true && completed === true)) {
+                                if (test.ace === true) {
+                                    if (options.mode !== "diff") {
+                                        lang = method
                                             .app
-                                            .langkey(false, pd.ace[pd.data.mode + "In"], "");
-                                    } else if (pd.data.langvalue[1] === "text") {
+                                            .langkey(false, aceStore.codeIn, "");
+                                    } else if (data.langvalue[1] === "text") {
                                         lang = ["text", "text", "Plain Text"];
                                     } else {
-                                        lang = pd
+                                        lang = method
                                             .app
-                                            .langkey(false, pd.ace.codeIn, "");
+                                            .langkey(false, aceStore.codeIn, "");
                                     }
-                                } else if (pd.data.mode === "diff" && pd.data.langvalue[1] === "text") {
+                                } else if (options.mode === "diff" && data.langvalue[1] === "text") {
                                     lang = ["text", "text", "Plain Text"];
                                 } else {
-                                    lang = pd
+                                    lang = method
                                         .app
                                         .langkey(false, {
-                                            value: pd.data.source
+                                            value: options.source
                                         }, "");
                                 }
-                                pd.options.lang = lang[0];
-                                pd.options.lexer = lang[1];
-                                if (pd.data.mode === "diff") {
-                                    pd.data.diff = pd.options.diff;
-                                } else {
-                                    pd.data.diff = "";
-                                }
+                                options.lang = lang[0];
+                                options.lexer = lang[1];
                                 output = prettydiff.app();
                                 if (output === undefined) {
-                                    if (pd.test.delayExecution === true) {
-                                        pd.test.delayExecution = false;
+                                    if (test.delayExecution === true) {
+                                        test.delayExecution = false;
                                         setTimeout(appDelay, 2000);
                                     }
                                 } else {
@@ -4730,429 +3434,83 @@
                                 return;
                             }
                         } else {
-                            pd.options.source = "Error: transmission failure receiving source code from address.";
+                            options.source = "Error: transmission failure receiving source code from address.";
                         }
                     }
                 };
                 if (filetest === true) {
-                    xhr.open("GET", pd.options.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                    xhr.open("GET", options.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
                 } else {
-                    xhr.open("GET", "proxy.php?x=" + pd.options.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                    xhr.open("GET", "proxy.php?x=" + options.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
                 }
                 xhr.send();
             }
         }
-        if (pd.data.node.report.stat.box !== null) {
-            pd.data.stat.usage  = pd.data.stat.usage + 1;
-            pd.data.stat.useday = Math.round(pd.data.stat.usage / ((Date.now() - pd.data.stat.fdate) / 86400000));
-            node                = pd.id("stusage");
-            if (node !== null) {
-                node.innerHTML = pd.data.stat.usage;
-            }
-            node = pd.id("stuseday");
-            if (node !== null) {
-                node.innerHTML = pd.data.stat.useday;
-            }
-        }
-        if (pd.options.source === undefined || (pd.data.mode === "diff" && pd.options.diff === undefined)) {
+        if (options.source === undefined || (options.mode === "diff" && options.diff === undefined)) {
             return;
         }
         if (requests === false && requestd === false) {
             // sometimes the Ace getValue method fires too early on copy/paste.  I put in a
             // 50ms delay in this case to prevent operations from old input
 
-            if (pd.test.ace === true && pd.options.mode !== "diff") {
-                pd.options.source     = pd
-                    .ace
+            if (test.ace === true && options.mode !== "diff") {
+                options.source     = aceStore
                     .codeIn
                     .getValue();
-                lang       = (pd.data.langvalue[0] !== "plain_text")
-                    ? pd
+                lang       = (data.langvalue[0] !== "plain_text")
+                    ? method
                         .app
-                        .langkey(false, pd.ace.codeIn, "")
+                        .langkey(false, aceStore.codeIn, "")
                     : lang;
-                pd.options.lang = lang[0];
-                pd.options.lexer = lang[1];
-                pd.data.source = pd.options.source;
-                pd.data.diff   = "";
+                options.lang = lang[0];
+                options.lexer = lang[1];
                 output         = prettydiff.app();
                 execOutput();
             } else {
-                pd.data.source = pd.options.source;
-                if (pd.data.langvalue[1] === "text") {
+                if (data.langvalue[1] === "text") {
                     lang = ["text", "text", "Plain Text"];
-                } else if (pd.data.langvalue[1] === "csv") {
+                } else if (data.langvalue[1] === "csv") {
                     lang = ["csv", "csv", "CSV"];
-                } else if (pd.test.ace === true) {
-                    lang = pd
+                } else if (test.ace === true) {
+                    lang = method
                         .app
-                        .langkey(false, pd.ace.codeIn, "");
+                        .langkey(false, aceStore.codeIn, "");
                 } else {
-                    lang = pd
+                    lang = method
                         .app
                         .langkey(false, {
-                            value: pd.options.source
+                            value: options.source
                         }, "");
                 }
-                pd.options.lang = lang[0];
-                pd.options.lexer = lang[1];
-                if (pd.data.mode === "diff") {
-                    pd.data.diff = pd.options.diff;
-                } else {
-                    pd.data.diff = "";
-                }
+                options.lang = lang[0];
+                options.lexer = lang[1];
                 output = prettydiff.app();
                 execOutput();
             }
         }
     };
-
-    // toggles an editor between 100% and 50% width if the output isn't textual
-    // references apps: langkey, options references events: recycle
-    pd.app.hideOutput   = function dom_app_hideOutput(x:HTMLElement):void {
-        let node:HTMLElement,
-            parent:HTMLElement,
-            state:boolean     = false,
-            targetOut:HTMLElement,
-            targetIn:HTMLElement;
-        const restore   = function dom_app_hideOutput_restore():void {
-                parent = <HTMLElement>targetOut.parentNode;
-                parent.style.display = "block";
-                if (targetOut !== null) {
-                    node             = <HTMLElement>targetIn.parentNode;
-                    node.style.width = "49%";
-                    if (pd.test.ace === true) {
-                        pd
-                            .ace
-                            .codeIn
-                            .resize();
-                    }
-                    targetIn.onkeyup   = pd.event.recycle;
-                    targetIn.onkeydown = function dom_app_hideOutput_restore_bindTargetInDown(event:Event):void {
-                        if (pd.test.ace === false) {
-                            pd
-                                .event
-                                .fixtabs(event, targetIn);
-                        }
-                        pd
-                            .event
-                            .keydown(event);
-                        pd
-                            .event
-                            .recycle(event);
-                    };
-                }
-                if (x === undefined) {
-                    return;
-                }
-                pd
-                    .app
-                    .options(x);
-            },
-            langval:string   = (pd.data.node.lang === null)
-                ? "javascript"
-                : ((pd.data.node.lang.nodeName === "select")
-                    ? pd.data.node.lang[pd.data.node.lang.selectedIndex].value
-                    : pd.data.node.lang.value);
-        if (x.nodeType === 1 && x.nodeName.toLowerCase() !== "input" && x !== pd.data.node.lang) {
-            x = x.getElementsByTagName("input")[0];
+    // this function allows typing of tab characters into textareas without the
+    // textarea loosing focus
+    method.event.fixtabs = function dom_event_fixtabs(event:KeyboardEvent, node:HTMLInputElement):boolean {
+        let start:string = "",
+            end:string   = "",
+            val:string   = "",
+            sel:number   = 0;
+        if (typeof event !== "object" || event === null || event.type !== "keydown" || event.keyCode !== 9 || typeof node.selectionStart !== "number" || typeof node.selectionEnd !== "number") {
+            return true;
         }
-        state = (pd.options.jsscope === "report" || langval === "csv");
-        targetOut = pd.data.node.codeOut;
-        targetIn  = pd.data.node.codeIn;
-        parent = <HTMLElement>targetOut.parentNode;
-        if (targetOut === null || (state === true && parent.style.display === "none") || (state === false && parent.style.display === "block")) {
-            if (pd.test.load === false) {
-                pd
-                    .app
-                    .options(x);
-            }
-            return;
-        }
-        if (langval !== "csv" && pd.data.mode !== "beau") {
-            state = false;
-        }
-        if (langval === "auto" || langval === "javascript" || langval === "csv") {
-            if (state === true) {
-                parent.style.display = "none";
-                if (targetIn !== null) {
-                    node             = <HTMLElement>targetIn.parentNode;
-                    node.style.width = "100%";
-                    if (pd.test.ace === true) {
-                        pd
-                            .ace
-                            .codeIn
-                            .resize();
-                    }
-                    if (pd.test.ace === true) {
-                        targetIn.onkeyup = function dom_app_hideOutput_langkeyEditor(event:Event):void {
-                            pd
-                                .app
-                                .langkey(false, pd.ace.codeIn, "");
-                            pd
-                                .event
-                                .recycle(event);
-                        };
-                    } else {
-                        targetIn.onkeyup = function dom_app_hideOutput_langkeyTextarea(event:Event):void {
-                            pd
-                                .event
-                                .recycle(event);
-                        };
-                    }
-                }
-                if (langval === "csv") {
-                    x = pd.data.node.lang;
-                }
-                if (pd.test.load === false) {
-                    pd
-                        .app
-                        .options(x);
-                }
-            } else if (x === pd.data.node.modeBeau || x === pd.id("jsscope-no")) {
-                restore();
-            } else {
-                pd
-                    .app
-                    .options(x);
-            }
-        } else if (x === pd.data.node.modeBeau) {
-            restore();
-        } else {
-            pd
-                .app
-                .options(x);
-        }
-    };
-
-    // provides interaction to simulate a text input into a radio buttonset with
-    // appropriate accessibility response references app: options
-    pd.app.indentchar   = function dom_app_indentchar():void {
-        const insize:HTMLInputElement = pd.id("option-insize"),
-            inchar:HTMLInputElement = pd.id("option-inchar");
-        if (pd.test.ace === true) {
-            if (inchar !== null && inchar.value === " ") {
-                pd
-                    .ace
-                    .codeIn
-                    .getSession()
-                    .setUseSoftTabs(true);
-                pd
-                    .ace
-                    .codeOut
-                    .getSession()
-                    .setUseSoftTabs(true);
-                if (insize !== null && isNaN(Number(insize.value)) === false) {
-                    pd
-                        .ace
-                        .codeIn
-                        .getSession()
-                        .setTabSize(Number(inchar.value));
-                    pd
-                        .ace
-                        .codeOut
-                        .getSession()
-                        .setTabSize(Number(inchar.value));
-                }
-            } else {
-                pd
-                    .ace
-                    .codeIn
-                    .getSession()
-                    .setUseSoftTabs(false);
-                pd
-                    .ace
-                    .codeOut
-                    .getSession()
-                    .setUseSoftTabs(false);
-            }
-        }
-        if (pd.test.load === false) {
-            pd
-                .app
-                .options(inchar);
-        }
-    };
-
-    // provide a means for keyboard users to escape a textarea references events:
-    // sequence
-    pd.event.areaTabOut = function dom_event_areaTabOut(event:KeyboardEvent, node:HTMLElement):void {
-        let len:number   = pd.test.tabesc.length,
-            esc:boolean   = false,
-            key:number   = 0;
-        key  = event.keyCode;
-        if (key === 17 || key === 224) {
-            if (pd.data.tabtrue === false && (pd.test.tabesc[0] === 17 || pd.test.tabesc[0] === 224 || len > 1)) {
-                return;
-            }
-            pd.data.tabtrue = false;
-        }
-        if (node.nodeName.toLowerCase() === "textarea") {
-            if (pd.test.ace === true) {
-                if (node === pd.data.node.codeOut) {
-                    esc = true;
-                }
-            }
-            if (node === pd.data.node.codeIn) {
-                esc = true;
-            }
-        }
-        if (esc === true) {
-            esc             = false;
-            pd.data.tabtrue = false;
-            if ((len === 1 && pd.test.tabesc[0] !== 16 && key !== pd.test.tabesc[0]) || (len === 2 && key !== pd.test.tabesc[1])) {
-                pd.test.tabesc = [];
-                return;
-            }
-            if (len === 0 && (key === 16 || key === 17 || key === 224)) {
-                return pd
-                    .test
-                    .tabesc
-                    .push(key);
-            }
-            if (len === 1 && (key === 17 || key === 224)) {
-                if (pd.test.tabesc[0] === 17 || pd.test.tabesc[0] === 224) {
-                    esc = true;
-                } else {
-                    return pd
-                        .test
-                        .tabesc
-                        .push(key);
-                }
-            } else if (len === 2 && (key === 17 || key === 224)) {
-                esc = true;
-            } else if (len > 0) {
-                pd.test.tabesc = [];
-            }
-            if (esc === true) {
-                if (len === 2) {
-                    //back tab
-
-                    if (node === pd.data.node.codeIn) {
-                        pd
-                            .id("inputfile")
-                            .focus();
-                    } else if (node === pd.data.node.codeOut) {
-                        pd
-                            .data
-                            .node
-                            .codeIn
-                            .focus();
-                    }
-                } else {
-                    //forward tab
-
-                    if (node === pd.data.node.codeOut) {
-                        pd
-                            .id("button-primary")
-                            .getElementsByTagName("button")[0]
-                            .focus();
-                    } else if (node === pd.data.node.codeIn) {
-                        pd
-                            .data
-                            .node
-                            .codeOut
-                            .focus();
-                    }
-                }
-                if (pd.test.tabesc[0] === 16) {
-                    pd.test.tabesc = [16];
-                } else {
-                    pd.test.tabesc = [];
-                }
-            }
-        }
-        pd
-            .event
-            .sequence(event);
-    };
-
-    //read from files if the W3C File API is supported references events: recycle
-    pd.event.file       = function dom_event_file(input:HTMLInputElement):void {
-        let a:number         = 0,
-            id:string        = "",
-            files:FileList,
-            textarea:HTMLTextAreaElement,
-            parent:HTMLElement,
-            reader:FileReader,
-            fileStore:string[] = [],
-            fileCount:number = 0;
-        id    = input.getAttribute("id");
-        files = input.files;
-        if (pd.test.fs === true && files[0] !== null && typeof files[0] === "object") {
-            if (input.nodeName === "input") {
-                parent = <HTMLElement>input.parentNode.parentNode;
-                textarea = parent.getElementsByTagName("textarea")[0];
-            }
-            const fileLoad  = function dom_event_file_onload(event:Event):void {
-                    const tscheat:string = "result";
-                    fileStore.push(event.target[tscheat]);
-                    if (a === fileCount) {
-                        if (pd.test.ace === true) {
-                            if (id === "outputfile") {
-                                pd
-                                    .ace
-                                    .codeOut
-                                    .setValue(fileStore.join("\n\n"));
-                                pd
-                                    .ace
-                                    .codeOut
-                                    .clearSelection();
-                            } else {
-                                pd
-                                    .ace
-                                    .codeIn
-                                    .setValue(fileStore.join("\n\n"));
-                                pd
-                                    .ace
-                                    .codeIn
-                                    .clearSelection();
-                            }
-                        } else {
-                            pd.data.node.codeIn.value = fileStore.join("\n\n");
-                        }
-                        if (pd.data.mode !== "diff") {
-                            pd
-                                .event
-                                .recycle();
-                        }
-                    }
-                },
-                fileError = function dom_event_file_onerror(event:ErrorEvent):void {
-                    if (textarea !== undefined) {
-                        textarea.value = "Error reading file:\n\nThis is the browser's descriptiong: " + event.error.name;
-                    }
-                    fileCount   = -1;
-                };
-            fileCount = files.length;
-            do {
-                reader         = new FileReader();
-                reader.onload  = fileLoad;
-                reader.onerror = fileError;
-                if (files[a] !== undefined) {
-                    reader.readAsText(files[a], "UTF-8");
-                }
-                a = a + 1;
-            } while (a < fileCount);
-            if (pd.data.mode !== "diff") {
-                pd
-                    .event
-                    .recycle();
-            }
-        }
-    };
-
-    //callback for filedrop event references events: file
-    pd.event.filedrop   = function dom_event_filedrop(event:Event):void {
-        event.stopPropagation();
+        val              = node.value;
+        sel              = node.selectionStart;
+        start            = val.substring(0, sel);
+        end              = val.substring(sel, val.length);
+        node.value          = start + "\t" + end;
+        node.selectionStart = sel + 1;
+        node.selectionEnd   = sel + 1;
         event.preventDefault();
-        pd
-            .event
-            .file();
+        return false;
     };
-
     //basic drag and drop for the report windows references events: minimize
-    pd.event.grab       = function dom_event_grab(event:Event):boolean {
+    method.event.grab = function dom_event_grab(event:Event):boolean {
         const x:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
             box:HTMLElement        = (x.nodeName.toLowerCase() === "h3")
                 ? <HTMLElement>x.parentNode
@@ -5184,7 +3542,7 @@
             touchY = (touch === true)
                 ? touchEvent.touches[0].clientY
                 : 0,
-            filled:boolean     = ((box === pd.data.node.report.stat.box && pd.test.filled.stat === true) || (box === pd.data.node.report.feed.box && pd.test.filled.feed === true) || (box === pd.data.node.report.code.box && pd.test.filled.code === true)),    
+            filled:boolean     = ((box === report.stat.box && test.filled.stat === true) || (box === report.feed.box && test.filled.feed === true) || (box === report.code.box && test.filled.code === true)),    
             drop       = function dom_event_grab_drop(e:Event):boolean {
                 const headingWidth = box.getElementsByTagName("h3")[0].clientWidth;
                 boxLeft = box.offsetLeft;
@@ -5210,7 +3568,7 @@
                 box.style.height   = "auto";
                 heading.style.top  = "100%";
                 resize.style.top   = "100%";
-                pd
+                method
                     .app
                     .options(box);
                 e.preventDefault();
@@ -5248,7 +3606,7 @@
             minButton.click();
             return false;
         }
-        pd
+        method
             .app
             .zTop(box);
         event.preventDefault();
@@ -5279,15 +3637,782 @@
             document.onmousemove = boxmoveClick;
             document.onmousedown = null;
         }
-        pd
+        method
             .app
             .options(box);
         return false;
     };
+    //tests if a key press is a short command
+    method.event.keydown = function dom_event_keydown(event:KeyboardEvent):void {
+        if (test.keypress === true && (test.keystore.length === 0 || event.keyCode !== test.keystore[test.keystore.length - 1]) && event.keyCode !== 17 && event.keyCode !== 224) {
+            test
+                .keystore
+                .push(event.keyCode);
+        }
+        if (event.keyCode === 17 || event.ctrlKey === true || event.keyCode === 224) {
+            test.keypress = true;
+        }
+    };
+    //alters available options depending upon language selection
+    method.event.langOps = function dom_event_langOps(node:HTMLElement):void {
+        let xml:boolean  = false;
+        const name:string = node.nodeName.toLowerCase(),
+            lang:HTMLInputElement = id("option-lang");
+        if (lang.value === "auto") {
+            method
+                .app
+                .langkey(true, {}, "");
+        } else {
+            method
+                .app
+                .langkey(true, {}, lang);
+        }
+        if (test.load === false && options.mode !== "diff") {
+            method
+                .app
+                .hideOutput(node);
+        }
+        method
+            .app
+            .options(node);
+    };
+    //maximize report window to available browser window
+    method.event.maximize = function dom_event_maximize(event:Event):void {
+        let node:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
+            parent:HTMLElement,
+            save:boolean    = false,
+            box:HTMLElement,
+            idval:string      = "",
+            heading:HTMLElement,
+            body:HTMLElement,
+            top:number,
+            left:number,
+            buttons:NodeListOf<HTMLButtonElement>,
+            resize:HTMLButtonElement;
+        if (node.nodeType !== 1) {
+            return;
+        }
+        parent = <HTMLElement>document.body.parentNode;
+        left = (parent.scrollLeft > document.body.scrollLeft)
+            ? parent.scrollLeft
+            : document.body.scrollLeft;
+        top = (parent.scrollTop > document.body.scrollTop)
+            ? parent.scrollTop
+            : document.body.scrollTop;
+        parent = <HTMLElement>node.parentNode;
+        buttons = parent.getElementsByTagName("button");
+        resize  = buttons[buttons.length - 1];
+        save    = (parent.innerHTML.indexOf("save") > -1);
+        box     = <HTMLElement>parent.parentNode;
+        idval   = box.getAttribute("id");
+        heading = box.getElementsByTagName("h3")[0];
+        body    = box.getElementsByTagName("div")[0];
+        method
+            .app
+            .zTop(box);
 
-    if (pd.data.node.page === null || pd.data.node.page === undefined || pd.data.node.page.getAttribute("id") === null) {
-        window.onload = loadPrep;
-    } else {
-        load();
-    }
+        //maximize
+        if (node.innerHTML === "\u2191") {
+            node.innerHTML = "\u2193";
+            node.setAttribute("title", "Return this dialogue to its prior size and location.");
+            data.settings.report[idval].max = true;
+            data.settings.report[idval].min = false;
+            localStorage.settings = JSON.stringify(data.settings);
+            data.settings.report[idval].top    = box.offsetTop;
+            data.settings.report[idval].left   = box.offsetLeft;
+            data.settings.report[idval].height = body.clientHeight - 36;
+            data.settings.report[idval].width  = body.clientWidth - 3;
+            data.settings.report[idval].zindex = box.style.zIndex;
+            box.style.top               = (top / 10) + "em";
+            box.style.left              = (left / 10) + "em";
+            if (typeof window.innerHeight === "number") {
+                body.style.height = ((window.innerHeight / 10) - 5.5) + "em";
+                if (save === true) {
+                    heading.style.width = ((window.innerWidth / 10) - 13.76) + "em";
+                } else {
+                    heading.style.width = ((window.innerWidth / 10) - 10.76) + "em";
+                }
+                body.style.width = ((window.innerWidth / 10) - 4.1) + "em";
+            }
+            resize.style.display = "none";
+
+            //return to normal size
+        } else {
+            data.settings.report[idval].max = false;
+            node.innerHTML              = "\u2191";
+            node.setAttribute("title", "Maximize this dialogue to the browser window.");
+            box.style.top  = (data.settings.report[idval].top / 10) + "em";
+            box.style.left = (data.settings.report[idval].left / 10) + "em";
+            if (save === true) {
+                heading.style.width = ((data.settings.report[idval].width / 10) - 9.76) + "em";
+            } else {
+                heading.style.width = ((data.settings.report[idval].width / 10) - 6.76) + "em";
+            }
+            body.style.width     = (data.settings.report[idval].width / 10) + "em";
+            body.style.height    = (data.settings.report[idval].height / 10) + "em";
+            box.style.zIndex     = data.settings.report[idval].zindex;
+            resize.style.display = "block";
+            method
+                .app
+                .options(box);
+        }
+    };
+    //minimize report windows to the default size and location
+    method.event.minimize = function dom_event_minimize(e:Event):boolean {
+        const node:HTMLElement = <HTMLElement>e.srcElement || <HTMLElement>e.target;
+        let parent:HTMLElement = <HTMLElement>node.parentNode,
+            parentNode:HTMLElement,
+            box:HTMLElement,
+            final:number    = 0,
+            idval:string        = "",
+            body:HTMLElement,
+            heading:HTMLElement,
+            buttons:NodeListOf<HTMLButtonElement>,
+            save:boolean      = false,
+            buttonMin:HTMLButtonElement,
+            buttonMax:HTMLButtonElement,
+            left:number      = 0,
+            top:number       = 0,
+            buttonRes:HTMLButtonElement,
+            step:number      = (parent.style.display === "none" && (options.mode === "diff" || (options.mode === "beau" && options.jsscope === "report" && options.lang === "javascript")))
+                ? 1
+                : 50;
+        const growth    = function dom_event_minimize_growth():boolean {
+                let width:number        = 17,
+                    height:number       = 3,
+                    leftTarget:number   = 0,
+                    topTarget:number    = 0,
+                    widthTarget:number  = 0,
+                    heightTarget:number = 0,
+                    incW:number         = 0,
+                    incH:number         = 0,
+                    incL:number         = 0,
+                    incT:number         = 0,
+                    saveSpace:number    = (save === true)
+                        ? 9.45
+                        : 6.45,
+                    grow         = function dom_event_minimize_growth_grow():boolean {
+                        width                    = width + incW;
+                        height                   = height + incH;
+                        left                = left + incL;
+                        top                 = top + incT;
+                        body.style.width    = width + "em";
+                        body.style.height   = height + "em";
+                        heading.style.width = (width - saveSpace) + "em";
+                        box.style.left      = left + "em";
+                        box.style.top       = top + "em";
+                        if (width + incW < widthTarget || height + incH < heightTarget) {
+                            setTimeout(dom_event_minimize_growth_grow, 1);
+                        } else {
+                            box.style.left      = leftTarget + "em";
+                            box.style.top       = topTarget + "em";
+                            body.style.width    = widthTarget + "em";
+                            body.style.height   = heightTarget + "em";
+                            heading.style.width = (widthTarget - saveSpace) + "em";
+                            method
+                                .app
+                                .options(box);
+                            return false;
+                        }
+                        return true;
+                    };
+                method
+                    .app
+                    .zTop(box);
+                buttonMin.innerHTML   = "\u035f";
+                parent.style.display  = "block";
+                box.style.borderWidth = ".1em";
+                box.style.right       = "auto";
+                body.style.display    = "block";
+                heading.getElementsByTagName("button")[0].style.cursor = "move";
+                heading.style.borderLeftStyle                          = "none";
+                heading.style.borderTopStyle                           = "none";
+                heading.style.margin                                   = "-0.1em 1.7em -3.2em -0.1em";
+                if (test.agent.indexOf("macintosh") > 0) {
+                    saveSpace = (save === true)
+                        ? 8
+                        : 5;
+                }
+                if (typeof data.settings.report[idval].left === "number") {
+                    leftTarget   = (data.settings.report[idval].left / 10);
+                    topTarget    = (data.settings.report[idval].top / 10);
+                    widthTarget  = (data.settings.report[idval].width / 10);
+                    heightTarget = (data.settings.report[idval].height / 10);
+                } else {
+                    top                    = top + 4;
+                    data.settings.report[idval].left   = 200;
+                    data.settings.report[idval].top    = (top * 10);
+                    data.settings.report[idval].width  = 550;
+                    data.settings.report[idval].height = 450;
+                    leftTarget                  = 10;
+                    topTarget                   = 2;
+                    widthTarget                 = 55;
+                    heightTarget                = 45;
+                }
+                widthTarget  = widthTarget - 0.3;
+                heightTarget = heightTarget - 3.55;
+                if (step === 1) {
+                    box.style.left    = leftTarget + "em";
+                    box.style.top     = ((window.innerHeight / 10) - 30) + "em";
+                    body.style.width  = widthTarget + "em";
+                    body.style.height = heightTarget + "em";
+                    heading.style.width    = (widthTarget - saveSpace) + "em";
+                    method
+                        .app
+                        .options(box);
+                    return false;
+                }
+                incW                    = (widthTarget > width)
+                    ? ((widthTarget - width) / step)
+                    : ((width - widthTarget) / step);
+                incH                    = (heightTarget > height)
+                    ? ((heightTarget - height) / step)
+                    : ((height - heightTarget) / step);
+                incL                    = (leftTarget - left) / step;
+                incT                    = (topTarget - top) / step;
+                box.style.right    = "auto";
+                body.style.display = "block";
+                grow();
+                return false;
+            },
+            shrinkage = function dom_event_minimize_shrinkage():boolean {
+                let width        = body.clientWidth / 10,
+                    height       = body.clientHeight / 10,
+                    incL         = (((window.innerWidth / 10) - final - 17) - left) / step,
+                    incT         = 0,
+                    incW         = (width === 17)
+                        ? 0
+                        : (width > 17)
+                            ? ((width - 17) / step)
+                            : ((17 - width) / step),
+                    incH         = height / step,
+                    shrink       = function dom_event_minimize_shrinkage_shrink():boolean {
+                        left                = left + incL;
+                        top                 = top + incT;
+                        width                    = width - incW;
+                        height                   = height - incH;
+                        body.style.width    = width + "em";
+                        heading.style.width = width + "em";
+                        body.style.height   = height + "em";
+                        box.style.left      = left + "em";
+                        box.style.top       = top + "em";
+                        if (width - incW > 16.8) {
+                            setTimeout(dom_event_minimize_shrinkage_shrink, 1);
+                        } else {
+                            box.style.left      = "auto";
+                            box.style.top       = "auto";
+                            box.style.right     = final + "em";
+                            data.settings[idval].max = false;
+                            body.style.display  = "none";
+                            heading.getElementsByTagName("button")[0].style.cursor = "pointer";
+                            heading.style.margin                                   = "-0.1em 0em -3.2em -0.1em";
+                            box.style.zIndex                                            = "2";
+                            method
+                                .app
+                                .options(box);
+                            return false;
+                        }
+                        return true;
+                    };
+                parentNode = <HTMLElement>box.parentNode;
+                incT = (((parentNode.offsetTop / 10) - top) / step);
+                buttonMin.innerHTML = "\u2191";
+                //if a maximized window is minimized
+                if (buttonMax.innerHTML === "\u2191") {
+                    if (test.agent.indexOf("macintosh") > 0) {
+                        data.settings.report[idval].top    = box.offsetTop;
+                        data.settings.report[idval].left   = box.offsetLeft;
+                        data.settings.report[idval].height = body.clientHeight - 17;
+                        data.settings.report[idval].width  = body.clientWidth - 17;
+                    } else {
+                        data.settings.report[idval].top    = box.offsetTop;
+                        data.settings.report[idval].left   = box.offsetLeft;
+                        data.settings.report[idval].height = body.clientHeight;
+                        data.settings.report[idval].width  = body.clientWidth;
+                    }
+                    if (data.zIndex > 2) {
+                        data.zIndex      = data.zIndex - 3;
+                        parent.style.zIndex = data.zIndex;
+                    }
+                } else {
+                    buttonMax.innerHTML         = "\u2191";
+                    data.settings.report[idval].top    = data.settings.report[idval].top + 1;
+                    data.settings.report[idval].left   = data.settings.report[idval].left - 7;
+                    data.settings.report[idval].height = data.settings.report[idval].height + 35.5;
+                    data.settings.report[idval].width  = data.settings.report[idval].width + 3;
+                }
+                parent.style.display = "none";
+                shrink();
+                return false;
+            };
+        if (node.parentNode.nodeName.toLowerCase() === "h3") {
+            heading = <HTMLElement>node.parentNode;
+            box     = <HTMLElement>heading.parentNode;
+            parent  = box.getElementsByTagName("p")[0];
+        } else {
+            parent  = (node.parentNode.nodeName.toLowerCase() === "a")
+                ? <HTMLElement>node.parentNode.parentNode
+                : <HTMLElement>node.parentNode;
+            box     = <HTMLElement>parent.parentNode;
+            heading = box.getElementsByTagName("h3")[0];
+        }
+        idval                   = box.getAttribute("id");
+        body                    = box.getElementsByTagName("div")[0];
+        buttons                 = parent.getElementsByTagName("button");
+        save                    = (parent.innerHTML.indexOf("save") > -1);
+        buttonMin               = (save === true)
+            ? buttons[1]
+            : buttons[0];
+        buttonMax               = (save === true)
+            ? buttons[2]
+            : buttons[1];
+        left                    = (box.offsetLeft / 10 > 1)
+            ? box.offsetLeft / 10
+            : 1;
+        top                     = (box.offsetTop / 10 > 1)
+            ? box.offsetTop / 10
+            : 1;
+        buttonRes               = (save === true)
+            ? buttons[3]
+            : buttons[2];
+        buttonRes.style.display = "block";
+        if (box === report.feed.box) {
+            if (test.filled.feed === true) {
+                step = 1;
+            }
+            final = 38.8;
+        }
+        if (box === report.code.box) {
+            if (test.filled.code === true) {
+                step = 1;
+            }
+            final = 19.8;
+        }
+        if (box === report.stat.box) {
+            if (test.filled.stat === true) {
+                step = 1;
+            }
+            final = 0.8;
+        }
+        if (typeof e.preventDefault === "function") {
+            e.preventDefault();
+        }
+        if (buttonMin.innerHTML === "\u035f") {
+            shrinkage();
+        } else {
+            growth();
+        }
+        return false;
+    };
+    //toggles between modes
+    method.event.modeToggle = function dom_event_modeToggle(mode:string):void {
+        const cycleOptions = function dom_event_modeToggle_cycleOptions():void {
+                const li:HTMLLIElement[] = id("addOptions").getElementsByTagName("li"),
+                    lilen:number = li.length;
+                let a:number = 0,
+                    div:HTMLDivElement,
+                    modeat:string;
+                do {
+                    if (li[a].getAttribute("data-mode") !== "any") {
+                        div = li[a].getElementsByTagName("div")[0];
+                        modeat = li[a].getAttribute("data-mode");
+                        if (modeat !== mode && mode !== "diff") {
+                            div.innerHTML = `This option is not available in mode '${mode}'.`;
+                            div.style.display = "block";
+                        } else if (mode === "diff" && modeat !== "diff" && modeat !== "beautify") {
+                            div.innerHTML = `This option is not available in mode '${mode}'.`;
+                            div.style.display = "block";
+                        } else {
+                            div.style.display = "none";
+                        }
+                    }
+                    a = a + 1;
+                } while (a < lilen);
+            },
+            makeChanges = function dom_event_modeToggle_makeChanges():void {
+                const text:string = mode.charAt(0).toUpperCase() + mode.slice(1),
+                    ci:HTMLElement = id("codeInput"),
+                    cilabel:NodeListOf<HTMLLabelElement> = ci.getElementsByTagName("label"),
+                    output:HTMLElement = id("output"),
+                    outLabel:HTMLElement = <HTMLElement>ci.getElementsByClassName("inputLabel")[1],
+                    sourceLabel:HTMLElement = id("inputlabel").parentNode,
+                    outputLabel:HTMLElement = id("outputlabel").parentNode,
+                    outputFile:HTMLElement = id("outputfile").parentNode;
+                if (mode === "diff") {
+                    ci.getElementsByTagName("h2")[0].innerHTML = "Compare Code";
+                    cilabel[0].innerHTML = "Base File";
+                    cilabel[2].innerHTML = "Compare code sample";
+                    cilabel[5].innerHTML = " Compare new code"
+                    outLabel.style.marginTop = "0";
+                    sourceLabel.style.display = "block";
+                    outputLabel.style.display = "block";
+                    outputFile.style.display = "block";
+                    if (test.ace === true) {
+                        aceStore
+                            .codeOut
+                            .setReadOnly(false);
+                        parent = <HTMLElement>output.parentNode;
+                        parent.setAttribute("class", "output");
+                    } else {
+                        output.getElementsByTagName("textarea")[0].readOnly = false;
+                        parent = <HTMLElement>output.parentNode.parentNode;
+                        parent.setAttribute("class", "output");
+                    }
+                } else {
+                    ci.getElementsByTagName("h2")[0].innerHTML = text;
+                    cilabel[0].innerHTML = `${text} file`;
+                    cilabel[2].innerHTML = `${text} code sample`;
+                    cilabel[5].innerHTML = `${text} output`;
+                    outLabel.style.marginTop = "3.6em";
+                    sourceLabel.style.display = "none";
+                    outputLabel.style.display = "none";
+                    outputFile.style.display = "none";
+                    if (test.ace === true) {
+                        aceStore
+                            .codeOut
+                            .setReadOnly(true);
+                        parent = <HTMLElement>output.parentNode;
+                        parent.setAttribute("class", "readonly");
+                    } else {
+                        output.getElementsByTagName("textarea")[0].readOnly = false;
+                        parent = <HTMLElement>output.parentNode.parentNode;
+                        parent.setAttribute("class", "readonly");
+                    }
+                }
+            };
+        let parent:HTMLElement;
+        if (mode === "analysis") {
+            options.mode = "anal";
+        }
+        if (mode === "beautify") {
+            options.mode = "beau";
+        }
+        if (mode === "diff") {
+            options.mode = "diff";
+        }
+        if (mode === "minify") {
+            options.mode = "minn";
+        }
+        if (mode === "parse") {
+            options.mode = "pars";
+        }
+        makeChanges();
+        cycleOptions();
+    };
+    //reset tool to default configuration
+    method.event.reset = function dom_event_reset():void {
+        const comment:HTMLElement = id("commentString");
+        let nametry:string = "",
+            name:string    = "";
+        localStorage.codeIn  = "";
+        localStorage.codeOut  = "";
+        localStorage.commentString = "[]";
+        if (data.settings === undefined || data.settings.knownname === undefined) {
+            if (data.settings === undefined) {
+                data.settings = {
+                    feedback: {
+                        newb   : false,
+                        veteran: false
+                    }
+                };
+            }
+            if (localStorage.settings !== undefined) {
+                nametry = JSON.stringify(localStorage.settings);
+            }
+            if (localStorage.settings === undefined || nametry === "" || nametry.indexOf("knownname") < 0) {
+                name = "\"" + Math
+                    .random()
+                    .toString()
+                    .slice(2) + Math
+                    .random()
+                    .toString()
+                    .slice(2) + "\"";
+            }
+            data.settings.knownname = name;
+        }
+        if (data.settings.feedback === undefined) {
+            data.settings.feedback = {
+                newb   : false,
+                veteran: false
+            };
+        }
+        localStorage.settings = `{"feedback":{"newb":${data.settings.feedback.newb},"veteran":${data.settings.feedback.veteran}},"report":{"code":{},"feed":{},"stat":{}},"knownname":${data.settings.knownname}}`;
+        data.commentString = [];
+        if (comment !== null) {
+            comment.innerHTML = "/*prettydiff.com \u002a/";
+        }
+        id("modediff").checked = true;
+        location.reload();
+    };
+    //resize report window to custom width and height on drag
+    method.event.resize = function dom_event_resize(e:MouseEvent, x:HTMLElement):void {
+        let bodyWidth:number  = 0,
+            bodyHeight:number = 0;
+        const parent:HTMLElement     = <HTMLElement>x.parentNode,
+            save:boolean       = (parent.innerHTML.indexOf("save") > -1),
+            box:HTMLElement        = <HTMLElement>parent.parentNode,
+            body:HTMLDivElement       = box.getElementsByTagName("div")[0],
+            offX:number = e.clientX,
+            offY:number = e.clientY,
+            heading:HTMLHeadingElement    = box.getElementsByTagName("h3")[0],
+            mac:boolean        = (test.agent.indexOf("macintosh") > 0),
+            offsetw:number    = (mac === true)
+                ? 20
+                : 4,
+            offseth:number    = (mac === true)
+                ? 54
+                : 36,
+            drop       = function dom_event_resize_drop():void {
+                document.onmousemove = null;
+                bodyWidth            = body.clientWidth;
+                bodyHeight           = body.clientHeight;
+                method
+                    .app
+                    .options(box);
+                document.onmouseup = null;
+            },
+            boxsize    = function dom_event_resize_boxsize(f:MouseEvent):void {
+                body.style.width = ((bodyWidth + ((f.clientX - offsetw) - offX)) / 10) + "em";
+                if (save === true) {
+                    heading.style.width = (((bodyWidth + (f.clientX - offX)) / 10) - 10.15) + "em";
+                } else {
+                    heading.style.width = (((bodyWidth + (f.clientX - offX)) / 10) - 7.15) + "em";
+                }
+                body.style.height  = ((bodyHeight + ((f.clientY - offseth) - offY)) / 10) + "em";
+                document.onmouseup = drop;
+            };
+        bodyWidth  = body.clientWidth,
+        bodyHeight = body.clientHeight
+        method
+            .app
+            .zTop(box);
+        document.onmousemove = boxsize;
+        document.onmousedown = null;
+    };
+    //toggle between parsed html diff report and raw text representation
+    method.event.save = function dom_event_save(x:HTMLElement):boolean {
+        const anchor:boolean     = (x.nodeName.toLowerCase() === "a"),
+            top:HTMLElement        = (x.parentNode.parentNode.nodeName.toLowerCase() === "p")
+                ? <HTMLElement>x.parentNode.parentNode.parentNode
+                : <HTMLElement>x.parentNode.parentNode,
+            button:HTMLElement     = (anchor === true)
+                ? x.getElementsByTagName("button")[0]
+                : x,
+            body:HTMLElement       = top.getElementsByTagName("div")[0],
+            bodyInner:string  = body
+                .innerHTML
+                .replace(/\u0020xmlns=("|')http:\/\/www\.w3\.org\/1999\/xhtml("|')/g, ""),
+            ro:HTMLInputElement         = id("savepref-report"),
+            jsscope:HTMLSelectElement = id("option-jsscope"),
+            reportonly:boolean = (ro !== null && ro.checked === true);
+        let pageHeight = 0,
+            content:NodeListOf<HTMLElement>,
+            span:HTMLElement       = id("inline"),
+            lastChild:HTMLElement = <HTMLElement>page.lastChild;
+        if (bodyInner === "") {
+            return;
+        }
+        if (reportonly === true && anchor === true) {
+            x.removeAttribute("href");
+        }
+
+        // added support for Firefox and Opera because they support long URIs.  This
+        // extra support allows for local file creation.
+        if (anchor === true && button.innerHTML === "S") {
+            if (bodyInner === "" || ((/Please\u0020try\u0020using\u0020the\u0020option\u0020labeled\u0020((&lt;)|<)em((&gt;)|>)Plain\u0020Text\u0020\(diff\u0020only\)((&lt;)|<)\/em((&gt;)|>)\./).test(bodyInner) === true && (/div\u0020class=("|')diff("|')/).test(bodyInner) === false)) {
+                return false;
+            }
+            if (reportonly === true) {
+                x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(bodyInner));
+            } else {
+                x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(prettydiff.finalFile.order.join("")));
+            }
+            x.onclick = method.event.save;
+
+            // prompt to save file created above.  below is the creation of the modal with
+            // instructions about file extension.
+            if (lastChild.nodeType > 1 || lastChild.nodeName.toLowerCase() === "script") {
+                do {
+                    lastChild = <HTMLElement>lastChild.previousSibling;
+                } while (lastChild.nodeType > 1 || lastChild.nodeName.toLowerCase() === "script");
+            }
+            pageHeight = lastChild.offsetTop + lastChild.clientHeight + 20;
+            lastChild  = document.createElement("div");
+            lastChild.onmousedown = function dom_event_save_remove() {
+                lastChild.parentNode.removeChild(lastChild);
+            };
+            lastChild.setAttribute("id", "modalSave");
+            span              = document.createElement("span");
+            span.style.width  = (page.clientWidth + 10) + "px";
+            span.style.height = pageHeight + "px";
+            lastChild.appendChild(span);
+            span           = document.createElement("p");
+            span.innerHTML = "Just rename the file extension from '<strong>.part</strong>' to '<strong>.xhtml<" +
+                                    "/strong>'. <em>Click anywhere to close this reminder.</em>";
+            lastChild.appendChild(span);
+            page.appendChild(lastChild);
+            span.style.left = (((page.clientWidth + 10) - span.clientWidth) / 2) + "px";
+            return false;
+        }
+        // Webkit and IE get the old functionality of a textarea with HTML text content
+        // to copy and paste into a text file.
+        method
+            .app
+            .zTop(top);
+        prettydiff.finalFile.order[7] = id("option-color")[id("option-color").selectedIndex].value;
+        if (options.mode === "diff") {
+            prettydiff.finalFile.order[12] = prettydiff.finalFile.script.diff;
+        } else if (options.mode === "beau" && data.langvalue[0] === "javascript" && (jsscope !== null && jsscope[jsscope.selectedIndex].value !== "none")) {
+            prettydiff.finalFile.order[12] = prettydiff.finalFile.script.beautify;
+        } else {
+            prettydiff.finalFile.order[12] = prettydiff.finalFile.script.minimal;
+        }
+        if (button.innerHTML === "S") {
+            button.innerHTML = "H";
+            button.setAttribute("title", "Convert output to rendered HTML.");
+            body.innerHTML = "<textarea rows='40' cols='80'>" + prettydiff
+                .finalFile
+                .order
+                .join("")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;") + "</textarea>";
+            return false;
+        }
+        button.innerHTML = "S";
+        button.setAttribute("title", "Convert report to text that can be saved.");
+        body.innerHTML = prettydiff.finalFile.order[10];
+        content        = body.getElementsByTagName("ol");
+        if (content.length > 0) {
+            if (options.mode === "diff") {
+                content[2].onmousedown  = function dom_event_save_mousedown() {
+                    method.event.colSliderGrab(content[2].onmousedown, content[2]);
+                };
+                content[2].ontouchstart = function dom_event_save_touchstart() {
+                    method.event.colSliderGrab(content[2].ontouchstart, content[2]);
+                };
+            }
+            content = content[0].getElementsByTagName("li");
+            pageHeight = content.length - 1;
+            do {
+                if (content[pageHeight].getAttribute("class") === "fold") {
+                    if (options.mode === "beau") {
+                        content[pageHeight].onclick = method.event.beaufold;
+                    } else if (options.mode === "diff") {
+                        content[pageHeight].onclick = function dom_event_save_difffold() {
+                            method.event.difffold(content[pageHeight]);
+                        }
+                    }
+                }
+                pageHeight = pageHeight - 1;
+            } while (pageHeight > -1);
+        }
+        method
+            .app
+            .options(x.parentNode);
+        return false;
+    };
+    //analyzes combinations of consecutive key presses
+    method.event.sequence = function dom_event_sequence(event:KeyboardEvent):void {
+        let seq   = test.keysequence;
+        const len   = seq.length,
+            key   = event.keyCode;
+        if (len === 0 || len === 1) {
+            if (key === 38) {
+                seq.push(true);
+            } else {
+                test.keysequence = [];
+                seq = test.keysequence;
+            }
+        } else if (len === 2 || len === 3) {
+            if (key === 40) {
+                seq.push(true);
+            } else {
+                test.keysequence = [];
+                seq = test.keysequence;
+            }
+        } else if (len === 4 || len === 6) {
+            if (key === 37) {
+                seq.push(true);
+            } else {
+                test.keysequence = [];
+                seq = test.keysequence;
+            }
+        } else if (len === 5 || len === 7) {
+            if (key === 39) {
+                seq.push(true);
+            } else {
+                test.keysequence = [];
+                seq = test.keysequence;
+            }
+        } else if (len === 8) {
+            if (key === 66) {
+                seq.push(true);
+            } else {
+                test.keysequence = [];
+                seq = test.keysequence;
+            }
+        } else if (len === 9) {
+            if (key === 65) {
+                if (data.audio !== undefined) {
+                    data
+                        .audio
+                        .play();
+                }
+                const active:HTMLElement = <HTMLElement>document.activeElement,
+                    color:HTMLSelectElement  = id("option-color"),
+                    max:number    = color
+                        .getElementsByTagName("option")
+                        .length - 1,
+                    change = function dom_event_sequence_colorChange_change():void {
+                        color.selectedIndex = ind;
+                        method
+                            .event
+                            .colorScheme();
+                        if (active === document.documentElement || active === null || active === document.getElementsByTagName("body")[0]) {
+                            color.blur();
+                        } else {
+                            active.focus();
+                        }
+                    };
+                let ind:number    = color.selectedIndex;
+                ind = ind - 1;
+                if (ind < 0) {
+                    ind = max;
+                }
+                change();
+                ind = ind + 1;
+                if (ind > max) {
+                    ind = 0;
+                }
+                setTimeout(change, 1500);
+            }
+            test.keysequence = [];
+        }
+    };
+    //intelligently raise the z-index of the report windows
+    method.app.zTop     = function dom_app_top(x:HTMLElement):void {
+        const indexListed = data.zIndex,
+            indexes     = [
+                (report.feed.box === null)
+                    ? 0
+                    : Number(report.feed.box.style.zIndex),
+                (report.code.box === null)
+                    ? 0
+                    : Number(report.code.box.style.zIndex),
+                (report.stat.box === null)
+                    ? 0
+                    : Number(report.stat.box.style.zIndex)
+            ];
+        let indexMax    = Math.max(indexListed, indexes[0], indexes[1], indexes[2]) + 1;
+        if (indexMax < 11) {
+            indexMax = 11;
+        }
+        data.zIndex = indexMax;
+        if (x.nodeType === 1) {
+            x.style.zIndex = String(indexMax);
+        }
+    };
+
+    load();
 }());

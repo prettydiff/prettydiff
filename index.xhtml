@@ -127,7 +127,7 @@
                         <label for="outputlabel">New code label</label>
                     </p>
                     <p>
-                        <label class="outputlabel" for="output">Compare new code</label>
+                        <label for="output">Compare new code</label>
                         <textarea cols="40" id="output" rows="10" wrap="off" style="background:#fff"></textarea>
                     </p>
                 </div>
@@ -319,6 +319,17 @@
                         </span>
                     </li>
                     <li>
+                        <p class="label">Parse Table Rendering</p>
+                        <span>
+                            <input checked="checked" id="parseTable-html" name="parseTable" type="radio"/>
+                            <label for="parseTable-html">Renders a HTML table</label>
+                        </span>
+                        <span>
+                            <input id="parseTable-raw" name="parseTable" type="radio"/>
+                            <label for="parseTable-raw">Writes text code output</label>
+                        </span>
+                    </li>
+                    <li>
                         <p class="label">Save Preference</p>
                         <span>
                             <input checked="checked" id="savepref-document" name="savepref" type="radio"/>
@@ -330,9 +341,9 @@
                         </span>
                     </li>
                     <li>
-                        <button id="option_commentClear">Reset Comment String</button>
-                        <label class="label" for="option_comment">Pretty Diff Comment</label>
-                        <textarea cols="30" id="option_comment" readonly="readonly" rows="2">/*prettydiff.com */</textarea>
+                        <button id="commentClear">Reset Comment String</button>
+                        <label class="label" for="commentString">Pretty Diff Comment</label>
+                        <textarea cols="30" id="commentString" readonly="readonly" rows="2">/*prettydiff.com */</textarea>
                     </li>
                 </ul>
             </div>
