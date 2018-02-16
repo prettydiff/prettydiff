@@ -8,7 +8,7 @@
  Please see the license.txt file associated with the Pretty Diff
  application for license information.
  ***********************************************************************/
-
+let debug;
 (function dom_init():void {
     "use strict";
     const prettydiff:prettydiff = global.prettydiff,
@@ -54,8 +54,7 @@
             event: {}
         },
         data:any = {
-            commentString: {},
-            html: [],
+            commentString: [],
             langvalue: ["javascript", "javascript", "JavaScript"],
             mode: "diff",
             settings: {
@@ -170,19 +169,18 @@
                         edit[dollar + "blockScrolling"] = Infinity;
                         return edit;
                     },
-                    aces = function dom_load_aces(el:HTMLInputElement):void {
-                        const acedisable      = function dom_load_acedisable():void {
+                    aces = function dom_load_aces(event:Event):void {
+                        const el:HTMLInputElement = <HTMLInputElement>event.srcElement || <HTMLInputElement>event.target,
+                            elId:string   = el.getAttribute("id"),
+                            acedisable      = function dom_load_acedisable():void {
                                 let addy:string   = "",
-                                    elId:string   = x.getAttribute("id"),
                                     loc:number    = location
                                         .href
                                         .indexOf("ace=false"),
                                     place:string[]  = [],
                                     symbol:string = "?";
-                                method
-                                    .app
-                                    .options(el);
-                                if (elId.indexOf("-yes") > 0 && loc > 0) {
+                                method.app.options(event);
+                                if (elId === "ace-yes" && loc > 0) {
                                     place = location
                                         .href
                                         .split("ace=false");
@@ -190,7 +188,7 @@
                                         place[0] = place[0].slice(0, place[0].length - 1);
                                     }
                                     location.href = place.join("");
-                                } else if (elId.indexOf("-no") > 0 && loc < 0) {
+                                } else if (elId === "ace-no" && loc < 0) {
                                     addy = location.href;
                                     addy = addy.slice(0, addy.indexOf("#") + 1);
                                     if (location.href.indexOf("?") < location.href.length - 1 && location.href.indexOf("?") > 0) {
@@ -198,15 +196,10 @@
                                     }
                                     location.href = addy + symbol + "ace=false";
                                 }
-                            },
-                            aceid = el.getAttribute("id");
-                        if (aceid === "ace-no" && x.checked === true && test.ace === true) {
+                            };
+                        if (el.checked === true) {
                             acedisable();
                         }
-                        if (aceid === "ace-yes" && x.checked === true && test.ace === false) {
-                            id("ace-no").checked = true;
-                        }
-                        el.onclick = acedisable;
                     },
                     areaShiftUp = function dom_load_areaShiftUp(event:KeyboardEvent):void {
                         if (event.keyCode === 16 && test.tabesc.length > 0) {
@@ -321,11 +314,12 @@
                         }
                     },
                     feeds = function dom_load_feeds(el:HTMLInputElement):void {
-                        const feedradio       = function dom_load_feedradio(elly:HTMLElement):boolean {
+                        const feedradio       = function dom_load_feedradio(event:Event):boolean {
                             let parent:HTMLElement,
                                 aa:number,
                                 radios:NodeListOf<HTMLInputElement>;
-                            const item:HTMLElement   = <HTMLElement>elly.parentNode,
+                            const elly:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
+                                item:HTMLElement   = <HTMLElement>elly.parentNode,
                                 radio:HTMLInputElement  = item.getElementsByTagName("input")[0];
                             parent = <HTMLElement>item.parentNode;
                             radios = parent.getElementsByTagName("input");
@@ -339,24 +333,19 @@
                             radio.checked = true;
                             radio.focus();
                             item.setAttribute("class", "active-focus");
+                            method.app.options(event);
                             event.preventDefault();
                             return false;
                         };
-                        el.onfocus = function dom_load_feedFocus() {
-                            feedradio(x);
-                        };
+                        el.onfocus = feedradio;
                         el.onblur  = function dom_load_feedblur():void {
                             const item = <HTMLElement>el.parentNode;
                             item.setAttribute("class", "active");
                         },
-                        el.onclick =function dom_load_feedClick() {
-                            feedradio(x);
-                        };
+                        el.onclick = feedradio;
                         parent = <HTMLElement>x.parentNode;
                         parent = parent.getElementsByTagName("label")[0];
-                        parent.onclick = function dom_load_feedParent() {
-                            feedradio(parent);
-                        };
+                        parent.onclick = feedradio;
                     },
                     feedsubmit = function dom_load_feedsubmit():void {
                         let a:number = 0;
@@ -536,7 +525,7 @@
                             }
                         }
                     },
-                    indentchar   = function dom_load_indentchar():void {
+                    indentchar   = function dom_load_indentchar(event:Event):void {
                         const insize:HTMLInputElement = id("option-insize"),
                             inchar:HTMLInputElement = id("option-inchar");
                         if (test.ace === true) {
@@ -573,7 +562,7 @@
                         if (test.load === false) {
                             method
                                 .app
-                                .options(inchar);
+                                .options(event);
                         }
                     },
                     insize   = function dom_load_insize():void {
@@ -596,6 +585,7 @@
                             const elly:HTMLElement = <HTMLElement>event.target || <HTMLElement>event.srcElement,
                                 mode = elly.getAttribute("id").replace("mode", "");
                             method.event.modeToggle(mode);
+                            method.app.options(event);
                         };
                         if (data.settings.mode === el.getAttribute("id")) {
                             method
@@ -606,9 +596,6 @@
                                 .event
                                 .modeToggle("diff");
                         }
-                    },
-                    optionswrapper  = function dom_load_optionswrapper(el:HTMLElement, event:string):void {
-                        el[event] = method.app.options(el);
                     },
                     parseTable = function dom_load_parseTable(event:Event):void {
                         const item:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
@@ -625,7 +612,7 @@
                         } else {
                             method.app.hideOutput(false);
                         }
-                        method.app.options(item);
+                        method.app.options(event);
                     },
                     prepBox = function dom_load_prepBox(boxName:string):void {
                         if (report[boxName].box === null || (test.domain === false && boxName === "feed")) {
@@ -832,6 +819,38 @@
                             .replace(/:undefined/g, ":false");
                     }
                     data.settings = JSON.parse(localStorage.settings);
+                    const keys:string[] = Object.keys(data.settings),
+                        keylen:number = keys.length;
+                    let a:number = 0,
+                        el:HTMLElement,
+                        sel:HTMLSelectElement,
+                        inp:HTMLInputElement,
+                        name:string;
+                    do {
+                        if (keys[a] !== "report" && keys[a] !== "knownname" && keys[a] !== "feedback") {
+                            el = id(keys[a]) || id(data.settings[keys[a]]);
+                            name = el.nodeName.toLowerCase();
+                            if (name === "select") {
+                                sel = <HTMLSelectElement>el;
+                                sel.selectedIndex = data.settings[keys[a]];
+                                options[keys[a].replace("option-", "")] = sel[sel.selectedIndex].value;
+                            } else {
+                                inp = <HTMLInputElement>el;
+                                if (keys[a] === "mode") {
+                                    id(data.settings[keys[a]]).checked = true;
+                                    options.mode = data.settings[keys[a]].replace("mode", "");
+                                } else if (data.settings[keys[a]].indexOf("option-true-") === 0) {
+                                    id(data.settings[keys[a]]).checked = true;
+                                    options[keys[a].replace("option-", "")] = true;
+                                } else if (data.settings[keys[a]].indexOf("option-false-") === 0) {
+                                    id(data.settings[keys[a]]).checked = true;
+                                } else {
+                                    options[keys[a].replace("option-", "")] = data.settings[keys[a]];
+                                }
+                            }
+                        }
+                        a = a + 1;
+                    } while (a < keylen)
                     if (data.settings.report === undefined) {
                         data.settings.report = {
                             code: {},
@@ -857,6 +876,27 @@
                         .random()
                         .toString()
                         .slice(2)}`;
+                }
+                if (options.diff === undefined) {
+                    options.diff = "";
+                }
+                if (localStorage.source !== undefined) {
+                    options.source = localStorage.source;
+                    if (test.ace === true) {
+                        aceStore.codeIn.setValue(options.source);
+                    } else {
+                        textarea.codeIn.value = options.source;
+                    }
+                }
+                if (localStorage.diff !== undefined) {
+                    options.diff = localStorage.diff;
+                    if (options.mode === "diff") {
+                        if (test.ace === true) {
+                            aceStore.codeOut.setValue(options.diff);
+                        } else {
+                            textarea.codeOut.value = options.diff;
+                        }
+                    }
                 }
 
                 //  feedback dialogue config data (current disabled)
@@ -888,14 +928,20 @@
                         } else if (name === "mode") {
                             modes(x);
                         } else if (name === "ace-radio") {
-                            aces(x);
+                            x.onclick = aces;
                         } else if (name === "parseTable") {
                             x.onclick = parseTable;
                         } else {
-                            optionswrapper(x, "onclick");
+                            x.onclick = method.app.options;
                         }
                     } else if (type === "text") {
-                        optionswrapper(x, "onkeyup");
+                        if (idval === "option-inchar") {
+                            x.onkeyup = indentchar;
+                        } else if (idval === "option-insize") {
+                            x.onkeyup = insize;
+                        } else {
+                            x.onkeyup = method.app.options;
+                        }
                         if (data.settings[idval] !== undefined) {
                             x.value = data.settings[idval];
                         }
@@ -921,19 +967,19 @@
                 if (inputsLen > 0) { 
                     do {
                         idval = selects[a].getAttribute("id");
-                        if (idval === "option-color") {
+                        if (idval === "option-parseFormat") {
+                            selects[a].onchange = parseTable;
+                        } else if (idval === "option-color") {
                             selects[a].onchange = method.event.colorScheme;
                             if (data.settings["option-color"] !== undefined) {
                                 selects[a].selectedIndex = Number(data.settings["option-color"]);
-                                method
-                                    .event
-                                    .colorScheme();
+                                selects[a].onchange = method.event.colorScheme;
                             }
                         } else {
                             if (typeof data.settings[idval] === "number") {
                                 selects[a].selectedIndex = data.settings[idval];
                             }
-                            optionswrapper(selects[a], "onchange");
+                            selects[a].onchange = method.app.options;
                         }
                         a = a + 1;
                     } while (a < inputsLen);
@@ -996,15 +1042,11 @@
                 }
 
                 // sets up the option comment string
-                if (localStorage.commentString !== undefined && localStorage.commentString !== null && localStorage.commentString !== "") {
-                    data.commentString = JSON.parse(localStorage.commentString.replace(/api\./g, ""));
-                }
-                node = id("commentClear");
-                if (node !== null) {
-                    node.onclick = clearComment;
-                }
                 node = id("commentString");
                 if (node !== null) {
+                    if (localStorage.commentString !== undefined && localStorage.commentString !== null && localStorage.commentString !== "") {
+                        data.commentString = JSON.parse(localStorage.commentString);
+                    }
                     if (node.value.length === 0) {
                         node.innerHTML = "/*prettydiff.com \u002a/";
                     } else {
@@ -1012,6 +1054,10 @@
                             .commentString
                             .join(", ")
                             .replace(/api\./g, "") + " \u002a/";
+                    }
+                    node = id("commentClear");
+                    if (node !== null) {
+                        node.onclick = clearComment;
                     }
                 }
 
@@ -1121,9 +1167,7 @@
                                     .getSession()
                                     .setMode("ace/mode/" + param[1]);
                             }
-                            method
-                                .event
-                                .langOps(lang);
+                            method.app.langkey(aceStore.codeIn, param[1]);
                         } else if (param[0] === "c" || param[0] === "color") {
                             param[0] = "color";
                             c = colors.length - 1;
@@ -1132,7 +1176,7 @@
                                     color.selectedIndex = c;
                                     method
                                         .event
-                                        .colorScheme();
+                                        .colorScheme(null);
                                     break;
                                 }
                                 c = c - 1;
@@ -2112,6 +2156,7 @@
                 // sets some default event configurations
                 if (textarea.codeIn !== null) {
                     textarea.codeIn.onkeyup = function dom_load_bindInUp(event:Event):void {
+                        method.app.options(event);
                         method
                             .event
                             .execute(event);
@@ -2119,46 +2164,35 @@
                     textarea.codeIn.onfocus   = textareafocus;
                     textarea.codeIn.onblur    = textareablur;
                     if (test.ace === true) {
-                        textarea.codeIn.onkeydown = function dom_load_bindInDownCM(event:Event):void {
-                            method
-                                .event
-                                .areaTabOut(event, textarea.codeIn);
+                        textarea.codeIn.onkeydown = function dom_load_bindInDownAce(event:KeyboardEvent):void {
+                            areaTabOut(event, textarea.codeIn);
                             method
                                 .event
                                 .keydown(event);
                         };
                     } else {
-                        textarea.codeIn.onkeydown = function dom_load_bindInDown(event:Event):void {
+                        textarea.codeIn.onkeydown = function dom_load_bindInDown(event:KeyboardEvent):void {
                             method
                                 .event
                                 .fixtabs(event, textarea.codeIn);
-                            method
-                                .event
-                                .areaTabOut(event, textarea.codeIn);
+                            areaTabOut(event, textarea.codeIn);
                             method
                                 .event
                                 .keydown(event);
                         };
                     }
                 }
-                if (textarea.codeOut !== null && test.ace === true) {
+                if (textarea.codeOut !== null) {
                     textarea.codeOut.onfocus   = textareafocus;
                     textarea.codeOut.onblur    = textareablur;
-                    textarea.codeOut.onkeydown = function dom_load_bindTabOut() {
-                        method.event.areaTabOut(textarea.codeOut);
+                    textarea.codeIn.onkeyup = function dom_load_bindOutUp(event:Event):void {
+                        method.app.options(event);
                     };
-                }
-                node = id("option-inchar");
-                if (node !== null) {
-                    node.onkeyup = indentchar;
-                }
-                node = id("option-insize");
-                if (node !== null) {
-                    node.onkeyup = insize;
-                }
-                node = id("option-parseFormat");
-                if (node !== null) {
-                    node.onchange = parseTable;
+                    if (test.ace === true) {
+                        textarea.codeOut.onkeydown = function dom_load_bindTabOut() {
+                            method.event.areaTabOut(textarea.codeOut);
+                        };
+                    }
                 }
                 window.onresize     = fixHeight;
                 window.onkeyup      = areaShiftUp;
@@ -2259,7 +2293,7 @@
                         }
                         method
                             .event
-                            .colorScheme();
+                            .colorScheme(null);
                         colorScheme.onchange = method.event.colorScheme;
                     };
                 b = docbuttons.length;
@@ -2318,7 +2352,7 @@
                     }
                     method
                         .event
-                        .colorScheme();
+                        .colorScheme(null);
                     node.onchange = method.event.colorScheme;
                 }
                 {
@@ -2395,9 +2429,6 @@
                 if (x === undefined) {
                     return;
                 }
-                method
-                    .app
-                    .options(x);
             },
             lang:HTMLInputElement = id("option-lang"),
             jsscope:HTMLInputElement = id("option-jsscope"),
@@ -2415,14 +2446,9 @@
         targetIn  = textarea.codeIn;
         parent = <HTMLElement>targetOut.parentNode;
         if (targetOut === null || (state === true && parent.style.display === "none") || (state === false && parent.style.display === "block")) {
-            if (test.load === false) {
-                method
-                    .app
-                    .options(x);
-            }
             return;
         }
-        if (langval !== "csv" && options.mode !== "beau") {
+        if (langval !== "csv" && options.mode !== "beautify") {
             state = false;
         }
         if (langval === "auto" || langval === "javascript" || langval === "csv") {
@@ -2440,7 +2466,7 @@
                         targetIn.onkeyup = function dom_app_hideOutput_langkeyEditor(event:Event):void {
                             method
                                 .app
-                                .langkey(false, aceStore.codeIn, "");
+                                .langkey(aceStore.codeIn, "");
                             method
                                 .event
                                 .execute(event);
@@ -2456,31 +2482,18 @@
                 if (langval === "csv") {
                     x = lang;
                 }
-                if (test.load === false) {
-                    method
-                        .app
-                        .options(x);
-                }
             } else if (x === id("modebeautify") || scopeval === "none") {
                 restore();
-            } else {
-                method
-                    .app
-                    .options(x);
             }
         } else if (x === id("modebeautify")) {
             restore();
-        } else {
-            method
-                .app
-                .options(x);
         }
     };
     // determine the specific language if auto or unknown all - change all language
     // modes? comes from pd.codeops, which is      fired on change of language
     // select list obj - the ace obj passed in. {} empty object if `all` is true
     // lang - a language passed in. "" empty string means auto detect
-    method.app.langkey  = function dom_app_langkey(all:boolean, obj:any, lang:string):[string, string, string] {
+    method.app.langkey  = function dom_app_langkey(obj:any, lang:string):[string, string, string] {
         let sample:string      = "",
             // defaultt      = actual default lang value from the select list
             defaultval:string  = "",
@@ -2510,7 +2523,6 @@
             }
         }
         if (defaultval === "auto") {
-            all  = true;
             lang = "auto";
         }
         if (lang === "csv") {
@@ -2526,33 +2538,34 @@
         }
         value = data.langvalue;
         if (test.ace === true) {
-            if (all === true) {
-                if (all === true && lang === "") {
-                    value          = language.auto(aceStore.codeIn.getValue(), defaultt);
-                    data.langvalue = value;
-                }
-                if (value[0] === "tss") {
-                    value[0] = "javascript";
-                } else if (value[0] === "dustjs") {
-                    value[0] = "html";
-                } else if (value[0] === "markup") {
-                    value[0] = "xml";
-                }
-                if (textarea.codeIn !== null) {
-                    aceStore
-                        .codeIn
-                        .getSession()
-                        .setMode("ace/mode/" + value[0]);
-                }
-                if (textarea.codeOut !== null) {
-                    aceStore
-                        .codeOut
-                        .getSession()
-                        .setMode("ace/mode/" + value[0]);
-                }
+            if (lang === "") {
+                value          = language.auto(aceStore.codeIn.getValue(), defaultt);
+                data.langvalue = value;
+            }
+            if (value[0] === "tss") {
+                value[0] = "javascript";
+            } else if (value[0] === "dustjs") {
+                value[0] = "html";
+            } else if (value[0] === "markup") {
+                value[0] = "xml";
+            }
+            if (textarea.codeIn !== null) {
+                aceStore
+                    .codeIn
+                    .getSession()
+                    .setMode("ace/mode/" + value[0]);
+            }
+            if (textarea.codeOut !== null) {
+                aceStore
+                    .codeOut
+                    .getSession()
+                    .setMode("ace/mode/" + value[0]);
             }
         }
-        if (all === true && lang !== "") {
+        if (lang === "text") {
+            return ["text", "text", "Plain Text"];
+        }
+        if (lang !== "") {
             return value;
         }
         if (value.length < 1 && lang === "") {
@@ -2564,17 +2577,16 @@
             }
             data.langvalue = value;
         }
-        if (lang === "text") {
-            return ["text", "text", "Plain Text"];
-        }
         return value;
     };
     //store tool changes into localStorage to maintain state
-    method.app.options  = function dom_app_options(x:HTMLElement):void {
-        let input:HTMLInputElement,
+    method.app.options  = function dom_app_options(event:Event):void {
+        let x:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
+            input:HTMLInputElement,
             select:HTMLSelectElement,
             item:HTMLElement,
             node:string   = "",
+            value:string = "",
             xname:string  = "",
             type:string   = "",
             idval:string     = "",
@@ -2592,7 +2604,7 @@
                 }
                 item = x.getElementsByTagName("input")[0];
             }
-        } else if (xname === "input") {
+        } else if (xname === "input" || xname === "textarea") {
             input = <HTMLInputElement>x;
             item = input;
         } else if (xname === "select") {
@@ -2651,36 +2663,79 @@
                 .replace(/\s+/g, " ");
         }
         localStorage.settings = JSON.stringify(data.settings);
+        if (item.nodeName.toLowerCase() === "select") {
+            value = select[select.selectedIndex].value;
+        } else {
+            value = input.value;
+        }
         if (classy === "box") {
             return;
         }
-        if (comment !== null && idval !== null) {
-            if (item.nodeName.toLowerCase() === "select") {
-                node = select[select.selectedIndex].value;
+        if (item === textarea.codeIn) {
+            classy = "source";
+            options.source = textarea.codeIn.value;
+            localStorage.source = options.source;
+        } else if (item === textarea.codeOut) {
+            classy = "diff";
+            options.diff = textarea.codeOut.value;
+            localStorage.diff = options.diff;
+        } else if (idval.indexOf("option-") === 0) {
+            classy = idval.replace("option-", "");
+            if (classy.indexOf("true-") === 0) {
+                classy = classy.replace("true-", "");
+                options[classy] = true;
+            } else if (classy.indexOf("false-") === 0) {
+                classy = classy.replace("false-", "");
+                options[classy] = false;
             } else {
-                node = input.value;
+                options[classy] = value;
             }
-            if (data.commentString.length === 0) {
-                comment.innerHTML = "/*prettydiff.com \u002a/";
-            } else if (data.commentString.length === 1) {
-                comment.innerHTML = "/*prettydiff.com " + data
-                    .commentString[0]
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;")
-                    .replace(/api\./g, "") + " \u002a/";
+        } else if (idval === "inputlabel") {
+            classy = "sourcelabel";
+            options.sourcelabel = value;
+        } else if (idval === "outputlabel") {
+            classy = "difflabel";
+            options.difflabel = value;
+        }
+        if (classy !== null && options[classy] !== undefined && classy !== "source" && classy !== "diff") {
+            let a:number = 0;
+            const cslen:number = data.commentString.length;
+            if (cslen > 0) {
+                do {
+                    if (data.commentString[a].slice(0, data.commentString[a].indexOf(":")) === classy) {
+                        data.commentString.splice(a, 1);
+                        break;
+                    }
+                    a = a + 1;
+                } while (a < cslen);
+            }
+            if (typeof options[classy] === "number" || typeof options[classy] === "boolean") {
+                data.commentString.push(`${classy}: ${options[classy]}`);
             } else {
-                comment.innerHTML = "/*prettydiff.com " + data
-                    .commentString
-                    .join(", ")
-                    .replace(/&/g, "&amp;")
-                    .replace(/</g, "&lt;")
-                    .replace(/>/g, "&gt;")
-                    .replace(/api\./g, "") + " \u002a/";
+                data.commentString.push(`${classy}: "${options[classy]}"`);
             }
-            localStorage.commentString = JSON
-                .stringify(data.commentString)
-                .replace(/api\./g, "");
+            if (comment !== null) {
+                if (data.commentString.length === 0) {
+                    comment.innerHTML = "/*prettydiff.com \u002a/";
+                } else if (data.commentString.length === 1) {
+                    comment.innerHTML = "/*prettydiff.com " + data
+                        .commentString[0]
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/api\./g, "") + " \u002a/";
+                } else {
+                    data.commentString.sort();
+                    comment.innerHTML = "/*prettydiff.com " + data
+                        .commentString
+                        .join(", ")
+                        .replace(/&/g, "&amp;")
+                        .replace(/</g, "&lt;")
+                        .replace(/>/g, "&gt;")
+                        .replace(/api\./g, "") + " \u002a/";
+                }
+            }
+            localStorage.commentString = JSON.stringify(data.commentString);
         }
     };
     //allows visual folding of function in the JSPretty jsscope HTML output
@@ -2724,7 +2779,7 @@
         }
     };
     //change the color scheme of the web UI
-    method.event.colorScheme = function dom_event_colorScheme():void {
+    method.event.colorScheme = function dom_event_colorScheme(event:Event):void {
         const item:HTMLSelectElement = id("option-color"),
             option:NodeListOf<HTMLOptionElement>    = item.getElementsByTagName("option"),
             optionLen:number = option.length,
@@ -2775,10 +2830,10 @@
                 .getElementsByTagName("g")[0]
                 .setAttribute("fill", "#" + logoColor);
         }
-        if (test.load === false) {
+        if (test.load === false && event !== null) {
             method
                 .app
-                .options(item);
+                .options(event);
         }
     };
     // allows grabbing and resizing columns (from the third column) in the diff
@@ -3316,7 +3371,7 @@
                     buttons[0].click();
                 }
                 parent = <HTMLElement>buttons[1].parentNode;
-                if (parent.style.display === "none" && (options.mode === "diff" || (options.mode === "beau" && options.jsscope === "report" && lang[1] === "javascript"))) {
+                if (parent.style.display === "none" && (options.mode === "diff" || (options.mode === "beautify" && options.jsscope === "report" && lang[1] === "javascript"))) {
                     buttons[1].click();
                 }
             };
@@ -3332,7 +3387,7 @@
         if (typeof event === "object" && event !== null && event.type === "keyup") {
             // jsscope does not get the convenience of keypress execution, because its
             // overhead is costly do not execute keypress from alt, home, end, or arrow keys
-            if ((textout === false && options.mode === "beau") || event.altKey === true || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) {
+            if ((textout === false && options.mode === "beautify") || event.altKey === true || event.keyCode === 16 || event.keyCode === 18 || event.keyCode === 35 || event.keyCode === 36 || event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) {
                 return false;
             }
             if (test.keypress === true) {
@@ -3403,20 +3458,20 @@
                                     if (options.mode !== "diff") {
                                         lang = method
                                             .app
-                                            .langkey(false, aceStore.codeIn, "");
+                                            .langkey(aceStore.codeIn, "");
                                     } else if (data.langvalue[1] === "text") {
                                         lang = ["text", "text", "Plain Text"];
                                     } else {
                                         lang = method
                                             .app
-                                            .langkey(false, aceStore.codeIn, "");
+                                            .langkey(aceStore.codeIn, "");
                                     }
                                 } else if (options.mode === "diff" && data.langvalue[1] === "text") {
                                     lang = ["text", "text", "Plain Text"];
                                 } else {
                                     lang = method
                                         .app
-                                        .langkey(false, {
+                                        .langkey({
                                             value: options.source
                                         }, "");
                                 }
@@ -3460,7 +3515,7 @@
                 lang       = (data.langvalue[0] !== "plain_text")
                     ? method
                         .app
-                        .langkey(false, aceStore.codeIn, "")
+                        .langkey(aceStore.codeIn, "")
                     : lang;
                 options.lang = lang[0];
                 options.lexer = lang[1];
@@ -3474,11 +3529,11 @@
                 } else if (test.ace === true) {
                     lang = method
                         .app
-                        .langkey(false, aceStore.codeIn, "");
+                        .langkey(aceStore.codeIn, "");
                 } else {
                     lang = method
                         .app
-                        .langkey(false, {
+                        .langkey({
                             value: options.source
                         }, "");
                 }
@@ -3570,7 +3625,7 @@
                 resize.style.top   = "100%";
                 method
                     .app
-                    .options(box);
+                    .options(e);
                 e.preventDefault();
                 return false;
             },
@@ -3639,7 +3694,7 @@
         }
         method
             .app
-            .options(box);
+            .options(event);
         return false;
     };
     //tests if a key press is a short command
@@ -3652,29 +3707,6 @@
         if (event.keyCode === 17 || event.ctrlKey === true || event.keyCode === 224) {
             test.keypress = true;
         }
-    };
-    //alters available options depending upon language selection
-    method.event.langOps = function dom_event_langOps(node:HTMLElement):void {
-        let xml:boolean  = false;
-        const name:string = node.nodeName.toLowerCase(),
-            lang:HTMLInputElement = id("option-lang");
-        if (lang.value === "auto") {
-            method
-                .app
-                .langkey(true, {}, "");
-        } else {
-            method
-                .app
-                .langkey(true, {}, lang);
-        }
-        if (test.load === false && options.mode !== "diff") {
-            method
-                .app
-                .hideOutput(node);
-        }
-        method
-            .app
-            .options(node);
     };
     //maximize report window to available browser window
     method.event.maximize = function dom_event_maximize(event:Event):void {
@@ -3774,7 +3806,7 @@
             left:number      = 0,
             top:number       = 0,
             buttonRes:HTMLButtonElement,
-            step:number      = (parent.style.display === "none" && (options.mode === "diff" || (options.mode === "beau" && options.jsscope === "report" && options.lang === "javascript")))
+            step:number      = (parent.style.display === "none" && (options.mode === "diff" || (options.mode === "beautify" && options.jsscope === "report" && options.lang === "javascript")))
                 ? 1
                 : 50;
         const growth    = function dom_event_minimize_growth():boolean {
@@ -3811,7 +3843,7 @@
                             heading.style.width = (widthTarget - saveSpace) + "em";
                             method
                                 .app
-                                .options(box);
+                                .options(e);
                             return false;
                         }
                         return true;
@@ -3859,7 +3891,7 @@
                     heading.style.width    = (widthTarget - saveSpace) + "em";
                     method
                         .app
-                        .options(box);
+                        .options(e);
                     return false;
                 }
                 incW                    = (widthTarget > width)
@@ -3909,7 +3941,7 @@
                             box.style.zIndex                                            = "2";
                             method
                                 .app
-                                .options(box);
+                                .options(e);
                             return false;
                         }
                         return true;
@@ -4033,7 +4065,7 @@
                 const text:string = mode.charAt(0).toUpperCase() + mode.slice(1),
                     ci:HTMLElement = id("codeInput"),
                     cilabel:NodeListOf<HTMLLabelElement> = ci.getElementsByTagName("label"),
-                    output:HTMLElement = id("output"),
+                    output:HTMLTextAreaElement = id("output"),
                     outLabel:HTMLElement = <HTMLElement>ci.getElementsByClassName("inputLabel")[1],
                     sourceLabel:HTMLElement = id("inputlabel").parentNode,
                     outputLabel:HTMLElement = id("outputlabel").parentNode,
@@ -4051,10 +4083,12 @@
                         aceStore
                             .codeOut
                             .setReadOnly(false);
+                        aceStore.codeOut.setValue(options.diff);
                         parent = <HTMLElement>output.parentNode;
                         parent.setAttribute("class", "output");
                     } else {
-                        output.getElementsByTagName("textarea")[0].readOnly = false;
+                        output.readOnly = false;
+                        output.value = options.diff;
                         parent = <HTMLElement>output.parentNode.parentNode;
                         parent.setAttribute("class", "output");
                     }
@@ -4071,31 +4105,19 @@
                         aceStore
                             .codeOut
                             .setReadOnly(true);
+                        aceStore.codeOut.setValue("");
                         parent = <HTMLElement>output.parentNode;
                         parent.setAttribute("class", "readonly");
                     } else {
-                        output.getElementsByTagName("textarea")[0].readOnly = false;
+                        output.readOnly = true;
+                        output.value = "";
                         parent = <HTMLElement>output.parentNode.parentNode;
                         parent.setAttribute("class", "readonly");
                     }
                 }
             };
         let parent:HTMLElement;
-        if (mode === "analysis") {
-            options.mode = "anal";
-        }
-        if (mode === "beautify") {
-            options.mode = "beau";
-        }
-        if (mode === "diff") {
-            options.mode = "diff";
-        }
-        if (mode === "minify") {
-            options.mode = "minn";
-        }
-        if (mode === "parse") {
-            options.mode = "pars";
-        }
+        options.mode = mode;
         makeChanges();
         cycleOptions();
     };
@@ -4168,7 +4190,7 @@
                 bodyHeight           = body.clientHeight;
                 method
                     .app
-                    .options(box);
+                    .options(e);
                 document.onmouseup = null;
             },
             boxsize    = function dom_event_resize_boxsize(f:MouseEvent):void {
@@ -4190,8 +4212,9 @@
         document.onmousedown = null;
     };
     //toggle between parsed html diff report and raw text representation
-    method.event.save = function dom_event_save(x:HTMLElement):boolean {
-        const anchor:boolean     = (x.nodeName.toLowerCase() === "a"),
+    method.event.save = function dom_event_save(event:Event):boolean {
+        const x:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
+            anchor:boolean     = (x.nodeName.toLowerCase() === "a"),
             top:HTMLElement        = (x.parentNode.parentNode.nodeName.toLowerCase() === "p")
                 ? <HTMLElement>x.parentNode.parentNode.parentNode
                 : <HTMLElement>x.parentNode.parentNode,
@@ -4262,7 +4285,7 @@
         prettydiff.finalFile.order[7] = id("option-color")[id("option-color").selectedIndex].value;
         if (options.mode === "diff") {
             prettydiff.finalFile.order[12] = prettydiff.finalFile.script.diff;
-        } else if (options.mode === "beau" && data.langvalue[0] === "javascript" && (jsscope !== null && jsscope[jsscope.selectedIndex].value !== "none")) {
+        } else if (options.mode === "beautify" && data.langvalue[0] === "javascript" && (jsscope !== null && jsscope[jsscope.selectedIndex].value !== "none")) {
             prettydiff.finalFile.order[12] = prettydiff.finalFile.script.beautify;
         } else {
             prettydiff.finalFile.order[12] = prettydiff.finalFile.script.minimal;
@@ -4296,7 +4319,7 @@
             pageHeight = content.length - 1;
             do {
                 if (content[pageHeight].getAttribute("class") === "fold") {
-                    if (options.mode === "beau") {
+                    if (options.mode === "beautify") {
                         content[pageHeight].onclick = method.event.beaufold;
                     } else if (options.mode === "diff") {
                         content[pageHeight].onclick = function dom_event_save_difffold() {
@@ -4309,7 +4332,7 @@
         }
         method
             .app
-            .options(x.parentNode);
+            .options(event);
         return false;
     };
     //analyzes combinations of consecutive key presses
@@ -4368,7 +4391,7 @@
                         color.selectedIndex = ind;
                         method
                             .event
-                            .colorScheme();
+                            .colorScheme(event);
                         if (active === document.documentElement || active === null || active === document.getElementsByTagName("body")[0]) {
                             color.blur();
                         } else {
@@ -4414,5 +4437,5 @@
         }
     };
 
-    load();
+    load();debug={data:data,options:options};
 }());

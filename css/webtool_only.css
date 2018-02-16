@@ -43,7 +43,6 @@
 #prettydiff.white #webtool td.nested .header th,
 #prettydiff.white #webtool .header th{background:#eef}
 #prettydiff.white #webtool thead th{background:#eef}
-#prettydiff.white #webtool .readonly textarea,
 #prettydiff.white #webtool .readonly .ace_scroller,
 #prettydiff.white #webtool td.nested th{background:#eee}
 #prettydiff.white #textareaTabKey em{color:#00f}
@@ -53,6 +52,7 @@
 #prettydiff.white .box .body p em{color:#080}
 #prettydiff.white .box .body p strong{color:#009}
 #prettydiff.white #webtool textarea{background:#eee;border-color:#999;color:#009}
+#prettydiff.white #webtool .readonly textarea{background:#ddd}
 #prettydiff #loadmask span{background:#ccc}
 
 /*color - canvas, webtool only*/
@@ -105,12 +105,12 @@
 #prettydiff.canvas #textareaTabKey em{color:#060}
 #prettydiff.canvas #announcement strong,
 #prettydiff.canvas #textareaTabKey strong{color:#900}
-#prettydiff.canvas #webtool .readonly textarea,
 #prettydiff.canvas #webtool .readonly .ace_scroller,
 #prettydiff.canvas .box .body{background:#ddddd8}
 #prettydiff.canvas .box .body p em{color:#060}
 #prettydiff.canvas .box .body p strong{color:#009}
 #prettydiff.canvas #webtool textarea{background:#ddddd8;border-color:#999;color:#420}
+#prettydiff.canvas #webtool .readonly textarea{background:#bbbbb8}
 #prettydiff.canvas .box h3 button{background:#eeeee8;border-color:#420;color:#900}
 #prettydiff.canvas .box h3 button:hover{background:#ccb;border-color:#630;color:#630}
 
@@ -176,7 +176,6 @@
 #prettydiff.shadow .ace-idle-fingers .ace_support.ace_constant{color:#8cc9fb}
 #prettydiff.shadow .unchecked{background:#666}
 #prettydiff.shadow #textareaTabKey em{color:#cf3}
-#prettydiff.shadow #webtool .readonly textarea,
 #prettydiff.shadow #webtool .readonly .ace_scroller,
 #prettydiff.shadow .box .body{background:#222}
 #prettydiff.shadow #announcement em,
@@ -184,6 +183,7 @@
 #prettydiff.shadow #announcement strong,
 #prettydiff.shadow .box .body p strong{color:#9cf}
 #prettydiff.shadow #webtool textarea{background:#222;border-color:#999;color:#ddd}
+#prettydiff.shadow #webtool .readonly textarea{background:#111}
 #prettydiff.shadow .box h3 button{background:#333;border-color:#666;color:#ccc}
 #prettydiff.shadow .box h3 button:hover{background:#777;border-color:#aaa;color:#fff}
 
