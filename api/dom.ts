@@ -47,7 +47,8 @@ let debug;
         // end option defaults
         aceStore:any = {
             codeIn: {},
-            codeOut: {}
+            codeOut: {},
+            height: 0
         },
         method:domMethods = {
             app: {},
@@ -497,6 +498,7 @@ let debug;
                         }
                         if (test.ace === true) {
                             math = (height / 14) - (14.31 + headline);
+                            aceStore.height = math;
                             if (input !== null) {
                                 input.style.height = math + "em";
                                 aceStore
@@ -525,7 +527,7 @@ let debug;
                             }
                         }
                     },
-                    indentchar   = function dom_load_indentchar(event:Event):void {
+                    indentchar   = function dom_load_indentchar():void {
                         const insize:HTMLInputElement = id("option-insize"),
                             inchar:HTMLInputElement = id("option-inchar");
                         if (test.ace === true) {
@@ -559,11 +561,6 @@ let debug;
                                     .setUseSoftTabs(false);
                             }
                         }
-                        if (test.load === false) {
-                            method
-                                .app
-                                .options(event);
-                        }
                     },
                     insize   = function dom_load_insize():void {
                         const el:HTMLInputElement = id("option-insize");
@@ -580,21 +577,33 @@ let debug;
                                 .setTabSize(el.value);
                         }
                     },
-                    modes = function dom_load_modes(el:HTMLInputElement):void {
-                        el.onclick = function dom_load_modeToggle(event:Event) {
-                            const elly:HTMLElement = <HTMLElement>event.target || <HTMLElement>event.srcElement,
-                                mode = elly.getAttribute("id").replace("mode", "");
-                            method.event.modeToggle(mode);
+                    modes = function dom_load_modes(event:Event):void {
+                        const elly:HTMLElement = <HTMLElement>event.target || <HTMLElement>event.srcElement,
+                            mode = elly.getAttribute("id").replace("mode", "");
+                        method.event.modeToggle(mode);
+                        method.app.options(event);
+                    },
+                    numeric = function dom_load_numeric(event:Event):void {
+                        const el:HTMLInputElement = <HTMLInputElement>event.srcElement || <HTMLInputElement>event.target;
+                        let val = el.value,
+                            negative:boolean = (/^(\s*-)/).test(val),
+                            split:string[] = val.replace(/\s|-/g, "").split(".");
+                        if (split.length > 1) {
+                            val = `${split[0].replace(/\D/g, "")}.${split[1].replace(/\D/, "")}`;
+                        } else {
+                            val = split[0].replace(/\D/g, "");
+                        }
+                        if (negative === true) {
+                            val = `-${val}`;
+                        }
+                        el.value = val;
+                        if (el === id("option-inchar")) {
+                            indentchar();
+                        } else if (el === id("option-insize")) {
+                            insize();
+                        }
+                        if (test.load === false) {
                             method.app.options(event);
-                        };
-                        if (data.settings.mode === el.getAttribute("id")) {
-                            method
-                                .event
-                                .modeToggle(idval.replace("mode", ""));
-                        } else if (data.settings.mode === undefined) {
-                            method
-                                .event
-                                .modeToggle("diff");
                         }
                     },
                     parseTable = function dom_load_parseTable(event:Event):void {
@@ -766,137 +775,27 @@ let debug;
 
                 // build the Ace editors
                 if (test.ace === true) {
+                    const val:number = (data.settings["option-insize"] === undefined || isNaN(Number(data.settings["option-insize"])) === true)
+                        ? 4
+                        : Number(data.settings["option-insize"])
                     if (textarea.codeIn !== null) {
                         aceStore.codeIn = aceApply("codeIn", true);
                     }
                     if (textarea.codeOut !== null) {
                         aceStore.codeOut = aceApply("codeOut", true);
                     }
-                    if (data.settings[idval] !== undefined && data.settings[idval] !== "4" && isNaN(data.settings[idval]) === false) {
-                        aceStore
-                            .codeIn
-                            .getSession()
-                            .setTabSize(Number(data.settings[idval]));
-                        aceStore
-                            .codeOut
-                            .getSession()
-                            .setTabSize(Number(data.settings[idval]));
-                    }
+                    aceStore
+                        .codeIn
+                        .getSession()
+                        .setTabSize(val);
+                    aceStore
+                        .codeOut
+                        .getSession()
+                        .setTabSize(val);
                 }
                 node = id("ace-no");
                 if (test.ace === false && node !== null && node.checked === false) {
                     node.checked = true;
-                }
-
-                // prep the floating GUI windows
-                report.feed.body = (report.feed.box === null)
-                    ? null
-                    : report
-                        .feed
-                        .box
-                        .getElementsByTagName("div")[0];
-                report.code.body = (report.code.box === null)
-                    ? null
-                    : report
-                        .code
-                        .box
-                        .getElementsByTagName("div")[0];
-                report.stat.body = (report.stat.box === null)
-                    ? null
-                    : report
-                        .stat
-                        .box
-                        .getElementsByTagName("div")[0];
-                prepBox("feed");
-                prepBox("code");
-                prepBox("stat");
-
-                // preps stored settings
-                if (localStorage.settings !== undefined && localStorage.settings !== null) {
-                    if (localStorage.settings.indexOf(":undefined") > 0) {
-                        localStorage.settings = localStorage
-                            .settings
-                            .replace(/:undefined/g, ":false");
-                    }
-                    data.settings = JSON.parse(localStorage.settings);
-                    const keys:string[] = Object.keys(data.settings),
-                        keylen:number = keys.length;
-                    let a:number = 0,
-                        el:HTMLElement,
-                        sel:HTMLSelectElement,
-                        inp:HTMLInputElement,
-                        name:string;
-                    do {
-                        if (keys[a] !== "report" && keys[a] !== "knownname" && keys[a] !== "feedback") {
-                            el = id(keys[a]) || id(data.settings[keys[a]]);
-                            name = el.nodeName.toLowerCase();
-                            if (name === "select") {
-                                sel = <HTMLSelectElement>el;
-                                sel.selectedIndex = data.settings[keys[a]];
-                                options[keys[a].replace("option-", "")] = sel[sel.selectedIndex].value;
-                            } else {
-                                inp = <HTMLInputElement>el;
-                                if (keys[a] === "mode") {
-                                    id(data.settings[keys[a]]).checked = true;
-                                    options.mode = data.settings[keys[a]].replace("mode", "");
-                                } else if (data.settings[keys[a]].indexOf("option-true-") === 0) {
-                                    id(data.settings[keys[a]]).checked = true;
-                                    options[keys[a].replace("option-", "")] = true;
-                                } else if (data.settings[keys[a]].indexOf("option-false-") === 0) {
-                                    id(data.settings[keys[a]]).checked = true;
-                                } else {
-                                    options[keys[a].replace("option-", "")] = data.settings[keys[a]];
-                                }
-                            }
-                        }
-                        a = a + 1;
-                    } while (a < keylen)
-                    if (data.settings.report === undefined) {
-                        data.settings.report = {
-                            code: {},
-                            feed: {},
-                            stat: {}
-                        };
-                    }
-                    if (data.settings.knownname === undefined) {
-                        data.settings.knownname = `${Math
-                            .random()
-                            .toString()
-                            .slice(2) + Math
-                            .random()
-                            .toString()
-                            .slice(2)}`;
-                        localStorage.settings      = JSON.stringify(data.settings);
-                    }
-                } else {
-                    data.settings.knownname = `${Math
-                        .random()
-                        .toString()
-                        .slice(2) + Math
-                        .random()
-                        .toString()
-                        .slice(2)}`;
-                }
-                if (options.diff === undefined) {
-                    options.diff = "";
-                }
-                if (localStorage.source !== undefined) {
-                    options.source = localStorage.source;
-                    if (test.ace === true) {
-                        aceStore.codeIn.setValue(options.source);
-                    } else {
-                        textarea.codeIn.value = options.source;
-                    }
-                }
-                if (localStorage.diff !== undefined) {
-                    options.diff = localStorage.diff;
-                    if (options.mode === "diff") {
-                        if (test.ace === true) {
-                            aceStore.codeOut.setValue(options.diff);
-                        } else {
-                            textarea.codeOut.value = options.diff;
-                        }
-                    }
                 }
 
                 //  feedback dialogue config data (current disabled)
@@ -926,7 +825,7 @@ let debug;
                         if (idval.indexOf("feedradio") === 0) {
                             feeds(x);
                         } else if (name === "mode") {
-                            modes(x);
+                            x.onclick = modes;
                         } else if (name === "ace-radio") {
                             x.onclick = aces;
                         } else if (name === "parseTable") {
@@ -935,10 +834,8 @@ let debug;
                             x.onclick = method.app.options;
                         }
                     } else if (type === "text") {
-                        if (idval === "option-inchar") {
-                            x.onkeyup = indentchar;
-                        } else if (idval === "option-insize") {
-                            x.onkeyup = insize;
+                        if (x.getAttribute("data-type") === "number") {
+                            x.onkeyup = numeric;
                         } else {
                             x.onkeyup = method.app.options;
                         }
@@ -1041,6 +938,128 @@ let debug;
                     }
                 }
 
+                // preps stored settings
+                // should come after events are assigned
+                if (localStorage.settings !== undefined && localStorage.settings !== null) {
+                    if (localStorage.settings.indexOf(":undefined") > 0) {
+                        localStorage.settings = localStorage
+                            .settings
+                            .replace(/:undefined/g, ":false");
+                    }
+                    data.settings = JSON.parse(localStorage.settings);
+                    const keys:string[] = Object.keys(data.settings),
+                        keylen:number = keys.length;
+                    let a:number = 0,
+                        el:HTMLElement,
+                        sel:HTMLSelectElement,
+                        inp:HTMLInputElement,
+                        name:string;
+                    do {
+                        if (keys[a] !== "report" && keys[a] !== "knownname" && keys[a] !== "feedback") {
+                            el = id(keys[a]) || id(data.settings[keys[a]]);
+                            name = el.nodeName.toLowerCase();
+                            if (name === "select") {
+                                sel = <HTMLSelectElement>el;
+                                sel.selectedIndex = data.settings[keys[a]];
+                                options[keys[a].replace("option-", "")] = sel[sel.selectedIndex].value;
+                            } else {
+                                inp = <HTMLInputElement>el;
+                                if (keys[a] === "mode") {
+                                    id(data.settings[keys[a]]).checked = true;
+                                    options.mode = data.settings[keys[a]].replace("mode", "");
+                                    method.event.modeToggle(options.mode);
+                                } else if (data.settings[keys[a]].indexOf("option-true-") === 0) {
+                                    id(data.settings[keys[a]]).checked = true;
+                                    options[keys[a].replace("option-", "")] = true;
+                                } else if (data.settings[keys[a]].indexOf("option-false-") === 0) {
+                                    id(data.settings[keys[a]]).checked = true;
+                                } else if (keys[a].indexOf("option-") === 0) {
+                                    id(keys[a]).value = data.settings[keys[a]];
+                                    options[keys[a].replace("option-", "")] = data.settings[keys[a]];
+                                    if (keys[a] === "option-insize") {
+                                        insize();
+                                    } else if (keys[a] === "option-inchar") {
+                                        indentchar();
+                                    }
+                                } else if (id(data.settings[keys[a]]) !== null) {
+                                    id(data.settings[keys[a]]).checked = true;
+                                }
+                            }
+                        }
+                        a = a + 1;
+                    } while (a < keylen)
+                    if (data.settings.report === undefined) {
+                        data.settings.report = {
+                            code: {},
+                            feed: {},
+                            stat: {}
+                        };
+                    }
+                    if (data.settings.knownname === undefined) {
+                        data.settings.knownname = `${Math
+                            .random()
+                            .toString()
+                            .slice(2) + Math
+                            .random()
+                            .toString()
+                            .slice(2)}`;
+                        localStorage.settings      = JSON.stringify(data.settings);
+                    }
+                } else {
+                    data.settings.knownname = `${Math
+                        .random()
+                        .toString()
+                        .slice(2) + Math
+                        .random()
+                        .toString()
+                        .slice(2)}`;
+                }
+                if (options.diff === undefined) {
+                    options.diff = "";
+                }
+                if (localStorage.source !== undefined) {
+                    options.source = localStorage.source;
+                    if (test.ace === true) {
+                        aceStore.codeIn.setValue(options.source);
+                    } else {
+                        textarea.codeIn.value = options.source;
+                    }
+                }
+                if (localStorage.diff !== undefined) {
+                    options.diff = localStorage.diff;
+                    if (options.mode === "diff") {
+                        if (test.ace === true) {
+                            aceStore.codeOut.setValue(options.diff);
+                        } else {
+                            textarea.codeOut.value = options.diff;
+                        }
+                    }
+                }
+
+                // prep the floating GUI windows
+                // should come after store settings are processed
+                report.feed.body = (report.feed.box === null)
+                    ? null
+                    : report
+                        .feed
+                        .box
+                        .getElementsByTagName("div")[0];
+                report.code.body = (report.code.box === null)
+                    ? null
+                    : report
+                        .code
+                        .box
+                        .getElementsByTagName("div")[0];
+                report.stat.body = (report.stat.box === null)
+                    ? null
+                    : report
+                        .stat
+                        .box
+                        .getElementsByTagName("div")[0];
+                prepBox("feed");
+                prepBox("code");
+                prepBox("stat");
+
                 // sets up the option comment string
                 node = id("commentString");
                 if (node !== null) {
@@ -1062,6 +1081,7 @@ let debug;
                 }
 
                 // sets default configurations from URI query string
+                // should come after all configurations are processed, so as to override
                 if (typeof location === "object" && typeof location.href === "string" && location.href.indexOf("?") > -1) {
                     let b:number        = 0,
                         c:number        = 0,
@@ -2200,6 +2220,7 @@ let debug;
                 document.onkeydown  = backspace;
 
                 // sets vertical responsive design layout
+                // must occur last
                 fixHeight();
             }
             if (pages === "documentation") {
@@ -2610,6 +2631,11 @@ let debug;
         } else if (xname === "select") {
             select = <HTMLSelectElement>x;
             item = select;
+        } else if (xname === "button") {
+            item = <HTMLElement>x.parentNode;
+            item = (item.nodeName.toLowerCase() === "a")
+                ? <HTMLElement>item.parentNode.parentNode
+                : <HTMLElement>item.parentNode
         } else {
             input = <HTMLInputElement>x.getElementsByTagName("input")[0];
             item = input;
@@ -2663,21 +2689,29 @@ let debug;
                 .replace(/\s+/g, " ");
         }
         localStorage.settings = JSON.stringify(data.settings);
+        if (classy === "box") {
+            return;
+        }
         if (item.nodeName.toLowerCase() === "select") {
             value = select[select.selectedIndex].value;
         } else {
             value = input.value;
         }
-        if (classy === "box") {
-            return;
-        }
         if (item === textarea.codeIn) {
             classy = "source";
-            options.source = textarea.codeIn.value;
+            if (test.ace === true) {
+                options.source = aceStore.codeIn.getValue();
+            } else {
+                options.source = textarea.codeIn.value;
+            }
             localStorage.source = options.source;
         } else if (item === textarea.codeOut) {
             classy = "diff";
-            options.diff = textarea.codeOut.value;
+            if (test.ace === true) {
+                options.diff = aceStore.codeOut.getValue();
+            } else {
+                options.diff = textarea.codeOut.value;
+            }
             localStorage.diff = options.diff;
         } else if (idval.indexOf("option-") === 0) {
             classy = idval.replace("option-", "");
@@ -3736,7 +3770,7 @@ let debug;
         resize  = buttons[buttons.length - 1];
         save    = (parent.innerHTML.indexOf("save") > -1);
         box     = <HTMLElement>parent.parentNode;
-        idval   = box.getAttribute("id");
+        idval   = box.getAttribute("id").replace("report", "");
         heading = box.getElementsByTagName("h3")[0];
         body    = box.getElementsByTagName("div")[0];
         method
@@ -3786,7 +3820,7 @@ let debug;
             resize.style.display = "block";
             method
                 .app
-                .options(box);
+                .options(event);
         }
     };
     //minimize report windows to the default size and location
@@ -3934,7 +3968,7 @@ let debug;
                             box.style.left      = "auto";
                             box.style.top       = "auto";
                             box.style.right     = final + "em";
-                            data.settings[idval].max = false;
+                            data.settings.report[idval].max = false;
                             body.style.display  = "none";
                             heading.getElementsByTagName("button")[0].style.cursor = "pointer";
                             heading.style.margin                                   = "-0.1em 0em -3.2em -0.1em";
@@ -3988,7 +4022,7 @@ let debug;
             box     = <HTMLElement>parent.parentNode;
             heading = box.getElementsByTagName("h3")[0];
         }
-        idval                   = box.getAttribute("id");
+        idval                   = box.getAttribute("id").replace("report", "");
         body                    = box.getElementsByTagName("div")[0];
         buttons                 = parent.getElementsByTagName("button");
         save                    = (parent.innerHTML.indexOf("save") > -1);
@@ -4040,7 +4074,31 @@ let debug;
     method.event.modeToggle = function dom_event_modeToggle(mode:string):void {
         const cycleOptions = function dom_event_modeToggle_cycleOptions():void {
                 const li:HTMLLIElement[] = id("addOptions").getElementsByTagName("li"),
-                    lilen:number = li.length;
+                    lilen:number = li.length,
+                    disable = function dom_event_modeToggle_cycleOptions_disable(parent:HTMLElement, enable:boolean):void {
+                        const inputs:NodeListOf<HTMLInputElement> = parent.getElementsByTagName("input"),
+                            sels:NodeListOf<HTMLSelectElement> = parent.getElementsByTagName("select");
+                        if (sels.length > 0) {
+                            if (enable === true) {
+                                sels[0].disabled = false;
+                            } else {
+                                sels[0].disabled = true;
+                            }
+                        } else {
+                            if (enable === true) {
+                                inputs[0].disabled = false;
+                            } else {
+                                inputs[0].disabled = true;
+                            }
+                            if (inputs.length > 1) {
+                                if (enable === true) {
+                                    inputs[1].disabled = false;
+                                } else {
+                                    inputs[1].disabled = true;
+                                }
+                            }
+                        }
+                    };
                 let a:number = 0,
                     div:HTMLDivElement,
                     modeat:string;
@@ -4051,11 +4109,14 @@ let debug;
                         if (modeat !== mode && mode !== "diff") {
                             div.innerHTML = `This option is not available in mode '${mode}'.`;
                             div.style.display = "block";
+                            disable(li[a], false);
                         } else if (mode === "diff" && modeat !== "diff" && modeat !== "beautify") {
                             div.innerHTML = `This option is not available in mode '${mode}'.`;
                             div.style.display = "block";
+                            disable(li[a], false);
                         } else {
                             div.style.display = "none";
+                            disable(li[a], true);
                         }
                     }
                     a = a + 1;
@@ -4065,6 +4126,7 @@ let debug;
                 const text:string = mode.charAt(0).toUpperCase() + mode.slice(1),
                     ci:HTMLElement = id("codeInput"),
                     cilabel:NodeListOf<HTMLLabelElement> = ci.getElementsByTagName("label"),
+                    input:HTMLTextAreaElement = id("input"),
                     output:HTMLTextAreaElement = id("output"),
                     outLabel:HTMLElement = <HTMLElement>ci.getElementsByClassName("inputLabel")[1],
                     sourceLabel:HTMLElement = id("inputlabel").parentNode,
@@ -4083,7 +4145,9 @@ let debug;
                         aceStore
                             .codeOut
                             .setReadOnly(false);
-                        aceStore.codeOut.setValue(options.diff);
+                        if (options.diff !== undefined) {
+                            aceStore.codeOut.setValue(options.diff);
+                        }
                         parent = <HTMLElement>output.parentNode;
                         parent.setAttribute("class", "output");
                     } else {
@@ -4102,10 +4166,10 @@ let debug;
                     outputLabel.style.display = "none";
                     outputFile.style.display = "none";
                     if (test.ace === true) {
+                        aceStore.codeOut.setValue("");
                         aceStore
                             .codeOut
                             .setReadOnly(true);
-                        aceStore.codeOut.setValue("");
                         parent = <HTMLElement>output.parentNode;
                         parent.setAttribute("class", "readonly");
                     } else {
@@ -4213,8 +4277,12 @@ let debug;
     };
     //toggle between parsed html diff report and raw text representation
     method.event.save = function dom_event_save(event:Event):boolean {
-        const x:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
-            anchor:boolean     = (x.nodeName.toLowerCase() === "a"),
+        let x:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
+            pageHeight = 0,
+            content:NodeListOf<HTMLElement>,
+            span:HTMLElement       = id("inline"),
+            lastChild:HTMLElement = <HTMLElement>page.lastChild;
+        const anchor:boolean     = (x.parentNode.nodeName.toLowerCase() === "a"),
             top:HTMLElement        = (x.parentNode.parentNode.nodeName.toLowerCase() === "p")
                 ? <HTMLElement>x.parentNode.parentNode.parentNode
                 : <HTMLElement>x.parentNode.parentNode,
@@ -4228,15 +4296,14 @@ let debug;
             ro:HTMLInputElement         = id("savepref-report"),
             jsscope:HTMLSelectElement = id("option-jsscope"),
             reportonly:boolean = (ro !== null && ro.checked === true);
-        let pageHeight = 0,
-            content:NodeListOf<HTMLElement>,
-            span:HTMLElement       = id("inline"),
-            lastChild:HTMLElement = <HTMLElement>page.lastChild;
         if (bodyInner === "") {
             return;
         }
-        if (reportonly === true && anchor === true) {
-            x.removeAttribute("href");
+        if (anchor === true) {
+            x = <HTMLElement>x.parentNode;
+            if (reportonly === true) {
+                x.removeAttribute("href");
+            }
         }
 
         // added support for Firefox and Opera because they support long URIs.  This
@@ -4250,7 +4317,6 @@ let debug;
             } else {
                 x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(prettydiff.finalFile.order.join("")));
             }
-            x.onclick = method.event.save;
 
             // prompt to save file created above.  below is the creation of the modal with
             // instructions about file extension.
