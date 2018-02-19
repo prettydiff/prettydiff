@@ -406,6 +406,20 @@
                         " detected.",
                 default   : "text"
             },
+            lexer          : {
+                api       : "any",
+                mode      : "any",
+                lexer     : "any",
+                label     : "Parsing Lexer",
+                type      : "string",
+                definition: "This option determines which sets of rules to use in the language parser. If option 'language' has a value of 'auto' this option is ignored.",
+                values    : {
+                    markup: "parses languages like XML and HTML",
+                    script: "parses languages with a C style syntax, such as JavaScript",
+                    style : "parses CSS like languages"
+                },
+                default   : "script"
+            },
             listoptions    : {
                 api       : "node",
                 mode      : "any",

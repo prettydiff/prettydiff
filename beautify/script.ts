@@ -2182,7 +2182,7 @@
                         do {
                             linesout.push(end)
                             index = index + 1;
-                        } while (index < data.lines[a]);
+                        } while (index < data.lines[a] - 1);
                         if (tabs > 0) {
                             index = 0;
                             do {
@@ -2194,7 +2194,7 @@
                     };
                 let a:number = 0;
                 do {
-                    if (data.token[a].charAt(0) !== "x") {
+                    if (data.token[a].length === 1 || data.token[a].charAt(0) !== "x") {
                         build.push(data.token[a]);
                         if (levels[a] > -20) {
                             if (levels[a] === -10) {
