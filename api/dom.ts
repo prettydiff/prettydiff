@@ -211,7 +211,8 @@
                             data.tabtrue = true;
                         }
                     },
-                    areaTabOut = function dom_load_areaTabOut(event:KeyboardEvent, node:HTMLElement):void {
+                    areaTabOut = function dom_load_areaTabOut(event:KeyboardEvent):void {
+                        const node:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target;
                         let len:number   = test.tabesc.length,
                             esc:boolean   = false,
                             key:number   = 0;
@@ -759,8 +760,7 @@
                             : headline.getElementsByTagName("p")[0],
                         x           = Math.random(),
                         circulation = [
-                            "<a href=\"license.txt\">License</a> change and new <a href=\"guide/unrelated_diff.xhtml\">diff algorithm</a> with version <a href=\"https://github.com/prettydiff/prettydiff/releases/tag/2.1.17\">2.1.17</a>.",
-                            "Version 2.2.0 brings complete biddle integration, <a href=\"https://asciinema.org/a/118428\">watch the video</a>."
+                            "Pretty Diff now at version 3.0.0"
                         ];
                     if (headline !== null) {
                         ann.innerHTML = circulation[Math.floor(x * circulation.length)];
@@ -2178,17 +2178,11 @@
 
                 // sets some default event configurations
                 if (textarea.codeIn !== null) {
-                    textarea.codeIn.onkeyup = function dom_load_bindInUp(event:Event):void {
-                        method.app.options(event);
-                        method
-                            .event
-                            .execute(event);
-                    };
                     textarea.codeIn.onfocus   = textareafocus;
                     textarea.codeIn.onblur    = textareablur;
                     if (test.ace === true) {
                         textarea.codeIn.onkeydown = function dom_load_bindInDownAce(event:KeyboardEvent):void {
-                            areaTabOut(event, textarea.codeIn);
+                            areaTabOut(event);
                             method
                                 .event
                                 .keydown(event);
@@ -2198,7 +2192,7 @@
                             method
                                 .event
                                 .fixtabs(event, textarea.codeIn);
-                            areaTabOut(event, textarea.codeIn);
+                            areaTabOut(event);
                             method
                                 .event
                                 .keydown(event);
@@ -2208,13 +2202,8 @@
                 if (textarea.codeOut !== null) {
                     textarea.codeOut.onfocus   = textareafocus;
                     textarea.codeOut.onblur    = textareablur;
-                    textarea.codeIn.onkeyup = function dom_load_bindOutUp(event:Event):void {
-                        method.app.options(event);
-                    };
                     if (test.ace === true) {
-                        textarea.codeOut.onkeydown = function dom_load_bindTabOut() {
-                            method.event.areaTabOut(textarea.codeOut);
-                        };
+                        textarea.codeOut.onkeydown = areaTabOut;
                     }
                 }
                 window.onresize     = fixHeight;
@@ -2700,23 +2689,7 @@
         } else {
             value = input.value;
         }
-        if (item === textarea.codeIn) {
-            classy = "source";
-            if (test.ace === true) {
-                options.source = aceStore.codeIn.getValue();
-            } else {
-                options.source = textarea.codeIn.value;
-            }
-            localStorage.source = options.source;
-        } else if (item === textarea.codeOut) {
-            classy = "diff";
-            if (test.ace === true) {
-                options.diff = aceStore.codeOut.getValue();
-            } else {
-                options.diff = textarea.codeOut.value;
-            }
-            localStorage.diff = options.diff;
-        } else if (idval.indexOf("option-") === 0) {
+        if (idval.indexOf("option-") === 0) {
             classy = idval.replace("option-", "");
             if (classy.indexOf("true-") === 0) {
                 classy = classy.replace("true-", "");
@@ -3037,14 +3010,17 @@
             requests:boolean    = false,
             requestd:boolean    = false,
             completed:boolean   = false,
+            completes:boolean   = false,
             autotest:boolean    = false,
-            node:HTMLSelectElement        = id("jsscope"),
+            diffout:[string, number, number],
+            node:HTMLSelectElement        = id("option-jsscope"),
             codesize:number = 0;
-        const domain:RegExp      = (/^((https?:\/\/)|(file:\/\/\/))/),
-            lf:HTMLInputElement        = id("lterminator-crlf"),
+        const startTime:number = Date.now(),
+            domain:RegExp      = (/^((https?:\/\/)|(file:\/\/\/))/),
+            lf:HTMLInputElement        = id("option-crlf"),
             textout:boolean     = (options.jsscope !== "report" && (node === null || node[node.selectedIndex].value !== "report")),
             app = function dom_event_execute_app() {
-                options.parsed = window.parseFramework.parserArrays(options);
+                let output:string = "";
                 const execOutput  = function dom_event_execute_app_execOutput():void {
                     let diffList:NodeListOf<HTMLOListElement>,
                         button:HTMLButtonElement,
@@ -3053,31 +3029,69 @@
                         parent:HTMLElement,
                         chromeSave:boolean = false,
                         size:number = 0;
-                    const commanumb  = function dom_event_execute_app_execOutput_commanumb(numb):string {
-                            let str:string = "",
-                                len:number = 0,
-                                arr:string[] = [];
-                            if (typeof numb !== "number" || isNaN(numb) === true) {
-                                return numb;
-                            }
-                            str = String(numb);
-                            if (str.length < 4) {
-                                return str;
-                            }
-                            arr = str.split("");
-                            len = str.length - 4
-                            do {
-                                arr[len] = arr[len] + ",";
-                                len = len - 3;
-                            } while (len > -1);
-                            return arr.join("");
-                        };
+                const commanumb  = function dom_event_execute_app_execOutput_commanumb(numb):string {
+                        let str:string = "",
+                            len:number = 0,
+                            arr:string[] = [];
+                        if (typeof numb !== "number" || isNaN(numb) === true) {
+                            return numb;
+                        }
+                        str = String(numb);
+                        if (str.length < 4) {
+                            return str;
+                        }
+                        arr = str.split("");
+                        len = str.length - 4
+                        do {
+                            arr[len] = arr[len] + ",";
+                            len = len - 3;
+                        } while (len > -1);
+                        return arr.join("");
+                    };
+                    meta.time = (function dom_event_execute_app_execOutput_proctime() {
+                        const plural       = function dom_event_execute_app_execOutput_proctime_plural(x:number, y:string):string {
+                                var a = x + y;
+                                if (x !== 1) {
+                                    a = a + "s";
+                                }
+                                if (y !== " second") {
+                                    a = a + " ";
+                                }
+                                return a;
+                            },
+                            minute       = function dom_event_execute_app_execOutput_proctime_minute():void {
+                                minutes      = elapsed / 60;
+                                minuteString = plural(minutes, " minute");
+                                minutes      = elapsed - (minutes * 60);
+                                secondString = (minutes === 1)
+                                    ? "1 second"
+                                    : minutes.toFixed(3) + " seconds";
+                            };
+                        let elapsed:number      = (Date.now() - startTime) / 1000,
+                            minuteString:string = "",
+                            hourString:string   = "",
+                            minutes:number      = 0,
+                            hours:number        = 0,
+                            secondString:string = elapsed + "";
+                        if (elapsed >= 60 && elapsed < 3600) {
+                            minute();
+                        } else if (elapsed >= 3600) {
+                            hours      = elapsed / 3600;
+                            hourString = hours.toString();
+                            elapsed    = elapsed - (hours * 3600);
+                            hourString = plural(hours, " hour");
+                            minute();
+                        } else {
+                            secondString = plural(Number(secondString), " second");
+                        }
+                        return hourString + minuteString + secondString;
+                    }());
+                    meta.outsize = output.length;
                     if (options.newline === true) {
                         output = output.replace(/(\s+)$/, "\r\n");
                     } else {
                         output = output.replace(/(\s+)$/, "");
                     }
-                    node = id("showOptionsCallOut");
                     data.zIndex = data.zIndex + 1;
                     if (autotest === true) {
                         options.lang = "auto";
@@ -3413,17 +3427,27 @@
                         buttons[1].click();
                     }
                 };
-                let output:string = prettydiff[options.mode][options.lexer]();
+                if (options.mode === "diff") {
+                    if (options.lexer !== "text") {
+                        let source:string;
+                        options.parsed = window.parseFramework.parserArrays(options);
+                        source = prettydiff.beautify[options.lexer]();
+                        options.source = options.diff;
+                        options.parsed = window.parseFramework.parserArrays(options);
+                        options.diff = prettydiff.beautify[options.lexer]();
+                        options.source = source;
+                    }
+                    diffout = prettydiff.diffview();
+                    output = diffout[0];
+                } else {
+                    options.parsed = window.parseFramework.parserArrays(options);
+                    output = prettydiff[options.mode][options.lexer]();
+                }
+                delete options.parsed;
                 execOutput();
             };
 
         meta.error = "";
-        node = id("showOptionsCallOut");
-        if (node !== null) {
-            node
-                .parentNode
-                .removeChild(node);
-        }
         options.crlf = (lf !== null && lf.checked === true);
         if (typeof event === "object" && event !== null && event.type === "keyup") {
             // jsscope does not get the convenience of keypress execution, because its
@@ -3452,9 +3476,39 @@
                 return false;
             }
         }
+        if (test.ace === true) {
+            options.source = aceStore.codeIn.getValue();
+        } else {
+            options.source = textarea.codeIn.value;
+        }
+        if (options.source === undefined || options.source === "") {
+            return false;
+        }
+        localStorage.source = options.source;
+        if (options.mode === "diff") {
+            if (id("inputlabel") !== null) {
+                options.sourcelabel = id("inputlabel").value;
+            }
+            if (id("outputlabel") !== null) {
+                options.difflabel = id("outputlabel").value;
+            }
+            if (test.ace === true) {
+                options.diff = aceStore.codeOut.getValue();
+            } else {
+                options.diff = textarea.codeOut.value;
+            }
+            if (options.diff === undefined || options.diff === "") {
+                return false;
+            }
+            localStorage.diff = options.diff;
+        }
+        if (options.lexer === "text" && options.mode !== "diff") {
+            return false;
+        }
 
         //gather updated dom nodes
         options.api         = "dom";
+        options.diffcli     = false;
         node            = id("option-csvchar");
         options.csvchar     = (node === null || node.value.length === 0)
             ? ","
@@ -3513,6 +3567,7 @@
                                 app();
                                 return;
                             }
+                            completes = true;
                         } else {
                             options.source = "Error: transmission failure receiving source code from address.";
                         }
@@ -3526,45 +3581,83 @@
                 xhr.send();
             }
         }
-        if (options.source === undefined || (options.mode === "diff" && options.diff === undefined)) {
-            return;
+        if (domain.test(options.diff) === true && options.mode === "diff") {
+            const filetest:boolean       = (options.diff.indexOf("file:///") === 0),
+                protocolRemove:string = (filetest === true)
+                    ? options
+                        .diff
+                        .split(":///")[1]
+                    : options
+                        .diff
+                        .split("://")[1],
+                slashIndex:number     = (protocolRemove !== undefined)
+                    ? protocolRemove.indexOf("/")
+                    : 0,
+                xhr:XMLHttpRequest            = new XMLHttpRequest();
+            if ((slashIndex > 0 || options.diff.indexOf("http") === 0) && typeof protocolRemove === "string" && protocolRemove.length > 0) {
+                requestd = true;
+                xhr.onreadystatechange = function dom_event_execute_xhrSource_statechange() {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200 || xhr.status === 0) {
+                            options.diff = xhr
+                                .responseText
+                                .replace(/\r\n/g, "\n");
+                            if (requests === false || (requests === true && completes === true)) {
+                                if (test.ace === true) {
+                                    if (data.langvalue[1] === "text") {
+                                        lang = ["text", "text", "Plain Text"];
+                                    } else {
+                                        lang = method
+                                            .app
+                                            .langkey(aceStore.codeIn, "");
+                                    }
+                                } else if (data.langvalue[1] === "text") {
+                                    lang = ["text", "text", "Plain Text"];
+                                } else {
+                                    lang = method
+                                        .app
+                                        .langkey({
+                                            value: options.diff
+                                        }, "");
+                                }
+                                options.lang = lang[0];
+                                options.lexer = lang[1];
+                                app();
+                                return;
+                            }
+                            completed = true;
+                        } else {
+                            options.diff = "Error: transmission failure receiving diff code from address.";
+                        }
+                    }
+                };
+                if (filetest === true) {
+                    xhr.open("GET", options.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                } else {
+                    xhr.open("GET", "proxy.php?x=" + options.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                }
+                xhr.send();
+            }
         }
         if (requests === false && requestd === false) {
-            // sometimes the Ace getValue method fires too early on copy/paste.  I put in a
-            // 50ms delay in this case to prevent operations from old input
-
-            if (test.ace === true && options.mode !== "diff") {
-                options.source     = aceStore
-                    .codeIn
-                    .getValue();
-                lang       = (data.langvalue[0] !== "plain_text")
-                    ? method
-                        .app
-                        .langkey(aceStore.codeIn, "")
-                    : lang;
-                options.lang = lang[0];
-                options.lexer = lang[1];
-                app();
+            if (data.langvalue[1] === "text") {
+                lang = ["text", "text", "Plain Text"];
+            } else if (data.langvalue[1] === "csv") {
+                lang = ["csv", "csv", "CSV"];
+            } else if (test.ace === true) {
+                lang = method
+                    .app
+                    .langkey(aceStore.codeIn, "");
             } else {
-                if (data.langvalue[1] === "text") {
-                    lang = ["text", "text", "Plain Text"];
-                } else if (data.langvalue[1] === "csv") {
-                    lang = ["csv", "csv", "CSV"];
-                } else if (test.ace === true) {
-                    lang = method
-                        .app
-                        .langkey(aceStore.codeIn, "");
-                } else {
-                    lang = method
-                        .app
-                        .langkey({
-                            value: options.source
-                        }, "");
-                }
-                options.lang = lang[0];
-                options.lexer = lang[1];
-                app();
+                lang = method
+                    .app
+                    .langkey({
+                        value: options.source
+                    }, "");
             }
+            options.lang = lang[0];
+            options.lexer = lang[1];
+            app();
         }
     };
     // this function allows typing of tab characters into textareas without the
@@ -4130,7 +4223,9 @@
                     sourceLabel.style.display = "block";
                     outputLabel.style.display = "block";
                     outputFile.style.display = "block";
+                    input.onkeyup = null;
                     if (test.ace === true) {
+                        aceStore.codeIn.onkeyup = null;
                         aceStore
                             .codeOut
                             .setReadOnly(false);
@@ -4156,6 +4251,7 @@
                     sourceLabel.style.display = "none";
                     outputLabel.style.display = "none";
                     outputFile.style.display = "none";
+                    input.onkeyup = method.event.execute;
                     if (test.ace === true) {
                         aceStore.codeOut.setValue("");
                         aceStore
@@ -4449,10 +4545,10 @@
                         method
                             .event
                             .colorScheme(event);
-                        if (active === document.documentElement || active === null || active === document.getElementsByTagName("body")[0]) {
-                            color.blur();
+                        if (test.ace === true) {
+                            id("input").getElementsByTagName("textarea")[0].focus();
                         } else {
-                            active.focus();
+                            id("input").focus();
                         }
                     };
                 let ind:number    = color.selectedIndex;
