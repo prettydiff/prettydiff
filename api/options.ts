@@ -1,154 +1,9 @@
 /*global __dirname, global, process, require*/
-/*jslint for: true, this: true*/
-/*
-
- Please see the license.txt file associated with the Pretty Diff
- application for license information.
-
- How to define a new option:
-
- 1. definitions - define the option
- 2. validate    - logic to assign values against accepted criteria
- 3. pdcomment   - only necessary if option is string type with a list of accepted values
- 4. domops      - associate ID names (from HTML) to values for populating the pretty diff comment in the web tool
-
- Functions map:
-
- * definitions   - a big object defining all the options
- * default       - pulls default values out of the definitions object. This is necessary to prevent collisions when processing multiple files simultanesouly
- * versionString - a function to build out human readable messaging about the current version from data in prettydiff.js
- * consolePrint  - a handy function to print documentation on all options and usage data to the console in the browser or command line.
-    ** to execute in the browser console: global.prettydiff.options.functions.consolePrint()
-    ** or use the alias document.consolePrint() from api/dom.js
- * pdcomment     - processes option overrides from the prettydiff.com code comment
- * validate      - process user input against supported options and their acceptable values.  I have plans to merge this into the definitions object
- * domops        - updates the comment string that appears in the options area of the web tool
- * node          - parses node arguments into options for submission to the validate function
- * binary        - a handy dandy tool to remove control characters from text output
-*/
 (function options_init():void {
     "use strict";
     const binaryCheck:RegExp   = (
             /\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u000b|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g
         ),
-        buildDefaults = function options_buildDefault(api):string {
-            const obj:any = {};
-            let a:number = 0,
-                apikey = "";
-            do {
-                apikey = definitions[keys[a]].api;
-                if (apikey === "any" || apikey === api) {
-                    obj[keys[a]] = definitions[keys[a]].default;
-                }
-                a = a + 1;
-            } while (a < keyslen);
-            return "options=" + JSON.stringify(obj) + ",";
-        },
-        buildDocumentation = function options_buildDocumentation():string {
-            const allOptions:string[] = [];
-            let a:number = 0,
-                b:number = 0,
-                vals:string[],
-                vallen:number,
-                item:string[],
-                optName:string,
-                opt:option;
-            do {
-                optName = keys[a];
-                opt = definitions[optName];
-                item = [`<li id="${optName}">`];
-                item.push(`<h4>${optName}</h4>`);
-                item.push(`<ul><li><h5>Description</h5>`);
-                item.push(opt.definition);
-                item.push(`</li><li><h5>Environment</h5>`);
-                item.push(opt.api);
-                item.push(`</li><li><h5>Type</h5>`);
-                item.push(opt.type);
-                item.push(`</li><li><h5>Mode</h5>`);
-                item.push(opt.mode);
-                item.push(`</li><li><h5>Lexer</h5>`);
-                item.push(opt.lexer);
-                if (opt.values !== undefined) {
-                    b = 0;
-                    vals = Object.keys(opt.values);
-                    vallen = vals.length;
-                    item.push(`</li><li><h5>Accepted Values</h5><dl>`);
-                    do {
-                        item.push(`<dt>${vals[b]}</dt><dd>${opt.values[vals[b]]}</dd>`);
-                        b = b + 1;
-                    } while (b < vallen);
-                    item.push(`</dl>`);
-                }
-                item.push(`</li><li><h5>Default</h5>`);
-                item.push(String(opt.default));
-                item.push(`</li><li><h5>As labeled in the HTML tool</h5>`);
-                item.push(opt.label);
-                item.push(`</li></ul></li>`);
-                allOptions.push(item.join(""));
-                a = a + 1;
-            } while (a < keyslen);
-            return allOptions.join("");
-        },
-        buildDomInterface = function options_buildDomInterface():string {
-            const allItems:string[] = [],
-                exclusions = {
-                    "diff": "",
-                    "difflabel": "",
-                    "source": "",
-                    "sourcelabel": ""
-                };
-            let a:number = 0,
-                b:number = 0,
-                item:string[],
-                optName:string,
-                opt:option,
-                vals:string[],
-                vallen:number;
-            do {
-                optName = keys[a];
-                opt = definitions[optName];
-                if (exclusions[optName] !== "" && (opt.api === "any" || opt.api === "dom")) {
-                    item = [`<li data-mode="${opt.mode}">`];
-                    if (opt.type === "boolean") {
-                        item.push(`<p class="label">${opt.label} <a class="apiname" href="documentation.xhtml#${optName}">(${optName})</a></p>`);
-                        if (opt.default === true) {
-                            item.push(`<span><input type="radio" id="option-false-${optName}" name="option-${optName}" value="false"/> <label for="option-false-${optName}">false</label></span>`);
-                            item.push(`<span><input type="radio" checked="checked" id="option-true-${optName}" name="option-${optName}" value="true"/> <label for="option-true-${optName}">true</label></span>`);
-                        } else {
-                            item.push(`<span><input type="radio" checked="checked" id="option-false-${optName}" name="option-${optName}" value="false"/> <label for="option-false-${optName}">false</label></span>`);
-                            item.push(`<span><input type="radio" id="option-true-${optName}" name="option-${optName}" value="true"/> <label for="option-true-${optName}">true</label></span>`);
-                        }
-                    } else {
-                        item.push(`<label for="option-${optName}" class="label">${opt.label}`);
-                        item.push(` <a class="apiname" href="documentation.xhtml#${optName}">(${optName})</a>`);
-                        item.push(`</label>`);
-                        if (opt.type === "number" || (opt.type === "string" && opt.values === undefined)) {
-                            item.push(`<input type="text" id="option-${optName}" value="${opt.default}" data-type="${opt.type}"/>`);
-                        } else {
-                            item.push(`<select id="option-${optName}">`);
-                            vals = Object.keys(opt.values);
-                            vallen = vals.length;
-                            b = 0;
-                            do {
-                                item.push(`<option data-description="${opt.values[vals[b]].replace(/"/g, "&quot;")}" ${
-                                    (opt.default === vals[b])
-                                        ? "selected=\"selected\""
-                                        : ""
-                                }>${vals[b]}</option>`);
-                                b = b + 1;
-                            } while (b < vallen);
-                            item.push(`</select>`);
-                        }
-                    }
-                    item.push(`<p class="option-description">${opt.definition.replace(/"/g, "&quot;")}</p>`);
-                    item.push(`<div class="disabled" style="display:none"></div>`);
-                    item.push(`</li>`);
-                    allItems.push(item.join(""));
-                }
-                a = a + 1;
-            } while (a < keyslen);
-            return allItems.join("");
-        },
         definitions = {
             accessibility    : {
                 api       : "any",
@@ -946,10 +801,6 @@
         keyslen: number = keys.length,
         optionDef:optionDef = {
             binaryCheck: binaryCheck,
-            buildDocumentation: buildDocumentation(),
-            buildDomDefaults: buildDefaults("dom"),
-            buildDomInterface: buildDomInterface(),
-            buildNodeDefaults: buildDefaults("node"),
             definitions: definitions
         };
     

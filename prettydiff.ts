@@ -6,25 +6,22 @@
     "use strict";
 
     const prettydiff = function prettydiff_():string {
-       /* let prettyout:string = "",
+        /*let prettyout:string = "",
             sourceout:string = "",
             diffout:string = "",
             parseOptions = {
-                correct: options.correct,
-                crlf: options.crlf,
-                lang: options.lang,
-                lexer: options.lexer,
+                correct: parserOptions.correct,
+                crlf: parserOptions.crlf,
+                lang: parserOptions.lang,
+                lexer: parserOptions.lexer,
                 outputFormat: "arrays",
-                source: options.source
+                source: parserOptions.source
             };
-        if (options.lexer === undefined) {
+        if (parserOptions.lexer === undefined) {
             console.log("Missing required option: lexer.");
             return "Missing required option: lexer.";
         }
-        options.parsed = window.parseFramework.parserArrays(parseOptions);
-        if (options.mode === "parse") {
-            return JSON.stringify(options.parsed);
-        }
+        options.parsed = global.parseFramework.parserArrays(parseOptions);
         let str = "",
             fun = (options.mode === "diff")
                 ? global.prettydiff.beautify[options.parsed.lexer[0]]

@@ -1,9 +1,8 @@
-/*global global*/
+/*global global, options*/
 (function diffview_init():void {
     "use strict";
     const diffview = function diffview_():[string, number, number] {
-        const options = global.prettydiff.options,
-            tab:string           = (function diffview__tab():string {
+        const tab:string           = (function diffview__tab():string {
                 let a:number      = 0;
                 const output:string[] = [];
                 if (options.inchar === "" || options.insize < 1) {

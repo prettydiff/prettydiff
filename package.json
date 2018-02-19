@@ -26,7 +26,7 @@
         "table"
     ],
     "license": "CC0-1.0",
-    "main": "js/prettydiff.js",
+    "main": "js/api/node.js",
     "name": "prettydiff3",
     "repository": {
         "type": "git",

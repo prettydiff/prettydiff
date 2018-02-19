@@ -1,4 +1,8 @@
 
+declare var options: any;
+interface Window {
+    parseFramework: any;
+}
 interface record {
     begin: number;
     lexer: string;
@@ -29,10 +33,6 @@ type lexer = "markup" | "script" | "style";
 type mode = "analysis" | "beautify" | "diff" | "minify" | "parse";
 interface optionDef {
     binaryCheck: RegExp;
-    buildDocumentation: string;
-    buildDomDefaults: string;
-    buildDomInterface: string;
-    buildNodeDefaults: string;
     definitions: any;
 }
 interface parseOptions {
@@ -106,28 +106,6 @@ interface option {
         [key: string]: string;
     }
 }
-interface prettydiff {
-    analyze: {
-        [key: string]: library;
-    };
-    app(): string;
-    beautify: {
-        [key: string]: library;
-    };
-    diffview?: diffview;
-    dom?: dom;
-    finalFile?: finalFile;
-    language?: language;
-    minify: {
-        [key: string]: library;
-    };
-    meta?: {};
-    optionDef?: optionDef;
-    options: {
-        source:string;
-        [key: string]: any;
-    }
-}
 interface meta {
     error: string;
     lang: [string, string, string];
@@ -147,21 +125,21 @@ interface difftable {
 interface compareStore extends Array<[number, number]>{
     [index:number]: [number, number];
 }
-
-interface Window {
-    prettydiff: prettydiff;
-    parseFramework: any;
-}
 interface pdNode {
     fs: "fs";
     http: "http";
     https: "https";
     path: "path";
 }
+interface modifyOps {
+    end: string;
+    injectFlag: string;
+    start: string;
+}
 declare var window: Window;
 declare module NodeJS {
     interface Global {
         parseFramework: any;
-        prettydiff: prettydiff
+        prettydiff: any
     }
 }

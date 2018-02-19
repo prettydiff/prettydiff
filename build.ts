@@ -1,6 +1,9 @@
+import { Stats } from "fs";
+
 /*jslint node:true*/
 /*eslint-env node*/
 /*eslint no-console: 0*/
+/*global global*/
 (function build():void {
     "use strict";
     const order = [
@@ -15,11 +18,13 @@
             fs: require("fs"),
             path: require("path")
         },
+        sep:string = node.path.sep,
         projectPath:string = (function build_project() {
-            const dirs:string[] = __dirname.split(node.path.sep);
-            return dirs.slice(0, dirs.length - 1).join(node.path.sep) + node.path.sep;
+            const dirs:string[] = __dirname.split(sep);
+            return dirs.slice(0, dirs.length - 1).join(sep) + sep;
         }()),
-        js:string = `${projectPath}js${node.path.sep}`,
+        js:string = `${projectPath}js${sep}`,
+        api:string = `${js}api${sep}`,
         orderlen:number = order.length,
         humantime  = function build_humantime(finished:boolean):string {
             let minuteString:string = "",
@@ -260,9 +265,9 @@
                                 filepath,
                                 function build_lint_getFiles_readDir_callback(erra, list) {
                                     const fileEval = function build_lint_getFiles_readDir_callback_fileEval(val:string):void {
-                                        const filename:string = (filepath.charAt(filepath.length - 1) === node.path.sep)
+                                        const filename:string = (filepath.charAt(filepath.length - 1) === sep)
                                             ? filepath + val
-                                            : filepath + node.path.sep + val;
+                                            : filepath + sep + val;
                                         node.fs.stat(
                                             filename,
                                             function build_lint_getFiles_readDir_callback_fileEval_stat(errb, stat) {
@@ -310,57 +315,191 @@
                 }());
             },
             options: function build_options():void {
+                require(`${api}options`);
+                let libs:string = "";
                 const flag = {
                         documentation: false,
                         dom: false,
                         html: false,
                         node: false
                     },
+                    definitions = global.prettydiff.optionDef.definitions,
+                    optkeys:string[] = Object.keys(definitions),
+                    keyslen:number = optkeys.length,
                     versionData = {
                         number: "",
                         date: ""
                     },
                     modifyFile = function build_options_modifyFile(file:string, fileFlag:string):void {
                         node.fs.readFile(file, "utf8", function build_options_modifyFile(err:Error, data:string):void {
-                            const startBuild = function build_options_modifyFile_startBuild(searchstr:string, source:string):number {
-                                    const len = (searchstr.indexOf("//") === 0)
-                                        ? searchstr.length + 1
-                                        : searchstr.length;
-                                    return source.indexOf(searchstr) + len;
-                                },
-                                modify = function build_options_modifyFile_modify(inject:string, source:string):string {
-                                    if (global.prettydiff.optionDef[inject] === undefined) {
-                                        return [source.slice(0, start), inject, source.slice(end)].join("");
+                            const modify = function build_options_modifyFile_modify(ops:modifyOps):void {
+                                    const start:number = (function build_options_modifyFile_modify_startBuild():number {
+                                            const len = (ops.start.indexOf("//") === 0)
+                                                ? (function build_options_modifyFile_modify_startBuild_lineStart():number {
+                                                    data = data.replace(new RegExp(ops.start + "\s+"), ops.start + "\n");
+                                                    return ops.start.length + 1;
+                                                }())
+                                                : ops.start.length;
+                                            return data.indexOf(ops.start) + len;
+                                        }()),
+                                        end:number = data.indexOf(ops.end);
+                                    if (ops.end.indexOf("//") === 0) {
+                                        data = data.replace(new RegExp(ops.end + "\s+"), ops.end + "\n");
                                     }
-                                    return [source.slice(0, start), global.prettydiff.optionDef[inject], source.slice(end)].join("");
+                                    data = [data.slice(0, start), ops.injectFlag + "\n", data.slice(end)].join("");
+                                },
+                                buildDefaults = function build_options_modifyFile_buildDefault(api:string):string {
+                                    const obj:any = {};
+                                    let a:number = 0,
+                                        apikey = "";
+                                    do {
+                                        apikey = definitions[optkeys[a]].api;
+                                        if (apikey === "any" || apikey === api) {
+                                            obj[optkeys[a]] = definitions[optkeys[a]].default;
+                                        }
+                                        a = a + 1;
+                                    } while (a < keyslen);
+                                    return "options=" + JSON.stringify(obj) + ",";
+                                },
+                                buildDocumentation = function build_options_modifyFile_buildDocumentation():string {
+                                    const allOptions:string[] = [];
+                                    let a:number = 0,
+                                        b:number = 0,
+                                        vals:string[],
+                                        vallen:number,
+                                        item:string[],
+                                        optName:string,
+                                        opt:option;
+                                    do {
+                                        optName = optkeys[a];
+                                        opt = definitions[optName];
+                                        item = [`<li id="${optName}">`];
+                                        item.push(`<h4>${optName}</h4>`);
+                                        item.push(`<ul><li><h5>Description</h5>`);
+                                        item.push(opt.definition);
+                                        item.push(`</li><li><h5>Environment</h5>`);
+                                        item.push(opt.api);
+                                        item.push(`</li><li><h5>Type</h5>`);
+                                        item.push(opt.type);
+                                        item.push(`</li><li><h5>Mode</h5>`);
+                                        item.push(opt.mode);
+                                        item.push(`</li><li><h5>Lexer</h5>`);
+                                        item.push(opt.lexer);
+                                        if (opt.values !== undefined) {
+                                            b = 0;
+                                            vals = Object.keys(opt.values);
+                                            vallen = vals.length;
+                                            item.push(`</li><li><h5>Accepted Values</h5><dl>`);
+                                            do {
+                                                item.push(`<dt>${vals[b]}</dt><dd>${opt.values[vals[b]]}</dd>`);
+                                                b = b + 1;
+                                            } while (b < vallen);
+                                            item.push(`</dl>`);
+                                        }
+                                        item.push(`</li><li><h5>Default</h5>`);
+                                        item.push(String(opt.default));
+                                        item.push(`</li><li><h5>As labeled in the HTML tool</h5>`);
+                                        item.push(opt.label);
+                                        item.push(`</li></ul></li>`);
+                                        allOptions.push(item.join(""));
+                                        a = a + 1;
+                                    } while (a < keyslen);
+                                    return allOptions.join("");
+                                },
+                                buildDomInterface = function build_options_modifyFile_buildDomInterface():string {
+                                    const allItems:string[] = [],
+                                        exclusions = {
+                                            "diff": "",
+                                            "difflabel": "",
+                                            "source": "",
+                                            "sourcelabel": ""
+                                        };
+                                    let a:number = 0,
+                                        b:number = 0,
+                                        item:string[],
+                                        optName:string,
+                                        opt:option,
+                                        vals:string[],
+                                        vallen:number;
+                                    do {
+                                        optName = optkeys[a];
+                                        opt = definitions[optName];
+                                        if (exclusions[optName] !== "" && (opt.api === "any" || opt.api === "dom")) {
+                                            item = [`<li data-mode="${opt.mode}">`];
+                                            if (opt.type === "boolean") {
+                                                item.push(`<p class="label">${opt.label} <a class="apiname" href="documentation.xhtml#${optName}">(${optName})</a></p>`);
+                                                if (opt.default === true) {
+                                                    item.push(`<span><input type="radio" id="option-false-${optName}" name="option-${optName}" value="false"/> <label for="option-false-${optName}">false</label></span>`);
+                                                    item.push(`<span><input type="radio" checked="checked" id="option-true-${optName}" name="option-${optName}" value="true"/> <label for="option-true-${optName}">true</label></span>`);
+                                                } else {
+                                                    item.push(`<span><input type="radio" checked="checked" id="option-false-${optName}" name="option-${optName}" value="false"/> <label for="option-false-${optName}">false</label></span>`);
+                                                    item.push(`<span><input type="radio" id="option-true-${optName}" name="option-${optName}" value="true"/> <label for="option-true-${optName}">true</label></span>`);
+                                                }
+                                            } else {
+                                                item.push(`<label for="option-${optName}" class="label">${opt.label}`);
+                                                item.push(` <a class="apiname" href="documentation.xhtml#${optName}">(${optName})</a>`);
+                                                item.push(`</label>`);
+                                                if (opt.type === "number" || (opt.type === "string" && opt.values === undefined)) {
+                                                    item.push(`<input type="text" id="option-${optName}" value="${opt.default}" data-type="${opt.type}"/>`);
+                                                } else {
+                                                    item.push(`<select id="option-${optName}">`);
+                                                    vals = Object.keys(opt.values);
+                                                    vallen = vals.length;
+                                                    b = 0;
+                                                    do {
+                                                        item.push(`<option data-description="${opt.values[vals[b]].replace(/"/g, "&quot;")}" ${
+                                                            (opt.default === vals[b])
+                                                                ? "selected=\"selected\""
+                                                                : ""
+                                                        }>${vals[b]}</option>`);
+                                                        b = b + 1;
+                                                    } while (b < vallen);
+                                                    item.push(`</select>`);
+                                                }
+                                            }
+                                            item.push(`<p class="option-description">${opt.definition.replace(/"/g, "&quot;")}</p>`);
+                                            item.push(`<div class="disabled" style="display:none"></div>`);
+                                            item.push(`</li>`);
+                                            allItems.push(item.join(""));
+                                        }
+                                        a = a + 1;
+                                    } while (a < keyslen);
+                                    return allItems.join("");
                                 };
-                            let start:number = 0,
-                                end: number = 0,
-                                built:string = "";
                             if (err !== null && err.toString() !== "") {
                                 errout(err.toString());
                                 return;
                             }
                             if (fileFlag === "documentation") {
-                                start = startBuild("<!-- option list start -->", data);
-                                end = data.indexOf("<!-- option list end -->");
-                                built = modify("buildDocumentation", data);
+                                modify({
+                                    end: "<!-- option list end -->",
+                                    injectFlag: buildDocumentation(),
+                                    start: "<!-- option list start -->"
+                                });
                             } else if (fileFlag === "html") {
-                                const ver = `${versionData.date} <span>Version: <span>${versionData.number}</span></span>`;
-                                start = startBuild("<!-- documented options start -->", data);
-                                end = data.indexOf("<!-- documented options end -->");
-                                built = modify("buildDomInterface", data);
-                                start = startBuild("<!-- start version data -->", built);
-                                end = built.indexOf("<!-- end version data -->");
-                                built = modify(ver, built);
+                                modify({
+                                    end: "<!-- documented options end -->",
+                                    injectFlag: buildDomInterface(),
+                                    start: "<!-- documented options start -->"
+                                });
+                                modify({
+                                    end: "<!-- end version data -->",
+                                    injectFlag: `<strong>${versionData.date}</strong> <span>Version: <strong>${versionData.number}</strong></span>`,
+                                    start: "<!-- start version data -->"
+                                });
                             } else if (fileFlag === "dom") {
-                                data = data.replace("// start option defaults\s+", "// start option defaults\n");
-                                data = data.replace("// end option defaults\s+", "// end option defaults\n");
-                                start = startBuild("// start option defaults", data);
-                                end = data.indexOf("// end option defaults");
-                                built = modify("buildDomDefaults", data);
+                                modify({
+                                    end: "// end option defaults",
+                                    injectFlag: buildDefaults("dom"),
+                                    start:"// start option defaults"
+                                });
+                                modify({
+                                    end: "// prettydiff insertion end",
+                                    injectFlag: libs.replace(/global\.prettydiff/g, "prettydiff"),
+                                    start: "// prettydiff insertion start"
+                                });
                             }
-                            node.fs.writeFile(file, built, function build_options_documentation_write(errw:Error) {
+                            node.fs.writeFile(file, data, function build_options_documentation_write(errw:Error) {
                                 if (errw !== null && errw.toString() !== "") {
                                     errout(errw.toString());
                                     return;
@@ -372,7 +511,7 @@
                             });
                         });
                     },
-                    version = function build_options_version():void {
+                    version = function build_options_version(file:string, fileFlag:string):void {
                         node.child(`git log -1 --branches`, function build_options_version_child(err:Error, stderr:string):void {
                             if (err !== null) {
                                 errout(err.toString());
@@ -386,14 +525,63 @@
                                     return;
                                 }
                                 versionData.number = JSON.parse(data).version;
-                                modifyFile(`${projectPath}index.xhtml`, "html");
+                                modifyFile(file, fileFlag);
                             });
                         })
+                    },
+                    libraries = function build_options_libraries(callback:Function) {
+                        const pathes:string[] = [`${js}beautify`, `${api}diffview.js`, `${api}finalFile.js`, `${api}language.js`],
+                            len:number = pathes.length,
+                            appendFile = function build_options_libraries_appendFile(filePath:string):void {
+                                node.fs.readFile(filePath, "utf8", function build_options_libraries_appendFile_read(errr:Error, filedata:string):void {
+                                    if (errr !== null) {
+                                        errout(errr.toString());
+                                        return;
+                                    }
+                                    libs = libs + filedata;
+                                    b = b + 1;
+                                    if (b === filelen) {
+                                        callback();
+                                    }
+                                });
+                            },
+                            stat = function build_options_libraries_stat(pathitem:string) {
+                                node.fs.stat(pathitem, function build_options_libraries_stat_callback(errs:Error, stats:Stats):void {
+                                    if (errs !== null) {
+                                        errout(errs.toString());
+                                        return;
+                                    }
+                                    if (stats.isDirectory() === true) {
+                                        node.fs.readdir(pathitem, "utf8", function build_options_libraries_stat_callback_readdir(errd:Error, filelist:string[]):void {
+                                            if (errd !== null) {
+                                                errout(errd.toString());
+                                                return;
+                                            }
+                                            filelen = filelen + (filelist.length - 1);
+                                            filelist.forEach(function build_options_libraries_stat_callback_readdir_each(value:string):void {
+                                                build_options_libraries_stat(pathitem + sep + value);
+                                            });
+                                        });
+                                    } else if (stats.isFile() === true) {
+                                        appendFile(pathitem);
+                                    } else {
+                                        filelen = filelen - 1;
+                                    }
+                                });
+                            };
+                        let a:number = 0,
+                            b:number = 0,
+                            filelen: number = len;
+                        do {
+                            stat(pathes[a]);
+                            a = a + 1;
+                        } while (a < len);
                     };
-                require(`${js}api${node.path.sep}options`);
-                version();
+                libraries(function build_options_libraryCallback() {
+                    modifyFile(`${api}dom.js`, "dom");
+                });
+                version(`${projectPath}index.xhtml`, "html");
                 modifyFile(`${projectPath}documentation.xhtml`, "documentation");
-                modifyFile(`${js}api${node.path.sep}dom.js`, "dom");
             },
             typescript: function build_typescript():void {
                 console.log("\u001b[36mTypeScript Compilation\u001b[39m");
@@ -419,7 +607,7 @@
                 });
             }
         };
-    require(`${js}prettydiff`);
+    global.prettydiff = {};
     console.log("");
     next();
 }());
