@@ -408,7 +408,8 @@
                         datapack.type     = "feedback";
                         sendit();
                     },
-                    file = function dom_load_file(input:HTMLInputElement):void {
+                    file = function dom_load_file(event:Event):void {
+                        const input:HTMLInputElement = <HTMLInputElement>event.srcElement || <HTMLInputElement>event.target;
                         let a:number         = 0,
                             id:string        = "",
                             files:FileList,
@@ -476,17 +477,6 @@
                                     .execute();
                             }
                         }
-                    },
-                    fileWrapper = function dom_load_fileWrapper(el:HTMLElement) {
-                        el.onchange = function dom_load_file() {
-                            file(x);
-                        };
-                        el.onfocus  = function dom_load_filefocus():void {
-                            el.setAttribute("class", "filefocus");
-                        };
-                        el.onblur   = function dom_load_fileblur():void {
-                            el.removeAttribute("class");
-                        };
                     },
                     fixHeight = function dom_load_fixHeight():void {
                         const input:HTMLElement = id("input"),
@@ -610,23 +600,6 @@
                             method.app.options(event);
                         }
                     },
-                    parseTable = function dom_load_parseTable(event:Event):void {
-                        const item:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
-                            parseFormat = id("option-parseFormat"),
-                            html = id("parseTable-html");
-                        if (
-                            options.mode === "pars" &&
-                            parseFormat !== null &&
-                            html !== null &&
-                            parseFormat[parseFormat.selectedIndex].value === "htmltable" &&
-                            html.checked === true
-                        ) {
-                            method.app.hideOutput(true);
-                        } else {
-                            method.app.hideOutput(false);
-                        }
-                        method.app.options(event);
-                    },
                     prepBox = function dom_load_prepBox(boxName:string):void {
                         if (report[boxName].box === null || (test.domain === false && boxName === "feed")) {
                             return;
@@ -643,7 +616,7 @@
                                 const el:HTMLInputElement = <HTMLInputElement>event.srcElement || <HTMLInputElement>event.target;
                                 event.stopPropagation();
                                 event.preventDefault();
-                                file(el);
+                                file(event);
                             },
                             filenull = function dom_load_prepBox_filenull(event:Event):void {
                                 event.stopPropagation();
@@ -831,8 +804,6 @@
                             x.onclick = modes;
                         } else if (name === "ace-radio") {
                             x.onclick = aces;
-                        } else if (name === "parseTable") {
-                            x.onclick = parseTable;
                         } else {
                             x.onclick = method.app.options;
                         }
@@ -845,17 +816,17 @@
                         if (data.settings[idval] !== undefined) {
                             x.value = data.settings[idval];
                         }
-                        if (idval === "option-lang") {
-                            if (options.mode !== "diff") {
-                                if (x.value === "text") {
-                                    x.value = "auto";
-                                } else if (x.value === "csv") {
-                                    method.app.hideOutput(x);
-                                }
-                            }
+                        if (idval === "option-lang" && options.mode !== "diff" && x.value === "text") {
+                            x.value = "auto";
                         }
                     } else if (type === "file") {
-                        fileWrapper(x);
+                        x.onchange = file;
+                        x.onfocus  = function dom_load_filefocus():void {
+                            x.setAttribute("class", "filefocus");
+                        };
+                        x.onblur   = function dom_load_fileblur():void {
+                            x.removeAttribute("class");
+                        };
                     }
                     a = a + 1;
                 } while (a < inputsLen);
@@ -867,9 +838,7 @@
                 if (inputsLen > 0) { 
                     do {
                         idval = selects[a].getAttribute("id");
-                        if (idval === "option-parseFormat") {
-                            selects[a].onchange = parseTable;
-                        } else if (idval === "option-color") {
+                        if (idval === "option-color") {
                             selects[a].onchange = method.event.colorScheme;
                             if (data.settings["option-color"] !== undefined) {
                                 selects[a].selectedIndex = Number(data.settings["option-color"]);
@@ -1091,7 +1060,6 @@
                         paramLen:number = 0,
                         param:string[]    = [],
                         colors:NodeListOf<HTMLOptionElement>,
-                        options:NodeListOf<HTMLOptionElement>,
                         lang:HTMLInputElement = id("option-lang"),
                         source:string   = "",
                         diff:string     = "",
@@ -1235,6 +1203,11 @@
                                     .codeOut
                                     .getSession()
                                     .setMode("ace/mode/html");
+                            }
+                        } else if (options[param[0]] !== undefined) {
+                            options[param[0]] = param[1];
+                            if (id(`option-true-${param[0]}`) !== null) {
+                                id(`option-true-${param[0]}`).checked = true;
                             }
                         }
                         b = b + 1;
@@ -2214,6 +2187,7 @@
                 // sets vertical responsive design layout
                 // must occur last
                 fixHeight();
+                method.app.hideOutput();
             }
             if (pages === "documentation") {
                 let b:number           = 0,
@@ -2405,103 +2379,6 @@
         };
     let keypress:any = {};
     prettydiff.meta = meta;
-    // toggles an editor between 100% and 50% width if the output isn't textual
-    // references apps: langkey, options references events: execute
-    method.app.hideOutput   = function dom_app_hideOutput(x:HTMLElement):void {
-        let node:HTMLElement,
-            parent:HTMLElement,
-            state:boolean     = false,
-            targetOut:HTMLElement,
-            targetIn:HTMLElement;
-        const restore   = function dom_app_hideOutput_restore():void {
-                parent = <HTMLElement>targetOut.parentNode;
-                parent.style.display = "block";
-                if (targetOut !== null) {
-                    node             = <HTMLElement>targetIn.parentNode;
-                    node.style.width = "49%";
-                    if (test.ace === true) {
-                        aceStore
-                            .codeIn
-                            .resize();
-                    }
-                    targetIn.onkeyup   = method.event.execute;
-                    targetIn.onkeydown = function dom_app_hideOutput_restore_bindTargetInDown(event:Event):void {
-                        if (test.ace === false) {
-                            method
-                                .event
-                                .fixtabs(event, targetIn);
-                        }
-                        method
-                            .event
-                            .keydown(event);
-                        method
-                            .event
-                            .execute(event);
-                    };
-                }
-                if (x === undefined) {
-                    return;
-                }
-            },
-            lang:HTMLInputElement = id("option-lang"),
-            jsscope:HTMLInputElement = id("option-jsscope"),
-            scopeval:string = (jsscope === null)
-                ? "none"
-                : jsscope.value,
-            langval:string   = (lang === null)
-                ? "javascript"
-                : lang.value;
-        if (x.nodeType === 1 && x.nodeName.toLowerCase() !== "input" && x !== lang) {
-            x = x.getElementsByTagName("input")[0];
-        }
-        state = (scopeval === "report" || langval === "csv");
-        targetOut = textarea.codeOut;
-        targetIn  = textarea.codeIn;
-        parent = <HTMLElement>targetOut.parentNode;
-        if (targetOut === null || (state === true && parent.style.display === "none") || (state === false && parent.style.display === "block")) {
-            return;
-        }
-        if (langval !== "csv" && options.mode !== "beautify") {
-            state = false;
-        }
-        if (langval === "auto" || langval === "javascript" || langval === "csv") {
-            if (state === true) {
-                parent.style.display = "none";
-                if (targetIn !== null) {
-                    node             = <HTMLElement>targetIn.parentNode;
-                    node.style.width = "100%";
-                    if (test.ace === true) {
-                        aceStore
-                            .codeIn
-                            .resize();
-                    }
-                    if (test.ace === true) {
-                        targetIn.onkeyup = function dom_app_hideOutput_langkeyEditor(event:Event):void {
-                            method
-                                .app
-                                .langkey(aceStore.codeIn, "");
-                            method
-                                .event
-                                .execute(event);
-                        };
-                    } else {
-                        targetIn.onkeyup = function dom_app_hideOutput_langkeyTextarea(event:Event):void {
-                            method
-                                .event
-                                .execute(event);
-                        };
-                    }
-                }
-                if (langval === "csv") {
-                    x = lang;
-                }
-            } else if (x === id("modebeautify") || scopeval === "none") {
-                restore();
-            }
-        } else if (x === id("modebeautify")) {
-            restore();
-        }
-    };
     // determine the specific language if auto or unknown all - change all language
     // modes? comes from pd.codeops, which is      fired on change of language
     // select list obj - the ace obj passed in. {} empty object if `all` is true
@@ -2591,6 +2468,34 @@
             data.langvalue = value;
         }
         return value;
+    };
+    // stretches input to 100% width if output is a html report
+    method.app.hideOutput = function dom_app_hideOutput():void {
+        let hide:boolean;
+        if (options.parseFormat === "htmltable" && options.mode === "parse" && id("parseTable-html") !== null && id("parseTable-html").checked === true) {
+            hide = true;
+        } else if (options.jsscope === "report" && options.mode === "beautify") {
+            hide = true;
+        } else {
+            hide = false;
+        }
+        if (hide === true) {
+            if (test.ace === true) {
+                id("output").parentNode.style.display = "none";
+                id("input").parentNode.style.width = "100%";
+            } else {
+                id("output").parentNode.parentNode.style.display = "none";
+                id("input").parentNode.parentNode.style.width = "100%";
+            }
+        } else {
+            if (test.ace === true) {
+                id("output").parentNode.style.display = "block";
+                id("input").parentNode.style.width = "49%";
+            } else {
+                id("output").parentNode.parentNode.style.display = "block";
+                id("input").parentNode.parentNode.style.width = "49%";
+            }
+        }
     };
     //store tool changes into localStorage to maintain state
     method.app.options  = function dom_app_options(event:Event):void {
@@ -2745,6 +2650,7 @@
                         .replace(/api\./g, "") + " \u002a/";
                 }
             }
+            method.app.hideOutput();
             localStorage.commentString = JSON.stringify(data.commentString);
         }
     };
@@ -4275,6 +4181,7 @@
         options.mode = mode;
         makeChanges();
         cycleOptions();
+        method.app.hideOutput();
     };
     //reset tool to default configuration
     method.event.reset = function dom_event_reset():void {
