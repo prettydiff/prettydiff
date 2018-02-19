@@ -3029,7 +3029,7 @@
                         parent:HTMLElement,
                         chromeSave:boolean = false,
                         size:number = 0;
-                const commanumb  = function dom_event_execute_app_execOutput_commanumb(numb):string {
+                    const commanumb  = function dom_event_execute_app_execOutput_commanumb(numb):string {
                         let str:string = "",
                             len:number = 0,
                             arr:string[] = [];
@@ -3267,7 +3267,7 @@
                             }
                         }
                     } else if (options.mode === "beautify") {
-                        prettydiff.finalFile.order[11] = prettydiff.finalFile.script.beautify;
+                        prettydiff.finalFile.order[12] = prettydiff.finalFile.script.beautify;
                         if (options.jsscope !== "report") {
                             if (test.ace === true) {
                                 aceStore
@@ -3313,7 +3313,7 @@
                             .box
                             .getElementsByTagName("p")[0]
                             .getElementsByTagName("button");
-                        prettydiff.finalFile.order[11] = prettydiff.finalFile.script.diff;
+                        prettydiff.finalFile.order[12] = prettydiff.finalFile.script.diff;
                         report.code.body.innerHTML = `<p>Code type is set to <strong>auto</strong>. Presumed language is <em>${data.langvalue[2]}</em>.</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
                         if (autotest === true && report.code.body.firstChild !== null) {
                             if (report.code.body.firstChild.nodeType > 1) {
@@ -3428,6 +3428,7 @@
                     }
                 };
                 if (options.mode === "diff") {
+                    meta.insize = options.source.length + options.diff.length;
                     if (options.lexer !== "text") {
                         let source:string;
                         options.parsed = window.parseFramework.parserArrays(options);
@@ -3438,8 +3439,11 @@
                         options.source = source;
                     }
                     diffout = prettydiff.diffview();
+                    meta.difftotal = diffout[1] + diffout[2];
+                    meta.difflines = diffout[2];
                     output = diffout[0];
                 } else {
+                    meta.insize = options.source.length;
                     options.parsed = window.parseFramework.parserArrays(options);
                     output = prettydiff[options.mode][options.lexer]();
                 }
@@ -4363,79 +4367,10 @@
         document.onmousedown = null;
     };
     //toggle between parsed html diff report and raw text representation
-    method.event.save = function dom_event_save(event:Event):boolean {
-        let x:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
-            pageHeight = 0,
-            content:NodeListOf<HTMLElement>,
-            span:HTMLElement       = id("inline"),
-            lastChild:HTMLElement = <HTMLElement>page.lastChild;
-        const anchor:boolean     = (x.parentNode.nodeName.toLowerCase() === "a"),
-            top:HTMLElement        = (x.parentNode.parentNode.nodeName.toLowerCase() === "p")
-                ? <HTMLElement>x.parentNode.parentNode.parentNode
-                : <HTMLElement>x.parentNode.parentNode,
-            button:HTMLElement     = (anchor === true)
-                ? x.getElementsByTagName("button")[0]
-                : x,
-            body:HTMLElement       = top.getElementsByTagName("div")[0],
-            bodyInner:string  = body
-                .innerHTML
-                .replace(/\u0020xmlns=("|')http:\/\/www\.w3\.org\/1999\/xhtml("|')/g, ""),
-            ro:HTMLInputElement         = id("savepref-report"),
-            jsscope:HTMLSelectElement = id("option-jsscope"),
-            reportonly:boolean = (ro !== null && ro.checked === true);
-        if (bodyInner === "") {
-            return;
-        }
-        if (anchor === true) {
-            x = <HTMLElement>x.parentNode;
-            if (reportonly === true) {
-                x.removeAttribute("href");
-            }
-        }
-
-        // added support for Firefox and Opera because they support long URIs.  This
-        // extra support allows for local file creation.
-        if (anchor === true && button.innerHTML === "S") {
-            if (bodyInner === "" || ((/Please\u0020try\u0020using\u0020the\u0020option\u0020labeled\u0020((&lt;)|<)em((&gt;)|>)Plain\u0020Text\u0020\(diff\u0020only\)((&lt;)|<)\/em((&gt;)|>)\./).test(bodyInner) === true && (/div\u0020class=("|')diff("|')/).test(bodyInner) === false)) {
-                return false;
-            }
-            if (reportonly === true) {
-                x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(bodyInner));
-            } else {
-                x.setAttribute("href", "data:text/prettydiff;charset=utf-8," + encodeURIComponent(prettydiff.finalFile.order.join("")));
-            }
-
-            // prompt to save file created above.  below is the creation of the modal with
-            // instructions about file extension.
-            if (lastChild.nodeType > 1 || lastChild.nodeName.toLowerCase() === "script") {
-                do {
-                    lastChild = <HTMLElement>lastChild.previousSibling;
-                } while (lastChild.nodeType > 1 || lastChild.nodeName.toLowerCase() === "script");
-            }
-            pageHeight = lastChild.offsetTop + lastChild.clientHeight + 20;
-            lastChild  = document.createElement("div");
-            lastChild.onmousedown = function dom_event_save_remove() {
-                lastChild.parentNode.removeChild(lastChild);
-            };
-            lastChild.setAttribute("id", "modalSave");
-            span              = document.createElement("span");
-            span.style.width  = (page.clientWidth + 10) + "px";
-            span.style.height = pageHeight + "px";
-            lastChild.appendChild(span);
-            span           = document.createElement("p");
-            span.innerHTML = "Just rename the file extension from '<strong>.part</strong>' to '<strong>.xhtml<" +
-                                    "/strong>'. <em>Click anywhere to close this reminder.</em>";
-            lastChild.appendChild(span);
-            page.appendChild(lastChild);
-            span.style.left = (((page.clientWidth + 10) - span.clientWidth) / 2) + "px";
-            return false;
-        }
-        // Webkit and IE get the old functionality of a textarea with HTML text content
-        // to copy and paste into a text file.
-        method
-            .app
-            .zTop(top);
+    method.event.save = function dom_event_save(event:Event):void {
+        const jsscope:HTMLSelectElement = id("option-jsscope");
         prettydiff.finalFile.order[7] = id("option-color")[id("option-color").selectedIndex].value;
+        prettydiff.finalFile.order[10] = report.code.body.innerHTML;
         if (options.mode === "diff") {
             prettydiff.finalFile.order[12] = prettydiff.finalFile.script.diff;
         } else if (options.mode === "beautify" && data.langvalue[0] === "javascript" && (jsscope !== null && jsscope[jsscope.selectedIndex].value !== "none")) {
@@ -4443,50 +4378,7 @@
         } else {
             prettydiff.finalFile.order[12] = prettydiff.finalFile.script.minimal;
         }
-        if (button.innerHTML === "S") {
-            button.innerHTML = "H";
-            button.setAttribute("title", "Convert output to rendered HTML.");
-            body.innerHTML = "<textarea rows='40' cols='80'>" + prettydiff
-                .finalFile
-                .order
-                .join("")
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;") + "</textarea>";
-            return false;
-        }
-        button.innerHTML = "S";
-        button.setAttribute("title", "Convert report to text that can be saved.");
-        body.innerHTML = prettydiff.finalFile.order[10];
-        content        = body.getElementsByTagName("ol");
-        if (content.length > 0) {
-            if (options.mode === "diff") {
-                content[2].onmousedown  = function dom_event_save_mousedown() {
-                    method.event.colSliderGrab(content[2].onmousedown, content[2]);
-                };
-                content[2].ontouchstart = function dom_event_save_touchstart() {
-                    method.event.colSliderGrab(content[2].ontouchstart, content[2]);
-                };
-            }
-            content = content[0].getElementsByTagName("li");
-            pageHeight = content.length - 1;
-            do {
-                if (content[pageHeight].getAttribute("class") === "fold") {
-                    if (options.mode === "beautify") {
-                        content[pageHeight].onclick = method.event.beaufold;
-                    } else if (options.mode === "diff") {
-                        content[pageHeight].onclick = function dom_event_save_difffold() {
-                            method.event.difffold(content[pageHeight]);
-                        }
-                    }
-                }
-                pageHeight = pageHeight - 1;
-            } while (pageHeight > -1);
-        }
-        method
-            .app
-            .options(event);
-        return false;
+        prettydiff.saveAs(new File([prettydiff.finalFile.order.join("")], "prettydiff.xhtml", {type: "application/xhtml+xml;charset=utf-8"}));
     };
     //analyzes combinations of consecutive key presses
     method.event.sequence = function dom_event_sequence(event:KeyboardEvent):void {

@@ -530,13 +530,18 @@ import { Stats } from "fs";
                         })
                     },
                     libraries = function build_options_libraries(callback:Function) {
-                        const pathes:string[] = [`${js}beautify`, `${api}diffview.js`, `${api}finalFile.js`, `${api}language.js`],
+                        const pathes:string[] = [`${js}beautify`, `${api}diffview.js`, `${api}finalFile.js`, `${api}language.js`, `${projectPath}node_modules${sep}file-saver${sep}FileSaver.min.js`],
                             len:number = pathes.length,
                             appendFile = function build_options_libraries_appendFile(filePath:string):void {
                                 node.fs.readFile(filePath, "utf8", function build_options_libraries_appendFile_read(errr:Error, filedata:string):void {
                                     if (errr !== null) {
                                         errout(errr.toString());
                                         return;
+                                    }
+                                    if (filePath.indexOf("FileSaver") > 0) {
+                                        filedata = filedata.replace("var saveAs=saveAs||function(", "prettydiff.saveAs=function prettydiff_saveAs(").replace(/[\{|\}|;|(*/)]\s*var\s/g, function build_options_libraries_appendFile_read_saveAsFix(str:string) {
+                                            return str.replace("var", "let");
+                                        });
                                     }
                                     libs = libs + filedata;
                                     b = b + 1;

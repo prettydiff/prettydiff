@@ -5,6 +5,7 @@
     },
     "dependencies": {
         "@types/node": "latest",
+        "file-saver": "^1.x.x",
         "parse-framework": "^1.x.x",
         "ws": "^3.2.0"
     },

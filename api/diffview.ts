@@ -1305,10 +1305,7 @@
             if (diffline === 1) {
                 linesplural = "";
             }
-            finaldoc = "<p><strong>Number of differences:</strong> <em>" + (
-                errorout + diffline
-            ) + "</em> difference" + diffplural + " from <em>" + diffline + "</em> line" +
-                    linesplural + " of code.</p>" + node.join("");
+            finaldoc = `<p><strong>Number of differences:</strong> <em>${errorout + diffline}</em> difference${diffplural} from <em>${diffline}</em> line${linesplural} of code.</p>${node.join("")}`;
             return [
                 finaldoc
                     .replace(
