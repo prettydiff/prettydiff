@@ -940,14 +940,21 @@
                                     id(data.settings[keys[a]]).checked = true;
                                     options.mode = data.settings[keys[a]].replace("mode", "");
                                     method.event.modeToggle(options.mode);
-                                } else if (data.settings[keys[a]].indexOf("option-true-") === 0) {
+                                } else if (typeof data.settings[keys[a]] === "string" && data.settings[keys[a]].indexOf("option-true-") === 0) {
                                     id(data.settings[keys[a]]).checked = true;
                                     options[keys[a].replace("option-", "")] = true;
-                                } else if (data.settings[keys[a]].indexOf("option-false-") === 0) {
+                                } else if (typeof data.settings[keys[a]] === "string" && data.settings[keys[a]].indexOf("option-false-") === 0) {
                                     id(data.settings[keys[a]]).checked = true;
                                 } else if (keys[a].indexOf("option-") === 0) {
-                                    id(keys[a]).value = data.settings[keys[a]];
-                                    options[keys[a].replace("option-", "")] = data.settings[keys[a]];
+                                    if (id(keys[a]).getAttribute("data-type") === "number") {
+                                        if (isNaN(Number(data.settings[keys[a]])) === false) {
+                                            id(keys[a]).value = data.settings[keys[a]];
+                                            options[keys[a].replace("option-", "")] = Number(data.settings[keys[a]]);
+                                        }
+                                    } else {
+                                        id(keys[a]).value = data.settings[keys[a]];
+                                        options[keys[a].replace("option-", "")] = data.settings[keys[a]];
+                                    }
                                     if (keys[a] === "option-insize") {
                                         insize();
                                     } else if (keys[a] === "option-inchar") {
@@ -2602,6 +2609,10 @@
             } else if (classy.indexOf("false-") === 0) {
                 classy = classy.replace("false-", "");
                 options[classy] = false;
+            } else if (item.getAttribute("data-type") === "number") {
+                if (isNaN(Number(value)) === false) {
+                    options[classy] = Number(value);
+                }
             } else {
                 options[classy] = value;
             }

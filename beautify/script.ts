@@ -2167,22 +2167,21 @@
                         } while (index > 0);
                         return tabby.join("");
                     }()),
+                    pres:number = options.preserve + 1,
                     nl = function beautify_script_output_nl(tabs):string {
                         const linesout:string[] = [],
                             end:string = (options.crlf === true)
                                 ? "\r\n"
-                                : "\n";
+                                : "\n",
+                            total:number = Math.min((data.lines[a + 1] - 1), pres);
                         let index = 0;
-                        if (data.lines[a] < 0) {
-                            data.lines[a] = 0;
-                        }
                         if (tabs < 0) {
                             tabs = 0;
                         }
                         do {
-                            linesout.push(end)
+                            linesout.push(end);
                             index = index + 1;
-                        } while (index < data.lines[a] - 1);
+                        } while (index < total);
                         if (tabs > 0) {
                             index = 0;
                             do {
