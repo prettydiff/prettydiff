@@ -1,4 +1,4 @@
-/*global global*/
+/*global global, options*/
 (function beautify_markup_init():void {
     "use strict";
     const markup = function beautify_markup():string {

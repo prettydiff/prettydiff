@@ -1,4 +1,4 @@
-/*global global*/
+/*global global, options*/
 (function beautify_script_init():void {
     "use strict";
     const script = function beautify_script():string {

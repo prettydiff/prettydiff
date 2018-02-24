@@ -9,7 +9,6 @@ import { Stats } from "fs";
     const order = [
             "typescript",
             "options",
-            //"dom",
             "lint"
         ],
         startTime:[number, number] = process.hrtime(),
@@ -254,7 +253,7 @@ import { Stats } from "fs";
                             };
                         files.forEach(lintit);
                     };
-                console.log("\u001b[36mBeautifying and Linting\u001b[39m");
+                console.log("\u001b[36mLinting\u001b[39m");
                 console.log("");
                 (function build_lint_getFiles():void {
                     let total:number    = 1,
@@ -348,8 +347,11 @@ import { Stats } from "fs";
                                     }
                                     data = [data.slice(0, start), ops.injectFlag + "\n", data.slice(end)].join("");
                                 },
-                                buildDefaults = function build_options_modifyFile_buildDefault(api:string):string {
-                                    const obj:any = {};
+                                buildDefaults = function build_options_modifyFile_buildDefault(api:"dom"|"node"):string {
+                                    const obj:any = {},
+                                        verse:string = (api === "node")
+                                            ? `version=${JSON.stringify(versionData)},`
+                                            : "";
                                     let a:number = 0,
                                         apikey = "";
                                     do {
@@ -359,7 +361,7 @@ import { Stats } from "fs";
                                         }
                                         a = a + 1;
                                     } while (a < keyslen);
-                                    return "options=" + JSON.stringify(obj) + ",";
+                                    return `options=${JSON.stringify(obj)},${verse}`;
                                 },
                                 buildDocumentation = function build_options_modifyFile_buildDocumentation():string {
                                     const allOptions:string[] = [];
@@ -498,6 +500,12 @@ import { Stats } from "fs";
                                     injectFlag: libs.replace(/global\.prettydiff/g, "prettydiff"),
                                     start: "// prettydiff insertion start"
                                 });
+                            } else if (fileFlag === "node") {
+                                modify({
+                                    end: "// node option default end",
+                                    injectFlag: buildDefaults("node"),
+                                    start:"// node option default start"
+                                });
                             }
                             node.fs.writeFile(file, data, function build_options_documentation_write(errw:Error) {
                                 if (errw !== null && errw.toString() !== "") {
@@ -506,12 +514,16 @@ import { Stats } from "fs";
                                 }
                                 flag[fileFlag] = true;
                                 if (flag.documentation === true && flag.dom === true && flag.html === true && flag.node === true) {
+                                    console.log(`${humantime(false)}\u001b[32mOption details written to files.\u001b[39m`);
                                     next();
                                 }
                             });
                         });
                     },
                     version = function build_options_version(file:string, fileFlag:string):void {
+                        if (versionData.number !== "") {
+                            return modifyFile(file, fileFlag);
+                        }
                         node.child(`git log -1 --branches`, function build_options_version_child(err:Error, stderr:string):void {
                             if (err !== null) {
                                 errout(err.toString());
@@ -582,8 +594,11 @@ import { Stats } from "fs";
                             a = a + 1;
                         } while (a < len);
                     };
+                console.log("\u001b[36mBuilding Options\u001b[39m");
+                console.log("");
                 libraries(function build_options_libraryCallback() {
                     modifyFile(`${api}dom.js`, "dom");
+                    version(`${api}node.js`, "node");
                 });
                 version(`${projectPath}index.xhtml`, "html");
                 modifyFile(`${projectPath}documentation.xhtml`, "documentation");

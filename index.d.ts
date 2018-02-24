@@ -125,16 +125,13 @@ interface difftable {
 interface compareStore extends Array<[number, number]>{
     [index:number]: [number, number];
 }
-interface pdNode {
-    fs: "fs";
-    http: "http";
-    https: "https";
-    path: "path";
-}
 interface modifyOps {
     end: string;
     injectFlag: string;
     start: string;
+}
+interface nodeArgs extends Array<[string, any]>{
+    [index: number]: [string, any];
 }
 declare var window: Window;
 declare module NodeJS {
