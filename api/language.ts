@@ -311,5 +311,8 @@
             return output("unknown");
         }
     };
+    if (global.prettydiff === undefined) {
+        global.prettydiff = {};
+    }
     global.prettydiff.language = language;
 }());

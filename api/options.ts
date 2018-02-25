@@ -857,5 +857,8 @@
             .validate(opts);
         return [help, langauto];
     };*/
+    if (global.prettydiff === undefined) {
+        global.prettydiff = {};
+    }
     global.prettydiff.optionDef = optionDef;
 }());

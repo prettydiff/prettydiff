@@ -1321,5 +1321,8 @@
             ];
         }());
     };
+    if (global.prettydiff === undefined) {
+        global.prettydiff = {};
+    }
     global.prettydiff.diffview = diffview;
 }());

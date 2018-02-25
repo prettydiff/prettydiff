@@ -1390,5 +1390,8 @@
         finalFile.script.minimal, //12
         finalFile.html.end //13
     ];
+    if (global.prettydiff === undefined) {
+        global.prettydiff = {};
+    }
     global.prettydiff.finalFile = finalFile;
 }());
