@@ -62,6 +62,7 @@ import { Stats } from "fs";
             parse: "Generate a parse table of a code sample.",
             remove: "Remove a file or directory tree from the local file system.",
             test: "Run the validation tests.",
+            validation: "Run only the validation tests.",
             version: "Prints the current version number and date of prior modification to the console."
         },
         humantime  = function node_humantime(finished:boolean):string {
@@ -231,8 +232,15 @@ import { Stats } from "fs";
         args:nodeArgs = (function node_args():nodeArgs {
             const list:string[] = process.argv.slice(2),
                 out:nodeArgs = [],
-                def = global.prettydiff.optionDef.definitions;
+                def = global.prettydiff.optionDef.definitions,
+                commandFilter = function node_args_filter(item:string) {
+                    if (item.indexOf(comm) === 0) {
+                        return true;
+                    }
+                    return false;
+                };
             let len:number = list.length,
+                comm:string = "",
                 split:string = "",
                 value:string = "",
                 name:string = "",
@@ -242,12 +250,32 @@ import { Stats } from "fs";
             }
             do {
                 list[a] = list[a].replace(/^(-+)/, "");
-                if (a < 1 && commands[list[a]] !== undefined) {
-                    if (list[a] === "options" && options[list[a + 1]] !== undefined) {
-                        out.push([list[a], list[a + 1]]);
+                if (a < 1) {
+                    let comkeys:string[] = Object.keys(commands),
+                        filtered:string[] = [],
+                        b:number = 1;
+                    do {
+                        comm = list[a].slice(0, b);
+                        filtered = comkeys.filter(commandFilter);
+                        if (b === list[a].length) {
+                            break;
+                        }
+                        b = b + 1;
+                    } while (filtered.length > 1);
+                    if (filtered.length < 1) {
+                        errout(`Command ${text.bold + text.red + list[a] + text.none} is not a supported command.`);
+                        return;
+                    }
+                    if (filtered.length > 1) {
+                        errout(`Command '${text.bold + text.red + list[a] + text.none}' is ambiguous as it could refer to any of: [${text.cyan + filtered.join(", ") + text.none}]`);
+                        return;
+                    }
+                    comm = filtered[0];
+                    if (comm === "options" && options[list[a + 1]] !== undefined) {
+                        out.push([comm, list[a + 1]]);
                         a = a + 1;
                     } else {
-                        out.push([list[a], true]);
+                        out.push([comm, true]);
                     }
                 } else {
                     if ((list[a].indexOf("=") < list[a].indexOf(":") && list[a].indexOf("=") > 0) || (list[a].indexOf("=") > 0 && list[a].indexOf(":") < 0)) {
@@ -875,10 +903,7 @@ import { Stats } from "fs";
     // * copy
     // * remove
     // * validation (tests)
-    if (args[0] === undefined || apps[args[0][0]] === undefined) {
-        // libs reference is included only to tease off a lint warning
-        apps.help();
-        return;
+    if (args.length > 0) {
+        apps[args[0][0]]();
     }
-    apps[args[0][0]]();
 }());
