@@ -13,10 +13,10 @@ import { Stats } from "fs";
             https: require("https"),
             path : require("path")
         },
-        stats = {
+        /*stats = {
             source: "",
             diff: ""
-        },
+        },*/
         sep:string = node.path.sep,
         projectPath:string = (function node_project() {
             const dirs:string[] = __dirname.split(sep);
@@ -450,7 +450,7 @@ import { Stats } from "fs";
                                         const start:number = (function build_options_modifyFile_modify_startBuild():number {
                                                 const len = (ops.start.indexOf("//") === 0)
                                                     ? (function build_options_modifyFile_modify_startBuild_lineStart():number {
-                                                        data = data.replace(new RegExp(ops.start + "\s+"), ops.start + "\n");
+                                                        data = data.replace(new RegExp(ops.start + "\\s+"), ops.start + "\n");
                                                         return ops.start.length + 1;
                                                     }())
                                                     : ops.start.length;
@@ -458,7 +458,7 @@ import { Stats } from "fs";
                                             }()),
                                             end:number = data.indexOf(ops.end);
                                         if (ops.end.indexOf("//") === 0) {
-                                            data = data.replace(new RegExp(ops.end + "\s+"), ops.end + "\n");
+                                            data = data.replace(new RegExp(ops.end + "\\s+"), ops.end + "\n");
                                         }
                                         data = [data.slice(0, start), ops.injectFlag + "\n", data.slice(end)].join("");
                                     },
@@ -612,7 +612,11 @@ import { Stats } from "fs";
                                     });
                                     modify({
                                         end: "// prettydiff insertion end",
-                                        injectFlag: libs.replace(/global\.prettydiff/g, "prettydiff"),
+                                        injectFlag: libs
+                                            .replace(/\/\*global global, options\*\//g, "/*global global*/")
+                                            .replace(/if \(global\.prettydiff === undefined\) \{\s+global\.prettydiff = \{\};\s+\}/g, "")
+                                            .replace(/global\.prettydiff/g, "prettydiff")
+                                            .replace(/("|')use strict("|');/g, ""),
                                         start: "// prettydiff insertion start"
                                     });
                                 } else if (fileFlag === "node") {
@@ -666,7 +670,9 @@ import { Stats } from "fs";
                                             return;
                                         }
                                         if (filePath.indexOf("FileSaver") > 0) {
-                                            filedata = filedata.replace("var saveAs=saveAs||function(", "prettydiff.saveAs=function prettydiff_saveAs(").replace(/[\{|\}|;|(*/)]\s*var\s/g, function build_options_libraries_appendFile_read_saveAsFix(str:string) {
+                                            filedata = filedata
+                                                .replace("var saveAs=saveAs||function(", "// eslint-disable-next-line\r\nprettydiff.saveAs=function prettydiff_saveAs(")
+                                                .replace(/[{|}|;|(*/)]\s*var\s/g, function build_options_libraries_appendFile_read_saveAsFix(str:string) {
                                                 return str.replace("var", "let");
                                             });
                                         }
@@ -712,7 +718,7 @@ import { Stats } from "fs";
                     heading("Building Options");
                     libraries(function build_options_libraryCallback() {
                         modifyFile(`${api}dom.js`, "dom");
-                        version(`${api}node.js`, "node");
+                        version(`${js}services.js`, "node");
                     });
                     version(`${projectPath}index.xhtml`, "html");
                     modifyFile(`${projectPath}documentation.xhtml`, "documentation");
@@ -781,7 +787,7 @@ import { Stats } from "fs";
         console.log("");
     };
     apps.help = function node_apps_help():void {
-        console.log("");
+        console.log(libs); // libs is an emptry string referenced to appease eslint
         console.log(`${text.bold + text.underline}Pretty Diff${text.none}`);
         console.log("");
         console.log("Pretty Diff is a language aware diff tool.");
@@ -868,9 +874,10 @@ import { Stats } from "fs";
     // * get
     // * copy
     // * remove
+    // * validation (tests)
     if (args[0] === undefined || apps[args[0][0]] === undefined) {
         // libs reference is included only to tease off a lint warning
-        errout(`${libs}Please use a supported command.  Example: ${text.cyan}prettydiff help${text.none}`);
+        apps.help();
         return;
     }
     apps[args[0][0]]();

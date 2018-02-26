@@ -139,7 +139,6 @@
                     parent:HTMLElement;
                 const aceApply = function dom_load_aceApply(nodeName:string, maxWidth:boolean):any {
                         const div:HTMLDivElement        = document.createElement("div"),
-                            span:HTMLSpanElement       = document.createElement("span"),
                             node:HTMLDivElement       = textarea[nodeName],
                             parent:HTMLElement     = <HTMLElement>node.parentNode.parentNode,
                             labels:NodeListOf<HTMLLabelElement> = parent.getElementsByTagName("label"),
@@ -613,7 +612,6 @@
                                 .getElementsByTagName("h3")[0]
                                 .getElementsByTagName("button")[0],
                             filedrop = function dom_load_prepBox_filedrop(event:Event):void {
-                                const el:HTMLInputElement = <HTMLInputElement>event.srcElement || <HTMLInputElement>event.target;
                                 event.stopPropagation();
                                 event.preventDefault();
                                 file(event);
@@ -741,12 +739,6 @@
                             headline.innerHTML = "<h2>BETA TEST SITE.</h2> <p>Official Pretty Diff is at <a href=\"http://prettydiff.com/\">http://prettydiff.com/</a></p> <span class=\"clear\"></span>";
                         }
                     }
-                    keypress                       = {
-                        date    : {},
-                        keys    : [],
-                        state   : false,
-                        throttle: 0
-                    };
                 }
 
                 // build the Ace editors
@@ -924,7 +916,6 @@
                     let a:number = 0,
                         el:HTMLElement,
                         sel:HTMLSelectElement,
-                        inp:HTMLInputElement,
                         name:string;
                     do {
                         if (keys[a] !== "report" && keys[a] !== "knownname" && keys[a] !== "feedback") {
@@ -935,7 +926,6 @@
                                 sel.selectedIndex = data.settings[keys[a]];
                                 options[keys[a].replace("option-", "")] = sel[sel.selectedIndex].value;
                             } else {
-                                inp = <HTMLInputElement>el;
                                 if (keys[a] === "mode") {
                                     id(data.settings[keys[a]]).checked = true;
                                     options.mode = data.settings[keys[a]].replace("mode", "");
@@ -1069,8 +1059,7 @@
                         colors:NodeListOf<HTMLOptionElement>,
                         lang:HTMLInputElement = id("option-lang"),
                         source:string   = "",
-                        diff:string     = "",
-                        modes;
+                        diff:string     = "";
                     const color:HTMLSelectElement    = id("option-color"),
                         params   = location
                             .href
@@ -2384,7 +2373,6 @@
             }
             test.load = false;
         };
-    let keypress:any = {};
     prettydiff.meta = meta;
     // determine the specific language if auto or unknown all - change all language
     // modes? comes from pd.codeops, which is      fired on change of language
@@ -2930,8 +2918,7 @@
             completes:boolean   = false,
             autotest:boolean    = false,
             diffout:[string, number, number],
-            node:HTMLSelectElement        = id("option-jsscope"),
-            codesize:number = 0;
+            node:HTMLSelectElement        = id("option-jsscope");
         const startTime:number = Date.now(),
             domain:RegExp      = (/^((https?:\/\/)|(file:\/\/\/))/),
             lf:HTMLInputElement        = id("option-crlf"),
@@ -2944,8 +2931,7 @@
                         buttons:NodeListOf<HTMLButtonElement>,
                         pdlang:string     = "",
                         parent:HTMLElement,
-                        chromeSave:boolean = false,
-                        size:number = 0;
+                        chromeSave:boolean = false;
                     const commanumb  = function dom_event_execute_app_execOutput_commanumb(numb):string {
                         let str:string = "",
                             len:number = 0,
@@ -2967,7 +2953,7 @@
                     };
                     meta.time = (function dom_event_execute_app_execOutput_proctime() {
                         const plural       = function dom_event_execute_app_execOutput_proctime_plural(x:number, y:string):string {
-                                var a = x + y;
+                                let a = x + y;
                                 if (x !== 1) {
                                     a = a + "s";
                                 }
@@ -3828,25 +3814,8 @@
     };
     //minimize report windows to the default size and location
     method.event.minimize = function dom_event_minimize(e:Event):boolean {
-        const node:HTMLElement = <HTMLElement>e.srcElement || <HTMLElement>e.target;
-        let parent:HTMLElement = <HTMLElement>node.parentNode,
-            parentNode:HTMLElement,
-            box:HTMLElement,
-            final:number    = 0,
-            idval:string        = "",
-            body:HTMLElement,
-            heading:HTMLElement,
-            buttons:NodeListOf<HTMLButtonElement>,
-            save:boolean      = false,
-            buttonMin:HTMLButtonElement,
-            buttonMax:HTMLButtonElement,
-            left:number      = 0,
-            top:number       = 0,
-            buttonRes:HTMLButtonElement,
-            step:number      = (parent.style.display === "none" && (options.mode === "diff" || (options.mode === "beautify" && options.jsscope === "report" && options.lang === "javascript")))
-                ? 1
-                : 50;
-        const growth    = function dom_event_minimize_growth():boolean {
+        const node:HTMLElement = <HTMLElement>e.srcElement || <HTMLElement>e.target,
+            growth    = function dom_event_minimize_growth():boolean {
                 let width:number        = 17,
                     height:number       = 3,
                     leftTarget:number   = 0,
@@ -4014,6 +3983,23 @@
                 shrink();
                 return false;
             };
+        let parent:HTMLElement = <HTMLElement>node.parentNode,
+            parentNode:HTMLElement,
+            box:HTMLElement,
+            final:number    = 0,
+            idval:string        = "",
+            body:HTMLElement,
+            heading:HTMLElement,
+            buttons:NodeListOf<HTMLButtonElement>,
+            save:boolean      = false,
+            buttonMin:HTMLButtonElement,
+            buttonMax:HTMLButtonElement,
+            left:number      = 0,
+            top:number       = 0,
+            buttonRes:HTMLButtonElement,
+            step:number      = (parent.style.display === "none" && (options.mode === "diff" || (options.mode === "beautify" && options.jsscope === "report" && options.lang === "javascript")))
+                ? 1
+                : 50;
         if (node.parentNode.nodeName.toLowerCase() === "h3") {
             heading = <HTMLElement>node.parentNode;
             box     = <HTMLElement>heading.parentNode;
@@ -4285,7 +4271,7 @@
         document.onmousedown = null;
     };
     //toggle between parsed html diff report and raw text representation
-    method.event.save = function dom_event_save(event:Event):void {
+    method.event.save = function dom_event_save():void {
         const jsscope:HTMLSelectElement = id("option-jsscope");
         prettydiff.finalFile.order[7] = id("option-color")[id("option-color").selectedIndex].value;
         prettydiff.finalFile.order[10] = report.code.body.innerHTML;
@@ -4345,8 +4331,7 @@
                         .audio
                         .play();
                 }
-                const active:HTMLElement = <HTMLElement>document.activeElement,
-                    color:HTMLSelectElement  = id("option-color"),
+                const color:HTMLSelectElement  = id("option-color"),
                     max:number    = color
                         .getElementsByTagName("option")
                         .length - 1,
