@@ -133,6 +133,18 @@ interface modifyOps {
 interface nodeArgs extends Array<[string, any]>{
     [index: number]: [string, any];
 }
+interface nodeLists {
+    emptyline: boolean;
+    heading: string;
+    obj: any;
+    property: "eachkey" | string;
+}
+interface commandList {
+    [key: string]: {
+        description: string;
+        example: string[];
+    }
+}
 declare var window: Window;
 declare module NodeJS {
     interface Global {

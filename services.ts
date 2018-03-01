@@ -1,4 +1,5 @@
 import { Stats } from "fs";
+import { Http2Stream } from "http2";
 /*jslint node:true */
 /*eslint-env node*/
 /*eslint no-console: 0*/
@@ -47,23 +48,77 @@ import { Stats } from "fs";
             underline: "\u001b[4m",
             yellow   : "\u001b[33m"
         },
-        commands:any = {
-            analysis: "Perform Pretty Diff's code analysis operation.",
-            beautify: "Perform Pretty Diff's code beautification.",
-            build: "Rebuilds the application",
-            commands: "List the support command to the console.",
-            copy: "Copy files or directories from one location to another on the local file system.",
-            diff: "Compare code samples the Pretty Diff way.",
-            get: "Retrieve a resource via a URI.",
-            hash: "Generate a SHA512 hash of a file.",
-            help: "Introductory information to Pretty Diff on the command line.",
-            minify: "Remove all unnecessary white space and comments from code.",
-            options: "List Pretty Diff's options to the console.",
-            parse: "Generate a parse table of a code sample.",
-            remove: "Remove a file or directory tree from the local file system.",
-            test: "Run the validation tests.",
-            validation: "Run only the validation tests.",
-            version: "Prints the current version number and date of prior modification to the console."
+        commands:commandList = {
+            analysis: {
+                description: "Perform Pretty Diff's code analysis operation.",
+                example: [""]
+            },
+            beautify: {
+                description: "Perform Pretty Diff's code beautification.",
+                example: [""]
+            },
+            build: {
+                description: "Rebuilds the application",
+                example: ["prettydiff build"]
+            },
+            commands: {
+                description: "List all supported commands to the console or examples of a specific command.",
+                example: [
+                    "prettydiff commands",
+                    "prettydiff commands commands"
+                ]
+            },
+            copy: {
+                description: "Copy files or directories from one location to another on the local file system.",
+                example: ["prettydiff copy source/file/or/directory destination/path"]
+            },
+            diff: {
+                description: "Compare code samples the Pretty Diff way.",
+                example: [""]
+            },
+            get: {
+                description: "Retrieve a resource via an absolute URI.",
+                example: [""]
+            },
+            hash: {
+                description: "Generate a SHA512 hash of a file.",
+                example: ["prettydiff hash path/to/file"]
+            },
+            help: {
+                description: "Introductory information to Pretty Diff on the command line.",
+                example: ["prettydiff help"]
+            },
+            minify: {
+                description: "Remove all unnecessary white space and comments from code.",
+                example: [""]
+            },
+            options: {
+                description: "List all Pretty Diff's options to the console or gather instructions on a specific option.",
+                example: [
+                    "prettydiff options",
+                    "prettydiff options mode"
+                ]
+            },
+            parse: {
+                description: "Generate a parse table of a code sample.",
+                example: [""]
+            },
+            remove: {
+                description: "Remove a file or directory tree from the local file system.",
+                example: ["prettydiff remove path/to/resource"]
+            },
+            test: {
+                description: "Run the validation tests.",
+                example: [""]
+            },
+            validation: {
+                description: "Run only the validation tests.",
+                example: ["prettydiff validation"]
+            },
+            version: {
+                description: "Prints the current version number and date of prior modification to the console.",
+                example: ["prettydiff version"]
+            }
         },
         humantime  = function node_humantime(finished:boolean):string {
             let minuteString:string = "",
@@ -274,6 +329,9 @@ import { Stats } from "fs";
                     if (comm === "options" && options[list[a + 1]] !== undefined) {
                         out.push([comm, list[a + 1]]);
                         a = a + 1;
+                    } else if (comm === "commands" && commands[list[a + 1]] !== undefined) {
+                        out.push([comm, list[a + 1]]);
+                        a = a + 1;
                     } else {
                         out.push([comm, true]);
                     }
@@ -308,6 +366,10 @@ import { Stats } from "fs";
             } while (a < len);
             return out;
         }()),
+        sample = {
+            source: "",
+            diff: ""
+        },
         apps:any = {};
     apps.analysis = function node_apps_analysis():void {
         options.mode = "analysis";
@@ -776,38 +838,55 @@ import { Stats } from "fs";
             };
         next();
     };
+    apps.commands = function node_apps_commands():void {
+        if (commands[args[0][1]] !== undefined) {
+            // specificly mentioned option
+            const comm:any = commands[args[0][1]],
+                len:number = comm.example.length,
+                plural:string = (len > 1)
+                    ? "s"
+                    : "";
+            let a:number = 0;
+            console.log("");
+            console.log(`${text.bold + text.underline}Pretty Diff - Command: ${text.green + args[0][1] + text.none}`);
+            console.log("");
+            console.log(comm.description);
+            console.log("");
+            console.log(`${text.underline}Example${plural + text.none}`);
+            do {
+                console.log(`   ${text.cyan + comm.example[a] + text.none}`);
+                a = a + 1;
+            } while (a < len);
+            console.log("");
+            apps.version();
+        } else {
+            // all commands in a list
+            apps.lists({
+                emptyline: true,
+                heading: "Commands",
+                obj: commands,
+                property: "description"
+            });
+        }
+    };
     apps.diff = function node_apps_diff():void {
         options.mode = "diff";
         apps.mode();
     };
-    apps.commands = function node_apps_commands():void {
-        const keys:string[] = Object.keys(commands),
-            len:number  = keys.length;
-        let comm:string = "",
-            lens:number = 0,
-            a:number    = 0,
-            b:number    = 0;
-        apps.heading("Commands");
-        do {
-            if (keys[a].length > lens) {
-                lens = keys[a].length;
-            }
-            a = a + 1;
-        } while (a < len);
-        a = 0;
-        do {
-            comm = keys[a];
-            b    = comm.length;
-            if (b < lens) {
-                do {
-                    comm = comm + " ";
-                    b    = b + 1;
-                } while (b < lens);
-            }
-            console.log(`${text.red + text.bold}* ${text.none + text.cyan + comm + text.nocolor}: ${commands[keys[a]]}`);
-            a = a + 1;
-        } while (a < len);
-        apps.version();
+    apps.get = function node_apps_get(address:string, flag:"source"|"diff"):void {
+        const scheme:string = (address.indexOf("https") === 0)
+            ? "https"
+            : "http";
+        let file:string = "";
+        node[scheme].get(address, function node_apps_get_callback(res:Http2Stream) {
+            res.setEncoding("utf8");
+            res.on("data", function node_apps_get_callback_data(chunk:string):void {
+                file = file + chunk;
+            });
+            res.on("end", function node_apps_get_callback_end() {
+                sample[flag] = file;
+            });
+        });
     };
     apps.heading = function node_apps_heading(message:string):void {
         console.log("");
@@ -826,6 +905,134 @@ import { Stats } from "fs";
         console.log("");
         apps.version();
     };
+    apps.lists = function node_apps_lists(lists:nodeLists):void {
+        // * lists.emptyline - boolean - if each key should be separated by an empty line
+        // * lists.heading   - string  - a text heading to precede the list
+        // * lists.obj       - object  - an object to traverse
+        // * lists.property  - string  - The child property to read from or "eachkey" to
+        // access a directly assigned primitive
+        const wrap:number = 100,
+            wrapit = function node_apps_lists_wrapit(string:string):void {
+                if (string.length > wrap) {
+                    const indent:string = (function node_apps_options_wrapit_indent():string {
+                            const len:number = string.length;
+                            let inc:number = 0,
+                                num:number = 2,
+                                str:string = "";
+                            do {
+                                if (string.charAt(inc) === ":") {
+                                    break;
+                                }
+                                if (string.charAt(inc) === "\u001b") {
+                                    if (string.charAt(inc + 4) === "m") {
+                                        inc = inc + 4;
+                                    } else {
+                                        inc = inc + 3;
+                                    }
+                                } else {
+                                    num = num + 1;
+                                }
+                                inc = inc + 1;
+                            } while (inc < len);
+                            inc = 0;
+                            do {
+                                str = str + " ";
+                                inc = inc + 1;
+                            } while (inc < num);
+                            return str;
+                        }()),
+                        formLine = function node_apps_options_wrapit_formLine():void {
+                            let inc:number = 0,
+                                wrapper:number = wrap;
+                            do {
+                                if (string.charAt(inc) === "\u001b") {
+                                    if (string.charAt(inc + 4) === "m") {
+                                        wrapper = wrapper + 4;
+                                    } else {
+                                        wrapper = wrapper + 3;
+                                    }
+                                }
+                                inc = inc + 1;
+                            } while (inc < wrapper);
+                            if (string.charAt(wrapper) !== " " && string.length > wrapper) {
+                                do {
+                                    wrapper = wrapper - 1;
+                                } while (wrapper > 0 && string.charAt(wrapper) !== " ");
+                                if (wrapper === 0) {
+                                    console.log(string);
+                                    return;
+                                }
+                            }
+                            console.log(string.slice(0, wrapper).replace(/ $/, ""));
+                            string = string.slice(wrapper + 1);
+                            if (string.length + indent.length > wrap) {
+                                string = indent + string;
+                                node_apps_options_wrapit_formLine();
+                            } else if (string !== "") {
+                                console.log(indent + string);
+                            }
+                        };
+                    formLine();
+                } else {
+                    console.log(string);
+                }
+            },
+            keys:string[] = Object.keys(lists.obj).sort(),
+            displayKeys = function node_apps_lists_displayKeys(item:string, keylist:string[]):void {
+                const len:number = keylist.length;
+                let a:number = 0,
+                    b:number = 0,
+                    c:number = 0,
+                    lens:number = 0,
+                    comm:string = "";
+                if (len < 1) {
+                    errout(`Please run the build: ${text.cyan}prettydiff build${text.none}`);
+                    return;
+                }
+                do {
+                    if (keylist[a].length > lens) {
+                        lens = keylist[a].length;
+                    }
+                    a = a + 1;
+                } while (a < len);
+                do {
+                    comm = keylist[b];
+                    c    = comm.length;
+                    if (c < lens) {
+                        do {
+                            comm = comm + " ";
+                            c    = c + 1;
+                        } while (c < lens);
+                    }
+                    if (item !== "") {
+                        // each of the "values" keys
+                        wrapit(`   ${text.red + text.bold}- ${text.none + text.cyan + comm + text.nocolor}: ${lists.obj.values[keylist[b]]}`);
+                    } else {
+                        // list all items
+                        if (lists.property === "eachkey") {
+                            if (args[0][0] === "options" && keylist[b] === "values") {
+                                // "values" keyname of options
+                                console.log(`${text.red + text.bold}* ${text.none + text.cyan + comm + text.nocolor}:`);
+                                displayKeys(args[0][1], Object.keys(lists.obj.values).sort());
+                            } else {
+                                // all items keys and their primitive value
+                                wrapit(`${text.red + text.bold}* ${text.none + text.cyan + comm + text.nocolor}: ${lists.obj[keylist[b]]}`);
+                            }
+                        } else {
+                            // a list by key and specified property
+                            wrapit(`${text.red + text.bold}* ${text.none + text.cyan + comm + text.nocolor}: ${lists.obj[keylist[b]][lists.property]}`);
+                        }
+                        if (lists.emptyline === true) {
+                            console.log("");
+                        }
+                    }
+                    b = b + 1;
+                } while (b < len);
+            };
+        apps.heading(lists.heading);
+        displayKeys("", keys);
+        humantime(true);
+    };
     apps.minify = function node_apps_minify():void {
         options.mode = "minify";
         apps.mode();
@@ -834,55 +1041,24 @@ import { Stats } from "fs";
         return;
     };
     apps.options = function node_apps_options():void {
-        const def:any = global.prettydiff.optionDef.definitions,
-            defPresent = function node_apps_options_defPresent(heading:string, obj:any):void {
-                const keys:string[] = Object.keys(obj).sort(),
-                    displayKeys = function node_apps_options_defPresent_displayKeys(option:string, keylist:string[]):void {
-                        const len:number = keylist.length;
-                        let a:number = 0,
-                            b:number = 0,
-                            c:number = 0,
-                            lens:number = 0,
-                            comm:string = "";
-                        do {
-                            if (keylist[a].length > lens) {
-                                lens = keylist[a].length;
-                            }
-                            a = a + 1;
-                        } while (a < len);
-                        do {
-                            comm = keylist[b];
-                            c    = comm.length;
-                            if (c < lens) {
-                                do {
-                                    comm = comm + " ";
-                                    c    = c + 1;
-                                } while (c < lens);
-                            }
-                            if (option !== "") {
-                                console.log(`   ${text.red + text.bold}- ${text.none + text.cyan + comm + text.nocolor}: ${def[option].values[keylist[b]]}`);
-                            } else if (obj === def[args[0][1]]) {
-                                if (keylist[b] === "values") {
-                                    console.log(`${text.red + text.bold}* ${text.none + text.cyan + comm + text.nocolor}:`);
-                                    displayKeys(args[0][1], Object.keys(def[args[0][1]][keylist[b]]).sort());
-                                } else {
-                                    console.log(`${text.red + text.bold}* ${text.none + text.cyan + comm + text.nocolor}: ${def[args[0][1]][keylist[b]]}`);
-                                }
-                            } else {
-                                console.log(`${text.red + text.bold}* ${text.none + text.cyan + comm + text.nocolor}: ${def[keylist[b]].definition}`);
-                            }
-                            b = b + 1;
-                        } while (b < len);
-                    };
-                apps.heading(heading);
-                displayKeys("", keys);
-            };
+        const def:any = global.prettydiff.optionDef.definitions;
         if (options[args[0][1]] !== undefined) {
-            defPresent(`Option: ${text.green + args[0][1] + text.nocolor}`, def[args[0][1]]);
+            // specificly mentioned option
+            apps.lists({
+                emptyLine: false,
+                heading: `Option: ${text.green + args[0][1] + text.nocolor}`,
+                obj: def[args[0][1]],
+                property: "eachkey"
+            });
         } else {
-            defPresent("Options", options);
+            // all options in a list
+            apps.lists({
+                emptyline: true,
+                heading: "Options",
+                obj: def,
+                property: "definition"
+            });
         }
-        humantime(true);
     };
     apps.parse = function node_apps_parse():void {
         options.mode = "parse";
@@ -903,7 +1079,8 @@ import { Stats } from "fs";
     // * copy
     // * remove
     // * validation (tests)
-    if (args.length > 0) {
-        apps[args[0][0]]();
+    if (args.length < 1) {
+        return apps.help();
     }
+    apps[args[0][0]]();
 }());
