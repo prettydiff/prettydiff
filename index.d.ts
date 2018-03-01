@@ -142,7 +142,10 @@ interface nodeLists {
 interface commandList {
     [key: string]: {
         description: string;
-        example: string[];
+        example: {
+            code: string;
+            defined: string;
+        }[];
     }
 }
 declare var window: Window;

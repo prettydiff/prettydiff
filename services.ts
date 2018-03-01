@@ -51,73 +51,126 @@ import { Http2Stream } from "http2";
         commands:commandList = {
             analysis: {
                 description: "Perform Pretty Diff's code analysis operation.",
-                example: [""]
+                example: [{
+                    code: "",
+                    defined: "Performs Pretty Diff's code analysis operation."
+                }]
             },
             beautify: {
                 description: "Perform Pretty Diff's code beautification.",
-                example: [""]
+                example: [{
+                    code: "",
+                    defined: "Performs Pretty Diff's beautify operation."
+                }]
             },
             build: {
-                description: "Rebuilds the application",
-                example: ["prettydiff build"]
+                description: "Rebuilds the application.",
+                example: [{
+                    code: "prettydiff build",
+                    defined: "Compiles from TypeScript into JavaScript, compiles libraries, and lints the code."
+                }]
             },
             commands: {
                 description: "List all supported commands to the console or examples of a specific command.",
                 example: [
-                    "prettydiff commands",
-                    "prettydiff commands commands"
+                    {
+                        code: "prettydiff commands",
+                        defined: "Lists all commands and their definitions to the shell."
+                    },
+                    {
+                        code: "prettydiff commands commands",
+                        defined: "Details the mentioned command with code examples."
+                    }
                 ]
             },
             copy: {
                 description: "Copy files or directories from one location to another on the local file system.",
-                example: ["prettydiff copy source/file/or/directory destination/path"]
+                example: [{
+                    code: "prettydiff copy source/file/or/directory destination/path",
+                    defined: "Copies the file system artifact at the first address to the second address."
+                }]
             },
             diff: {
                 description: "Compare code samples the Pretty Diff way.",
-                example: [""]
+                example: [{
+                    code: "",
+                    defined: "Performs Pretty Diff's diff operation."
+                }]
             },
             get: {
                 description: "Retrieve a resource via an absolute URI.",
-                example: [""]
+                example: [
+                    {
+                        code: "prettydiff get http://example.com/file.txt",
+                        defined: "Gets a resource from the web and prints the output to the shell."
+                    },
+                    {
+                        code: "prettydiff get http://example.com/file.txt write path/to/file",
+                        defined: "Get a resource from the web and writes the resource as UTF8 to a file at the specified path."
+                    }
+                ]
             },
             hash: {
                 description: "Generate a SHA512 hash of a file.",
-                example: ["prettydiff hash path/to/file"]
+                example: [{
+                    code: "prettydiff hash path/to/file",
+                    defined: "Prints a SHA512 hash to the shell for the specified file system resource."
+                }]
             },
             help: {
                 description: "Introductory information to Pretty Diff on the command line.",
-                example: ["prettydiff help"]
+                example: [{
+                    code: "prettydiff help",
+                    defined: "Writes help text to shell."
+                }]
             },
             minify: {
                 description: "Remove all unnecessary white space and comments from code.",
-                example: [""]
+                example: [{
+                    code: "",
+                    defined: "Performs Pretty Diff's minify operation."
+                }]
             },
             options: {
                 description: "List all Pretty Diff's options to the console or gather instructions on a specific option.",
                 example: [
-                    "prettydiff options",
-                    "prettydiff options mode"
+                    {
+                        code: "prettydiff options",
+                        defined: "List all options and their definitions to the shell."
+                    },
+                    {
+                        code: "prettydiff options mode",
+                        defined: "Writes details about the specified option to the shell."
+                    }
                 ]
             },
             parse: {
                 description: "Generate a parse table of a code sample.",
-                example: [""]
+                example: [{
+                    code: "",
+                    defined: "Performs Pretty Diff's parse operation."
+                }]
             },
             remove: {
                 description: "Remove a file or directory tree from the local file system.",
-                example: ["prettydiff remove path/to/resource"]
+                example: [{
+                    code: "prettydiff remove path/to/resource",
+                    defined: "Removes the specified resource."
+                }]
             },
             test: {
                 description: "Run the validation tests.",
-                example: [""]
-            },
-            validation: {
-                description: "Run only the validation tests.",
-                example: ["prettydiff validation"]
+                example: [{
+                    code: "",
+                    defined: ""
+                }]
             },
             version: {
                 description: "Prints the current version number and date of prior modification to the console.",
-                example: ["prettydiff version"]
+                example: [{
+                    code: "prettydiff version",
+                    defined: "Prints the current version number and date to the shell."
+                }]
             }
         },
         humantime  = function node_humantime(finished:boolean):string {
@@ -326,12 +379,19 @@ import { Http2Stream } from "http2";
                         return;
                     }
                     comm = filtered[0];
-                    if (comm === "options" && options[list[a + 1]] !== undefined) {
-                        out.push([comm, list[a + 1]]);
+                    if (comm === "options" && options[list[1]] !== undefined) {
+                        out.push(["options", list[1]]);
                         a = a + 1;
-                    } else if (comm === "commands" && commands[list[a + 1]] !== undefined) {
-                        out.push([comm, list[a + 1]]);
+                    } else if (comm === "commands" && commands[list[1]] !== undefined) {
+                        out.push(["commands", list[1]]);
                         a = a + 1;
+                    } else if (comm === "get" && commands[list[1]] === undefined && options[list[1]] === undefined) {
+                        out.push(["get", list[1]]);
+                        a = a + 1;
+                        if (list[2].replace(/^(-+)/, "") === "write" && commands[list[3]] === undefined && options[list[3]] === undefined) {
+                            out.push(["write", list[3]]);
+                            a = a + 2;
+                        }
                     } else {
                         out.push([comm, true]);
                     }
@@ -854,10 +914,11 @@ import { Http2Stream } from "http2";
             console.log("");
             console.log(`${text.underline}Example${plural + text.none}`);
             do {
-                console.log(`   ${text.cyan + comm.example[a] + text.none}`);
+                console.log(comm.example[a].defined);
+                console.log(`   ${text.cyan + comm.example[a].code + text.none}`);
+                console.log("");
                 a = a + 1;
             } while (a < len);
-            console.log("");
             apps.version();
         } else {
             // all commands in a list
@@ -873,18 +934,45 @@ import { Http2Stream } from "http2";
         options.mode = "diff";
         apps.mode();
     };
-    apps.get = function node_apps_get(address:string, flag:"source"|"diff"):void {
+    apps.get = function node_apps_get():void {
+        if (args[0][1] === undefined) {
+            errout("The get command requires an address.  Please see `prettydiff commands get` for examples.");
+            return;
+        }
+        if ((/^(https?:\/\/)/).test(args[0][1]) === false) {
+            console.log(args[0][1]);
+            errout("The first parameter to the get command must be an absolute web address.  Please see `prettydiff commands get` for examples.");
+            return;
+        }
+        apps.getFile(args[0][1], "source", function node_apps_get_callback() {
+            console.log(args);
+            if (args[1] !== undefined && args[1][0] === "write") {
+                let path = node.path.resolve(args[1][1]);
+                node.fs.writeFile(path, sample.source, "utf8", function node_apps_get_callback_write(err:Error) {
+                    if (err !== null) {
+                        errout(err.toString());
+                        return;
+                    }
+                    console.log(`File ${text.cyan + path + text.none} written with ${sample.source.length} characters.`);
+                });
+            } else {
+                console.log(sample.source);
+            }
+        });
+    };
+    apps.getFile = function node_apps_getFile(address:string, flag:"source"|"diff", callback:Function):void {
         const scheme:string = (address.indexOf("https") === 0)
             ? "https"
             : "http";
         let file:string = "";
-        node[scheme].get(address, function node_apps_get_callback(res:Http2Stream) {
+        node[scheme].get(address, function node_apps_getFile_callback(res:Http2Stream) {
             res.setEncoding("utf8");
-            res.on("data", function node_apps_get_callback_data(chunk:string):void {
+            res.on("data", function node_apps_getFile_callback_data(chunk:string):void {
                 file = file + chunk;
             });
-            res.on("end", function node_apps_get_callback_end() {
+            res.on("end", function node_apps_getFile_callback_end() {
                 sample[flag] = file;
+                callback();
             });
         });
     };

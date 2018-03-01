@@ -815,48 +815,6 @@
             binaryCheck: binaryCheck,
             definitions: definitions
         };
-    /*functions.node          = function options_node(a) {
-        var b        = 0,
-            c        = a.length,
-            d        = [],
-            e        = [],
-            f        = 0,
-            opts     = {},
-            help     = false,
-            langauto = true;
-        for (b = 0; b < c; b = b + 1) {
-            e = [];
-            f = a[b].indexOf(":");
-            e.push(a[b].substring(0, f).replace(/(\s+)$/, ""));
-            e.push(a[b].substring(f + 1).replace(/^(\s+)/, ""));
-            d.push(e);
-        }
-        c = d.length;
-        for (b = 0; b < c; b = b + 1) {
-            if (d[b].length === 2) {
-                opts[d[b][0]] = d[b][1];
-                if (d[b][0] === "lang" && d[b][1] !== "auto") {
-                    langauto = false;
-                }
-            } else {
-                if (d[b] === "help" || d[b][0] === "help" || d[b][0] === "man" || d[b][0] === "manual") {
-                    help = true;
-                } else if (d[b] === "v" || d[b] === "version" || d[b][0] === "v" || d[b][0] === "version") {
-                    options.version = true;
-                } else if (d[b] === "l" || d[b] === "list" || d[b][0] === "l" || d[b][0] === "list") {
-                    options.listoptions = true;
-                }
-            }
-        }
-        if (Object.keys(opts).length < 2) {
-            help = true;
-        }
-        options.functions.nodeArgs = opts;
-        options
-            .functions
-            .validate(opts);
-        return [help, langauto];
-    };*/
     if (global.prettydiff === undefined) {
         global.prettydiff = {};
     }
