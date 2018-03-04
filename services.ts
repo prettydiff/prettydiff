@@ -1,6 +1,7 @@
 import { Stats } from "fs";
 import { Http2Stream } from "http2";
 import { Stream, Writable } from "stream";
+import { Hash } from "crypto";
 /*jslint node:true */
 /*eslint-env node*/
 /*eslint no-console: 0*/
@@ -9,11 +10,12 @@ import { Stream, Writable } from "stream";
     "use strict";
     const startTime:[number, number]      = process.hrtime(),
         node = {
-            child: require("child_process").exec,
-            fs   : require("fs"),
-            http : require("http"),
-            https: require("https"),
-            path : require("path")
+            child : require("child_process").exec,
+            crypto: require("crypto"),
+            fs    : require("fs"),
+            http  : require("http"),
+            https : require("https"),
+            path  : require("path")
         },
         /*stats = {
             source: "",
@@ -127,10 +129,20 @@ import { Stream, Writable } from "stream";
             },
             hash: {
                 description: "Generate a SHA512 hash of a file.",
-                example: [{
-                    code: "prettydiff hash path/to/file",
-                    defined: "Prints a SHA512 hash to the shell for the specified file system resource."
-                }]
+                example: [
+                    {
+                        code: "prettydiff hash path/to/file",
+                        defined: "Prints a SHA512 hash to the shell for the specified file system resource."
+                    },
+                    {
+                        code: "prettydiff hash explicit path/to/file",
+                        defined: "Prints only the SHA512 hash to the shell."
+                    },
+                    {
+                        code: "prettydiff hash string \"I love kittens.\"",
+                        defined: "Hash an arbitrary string directly from shell input."
+                    }
+                ]
             },
             help: {
                 description: "Introductory information to Pretty Diff on the command line.",
@@ -1139,6 +1151,130 @@ import { Stream, Writable } from "stream";
             });
         });
     };
+    apps.hash        = function node_apps_hash(filepath:string, callback:Function):void {
+        const hash:Hash = node
+            .crypto
+            .createHash("sha512");
+        let explicit:boolean = false;
+        if (command === "hash") {
+            if (process.argv.indexOf("explicit") > -1) {
+                explicit = true;
+                process.argv.splice(process.argv.indexOf("explicit"), 1);
+            }
+            filepath = node.path.resolve(process.argv[0]);
+            callback = function node_apps_hash_callback(hash:string):void {
+                if (explicit === true) {
+                    console.log(hash);
+                    return;
+                }
+                console.log("");
+                console.log(`Pretty Diff hashed ${text.cyan + filepath + text.none}`);
+                console.log(hash);
+                console.log("");
+                apps.version();
+            };
+            if (process.argv.indexOf("string") > -1) {
+                process.argv.splice(process.argv.indexOf("string"), 1);
+                hash.update(process.argv[0]);
+                callback(hash.digest("hex"));
+                return;
+            }
+        }
+        node
+            .fs
+            .stat(filepath, function node_apps_hash_stat(er:Error, stat:Stats):void {
+                if (er !== null) {
+                    if (er.toString().indexOf("no such file or directory") > 0) {
+                        apps.errout(`filepath ${filepath} is not a file.`);
+                        return;
+                    }
+                    apps.errout(er);
+                    return;
+                }
+                if (stat === undefined || stat.isFile() === false) {
+                    apps.errout(`filepath ${filepath} is not a file.`);
+                    return;
+                }
+                node
+                    .fs
+                    .open(filepath, "r", function node_apps_hash_stat_open(ero:Error, fd:number):void {
+                        const msize = (stat.size < 100)
+                                ? stat.size
+                                : 100;
+                        let buff  = new Buffer(msize);
+                        if (ero !== null) {
+                            apps.errout(ero);
+                            return;
+                        }
+                        node
+                            .fs
+                            .read(
+                                fd,
+                                buff,
+                                0,
+                                msize,
+                                1,
+                                function node_apps_hash_stat_open_read(erra:Error, bytesa:number, buffera:Buffer):number {
+                                    let bstring:string = "";
+                                    if (erra !== null) {
+                                        apps.errout(erra);
+                                        return;
+                                    }
+                                    bstring = buffera.toString("utf8", 0, buffera.length);
+                                    bstring = bstring.slice(2, bstring.length - 2);
+                                    if (global.prettydiff.optionDef.binaryCheck.test(bstring) === true) {
+                                        buff = new Buffer(stat.size);
+                                        node
+                                            .fs
+                                            .read(
+                                                fd,
+                                                buff,
+                                                0,
+                                                stat.size,
+                                                0,
+                                                function node_apps_hash_stat_open_read_readBinary(errb:Error, bytesb:number, bufferb:Buffer):void {
+                                                    if (errb !== null) {
+                                                        apps.errout(errb);
+                                                        return;
+                                                    }
+                                                    if (bytesb > 0) {
+                                                        hash.on("readable", function node_apps_hash_stat_open_read_readBinary_hash():void {
+                                                            const hashdata = <Buffer>hash.read();
+                                                            if (hashdata !== null) {
+                                                                callback(hashdata.toString("hex").replace(/\s+/g, ""));
+                                                            }
+                                                        });
+                                                        hash.write(bufferb);
+                                                        hash.end();
+                                                    }
+                                                }
+                                            );
+                                    } else {
+                                        node
+                                            .fs
+                                            .readFile(filepath, {
+                                                encoding: "utf8"
+                                            }, function node_apps_hash_stat_open_read_readFile(errc:Error, dump:string):void {
+                                                if (errc !== null && errc !== undefined) {
+                                                    apps.errout(errc);
+                                                    return;
+                                                }
+                                                hash.on("readable", function node_apps_hash_stat_open_read_readFile_hash():void {
+                                                    const hashdata = <Buffer>hash.read();
+                                                    if (hashdata !== null) {
+                                                        callback(hashdata.toString("hex").replace(/\s+/g, ""));
+                                                    }
+                                                });
+                                                hash.write(dump);
+                                                hash.end();
+                                            });
+                                    }
+                                    return bytesa;
+                                }
+                            );
+                    });
+            });
+    };
     apps.heading = function node_apps_heading(message:string):void {
         console.log("");
         console.log(`${text.underline + text.bold}Pretty Diff - ${message + text.none}`);
@@ -1723,6 +1859,7 @@ import { Stream, Writable } from "stream";
         // * commands
         // * copy
         // * get
+        // * hash
         // * help - think of better content
         // * options
         // * remove
@@ -1732,7 +1869,6 @@ import { Stream, Writable } from "stream";
         // * analysis - mode
         // * beautify - mode
         // * diff - mode
-        // * hash
         // * minify - mode
         // * parse - mode
         // * validation
