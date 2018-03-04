@@ -814,48 +814,8 @@ import { Hash } from "crypto";
             destination:string   = "",
             exlen:number = 0;
         util.complete = function node_apps_copy_complete(item:string):void {
-            const out:string[] = ["Pretty Diff copied "];
             delete dirs[item];
             if (Object.keys(dirs).length < 1) {
-                if (command === "copy") {
-                    console.log("");
-                    out.push(text.green);
-                    out.push(text.bold);
-                    out.push(numb.dirs);
-                    out.push(text.none);
-                    out.push(" director");
-                    if (numb.dirs === 1) {
-                        out.push("y, ");
-                    } else {
-                        out.push("ies, ");
-                    }
-                    out.push(text.green);
-                    out.push(text.bold);
-                    out.push(numb.files);
-                    out.push(text.none);
-                    out.push(" file");
-                    if (numb.files !== 1) {
-                        out.push("s");
-                    }
-                    out.push(", and ");
-                    out.push(text.green);
-                    out.push(text.bold);
-                    out.push(numb.link);
-                    out.push(text.none);
-                    out.push(" symbolic link");
-                    if (numb.link !== 1) {
-                        out.push("s");
-                    }
-                    out.push(" at ");
-                    out.push(text.green);
-                    out.push(text.bold);
-                    out.push(apps.commas(numb.size));
-                    out.push(text.none);
-                    out.push(" bytes.");
-                    console.log(out.join(""));
-                    console.log(`Copied ${text.cyan + target + text.nocolor} to ${text.green + destination + text.nocolor}`);
-                    console.log("");
-                }
                 params.callback();
             }
         };
@@ -1051,22 +1011,70 @@ import { Hash } from "crypto";
                 return;
             }
             params = {
-                callback: function node_copy_callback() {},
-                destination: process.argv[1].replace(/(\\|\/)/g, node.path.sep),
+                callback: function node_copy_callback() {
+                    const out:string[] = ["Pretty Diff copied "];
+                    console.log("");
+                    out.push(text.green);
+                    out.push(text.bold);
+                    out.push(numb.dirs);
+                    out.push(text.none);
+                    out.push(" director");
+                    if (numb.dirs === 1) {
+                        out.push("y, ");
+                    } else {
+                        out.push("ies, ");
+                    }
+                    out.push(text.green);
+                    out.push(text.bold);
+                    out.push(numb.files);
+                    out.push(text.none);
+                    out.push(" file");
+                    if (numb.files !== 1) {
+                        out.push("s");
+                    }
+                    out.push(", and ");
+                    out.push(text.green);
+                    out.push(text.bold);
+                    out.push(numb.link);
+                    out.push(text.none);
+                    out.push(" symbolic link");
+                    if (numb.link !== 1) {
+                        out.push("s");
+                    }
+                    out.push(" at ");
+                    out.push(text.green);
+                    out.push(text.bold);
+                    out.push(apps.commas(numb.size));
+                    out.push(text.none);
+                    out.push(" bytes.");
+                    console.log(out.join(""));
+                    console.log(`Copied ${text.cyan + target + text.nocolor} to ${text.green + destination + text.nocolor}`);
+                    console.log("");
+                },
                 exclusions: (function node_copy_exclusions():string[] {
                     const out:string[] = [],
                         len:number = process.argv.length;
                     let a:number = 0,
-                        length:number = 0;
+                        length:number = 0,
+                        start:number = 0;
                     do {
                         if (out.length < 1 && process.argv[a].indexOf("[") === 0) {
                             out.push(process.argv[a].slice(1));
+                            start = a;
+                            if (process.argv[a].indexOf("]") === length) {
+                                if (process.argv[a].slice(0, length) !== "") {
+                                    out.push(process.argv[a].slice(0, length));
+                                }
+                                process.argv.splice(start, 1);
+                                return out;
+                            }
                         } else if (out.length > 0) {
                             length = process.argv[a].length - 1;
                             if (process.argv[a].indexOf("]") === length) {
                                 if (process.argv[a].slice(0, length) !== "") {
                                     out.push(process.argv[a].slice(0, length));
                                 }
+                                process.argv.splice(start, a - start);
                                 return out;
                             }
                             out.push(process.argv[a]);
@@ -1075,6 +1083,7 @@ import { Hash } from "crypto";
                     } while (a < len);
                     return out;
                 }()),
+                destination: process.argv[1].replace(/(\\|\/)/g, node.path.sep),
                 target: process.argv[0].replace(/(\\|\/)/g, node.path.sep)
             };
             console.log(params.exclusions);
@@ -1672,7 +1681,7 @@ import { Hash } from "crypto";
         options.mode = "parse";
         apps.mode();
     };
-    apps.remove      = function node_apps_remove(filepath:string, callback:Function):void {
+    apps.remove = function node_apps_remove(filepath:string, callback:Function):void {
         const numb    = {
                 dirs: 0,
                 file: 0,
