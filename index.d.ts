@@ -133,6 +133,17 @@ interface modifyOps {
 interface nodeArgs extends Array<[string, any]>{
     [index: number]: [string, any];
 }
+interface nodeCopyParams {
+    callback:Function;
+    destination:string;
+    exclusions:string[];
+    target:string;
+}
+interface nodeFileProps {
+    atime: number;
+    mode: number;
+    mtime: number;
+}
 interface nodeLists {
     emptyline: boolean;
     heading: string;
@@ -149,6 +160,9 @@ interface commandList {
     }
 }
 declare var window: Window;
+interface nodeError extends Error {
+    code: string;
+}
 declare module NodeJS {
     interface Global {
         parseFramework: any;

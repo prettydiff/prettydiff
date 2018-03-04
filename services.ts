@@ -1,5 +1,6 @@
 import { Stats } from "fs";
 import { Http2Stream } from "http2";
+import { Stream, Writable } from "stream";
 /*jslint node:true */
 /*eslint-env node*/
 /*eslint no-console: 0*/
@@ -85,10 +86,24 @@ import { Http2Stream } from "http2";
             },
             copy: {
                 description: "Copy files or directories from one location to another on the local file system.",
-                example: [{
-                    code: "prettydiff copy source/file/or/directory destination/path",
-                    defined: "Copies the file system artifact at the first address to the second address."
-                }]
+                example: [
+                    {
+                        code: "prettydiff copy source/file/or/directory destination/path",
+                        defined: "Copies the file system artifact at the first address to the second address."
+                    },
+                    {
+                        code: "prettydiff copy \"C:\\Program Files\" destination\\path",
+                        defined: "Quote values that contain non-alphanumeric characters."
+                    },
+                    {
+                        code: "prettydiff copy source destination [build, .git, node_modules]",
+                        defined: "Exclusions are permitted as a comma separated list in square brackets."
+                    },
+                    {
+                        code: "prettydiff copy ../prettydiff3 ../prettydiffXX [build, .git, node_modules]",
+                        defined: "Exclusions are relative to the source directory."
+                    }
+                ]
             },
             diff: {
                 description: "Compare code samples the Pretty Diff way.",
@@ -105,7 +120,7 @@ import { Http2Stream } from "http2";
                         defined: "Gets a resource from the web and prints the output to the shell."
                     },
                     {
-                        code: "prettydiff get http://example.com/file.txt write path/to/file",
+                        code: "prettydiff get http://example.com/file.txt path/to/file",
                         defined: "Get a resource from the web and writes the resource as UTF8 to a file at the specified path."
                     }
                 ]
@@ -153,12 +168,18 @@ import { Http2Stream } from "http2";
             },
             remove: {
                 description: "Remove a file or directory tree from the local file system.",
-                example: [{
-                    code: "prettydiff remove path/to/resource",
-                    defined: "Removes the specified resource."
-                }]
+                example: [
+                    {
+                        code: "prettydiff remove path/to/resource",
+                        defined: "Removes the specified resource."
+                    },
+                    {
+                        code: "prettydiff remove \"C:\\Program Files\"",
+                        defined: "Quote the path if it contains non-alphanumeric characters."
+                    }
+                ]
             },
-            test: {
+            validation: {
                 description: "Run the validation tests.",
                 example: [{
                     code: "",
@@ -173,183 +194,41 @@ import { Http2Stream } from "http2";
                 }]
             }
         },
-        humantime  = function node_humantime(finished:boolean):string {
-            let minuteString:string = "",
-                hourString:string   = "",
-                secondString:string = "",
-                finalTime:string    = "",
-                finalMem:string     = "",
-                strSplit:string[]     = [],
-                minutes:number      = 0,
-                hours:number        = 0,
-                memory,
-                elapsed:number      = (function node_humantime_elapsed():number {
-                    const endtime:[number, number] = process.hrtime();
-                    let dtime:[number, number] = [endtime[0] - startTime[0], endtime[1] - startTime[1]];
-                    if (dtime[1] === 0) {
-                        return dtime[0];
-                    }
-                    if (dtime[1] < 0) {
-                        dtime[1] = ((1000000000 + endtime[1]) - startTime[1]);
-                    }
-                    return dtime[0] + (dtime[1] / 1000000000);
-                }());
-            const prettybytes  = function node_humantime_prettybytes(an_integer:number):string {
-                    //find the string length of input and divide into triplets
-                    let output:string = "",
-                        length:number  = an_integer
-                            .toString()
-                            .length;
-                    const triples:number = (function node_humantime_prettybytes_triples():number {
-                            if (length < 22) {
-                                return Math.floor((length - 1) / 3);
-                            }
-                            //it seems the maximum supported length of integer is 22
-                            return 8;
-                        }()),
-                        //each triplet is worth an exponent of 1024 (2 ^ 10)
-                        power:number   = (function node_humantime_prettybytes_power():number {
-                            let a = triples - 1,
-                                b = 1024;
-                            if (triples === 0) {
-                                return 0;
-                            }
-                            if (triples === 1) {
-                                return 1024;
-                            }
-                            do {
-                                b = b * 1024;
-                                a = a - 1;
-                            } while (a > 0);
-                            return b;
-                        }()),
-                        //kilobytes, megabytes, and so forth...
-                        unit    = [
-                            "",
-                            "KB",
-                            "MB",
-                            "GB",
-                            "TB",
-                            "PB",
-                            "EB",
-                            "ZB",
-                            "YB"
-                        ];
-
-                    if (typeof an_integer !== "number" || Number.isNaN(an_integer) === true || an_integer < 0 || an_integer % 1 > 0) {
-                        //input not a positive integer
-                        output = "0.00B";
-                    } else if (triples === 0) {
-                        //input less than 1000
-                        output = `${an_integer}B`;
-                    } else {
-                        //for input greater than 999
-                        length = Math.floor((an_integer / power) * 100) / 100;
-                        output = length.toFixed(2) + unit[triples];
-                    }
-                    return output;
-                },
-                plural       = function node_proctime_plural(x:number, y:string):string {
-                    if (x !== 1) {
-                        return `${x + y}s `;
-                    }
-                    return `${x + y} `;
-                },
-                minute       = function node_proctime_minute():void {
-                    minutes      = parseInt((elapsed / 60).toString(), 10);
-                    minuteString = (finished === true)
-                        ? plural(minutes, " minute")
-                        : (minutes < 10)
-                            ? `0${minutes}`
-                            : String(minutes);
-                    minutes      = elapsed - (minutes * 60);
-                    secondString = (finished === true)
-                        ? (minutes === 1)
-                            ? " 1 second "
-                            : `${minutes.toFixed(3)} seconds `
-                        : minutes.toFixed(3);
-                };
-            memory       = process.memoryUsage();
-            finalMem     = prettybytes(memory.rss);
-
-            //last line for additional instructions without bias to the timer
-            secondString = String(elapsed);
-            strSplit     = secondString.split(".");
-            if (strSplit[1].length < 9) {
-                do {
-                    strSplit[1]  = strSplit[1] + 0;
-                } while (strSplit[1].length < 9);
-                secondString = `${strSplit[0]}.${strSplit[1]}`;
-            } else if (strSplit[1].length > 9) {
-                secondString = `${strSplit[0]}.${strSplit[1].slice(0, 9)}`;
-            }
-            if (elapsed >= 60 && elapsed < 3600) {
-                minute();
-            } else if (elapsed >= 3600) {
-                hours      = parseInt((elapsed / 3600).toString(), 10);
-                elapsed    = elapsed - (hours * 3600);
-                hourString = (finished === true)
-                    ? plural(hours, " hour")
-                    : (hours < 10)
-                        ? `0${hours}`
-                        : String(hours);
-                minute();
-            } else {
-                secondString = (finished === true)
-                    ? plural(elapsed, " second")
-                    : secondString;
-            }
-            if (finished === true) {
-                finalTime = hourString + minuteString + secondString;
-                console.log("");
-                console.log(`${finalMem} of memory consumed`);
-                console.log(`${finalTime}total time`);
-                console.log("");
-            } else {
-                if (hourString === "") {
-                    hourString = "00";
-                }
-                if (minuteString === "") {
-                    minuteString = "00";
-                }
-                if ((/^([0-9]\.)/).test(secondString) === true) {
-                    secondString = `0${secondString}`;
-                }
-                return `\u001b[36m[${hourString}:${minuteString}:${secondString}]\u001b[39m `;
-            }
-        },
-        errout     = function node_errout(errtext:string):void {
-            let stack:string = new Error().stack;
-            console.log("");
-            console.log("\u001b[31mScript error\u001b[39m");
-            console.log("------------");
-            if (errtext === "") {
-                console.log("\u001b[33mNo error message supplied\u001b[39m");
-            } else {
-                console.log(errtext);
-            }
-            console.log("");
-            if (process.platform.toLowerCase() === "win32") {
-                stack = stack.replace("Error", "\u001b[36mStack trace\u001b[39m\r\n-----------");
-            } else {
-                stack = stack.replace("Error", "\u001b[36mStack trace\u001b[39m\n-----------");
-            }
-            console.log(stack);
-            process.exit(1);
-        },
-        args:nodeArgs = (function node_args():nodeArgs {
-            const list:string[] = process.argv.slice(2),
-                out:nodeArgs = [],
-                def = global.prettydiff.optionDef.definitions,
-                commandFilter = function node_args_filter(item:string) {
-                    if (item.indexOf(comm) === 0) {
+        command:string = (function node_command():string {
+            let comkeys:string[] = Object.keys(commands),
+                filtered:string[] = [],
+                a:number = 1;
+            const arg:string = process.argv[2],
+                len:number = arg.length,
+                commandFilter = function node_args_filter(item:string):boolean {
+                    if (item.indexOf(arg.slice(0, a)) === 0) {
                         return true;
                     }
                     return false;
                 };
-            let len:number = list.length,
-                comm:string = "",
-                split:string = "",
+            process.argv = process.argv.slice(3);
+            do {
+                filtered = comkeys.filter(commandFilter);
+                a = a + 1;
+            } while (filtered.length > 1 && a < len);
+            if (filtered.length < 1) {
+                console.log(`Command ${text.bold + text.red + arg + text.none} is not a supported command.`);
+                process.exit(1);
+                return "";
+            }
+            if (filtered.length > 1) {
+                console.log(`Command '${text.bold + text.red + arg + text.none}' is ambiguous as it could refer to any of: [${text.cyan + filtered.join(", ") + text.none}]`);
+                process.exit(1);
+                return "";
+            }
+            return filtered[0];
+        }()),
+        args:nodeArgs = (function node_args():nodeArgs {
+            const list:string[] = process.argv.slice(3),
+                out:nodeArgs = [],
+                len:number = list.length,
+                def = global.prettydiff.optionDef.definitions;
+            let split:string = "",
                 value:string = "",
                 name:string = "",
                 a:number = 0;
@@ -358,67 +237,28 @@ import { Http2Stream } from "http2";
             }
             do {
                 list[a] = list[a].replace(/^(-+)/, "");
-                if (a < 1) {
-                    let comkeys:string[] = Object.keys(commands),
-                        filtered:string[] = [],
-                        b:number = 1;
-                    do {
-                        comm = list[a].slice(0, b);
-                        filtered = comkeys.filter(commandFilter);
-                        if (b === list[a].length) {
-                            break;
-                        }
-                        b = b + 1;
-                    } while (filtered.length > 1);
-                    if (filtered.length < 1) {
-                        errout(`Command ${text.bold + text.red + list[a] + text.none} is not a supported command.`);
-                        return;
-                    }
-                    if (filtered.length > 1) {
-                        errout(`Command '${text.bold + text.red + list[a] + text.none}' is ambiguous as it could refer to any of: [${text.cyan + filtered.join(", ") + text.none}]`);
-                        return;
-                    }
-                    comm = filtered[0];
-                    if (comm === "options" && options[list[1]] !== undefined) {
-                        out.push(["options", list[1]]);
-                        a = a + 1;
-                    } else if (comm === "commands" && commands[list[1]] !== undefined) {
-                        out.push(["commands", list[1]]);
-                        a = a + 1;
-                    } else if (comm === "get" && commands[list[1]] === undefined && options[list[1]] === undefined) {
-                        out.push(["get", list[1]]);
-                        a = a + 1;
-                        if (list[2].replace(/^(-+)/, "") === "write" && commands[list[3]] === undefined && options[list[3]] === undefined) {
-                            out.push(["write", list[3]]);
-                            a = a + 2;
-                        }
-                    } else {
-                        out.push([comm, true]);
-                    }
+                if ((list[a].indexOf("=") < list[a].indexOf(":") && list[a].indexOf("=") > 0) || (list[a].indexOf("=") > 0 && list[a].indexOf(":") < 0)) {
+                    split = "=";
                 } else {
-                    if ((list[a].indexOf("=") < list[a].indexOf(":") && list[a].indexOf("=") > 0) || (list[a].indexOf("=") > 0 && list[a].indexOf(":") < 0)) {
-                        split = "=";
-                    } else {
-                        split = ":";
-                    }
-                    if (options[list[a]] !== undefined && options[list[a + 1]] === undefined) {
-                        options[list[a]] = list[a + 1];
-                        a = a + 1;
-                    } else if (list[a].indexOf(split) > 0) {
-                        name = list[a].slice(0, list[a].indexOf(split));
-                        value = list[a].slice(list[a].indexOf(split) + 1);
-                        if (options[name] !== undefined) {
-                            if (value === "true" && def[name].type === "boolean") {
-                                options[name] = true;
-                            } else if (value === "false" && def[name].type === "boolean") {
-                                options[name] = false;
-                            } else if (isNaN(Number(value)) === false && def[name].type === "number") {
-                                options[name] = Number(value);
-                            } else if (def[name].values !== undefined && def[name].values[value] !== undefined) {
-                                options[name] = value;
-                            } else if (def[name].values === undefined) {
-                                options[name] = value;
-                            }
+                    split = ":";
+                }
+                if (options[list[a]] !== undefined && options[list[a + 1]] === undefined) {
+                    options[list[a]] = list[a + 1];
+                    a = a + 1;
+                } else if (list[a].indexOf(split) > 0) {
+                    name = list[a].slice(0, list[a].indexOf(split));
+                    value = list[a].slice(list[a].indexOf(split) + 1);
+                    if (options[name] !== undefined) {
+                        if (value === "true" && def[name].type === "boolean") {
+                            options[name] = true;
+                        } else if (value === "false" && def[name].type === "boolean") {
+                            options[name] = false;
+                        } else if (isNaN(Number(value)) === false && def[name].type === "number") {
+                            options[name] = Number(value);
+                        } else if (def[name].values !== undefined && def[name].values[value] !== undefined) {
+                            options[name] = value;
+                        } else if (def[name].values === undefined) {
+                            options[name] = value;
                         }
                     }
                 }
@@ -449,16 +289,15 @@ import { Http2Stream } from "http2";
             orderlen:number = order.length,
             next = function build_next():void {
                 let phase = order[0];
-                const complete = function build_complete() {
+                const complete = function build_complete():void {
                     console.log("");
                     console.log("All tasks complete... Exiting clean!");
-                    humantime(true);
-                    if (process.argv[1].indexOf("validate.js") > -1) {
-                        process.exit(0);
-                    }
+                    apps.humantime(true);
+                    process.exit(0);
                 };
                 if (order.length < 1) {
-                    return complete();
+                    complete();
+                    return;
                 }
                 order.splice(0, 1);
                 phases[phase]();
@@ -496,15 +335,15 @@ import { Http2Stream } from "http2";
                                     }, function build_lint_lintrun_lintit_eslint(err, stdout, stderr) {
                                         if (stdout === "" || stdout.indexOf("0:0  warning  File ignored because of a matching ignore pattern.") > -1) {
                                             if (err !== null) {
-                                                errout(err);
+                                                apps.errout(err);
                                                 return;
                                             }
                                             if (stderr !== null && stderr !== "") {
-                                                errout(stderr);
+                                                apps.errout(stderr);
                                                 return;
                                             }
                                             filesCount = filesCount + 1;
-                                            console.log(`${humantime(false)}\u001b[32mLint passed:\u001b[39m ${val}`);
+                                            console.log(`${apps.humantime(false)}\u001b[32mLint passed:\u001b[39m ${val}`);
                                             if (filesCount === filesTotal) {
                                                 console.log("\u001b[32mLint complete!\u001b[39m");
                                                 next();
@@ -512,7 +351,7 @@ import { Http2Stream } from "http2";
                                             }
                                         } else {
                                             console.log(stdout);
-                                            errout("Lint failure.");
+                                            apps.errout("Lint failure.");
                                             return;
                                         }
                                     })
@@ -539,7 +378,8 @@ import { Http2Stream } from "http2";
                                                         ignoreDir:boolean = false;
                                                     const dirtest:string   = `${filepath.replace(/\\/g, "/")}/${val}`;
                                                     if (errb !== null) {
-                                                        return errout(errb);
+                                                        apps.errout(errb);
+                                                        return;
                                                     }
                                                     count = count + 1;
                                                     if (stat.isFile() === true && (/(\.js)$/).test(val) === true) {
@@ -568,7 +408,8 @@ import { Http2Stream } from "http2";
                                             );
                                         };
                                         if (erra !== null) {
-                                            return errout(`Error reading path: ${filepath}\n${erra}`);
+                                            apps.errout(`Error reading path: ${filepath}\n${erra}`);
+                                            return;
                                         }
                                         total = total + list.length - 1;
                                         list.forEach(fileEval);
@@ -734,7 +575,7 @@ import { Http2Stream } from "http2";
                                         return allItems.join("");
                                     };
                                 if (err !== null && err.toString() !== "") {
-                                    errout(err.toString());
+                                    apps.errout(err.toString());
                                     return;
                                 }
                                 if (fileFlag === "documentation") {
@@ -778,12 +619,12 @@ import { Http2Stream } from "http2";
                                 }
                                 node.fs.writeFile(file, data, function build_options_documentation_write(errw:Error) {
                                     if (errw !== null && errw.toString() !== "") {
-                                        errout(errw.toString());
+                                        apps.errout(errw.toString());
                                         return;
                                     }
                                     flag[fileFlag] = true;
                                     if (flag.documentation === true && flag.dom === true && flag.html === true && flag.node === true) {
-                                        console.log(`${humantime(false)}\u001b[32mOption details written to files.\u001b[39m`);
+                                        console.log(`${apps.humantime(false)}\u001b[32mOption details written to files.\u001b[39m`);
                                         next();
                                     }
                                 });
@@ -791,18 +632,19 @@ import { Http2Stream } from "http2";
                         },
                         version = function build_options_version(file:string, fileFlag:string):void {
                             if (versionData.number !== "") {
-                                return modifyFile(file, fileFlag);
+                                modifyFile(file, fileFlag);
+                                return;
                             }
                             node.child(`git log -1 --branches`, function build_options_version_child(err:Error, stderr:string):void {
                                 if (err !== null) {
-                                    errout(err.toString());
+                                    apps.errout(err.toString());
                                     return;
                                 }
                                 const date:string[] = stderr.slice(stderr.indexOf("Date:") + 12).split(" ");
                                 versionData.date = `${date[1]} ${date[0]} ${date[3]}`;
                                 node.fs.readFile(`${projectPath}package.json`, "utf8", function build_options_version_child_readPackage(errp:Error, data:string):void {
                                     if (errp !== null) {
-                                        errout(errp.toString());
+                                        apps.errout(errp.toString());
                                         return;
                                     }
                                     versionData.number = JSON.parse(data).version;
@@ -816,13 +658,13 @@ import { Http2Stream } from "http2";
                                 appendFile = function build_options_libraries_appendFile(filePath:string):void {
                                     node.fs.readFile(filePath, "utf8", function build_options_libraries_appendFile_read(errr:Error, filedata:string):void {
                                         if (errr !== null) {
-                                            errout(errr.toString());
+                                            apps.errout(errr.toString());
                                             return;
                                         }
                                         if (filePath.indexOf("FileSaver") > 0) {
                                             filedata = filedata
                                                 .replace("var saveAs=saveAs||function(", "// eslint-disable-next-line\r\nprettydiff.saveAs=function prettydiff_saveAs(")
-                                                .replace(/[{|}|;|(*/)]\s*var\s/g, function build_options_libraries_appendFile_read_saveAsFix(str:string) {
+                                                .replace(/[{|}|;|(*/)]\s*var\s/g, function build_options_libraries_appendFile_read_saveAsFix(str:string):string {
                                                 return str.replace("var", "let");
                                             });
                                         }
@@ -836,13 +678,13 @@ import { Http2Stream } from "http2";
                                 stat = function build_options_libraries_stat(pathitem:string) {
                                     node.fs.stat(pathitem, function build_options_libraries_stat_callback(errs:Error, stats:Stats):void {
                                         if (errs !== null) {
-                                            errout(errs.toString());
+                                            apps.errout(errs.toString());
                                             return;
                                         }
                                         if (stats.isDirectory() === true) {
                                             node.fs.readdir(pathitem, "utf8", function build_options_libraries_stat_callback_readdir(errd:Error, filelist:string[]):void {
                                                 if (errd !== null) {
-                                                    errout(errd.toString());
+                                                    apps.errout(errd.toString());
                                                     return;
                                                 }
                                                 filelen = filelen + (filelist.length - 1);
@@ -880,35 +722,43 @@ import { Http2Stream } from "http2";
                     }, function build_typescript_callback(err, stdout, stderr):void {
                         if (stdout !== "" && stdout.indexOf(" \u001b[91merror\u001b[0m ") > -1) {
                             console.log("\u001b[31mTypeScript reported warnings.\u001b[39m");
-                            errout(stdout);
+                            apps.errout(stdout);
                             return;
                         }
                         if (err !== null) {
-                            errout(err);
+                            apps.errout(err);
                             return;
                         }
                         if (stderr !== null && stderr !== "") {
-                            errout(stderr);
+                            apps.errout(stderr);
                             return;
                         }
-                        console.log(`${humantime(false)}\u001b[32mTypeScript build completed without warnings.\u001b[39m`);
-                        return next();
+                        console.log(`${apps.humantime(false)}\u001b[32mTypeScript build completed without warnings.\u001b[39m`);
+                        next();
                     });
                 }
             };
         next();
     };
     apps.commands = function node_apps_commands():void {
-        if (commands[args[0][1]] !== undefined) {
+        if (commands[process.argv[0]] === undefined) {
+            // all commands in a list
+            apps.lists({
+                emptyline: true,
+                heading: "Commands",
+                obj: commands,
+                property: "description"
+            });
+        } else {
             // specificly mentioned option
-            const comm:any = commands[args[0][1]],
+            const comm:any = commands[process.argv[0]],
                 len:number = comm.example.length,
                 plural:string = (len > 1)
                     ? "s"
                     : "";
             let a:number = 0;
             console.log("");
-            console.log(`${text.bold + text.underline}Pretty Diff - Command: ${text.green + args[0][1] + text.none}`);
+            console.log(`${text.bold + text.underline}Pretty Diff - Command: ${text.green + process.argv[0] + text.none}`);
             console.log("");
             console.log(comm.description);
             console.log("");
@@ -920,57 +770,370 @@ import { Http2Stream } from "http2";
                 a = a + 1;
             } while (a < len);
             apps.version();
-        } else {
-            // all commands in a list
-            apps.lists({
-                emptyline: true,
-                heading: "Commands",
-                obj: commands,
-                property: "description"
-            });
         }
+    };
+    apps.commas   = function node_apps_commas(number:number):string {
+        const str:string = String(number);
+        let arr:string[] = [],
+            a:number   = str.length;
+        if (a < 4) {
+            return str;
+        }
+        arr = String(number).split("");
+        a   = arr.length;
+        do {
+            a      = a - 3;
+            arr[a] = "," + arr[a];
+        } while (a > 3);
+        return arr.join("");
+    };
+    apps.copy = function node_apps_copy(params:nodeCopyParams):void {
+        const numb:any  = {
+                dirs : 0,
+                files: 0,
+                link : 0,
+                size : 0
+            },
+            util:any  = {};
+        let start:string = "",
+            dest:string  = "",
+            dirs:any  = {},
+            target:string        = "",
+            destination:string   = "",
+            exlen:number = 0;
+        util.complete = function node_apps_copy_complete(item:string):void {
+            const out:string[] = ["Pretty Diff copied "];
+            delete dirs[item];
+            if (Object.keys(dirs).length < 1) {
+                if (command === "copy") {
+                    console.log("");
+                    out.push(text.green);
+                    out.push(text.bold);
+                    out.push(numb.dirs);
+                    out.push(text.none);
+                    out.push(" director");
+                    if (numb.dirs === 1) {
+                        out.push("y, ");
+                    } else {
+                        out.push("ies, ");
+                    }
+                    out.push(text.green);
+                    out.push(text.bold);
+                    out.push(numb.files);
+                    out.push(text.none);
+                    out.push(" file");
+                    if (numb.files !== 1) {
+                        out.push("s");
+                    }
+                    out.push(", and ");
+                    out.push(text.green);
+                    out.push(text.bold);
+                    out.push(numb.link);
+                    out.push(text.none);
+                    out.push(" symbolic link");
+                    if (numb.link !== 1) {
+                        out.push("s");
+                    }
+                    out.push(" at ");
+                    out.push(text.green);
+                    out.push(text.bold);
+                    out.push(apps.commas(numb.size));
+                    out.push(text.none);
+                    out.push(" bytes.");
+                    console.log(out.join(""));
+                    console.log(`Copied ${text.cyan + target + text.nocolor} to ${text.green + destination + text.nocolor}`);
+                    console.log("");
+                }
+                params.callback();
+            }
+        };
+        util.eout     = function node_apps_copy_eout(er:Error):void {
+            const filename:string[] = target.split(node.path.sep);
+            apps.remove(
+                destination + node.path.sep + filename[filename.length - 1],
+                function node_apps_copy_eout_remove() {
+                    apps.errout(er);
+                }
+            );
+        };
+        util.dir      = function node_apps_copy_dir(item:string):void {
+            node
+                .fs
+                .readdir(item, function node_apps_copy_dir_makedir_readdir(er:Error, files:string[]):void {
+                    const place:string = (item === start)
+                        ? dest
+                        : dest + item.replace(start + node.path.sep, "");
+                    if (er !== null) {
+                        util.eout(er);
+                        return;
+                    }
+                    apps.makedir(place, function node_apps_copy_dir_makedir():void {
+                        const a = files.length;
+                        let b = 0;
+                        if (a > 0) {
+                            delete dirs[item];
+                            do {
+                                dirs[item + node.path.sep + files[b]] = true;
+                                b                                     = b + 1;
+                            } while (b < a);
+                            b = 0;
+                            do {
+                                util.stat(item + node.path.sep + files[b], item);
+                                b = b + 1;
+                            } while (b < a);
+                        } else {
+                            util.complete(item);
+                        }
+                    });
+                });
+        };
+        util.file     = function node_apps_copy_file(item:string, dir:string, prop:nodeFileProps):void {
+            const place:string       = (item === dir)
+                    ? dest + item
+                        .split(node.path.sep)
+                        .pop()
+                    : dest + item.replace(start + node.path.sep, ""),
+                readStream:Stream  = node
+                    .fs
+                    .createReadStream(item),
+                writeStream:Writable = node
+                    .fs
+                    .createWriteStream(place, {mode: prop.mode});
+            let errorflag:boolean   = false;
+            readStream.on("error", function node_apps_copy_file_readError(error:Error):void {
+                errorflag = true;
+                util.eout(error);
+                return;
+            });
+            writeStream.on("error", function node_apps_copy_file_writeError(error:Error):void {
+                errorflag = true;
+                util.eout(error);
+                return;
+            });
+            if (errorflag === false) {
+                writeStream.on("open", function node_apps_copy_file_write():void {
+                    readStream.pipe(writeStream);
+                });
+                writeStream.once("finish", function node_apps_copy_file_finish():void {
+                    const filename:string[] = item.split(node.path.sep);
+                    node
+                        .fs
+                        .utimes(
+                            dest + node.path.sep + filename[filename.length - 1],
+                            prop.atime,
+                            prop.mtime,
+                            function node_apps_copy_file_finish_utimes():void {
+                                util.complete(item);
+                            }
+                        );
+                });
+            }
+        };
+        util.link     = function node_apps_copy_link(item:string, dir:string):void {
+            node
+                .fs
+                .readlink(item, function node_apps_copy_link_readlink(err:Error, resolvedlink:string):void {
+                    if (err !== null) {
+                        util.eout(err);
+                        return;
+                    }
+                    resolvedlink = node.path.resolve(resolvedlink);
+                    node
+                        .fs
+                        .stat(resolvedlink, function node_apps_copy_link_readlink_stat(ers:Error, stats:Stats):void {
+                            let type  = "file",
+                                place = dest + item;
+                            if (ers !== null) {
+                                util.eout(ers);
+                                return;
+                            }
+                            if (stats === undefined || stats.isFile === undefined) {
+                                util.eout(`Error in performing stat against ${item}`);
+                                return;
+                            }
+                            if (item === dir) {
+                                place = dest + item
+                                    .split(node.path.sep)
+                                    .pop();
+                            }
+                            if (stats.isDirectory() === true) {
+                                type = "junction";
+                            }
+                            node
+                                .fs
+                                .symlink(
+                                    resolvedlink,
+                                    place,
+                                    type,
+                                    function node_apps_copy_link_readlink_stat_makelink(erl:Error):void {
+                                        if (erl !== null) {
+                                            util.eout(erl);
+                                            return;
+                                        }
+                                        util.complete(item);
+                                    }
+                                );
+                        });
+                });
+        };
+        util.stat     = function node_apps_copy_stat(item:string, dir:string):void {
+            let a    = 0;
+            if (exlen > 0) {
+                do {
+                    if (item.replace(start + node.path.sep, "") === params.exclusions[a]) {
+                        params.exclusions.splice(a, 1);
+                        exlen = exlen - 1;
+                        util.complete(item);
+                        return;
+                    }
+                    a = a + 1;
+                } while (a < exlen);
+            }
+            node.fs.stat(item, function node_apps_copy_stat_callback(er:Error, stats:Stats):void {
+                if (er !== null) {
+                    util.eout(er);
+                    return;
+                }
+                if (stats === undefined || stats.isFile === undefined) {
+                    util.eout("stats object is undefined");
+                    return;
+                }
+                if (stats.isFile() === true) {
+                    numb.files = numb.files + 1;
+                    numb.size  = numb.size + stats.size;
+                    if (item === dir) {
+                        apps.makedir(dest, function node_apps_copy_stat_callback_file():void {
+                            util.file(item, dir, {
+                                atime: (Date.parse(stats.atime.toString()) / 1000),
+                                mode : stats.mode,
+                                mtime: (Date.parse(stats.mtime.toString()) / 1000)
+                            });
+                        });
+                    } else {
+                        util.file(item, dir, {
+                            atime: (Date.parse(stats.atime.toString()) / 1000),
+                            mode : stats.mode,
+                            mtime: (Date.parse(stats.mtime.toString()) / 1000)
+                        });
+                    }
+                } else if (stats.isDirectory() === true) {
+                    numb.dirs = numb.dirs + 1;
+                    util.dir(item);
+                } else if (stats.isSymbolicLink() === true) {
+                    numb.link = numb.link + 1;
+                    if (item === dir) {
+                        apps.makedir(dest, function node_apps_copy_stat_callback_symb() {
+                            util.link(item, dir);
+                        });
+                    } else {
+                        util.link(item, dir);
+                    }
+                } else {
+                    util.complete(item);
+                }
+            });
+        };
+        if (command === "copy") {
+            if (process.argv[0] === undefined || process.argv[1] === undefined) {
+                apps.errout("The copy command requires a source path and a destination path.  Please see `prettydiff commands copy` for examples.");
+                return;
+            }
+            params = {
+                callback: function node_copy_callback() {},
+                destination: process.argv[1].replace(/(\\|\/)/g, node.path.sep),
+                exclusions: (function node_copy_exclusions():string[] {
+                    const out:string[] = [],
+                        len:number = process.argv.length;
+                    let a:number = 0,
+                        length:number = 0;
+                    do {
+                        if (out.length < 1 && process.argv[a].indexOf("[") === 0) {
+                            out.push(process.argv[a].slice(1));
+                        } else if (out.length > 0) {
+                            length = process.argv[a].length - 1;
+                            if (process.argv[a].indexOf("]") === length) {
+                                if (process.argv[a].slice(0, length) !== "") {
+                                    out.push(process.argv[a].slice(0, length));
+                                }
+                                return out;
+                            }
+                            out.push(process.argv[a]);
+                        }
+                        a = a + 1;
+                    } while (a < len);
+                    return out;
+                }()),
+                target: process.argv[0].replace(/(\\|\/)/g, node.path.sep)
+            };
+            console.log(params.exclusions);
+        }
+        target =  params.target.replace(/(\\|\/)/g, node.path.sep);
+        destination = params.destination.replace(/(\\|\/)/g, node.path.sep);
+        exlen = params.exclusions.length;
+        dest          = node.path.resolve(destination) + node.path.sep;
+        start         = node.path.resolve(target);
+        util.stat(start, start);
     };
     apps.diff = function node_apps_diff():void {
         options.mode = "diff";
         apps.mode();
     };
-    apps.get = function node_apps_get():void {
-        if (args[0][1] === undefined) {
-            errout("The get command requires an address.  Please see `prettydiff commands get` for examples.");
-            return;
+    apps.errout     = function node_apps_errout(errtext:string):void {
+        let stack:string = new Error().stack;
+        console.log("");
+        console.log("\u001b[31mScript error\u001b[39m");
+        console.log("------------");
+        if (errtext === "") {
+            console.log("\u001b[33mNo error message supplied\u001b[39m");
+        } else {
+            console.log(errtext);
         }
-        if ((/^(https?:\/\/)/).test(args[0][1]) === false) {
-            console.log(args[0][1]);
-            errout("The first parameter to the get command must be an absolute web address.  Please see `prettydiff commands get` for examples.");
-            return;
+        console.log("");
+        if (process.platform.toLowerCase() === "win32") {
+            stack = stack.replace("Error", "\u001b[36mStack trace\u001b[39m\r\n-----------");
+        } else {
+            stack = stack.replace("Error", "\u001b[36mStack trace\u001b[39m\n-----------");
         }
-        apps.getFile(args[0][1], "source", function node_apps_get_callback() {
-            console.log(args);
-            if (args[1] !== undefined && args[1][0] === "write") {
-                let path = node.path.resolve(args[1][1]);
-                node.fs.writeFile(path, sample.source, "utf8", function node_apps_get_callback_write(err:Error) {
-                    if (err !== null) {
-                        errout(err.toString());
-                        return;
-                    }
-                    console.log(`File ${text.cyan + path + text.none} written with ${sample.source.length} characters.`);
-                });
-            } else {
-                console.log(sample.source);
-            }
-        });
+        console.log(stack);
+        process.exit(1);
     };
-    apps.getFile = function node_apps_getFile(address:string, flag:"source"|"diff", callback:Function):void {
+    apps.get = function node_apps_get(address:string, flag:"source"|"diff", callback:Function):void {
         const scheme:string = (address.indexOf("https") === 0)
             ? "https"
             : "http";
         let file:string = "";
-        node[scheme].get(address, function node_apps_getFile_callback(res:Http2Stream) {
+        if (command === "get") {
+            address = process.argv[0];
+            callback = function node_apps_getFile_callback() {
+                if (process.argv[1] !== undefined) {
+                    let path = node.path.resolve(process.argv[1]);
+                    node.fs.writeFile(path, sample.source, "utf8", function node_apps_getFile_callback_write(err:Error) {
+                        if (err !== null) {
+                            apps.errout(err.toString());
+                            return;
+                        }
+                        console.log(`File ${text.cyan + path + text.none} written with ${apps.commas(sample.source.length)} characters.`);
+                    });
+                } else {
+                    console.log(sample.source);
+                }
+            };
+        }
+        if (address === undefined) {
+            apps.errout("The get command requires an address.  Please see `prettydiff commands get` for examples.");
+            return;
+        }
+        if ((/^(https?:\/\/)/).test(address) === false) {
+            console.log(address);
+            apps.errout("The get command requires a web address in http/https scheme.  Please see `prettydiff commands get` for examples.");
+            return;
+        }
+        node[scheme].get(address, function node_apps_get_callback(res:Http2Stream) {
             res.setEncoding("utf8");
-            res.on("data", function node_apps_getFile_callback_data(chunk:string):void {
+            res.on("data", function node_apps_get_callback_data(chunk:string):void {
                 file = file + chunk;
             });
-            res.on("end", function node_apps_getFile_callback_end() {
+            res.on("end", function node_apps_get_callback_end() {
                 sample[flag] = file;
                 callback();
             });
@@ -992,6 +1155,150 @@ import { Http2Stream } from "http2";
         console.log("");
         console.log("");
         apps.version();
+    };
+    apps.humantime  = function node_apps_humantime(finished:boolean):string {
+        let minuteString:string = "",
+            hourString:string   = "",
+            secondString:string = "",
+            finalTime:string    = "",
+            finalMem:string     = "",
+            strSplit:string[]     = [],
+            minutes:number      = 0,
+            hours:number        = 0,
+            memory,
+            elapsed:number      = (function node_apps_humantime_elapsed():number {
+                const endtime:[number, number] = process.hrtime(),
+                    big:number = 1000000000;
+                let dtime:[number, number] = [endtime[0] - startTime[0], endtime[1] - startTime[1]];
+                if (dtime[1] === 0) {
+                    return dtime[0];
+                }
+                dtime[1] = ((big + endtime[1]) - startTime[1]);
+                return dtime[0] + (dtime[1] / big);
+            }());
+        const prettybytes  = function node_apps_humantime_prettybytes(an_integer:number):string {
+                //find the string length of input and divide into triplets
+                let output:string = "",
+                    length:number  = an_integer
+                        .toString()
+                        .length;
+                const triples:number = (function node_apps_humantime_prettybytes_triples():number {
+                        if (length < 22) {
+                            return Math.floor((length - 1) / 3);
+                        }
+                        //it seems the maximum supported length of integer is 22
+                        return 8;
+                    }()),
+                    //each triplet is worth an exponent of 1024 (2 ^ 10)
+                    power:number   = (function node_apps_humantime_prettybytes_power():number {
+                        let a = triples - 1,
+                            b = 1024;
+                        if (triples === 0) {
+                            return 0;
+                        }
+                        if (triples === 1) {
+                            return 1024;
+                        }
+                        do {
+                            b = b * 1024;
+                            a = a - 1;
+                        } while (a > 0);
+                        return b;
+                    }()),
+                    //kilobytes, megabytes, and so forth...
+                    unit    = [
+                        "",
+                        "KB",
+                        "MB",
+                        "GB",
+                        "TB",
+                        "PB",
+                        "EB",
+                        "ZB",
+                        "YB"
+                    ];
+
+                if (typeof an_integer !== "number" || Number.isNaN(an_integer) === true || an_integer < 0 || an_integer % 1 > 0) {
+                    //input not a positive integer
+                    output = "0.00B";
+                } else if (triples === 0) {
+                    //input less than 1000
+                    output = `${an_integer}B`;
+                } else {
+                    //for input greater than 999
+                    length = Math.floor((an_integer / power) * 100) / 100;
+                    output = length.toFixed(2) + unit[triples];
+                }
+                return output;
+            },
+            plural       = function node_proctime_plural(x:number, y:string):string {
+                if (x !== 1) {
+                    return `${x + y}s `;
+                }
+                return `${x + y} `;
+            },
+            minute       = function node_proctime_minute():void {
+                minutes      = parseInt((elapsed / 60).toString(), 10);
+                minuteString = (finished === true)
+                    ? plural(minutes, " minute")
+                    : (minutes < 10)
+                        ? `0${minutes}`
+                        : String(minutes);
+                minutes      = elapsed - (minutes * 60);
+                secondString = (finished === true)
+                    ? (minutes === 1)
+                        ? " 1 second "
+                        : `${minutes.toFixed(3)} seconds `
+                    : minutes.toFixed(3);
+            };
+        memory       = process.memoryUsage();
+        finalMem     = prettybytes(memory.rss);
+
+        //last line for additional instructions without bias to the timer
+        secondString = String(elapsed);
+        strSplit     = secondString.split(".");
+        if (strSplit[1].length < 9) {
+            do {
+                strSplit[1]  = strSplit[1] + 0;
+            } while (strSplit[1].length < 9);
+            secondString = `${strSplit[0]}.${strSplit[1]}`;
+        } else if (strSplit[1].length > 9) {
+            secondString = `${strSplit[0]}.${strSplit[1].slice(0, 9)}`;
+        }
+        if (elapsed >= 60 && elapsed < 3600) {
+            minute();
+        } else if (elapsed >= 3600) {
+            hours      = parseInt((elapsed / 3600).toString(), 10);
+            elapsed    = elapsed - (hours * 3600);
+            hourString = (finished === true)
+                ? plural(hours, " hour")
+                : (hours < 10)
+                    ? `0${hours}`
+                    : String(hours);
+            minute();
+        } else {
+            secondString = (finished === true)
+                ? plural(elapsed, " second")
+                : secondString;
+        }
+        if (finished === true) {
+            finalTime = hourString + minuteString + secondString;
+            console.log("");
+            console.log(`${finalMem} of memory consumed`);
+            console.log(`${finalTime}total time`);
+            console.log("");
+        } else {
+            if (hourString === "") {
+                hourString = "00";
+            }
+            if (minuteString === "") {
+                minuteString = "00";
+            }
+            if ((/^([0-9]\.)/).test(secondString) === true) {
+                secondString = `0${secondString}`;
+            }
+        }
+        return `\u001b[36m[${hourString}:${minuteString}:${secondString}]\u001b[39m `;
     };
     apps.lists = function node_apps_lists(lists:nodeLists):void {
         // * lists.emptyline - boolean - if each key should be separated by an empty line
@@ -1074,7 +1381,7 @@ import { Http2Stream } from "http2";
                     lens:number = 0,
                     comm:string = "";
                 if (len < 1) {
-                    errout(`Please run the build: ${text.cyan}prettydiff build${text.none}`);
+                    apps.errout(`Please run the build: ${text.cyan}prettydiff build${text.none}`);
                     return;
                 }
                 do {
@@ -1098,10 +1405,10 @@ import { Http2Stream } from "http2";
                     } else {
                         // list all items
                         if (lists.property === "eachkey") {
-                            if (args[0][0] === "options" && keylist[b] === "values") {
+                            if (command === "options" && keylist[b] === "values") {
                                 // "values" keyname of options
                                 console.log(`${text.red + text.bold}* ${text.none + text.cyan + comm + text.nocolor}:`);
-                                displayKeys(args[0][1], Object.keys(lists.obj.values).sort());
+                                displayKeys(command, Object.keys(lists.obj.values).sort());
                             } else {
                                 // all items keys and their primitive value
                                 wrapit(`${text.red + text.bold}* ${text.none + text.cyan + comm + text.nocolor}: ${lists.obj[keylist[b]]}`);
@@ -1119,7 +1426,84 @@ import { Http2Stream } from "http2";
             };
         apps.heading(lists.heading);
         displayKeys("", keys);
-        humantime(true);
+        apps.humantime(true);
+    };
+    apps.makedir     = function node_apps_makedir(dirToMake:string, callback:Function):void {
+        node
+            .fs
+            .stat(dirToMake, function node_apps_makedir_stat(err:nodeError, stats:Stats):void {
+                let dirs   = [],
+                    ind    = 0,
+                    len    = 0,
+                    ers    = "";
+                const restat = function node_apps_makedir_stat_restat():void {
+                        node
+                            .fs
+                            .stat(
+                                dirs.slice(0, ind + 1).join(node.path.sep),
+                                function node_apps_makedir_stat_restat_callback(erra:nodeError, stata:Stats):void {
+                                    let erras:string = "";
+                                    ind = ind + 1;
+                                    if (erra !== null) {
+                                        erras = erra.toString();
+                                        if (erras.indexOf("no such file or directory") > 0 || erra.code === "ENOENT") {
+                                            node
+                                                .fs
+                                                .mkdir(
+                                                    dirs.slice(0, ind).join(node.path.sep),
+                                                    function node_apps_makedir_stat_restat_callback_mkdir(errb:Error):void {
+                                                        if (errb !== null && errb.toString().indexOf("file already exists") < 0) {
+                                                            apps.errout(errb);
+                                                            return;
+                                                        }
+                                                        if (ind < len) {
+                                                            node_apps_makedir_stat_restat();
+                                                        } else {
+                                                            callback();
+                                                        }
+                                                    }
+                                                );
+                                            return;
+                                        }
+                                        if (erras.indexOf("file already exists") < 0) {
+                                            apps.errout(erra);
+                                            return;
+                                        }
+                                    }
+                                    if (stata.isFile() === true) {
+                                        apps.errout(`Destination directory, '${dirToMake}', is a file.`);
+                                        return;
+                                    }
+                                    if (ind < len) {
+                                        node_apps_makedir_stat_restat();
+                                    } else {
+                                        callback();
+                                    }
+                                }
+                            );
+                    };
+                if (err !== null) {
+                    ers = err.toString();
+                    if (ers.indexOf("no such file or directory") > 0 || err.code === "ENOENT") {
+                        dirs = dirToMake.split(node.path.sep);
+                        if (dirs[0] === "") {
+                            ind = ind + 1;
+                        }
+                        len = dirs.length;
+                        restat();
+                        return;
+                    }
+                    if (ers.indexOf("file already exists") < 0) {
+                        apps.errout(err);
+                        return;
+                    }
+                }
+                if (stats.isFile() === true) {
+                    apps.errout(`Destination directory, '${dirToMake}', is a file.`);
+                    return;
+                }
+                callback();
+            });
     };
     apps.minify = function node_apps_minify():void {
         options.mode = "minify";
@@ -1130,15 +1514,7 @@ import { Http2Stream } from "http2";
     };
     apps.options = function node_apps_options():void {
         const def:any = global.prettydiff.optionDef.definitions;
-        if (options[args[0][1]] !== undefined) {
-            // specificly mentioned option
-            apps.lists({
-                emptyLine: false,
-                heading: `Option: ${text.green + args[0][1] + text.nocolor}`,
-                obj: def[args[0][1]],
-                property: "eachkey"
-            });
-        } else {
+        if (options[process.argv[0]] === undefined) {
             // all options in a list
             apps.lists({
                 emptyline: true,
@@ -1146,29 +1522,219 @@ import { Http2Stream } from "http2";
                 obj: def,
                 property: "definition"
             });
+        } else {
+            // specificly mentioned option
+            apps.lists({
+                emptyLine: false,
+                heading: `Option: ${text.green + process.argv[0] + text.nocolor}`,
+                obj: def[process.argv[0]],
+                property: "eachkey"
+            });
         }
     };
     apps.parse = function node_apps_parse():void {
         options.mode = "parse";
         apps.mode();
     };
+    apps.remove      = function node_apps_remove(filepath:string, callback:Function):void {
+        const numb    = {
+                dirs: 0,
+                file: 0,
+                othr: 0,
+                size: 0,
+                symb: 0
+            },
+            dirs:any    = {},
+            util:any    = {};
+        let verbose = true;
+        if (command === "copy") {
+            verbose = false;
+        }
+        util.complete = function node_apps_remove_complete():void {
+            const out = ["Pretty Diff removed "];
+            if (command === "remove") {
+                console.log("");
+                out.push(text.red);
+                out.push(text.bold);
+                out.push(String(numb.dirs));
+                out.push(text.none);
+                out.push(" director");
+                if (numb.dirs === 1) {
+                    out.push("y, ");
+                } else {
+                    out.push("ies, ");
+                }
+                out.push(text.red);
+                out.push(text.bold);
+                out.push(String(numb.file));
+                out.push(text.none);
+                out.push(" file");
+                if (numb.dirs !== 1) {
+                    out.push("s");
+                }
+                out.push(", ");
+                out.push(text.red);
+                out.push(text.bold);
+                out.push(String(numb.symb));
+                out.push(text.none);
+                out.push(" symbolic link");
+                if (numb.symb !== 1) {
+                    out.push("s");
+                }
+                out.push(", and ");
+                out.push(text.red);
+                out.push(text.bold);
+                out.push(String(numb.symb));
+                out.push(text.none);
+                out.push(" other type");
+                if (numb.symb !== 1) {
+                    out.push("s");
+                }
+                out.push(" at ");
+                out.push(text.red);
+                out.push(text.bold);
+                out.push(apps.commas(numb.size));
+                out.push(text.none);
+                out.push(" bytes.");
+                console.log(out.join(""));
+                console.log(`Removed ${text.cyan + filepath + text.nocolor}`);
+                console.log("");
+            }
+            callback();
+        };
+        util.destroy  = function node_apps_remove_destroy(item:string, dir:string):void {
+            node
+                .fs
+                .unlink(item, function node_apps_remove_destroy_callback(er:Error):void {
+                    if (verbose === true && er !== null && er.toString().indexOf("no such file or directory") < 0) {
+                        apps.errout(er);
+                        return;
+                    }
+                    if (item === dir) {
+                        util.complete();
+                    }
+                    dirs[dir] = dirs[dir] - 1;
+                    if (dirs[dir] < 1) {
+                        util.rmdir(dir);
+                    }
+                });
+        };
+        util.readdir  = function node_apps_remove_readdir(item:string):void {
+            node
+                .fs
+                .readdir(item, function node_apps_remove_readdir_callback(er:Error, files:string[]):void {
+                    if (verbose === true && er !== null && er.toString().indexOf("no such file or directory") < 0) {
+                        apps.errout(er);
+                        return;
+                    }
+                    dirs[item] = 0;
+                    if (files === undefined || files.length < 1) {
+                        util.rmdir(item);
+                    } else {
+                        files.forEach(function node_apps_remove_readdir_callback_each(value) {
+                            dirs[item] = dirs[item] + 1;
+                            util.stat(item + node.path.sep + value, item);
+                        });
+                    }
+                });
+        };
+        util.rmdir    = function node_apps_remove_rmdir(item:string):void {
+            node
+                .fs
+                .rmdir(item, function node_apps_remove_delete_callback_rmdir(er:Error):void {
+                    const dirlist:string[] = item.split(node.path.sep);
+                    let dir:string     = "";
+                    if (er !== null && er.toString().indexOf("resource busy or locked") > 0) {
+                        setTimeout(function node_apps_remove_rmdir_delay() {
+                            node_apps_remove_rmdir(item);
+                        }, 1000);
+                        return;
+                    }
+                    if (verbose === true && er !== null && er.toString().indexOf("no such file or directory") < 0) {
+                        apps.errout(er);
+                        return;
+                    }
+                    delete dirs[item];
+                    if (Object.keys(dirs).length < 1) {
+                        util.complete();
+                    } else {
+                        dirlist.pop();
+                        dir       = dirlist.join(node.path.sep);
+                        dirs[dir] = dirs[dir] - 1;
+                        if (dirs[dir] < 1) {
+                            node_apps_remove_rmdir(dir);
+                        }
+                    }
+                });
+        };
+        util.stat     = function node_apps_remove_stat(item:string, dir:string):void {
+            node
+                .fs
+                .lstat(item, function node_apps_remove_stat_callback(er:Error, stats:Stats) {
+                    if (verbose === true && er !== null && er.toString().indexOf("no such file or directory") < 0) {
+                        apps.errout(er);
+                        return;
+                    }
+                    if (stats !== undefined && stats.isFile !== undefined) {
+                        if (stats.isDirectory() === true) {
+                            numb.dirs = numb.dirs + 1;
+                            util.readdir(item);
+                        } else {
+                            if (stats.isFile() === true) {
+                                numb.file = numb.file + 1;
+                                numb.size = numb.size + stats.size;
+                            } else if (stats.isSymbolicLink() === true) {
+                                numb.symb = numb.symb + 1;
+                            } else {
+                                numb.othr = numb.othr + 1;
+                            }
+                            util.destroy(item, dir);
+                        }
+                    } else if (item === dir) {
+                        if (command === "remove") {
+                            console.log("Item not found - " + text.cyan + filepath + text.nocolor);
+                        }
+                        callback();
+                    }
+                });
+        };
+        if (command === "remove") {
+            if (process.argv.length < 1) {
+                apps.errout("Command remove requires a filepath");
+                return;
+            }
+            filepath = node.path.resolve(process.argv[0]);
+            callback = function node_apps_remove_callback() {
+                return;
+            };
+        }
+        util.stat(filepath, filepath);
+    };
     apps.version = function node_apps_version():void {
         console.log("");
         console.log(`Pretty Diff version ${text.red + text.bold + version.number + text.none} dated ${text.cyan + version.date + text.none}`);
-        humantime(true);
+        apps.humantime(true);
     };
-    // resolve relative paths into absolute from process.cwd
-    //if ((/^(\w+:\/\/)/).test(options.source) === true && (options.readmethod === "auto" || options.readmethod === "")) {}
-    // rethink flags for things such as help, version
-    // allow =, :, and space as name/value separators
-    //
-    // command list
-    // * get
-    // * copy
-    // * remove
-    // * validation (tests)
-    if (args.length < 1) {
-        return apps.help();
-    }
-    apps[args[0][0]]();
+
+    // if commands[list[0]] !== undefined then assign the command
+    // here create the functions to execute the commands
+        // checklist of verified commands:
+        // * build
+        // * commands
+        // * copy
+        // * get
+        // * help - think of better content
+        // * options
+        // * remove
+        // * version
+        //
+        // remaining
+        // * analysis - mode
+        // * beautify - mode
+        // * diff - mode
+        // * hash
+        // * minify - mode
+        // * parse - mode
+        // * validation
+    apps[command]();
 }());
