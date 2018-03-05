@@ -130,9 +130,6 @@ interface modifyOps {
     injectFlag: string;
     start: string;
 }
-interface nodeArgs extends Array<[string, any]>{
-    [index: number]: [string, any];
-}
 interface nodeCopyParams {
     callback:Function;
     destination:string;

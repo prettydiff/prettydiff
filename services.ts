@@ -17,6 +17,9 @@ import { Hash } from "crypto";
             https : require("https"),
             path  : require("path")
         },
+        binaryCheck:RegExp   = (
+            /\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u000b|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g
+        ),
         /*stats = {
             source: "",
             diff: ""
@@ -28,13 +31,6 @@ import { Hash } from "crypto";
         }()),
         js:string = `${projectPath}js${sep}`,
         api:string = `${js}api${sep}`,
-        libs:string = (function node_libs():string {
-            require(`${api}diffview`);
-            require(`${api}finalFile`);
-            require(`${api}language`);
-            require(`${api}options`);
-            return "";
-        }()),
         // node option default start
         options:any = {},
         version:any = {},
@@ -210,6 +206,11 @@ import { Hash } from "crypto";
             let comkeys:string[] = Object.keys(commands),
                 filtered:string[] = [],
                 a:number = 1;
+            if (process.argv[2] === undefined) {
+                console.log(`Pretty Diff requires a command. Try: ${text.cyan}prettydiff help${text.none}`);
+                process.exit(1);
+                return;
+            }
             const arg:string = process.argv[2],
                 len:number = arg.length,
                 commandFilter = function node_args_filter(item:string):boolean {
@@ -235,54 +236,119 @@ import { Hash } from "crypto";
             }
             return filtered[0];
         }()),
-        args:nodeArgs = (function node_args():nodeArgs {
-            const list:string[] = process.argv.slice(3),
-                out:nodeArgs = [],
-                len:number = list.length,
-                def = global.prettydiff.optionDef.definitions;
-            let split:string = "",
-                value:string = "",
-                name:string = "",
-                a:number = 0;
-            if (len < 1) {
-                return [];
-            }
-            do {
-                list[a] = list[a].replace(/^(-+)/, "");
-                if ((list[a].indexOf("=") < list[a].indexOf(":") && list[a].indexOf("=") > 0) || (list[a].indexOf("=") > 0 && list[a].indexOf(":") < 0)) {
-                    split = "=";
-                } else {
-                    split = ":";
-                }
-                if (options[list[a]] !== undefined && options[list[a + 1]] === undefined) {
-                    options[list[a]] = list[a + 1];
-                    a = a + 1;
-                } else if (list[a].indexOf(split) > 0) {
-                    name = list[a].slice(0, list[a].indexOf(split));
-                    value = list[a].slice(list[a].indexOf(split) + 1);
-                    if (options[name] !== undefined) {
-                        if (value === "true" && def[name].type === "boolean") {
-                            options[name] = true;
-                        } else if (value === "false" && def[name].type === "boolean") {
-                            options[name] = false;
-                        } else if (isNaN(Number(value)) === false && def[name].type === "number") {
-                            options[name] = Number(value);
-                        } else if (def[name].values !== undefined && def[name].values[value] !== undefined) {
-                            options[name] = value;
-                        } else if (def[name].values === undefined) {
-                            options[name] = value;
-                        }
-                    }
-                }
-                a = a + 1;
-            } while (a < len);
-            return out;
-        }()),
         sample = {
             source: "",
             diff: ""
         },
         apps:any = {};
+    
+    (function node_args():void {
+        const list:string[] = process.argv,
+            len:number = list.length,
+            requireDir = function node_args_requireDir(dirName:string):void {
+                let counts = {
+                    items: 0,
+                    total: 0
+                };
+                if (dirName !== `${js}api`) {
+                    const dirs:string[] = dirName.split(node.path.sep);
+                    global.prettydiff[dirs[dirs.length - 1]] = {};
+                }
+                const completeTest = function node_args_requireDir_completeTest(filesLength:number):boolean {
+                        counts.total = counts.total + filesLength;
+                        if (counts.total === counts.items) {
+                            dirs = dirs + 1;
+                            if (dirs === dirstotal) {
+                                if (len > 0) {
+                                    readOptions();
+                                }
+                                apps[command]();
+                            }
+                            return true;
+                        }
+                        return false;
+                    },
+                    readdir = function node_args_requireDir_dirwrapper(start:string):void {
+                        node.fs.readdir(start, function node_args_requireDir_dirwrapper_readdir(err:Error, files:string[]) {
+                            if (err !== null) {
+                                apps.errout(err.toString());
+                                return;
+                            }
+                            if (completeTest(files.length) === true) {
+                                return;
+                            }
+                            files.forEach(function node_args_requireDir_dirwrapper_readdir_each(value:string) {
+                                const valpath:string = start + node.path.sep + value;
+                                if (valpath.indexOf(`api${node.path.sep}dom.js`) > 0) {
+                                    counts.items = counts.items + 1;
+                                    completeTest(0);
+                                    return;
+                                }
+                                node.fs.stat(valpath, function node_args_requireDir_dirwrapper_readdir_each_stat(errs:Error, stats:Stats):void {
+                                    if (errs !== null) {
+                                        apps.errout(errs.toString());
+                                        return;
+                                    }
+                                    if (stats.isFile() === true) {
+                                        require(valpath);
+                                        counts.items = counts.items + 1;
+                                    } else if (stats.isDirectory() === true) {
+                                        node_args_requireDir_dirwrapper(valpath);
+                                    } else {
+                                        counts.items = counts.items + 1;
+                                    }
+                                    if (completeTest(0) === true) {
+                                        return;
+                                    }
+                                });
+                            });
+                        });
+                    };
+                dirstotal = dirstotal + 1;
+                readdir(dirName);
+            },
+            readOptions = function node_args_readOptions():void {
+                const def = global.prettydiff.optionDef;
+                let split:string = "",
+                    value:string = "",
+                    name:string = "",
+                    a:number = 0;
+                do {
+                    list[a] = list[a].replace(/^(-+)/, "");
+                    if ((list[a].indexOf("=") < list[a].indexOf(":") && list[a].indexOf("=") > 0) || (list[a].indexOf("=") > 0 && list[a].indexOf(":") < 0)) {
+                        split = "=";
+                    } else {
+                        split = ":";
+                    }
+                    if (options[list[a]] !== undefined && options[list[a + 1]] === undefined) {
+                        options[list[a]] = list[a + 1];
+                        a = a + 1;
+                    } else if (list[a].indexOf(split) > 0) {
+                        name = list[a].slice(0, list[a].indexOf(split));
+                        value = list[a].slice(list[a].indexOf(split) + 1);
+                        if (options[name] !== undefined) {
+                            if (value === "true" && def[name].type === "boolean") {
+                                options[name] = true;
+                            } else if (value === "false" && def[name].type === "boolean") {
+                                options[name] = false;
+                            } else if (isNaN(Number(value)) === false && def[name].type === "number") {
+                                options[name] = Number(value);
+                            } else if (def[name].values !== undefined && def[name].values[value] !== undefined) {
+                                options[name] = value;
+                            } else if (def[name].values === undefined) {
+                                options[name] = value;
+                            }
+                        }
+                    }
+                    a = a + 1;
+                } while (a < len);
+            };
+        let dirs:number = 0,
+            dirstotal:number = 0;
+        global.prettydiff = {};
+        requireDir(`${js}api`);
+        requireDir(`${js}beautify`);
+    }());
     apps.analysis = function node_apps_analysis():void {
         options.mode = "analysis";
         apps.mode();
@@ -440,7 +506,7 @@ import { Hash } from "crypto";
                             html: false,
                             node: false
                         },
-                        definitions = global.prettydiff.optionDef.definitions,
+                        definitions = global.prettydiff.optionDef,
                         optkeys:string[] = Object.keys(definitions),
                         keyslen:number = optkeys.length,
                         versionData = {
@@ -1231,7 +1297,7 @@ import { Hash } from "crypto";
                                     }
                                     bstring = buffera.toString("utf8", 0, buffera.length);
                                     bstring = bstring.slice(2, bstring.length - 2);
-                                    if (global.prettydiff.optionDef.binaryCheck.test(bstring) === true) {
+                                    if (binaryCheck.test(bstring) === true) {
                                         buff = new Buffer(stat.size);
                                         node
                                             .fs
@@ -1290,7 +1356,7 @@ import { Hash } from "crypto";
         console.log("");
     };
     apps.help = function node_apps_help():void {
-        console.log(libs); // libs is an emptry string referenced to appease eslint
+        console.log("");
         console.log(`${text.bold + text.underline}Pretty Diff${text.none}`);
         console.log("");
         console.log("Pretty Diff is a language aware diff tool.");
@@ -1655,10 +1721,13 @@ import { Hash } from "crypto";
         apps.mode();
     };
     apps.mode = function node_apps_mode():void {
+        if (options.source === "") {
+            apps.errout(`Pretty Diff requires use of the ${text.red + text.bold}source${text.none} option.`);
+        }
         return;
     };
     apps.options = function node_apps_options():void {
-        const def:any = global.prettydiff.optionDef.definitions;
+        const def:any = global.prettydiff.optionDef;
         if (options[process.argv[0]] === undefined) {
             // all options in a list
             apps.lists({
@@ -1881,5 +1950,4 @@ import { Hash } from "crypto";
         // * minify - mode
         // * parse - mode
         // * validation
-    apps[command]();
 }());

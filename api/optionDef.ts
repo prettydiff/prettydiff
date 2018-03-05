@@ -1,10 +1,7 @@
 /*global __dirname, global, process, require*/
 (function options_init():void {
     "use strict";
-    const binaryCheck:RegExp   = (
-            /\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u000b|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g
-        ),
-        definitions = {
+    const optionDef = {
             accessibility    : {
                 api       : "any",
                 mode      : "analysis",
@@ -810,10 +807,6 @@
                 definition: "Character width limit before applying word wrap. A 0 value disables this option. A negative value concatenates script strings.",
                 default   : 0
             }
-        },
-        optionDef:optionDef = {
-            binaryCheck: binaryCheck,
-            definitions: definitions
         };
     if (global.prettydiff === undefined) {
         global.prettydiff = {};
