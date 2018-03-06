@@ -1,4 +1,3 @@
-/*global __dirname, global, process, require*/
 (function options_init():void {
     "use strict";
     const optionDef = {
@@ -808,8 +807,5 @@
                 default   : 0
             }
         };
-    if (global.prettydiff === undefined) {
-        global.prettydiff = {};
-    }
-    global.prettydiff.optionDef = optionDef;
+    module.exports = optionDef;
 }());

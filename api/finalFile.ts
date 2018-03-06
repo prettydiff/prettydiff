@@ -1,4 +1,3 @@
-/*global global*/
 (function finalFile_init():void {
     "use strict";
     const finalFile:finalFile = {
@@ -1390,8 +1389,5 @@
         finalFile.script.minimal, //12
         finalFile.html.end //13
     ];
-    if (global.prettydiff === undefined) {
-        global.prettydiff = {};
-    }
-    global.prettydiff.finalFile = finalFile;
+    module.exports = finalFile;
 }());

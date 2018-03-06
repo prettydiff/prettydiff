@@ -1,7 +1,6 @@
-/*global global, options*/
 (function beautify_style_init():void {
     "use strict";
-    const style = function beautify_style():string {
+    const style = function beautify_style(options:any):string {
         const data:parsedArray = options.parsed,
             /*colorNames:any = {
                 aliceblue           : 0.9288006825347457,
@@ -407,5 +406,5 @@
         }
         return output;
     };
-    global.prettydiff.beautify.style = style;
+    module.exports = style;
 }());

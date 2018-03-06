@@ -1,7 +1,7 @@
-/*global global, options*/
+/*global prettydiff*/
 (function beautify_markup_init():void {
     "use strict";
-    const markup = function beautify_markup():string {
+    const markup = function beautify_markup(options:any):string {
         const data:parsedArray = options.parsed,
             c:number            = data.token.length,
             cdataStart:RegExp   = (/^(\s*(\/)*<!?\[+[A-Z]+\[+)/),
@@ -24,11 +24,11 @@
             extlib      = function beautify_markup_extlib(type:string):string {
                 let result:string = "";
                 const newline:boolean = options.newline;
-                if (type === "script" && typeof global.prettydiff.beautify[type] !== "function") {
+                if (type === "script" && typeof prettydiff.beautify[type] !== "function") {
                     return options.source;
                 }
                 options.newline = false;
-                result = global.prettydiff.beautify[type]();
+                result = prettydiff.beautify[type]();
                 options.newline = newline;
                 return result;
             },
@@ -688,5 +688,5 @@
         level[0] = 0;
         return apply();
     };
-    global.prettydiff.beautify.markup = markup;
+    module.exports = markup;
 }());

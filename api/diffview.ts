@@ -1,7 +1,6 @@
-/*global global, options*/
 (function diffview_init():void {
     "use strict";
-    const diffview = function diffview_():[string, number, number] {
+    const diffview = function diffview_(options:any):[string, number, number] {
         const tab:string           = (function diffview__tab():string {
                 let a:number      = 0;
                 const output:string[] = [];
@@ -1321,8 +1320,5 @@
             ];
         }());
     };
-    if (global.prettydiff === undefined) {
-        global.prettydiff = {};
-    }
-    global.prettydiff.diffview = diffview;
+    module.exports = diffview;
 }());

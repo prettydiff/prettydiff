@@ -1,5 +1,5 @@
 /*prettydiff.com topcoms: true, inchar: " ", insize: 4, vertical: true */
-/*global ace, ArrayBuffer, AudioContext, console, document, FileReader, global, localStorage, location, navigator, setTimeout, Uint8Array, window, XMLHttpRequest*/
+/*global ace, ArrayBuffer, AudioContext, console, document, FileReader, localStorage, location, navigator, setTimeout, Uint8Array, window, XMLHttpRequest*/
 /*jshint laxbreak: true*/
 /*jslint for: true*/
 /***********************************************************************
@@ -19,9 +19,7 @@
             difftotal: 0,
             difflines: 0
         },
-        prettydiff:any = {
-            beautify: {}
-        },
+        prettydiff:any = {},
         id = function dom_id(x:string):any {
             if (document.getElementById === undefined) {
                 return;
@@ -2384,7 +2382,7 @@
             defaultval:string  = "",
             defaultt:string    = "",
             value:languageAuto;
-        const language:language    = prettydiff.language,
+        const language:language    = prettydiff.api.language,
             langdefault:HTMLInputElement = id("option-langdefault");
         if (typeof language !== "object") {
             return ["", "", ""];
@@ -3170,7 +3168,7 @@
                             }
                         }
                     } else if (options.mode === "beautify") {
-                        prettydiff.finalFile.order[12] = prettydiff.finalFile.script.beautify;
+                        prettydiff.api.finalFile.order[12] = prettydiff.api.finalFile.script.beautify;
                         if (options.jsscope !== "report") {
                             if (test.ace === true) {
                                 aceStore
@@ -3216,7 +3214,7 @@
                             .box
                             .getElementsByTagName("p")[0]
                             .getElementsByTagName("button");
-                        prettydiff.finalFile.order[12] = prettydiff.finalFile.script.diff;
+                        prettydiff.api.finalFile.order[12] = prettydiff.api.finalFile.script.diff;
                         report.code.body.innerHTML = `<p>Code type is set to <strong>auto</strong>. Presumed language is <em>${data.langvalue[2]}</em>.</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
                         if (autotest === true && report.code.body.firstChild !== null) {
                             if (report.code.body.firstChild.nodeType > 1) {
@@ -3341,7 +3339,7 @@
                         options.diff = prettydiff.beautify[options.lexer]();
                         options.source = source;
                     }
-                    diffout = prettydiff.diffview();
+                    diffout = prettydiff.api.diffview();
                     meta.difftotal = diffout[1] + diffout[2];
                     meta.difflines = diffout[2];
                     output = diffout[0];
@@ -4273,16 +4271,16 @@
     //toggle between parsed html diff report and raw text representation
     method.event.save = function dom_event_save():void {
         const jsscope:HTMLSelectElement = id("option-jsscope");
-        prettydiff.finalFile.order[7] = id("option-color")[id("option-color").selectedIndex].value;
-        prettydiff.finalFile.order[10] = report.code.body.innerHTML;
+        prettydiff.api.finalFile.order[7] = id("option-color")[id("option-color").selectedIndex].value;
+        prettydiff.api.finalFile.order[10] = report.code.body.innerHTML;
         if (options.mode === "diff") {
-            prettydiff.finalFile.order[12] = prettydiff.finalFile.script.diff;
+            prettydiff.api.finalFile.order[12] = prettydiff.api.finalFile.script.diff;
         } else if (options.mode === "beautify" && data.langvalue[0] === "javascript" && (jsscope !== null && jsscope[jsscope.selectedIndex].value !== "none")) {
-            prettydiff.finalFile.order[12] = prettydiff.finalFile.script.beautify;
+            prettydiff.api.finalFile.order[12] = prettydiff.api.finalFile.script.beautify;
         } else {
-            prettydiff.finalFile.order[12] = prettydiff.finalFile.script.minimal;
+            prettydiff.api.finalFile.order[12] = prettydiff.api.finalFile.script.minimal;
         }
-        prettydiff.saveAs(new File([prettydiff.finalFile.order.join("")], "prettydiff.xhtml", {type: "application/xhtml+xml;charset=utf-8"}));
+        prettydiff.saveAs(new File([prettydiff.api.finalFile.order.join("")], "prettydiff.xhtml", {type: "application/xhtml+xml;charset=utf-8"}));
     };
     //analyzes combinations of consecutive key presses
     method.event.sequence = function dom_event_sequence(event:KeyboardEvent):void {

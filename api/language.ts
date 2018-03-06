@@ -1,8 +1,3 @@
-/*global global*/
-/*
- Please see the license.txt file associated with the Pretty Diff
- application for license information.
-*/
 (function language_init():void {
     "use strict";
     const language:language = {
@@ -311,8 +306,5 @@
             return output("unknown");
         }
     };
-    if (global.prettydiff === undefined) {
-        global.prettydiff = {};
-    }
-    global.prettydiff.language = language;
+    module.exports = language;
 }());

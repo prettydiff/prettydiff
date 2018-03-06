@@ -1,7 +1,6 @@
-/*global global, options*/
 (function beautify_script_init():void {
     "use strict";
-    const script = function beautify_script():string {
+    const script = function beautify_script(options:any):string {
         (function beautify_script_options() {
             let styleguide = {
                     airbnb: function beautify_script_options_styleairbnb() {
@@ -2209,5 +2208,5 @@
             }());
         return output;
     };
-    global.prettydiff.beautify.script = script;
+    module.exports = script;
 }());

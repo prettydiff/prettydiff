@@ -47,6 +47,7 @@ import { Hash } from "crypto";
             underline: "\u001b[4m",
             yellow   : "\u001b[33m"
         },
+        prettydiff:any = {},
         commands:commandList = {
             analysis: {
                 description: "Perform Pretty Diff's code analysis operation.",
@@ -250,11 +251,9 @@ import { Hash } from "crypto";
                     items: 0,
                     total: 0
                 };
-                if (dirName !== `${js}api`) {
-                    const dirs:string[] = dirName.split(node.path.sep);
-                    global.prettydiff[dirs[dirs.length - 1]] = {};
-                }
-                const completeTest = function node_args_requireDir_completeTest(filesLength:number):boolean {
+                const dirlist:string[] = dirName.split(node.path.sep),
+                    dirname:string = dirlist[dirlist.length - 1],
+                    completeTest = function node_args_requireDir_completeTest(filesLength:number):boolean {
                         counts.total = counts.total + filesLength;
                         if (counts.total === counts.items) {
                             dirs = dirs + 1;
@@ -279,18 +278,18 @@ import { Hash } from "crypto";
                             }
                             files.forEach(function node_args_requireDir_dirwrapper_readdir_each(value:string) {
                                 const valpath:string = start + node.path.sep + value;
-                                if (valpath.indexOf(`api${node.path.sep}dom.js`) > 0) {
-                                    counts.items = counts.items + 1;
-                                    completeTest(0);
-                                    return;
-                                }
                                 node.fs.stat(valpath, function node_args_requireDir_dirwrapper_readdir_each_stat(errs:Error, stats:Stats):void {
                                     if (errs !== null) {
                                         apps.errout(errs.toString());
                                         return;
                                     }
                                     if (stats.isFile() === true) {
-                                        require(valpath);
+                                        const fileName:string = (function node_args_requireDir_dirwrapper_readdir_each_stat_fileName():string {
+                                                const filedirs:string[] = valpath.split(node.path.sep);
+                                                return filedirs[filedirs.length - 1].split(".")[0];
+                                            }()),
+                                            file:Function = require(valpath);
+                                        prettydiff[dirname][fileName] = file;
                                         counts.items = counts.items + 1;
                                     } else if (stats.isDirectory() === true) {
                                         node_args_requireDir_dirwrapper(valpath);
@@ -304,11 +303,12 @@ import { Hash } from "crypto";
                             });
                         });
                     };
+                prettydiff[dirname] = {};
                 dirstotal = dirstotal + 1;
                 readdir(dirName);
             },
             readOptions = function node_args_readOptions():void {
-                const def = global.prettydiff.optionDef;
+                const def = prettydiff.api.optionDef;
                 let split:string = "",
                     value:string = "",
                     name:string = "",
@@ -345,7 +345,6 @@ import { Hash } from "crypto";
             };
         let dirs:number = 0,
             dirstotal:number = 0;
-        global.prettydiff = {};
         requireDir(`${js}api`);
         requireDir(`${js}beautify`);
     }());
@@ -361,13 +360,13 @@ import { Hash } from "crypto";
         let firstOrder:boolean = true;
         const order = [
                 "typescript",
-                "options",
+                "libraries",
                 "lint"
             ],
             orderlen:number = order.length,
-            next = function build_next():void {
+            next = function node_apps_build_next():void {
                 let phase = order[0];
-                const complete = function build_complete():void {
+                const complete = function node_apps_build_complete():void {
                     console.log("");
                     console.log("All tasks complete... Exiting clean!");
                     apps.humantime(true);
@@ -380,7 +379,7 @@ import { Hash } from "crypto";
                 order.splice(0, 1);
                 phases[phase]();
             },
-            heading = function build_heading(message:string):void {
+            heading = function node_apps_build_heading(message:string):void {
                 if (firstOrder === true) {
                     console.log("");
                     firstOrder = false;
@@ -392,133 +391,26 @@ import { Hash } from "crypto";
                 console.log("");
             },
             phases = {
-                lint     : function build_lint():void {
-                    const ignoreDirectory = [
-                            ".git",
-                            ".vscode",
-                            "bin",
-                            "coverage",
-                            "guide",
-                            "ignore",
-                            "node_modules",
-                            "test"
-                        ],
-                        files:string[]           = [],
-                        lintrun         = function build_lint_lintrun() {
-                            let filesCount:number = 0;
-                            const filesTotal = files.length,
-                                lintit = function build_lint_lintrun_lintit(val:string):void {
-                                    node.child(`eslint ${val}`, {
-                                        cwd: projectPath
-                                    }, function build_lint_lintrun_lintit_eslint(err, stdout, stderr) {
-                                        if (stdout === "" || stdout.indexOf("0:0  warning  File ignored because of a matching ignore pattern.") > -1) {
-                                            if (err !== null) {
-                                                apps.errout(err);
-                                                return;
-                                            }
-                                            if (stderr !== null && stderr !== "") {
-                                                apps.errout(stderr);
-                                                return;
-                                            }
-                                            filesCount = filesCount + 1;
-                                            console.log(`${apps.humantime(false)}\u001b[32mLint passed:\u001b[39m ${val}`);
-                                            if (filesCount === filesTotal) {
-                                                console.log("\u001b[32mLint complete!\u001b[39m");
-                                                next();
-                                                return;
-                                            }
-                                        } else {
-                                            console.log(stdout);
-                                            apps.errout("Lint failure.");
-                                            return;
-                                        }
-                                    })
-                                };
-                            files.forEach(lintit);
-                        };
-                    heading("Linting");
-                    (function build_lint_getFiles():void {
-                        let total:number    = 1,
-                            count:number    = 0;
-                        const idLen:number    = ignoreDirectory.length,
-                            readDir  = function build_lint_getFiles_readDir(filepath:string):void {
-                                node.fs.readdir(
-                                    filepath,
-                                    function build_lint_getFiles_readDir_callback(erra, list) {
-                                        const fileEval = function build_lint_getFiles_readDir_callback_fileEval(val:string):void {
-                                            const filename:string = (filepath.charAt(filepath.length - 1) === sep)
-                                                ? filepath + val
-                                                : filepath + sep + val;
-                                            node.fs.stat(
-                                                filename,
-                                                function build_lint_getFiles_readDir_callback_fileEval_stat(errb, stat) {
-                                                    let a:number         = 0,
-                                                        ignoreDir:boolean = false;
-                                                    const dirtest:string   = `${filepath.replace(/\\/g, "/")}/${val}`;
-                                                    if (errb !== null) {
-                                                        apps.errout(errb);
-                                                        return;
-                                                    }
-                                                    count = count + 1;
-                                                    if (stat.isFile() === true && (/(\.js)$/).test(val) === true) {
-                                                        files.push(filename);
-                                                    }
-                                                    if (stat.isDirectory() === true) {
-                                                        do {
-                                                            if (dirtest.indexOf(ignoreDirectory[a]) === dirtest.length - ignoreDirectory[a].length) {
-                                                                ignoreDir = true;
-                                                                break;
-                                                            }
-                                                            a = a + 1;
-                                                        } while (a < idLen);
-                                                        if (ignoreDir === true) {
-                                                            if (count === total) {
-                                                                lintrun();
-                                                            }
-                                                        } else {
-                                                            total = total + 1;
-                                                            build_lint_getFiles_readDir(filename);
-                                                        }
-                                                    } else if (count === total) {
-                                                        lintrun();
-                                                    }
-                                                }
-                                            );
-                                        };
-                                        if (erra !== null) {
-                                            apps.errout(`Error reading path: ${filepath}\n${erra}`);
-                                            return;
-                                        }
-                                        total = total + list.length - 1;
-                                        list.forEach(fileEval);
-                                    }
-                                );
-                            };
-                        readDir(js);
-                    }());
-                },
-                options: function build_options():void {
-                    require(`${api}options`);
-                    let libs:string = "";
+                libraries: function node_apps_build_libraries():void {
+                    let domlibs:string = "";
                     const flag = {
                             documentation: false,
                             dom: false,
                             html: false,
                             node: false
                         },
-                        definitions = global.prettydiff.optionDef,
-                        optkeys:string[] = Object.keys(definitions),
+                        optkeys:string[] = Object.keys(prettydiff.api.optionDef),
                         keyslen:number = optkeys.length,
                         versionData = {
                             number: "",
                             date: ""
                         },
-                        modifyFile = function build_options_modifyFile(file:string, fileFlag:string):void {
-                            node.fs.readFile(file, "utf8", function build_options_modifyFile(err:Error, data:string):void {
-                                const modify = function build_options_modifyFile_modify(ops:modifyOps):void {
-                                        const start:number = (function build_options_modifyFile_modify_startBuild():number {
+                        modifyFile = function node_apps_build_libraries_modifyFile(file:string, fileFlag:string):void {
+                            node.fs.readFile(file, "utf8", function node_apps_build_libraries_modifyFile(err:Error, data:string):void {
+                                const modify = function node_apps_build_libraries_modifyFile_modify(ops:modifyOps):void {
+                                        const start:number = (function node_apps_build_libraries_modifyFile_modify_startBuild():number {
                                                 const len = (ops.start.indexOf("//") === 0)
-                                                    ? (function build_options_modifyFile_modify_startBuild_lineStart():number {
+                                                    ? (function node_apps_build_libraries_modifyFile_modify_startBuild_lineStart():number {
                                                         data = data.replace(new RegExp(ops.start + "\\s+"), ops.start + "\n");
                                                         return ops.start.length + 1;
                                                     }())
@@ -531,7 +423,7 @@ import { Hash } from "crypto";
                                         }
                                         data = [data.slice(0, start), ops.injectFlag + "\n", data.slice(end)].join("");
                                     },
-                                    buildDefaults = function build_options_modifyFile_buildDefault(api:"dom"|"node"):string {
+                                    buildDefaults = function node_apps_build_libraries_modifyFile_buildDefault(api:"dom"|"node"):string {
                                         const obj:any = {},
                                             verse:string = (api === "node")
                                                 ? `version=${JSON.stringify(versionData)},`
@@ -539,15 +431,15 @@ import { Hash } from "crypto";
                                         let a:number = 0,
                                             apikey = "";
                                         do {
-                                            apikey = definitions[optkeys[a]].api;
+                                            apikey = prettydiff.api.optionDef[optkeys[a]].api;
                                             if (apikey === "any" || apikey === api) {
-                                                obj[optkeys[a]] = definitions[optkeys[a]].default;
+                                                obj[optkeys[a]] = prettydiff.api.optionDef[optkeys[a]].default;
                                             }
                                             a = a + 1;
                                         } while (a < keyslen);
                                         return `options=${JSON.stringify(obj)},${verse}`;
                                     },
-                                    buildDocumentation = function build_options_modifyFile_buildDocumentation():string {
+                                    buildDocumentation = function node_apps_build_libraries_modifyFile_buildDocumentation():string {
                                         const allOptions:string[] = [];
                                         let a:number = 0,
                                             b:number = 0,
@@ -558,7 +450,7 @@ import { Hash } from "crypto";
                                             opt:option;
                                         do {
                                             optName = optkeys[a];
-                                            opt = definitions[optName];
+                                            opt = prettydiff.api.optionDef[optName];
                                             item = [`<li id="${optName}">`];
                                             item.push(`<h4>${optName}</h4>`);
                                             item.push(`<ul><li><h5>Description</h5>`);
@@ -592,7 +484,7 @@ import { Hash } from "crypto";
                                         } while (a < keyslen);
                                         return allOptions.join("");
                                     },
-                                    buildDomInterface = function build_options_modifyFile_buildDomInterface():string {
+                                    buildDomInterface = function node_apps_build_libraries_modifyFile_buildDomInterface():string {
                                         const allItems:string[] = [],
                                             exclusions = {
                                                 "diff": "",
@@ -609,7 +501,7 @@ import { Hash } from "crypto";
                                             vallen:number;
                                         do {
                                             optName = optkeys[a];
-                                            opt = definitions[optName];
+                                            opt = prettydiff.api.optionDef[optName];
                                             if (exclusions[optName] !== "" && (opt.api === "any" || opt.api === "dom")) {
                                                 item = [`<li data-mode="${opt.mode}">`];
                                                 if (opt.type === "boolean") {
@@ -681,10 +573,8 @@ import { Hash } from "crypto";
                                     });
                                     modify({
                                         end: "// prettydiff insertion end",
-                                        injectFlag: libs
-                                            .replace(/\/\*global global, options\*\//g, "/*global global*/")
-                                            .replace(/if \(global\.prettydiff === undefined\) \{\s+global\.prettydiff = \{\};\s+\}/g, "")
-                                            .replace(/global\.prettydiff/g, "prettydiff")
+                                        injectFlag: domlibs
+                                            .replace(/\/\*global prettydiff\*\//g, "")
                                             .replace(/("|')use strict("|');/g, ""),
                                         start: "// prettydiff insertion start"
                                     });
@@ -695,7 +585,7 @@ import { Hash } from "crypto";
                                         start:"// node option default start"
                                     });
                                 }
-                                node.fs.writeFile(file, data, function build_options_documentation_write(errw:Error) {
+                                node.fs.writeFile(file, data, function node_apps_build_libraries_documentation_write(errw:Error) {
                                     if (errw !== null && errw.toString() !== "") {
                                         apps.errout(errw.toString());
                                         return;
@@ -708,19 +598,19 @@ import { Hash } from "crypto";
                                 });
                             });
                         },
-                        version = function build_options_version(file:string, fileFlag:string):void {
+                        version = function node_apps_build_libraries_version(file:string, fileFlag:string):void {
                             if (versionData.number !== "") {
                                 modifyFile(file, fileFlag);
                                 return;
                             }
-                            node.child(`git log -1 --branches`, function build_options_version_child(err:Error, stderr:string):void {
+                            node.child(`git log -1 --branches`, function node_apps_build_libraries_version_child(err:Error, stderr:string):void {
                                 if (err !== null) {
                                     apps.errout(err.toString());
                                     return;
                                 }
                                 const date:string[] = stderr.slice(stderr.indexOf("Date:") + 12).split(" ");
                                 versionData.date = `${date[1]} ${date[0]} ${date[3]}`;
-                                node.fs.readFile(`${projectPath}package.json`, "utf8", function build_options_version_child_readPackage(errp:Error, data:string):void {
+                                node.fs.readFile(`${projectPath}package.json`, "utf8", function node_apps_build_libraries_version_child_readPackage(errp:Error, data:string):void {
                                     if (errp !== null) {
                                         apps.errout(errp.toString());
                                         return;
@@ -730,11 +620,11 @@ import { Hash } from "crypto";
                                 });
                             })
                         },
-                        libraries = function build_options_libraries(callback:Function) {
-                            const pathes:string[] = [`${js}beautify`, `${api}diffview.js`, `${api}finalFile.js`, `${api}language.js`, `${projectPath}node_modules${sep}file-saver${sep}FileSaver.min.js`],
+                        libraries = function node_apps_build_libraries_libraries(callback:Function) {
+                            const pathes:string[] = [`${js}beautify`, `${api}`, `${projectPath}node_modules${sep}file-saver${sep}FileSaver.min.js`],
                                 len:number = pathes.length,
-                                appendFile = function build_options_libraries_appendFile(filePath:string):void {
-                                    node.fs.readFile(filePath, "utf8", function build_options_libraries_appendFile_read(errr:Error, filedata:string):void {
+                                appendFile = function node_apps_build_libraries_libraries_appendFile(filePath:string):void {
+                                    node.fs.readFile(filePath, "utf8", function node_apps_build_libraries_libraries_appendFile_read(errr:Error, filedata:string):void {
                                         if (errr !== null) {
                                             apps.errout(errr.toString());
                                             return;
@@ -742,32 +632,45 @@ import { Hash } from "crypto";
                                         if (filePath.indexOf("FileSaver") > 0) {
                                             filedata = filedata
                                                 .replace("var saveAs=saveAs||function(", "// eslint-disable-next-line\r\nprettydiff.saveAs=function prettydiff_saveAs(")
-                                                .replace(/[{|}|;|(*/)]\s*var\s/g, function build_options_libraries_appendFile_read_saveAsFix(str:string):string {
+                                                .replace(/[{|}|;|(*/)]\s*var\s/g, function node_apps_build_libraries_libraries_appendFile_read_saveAsFix(str:string):string {
                                                 return str.replace("var", "let");
                                             });
+                                        } else {
+                                            const assign = function node_apps_build_libraries_libraries_assign(x:string):string {
+                                                const itemname:string = x.split("=")[1].replace(/\s+/g, ""),
+                                                    itemgroups:string[] = filePath.split(node.path.sep),
+                                                    itemgroup:string = (itemgroups[itemgroups.length - 2] === "")
+                                                        ? itemgroups[itemgroups.length - 3]
+                                                        : itemgroups[itemgroups.length - 2];
+                                                return `prettydiff.${itemgroup}.${itemname}=${itemname}`;
+                                            };
+                                            filedata = filedata.replace(/module\.exports\s=\s\w+/, assign);
                                         }
-                                        libs = libs + filedata;
+                                        domlibs = domlibs + filedata;
                                         b = b + 1;
                                         if (b === filelen) {
                                             callback();
                                         }
                                     });
                                 },
-                                stat = function build_options_libraries_stat(pathitem:string) {
-                                    node.fs.stat(pathitem, function build_options_libraries_stat_callback(errs:Error, stats:Stats):void {
+                                stat = function node_apps_build_libraries_libraries_stat(pathitem:string) {
+                                    node.fs.stat(pathitem, function node_apps_build_libraries_libraries_stat_callback(errs:Error, stats:Stats):void {
                                         if (errs !== null) {
                                             apps.errout(errs.toString());
                                             return;
                                         }
                                         if (stats.isDirectory() === true) {
-                                            node.fs.readdir(pathitem, "utf8", function build_options_libraries_stat_callback_readdir(errd:Error, filelist:string[]):void {
+                                            node.fs.readdir(pathitem, "utf8", function node_apps_build_libraries_libraries_stat_callback_readdir(errd:Error, filelist:string[]):void {
                                                 if (errd !== null) {
                                                     apps.errout(errd.toString());
                                                     return;
                                                 }
+                                                const dirnames:string[] = pathitem.split(node.path.sep).filter(dirs => dirs !== ""),
+                                                    groupname:string = dirnames[dirnames.length - 1];
+                                                domlibs = domlibs + `prettydiff.${groupname}={};`;
                                                 filelen = filelen + (filelist.length - 1);
-                                                filelist.forEach(function build_options_libraries_stat_callback_readdir_each(value:string):void {
-                                                    build_options_libraries_stat(pathitem + sep + value);
+                                                filelist.forEach(function node_apps_build_libraries_libraries_stat_callback_readdir_each(value:string):void {
+                                                    node_apps_build_libraries_libraries_stat(pathitem + sep + value);
                                                 });
                                             });
                                         } else if (stats.isFile() === true) {
@@ -786,18 +689,123 @@ import { Hash } from "crypto";
                             } while (a < len);
                         };
                     heading("Building Options");
-                    libraries(function build_options_libraryCallback() {
-                        modifyFile(`${api}dom.js`, "dom");
+                    libraries(function node_apps_build_libraries_libraryCallback() {
+                        modifyFile(`${js}dom.js`, "dom");
                         version(`${js}services.js`, "node");
                     });
                     version(`${projectPath}index.xhtml`, "html");
                     modifyFile(`${projectPath}documentation.xhtml`, "documentation");
                 },
-                typescript: function build_typescript():void {
+                lint     : function node_apps_build_lint():void {
+                    const ignoreDirectory = [
+                            ".git",
+                            ".vscode",
+                            "bin",
+                            "coverage",
+                            "guide",
+                            "ignore",
+                            "node_modules",
+                            "test"
+                        ],
+                        files:string[]           = [],
+                        lintrun         = function node_apps_build_lint_lintrun() {
+                            let filesCount:number = 0;
+                            const filesTotal = files.length,
+                                lintit = function node_apps_build_lint_lintrun_lintit(val:string):void {
+                                    node.child(`eslint ${val}`, {
+                                        cwd: projectPath
+                                    }, function node_apps_build_lint_lintrun_lintit_eslint(err, stdout, stderr) {
+                                        if (stdout === "" || stdout.indexOf("0:0  warning  File ignored because of a matching ignore pattern.") > -1) {
+                                            if (err !== null) {
+                                                apps.errout(err);
+                                                return;
+                                            }
+                                            if (stderr !== null && stderr !== "") {
+                                                apps.errout(stderr);
+                                                return;
+                                            }
+                                            filesCount = filesCount + 1;
+                                            console.log(`${apps.humantime(false)}\u001b[32mLint passed:\u001b[39m ${val}`);
+                                            if (filesCount === filesTotal) {
+                                                console.log("\u001b[32mLint complete!\u001b[39m");
+                                                next();
+                                                return;
+                                            }
+                                        } else {
+                                            console.log(stdout);
+                                            apps.errout("Lint failure.");
+                                            return;
+                                        }
+                                    })
+                                };
+                            files.forEach(lintit);
+                        };
+                    heading("Linting");
+                    (function node_apps_build_lint_getFiles():void {
+                        let total:number    = 1,
+                            count:number    = 0;
+                        const idLen:number    = ignoreDirectory.length,
+                            readDir  = function node_apps_build_lint_getFiles_readDir(filepath:string):void {
+                                node.fs.readdir(
+                                    filepath,
+                                    function node_apps_build_lint_getFiles_readDir_callback(erra, list) {
+                                        const fileEval = function node_apps_build_lint_getFiles_readDir_callback_fileEval(val:string):void {
+                                            const filename:string = (filepath.charAt(filepath.length - 1) === sep)
+                                                ? filepath + val
+                                                : filepath + sep + val;
+                                            node.fs.stat(
+                                                filename,
+                                                function node_apps_build_lint_getFiles_readDir_callback_fileEval_stat(errb, stat) {
+                                                    let a:number         = 0,
+                                                        ignoreDir:boolean = false;
+                                                    const dirtest:string   = `${filepath.replace(/\\/g, "/")}/${val}`;
+                                                    if (errb !== null) {
+                                                        apps.errout(errb);
+                                                        return;
+                                                    }
+                                                    count = count + 1;
+                                                    if (stat.isFile() === true && (/(\.js)$/).test(val) === true) {
+                                                        files.push(filename);
+                                                    }
+                                                    if (stat.isDirectory() === true) {
+                                                        do {
+                                                            if (dirtest.indexOf(ignoreDirectory[a]) === dirtest.length - ignoreDirectory[a].length) {
+                                                                ignoreDir = true;
+                                                                break;
+                                                            }
+                                                            a = a + 1;
+                                                        } while (a < idLen);
+                                                        if (ignoreDir === true) {
+                                                            if (count === total) {
+                                                                lintrun();
+                                                            }
+                                                        } else {
+                                                            total = total + 1;
+                                                            node_apps_build_lint_getFiles_readDir(filename);
+                                                        }
+                                                    } else if (count === total) {
+                                                        lintrun();
+                                                    }
+                                                }
+                                            );
+                                        };
+                                        if (erra !== null) {
+                                            apps.errout(`Error reading path: ${filepath}\n${erra}`);
+                                            return;
+                                        }
+                                        total = total + list.length - 1;
+                                        list.forEach(fileEval);
+                                    }
+                                );
+                            };
+                        readDir(js);
+                    }());
+                },
+                typescript: function node_apps_build_typescript():void {
                     heading("TypeScript Compilation");
                     node.child("tsc --pretty", {
                         cwd: projectPath
-                    }, function build_typescript_callback(err, stdout, stderr):void {
+                    }, function node_apps_build_typescript_callback(err, stdout, stderr):void {
                         if (stdout !== "" && stdout.indexOf(" \u001b[91merror\u001b[0m ") > -1) {
                             console.log("\u001b[31mTypeScript reported warnings.\u001b[39m");
                             apps.errout(stdout);
@@ -1723,11 +1731,15 @@ import { Hash } from "crypto";
     apps.mode = function node_apps_mode():void {
         if (options.source === "") {
             apps.errout(`Pretty Diff requires use of the ${text.red + text.bold}source${text.none} option.`);
+            return;
         }
+        options.parsed = global.parseFramework.parserArrays(options);
+        const result:string = prettydiff[options.mode][options.lexer](options);
+        console.log(result);
         return;
     };
     apps.options = function node_apps_options():void {
-        const def:any = global.prettydiff.optionDef;
+        const def:any = prettydiff.api.optionDef;
         if (options[process.argv[0]] === undefined) {
             // all options in a list
             apps.lists({

@@ -1,5 +1,7 @@
 
 declare var options: any;
+declare var ace: any;
+declare var prettydiff: any;
 interface Window {
     parseFramework: any;
 }
@@ -28,9 +30,6 @@ interface optionFunctions {
     definitions?: {};
 
 }
-type api = "any" | "dom" | "node";
-type lexer = "markup" | "script" | "style";
-type mode = "analysis" | "beautify" | "diff" | "minify" | "parse";
 interface optionDef {
     binaryCheck: RegExp;
     definitions: any;
@@ -51,7 +50,6 @@ interface library {
 interface dom {
     [key: string]: any;
 }
-declare var ace: any;
 type languageAuto = [string, string, string];
 interface language {
     auto(sample:string, defaultLang:string): languageAuto;
@@ -94,6 +92,9 @@ interface finalFile {
 interface diffview {
     (): [string, number, number]
 }
+type api = "any" | "dom" | "node";
+type lexer = "markup" | "script" | "style";
+type mode = "analysis" | "beautify" | "diff" | "minify" | "parse";
 interface option {
     api: api;
     default: boolean | number | string;
