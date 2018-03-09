@@ -165,6 +165,10 @@ import { Hash } from "crypto";
                     {
                         code: "prettydiff options mode",
                         defined: "Writes details about the specified option to the shell."
+                    },
+                    {
+                        code: "prettydiff options api:any lexer:script values",
+                        defined: "The option list can be queried against key and value (if present) names. This example will return only options that work with the script lexer, takes specific values, and aren't limited to a certain environment."
                     }
                 ]
             },
@@ -313,38 +317,88 @@ import { Hash } from "crypto";
                         : [],
                     obj = (command === "options")
                         ? def.mode
-                        : options;
+                        : options,
+                    optionName = function node_args_optionName(bindArgument:boolean):void {
+                        if (a === 0 || options[name] === undefined) {
+                            if (keys.indexOf(list[a]) < 0) {
+                                list.splice(a, 1);
+                                len = len - 1;
+                                a = a - 1;
+                            }
+                            return;
+                        }
+                        if (bindArgument === true) {
+                            if (list[a + 1] !== undefined && list[a + 1].length > 0) {
+                                list[a] = `${list[a]}:${list[a + 1]}`;
+                                list.splice(a + 1, 1);
+                                len = len - 1;
+                            } else {
+                                list[a] = list[a];
+                            }
+                        }
+                        list.splice(0, 0, list[a]);
+                        list.splice(a + 1, 1);
+                    };
                 let split:string = "",
                     value:string = "",
                     name:string = "",
                     a:number = 0,
+                    si:number = 0,
                     len:number = list.length;
                 do {
                     list[a] = list[a].replace(/^(-+)/, "");
-                    if ((list[a].indexOf("=") < list[a].indexOf(":") && list[a].indexOf("=") > 0) || (list[a].indexOf("=") > 0 && list[a].indexOf(":") < 0)) {
+                    si = list[a].indexOf("=");
+                    if (
+                        si > 0 &&
+                        (list[a].indexOf("\"") < 0 || si < list[a].indexOf("\"")) &&
+                        (list[a].indexOf("'") < 0 || si < list[a].indexOf("'")) &&
+                        (si < list[a].indexOf(":") || list[a].indexOf(":") < 0)
+                    ) {
                         split = "=";
                     } else {
                         split = ":";
                     }
-                    if (obj[list[a]] !== undefined && obj[list[a + 1]] === undefined) {
+                    if (list[a + 1] === undefined) {
+                        si = 99;
+                    } else {
+                        si = list[a + 1].indexOf(split);
+                    }
+                    if (
+                        obj[list[a]] !== undefined &&
+                        list[a + 1] !== undefined &&
+                        obj[list[a + 1]] === undefined &&
+                        (
+                            si < 0 || 
+                            (si > list[a + 1].indexOf("\"") && list[a + 1].indexOf("\"") > -1) ||
+                            (si > list[a + 1].indexOf("'") && list[a + 1].indexOf("'") > -1)
+                        )
+                    ) {
                         if (command === "options") {
-                            process.argv[a] = `${list[a]}:${list[a + 1]}`;
-                            process.argv.splice(a + 1, 1);
-                            len = len - 1;
+                            optionName(true);
                         } else {
                             options[list[a]] = list[a + 1];
                             a = a + 1;
                         }
-                    } else if (list[a].indexOf(split) > 0) {
-                        name = list[a].slice(0, list[a].indexOf(split));
-                        value = list[a].slice(list[a].indexOf(split) + 1);
+                    } else if (list[a].indexOf(split) > 0 || (list[a].indexOf(split) < 0 && list[a + 1] !== undefined && (list[a + 1].charAt(0) === ":" || list[a + 1].charAt(0) === "="))) {
+                        if (list[a].indexOf(split) > 0) {
+                            name = list[a].slice(0, list[a].indexOf(split));
+                            value = list[a].slice(list[a].indexOf(split) + 1);
+                        } else {
+                            name = list[a];
+                            value = list[a + 1].slice(1);
+                            list.splice(a + 1, 1);
+                            len = len - 1;
+                        }
                         if (command === "options") {
                             if (keys.indexOf(name) > -1) {
-                                process.argv[a] = `${name}:${value}`;
+                                if (value !== undefined && value.length > 0) {
+                                    list[a] = `${name}:${value}`;
+                                } else {
+                                    list[a] = name;
+                                }
                             } else {
-                                process.argv.splice(a, 1);
+                                list.splice(a, 1);
                                 len = len - 1;
-                                a = a - 1;
                             }
                         } else if (options[name] !== undefined) {
                             if (value === "true" && def[name].type === "boolean") {
@@ -359,6 +413,8 @@ import { Hash } from "crypto";
                                 options[name] = value;
                             }
                         }
+                    } else if (command === "options") {
+                        optionName(false);
                     }
                     a = a + 1;
                 } while (a < len);
@@ -1195,6 +1251,12 @@ import { Hash } from "crypto";
     };
     apps.errout     = function node_apps_errout(errtext:string):void {
         let stack:string = new Error().stack;
+        if (process.platform.toLowerCase() === "win32") {
+            stack = stack.replace("Error", "\u001b[36mStack trace\u001b[39m\r\n-----------");
+        } else {
+            stack = stack.replace("Error", "\u001b[36mStack trace\u001b[39m\n-----------");
+        }
+        console.log(stack);
         console.log("");
         console.log("\u001b[31mScript error\u001b[39m");
         console.log("------------");
@@ -1204,12 +1266,6 @@ import { Hash } from "crypto";
             console.log(errtext);
         }
         console.log("");
-        if (process.platform.toLowerCase() === "win32") {
-            stack = stack.replace("Error", "\u001b[36mStack trace\u001b[39m\r\n-----------");
-        } else {
-            stack = stack.replace("Error", "\u001b[36mStack trace\u001b[39m\n-----------");
-        }
-        console.log(stack);
         process.exit(1);
     };
     apps.get = function node_apps_get(address:string, flag:"source"|"diff", callback:Function):void {
@@ -1401,7 +1457,6 @@ import { Hash } from "crypto";
             secondString:string = "",
             finalTime:string    = "",
             finalMem:string     = "",
-            strSplit:string[]     = [],
             minutes:number      = 0,
             hours:number        = 0,
             memory,
@@ -1415,7 +1470,20 @@ import { Hash } from "crypto";
                 dtime[1] = ((big + endtime[1]) - startTime[1]);
                 return dtime[0] + (dtime[1] / big);
             }());
-        const prettybytes  = function node_apps_humantime_prettybytes(an_integer:number):string {
+        const numberString = function node_apps_humantime_numberString(numb:number):string {
+                const strSplit:string[] = String(numb).split(".");
+                if (strSplit[1].length < 9) {
+                    do {
+                        strSplit[1]  = strSplit[1] + 0;
+                    } while (strSplit[1].length < 9);
+                    return `${strSplit[0]}.${strSplit[1]}`;
+                }
+                if (strSplit[1].length > 9) {
+                    return `${strSplit[0]}.${strSplit[1].slice(0, 9)}`;
+                }
+                return `${strSplit[0]}.${strSplit[1]}`;
+            },
+            prettybytes  = function node_apps_humantime_prettybytes(an_integer:number):string {
                 //find the string length of input and divide into triplets
                 let output:string = "",
                     length:number  = an_integer
@@ -1472,9 +1540,9 @@ import { Hash } from "crypto";
             },
             plural       = function node_proctime_plural(x:number, y:string):string {
                 if (x !== 1) {
-                    return `${x + y}s `;
+                    return `${numberString(x) + y}s `;
                 }
-                return `${x + y} `;
+                return `${numberString(x) + y} `;
             },
             minute       = function node_proctime_minute():void {
                 minutes      = parseInt((elapsed / 60).toString(), 10);
@@ -1494,16 +1562,7 @@ import { Hash } from "crypto";
         finalMem     = prettybytes(memory.rss);
 
         //last line for additional instructions without bias to the timer
-        secondString = String(elapsed);
-        strSplit     = secondString.split(".");
-        if (strSplit[1].length < 9) {
-            do {
-                strSplit[1]  = strSplit[1] + 0;
-            } while (strSplit[1].length < 9);
-            secondString = `${strSplit[0]}.${strSplit[1]}`;
-        } else if (strSplit[1].length > 9) {
-            secondString = `${strSplit[0]}.${strSplit[1].slice(0, 9)}`;
-        }
+        secondString = numberString(elapsed);
         if (elapsed >= 60 && elapsed < 3600) {
             minute();
         } else if (elapsed >= 3600) {
@@ -1667,7 +1726,7 @@ import { Hash } from "crypto";
         displayKeys("", keys);
         apps.humantime(true);
     };
-    apps.makedir     = function node_apps_makedir(dirToMake:string, callback:Function):void {
+    apps.makedir = function node_apps_makedir(dirToMake:string, callback:Function):void {
         node
             .fs
             .stat(dirToMake, function node_apps_makedir_stat(err:nodeError, stats:Stats):void {
@@ -1775,17 +1834,78 @@ import { Hash } from "crypto";
     };
     apps.options = function node_apps_options():void {
         const def:any = prettydiff.api.optionDef;
-
-// query options by parameter
-
         if (def[process.argv[0]] === undefined) {
-            // all options in a list
-            apps.lists({
-                emptyline: true,
-                heading: "Options",
-                obj: def,
-                property: "definition"
-            });
+            if (process.argv.length < 1) {
+                // all options in a list
+                apps.lists({
+                    emptyline: true,
+                    heading: "Options",
+                    obj: def,
+                    property: "definition"
+                });
+            } else {console.log(process.argv);
+                // queried list of options
+                const keys:string[] = Object.keys(def),
+                    arglen:number = process.argv.length,
+                    output:any = {},
+                    namevalue = function node_apps_options_namevalue(item:string):void {
+                        const si:number = item.indexOf(":");
+                        if (si < 1) {
+                            name = item;
+                            value = "";
+                            return;
+                        }
+                        if (
+                            (si < item.indexOf("\"") && item.indexOf("\"") > -1) ||
+                            (si < item.indexOf("'") && item.indexOf("'") > -1) ||
+                            (item.indexOf("\"") < 0 && item.indexOf("'") < 0)
+                        ) {
+                            name = item.slice(0, si);
+                            value = item.slice(si + 1);
+                            return;
+                        }
+                        name = item;
+                        value = "";
+                    };
+                let keylen:number = keys.length,
+                    a:number = 0,
+                    b:number = 0,
+                    name:string = "",
+                    value:string = "";
+                do {
+                    namevalue(process.argv[a]);
+                    b = 0;
+                    do {
+                        if (def[keys[b]][name] === undefined || (value !== "" && def[keys[b]][name] !== value)) {
+                            keys.splice(b, 1);
+                            b = b - 1;
+                            keylen = keylen - 1;
+                        }
+                        b = b + 1;
+                    } while (b < keylen);
+                    if (keylen < 1) {
+                        break;
+                    }
+                    a = a + 1;
+                } while (a < arglen);
+                a = 0;
+                do {
+                    output[keys[a]] = def[keys[a]];
+                    a = a + 1;
+                } while (a < keylen);
+                if (keylen < 1) {
+                    console.log("");
+                    console.log(`${text.red + text.bold}Pretty Diff has no options match the query criteria.${text.none}`);
+                    console.log("");
+                } else {
+                    apps.lists({
+                        emptyline: true,
+                        heading: "Options",
+                        obj: output,
+                        property: "definition"
+                    });
+                }
+            }
         } else {
             // specificly mentioned option
             apps.lists({

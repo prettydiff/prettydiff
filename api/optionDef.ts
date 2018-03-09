@@ -80,8 +80,7 @@
                 definition: "This will determine whether comments should always start" +
                         " at position 0 of each line or if comments should be indented according to the" +
                         " code.",
-                default   : "indent",
-                values    : false
+                default   : false
             },
             commline       : {
                 api       : "any",
