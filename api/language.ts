@@ -30,18 +30,18 @@
                 tss       : "script",
                 twig      : "markup",
                 typescript: "script",
-                velocity  : "velocity",
+                velocity  : "markup",
                 xhtml     : "markup",
                 xml       : "markup"
             };
             if (typeof input !== "string") {
-                return "javascript";
+                return "script";
             }
             if (input.indexOf("html") > -1) {
-                return "html";
+                return "markup";
             }
             if (langmap[input] === undefined) {
-                return "javascript";
+                return "script";
             }
             return langmap[input];
         },

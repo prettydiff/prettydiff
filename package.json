@@ -6,7 +6,7 @@
     "dependencies": {
         "@types/node": "latest",
         "file-saver": "^1.x.x",
-        "parse-framework": "^1.x.x",
+        "parse-framework": "^1.1.11",
         "ws": "^3.2.0"
     },
     "description": "A language aware diff tool.",

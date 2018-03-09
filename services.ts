@@ -244,21 +244,19 @@ import { Hash } from "crypto";
         apps:any = {};
     
     (function node_args():void {
-        const list:string[] = process.argv,
-            len:number = list.length,
-            requireDir = function node_args_requireDir(dirName:string):void {
+        const requireDir = function node_args_requireDir(dirName:string):void {
                 let counts = {
                     items: 0,
                     total: 0
                 };
-                const dirlist:string[] = dirName.split(node.path.sep),
+                const dirlist:string[] = dirName.split(sep),
                     dirname:string = dirlist[dirlist.length - 1],
                     completeTest = function node_args_requireDir_completeTest(filesLength:number):boolean {
                         counts.total = counts.total + filesLength;
                         if (counts.total === counts.items) {
                             dirs = dirs + 1;
                             if (dirs === dirstotal) {
-                                if (len > 0) {
+                                if (process.argv.length > 0) {
                                     readOptions();
                                 }
                                 apps[command]();
@@ -277,7 +275,7 @@ import { Hash } from "crypto";
                                 return;
                             }
                             files.forEach(function node_args_requireDir_dirwrapper_readdir_each(value:string) {
-                                const valpath:string = start + node.path.sep + value;
+                                const valpath:string = start + sep + value;
                                 node.fs.stat(valpath, function node_args_requireDir_dirwrapper_readdir_each_stat(errs:Error, stats:Stats):void {
                                     if (errs !== null) {
                                         apps.errout(errs.toString());
@@ -285,7 +283,7 @@ import { Hash } from "crypto";
                                     }
                                     if (stats.isFile() === true) {
                                         const fileName:string = (function node_args_requireDir_dirwrapper_readdir_each_stat_fileName():string {
-                                                const filedirs:string[] = valpath.split(node.path.sep);
+                                                const filedirs:string[] = valpath.split(sep);
                                                 return filedirs[filedirs.length - 1].split(".")[0];
                                             }()),
                                             file:Function = require(valpath);
@@ -308,11 +306,19 @@ import { Hash } from "crypto";
                 readdir(dirName);
             },
             readOptions = function node_args_readOptions():void {
-                const def = prettydiff.api.optionDef;
+                const list:string[] = process.argv,
+                    def = prettydiff.api.optionDef,
+                    keys:string[] = (command === "options")
+                        ? Object.keys(def.mode)
+                        : [],
+                    obj = (command === "options")
+                        ? def.mode
+                        : options;
                 let split:string = "",
                     value:string = "",
                     name:string = "",
-                    a:number = 0;
+                    a:number = 0,
+                    len:number = list.length;
                 do {
                     list[a] = list[a].replace(/^(-+)/, "");
                     if ((list[a].indexOf("=") < list[a].indexOf(":") && list[a].indexOf("=") > 0) || (list[a].indexOf("=") > 0 && list[a].indexOf(":") < 0)) {
@@ -320,13 +326,27 @@ import { Hash } from "crypto";
                     } else {
                         split = ":";
                     }
-                    if (options[list[a]] !== undefined && options[list[a + 1]] === undefined) {
-                        options[list[a]] = list[a + 1];
-                        a = a + 1;
+                    if (obj[list[a]] !== undefined && obj[list[a + 1]] === undefined) {
+                        if (command === "options") {
+                            process.argv[a] = `${list[a]}:${list[a + 1]}`;
+                            process.argv.splice(a + 1, 1);
+                            len = len - 1;
+                        } else {
+                            options[list[a]] = list[a + 1];
+                            a = a + 1;
+                        }
                     } else if (list[a].indexOf(split) > 0) {
                         name = list[a].slice(0, list[a].indexOf(split));
                         value = list[a].slice(list[a].indexOf(split) + 1);
-                        if (options[name] !== undefined) {
+                        if (command === "options") {
+                            if (keys.indexOf(name) > -1) {
+                                process.argv[a] = `${name}:${value}`;
+                            } else {
+                                process.argv.splice(a, 1);
+                                len = len - 1;
+                                a = a - 1;
+                            }
+                        } else if (options[name] !== undefined) {
                             if (value === "true" && def[name].type === "boolean") {
                                 options[name] = true;
                             } else if (value === "false" && def[name].type === "boolean") {
@@ -638,7 +658,7 @@ import { Hash } from "crypto";
                                         } else {
                                             const assign = function node_apps_build_libraries_libraries_assign(x:string):string {
                                                 const itemname:string = x.split("=")[1].replace(/\s+/g, ""),
-                                                    itemgroups:string[] = filePath.split(node.path.sep),
+                                                    itemgroups:string[] = filePath.split(sep),
                                                     itemgroup:string = (itemgroups[itemgroups.length - 2] === "")
                                                         ? itemgroups[itemgroups.length - 3]
                                                         : itemgroups[itemgroups.length - 2];
@@ -665,7 +685,7 @@ import { Hash } from "crypto";
                                                     apps.errout(errd.toString());
                                                     return;
                                                 }
-                                                const dirnames:string[] = pathitem.split(node.path.sep).filter(dirs => dirs !== ""),
+                                                const dirnames:string[] = pathitem.split(sep).filter(dirs => dirs !== ""),
                                                     groupname:string = dirnames[dirnames.length - 1];
                                                 domlibs = domlibs + `prettydiff.${groupname}={};`;
                                                 filelen = filelen + (filelist.length - 1);
@@ -894,9 +914,9 @@ import { Hash } from "crypto";
             }
         };
         util.eout     = function node_apps_copy_eout(er:Error):void {
-            const filename:string[] = target.split(node.path.sep);
+            const filename:string[] = target.split(sep);
             apps.remove(
-                destination + node.path.sep + filename[filename.length - 1],
+                destination + sep + filename[filename.length - 1],
                 function node_apps_copy_eout_remove() {
                     apps.errout(er);
                 }
@@ -908,7 +928,7 @@ import { Hash } from "crypto";
                 .readdir(item, function node_apps_copy_dir_makedir_readdir(er:Error, files:string[]):void {
                     const place:string = (item === start)
                         ? dest
-                        : dest + item.replace(start + node.path.sep, "");
+                        : dest + item.replace(start + sep, "");
                     if (er !== null) {
                         util.eout(er);
                         return;
@@ -919,12 +939,12 @@ import { Hash } from "crypto";
                         if (a > 0) {
                             delete dirs[item];
                             do {
-                                dirs[item + node.path.sep + files[b]] = true;
+                                dirs[item + sep + files[b]] = true;
                                 b                                     = b + 1;
                             } while (b < a);
                             b = 0;
                             do {
-                                util.stat(item + node.path.sep + files[b], item);
+                                util.stat(item + sep + files[b], item);
                                 b = b + 1;
                             } while (b < a);
                         } else {
@@ -936,9 +956,9 @@ import { Hash } from "crypto";
         util.file     = function node_apps_copy_file(item:string, dir:string, prop:nodeFileProps):void {
             const place:string       = (item === dir)
                     ? dest + item
-                        .split(node.path.sep)
+                        .split(sep)
                         .pop()
-                    : dest + item.replace(start + node.path.sep, ""),
+                    : dest + item.replace(start + sep, ""),
                 readStream:Stream  = node
                     .fs
                     .createReadStream(item),
@@ -961,11 +981,11 @@ import { Hash } from "crypto";
                     readStream.pipe(writeStream);
                 });
                 writeStream.once("finish", function node_apps_copy_file_finish():void {
-                    const filename:string[] = item.split(node.path.sep);
+                    const filename:string[] = item.split(sep);
                     node
                         .fs
                         .utimes(
-                            dest + node.path.sep + filename[filename.length - 1],
+                            dest + sep + filename[filename.length - 1],
                             prop.atime,
                             prop.mtime,
                             function node_apps_copy_file_finish_utimes():void {
@@ -999,7 +1019,7 @@ import { Hash } from "crypto";
                             }
                             if (item === dir) {
                                 place = dest + item
-                                    .split(node.path.sep)
+                                    .split(sep)
                                     .pop();
                             }
                             if (stats.isDirectory() === true) {
@@ -1026,7 +1046,7 @@ import { Hash } from "crypto";
             let a    = 0;
             if (exlen > 0) {
                 do {
-                    if (item.replace(start + node.path.sep, "") === params.exclusions[a]) {
+                    if (item.replace(start + sep, "") === params.exclusions[a]) {
                         params.exclusions.splice(a, 1);
                         exlen = exlen - 1;
                         util.complete(item);
@@ -1157,15 +1177,15 @@ import { Hash } from "crypto";
                     } while (a < len);
                     return out;
                 }()),
-                destination: process.argv[1].replace(/(\\|\/)/g, node.path.sep),
-                target: process.argv[0].replace(/(\\|\/)/g, node.path.sep)
+                destination: process.argv[1].replace(/(\\|\/)/g, sep),
+                target: process.argv[0].replace(/(\\|\/)/g, sep)
             };
             console.log(params.exclusions);
         }
-        target =  params.target.replace(/(\\|\/)/g, node.path.sep);
-        destination = params.destination.replace(/(\\|\/)/g, node.path.sep);
+        target =  params.target.replace(/(\\|\/)/g, sep);
+        destination = params.destination.replace(/(\\|\/)/g, sep);
         exlen = params.exclusions.length;
-        dest          = node.path.resolve(destination) + node.path.sep;
+        dest          = node.path.resolve(destination) + sep;
         start         = node.path.resolve(target);
         util.stat(start, start);
     };
@@ -1659,7 +1679,7 @@ import { Hash } from "crypto";
                         node
                             .fs
                             .stat(
-                                dirs.slice(0, ind + 1).join(node.path.sep),
+                                dirs.slice(0, ind + 1).join(sep),
                                 function node_apps_makedir_stat_restat_callback(erra:nodeError, stata:Stats):void {
                                     let erras:string = "";
                                     ind = ind + 1;
@@ -1669,7 +1689,7 @@ import { Hash } from "crypto";
                                             node
                                                 .fs
                                                 .mkdir(
-                                                    dirs.slice(0, ind).join(node.path.sep),
+                                                    dirs.slice(0, ind).join(sep),
                                                     function node_apps_makedir_stat_restat_callback_mkdir(errb:Error):void {
                                                         if (errb !== null && errb.toString().indexOf("file already exists") < 0) {
                                                             apps.errout(errb);
@@ -1704,7 +1724,7 @@ import { Hash } from "crypto";
                 if (err !== null) {
                     ers = err.toString();
                     if (ers.indexOf("no such file or directory") > 0 || err.code === "ENOENT") {
-                        dirs = dirToMake.split(node.path.sep);
+                        dirs = dirToMake.split(sep);
                         if (dirs[0] === "") {
                             ind = ind + 1;
                         }
@@ -1733,14 +1753,32 @@ import { Hash } from "crypto";
             apps.errout(`Pretty Diff requires use of the ${text.red + text.bold}source${text.none} option.`);
             return;
         }
-        options.parsed = global.parseFramework.parserArrays(options);
-        const result:string = prettydiff[options.mode][options.lexer](options);
-        console.log(result);
+        require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}parse`);
+        const all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`);
+        options.lexerOptions = {};
+        all(options, function node_apps_mode_allLexers() {
+            const pdapp = function node_apps_mode_pdapp() {
+                if (options.lang === "auto") {
+                    let lang = prettydiff.api.language.auto(options.source, "javascript");
+                    options.lang = lang[0];
+                    options.lexer = lang[1];
+                }
+                options.parsed = global.parseFramework.parserArrays(options);
+                options.source = prettydiff[options.mode][options.lexer](options);
+            };
+            if (options.readmethod === "screen") {
+                pdapp();
+                console.log(options.source);
+            }
+        });
         return;
     };
     apps.options = function node_apps_options():void {
         const def:any = prettydiff.api.optionDef;
-        if (options[process.argv[0]] === undefined) {
+
+// query options by parameter
+
+        if (def[process.argv[0]] === undefined) {
             // all options in a list
             apps.lists({
                 emptyline: true,
@@ -1859,7 +1897,7 @@ import { Hash } from "crypto";
                     } else {
                         files.forEach(function node_apps_remove_readdir_callback_each(value) {
                             dirs[item] = dirs[item] + 1;
-                            util.stat(item + node.path.sep + value, item);
+                            util.stat(item + sep + value, item);
                         });
                     }
                 });
@@ -1868,7 +1906,7 @@ import { Hash } from "crypto";
             node
                 .fs
                 .rmdir(item, function node_apps_remove_delete_callback_rmdir(er:Error):void {
-                    const dirlist:string[] = item.split(node.path.sep);
+                    const dirlist:string[] = item.split(sep);
                     let dir:string     = "";
                     if (er !== null && er.toString().indexOf("resource busy or locked") > 0) {
                         setTimeout(function node_apps_remove_rmdir_delay() {
@@ -1885,7 +1923,7 @@ import { Hash } from "crypto";
                         util.complete();
                     } else {
                         dirlist.pop();
-                        dir       = dirlist.join(node.path.sep);
+                        dir       = dirlist.join(sep);
                         dirs[dir] = dirs[dir] - 1;
                         if (dirs[dir] < 1) {
                             node_apps_remove_rmdir(dir);
