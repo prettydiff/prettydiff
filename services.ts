@@ -926,7 +926,7 @@ import { Hash } from "crypto";
             console.log("");
             console.log(`${text.underline}Example${plural + text.none}`);
             do {
-                console.log(comm.example[a].defined);
+                apps.wrapit(comm.example[a].defined);
                 console.log(`   ${text.cyan + comm.example[a].code + text.none}`);
                 console.log("");
                 a = a + 1;
@@ -1604,73 +1604,7 @@ import { Hash } from "crypto";
         // * lists.obj       - object  - an object to traverse
         // * lists.property  - string  - The child property to read from or "eachkey" to
         // access a directly assigned primitive
-        const wrap:number = 100,
-            wrapit = function node_apps_lists_wrapit(string:string):void {
-                if (string.length > wrap) {
-                    const indent:string = (function node_apps_options_wrapit_indent():string {
-                            const len:number = string.length;
-                            let inc:number = 0,
-                                num:number = 2,
-                                str:string = "";
-                            do {
-                                if (string.charAt(inc) === ":") {
-                                    break;
-                                }
-                                if (string.charAt(inc) === "\u001b") {
-                                    if (string.charAt(inc + 4) === "m") {
-                                        inc = inc + 4;
-                                    } else {
-                                        inc = inc + 3;
-                                    }
-                                } else {
-                                    num = num + 1;
-                                }
-                                inc = inc + 1;
-                            } while (inc < len);
-                            inc = 0;
-                            do {
-                                str = str + " ";
-                                inc = inc + 1;
-                            } while (inc < num);
-                            return str;
-                        }()),
-                        formLine = function node_apps_options_wrapit_formLine():void {
-                            let inc:number = 0,
-                                wrapper:number = wrap;
-                            do {
-                                if (string.charAt(inc) === "\u001b") {
-                                    if (string.charAt(inc + 4) === "m") {
-                                        wrapper = wrapper + 4;
-                                    } else {
-                                        wrapper = wrapper + 3;
-                                    }
-                                }
-                                inc = inc + 1;
-                            } while (inc < wrapper);
-                            if (string.charAt(wrapper) !== " " && string.length > wrapper) {
-                                do {
-                                    wrapper = wrapper - 1;
-                                } while (wrapper > 0 && string.charAt(wrapper) !== " ");
-                                if (wrapper === 0) {
-                                    console.log(string);
-                                    return;
-                                }
-                            }
-                            console.log(string.slice(0, wrapper).replace(/ $/, ""));
-                            string = string.slice(wrapper + 1);
-                            if (string.length + indent.length > wrap) {
-                                string = indent + string;
-                                node_apps_options_wrapit_formLine();
-                            } else if (string !== "") {
-                                console.log(indent + string);
-                            }
-                        };
-                    formLine();
-                } else {
-                    console.log(string);
-                }
-            },
-            keys:string[] = Object.keys(lists.obj).sort(),
+        const keys:string[] = Object.keys(lists.obj).sort(),
             displayKeys = function node_apps_lists_displayKeys(item:string, keylist:string[]):void {
                 const len:number = keylist.length;
                 let a:number = 0,
@@ -1699,7 +1633,7 @@ import { Hash } from "crypto";
                     }
                     if (item !== "") {
                         // each of the "values" keys
-                        wrapit(`   ${text.red + text.bold}- ${text.none + text.cyan + comm + text.nocolor}: ${lists.obj.values[keylist[b]]}`);
+                        apps.wrapit(`   ${text.red + text.bold}- ${text.none + text.cyan + comm + text.nocolor}: ${lists.obj.values[keylist[b]]}`);
                     } else {
                         // list all items
                         if (lists.property === "eachkey") {
@@ -1709,11 +1643,11 @@ import { Hash } from "crypto";
                                 displayKeys(command, Object.keys(lists.obj.values).sort());
                             } else {
                                 // all items keys and their primitive value
-                                wrapit(`${text.red + text.bold}* ${text.none + text.cyan + comm + text.nocolor}: ${lists.obj[keylist[b]]}`);
+                                apps.wrapit(`${text.red + text.bold}* ${text.none + text.cyan + comm + text.nocolor}: ${lists.obj[keylist[b]]}`);
                             }
                         } else {
                             // a list by key and specified property
-                            wrapit(`${text.red + text.bold}* ${text.none + text.cyan + comm + text.nocolor}: ${lists.obj[keylist[b]][lists.property]}`);
+                            apps.wrapit(`${text.red + text.bold}* ${text.none + text.cyan + comm + text.nocolor}: ${lists.obj[keylist[b]][lists.property]}`);
                         }
                         if (lists.emptyline === true) {
                             console.log("");
@@ -2098,6 +2032,75 @@ import { Hash } from "crypto";
         console.log("");
         console.log(`Pretty Diff version ${text.red + text.bold + version.number + text.none} dated ${text.cyan + version.date + text.none}`);
         apps.humantime(true);
+    };
+    apps.wrapit = function node_apps_lists_wrapit(string:string):void {
+        const wrap:number = 100;
+        if (string.length > wrap) {
+            const indent:string = (function node_apps_options_wrapit_indent():string {
+                    const len:number = string.length;
+                    let inc:number = 0,
+                        num:number = 2,
+                        str:string = "";
+                    if ((/^(\s*((\*|-)\s*)?\w+\s*:)/).test(string.replace(/\u001b\[\d+m/g, "")) === false) {
+                        return "";
+                    }
+                    do {
+                        if (string.charAt(inc) === ":") {
+                            break;
+                        }
+                        if (string.charAt(inc) === "\u001b") {
+                            if (string.charAt(inc + 4) === "m") {
+                                inc = inc + 4;
+                            } else {
+                                inc = inc + 3;
+                            }
+                        } else {
+                            num = num + 1;
+                        }
+                        inc = inc + 1;
+                    } while (inc < len);
+                    inc = 0;
+                    do {
+                        str = str + " ";
+                        inc = inc + 1;
+                    } while (inc < num);
+                    return str;
+                }()),
+                formLine = function node_apps_options_wrapit_formLine():void {
+                    let inc:number = 0,
+                        wrapper:number = wrap;
+                    do {
+                        if (string.charAt(inc) === "\u001b") {
+                            if (string.charAt(inc + 4) === "m") {
+                                wrapper = wrapper + 4;
+                            } else {
+                                wrapper = wrapper + 3;
+                            }
+                        }
+                        inc = inc + 1;
+                    } while (inc < wrapper);
+                    if (string.charAt(wrapper) !== " " && string.length > wrapper) {
+                        do {
+                            wrapper = wrapper - 1;
+                        } while (wrapper > 0 && string.charAt(wrapper) !== " ");
+                        if (wrapper === 0) {
+                            console.log(string);
+                            return;
+                        }
+                    }
+                    console.log(string.slice(0, wrapper).replace(/ $/, ""));
+                    string = string.slice(wrapper + 1);
+                    if (string.length + indent.length > wrap) {
+                        string = indent + string;
+                        node_apps_options_wrapit_formLine();
+                    } else if (string !== "") {
+                        console.log(indent + string);
+                    }
+                };
+            formLine();
+        } else {
+            console.log(string);
+        }
     };
 
     // if commands[list[0]] !== undefined then assign the command
