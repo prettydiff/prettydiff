@@ -1461,13 +1461,11 @@ import { Hash } from "crypto";
             hours:number        = 0,
             memory,
             elapsed:number      = (function node_apps_humantime_elapsed():number {
-                const endtime:[number, number] = process.hrtime(),
-                    big:number = 1000000000;
-                let dtime:[number, number] = [endtime[0] - startTime[0], endtime[1] - startTime[1]];
+                const big:number = 1e9,
+                    dtime:[number, number] = process.hrtime(startTime);
                 if (dtime[1] === 0) {
                     return dtime[0];
                 }
-                dtime[1] = ((big + endtime[1]) - startTime[1]);
                 return dtime[0] + (dtime[1] / big);
             }());
         const numberString = function node_apps_humantime_numberString(numb:number):string {
@@ -1747,12 +1745,17 @@ import { Hash } from "crypto";
             return;
         }
         require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}parse`);
-        const all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`);
+        const all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`),
+            auto:any = {
+                lang: (options.lang === "auto"),
+                readmethod: (options.readmethod === "auto")
+            };
+        let lang:[string, string, string] = ["javascript", "script", "JavaScript"];
         options.lexerOptions = {};
         all(options, function node_apps_mode_allLexers() {
             const pdapp = function node_apps_mode_pdapp() {
                 if (options.lang === "auto") {
-                    let lang = prettydiff.api.language.auto(options.source, "javascript");
+                    lang = prettydiff.api.language.auto(options.source, "javascript");
                     options.lang = lang[0];
                     options.lexer = lang[1];
                 }
@@ -1762,6 +1765,11 @@ import { Hash } from "crypto";
             if (options.readmethod === "screen") {
                 pdapp();
                 console.log(options.source);
+                if (auto.lang === true) {
+                    console.log("");
+                    console.log(`Language set to ${text.red + text.bold}auto${text.none} and evaluated as ${text.green + text.bold + lang[0] + text.none} by lexer ${text.green + text.bold + lang[1] + text.none}.`);
+                    apps.humantime(true);
+                }
             }
         });
         return;
