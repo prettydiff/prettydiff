@@ -319,8 +319,8 @@ import { Hash } from "crypto";
                         ? def.mode
                         : options,
                     optionName = function node_args_optionName(bindArgument:boolean):void {
-                        if (a === 0 || options[name] === undefined) {
-                            if (keys.indexOf(list[a]) < 0) {
+                        if (a === 0 || options[list[a]] === undefined) {
+                            if (keys.indexOf(list[a]) < 0 && options[list[a]] === undefined) {
                                 list.splice(a, 1);
                                 len = len - 1;
                                 a = a - 1;
@@ -1749,11 +1749,8 @@ import { Hash } from "crypto";
             auto:any = {
                 lang: (options.lang === "auto"),
                 readmethod: (options.readmethod === "auto")
-            };
-        let lang:[string, string, string] = ["javascript", "script", "JavaScript"];
-        options.lexerOptions = {};
-        all(options, function node_apps_mode_allLexers() {
-            const pdapp = function node_apps_mode_pdapp() {
+            },
+            screen = function node_apps_mode_screen():void {
                 if (options.lang === "auto") {
                     lang = prettydiff.api.language.auto(options.source, "javascript");
                     options.lang = lang[0];
@@ -1761,15 +1758,53 @@ import { Hash } from "crypto";
                 }
                 options.parsed = global.parseFramework.parserArrays(options);
                 options.source = prettydiff[options.mode][options.lexer](options);
-            };
-            if (options.readmethod === "screen") {
-                pdapp();
                 console.log(options.source);
-                if (auto.lang === true) {
+                if (auto.lang === true || auto.readmethod === true) {
                     console.log("");
-                    console.log(`Language set to ${text.red + text.bold}auto${text.none} and evaluated as ${text.green + text.bold + lang[0] + text.none} by lexer ${text.green + text.bold + lang[1] + text.none}.`);
+                }
+                if (auto.readmethod === true) {
+                    apps.wrapit(`${text.red + text.bold}*${text.none} Option ${text.cyan}readmethod${text.none} set to ${text.red + text.bold}auto${text.none}. Option ${text.cyan}source${text.none} was not provided a valid file system path so Pretty Diff processed the source value literally.`);
+                }
+                if (auto.lang === true) {
+                    apps.wrapit(`${text.red + text.bold}*${text.none} Option ${text.cyan}lang${text.none} set to ${text.red + text.bold}auto${text.none} and evaluated by Pretty Diff as ${text.green + text.bold + lang[2] + text.none} by lexer ${text.green + text.bold + lang[1] + text.none}.`);
+                }
+                if (auto.lang === true || auto.readmethod === true) {
                     apps.humantime(true);
                 }
+            },
+            sourceStat = function node_apps_mode_sourceStat(err:Error, stats:Stats):void {
+                const auto:boolean = (options.readmethod === "auto");
+                if (auto === true) {
+                    if (err !== null) {
+                        if (err.toString().indexOf("ENOENT") > -1) {
+                            screen();
+                        } else {
+                            apps.errout(err.toString());
+                        }
+                        return;
+                    }
+                } else {
+                    if (err !== null) {
+                        apps.errout(err.toString());
+                        return;
+                    }
+                    if ((options.readmethod === "file" || options.readmethod === "filescreen") && stats.isFile() === false) {
+                        apps.errout(`The value for the source option is ${text.red + text.bold}not an address to a file${text.none} but option readmethod is ${text.cyan + options.readmethod + text.none}.`);
+                        return;
+                    }
+                    if ((options.readmethod === "directory" || options.readmethod === "subdirectory") && stats.isDirectory() === false) {
+                        apps.errout(`The value for the source option is ${text.red + text.bold}not an address to a directory${text.none} but option readmethod is ${text.cyan + options.readmethod + text.none}.`);
+                        return;
+                    }
+                }
+            };
+        let lang:[string, string, string] = ["javascript", "script", "JavaScript"];
+        options.lexerOptions = {};
+        all(options, function node_apps_mode_allLexers() {
+            if (options.readmethod === "screen") {
+                screen();
+            } else {
+                node.fs.stat(options.source, sourceStat);
             }
         });
         return;
@@ -1785,7 +1820,7 @@ import { Hash } from "crypto";
                     obj: def,
                     property: "definition"
                 });
-            } else {console.log(process.argv);
+            } else {
                 // queried list of options
                 const keys:string[] = Object.keys(def),
                     arglen:number = process.argv.length,
