@@ -1781,6 +1781,7 @@ import { Hash } from "crypto";
         options.mode = "minify";
         apps.mode();
     };
+    //checking on the status of options.diffcli default
     apps.mode = function node_apps_mode():void {
         if (options.source === "") {
             apps.errout([`Pretty Diff requires use of the ${text.angry}source${text.none} option.`]);
@@ -1792,6 +1793,10 @@ import { Hash } from "crypto";
                 lang: (options.lang === "auto"),
                 readmethod: (options.readmethod === "auto")
             },
+            status:any = {
+                source: false,
+                diff: false
+            },
             screen = function node_apps_mode_screen():void {
                 const output:string[] = [];
                 if (options.lang === "auto") {
@@ -1799,9 +1804,28 @@ import { Hash } from "crypto";
                     options.lang = lang[0];
                     options.lexer = lang[1];
                 }
-                options.parsed = global.parseFramework.parserArrays(options);
-                options.source = prettydiff[options.mode][options.lexer](options);
-                output.push(options.source);
+                if (options.mode === "diff") {
+                    if (options.lang !== "text") {
+                        const source:string = options.source;
+                        options.source = options.diff;
+                        options.parsed = global.parseFramework.parserArrays(options);
+                        options.diff = prettydiff.beautify[options.lexer](options);
+                        options.source = source;
+                        options.parsed = global.parseFramework.parserArrays(options);
+                        options.source = prettydiff.beautify[options.lexer](options);
+                    }
+                    const diff:[string, number, number] = prettydiff.api.diffview(options),
+                        plural:string = (diff[2] > 0)
+                            ? "s"
+                            : "";
+                    output.push(diff[0]);
+                    output.push("");
+                    output.push(`Number of differences: ${text.cyan + (diff[1] + diff[2]) + text.none} from ${text.cyan + (diff[2] + 1) + text.none} line${plural} of code.`);
+                } else {
+                    options.parsed = global.parseFramework.parserArrays(options);
+                    options.source = prettydiff[options.mode][options.lexer](options);
+                    output.push(options.source);
+                }
                 if (verbose === true) {
                     if (auto.lang === true || auto.readmethod === true) {
                         output.push("");
@@ -1817,31 +1841,36 @@ import { Hash } from "crypto";
                 }
                 apps.output(output);
             },
-            inputStat = function node_apps_mode_sourceStat(err:Error, stats:Stats):void {
-                const auto:boolean = (options.readmethod === "auto");
-                if (auto === true) {
-                    if (err !== null) {
-                        if (err.toString().indexOf("ENOENT") > -1) {
-                            screen();
-                        } else {
-                            apps.errout([err.toString()]);
+            statWrapper = function node_apps_mode_statWrapper(item:"source"|"diff") {
+                node.fs.stat(options[item], function node_apps_mode_sourceStat(err:Error, stats:Stats):void {
+                    const auto:boolean = (options.readmethod === "auto");
+                    if (auto === true) {
+                        if (err !== null) {
+                            if (err.toString().indexOf("ENOENT") > -1) {
+                                status[item] = true;
+                                if (options.mode !== "diff" || (status.source === true && status.diff === true)) {
+                                    screen();
+                                }
+                            } else {
+                                apps.errout([err.toString()]);
+                            }
+                            return;
                         }
-                        return;
+                    } else {
+                        if (err !== null) {
+                            apps.errout([err.toString()]);
+                            return;
+                        }
+                        if ((options.readmethod === "file" || options.readmethod === "filescreen") && stats.isFile() === false) {
+                            apps.errout([`The value for the source option is ${text.angry}not an address to a file${text.none} but option readmethod is ${text.angry + options.readmethod + text.none}.`]);
+                            return;
+                        }
+                        if ((options.readmethod === "directory" || options.readmethod === "subdirectory") && stats.isDirectory() === false) {
+                            apps.errout([`The value for the source option is ${text.angry}not an address to a directory${text.none} but option readmethod is ${text.angry + options.readmethod + text.none}.`]);
+                            return;
+                        }
                     }
-                } else {
-                    if (err !== null) {
-                        apps.errout([err.toString()]);
-                        return;
-                    }
-                    if ((options.readmethod === "file" || options.readmethod === "filescreen") && stats.isFile() === false) {
-                        apps.errout([`The value for the source option is ${text.angry}not an address to a file${text.none} but option readmethod is ${text.angry + options.readmethod + text.none}.`]);
-                        return;
-                    }
-                    if ((options.readmethod === "directory" || options.readmethod === "subdirectory") && stats.isDirectory() === false) {
-                        apps.errout([`The value for the source option is ${text.angry}not an address to a directory${text.none} but option readmethod is ${text.angry + options.readmethod + text.none}.`]);
-                        return;
-                    }
-                }
+                })
             };
         let lang:[string, string, string] = ["javascript", "script", "JavaScript"];
         options.lexerOptions = {};
@@ -1849,7 +1878,7 @@ import { Hash } from "crypto";
             if (options.readmethod === "screen") {
                 screen();
             } else {
-                node.fs.stat(options.source, inputStat);
+                statWrapper("source");
             }
         });
         return;

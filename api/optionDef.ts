@@ -187,7 +187,7 @@
                 type      : "boolean",
                 definition: "If true only text lines of the code differences are returned instead of an HTM" +
                         "L diff report.",
-                default   : false
+                default   : true
             },
             diffcomments   : {
                 api       : "any",

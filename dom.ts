@@ -3333,20 +3333,20 @@
                     if (options.lexer !== "text") {
                         let source:string;
                         options.parsed = window.parseFramework.parserArrays(options);
-                        source = prettydiff.beautify[options.lexer]();
+                        source = prettydiff.beautify[options.lexer](options);
                         options.source = options.diff;
                         options.parsed = window.parseFramework.parserArrays(options);
-                        options.diff = prettydiff.beautify[options.lexer]();
+                        options.diff = prettydiff.beautify[options.lexer](options);
                         options.source = source;
                     }
-                    diffout = prettydiff.api.diffview();
+                    diffout = prettydiff.api.diffview(options);
                     meta.difftotal = diffout[1] + diffout[2];
                     meta.difflines = diffout[2];
                     output = diffout[0];
                 } else {
                     meta.insize = options.source.length;
                     options.parsed = window.parseFramework.parserArrays(options);
-                    output = prettydiff[options.mode][options.lexer]();
+                    output = prettydiff[options.mode][options.lexer](options);
                 }
                 delete options.parsed;
                 execOutput();
