@@ -36,6 +36,7 @@ import { Hash } from "crypto";
         version:any = {},
         // node option default end
         text:any     = {
+            angry    : "\u001b[1m\u001b[31m",
             blue     : "\u001b[34m",
             bold     : "\u001b[1m",
             cyan     : "\u001b[36m",
@@ -225,7 +226,7 @@ import { Hash } from "crypto";
                 return;
             }
             const arg:string = process.argv[2],
-                boldarg:string = text.bold + text.red + arg + text.none,
+                boldarg:string = text.angry + arg + text.none,
                 len:number = arg.length,
                 commandFilter = function node_args_filter(item:string):boolean {
                     if (item.indexOf(arg.slice(0, a)) === 0) {
@@ -287,7 +288,7 @@ import { Hash } from "crypto";
                     readdir = function node_args_requireDir_dirwrapper(start:string):void {
                         node.fs.readdir(start, function node_args_requireDir_dirwrapper_readdir(err:Error, files:string[]) {
                             if (err !== null) {
-                                apps.errout(err.toString());
+                                apps.errout([err.toString()]);
                                 return;
                             }
                             if (completeTest(files.length) === true) {
@@ -297,7 +298,7 @@ import { Hash } from "crypto";
                                 const valpath:string = start + sep + value;
                                 node.fs.stat(valpath, function node_args_requireDir_dirwrapper_readdir_each_stat(errs:Error, stats:Stats):void {
                                     if (errs !== null) {
-                                        apps.errout(errs.toString());
+                                        apps.errout([errs.toString()]);
                                         return;
                                     }
                                     if (stats.isFile() === true) {
@@ -481,7 +482,7 @@ import { Hash } from "crypto";
                     console.log("________________________________________________________________________");
                     console.log("");
                 }
-                console.log(`\u001b[36m${message}\u001b[39m`);
+                console.log(text.cyan + message + text.none);
                 console.log("");
             },
             phases = {
@@ -639,7 +640,7 @@ import { Hash } from "crypto";
                                         return allItems.join("");
                                     };
                                 if (err !== null && err.toString() !== "") {
-                                    apps.errout(err.toString());
+                                    apps.errout([err.toString()]);
                                     return;
                                 }
                                 if (fileFlag === "documentation") {
@@ -681,12 +682,12 @@ import { Hash } from "crypto";
                                 }
                                 node.fs.writeFile(file, data, function node_apps_build_libraries_documentation_write(errw:Error) {
                                     if (errw !== null && errw.toString() !== "") {
-                                        apps.errout(errw.toString());
+                                        apps.errout([errw.toString()]);
                                         return;
                                     }
                                     flag[fileFlag] = true;
                                     if (flag.documentation === true && flag.dom === true && flag.html === true && flag.node === true) {
-                                        console.log(`${apps.humantime(false)}\u001b[32mOption details written to files.\u001b[39m`);
+                                        console.log(`${apps.humantime(false) + text.green}Option details written to files.${text.none}`);
                                         next();
                                     }
                                 });
@@ -699,14 +700,14 @@ import { Hash } from "crypto";
                             }
                             node.child(`git log -1 --branches`, function node_apps_build_libraries_version_child(err:Error, stderr:string):void {
                                 if (err !== null) {
-                                    apps.errout(err.toString());
+                                    apps.errout([err.toString()]);
                                     return;
                                 }
                                 const date:string[] = stderr.slice(stderr.indexOf("Date:") + 12).split(" ");
                                 versionData.date = `${date[1]} ${date[0]} ${date[3]}`;
                                 node.fs.readFile(`${projectPath}package.json`, "utf8", function node_apps_build_libraries_version_child_readPackage(errp:Error, data:string):void {
                                     if (errp !== null) {
-                                        apps.errout(errp.toString());
+                                        apps.errout([errp.toString()]);
                                         return;
                                     }
                                     versionData.number = JSON.parse(data).version;
@@ -720,7 +721,7 @@ import { Hash } from "crypto";
                                 appendFile = function node_apps_build_libraries_libraries_appendFile(filePath:string):void {
                                     node.fs.readFile(filePath, "utf8", function node_apps_build_libraries_libraries_appendFile_read(errr:Error, filedata:string):void {
                                         if (errr !== null) {
-                                            apps.errout(errr.toString());
+                                            apps.errout([errr.toString()]);
                                             return;
                                         }
                                         if (filePath.indexOf("FileSaver") > 0) {
@@ -750,13 +751,13 @@ import { Hash } from "crypto";
                                 stat = function node_apps_build_libraries_libraries_stat(pathitem:string) {
                                     node.fs.stat(pathitem, function node_apps_build_libraries_libraries_stat_callback(errs:Error, stats:Stats):void {
                                         if (errs !== null) {
-                                            apps.errout(errs.toString());
+                                            apps.errout([errs.toString()]);
                                             return;
                                         }
                                         if (stats.isDirectory() === true) {
                                             node.fs.readdir(pathitem, "utf8", function node_apps_build_libraries_libraries_stat_callback_readdir(errd:Error, filelist:string[]):void {
                                                 if (errd !== null) {
-                                                    apps.errout(errd.toString());
+                                                    apps.errout([errd.toString()]);
                                                     return;
                                                 }
                                                 const dirnames:string[] = pathitem.split(sep).filter(dirs => dirs !== ""),
@@ -808,26 +809,26 @@ import { Hash } from "crypto";
                                 lintit = function node_apps_build_lint_lintrun_lintit(val:string):void {
                                     node.child(`eslint ${val}`, {
                                         cwd: projectPath
-                                    }, function node_apps_build_lint_lintrun_lintit_eslint(err, stdout, stderr) {
+                                    }, function node_apps_build_lint_lintrun_lintit_eslint(err:Error, stdout:string, stderr:string) {
                                         if (stdout === "" || stdout.indexOf("0:0  warning  File ignored because of a matching ignore pattern.") > -1) {
                                             if (err !== null) {
-                                                apps.errout(err);
+                                                apps.errout([err.toString()]);
                                                 return;
                                             }
                                             if (stderr !== null && stderr !== "") {
-                                                apps.errout(stderr);
+                                                apps.errout([stderr]);
                                                 return;
                                             }
                                             filesCount = filesCount + 1;
-                                            console.log(`${apps.humantime(false)}\u001b[32mLint passed:\u001b[39m ${val}`);
+                                            console.log(`${apps.humantime(false) + text.green}Lint passed:${text.none} ${val}`);
                                             if (filesCount === filesTotal) {
-                                                console.log("\u001b[32mLint complete!\u001b[39m");
+                                                console.log(`${text.green}Lint complete!${text.none}`);
                                                 next();
                                                 return;
                                             }
                                         } else {
                                             console.log(stdout);
-                                            apps.errout("Lint failure.");
+                                            apps.errout(["Lint failure."]);
                                             return;
                                         }
                                     })
@@ -842,19 +843,19 @@ import { Hash } from "crypto";
                             readDir  = function node_apps_build_lint_getFiles_readDir(filepath:string):void {
                                 node.fs.readdir(
                                     filepath,
-                                    function node_apps_build_lint_getFiles_readDir_callback(erra, list) {
+                                    function node_apps_build_lint_getFiles_readDir_callback(erra:Error, list:string[]) {
                                         const fileEval = function node_apps_build_lint_getFiles_readDir_callback_fileEval(val:string):void {
                                             const filename:string = (filepath.charAt(filepath.length - 1) === sep)
                                                 ? filepath + val
                                                 : filepath + sep + val;
                                             node.fs.stat(
                                                 filename,
-                                                function node_apps_build_lint_getFiles_readDir_callback_fileEval_stat(errb, stat) {
+                                                function node_apps_build_lint_getFiles_readDir_callback_fileEval_stat(errb:Error, stat:Stats) {
                                                     let a:number         = 0,
                                                         ignoreDir:boolean = false;
                                                     const dirtest:string   = `${filepath.replace(/\\/g, "/")}/${val}`;
                                                     if (errb !== null) {
-                                                        apps.errout(errb);
+                                                        apps.errout([errb.toString()]);
                                                         return;
                                                     }
                                                     count = count + 1;
@@ -884,7 +885,10 @@ import { Hash } from "crypto";
                                             );
                                         };
                                         if (erra !== null) {
-                                            apps.errout(`Error reading path: ${filepath}\n${erra}`);
+                                            apps.errout([
+                                                `Error reading path: ${filepath}`,
+                                                erra.toString()
+                                            ]);
                                             return;
                                         }
                                         total = total + list.length - 1;
@@ -899,21 +903,21 @@ import { Hash } from "crypto";
                     heading("TypeScript Compilation");
                     node.child("tsc --pretty", {
                         cwd: projectPath
-                    }, function node_apps_build_typescript_callback(err, stdout, stderr):void {
-                        if (stdout !== "" && stdout.indexOf(" \u001b[91merror\u001b[0m ") > -1) {
-                            console.log("\u001b[31mTypeScript reported warnings.\u001b[39m");
-                            apps.errout(stdout);
+                    }, function node_apps_build_typescript_callback(err:Error, stdout:string, stderr:string):void {
+                        if (stdout !== "" && stdout.indexOf(` \u001b[91merror${text.none} `) > -1) {
+                            console.log(`${text.red}TypeScript reported warnings.${text.none}`);
+                            apps.errout([stdout]);
                             return;
                         }
                         if (err !== null) {
-                            apps.errout(err);
+                            apps.errout([err.toString()]);
                             return;
                         }
                         if (stderr !== null && stderr !== "") {
-                            apps.errout(stderr);
+                            apps.errout([stderr]);
                             return;
                         }
-                        console.log(`${apps.humantime(false)}\u001b[32mTypeScript build completed without warnings.\u001b[39m`);
+                        console.log(`${apps.humantime(false) + text.green}TypeScript build completed without warnings.${text.none}`);
                         next();
                     });
                 }
@@ -993,7 +997,7 @@ import { Hash } from "crypto";
             apps.remove(
                 destination + sep + filename[filename.length - 1],
                 function node_apps_copy_eout_remove() {
-                    apps.errout(er);
+                    apps.errout([er.toString()]);
                 }
             );
         };
@@ -1176,7 +1180,10 @@ import { Hash } from "crypto";
         };
         if (command === "copy") {
             if (process.argv[0] === undefined || process.argv[1] === undefined) {
-                apps.errout("The copy command requires a source path and a destination path.  Please see `prettydiff commands copy` for examples.");
+                apps.errout([
+                    "The copy command requires a source path and a destination path.",
+                    `Please execute ${text.cyan}prettydiff commands copy${text.none} for examples.`
+                ]);
                 return;
             }
             params = {
@@ -1264,24 +1271,34 @@ import { Hash } from "crypto";
         util.stat(start, start);
     };
     apps.diff = function node_apps_diff():void {
+        if (options.diff === "" || options.source === "") {
+            apps.errout([
+                "Pretty Diff requires option diff when using command diff. Example:",
+                `${text.cyan}prettydiff diff source:"myFile.js" diff:"myFile1.js"${text.none}`
+            ]);
+            return;
+        }
         options.mode = "diff";
         apps.mode();
     };
-    apps.errout = function node_apps_errout(errtext:string):void {
+    apps.errout = function node_apps_errout(errtext:string[]):void {
         let stack:string = new Error().stack;
         if (process.platform.toLowerCase() === "win32") {
-            stack = stack.replace("Error", "\u001b[36mStack trace\u001b[39m\r\n-----------");
+            stack = stack.replace("Error", `${text.cyan}Stack trace${text.none}\r\n-----------`);
         } else {
-            stack = stack.replace("Error", "\u001b[36mStack trace\u001b[39m\n-----------");
+            stack = stack.replace("Error", `${text.cyan}Stack trace${text.none}\n-----------`);
         }
+        console.log("");
         console.log(stack);
         console.log("");
-        console.log("\u001b[31mScript error\u001b[39m");
+        console.log(`${text.angry}Error Message${text.none}`);
         console.log("------------");
-        if (errtext === "") {
-            console.log("\u001b[33mNo error message supplied\u001b[39m");
+        if (errtext[0] === "" && errtext.length < 2) {
+            console.log(`${text.yellow}No error message supplied${text.none}`);
         } else {
-            console.log(errtext);
+            errtext.forEach(function node_apps_errout_each(value:string):void {
+                console.log(value);
+            });
         }
         console.log("");
         process.exit(1);
@@ -1299,7 +1316,7 @@ import { Hash } from "crypto";
                     let path = node.path.resolve(process.argv[1]);
                     node.fs.writeFile(path, sample.source, "utf8", function node_apps_getFile_callback_write(err:Error) {
                         if (err !== null) {
-                            apps.errout(err.toString());
+                            apps.errout([err.toString()]);
                             return;
                         }
                         apps.output([`File ${text.cyan + path + text.none} written with ${apps.commas(sample.source.length)} characters.`]);
@@ -1310,12 +1327,18 @@ import { Hash } from "crypto";
             };
         }
         if (address === undefined) {
-            apps.errout("The get command requires an address.  Please see `prettydiff commands get` for examples.");
+            apps.errout([
+                "The get command requires an address in http/https scheme.",
+                `Please execute ${text.cyan}prettydiff commands get${text.none} for examples.`
+            ]);
             return;
         }
         if ((/^(https?:\/\/)/).test(address) === false) {
-            console.log(address);
-            apps.errout("The get command requires a web address in http/https scheme.  Please see `prettydiff commands get` for examples.");
+            apps.errout([
+                `Address: ${text.angry + address + text.none}`,
+                "The get command requires an address in http/https scheme.",
+                `Please execute ${text.cyan}prettydiff commands get${text.none} for examples.`
+            ]);
             return;
         }
         node[scheme].get(address, function node_apps_get_callback(res:Http2Stream) {
@@ -1348,14 +1371,14 @@ import { Hash } from "crypto";
             .stat(filepath, function node_apps_hash_stat(er:Error, stat:Stats):void {
                 if (er !== null) {
                     if (er.toString().indexOf("no such file or directory") > 0) {
-                        apps.errout(`filepath ${filepath} is not a file.`);
+                        apps.errout([`filepath ${filepath} is not a file.`]);
                         return;
                     }
-                    apps.errout(er);
+                    apps.errout([er.toString()]);
                     return;
                 }
                 if (stat === undefined || stat.isFile() === false) {
-                    apps.errout(`filepath ${filepath} is not a file.`);
+                    apps.errout([`filepath ${filepath} is not a file.`]);
                     return;
                 }
                 node
@@ -1366,7 +1389,7 @@ import { Hash } from "crypto";
                                 : 100;
                         let buff  = new Buffer(msize);
                         if (ero !== null) {
-                            apps.errout(ero);
+                            apps.errout([ero.toString()]);
                             return;
                         }
                         node
@@ -1380,7 +1403,7 @@ import { Hash } from "crypto";
                                 function node_apps_hash_stat_open_read(erra:Error, bytesa:number, buffera:Buffer):number {
                                     let bstring:string = "";
                                     if (erra !== null) {
-                                        apps.errout(erra);
+                                        apps.errout([erra.toString()]);
                                         return;
                                     }
                                     bstring = buffera.toString("utf8", 0, buffera.length);
@@ -1397,7 +1420,7 @@ import { Hash } from "crypto";
                                                 0,
                                                 function node_apps_hash_stat_open_read_readBinary(errb:Error, bytesb:number, bufferb:Buffer):void {
                                                     if (errb !== null) {
-                                                        apps.errout(errb);
+                                                        apps.errout([errb.toString()]);
                                                         return;
                                                     }
                                                     if (bytesb > 0) {
@@ -1427,7 +1450,7 @@ import { Hash } from "crypto";
                                                 encoding: "utf8"
                                             }, function node_apps_hash_stat_open_read_readFile(errc:Error, dump:string):void {
                                                 if (errc !== null && errc !== undefined) {
-                                                    apps.errout(errc);
+                                                    apps.errout([errc.toString()]);
                                                     return;
                                                 }
                                                 hash.on("readable", function node_apps_hash_stat_open_read_readFile_hash():void {
@@ -1611,7 +1634,7 @@ import { Hash } from "crypto";
                 secondString = `0${secondString}`;
             }
         }
-        return `\u001b[36m[${hourString}:${minuteString}:${secondString}]\u001b[39m `;
+        return `${text.cyan}[${hourString}:${minuteString}:${secondString}]${text.none} `;
     };
     apps.lists = function node_apps_lists(lists:nodeLists):void {
         // * lists.emptyline - boolean - if each key should be separated by an empty line
@@ -1629,7 +1652,7 @@ import { Hash } from "crypto";
                     lens:number = 0,
                     comm:string = "";
                 if (len < 1) {
-                    apps.errout(`Please run the build: ${text.cyan}prettydiff build${text.none}`);
+                    apps.errout([`Please run the build: ${text.cyan}prettydiff build${text.none}`]);
                     return;
                 }
                 do {
@@ -1649,21 +1672,21 @@ import { Hash } from "crypto";
                     }
                     if (item !== "") {
                         // each of the "values" keys
-                        apps.wrapit(output, `   ${text.red + text.bold}- ${text.none + text.cyan + comm + text.nocolor}: ${lists.obj.values[keylist[b]]}`);
+                        apps.wrapit(output, `   ${text.angry}- ${text.none + text.cyan + comm + text.nocolor}: ${lists.obj.values[keylist[b]]}`);
                     } else {
                         // list all items
                         if (lists.property === "eachkey") {
                             if (command === "options" && keylist[b] === "values") {
                                 // "values" keyname of options
-                                output.push(`${text.red + text.bold}* ${text.none + text.cyan + comm + text.nocolor}:`);
+                                output.push(`${text.angry}* ${text.none + text.cyan + comm + text.nocolor}:`);
                                 node_apps_lists_displayKeys(command, Object.keys(lists.obj.values).sort());
                             } else {
                                 // all items keys and their primitive value
-                                apps.wrapit(output, `${text.red + text.bold}* ${text.none + text.cyan + comm + text.nocolor}: ${lists.obj[keylist[b]]}`);
+                                apps.wrapit(output, `${text.angry}* ${text.none + text.cyan + comm + text.nocolor}: ${lists.obj[keylist[b]]}`);
                             }
                         } else {
                             // a list by key and specified property
-                            apps.wrapit(output, `${text.red + text.bold}* ${text.none + text.cyan + comm + text.nocolor}: ${lists.obj[keylist[b]][lists.property]}`);
+                            apps.wrapit(output, `${text.angry}* ${text.none + text.cyan + comm + text.nocolor}: ${lists.obj[keylist[b]][lists.property]}`);
                         }
                         if (lists.emptyline === true) {
                             output.push("");
@@ -1702,7 +1725,7 @@ import { Hash } from "crypto";
                                                     dirs.slice(0, ind).join(sep),
                                                     function node_apps_makedir_stat_restat_callback_mkdir(errb:Error):void {
                                                         if (errb !== null && errb.toString().indexOf("file already exists") < 0) {
-                                                            apps.errout(errb);
+                                                            apps.errout([errb.toString()]);
                                                             return;
                                                         }
                                                         if (ind < len) {
@@ -1715,12 +1738,12 @@ import { Hash } from "crypto";
                                             return;
                                         }
                                         if (erras.indexOf("file already exists") < 0) {
-                                            apps.errout(erra);
+                                            apps.errout([erra.toString()]);
                                             return;
                                         }
                                     }
                                     if (stata.isFile() === true) {
-                                        apps.errout(`Destination directory, '${dirToMake}', is a file.`);
+                                        apps.errout([`Destination directory, '${text.cyan + dirToMake + text.none}', is a file.`]);
                                         return;
                                     }
                                     if (ind < len) {
@@ -1743,12 +1766,12 @@ import { Hash } from "crypto";
                         return;
                     }
                     if (ers.indexOf("file already exists") < 0) {
-                        apps.errout(err);
+                        apps.errout([err.toString()]);
                         return;
                     }
                 }
                 if (stats.isFile() === true) {
-                    apps.errout(`Destination directory, '${dirToMake}', is a file.`);
+                    apps.errout([`Destination directory, '${text.cyan + dirToMake + text.none}', is a file.`]);
                     return;
                 }
                 callback();
@@ -1760,7 +1783,7 @@ import { Hash } from "crypto";
     };
     apps.mode = function node_apps_mode():void {
         if (options.source === "") {
-            apps.errout(`Pretty Diff requires use of the ${text.red + text.bold}source${text.none} option.`);
+            apps.errout([`Pretty Diff requires use of the ${text.angry}source${text.none} option.`]);
             return;
         }
         require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}parse`);
@@ -1784,38 +1807,38 @@ import { Hash } from "crypto";
                         output.push("");
                     }
                     if (auto.readmethod === true) {
-                        apps.wrapit(output, `${text.red + text.bold}*${text.none} Option ${text.cyan}readmethod${text.none} set to ${text.red + text.bold}auto${text.none}. Option ${text.cyan}source${text.none} was not provided a valid file system path so Pretty Diff processed the source value literally.`);
+                        apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}readmethod${text.none} set to ${text.angry}auto${text.none}. Option ${text.cyan}source${text.none} was not provided a valid file system path so Pretty Diff processed the source value literally.`);
                     }
                     if (auto.lang === true) {
-                        apps.wrapit(output, `${text.red + text.bold}*${text.none} Option ${text.cyan}lang${text.none} set to ${text.red + text.bold}auto${text.none} and evaluated by Pretty Diff as ${text.green + text.bold + lang[2] + text.none} by lexer ${text.green + text.bold + lang[1] + text.none}.`);
+                        apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}lang${text.none} set to ${text.angry}auto${text.none} and evaluated by Pretty Diff as ${text.green + text.bold + lang[2] + text.none} by lexer ${text.green + text.bold + lang[1] + text.none}.`);
                     }
                 } else if (options.newline === true) {
                     output.push("");
                 }
                 apps.output(output);
             },
-            inputStat = function node_apps_mode_sourceStat(err:Error, stats:Stats):void {console.log(stats);
+            inputStat = function node_apps_mode_sourceStat(err:Error, stats:Stats):void {
                 const auto:boolean = (options.readmethod === "auto");
                 if (auto === true) {
                     if (err !== null) {
                         if (err.toString().indexOf("ENOENT") > -1) {
                             screen();
                         } else {
-                            apps.errout(err.toString());
+                            apps.errout([err.toString()]);
                         }
                         return;
                     }
                 } else {
                     if (err !== null) {
-                        apps.errout(err.toString());
+                        apps.errout([err.toString()]);
                         return;
                     }
                     if ((options.readmethod === "file" || options.readmethod === "filescreen") && stats.isFile() === false) {
-                        apps.errout(`The value for the source option is ${text.red + text.bold}not an address to a file${text.none} but option readmethod is ${text.cyan + options.readmethod + text.none}.`);
+                        apps.errout([`The value for the source option is ${text.angry}not an address to a file${text.none} but option readmethod is ${text.angry + options.readmethod + text.none}.`]);
                         return;
                     }
                     if ((options.readmethod === "directory" || options.readmethod === "subdirectory") && stats.isDirectory() === false) {
-                        apps.errout(`The value for the source option is ${text.red + text.bold}not an address to a directory${text.none} but option readmethod is ${text.cyan + options.readmethod + text.none}.`);
+                        apps.errout([`The value for the source option is ${text.angry}not an address to a directory${text.none} but option readmethod is ${text.angry + options.readmethod + text.none}.`]);
                         return;
                     }
                 }
@@ -1894,7 +1917,7 @@ import { Hash } from "crypto";
                     a = a + 1;
                 } while (a < keylen);
                 if (keylen < 1) {
-                    apps.output([`${text.red + text.bold}Pretty Diff has no options match the query criteria.${text.none}`]);
+                    apps.output([`${text.angry}Pretty Diff has no options matching the query criteria.${text.none}`]);
                 } else {
                     apps.lists({
                         emptyline: true,
@@ -1927,7 +1950,7 @@ import { Hash } from "crypto";
         if (verbose === true) {
             console.log("");
             console.log("");
-            console.log(`Pretty Diff version ${text.red + text.bold + version.number + text.none} dated ${text.cyan + version.date + text.none}`);
+            console.log(`Pretty Diff version ${text.angry + version.number + text.none} dated ${text.cyan + version.date + text.none}`);
             apps.humantime(true);
         }
     };
@@ -1950,8 +1973,7 @@ import { Hash } from "crypto";
             if (command === "remove") {
                 verbose = true;
                 console.log("");
-                out.push(text.red);
-                out.push(text.bold);
+                out.push(text.angry);
                 out.push(String(numb.dirs));
                 out.push(text.none);
                 out.push(" director");
@@ -1960,8 +1982,7 @@ import { Hash } from "crypto";
                 } else {
                     out.push("ies, ");
                 }
-                out.push(text.red);
-                out.push(text.bold);
+                out.push(text.angry);
                 out.push(String(numb.file));
                 out.push(text.none);
                 out.push(" file");
@@ -1969,8 +1990,7 @@ import { Hash } from "crypto";
                     out.push("s");
                 }
                 out.push(", ");
-                out.push(text.red);
-                out.push(text.bold);
+                out.push(text.angry);
                 out.push(String(numb.symb));
                 out.push(text.none);
                 out.push(" symbolic link");
@@ -1978,8 +1998,7 @@ import { Hash } from "crypto";
                     out.push("s");
                 }
                 out.push(", and ");
-                out.push(text.red);
-                out.push(text.bold);
+                out.push(text.angry);
                 out.push(String(numb.symb));
                 out.push(text.none);
                 out.push(" other type");
@@ -1987,8 +2006,7 @@ import { Hash } from "crypto";
                     out.push("s");
                 }
                 out.push(" at ");
-                out.push(text.red);
-                out.push(text.bold);
+                out.push(text.angry);
                 out.push(apps.commas(numb.size));
                 out.push(text.none);
                 out.push(" bytes.");
@@ -2001,7 +2019,7 @@ import { Hash } from "crypto";
                 .fs
                 .unlink(item, function node_apps_remove_destroy_callback(er:Error):void {
                     if (verbose === true && er !== null && er.toString().indexOf("no such file or directory") < 0) {
-                        apps.errout(er);
+                        apps.errout([er.toString()]);
                         return;
                     }
                     if (item === dir) {
@@ -2018,7 +2036,7 @@ import { Hash } from "crypto";
                 .fs
                 .readdir(item, function node_apps_remove_readdir_callback(er:Error, files:string[]):void {
                     if (verbose === true && er !== null && er.toString().indexOf("no such file or directory") < 0) {
-                        apps.errout(er);
+                        apps.errout([er.toString()]);
                         return;
                     }
                     dirs[item] = 0;
@@ -2045,7 +2063,7 @@ import { Hash } from "crypto";
                         return;
                     }
                     if (verbose === true && er !== null && er.toString().indexOf("no such file or directory") < 0) {
-                        apps.errout(er);
+                        apps.errout([er.toString()]);
                         return;
                     }
                     delete dirs[item];
@@ -2066,7 +2084,7 @@ import { Hash } from "crypto";
                 .fs
                 .lstat(item, function node_apps_remove_stat_callback(er:Error, stats:Stats) {
                     if (verbose === true && er !== null && er.toString().indexOf("no such file or directory") < 0) {
-                        apps.errout(er);
+                        apps.errout([er.toString()]);
                         return;
                     }
                     if (stats !== undefined && stats.isFile !== undefined) {
@@ -2094,7 +2112,10 @@ import { Hash } from "crypto";
         };
         if (command === "remove") {
             if (process.argv.length < 1) {
-                apps.errout("Command remove requires a filepath");
+                apps.errout([
+                    "Command remove requires a filepath",
+                    `${text.cyan}prettydiff remove ../jsFiles${text.none}`
+                ]);
                 return;
             }
             filepath = node.path.resolve(process.argv[0]);
