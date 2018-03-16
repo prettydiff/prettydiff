@@ -540,9 +540,10 @@
                 type      : "string",
                 definition: "Determines the output format for 'parse' mode.",
                 values    : {
+                    clitable  : "generates a colorful grid of output for a command line interface",
                     htmltable : "generates a human readable report in the format of an HTML table",
-                    parallel  : "returns a series of parallel arrays",
-                    sequential: "returns an array where each index is a child array containing the parsed token" +
+                    parallel  : "returns an object containing series of parallel arrays",
+                    sequential: "returns an array where each index is a child object containing the parsed token" +
                             " and all descriptive data"
                 },
                 default   : "parallel"

@@ -1832,12 +1832,6 @@ import { Hash } from "crypto";
             },
             pdwrap = function node_apps_mode_pdwrap(stattype:"directory"|"file"|"screen"):void {
                 const output:string[] = [],
-                    nooutput:string[] = [
-                        `Pretty Diff requires use of option ${text.angry}output${text.none} to indicate where to write output.`,
-                        `To print output to the console try using option ${text.cyan}readmethod:screen${text.none} or ${text.cyan}readmethod:filescreen${text.none}`,
-                        "Example:",
-                        `${text.cyan}prettydiff ${options.mode} source:"myfile1.txt"${(options.mode === "diff") ? " diff:\"myfile2.txt\"" : ""} readmethod:filescreen${text.none}`
-                    ],
                     final = function node_apps_mode_pdwrap_final(inject?:string) {
                         if (verbose === true) {
                             if (auto.lang === true || auto.readmethod === true) {
@@ -1854,19 +1848,6 @@ import { Hash } from "crypto";
                             output.push(inject);
                         }
                         apps.output(output);
-                    },
-                    writeFile = function node_apps_mode_writeFile() {
-                        if (options.output === "") {
-                            apps.errout(nooutput);
-                            return;
-                        }
-                        node.fs.writeFile(options.output, options.source, "utf8", function node_apps_mode_pdwrap_writeFile(err:Error) {
-                            if (err !== null) {
-                                apps.errout([err.toString()]);
-                                return;
-                            }
-                            final(`${text.angry}*${text.none} Output written to ${text.cyan + node.path.resolve(options.output) + text.none} at ${text.green + apps.commas(options.source.length) + text.none} characters.`);
-                        });
                     };
                 if (options.lang === "auto") {
                     lang = prettydiff.api.language.auto(options.source, "javascript");
@@ -1894,20 +1875,103 @@ import { Hash } from "crypto";
                         output.push(diff[0]);
                         output.push("");
                         output.push(`Number of differences: ${text.cyan + (diff[1] + diff[2]) + text.none} from ${text.cyan + (diff[2] + 1) + text.none} line${plural} of code.`);
-                        final();
-                    } else if (stattype === "file") {
-                        writeFile();
                     }
                 } else {
-                    options.parsed = global.parseFramework.parserArrays(options);
-                    options.source = prettydiff[options.mode][options.lexer](options);
-                    if (options.readmethod === "screen" || options.readmethod === "filescreen") {
+                    if (options.mode === "parse" && options.parseFormat === "sequential") {
+                        options.parsed = global.parseFramework.parserObjects(options);
+                    } else {
+                        options.parsed = global.parseFramework.parserArrays(options);
+                    }
+                    if (options.mode === "parse") {
+                        options.source = JSON.stringify(options.parsed);
+                    } else {
+                        options.source = prettydiff[options.mode][options.lexer](options);
+                    }
+                    if (options.mode === "parse" && options.parseFormat === "clitable") {
+                        let a:number   = 0,
+                            str:string[] = [];
+                        const outputArrays:parsedArray = options.parsed,
+                            b:number = outputArrays.token.length,
+                            pad = function nodetest_display_pad(x:string, y:number):void {
+                                const cc:string = x
+                                        .toString()
+                                        .replace(/\s/g, " ");
+                                let dd:number = y - cc.length;
+                                str.push(cc);
+                                if (dd > 0) {
+                                    do {
+                                        str.push(" ");
+                                        dd = dd - 1;
+                                    } while (dd > 0);
+                                }
+                                str.push(" | ");
+                            },
+                            heading:string = "index | begin | lexer  | lines | presv | stack       | types       | token",
+                            bar:string     = "------|-------|--------|-------|-------|-------------|-------------|------";
+                        console.log("");
+                        console.log(heading);
+                        console.log(bar);
+                        do {
+                            if (a % 100 === 0 && a > 0) {
+                                console.log("");
+                                console.log(heading);
+                                console.log(bar);
+                            }
+                            str = [];
+                            if (outputArrays.lexer[a] === "markup") {
+                                str.push("\u001b[31m");
+                            } else if (outputArrays.lexer[a] === "script") {
+                                str.push("\u001b[32m");
+                            } else if (outputArrays.lexer[a] === "style") {
+                                str.push("\u001b[33m");
+                            }
+                            pad(a.toString(), 5);
+                            pad(outputArrays.begin[a].toString(), 5);
+                            pad(outputArrays.lexer[a].toString(), 5);
+                            pad(outputArrays.lines[a].toString(), 5);
+                            pad(outputArrays.presv[a].toString(), 5);
+                            pad(outputArrays.stack[a].toString(), 11);
+                            pad(outputArrays.types[a].toString(), 11);
+                            str.push(outputArrays.token[a].replace(/\s/g, " "));
+                            str.push("\u001b[39m");
+                            console.log(str.join(""));
+                            a = a + 1;
+                        } while (a < b);
+                        options.readmethod = "screen";
+                        verbose = true;
+                    } else if (options.readmethod === "screen" || options.readmethod === "filescreen") {
                         output.push(options.source);
-                        final();
-                    } else if (stattype === "file") {
-                        writeFile();
                     }
                 }
+                if (options.readmethod === "screen" || options.readmethod === "filescreen") {
+                    final();
+                } else if (stattype === "file") {
+                    if (options.output === "") {
+                        apps.errout([
+                            `Pretty Diff requires use of option ${text.angry}output${text.none} to indicate where to write output.`,
+                            `To print output to the console try using option ${text.cyan}readmethod:screen${text.none} or ${text.cyan}readmethod:filescreen${text.none}`,
+                            "Example:",
+                            `${text.cyan}prettydiff ${options.mode} source:"myfile1.txt"${(options.mode === "diff") ? " diff:\"myfile2.txt\"" : ""} readmethod:filescreen${text.none}`
+                        ]);
+                        return;
+                    }
+                    node.fs.writeFile(options.output, options.source, "utf8", function node_apps_mode_pdwrap_writeFile(err:Error) {
+                        if (err !== null) {
+                            apps.errout([err.toString()]);
+                            return;
+                        }
+                        final(`${text.angry}*${text.none} Output written to ${text.cyan + node.path.resolve(options.output) + text.none} at ${text.green + apps.commas(options.source.length) + text.none} characters.`);
+                    });
+                }
+                // priorities
+                // 1 parse output - line 1904 - determine parse options and tabular output from the parse tool
+                // 2 minify output
+                // 3 analysis output
+                // 4 validation
+                // 5 readmethod dir and subdir
+                // 6 prettydiff.js file for embedding
+                // 7 global installation
+                // 8 open defects
             },
             statWrapper = function node_apps_mode_statWrapper(item:"source"|"diff") {
                 node.fs.stat(options[item], function node_apps_mode_statWrapper_stat(err:Error, stats:Stats):void {
