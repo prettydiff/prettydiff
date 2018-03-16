@@ -211,7 +211,8 @@ import { Hash } from "crypto";
         command:string = (function node_command():string {
             let comkeys:string[] = Object.keys(commands),
                 filtered:string[] = [],
-                a:number = 1;
+                a:number = 1,
+                mode:string = "";
             if (process.argv[2] === undefined) {
                 console.log("");
                 console.log("Pretty Diff requires a command. Try:");
@@ -228,10 +229,37 @@ import { Hash } from "crypto";
             const arg:string = process.argv[2],
                 boldarg:string = text.angry + arg + text.none,
                 len:number = arg.length,
-                commandFilter = function node_args_filter(item:string):boolean {
+                commandFilter = function node_command_commandFilter(item:string):boolean {
                     if (item.indexOf(arg.slice(0, a)) === 0) {
                         return true;
                     }
+                    return false;
+                },
+                modeval = function node_command_modeval():boolean {
+                    let a:number = 0;
+                    const len:number = process.argv.length;
+                    do {
+                        if (process.argv[a].indexOf("mode") === 0) {
+                            if (process.argv[a].indexOf("analysis") > 0) {
+                                mode = "analysis";
+                            } else if (process.argv[a].indexOf("beautify") > 0) {
+                                mode = "beautify";
+                            } else if (process.argv[a].indexOf("diff") > 0) {
+                                mode = "diff";
+                            } else if (process.argv[a].indexOf("minify") > 0) {
+                                mode = "minify";
+                            } else if (process.argv[a].indexOf("parse") > 0) {
+                                mode = "parse";
+                            } else {
+                                return false;
+                            }
+                            console.log("");
+                            console.log(`${boldarg} is not a supported command. Pretty Diff is assuming command ${text.bold + text.cyan + mode + text.none}.`);
+                            console.log("");
+                            return true;
+                        }
+                        a = a + 1;
+                    } while (a < len);
                     return false;
                 };
             process.argv = process.argv.slice(3);
@@ -240,11 +268,17 @@ import { Hash } from "crypto";
                 a = a + 1;
             } while (filtered.length > 1 && a < len);
             if (filtered.length < 1) {
+                if (modeval() === true) {
+                    return mode;
+                }
                 console.log(`Command ${boldarg} is not a supported command.`);
                 process.exit(1);
                 return "";
             }
             if (filtered.length > 1) {
+                if (modeval() === true) {
+                    return mode;
+                }
                 console.log(`Command '${boldarg}' is ambiguous as it could refer to any of: [${text.cyan + filtered.join(", ") + text.none}]`);
                 process.exit(1);
                 return "";
@@ -1781,7 +1815,6 @@ import { Hash } from "crypto";
         options.mode = "minify";
         apps.mode();
     };
-    //checking on the status of options.diffcli default
     apps.mode = function node_apps_mode():void {
         if (options.source === "") {
             apps.errout([`Pretty Diff requires use of the ${text.angry}source${text.none} option.`]);
@@ -1797,10 +1830,49 @@ import { Hash } from "crypto";
                 source: false,
                 diff: false
             },
-            screen = function node_apps_mode_screen():void {
-                const output:string[] = [];
+            pdwrap = function node_apps_mode_pdwrap(stattype:"directory"|"file"|"screen"):void {
+                const output:string[] = [],
+                    nooutput:string[] = [
+                        `Pretty Diff requires use of option ${text.angry}output${text.none} to indicate where to write output.`,
+                        `To print output to the console try using option ${text.cyan}readmethod:screen${text.none} or ${text.cyan}readmethod:filescreen${text.none}`,
+                        "Example:",
+                        `${text.cyan}prettydiff ${options.mode} source:"myfile1.txt"${(options.mode === "diff") ? " diff:\"myfile2.txt\"" : ""} readmethod:filescreen${text.none}`
+                    ],
+                    final = function node_apps_mode_pdwrap_final(inject?:string) {
+                        if (verbose === true) {
+                            if (auto.lang === true || auto.readmethod === true) {
+                                output.push("");
+                            }
+                            if (auto.readmethod === true) {
+                                apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}readmethod${text.none} set to ${text.angry}auto${text.none}. Option ${text.cyan}source${text.none} was not provided a valid file system path so Pretty Diff processed the source value literally.`);
+                            }
+                            if (auto.lang === true) {
+                                apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}lang${text.none} set to ${text.angry}auto${text.none} and evaluated by Pretty Diff as ${text.green + text.bold + lang[2] + text.none} by lexer ${text.green + text.bold + lang[1] + text.none}.`);
+                            }
+                        }
+                        if (inject !== undefined && inject !== "") {
+                            output.push(inject);
+                        }
+                        apps.output(output);
+                    },
+                    writeFile = function node_apps_mode_writeFile() {
+                        if (options.output === "") {
+                            apps.errout(nooutput);
+                            return;
+                        }
+                        node.fs.writeFile(options.output, options.source, "utf8", function node_apps_mode_pdwrap_writeFile(err:Error) {
+                            if (err !== null) {
+                                apps.errout([err.toString()]);
+                                return;
+                            }
+                            final(`${text.angry}*${text.none} Output written to ${text.cyan + node.path.resolve(options.output) + text.none} at ${text.green + apps.commas(options.source.length) + text.none} characters.`);
+                        });
+                    };
                 if (options.lang === "auto") {
                     lang = prettydiff.api.language.auto(options.source, "javascript");
+                    if (lang[2] === "unknown") {
+                        lang[2] = "JavaScript";
+                    }
                     options.lang = lang[0];
                     options.lexer = lang[1];
                 }
@@ -1818,40 +1890,50 @@ import { Hash } from "crypto";
                         plural:string = (diff[2] > 0)
                             ? "s"
                             : "";
-                    output.push(diff[0]);
-                    output.push("");
-                    output.push(`Number of differences: ${text.cyan + (diff[1] + diff[2]) + text.none} from ${text.cyan + (diff[2] + 1) + text.none} line${plural} of code.`);
+                    if (options.readmethod === "screen" || options.readmethod === "filescreen" || options.diffcli === true) {
+                        output.push(diff[0]);
+                        output.push("");
+                        output.push(`Number of differences: ${text.cyan + (diff[1] + diff[2]) + text.none} from ${text.cyan + (diff[2] + 1) + text.none} line${plural} of code.`);
+                        final();
+                    } else if (stattype === "file") {
+                        writeFile();
+                    }
                 } else {
                     options.parsed = global.parseFramework.parserArrays(options);
                     options.source = prettydiff[options.mode][options.lexer](options);
-                    output.push(options.source);
+                    if (options.readmethod === "screen" || options.readmethod === "filescreen") {
+                        output.push(options.source);
+                        final();
+                    } else if (stattype === "file") {
+                        writeFile();
+                    }
                 }
-                if (verbose === true) {
-                    if (auto.lang === true || auto.readmethod === true) {
-                        output.push("");
-                    }
-                    if (auto.readmethod === true) {
-                        apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}readmethod${text.none} set to ${text.angry}auto${text.none}. Option ${text.cyan}source${text.none} was not provided a valid file system path so Pretty Diff processed the source value literally.`);
-                    }
-                    if (auto.lang === true) {
-                        apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}lang${text.none} set to ${text.angry}auto${text.none} and evaluated by Pretty Diff as ${text.green + text.bold + lang[2] + text.none} by lexer ${text.green + text.bold + lang[1] + text.none}.`);
-                    }
-                } else if (options.newline === true) {
-                    output.push("");
-                }
-                apps.output(output);
             },
             statWrapper = function node_apps_mode_statWrapper(item:"source"|"diff") {
-                node.fs.stat(options[item], function node_apps_mode_sourceStat(err:Error, stats:Stats):void {
-                    const auto:boolean = (options.readmethod === "auto");
-                    if (auto === true) {
+                node.fs.stat(options[item], function node_apps_mode_statWrapper_stat(err:Error, stats:Stats):void {
+                    if (auto.readmethod === true) {
                         if (err !== null) {
-                            if (err.toString().indexOf("ENOENT") > -1) {
+                            const index:any = {
+                                "sep": options[item].indexOf(node.path.sep),
+                                "<": options[item].indexOf("<"),
+                                "=": options[item].indexOf("="),
+                                ";": options[item].indexOf(";"),
+                                "{": options[item].indexOf("}")
+                            };
+                            if (err.toString().indexOf("ENOENT") > -1 && (
+                                index["sep"] < 0 ||
+                                index["<"] > -1 ||
+                                index["="] > -1 ||
+                                index[";"] > -1 ||
+                                index["{"] > -1
+                            )) {
+                                // readmethod:auto evaluated as "screen"
                                 status[item] = true;
                                 if (options.mode !== "diff" || (status.source === true && status.diff === true)) {
-                                    screen();
+                                    pdwrap("screen");
                                 }
                             } else {
+                                // readmethod:auto evaluated as filesystem path
                                 apps.errout([err.toString()]);
                             }
                             return;
@@ -1870,13 +1952,26 @@ import { Hash } from "crypto";
                             return;
                         }
                     }
+                    if (stats.isFile() === true) {
+                        node.fs.readFile(options[item], "utf8", function node_apps_mode_statWrapper_stat_readFile(erread:Error, filedata:string):void {
+                            if (erread !== null) {
+                                apps.errout([erread.toString()]);
+                                return;
+                            }
+                            options[item] = filedata;
+                            status[item] = true;
+                            if (options.mode !== "diff" || (status.diff === true && status.source === true)) {
+                                pdwrap("file");
+                            }
+                        });
+                    }
                 })
             };
         let lang:[string, string, string] = ["javascript", "script", "JavaScript"];
         options.lexerOptions = {};
         all(options, function node_apps_mode_allLexers() {
             if (options.readmethod === "screen") {
-                screen();
+                pdwrap("screen");
             } else {
                 statWrapper("source");
             }
