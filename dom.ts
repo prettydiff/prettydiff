@@ -119,13 +119,12 @@
             tabesc        : []
         },
         load                = function dom_load():void {
-            let a:number               = 0,
-                node:HTMLFormElement;
             const pages:string            = (page === null || page === undefined || page.getAttribute("id") === null)
                 ? ""
                 : page.getAttribute("id");
             if (pages === "webtool") {
-                let x:HTMLInputElement,
+                let a:number = 0,
+                    x:HTMLInputElement,
                     inputs:NodeListOf<HTMLInputElement>,
                     selects:NodeListOf<HTMLSelectElement>,
                     buttons:NodeListOf<HTMLButtonElement>,
@@ -133,9 +132,9 @@
                     idval:string              = "",
                     name:string            = "",
                     type:string            = "",
-                    button:HTMLButtonElement,
                     parent:HTMLElement;
-                const aceApply = function dom_load_aceApply(nodeName:string, maxWidth:boolean):any {
+                const parseFormat:HTMLSelectElement = id("option-parseFormat"),
+                    aceApply = function dom_load_aceApply(nodeName:string, maxWidth:boolean):any {
                         const div:HTMLDivElement        = document.createElement("div"),
                             node:HTMLDivElement       = textarea[nodeName],
                             parent:HTMLElement     = <HTMLElement>node.parentNode.parentNode,
@@ -260,7 +259,6 @@
                             if (esc === true) {
                                 if (len === 2) {
                                     //back tab
-                
                                     if (node === textarea.codeIn) {
                                         id("inputfile").focus();
                                     } else if (node === textarea.codeOut) {
@@ -270,7 +268,6 @@
                                     }
                                 } else {
                                     //forward tab
-                
                                     if (node === textarea.codeOut) {
                                         id("button-primary")
                                             .getElementsByTagName("button")[0]
@@ -629,7 +626,7 @@
                         parent = <HTMLElement>title.parentNode;
                         title.onmousedown                         = method.event.grab;
                         title.ontouchstart                        = method.event.grab;
-                        title.onfocus                             = method.event.minimize;
+                        title.onclick                             = method.event.minimize;
                         title.onblur                              = function dom_load_prepBox_blur():void {
                             title.onclick = null;
                         };
@@ -739,6 +736,21 @@
                     }
                 }
 
+                // quick option adjustment just for the browser environment
+                if (parseFormat !== null && parseFormat.innerHTML.indexOf("clitable") > 0) {
+                    const ops:NodeListOf<HTMLOptionElement> = parseFormat.getElementsByTagName("option"),
+                        opslen:number = ops.length;
+                    let a:number = 0;
+                    do {
+                        if (ops[a].innerHTML.indexOf("clitable") > -1) {
+                            ops[a].innerHTML = "renderhtml";
+                            ops[a].setAttribute("data-description", "Generates an HTML table of the parsed data and renders it for immediate display.");
+                            break;
+                        }
+                        a = a + 1;
+                    } while (a < opslen);
+                }
+
                 // build the Ace editors
                 if (test.ace === true) {
                     const val:number = (data.settings["option-insize"] === undefined || isNaN(Number(data.settings["option-insize"])) === true)
@@ -759,9 +771,9 @@
                         .getSession()
                         .setTabSize(val);
                 }
-                node = id("ace-no");
-                if (test.ace === false && node !== null && node.checked === false) {
-                    node.checked = true;
+                x = id("ace-no");
+                if (test.ace === false && x !== null && x.checked === false) {
+                    x.checked = true;
                 }
 
                 //  feedback dialogue config data (current disabled)
@@ -770,9 +782,9 @@
                     data.settings.feedback.newb    = false;
                     data.settings.feedback.veteran = false;
                 }
-                node = id("feedsubmit");
-                if (node !== null) {
-                    node.onclick = feedsubmit;
+                x = id("feedsubmit");
+                if (x !== null) {
+                    x.onclick = feedsubmit;
                 }
 
                 // assigns event handlers to input elements
@@ -868,35 +880,20 @@
                     } else if (name === "resize") {
                         buttons[a].onmousedown = method.event.resize;
                     } else if (name === "save") {
-                        button  = buttons[a];
-                        const title = <HTMLElement>button.parentNode;
-                        if (title.nodeName.toLowerCase() === "a") {
-                            if (test.agent.indexOf("firefox") < 0 && test.agent.indexOf("presto") < 0) {
-                                parent = <HTMLElement>title.parentNode;
-                                button.onclick = method.event.save;
-                                title.removeChild(node);
-                                parent.removeChild(title);
-                                parent.insertBefore(node, parent.firstChild);
-                                buttons[a].removeAttribute("tabindex");
-                            } else {
-                                title.onclick = method.event.save;
-                            }
-                        } else {
-                            node.onclick = method.event.save;
-                        }
+                        buttons[a].onclick = method.event.save;
                     }
                     a = a + 1;
                 } while (a < inputsLen);
 
                 // preps the file inputs
                 if (test.fs === false) {
-                    node = id("inputfile");
-                    if (node !== null) {
-                        node.disabled = true;
+                    x = id("inputfile");
+                    if (x !== null) {
+                        x.disabled = true;
                     }
-                    node = id("outputfile");
-                    if (node !== null) {
-                        node.disabled = true;
+                    x = id("outputfile");
+                    if (x !== null) {
+                        x.disabled = true;
                     }
                 }
 
@@ -1028,22 +1025,22 @@
                 prepBox("stat");
 
                 // sets up the option comment string
-                node = id("commentString");
-                if (node !== null) {
+                x = id("commentString");
+                if (x !== null) {
                     if (localStorage.commentString !== undefined && localStorage.commentString !== null && localStorage.commentString !== "") {
                         data.commentString = JSON.parse(localStorage.commentString);
                     }
-                    if (node.value.length === 0) {
-                        node.innerHTML = "/*prettydiff.com \u002a/";
+                    if (x.value.length === 0) {
+                        x.innerHTML = "/*prettydiff.com \u002a/";
                     } else {
-                        node.innerHTML = "/*prettydiff.com " + data
+                        x.innerHTML = "/*prettydiff.com " + data
                             .commentString
                             .join(", ")
                             .replace(/api\./g, "") + " \u002a/";
                     }
-                    node = id("commentClear");
-                    if (node !== null) {
-                        node.onclick = clearComment;
+                    x = id("commentClear");
+                    if (x !== null) {
+                        x.onclick = clearComment;
                     }
                 }
 
@@ -1179,9 +1176,9 @@
                         } else if (param[0] === "jscorrect" || param[0] === "correct" || param[0] === "fix") {
                             param[0] = "correct";
                             param[1] = "true";
-                            node = id("option-true-correct");
-                            if (node !== null) {
-                                node.checked = true;
+                            x = id("option-true-correct");
+                            if (x !== null) {
+                                x.checked = true;
                             }
                         } else if (param[0] === "html") {
                             param[1] = "true";
@@ -2184,7 +2181,8 @@
                 method.app.hideOutput();
             }
             if (pages === "documentation") {
-                let b:number           = 0,
+                let a:number = 0,
+                    b:number           = 0,
                     colorParam:string  = (typeof location === "object" && typeof location.href === "string" && location.href.indexOf("?") > -1)
                         ? location
                             .href
@@ -2263,7 +2261,7 @@
                             b = 0;
                             do {
                                 if (options[b].value.toLowerCase() === colorParam) {
-                                    node.selectedIndex = b;
+                                    colorScheme.selectedIndex = b;
                                     break;
                                 }
                                 b = b + 1;
@@ -2301,7 +2299,7 @@
                             .toLowerCase()
                             .split("?")[1]
                         : "";
-                node    = id("colorScheme");
+                const node    = id("colorScheme");
                 options = node.getElementsByTagName("option");
                 olen    = options.length;
                 if (node !== null) {
@@ -2465,7 +2463,7 @@
     // stretches input to 100% width if output is a html report
     method.app.hideOutput = function dom_app_hideOutput():void {
         let hide:boolean;
-        if (options.parseFormat === "htmltable" && options.mode === "parse" && id("parseTable-html") !== null && id("parseTable-html").checked === true) {
+        if (options.parseFormat === "renderhtml" && options.mode === "parse") {
             hide = true;
         } else if (options.jsscope === "report" && options.mode === "beautify") {
             hide = true;
@@ -3012,7 +3010,6 @@
                         test.filled.code = false;
                     }
                     if (options.mode === "parse" || (options.lang === "csv" && options.mode !== "diff")) {
-                        pdlang = JSON.stringify(output);
                         if (report.code.box !== null) {
                             if (options.lang === "csv") {
                                 let a:number       = 0,
@@ -3116,55 +3113,49 @@
                                     .body
                                     .appendChild(div);
                             } else if (options.mode === "parse") {
-                                let table:string[] = [],
-                                    build:string = "",
-                                    render:HTMLInputElement = id("parseTable-html");
-                                if (options.parseFormat !== "htmltable" || render === null || (options.parseFormat === "htmltable" && render.checked === false)) {
+                                if (options.parseFormat === false) {
                                     if (options.lang !== "csv") {
-                                        build = JSON.stringify(JSON.parse(output).data);
-                                        if (options.parseFormat === "htmltable") {
-                                            build = build.slice(1, build.length - 1).replace(/\\"/g, "\"");
-                                        }
                                         if (test.ace === true) {
                                             aceStore
-                                                .parsOut
-                                                .setValue(build);
+                                                .codeOut
+                                                .setValue(output);
                                             aceStore
-                                                .parsOut
+                                                .codeOut
                                                 .clearSelection();
                                         } else {
-                                            textarea.codeOut.value = build;
+                                            textarea.codeOut.value = output;
                                         }
                                     }
                                     return;
                                 }
                                 if (report.code.box !== null) {
+                                    const table:string[] = [];
                                     table.push("<div class='report'><h4>Parsed Output</h4>");
-                                    table.push(JSON.parse(output).data);
+                                    table.push(output);
                                     table.push("</div>");
-                                    build = table.join("");
+                                    output = table.join("");
                                     if (autotest === true) {
-                                        report.code.body.innerHTML = `<p>Code type is set to <strong>auto</strong>. <span>Presumed language is <em>${data.langvalue[2]}</em>.</span></p>${build}`;
+                                        report.code.body.innerHTML = `<p>Code type is set to <strong>auto</strong>. <span>Presumed language is <em>${data.langvalue[2]}</em>.</span></p>${output}`;
                                     } else {
-                                        report.code.body.innerHTML = build;
+                                        report.code.body.innerHTML = output;
                                     }
                                     if (report.code.body.style.display === "none") {
-                                        report.code.box.getElementsByTagName("h3")[0].click();
+                                        report.code.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0].click();
                                     }
-                                    report.code.box.style.top   = (data.settings.codereport.top / 10) + "em";
+                                    report.code.box.style.top   = (data.settings.report.code.top / 10) + "em";
                                     report.code.box.style.right = "auto";
                                 }
                             }
                         } else if (options.lang !== "csv") {
                             if (test.ace === true) {
                                 aceStore
-                                    .parsOut
-                                    .setValue(pdlang);
+                                    .codeOut
+                                    .setValue(output);
                                 aceStore
-                                    .parsOut
+                                    .codeOut
                                     .clearSelection();
                             } else {
-                                textarea.codeOut.value = pdlang;
+                                textarea.codeOut.value = output;
                             }
                         }
                     } else if (options.mode === "beautify") {
@@ -3187,7 +3178,7 @@
                                 if (report.code.body.style.display === "none") {
                                     report.code.box.getElementsByTagName("h3")[0].click();
                                 }
-                                report.code.box.style.top   = (data.settings.codereport.top / 10) + "em";
+                                report.code.box.style.top   = (data.settings.report.code.top / 10) + "em";
                                 report.code.box.style.right = "auto";
                                 diffList                                 = report
                                     .code
@@ -3254,10 +3245,10 @@
                     } else if (options.mode === "minify") {
                         if (test.ace === true) {
                             aceStore
-                                .minnOut
+                                .codeOut
                                 .setValue(output);
                             aceStore
-                                .minnOut
+                                .codeOut
                                 .clearSelection();
                         } else {
                             textarea.codeOut.value = output;
@@ -3276,10 +3267,10 @@
                             report.code.box.style.right = "auto";
                         } else if (test.ace === true) {
                             aceStore
-                                .analOut
+                                .codeOut
                                 .setValue(output);
                             aceStore
-                                .analOut
+                                .codeOut
                                 .clearSelection();
                         } else {
                             textarea.codeOut.value = output.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -3346,7 +3337,57 @@
                 } else {
                     meta.insize = options.source.length;
                     options.parsed = window.parseFramework.parserArrays(options);
-                    output = prettydiff[options.mode][options.lexer](options);
+                    if (options.mode === "parse") {
+                        if (options.parseFormat === "htmltable" || options.parseFormat === "renderhtml") {
+                            const parsLen:number = options.parsed.token.length,
+                                keys = Object.keys(options.parsed),
+                                keylen:number = keys.length,
+                                headingString:string = (function dom_event_execute_app_execOutput_heading():string {
+                                    const hout:string[] = ["<tr><th>index</th>"];
+                                    let b:number = 0;
+                                    do {
+                                        if (keys[b] !== "token") {
+                                            hout.push(`<th>${keys[b]}</th>`);
+                                        }
+                                        b = b + 1;
+                                    } while (b < keylen);
+                                    hout.push("<th>token</th></tr>");
+                                    return hout.join("");
+                                }()),
+                                row = function dom_event_execute_app_execOutput_row():string {
+                                    const hout:string[] = ["<tr>"];
+                                    let b = 0;
+                                    hout.push(`<td>${a}</td>`);
+                                    do {
+                                        if (keys[b] !== "token") {
+                                            hout.push(`<td>${options.parsed[keys[b]][a].toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</td>`);
+                                        }
+                                        b = b + 1;
+                                    } while (b < keylen);
+                                    hout.push(`<td>${options.parsed.token[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</td></tr>`);
+                                    return hout.join("");
+                                },
+                                parsOut:string[] = [];
+                            parsOut.push(`<p><strong>${parsLen}</strong> total parsed tokens</p>`);
+                            parsOut.push("<table><thead>");
+                            parsOut.push(headingString);
+                            parsOut.push("</thead><tbody>");
+                            let a:number = 0;
+                            do {
+                                if (a % 100 === 0 && a > 0) {
+                                    parsOut.push(headingString);
+                                }
+                                parsOut.push(row());
+                                a = a + 1;
+                            } while (a < parsLen);
+                            parsOut.push("</tbody></table>");
+                            output = parsOut.join("");
+                        } else {
+                            output = JSON.stringify(options.parsed);
+                        }
+                    } else {
+                        output = prettydiff[options.mode][options.lexer](options);
+                    }
                 }
                 delete options.parsed;
                 execOutput();
@@ -3893,6 +3934,9 @@
                     body.style.width  = widthTarget + "em";
                     body.style.height = heightTarget + "em";
                     heading.style.width    = (widthTarget - saveSpace) + "em";
+                    body.style.right = "auto";
+                    body.style.display = "block";
+                    box.getElementsByTagName("p")[0].style.display = "block";
                     method
                         .app
                         .options(e);

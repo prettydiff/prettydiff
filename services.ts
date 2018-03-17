@@ -1892,7 +1892,7 @@ import { Hash } from "crypto";
                             str:string[] = [];
                         const outputArrays:parsedArray = options.parsed,
                             b:number = outputArrays.token.length,
-                            pad = function nodetest_display_pad(x:string, y:number):void {
+                            pad = function node_apps_mode_pdwrap_pad(x:string, y:number):void {
                                 const cc:string = x
                                         .toString()
                                         .replace(/\s/g, " ");
