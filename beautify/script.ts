@@ -125,7 +125,12 @@
                 options.correct = false;
             }
         }());
+        let scolon:number = 0,
+            news:number = 0;
         const data:parsedArray = options.parsed,
+            markupvar:number[] = [],
+            globals:string[] = [],
+            meta:any = [],
             levels:number[] = (function beautify_script_level():number[] {
                 let a             = 0, //will store the current level of indentation
                     b:number = data.token.length,
@@ -352,7 +357,8 @@
                             b    = b - 1;
                             item = item.slice(1, item.length - 1);
                             bb   = Math.floor(item.length / wrap) * wrap;
-                            for (aa = 0; aa < bb; aa = aa + wrap) {
+                            aa = 0;
+                            do {
                                 cc = aa + wrap + dd;
                                 if (item.charAt(cc - 5) === "\\" && uchar.test(item.slice(cc - 4, cc + 1)) === true) {
                                     slash(5, true);
@@ -389,7 +395,8 @@
                                 if (aa < item.length - wrap) {
                                     tokenpush("+", "operator");
                                 }
-                            }
+                                aa = aa + wrap;
+                            } while (aa < bb);
                             if (aa < item.length) {
                                 tokenpush(qchar + item.slice(aa, aa + wrap) + qchar, "literal");
                             }
@@ -488,7 +495,7 @@
                         destructfix(false, false);
                         if (data.token[a - 1] === ",") {
                             level[a - 1] = indent;
-                        } else if (data.lines[a - 1] === 0 && data.types[a - 1] !== "comment" && data.types[a - 1] !== "comment-inline") {
+                        } else if (data.lines[a - 1] === 0 && data.types[a - 1] !== "comment") {
                             level[a - 1] = -20;
                         } else if (ltoke === "=" && (/^(\/\*\*\s*@[a-z_]+\s)/).test(ctoke) === true) {
                             level[a - 1] = -10;
@@ -563,6 +570,9 @@
                         } else {
                             level.push(-20);
                         }
+                        if (varline[varline.length - 1] === true) {
+                            markupvar.push(a);
+                        }
                     },
                     separator     = function beautify_script_separator():void {
                         let methtest:boolean      = false;
@@ -582,7 +592,7 @@
                                         if (data.token[c] === ".") {
                                             e = e + 1;
                                         }
-                                        if (data.token[c] === ";" || data.token[c] === "," || data.types[c] === "operator" || data.token[c] === "return" || data.token[c] === "break" || data.token[c] === "continue" || data.types[c] === "comment" || data.types[c] === "comment-inline") {
+                                        if (data.token[c] === ";" || data.token[c] === "," || data.types[c] === "operator" || data.token[c] === "return" || data.token[c] === "break" || data.token[c] === "continue" || data.types[c] === "comment") {
                                             break;
                                         }
                                         if (data.types[c - 1] === "end") {
@@ -604,13 +614,15 @@
                                         c = c + 1;
                                     } while (c < a && (data.token[c] !== "." || data.begin[c] !== d));
                                 }
-                                for (e = c; e < a; e = e + 1) {
+                                e = c;
+                                do {
                                     if (data.token[e] === "." && data.begin[e] === d) {
                                         level[e - 1] = indent;
                                     } else if (level[e] > -9) {
                                         level[e] = level[e] + 1;
                                     }
-                                }
+                                    e = e + 1;
+                                } while (e < a);
                                 level[a - 1] = indent;
                                 ei.push(a);
                             };
@@ -619,7 +631,7 @@
                             level.push(-20);
                             return;
                         }
-                        if ((options.methodchain === "chain" || (options.methodchain === "none" && data.lines[a] < 1)) && data.types[a - 1] === "comment-inline" && a > 1) {
+                        if ((options.methodchain === "chain" || options.methodchain === "none") && data.lines[a] < 2 && data.types[a - 1] === "comment" && a > 1) {
                             let c:number    = a,
                                 d:number    = b;
                             const last:string = data.token[a - 1];
@@ -630,14 +642,14 @@
                                 data.types[c - 1] = data.types[c];
                                 if (data.token[c] === ";" || data.token[c] === "x;" || data.token[c] === "{" || data.token[c] === "x{" || data.lines[c] > 0) {
                                     data.token[c] = last;
-                                    data.types[c] = "comment-inline";
+                                    data.types[c] = "comment";
                                     a        = a - 1;
                                     break;
                                 }
                                 c = c + 1;
                             } while (c < d);
                             data.token[c - 1] = last;
-                            data.types[c - 1] = "comment-inline";
+                            data.types[c - 1] = "comment";
                             a            = a - 1;
                         }
                         if (ctoke === ".") {
@@ -648,26 +660,28 @@
                                     destructfix(false, false);
                                 }
                             }
-                            if ((options.methodchain === "chain" || (options.methodchain === "none" && data.lines[a] < 1)) && ltype !== "comment" && ltype !== "comment-inline") {
+                            if (data.types[a - 1] === "comment") {
+                                if (ei[ei.length - 1] > 0) {
+                                    level[a - 1] = indent;
+                                } else {
+                                    level[a - 1] = indent + 1;
+                                }
+                            } else if (
+                                (options.methodchain === "chain" || (options.methodchain === "none" && data.lines[a] < 1)) &&
+                                data.types[a - 1] !== "comment"
+                            ) {
                                 level[a - 1] = -20;
                             } else {
                                 if (data.token[data.begin[a]] !== "(" && data.token[data.begin[a]] !== "x(" && (data.types[a + 2] === "start" || ltoke === ")" || (data.token[ei[ei.length - 1]] !== "."))) {
                                     if (data.token[ei[ei.length - 1]] !== "." && options.nochainindent === false) {
                                         propertybreak();
                                     } else {
-                                        level[a - 1] = indent;
+                                        level[a - 1] = indent + 1;
                                     }
                                 } else if (data.token[ei[ei.length - 1]] === ".") {
-                                    level[a - 1] = indent;
+                                    level[a - 1] = indent + 1;
                                 } else {
                                     level[a - 1] = -20;
-                                }
-                            }
-                            if (data.types[a - 1] === "comment" || data.types[a - 1] === "comment-inline") {
-                                if (ei[ei.length - 1] > 0) {
-                                    level[a - 1] = indent;
-                                } else {
-                                    level[a - 1] = indent + 1;
                                 }
                             }
                             level.push(-20);
@@ -779,14 +793,16 @@
                                                 level[c] = -20;
                                             }
                                             if (data.token[a - 2] === "+" && ltype === "literal" && level[a - 2] > 0 && (ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'")) {
-                                                for (d = a - 2; d > c; d = d - 2) {
+                                                d = a - 2;
+                                                do {
                                                     if (data.token[d] !== "+") {
                                                         break;
                                                     }
                                                     if (data.token[d - 1].charAt(0) !== "\"" && data.token[d - 1].charAt(0) !== "'") {
                                                         level[d] = -10;
                                                     }
-                                                }
+                                                    d = d - 2;
+                                                } while (d > c);
                                                 break;
                                             }
                                         }
@@ -842,6 +858,9 @@
                             if (data.token[data.begin[a] - 1] !== "for") {
                                 destructfix(false, false);
                             }
+                            if (ctoke === "x;") {
+                                scolon = scolon + 1;
+                            }
                             wordlist[wordlist.length - 1] = false;
                             level[a - 1] = -20;
                             if (varline[varline.length - 1] === true) {
@@ -883,7 +902,7 @@
                         }
                     },
                     start         = function beautify_script_start():void {
-                        const deep:string   = data.stack[a],
+                        const deep:string   = data.stack[a + 1],
                             deeper:string = (a === 0)
                                 ? data.stack[a]
                                 : data.stack[a - 1];
@@ -931,7 +950,7 @@
                             if (ctoke === "{") {
                                 varline.push(false);
                             }
-                            if (data.types[a - 1] !== "comment" && data.types[a - 1] !== "comment-inline") {
+                            if (data.types[a - 1] !== "comment") {
                                 if (ltype === "markup") {
                                     level[a - 1] = indent;
                                 } else if (options.braces === true && ltype !== "operator" && ltoke !== "return") {
@@ -976,8 +995,11 @@
                             if (ltoke === "-" && (data.token[a - 2] === "(" || data.token[a - 2] === "x(")) {
                                 level[a - 2] = -20;
                             }
+                            if ((options.jsscope !== "none" || options.mode === "minify") && (ltoke === "function" || data.token[a - 2] === "function")) {
+                                meta[meta.length - 1] = 0;
+                            }
                             if (ltype === "end" && deeper !== "if" && deeper !== "for" && deeper !== "catch" && deeper !== "else" && deeper !== "do" && deeper !== "try" && deeper !== "finally" && deeper !== "catch") {
-                                if (data.types[a - 1] === "comment" || data.types[a - 1] === "comment-inline") {
+                                if (data.types[a - 1] === "comment") {
                                     level[a - 1] = indent;
                                 } else {
                                     level[a - 1] = -20;
@@ -1014,7 +1036,7 @@
                             }
                             if (ltoke === "return" || ltoke === "var" || ltoke === "let" || ltoke === "const") {
                                 level[a - 1] = -10;
-                            } else if (data.types[a - 1] !== "comment" && data.types[a - 1] !== "comment-inline" && data.stack[a - 1] !== "attribute" && (ltype === "end" || ltype === "word")) {
+                            } else if (data.types[a - 1] !== "comment" && data.stack[a - 1] !== "attribute" && (ltype === "end" || ltype === "word")) {
                                 level[a - 1] = -20;
                             } else if (ltoke !== "{" && (ltoke === "[" || ltoke === "{" || ltoke === "x{")) {
                                 level[a - 1] = indent - 1;
@@ -1096,7 +1118,7 @@
                             }
                         }
                         if (ctoke === "}" || ctoke === "x}") {
-                            if (data.types[a - 1] !== "comment" && data.types[a - 1] !== "comment-inline" && ltoke !== "{" && ltoke !== "x{" && ltype !== "end" && ltype !== "literal" && ltype !== "separator" && ltoke !== "++" && ltoke !== "--" && varline[varline.length - 1] === false && (a < 2 || data.token[a - 2] !== ";" || data.token[a - 2] !== "x;" || ltoke === "break" || ltoke === "return")) {
+                            if (data.types[a - 1] !== "comment" && ltoke !== "{" && ltoke !== "x{" && ltype !== "end" && ltype !== "literal" && ltype !== "separator" && ltoke !== "++" && ltoke !== "--" && varline[varline.length - 1] === false && (a < 2 || data.token[a - 2] !== ";" || data.token[a - 2] !== "x;" || ltoke === "break" || ltoke === "return")) {
                                 let c:number       = a - 1,
                                     d:number       = 1,
                                     assign:boolean  = false,
@@ -1148,7 +1170,7 @@
                                     if (d < 0) {
                                         break;
                                     }
-                                    if (data.token[c] !== build[build.length - 1]) {
+                                    if (meta[c] > "v" && data.token[c] !== build[build.length - 1]) {
                                         build.push(data.token[c]);
                                     } else if (d === 1 && data.token[c] === ")") {
                                         paren = true;
@@ -1156,11 +1178,26 @@
                                         build.push(data.token[c]);
                                     }
                                     if (c === lettest) {
+                                        meta[c] = a - 1;
+                                        if (data.token[c] === "let" || data.token[c] === "const") {
+                                            meta[meta.length - 2] = [build, true];
+                                        }
                                         build   = [];
                                         lettest = -1;
                                     }
                                     if (c > 0 && data.token[c - 1] === "function" && data.types[c] === "word" && data.token[c] !== build[build.length - 1]) {
                                         build.push(data.token[c]);
+                                    }
+                                    if (d === 0) {
+                                        if (data.token[c] === "function") {
+                                            if (data.types[c + 1] === "word") {
+                                                meta[c + 2] = a;
+                                            } else {
+                                                meta[c + 1] = a;
+                                            }
+                                            meta[meta.length - 1] = [build, false];
+                                            return;
+                                        }
                                     }
                                     c = c - 1;
                                 } while (c > -1);
@@ -1357,13 +1394,13 @@
                             }
                             level[a - 1] = -20;
                             level.push(-20);
-                        } else if ((data.types[a - 1] === "comment" && data.token[a - 1].substr(0, 2) === "//") || data.types[a - 1] === "comment-inline") {
+                        } else if (data.types[a - 1] === "comment" && data.token[a - 1].substr(0, 2) === "//") {
                             if (data.token[a - 2] === "x}") {
                                 level[a - 3] = indent + 1;
                             }
                             level[a - 1] = indent;
                             level.push(-20);
-                        } else if (data.types[a - 1] !== "comment" && data.types[a - 1] !== "comment-inline" && ((ltoke === "{" && ctoke === "}") || (ltoke === "[" && ctoke === "]"))) {
+                        } else if (data.types[a - 1] !== "comment" && ((ltoke === "{" && ctoke === "}") || (ltoke === "[" && ctoke === "]"))) {
                             level[a - 1] = -20;
                             if (ctoke === "}" && options.lang === "titanium") {
                                 level.push(indent);
@@ -1772,7 +1809,7 @@
                             level.push(-10);
                             return;
                         }
-                        if (data.types[a - 1] !== "comment" && data.types[a - 1] !== "comment-inline") {
+                        if (data.types[a - 1] !== "comment") {
                             if (ltoke === "(") {
                                 level[a - 1] = -20;
                             } else if (ctoke === "*" && data.stack[a] === "object" && data.types[a + 1] === "word" && (ltoke === "{" || ltoke === ",")) {
@@ -1891,6 +1928,11 @@
                                     varlen[varlen.length - 1].push(a);
                                 }
                             }
+                            if (options.jsscope !== "none" || options.mode === "minify") {
+                                meta[meta.length - 1] = "v";
+                            }
+                        } else if ((options.jsscope !== "none" || options.mode === "minify") && ltoke === "function") {
+                            meta[meta.length - 1] = "v";
                         }
                         if ((ltoke === ")" || ltoke === "x)") && data.stack[a] === "class" && (data.token[data.begin[a - 1] - 1] === "static" || data.token[data.begin[a - 1] - 1] === "final" || data.token[data.begin[a - 1] - 1] === "void")) {
                             level[a - 1]            = -10;
@@ -1909,86 +1951,76 @@
                             lettest = a;
                         }
                         if (ctoke === "new") {
-                            let c:number       = 0,
-                                nextish:string = (typeof next === "string")
-                                    ? next
-                                    : "",
-                                apiword:string[] = (nextish === "")
-                                    ? []
-                                    : [
-                                        "ActiveXObject",
-                                        "ArrayBuffer",
-                                        "AudioContext",
-                                        "Canvas",
-                                        "CustomAnimation",
-                                        "DOMParser",
-                                        "DataView",
-                                        "Date",
-                                        "Error",
-                                        "EvalError",
-                                        "FadeAnimation",
-                                        "FileReader",
-                                        "Flash",
-                                        "Float32Array",
-                                        "Float64Array",
-                                        "FormField",
-                                        "Frame",
-                                        "Generator",
-                                        "HotKey",
-                                        "Image",
-                                        "Iterator",
-                                        "Intl",
-                                        "Int16Array",
-                                        "Int32Array",
-                                        "Int8Array",
-                                        "InternalError",
-                                        "Loader",
-                                        "Map",
-                                        "MenuItem",
-                                        "MoveAnimation",
-                                        "Notification",
-                                        "ParallelArray",
-                                        "Point",
-                                        "Promise",
-                                        "Proxy",
-                                        "RangeError",
-                                        "Rectangle",
-                                        "ReferenceError",
-                                        "Reflect",
-                                        "RegExp",
-                                        "ResizeAnimation",
-                                        "RotateAnimation",
-                                        "Set",
-                                        "SQLite",
-                                        "ScrollBar",
-                                        "Set",
-                                        "Shadow",
-                                        "StopIteration",
-                                        "Symbol",
-                                        "SyntaxError",
-                                        "Text",
-                                        "TextArea",
-                                        "Timer",
-                                        "TypeError",
-                                        "URL",
-                                        "Uint16Array",
-                                        "Uint32Array",
-                                        "Uint8Array",
-                                        "Uint8ClampedArray",
-                                        "URIError",
-                                        "WeakMap",
-                                        "WeakSet",
-                                        "Web",
-                                        "Window",
-                                        "XMLHttpRequest"
-                                    ],
-                                apilen:number  = apiword.length;
-                            do {
-                                if (nextish === apiword[c]) {
-                                    break;
-                                }
-                                c = c + 1;
-                            } while(c < apilen);
+                            let apiword:string[] = [
+                                    "ActiveXObject",
+                                    "ArrayBuffer",
+                                    "AudioContext",
+                                    "Canvas",
+                                    "CustomAnimation",
+                                    "DOMParser",
+                                    "DataView",
+                                    "Date",
+                                    "Error",
+                                    "EvalError",
+                                    "FadeAnimation",
+                                    "FileReader",
+                                    "Flash",
+                                    "Float32Array",
+                                    "Float64Array",
+                                    "FormField",
+                                    "Frame",
+                                    "Generator",
+                                    "HotKey",
+                                    "Image",
+                                    "Iterator",
+                                    "Intl",
+                                    "Int16Array",
+                                    "Int32Array",
+                                    "Int8Array",
+                                    "InternalError",
+                                    "Loader",
+                                    "Map",
+                                    "MenuItem",
+                                    "MoveAnimation",
+                                    "Notification",
+                                    "ParallelArray",
+                                    "Point",
+                                    "Promise",
+                                    "Proxy",
+                                    "RangeError",
+                                    "Rectangle",
+                                    "ReferenceError",
+                                    "Reflect",
+                                    "RegExp",
+                                    "ResizeAnimation",
+                                    "RotateAnimation",
+                                    "Set",
+                                    "SQLite",
+                                    "ScrollBar",
+                                    "Set",
+                                    "Shadow",
+                                    "StopIteration",
+                                    "Symbol",
+                                    "SyntaxError",
+                                    "Text",
+                                    "TextArea",
+                                    "Timer",
+                                    "TypeError",
+                                    "URL",
+                                    "Uint16Array",
+                                    "Uint32Array",
+                                    "Uint8Array",
+                                    "Uint8ClampedArray",
+                                    "URIError",
+                                    "WeakMap",
+                                    "WeakSet",
+                                    "Web",
+                                    "Window",
+                                    "XMLHttpRequest"
+                                ];
+                            if (apiword.indexOf(data.token[a + 1]) < 0) {
+                                news = news + 1;
+                            }
                             if (options.jsscope !== "none") {
                                 data.token[a] = "<strong class='new'>new</strong>";
                             }
@@ -2106,12 +2138,17 @@
                     indent = indent - 1;
                 }
                 do {
+                    if (options.jsscope !== "none" || options.mode === "minify") {
+                        meta.push("");
+                    }
                     ctype = data.types[a];
                     ctoke = data.token[a];
                     if (ctype === "comment") {
-                        comment();
-                    } else if (ctype === "comment-inline") {
-                        commentInline();
+                        if (data.lines[a - 1] < 2) {
+                            commentInline();
+                        } else {
+                            comment();
+                        }
                     } else if (ctype === "regex") {
                         level.push(-20);
                     } else if (ctype === "literal") {
@@ -2142,7 +2179,7 @@
                     } else {
                         level.push(-10);
                     }
-                    if (ctype !== "comment" && ctype !== "comment-inline") {
+                    if (ctype !== "comment") {
                         ltype = ctype;
                         ltoke = ctoke;
                     }
@@ -2166,8 +2203,838 @@
                         } while (index > 0);
                         return tabby.join("");
                     }()),
+                    lf:"\r\n"|"\n" = (options.crlf === true)
+                        ? "\r\n"
+                        : "\n",
                     pres:number = options.preserve + 1,
-                    nl = function beautify_script_output_nl(tabs):string {
+                    invisibles:string[] = ["x;", "x}", "x{", "x(", "x)"];
+                let a:number = 0;
+                if (options.jsscope !== "none") {
+                    let linecount:number          = 2,
+                        last:string               = "",
+                        scope:number              = 1,
+                        buildlen:number           = 0,
+                        commentfix:number         = (function beautify_script_output_scope_commentfix():number {
+                            let aa:number = 1,
+                                bb:number = 1;
+                            if (
+                                data.types[0] !== "comment" ||
+                                (data.token[0].indexOf("//") === 0 && data.lines[0] > 0) ||
+                                data.types[1] !== "comment"
+                            ) {
+                                return 1;
+                            }
+                            do {
+                                if (data.token[aa].indexOf("/*") === 0) {
+                                    bb = bb + 1;
+                                }
+                                aa = aa + 1;
+                            } while (data.types[aa] === "comment" && aa < len);
+                            return bb + 1;
+                        }()),
+                        indent:number             = options.inlevel,
+                        comfold:number            = -1;
+                    const code:string[] = [],
+                        folderItem:[number, number, boolean][]         = [],
+                        folder             = function beautify_script_output_scope_folder():void {
+                            let codelen:number = (code.length - (commentfix * 3) > 0)
+                                    ? code.length - (commentfix * 3)
+                                    : 1,
+                                index:number   = a,
+                                start:number   = Number(code[codelen + 1]) || 1,
+                                assign:boolean  = true,
+                                kk:number      = index;
+                            if (data.types[a] === "comment" && comfold === -1) {
+                                comfold = a;
+                            } else if (data.types[a] !== "comment") {
+                                index = meta[a];
+                                do {
+                                    kk = kk - 1;
+                                } while (data.token[kk] !== "function" && kk > -1);
+                                kk = kk - 1;
+                                if (data.token[kk] === "(" || data.token[kk] === "x(") {
+                                    do {
+                                        kk = kk - 1;
+                                    } while (kk > -1 && (data.token[kk] === "(" || data.token[kk] === "x("));
+                                }
+                                if (
+                                    data.token[kk] === "=" ||
+                                    data.token[kk] === ":" ||
+                                    data.token[kk] === "," ||
+                                    data.token[kk + 1] === "(" ||
+                                    data.token[kk + 1] === "x("
+                                ) {
+                                    assign = false;
+                                }
+                            }
+                            if (data.types[a] === "comment" && data.lines[a] > 1) {
+                                codelen = codelen - 3;
+                                start   = start - 1;
+                            }
+                            code[codelen]     = `<li class="fold" title="folds from line ${start} to line xxx">`;
+                            code[codelen + 1] = `- ${start}`;
+                            folderItem.push([codelen, index, assign]);
+                        },
+                        // determines where folding ends function assignments require one more line for
+                        // closing than everything else
+                        foldclose          = function beautify_script_output_scope_foldclose():void {
+                            const semi:boolean = (/(>;<\/em>)$/).test(data.token[a]);
+                            let gg:number   = build.length - 1,
+                                lets:boolean = false,
+                                end:number  = (function beautify_script_output_scope_foldclose_end():number {
+                                    if (comfold > -1 || folderItem[folderItem.length - 1][2] === true) {
+                                        return linecount - commentfix - 1;
+                                    }
+                                    return linecount - commentfix;
+                                }());
+                            if (semi === true) {
+                                end = end - 1;
+                                do {
+                                    if (build[gg] === "let" || build[gg] === "const") {
+                                        lets = true;
+                                    }
+                                    if (build[gg].indexOf("><li") > 0) {
+                                        build[gg] = build[gg].replace(/class='l\d+'/, `class="l${scope + 1}`);
+                                        if (lets === true) {
+                                            break;
+                                        }
+                                    }
+                                    if (build[gg].indexOf(`<em class="l${scope}">${tab}`) > -1) {
+                                        build[gg] = build[gg].replace(
+                                            `<em class="l${scope}">${tab}`,
+                                            `<em class="l${scope + 1}">${tab}`
+                                        );
+                                    }
+                                    gg = gg - 1;
+                                } while (gg > 0);
+                            }
+                            if (
+                                a > 1 &&
+                                data.token[a].indexOf("}</em>") === data.token[a].length - 6 &&
+                                data.token[a - 1].indexOf("{</em>") === data.token[a - 1].length - 6
+                            ) {
+                                gg = code.length - 1;
+                                do {
+                                    if (code[gg].charAt(0) === "-") {
+                                        code[gg - 1] = "<li>";
+                                        code[gg]     = code[gg].slice(0, 1);
+                                        folderItem.pop();
+                                        return;
+                                    }
+                                    gg = gg - 1;
+                                } while (gg > 0);
+                            }
+                            if (folderItem[folderItem.length - 1][1] === len - 1 && data.token[a].indexOf("<em ") === 0) {
+                                end = end + 1;
+                            }
+                            code[folderItem[folderItem.length - 1][0]] = code[folderItem[folderItem.length - 1][0]].replace(
+                                "xxx",
+                                String(end)
+                            );
+                            folderItem.pop();
+                        },
+                        // splits block comments, which are single tokens, into multiple lines of output
+                        blockline          = function beautify_script_output_scope_blockline(x:string):string {
+                            const commentLines:string[] = x.split(lf),
+                                ii:number           = commentLines.length - 1;
+                            let hh:number           = 0;
+                            if (data.lines[a] > 0) {
+                                code.push("<li>");
+                                code.push(String(linecount));
+                                code.push("</li>");
+                                linecount = linecount + 1;
+                            }
+                            do {
+                                code.push("<li>");
+                                code.push(String(linecount));
+                                code.push("</li>");
+                                linecount        = linecount + 1;
+                                commentLines[hh] = commentLines[hh] + "<em>&#xA;</em></li><li class='c0'>";
+                                hh = hh + 1;
+                            } while (hh < ii);
+                            return commentLines.join("");
+                        },
+                        //finds the variables if the jsscope option is true
+                        findvars           = function beautify_script_output_scope_findvars(x:number):void {
+                            let lettest:boolean       = false,
+                                ee:number            = 0,
+                                ff:number            = 0,
+                                hh:number            = 0,
+                                adjustment:number    = 1,
+                                functionBlock:boolean = true,
+                                varbuild:string[]      = [],
+                                varbuildlen:number   = 0;
+                            const metax         = meta[x],
+                                metameta      = meta[metax][0],
+                                letcomma      = function beautify_script_output_scope_findvars_letcomma():void {
+                                    let aa:number = a,
+                                        bb:number = 0;
+                                    if (a > -1) {
+                                        do {
+                                            if (data.types[aa] === "end") {
+                                                bb = bb - 1;
+                                            }
+                                            if (data.types[aa] === "start") {
+                                                bb = bb + 1;
+                                            }
+                                            if (bb > 0) {
+                                                return;
+                                            }
+                                            if (bb === 0) {
+                                                if (data.token[aa] === "var" || data.token[aa] === ";" || data.token[aa] === "x;") {
+                                                    return;
+                                                }
+                                                if (data.token[aa] === "let" || data.token[aa] === "const") {
+                                                    data.token[ee] = `<em class="s${scope}">${varbuild[0]}</em>`;
+                                                }
+                                            }
+                                            aa = aa - 1;
+                                        } while (aa > -1);
+                                    }
+                                };
+                            if (metameta === undefined) {
+                                return;
+                            }
+                            lettest = meta[metax][1];
+                            hh      = metameta.length;
+                            if (data.types[a - 1] === "word" && data.token[a - 1] !== "function" && lettest === false) {
+                                varbuild     = data.token[a - 1].split(" ");
+                                data.token[a - 1] = `<em class="s${scope}">${varbuild[0]}</em>`;
+                                varbuildlen  = varbuild.length;
+                                if (varbuildlen > 1) {
+                                    do {
+                                        data.token[ee]   = data.token[ee] + " ";
+                                        varbuildlen = varbuildlen - 1;
+                                    } while (varbuildlen > 1);
+                                }
+                            }
+                            if (hh > 0) {
+                                ee = metax - 1;
+                                if (lettest === true) {
+                                    ee = ee - 1;
+                                }
+                                do {
+                                    if (data.types[ee] === "word") {
+                                        varbuild = data.token[ee].split(" ");
+                                        ff = 0;
+                                        do {
+                                            if (varbuild[0] === metameta[ff] && data.token[ee - 1] !== ".") {
+                                                if (data.token[ee - 1] === "function" && data.token[ee + 1] === "(") {
+                                                    data.token[ee]   = `<em class="s${scope + 1}">${varbuild[0]}</em>`;
+                                                    varbuildlen = varbuild.length;
+                                                    if (varbuildlen > 1) {
+                                                        do {
+                                                            data.token[ee]   = data.token[ee] + " ";
+                                                            varbuildlen = varbuildlen - 1;
+                                                        } while (varbuildlen > 1);
+                                                    }
+                                                } else if (
+                                                    data.token[ee - 1] === "case" ||
+                                                    data.token[ee + 1] !== ":" ||
+                                                    (data.token[ee + 1] === ":" && levels[ee] > -20)
+                                                ) {
+                                                    if (lettest === true) {
+                                                        if (data.token[ee - 1] === "let" || data.token[ee - 1] === "const") {
+                                                            data.token[ee] = `<em class="s${scope}">${varbuild[0]}</em>`;
+                                                        } else if (data.token[ee - 1] === ",") {
+                                                            letcomma();
+                                                        } else {
+                                                            data.token[ee] = `<em class="s${scope}">${varbuild[0]}</em>`;
+                                                        }
+                                                    } else {
+                                                        data.token[ee] = `<em class="s${scope}">${varbuild[0]}</em>`;
+                                                    }
+                                                    varbuildlen = varbuild.length;
+                                                    if (varbuildlen > 1) {
+                                                        do {
+                                                            data.token[ee]   = data.token[ee] + " ";
+                                                            varbuildlen = varbuildlen - 1;
+                                                        } while (varbuildlen > 1);
+                                                    }
+                                                }
+                                                break;
+                                            }
+                                            ff = ff + 1;
+                                        } while (ff < hh);
+                                    }
+                                    if (functionBlock === true) {
+                                        if (data.types[ee] === "end") {
+                                            adjustment = adjustment + 1;
+                                        } else if (data.types[ee] === "start") {
+                                            adjustment = adjustment - 1;
+                                        }
+                                        if (adjustment === 0 && data.token[ee] === "{") {
+                                            data.token[ee]     = `<em class="s${scope}">{</em>`;
+                                            functionBlock = false;
+                                        }
+                                    }
+                                    ee = ee - 1;
+                                } while (ee > a);
+                            } else {
+                                ee = a + 1;
+                                if (lettest === true) {
+                                    ee = ee - 1;
+                                }
+                                if (ee < metax) {
+                                    do {
+                                        if (data.types[ee] === "end") {
+                                            adjustment = adjustment - 1;
+                                        } else if (data.types[ee] === "start") {
+                                            adjustment = adjustment + 1;
+                                        }
+                                        if (adjustment === 1 && data.token[ee] === "{") {
+                                            data.token[ee] = `<em class="s${scope}">{</em>`;
+                                            return;
+                                        }
+                                        ee = ee + 1;
+                                    } while (ee < metax);
+                                }
+                            }
+                        },
+                        //a function for calculating indentation after each new line
+                        nl                 = function beautify_script_output_scope_nl(x:number, linetest:boolean):void {
+                            let dd = 0;
+                            const lscope             = function beautify_script_output_scope_lscope(depth:number):string {
+                                const indentation:string[] = [];
+                                let aa:number = 0;
+                                do {
+                                    indentation.push(`<em class="l${aa}">${tab}</em>`);
+                                    aa = aa + 1;
+                                } while (aa < depth);
+                                return indentation.join("");
+                            };
+                            if (data.token[a] !== "x}" || (data.token[a] === "x}" && data.token[a + 1] !== "}")) {
+                                code.push("<li>");
+                                code.push(String(linecount));
+                                code.push("</li>");
+                                linecount = linecount + 1;
+                                if (a < len - 1 && data.token[a + 1].indexOf("/*") === 0) {
+                                    build.push("<em>&#xA;</em></li><li class='c0'>");
+                                } else {
+                                    build.push(`<em>&#xA;</em></li><li class="l${scope}">`);
+                                    if (x > 0 && scope > 0) {
+                                        dd = scope;
+                                        if (scope === x + 1 && x > 0 && linetest === false) {
+                                            dd = dd - 1;
+                                        }
+                                        build.push(lscope(dd));
+                                    } else if (linetest === true) {
+                                        build.push(lscope(0));
+                                    }
+                                }
+                            } else if (x > 0 && scope > 0) {
+                                if (scope === x + 1 && x > 0 && linetest === false) {
+                                    dd = scope - 1;
+                                }
+                                build.push(lscope(dd));
+                            }
+                            /*if (x > 0) {
+                                do {
+                                    build.push(tab);
+                                    dd = dd + 1;
+                                } while (dd < x);
+                            }*/
+                        },
+                        rl                 = function beautify_script_output_scope_rl(x:number):void {
+                            let cc:number = 2,
+                                dd:number = a + 2;
+                            if (dd < len) {
+                                do {
+                                    if (data.token[dd] === "x}") {
+                                        cc = cc + 1;
+                                    } else {
+                                        break;
+                                    }
+                                    dd = dd + 1;
+                                } while (dd < len);
+                            }
+                            nl(x - cc, false);
+                            a = a + 1;
+                        },
+                        /*markupBuild        = function beautify_script_output_scope_markupBuild() {
+                            let c:number        = 1,
+                                spaces:number   = 0,
+                                synthtab:string = "\\" + tab.charAt(0),
+                                tabreg:RegExp,
+                                markuplen:number      = tab.length,
+                                mindent  = (function beautify_script_output_scope_markupBuild_offset():number {
+                                    let d = a - 1;
+                                    if (a === markupvar[0]) {
+                                        markupvar.splice(0, 1);
+                                        return 1;
+                                    }
+                                    if (data.token[d] === "return" || data.token[0] === "{") {
+                                        return 1;
+                                    }
+                                    if (levels[a] < -9) {
+                                        return 0;
+                                    }
+                                    do {
+                                        if (data.token[d] !== "(" && data.token[d] !== "x(") {
+                                            if (data.token[d] === "=") {
+                                                return 1;
+                                            }
+                                            return 0;
+                                        }
+                                        d = d - 1;
+                                    } while (d > -1);
+                                    return 0;
+                                }());
+                            const markup   = (function beautify_script_output_scope_markupBuild_varscope():string[] {
+                                    const lena:number    = meta.length,
+                                        emscope = function jsscope__result_scope_markupBuild_varscope_emscope(x:string):string {
+                                            return `<em class="s${x.replace("[pdjsxem", "").replace("]", "")}">`;
+                                        };
+                                    let item:string    = "",
+                                        word:string    = "",
+                                        newword:string = "",
+                                        inca:number    = 0,
+                                        incb:number    = 0,
+                                        lenb:number    = 0,
+                                        vars    = [],
+                                        mode:mode    = options.mode,
+                                        inle:number    = options.inlevel,
+                                        jsx:boolean     = (options.lang === "jsx");
+                                    //options.source  = data.token[a];
+                                    //options.mode    = "beautify";
+                                    //options.inlevel = mindent;
+                                    //options.jsx     = true;
+                                    //item            = extlib().replace(/return\s+</g, "return <");
+                                    //options.mode    = mode;
+                                    //options.inlevel = inle;
+                                    //options.jsx     = jsx;
+                                    //if (item.indexOf("[pdjsxscope]") < 0) {
+                                    //    return item
+                                    //        .replace(/&/g, "&amp;")
+                                    //        .replace(/</g, "&lt;")
+                                    //        .replace(/>/g, "&gt;")
+                                    //        .split(lf);
+                                    //}
+                                    do {
+                                        newword = "";
+                                        vars    = [];
+                                        word    = item.slice(
+                                            item.indexOf("[pdjsxscope]") + 12,
+                                            item.indexOf("[/pdjsxscope]")
+                                        );
+                                        do {
+                                            if (typeof meta[inca] === "number" && inca < a && a < meta[inca]) {
+                                                vars.push(meta[inca]);
+                                                lenb = meta[meta[inca]].length;
+                                                do {
+                                                    if (meta[meta[inca]][incb] === word) {
+                                                        newword = `[pdjsxem${vars.length + 1}]${word}[/pdjsxem]`;
+                                                    }
+                                                    incb = incb + 1;
+                                                } while (incb < lenb);
+                                                if (incb < lenb) {
+                                                    break;
+                                                }
+                                                vars.pop();
+                                            }
+                                            inca = inca - 1;
+                                        } while (inca < lena);
+                                        if (newword === "") {
+                                            lenb = globals.length;
+                                            incb = 0;
+                                            do {
+                                                if (word === globals[incb]) {
+                                                    newword = `[pdjsxem0]${word}[/pdjsxem]`;
+                                                }
+                                                incb = incb + 1;
+                                            } while (incb < lenb);
+                                            if (newword === "") {
+                                                newword = word;
+                                            }
+                                        }
+                                        item = item.replace(`[pdjsxscope]${word}[/pdjsxscope]`, newword);
+                                    } while (item.indexOf("[pdjsxscope]") > -1);
+                                    return item
+                                        .replace(/&/g, "&amp;")
+                                        .replace(/</g, "&lt;")
+                                        .replace(/>/g, "&gt;")
+                                        .replace(/\[pdjsxem\d+\]/g, emscope)
+                                        .replace(/\[\/pdjsxem\]/g, "</em>")
+                                        .split(lf);
+                                }());
+                            do {
+                                synthtab = synthtab + "\\" + tab.charAt(c);
+                                c = c + 1;
+                            } while (c < markuplen);
+                            tabreg  = new RegExp(`^(${synthtab})`);
+                            mindent = indent + 2;
+                            if (levels[a] < -9) {
+                                markup[0] = markup[0].replace(tabreg, "");
+                                mindent   = mindent - 1;
+                            }
+                            markuplen = markup.length;
+                            c = 0;
+                            do {
+                                if (markup[c].indexOf(tab) !== 0 && c > 0) {
+                                    spaces = markup[c - 1]
+                                        .split(tab)
+                                        .length - 1;
+                                    do {
+                                        spaces    = spaces - 1;
+                                        markup[c] = tab + markup[c];
+                                    } while (spaces > 0);
+                                }
+                                build.push(markup[c]);
+                                nl(mindent - 1, false);
+                                c = c + 1;
+                            } while (c < markuplen - 1);
+                            build.push(markup[markup.length - 1]);
+                        },*/
+                        multiline          = function beautify_script_output_scope_multiline(x:string):void {
+                            const temparray:string[] = x.split(lf),
+                                d:number         = temparray.length;
+                            let c:number         = 1;
+                            build.push(temparray[0]);
+                            do {
+                                nl(indent, false);
+                                build.push(temparray[c]);
+                                c = c + 1;
+                            } while (c < d);
+                        },
+                        endcomma_multiline = function beautify_script_output_scope_endcommaMultiline():void {
+                            let c:number = a;
+                            if (data.types[c] === "comment") {
+                                do {
+                                    c = c - 1;
+                                } while (c > 0 && data.types[c] === "comment");
+                            }
+                            data.token[c] = data.token[c] + ",";
+                        };
+                    code.push("<div class='beautify' data-prettydiff-ignore='true'><ol class='count'>");
+                    code.push("<li>");
+                    code.push("1");
+                    code.push("</li>");
+                    /*if (options.vertical === true) {
+                        vertical();
+                    }*/
+                    if (data.types[a] === "comment" && data.token[a].indexOf("/*") === 0) {
+                        build.push("<ol class='data'><li class='c0'>");
+                    } else {
+                        build.push("<ol class='data'><li>");
+                    }
+                    if (indent > 0) {
+                        do {
+                            build.push(tab);
+                            a = a + 1;
+                        } while (a < indent);
+                    }
+                    // its important to find the variables separately from building the output so
+                    // that recursive flows in the loop incrementation do not present simple
+                    // counting collisions as to what gets modified versus what gets included
+                    if (a > 0) {
+                        a = len - 1;
+                        do {
+                            if (typeof meta[a] === "number") {
+                                scope = scope - 1;
+                                findvars(a);
+                            } else if (
+                                meta[a] !== undefined &&
+                                typeof meta[a] !== "string" &&
+                                typeof meta[a] !== "number" &&
+                                a > 0 &&
+                                invisibles.indexOf(data.token[a]) < 0
+                            ) {
+                                data.token[a] = `<em class='s${scope}'>${data.token[a]}</em>`;
+                                scope    = scope + 1;
+                                if (scope > 16) {
+                                    scope = 16;
+                                }
+                            }
+                            a = a - 1;
+                        } while (a > -1);
+                    }
+                    (function beautify_script_output_scope_globals():void {
+                        let aa:number          = len,
+                            ee:number          = globals.length - 1,
+                            word:string[]        = [],
+                            wordlen:number     = 0;
+                        if (ee < 0) {
+                            return;
+                        }
+                        do {
+                            if (
+                                data.types[aa] === "word" &&
+                                (data.token[aa + 1] !== ":" || (data.token[aa + 1] === ":" && levels[aa + 1] === -20)) &&
+                                data.token[aa].indexOf("<em ") < 0
+                            ) {
+                                word = data.token[aa].split(" ");
+                                do {
+                                    if (word[0] === globals[ee] && data.token[aa - 1] !== ".") {
+                                        if (data.token[aa - 1] === "function" && data.stack[aa + 1] === "method") {
+                                            data.token[aa] = `<em class="s1">${word[0]}</em>`;
+                                            wordlen   = word.length;
+                                            if (wordlen > 1) {
+                                                do {
+                                                    data.token[aa] = data.token[aa] + " ";
+                                                    wordlen   = wordlen - 1;
+                                                } while (wordlen > 1);
+                                            }
+                                        } else {
+                                            data.token[aa] = `<em class="s0">${word[0]}</em>`;
+                                            wordlen   = word.length;
+                                            if (wordlen > 1) {
+                                                do {
+                                                    data.token[aa] = data.token[aa] + " ";
+                                                    wordlen   = wordlen - 1;
+                                                } while (wordlen > 1);
+                                            }
+                                        }
+                                        break;
+                                    }
+                                    ee = ee - 1;
+                                } while (ee > -1);
+                            }
+                            aa = aa - 1;
+                        } while (a > 0);
+                    }());
+                    scope = 0;
+                    // this loops combines the white space as determined from the algorithm with the
+                    // tokens to create the output
+                    a = 0;
+                    do {
+                        if (typeof meta[a] === "number") {
+                            folder();
+                        }
+                        if (
+                            comfold === -1 &&
+                            data.types[a] === "comment" &&
+                            (
+                                (data.token[a].indexOf("/*") === 0 && data.token[a].indexOf("\n") > 0) ||
+                                data.types[a + 1] === "comment" || data.lines[a] > 1
+                            )
+                        ) {
+                            folder();
+                            comfold = a;
+                        }
+                        if (comfold > -1 && data.types[a] !== "comment") {
+                            foldclose();
+                            comfold = -1;
+                        }
+                        if (options.endcomma === "multiline" && (
+                            data.token[a + 1] === "]" ||
+                            data.token[a + 1] === "}"
+                        ) && levels[a] !== -20) {
+                            endcomma_multiline();
+                        }
+                        if (data.types[a] === "comment" && data.token[a].indexOf("/*") === 0) {
+                            build.push(blockline(data.token[a]));
+                        } else if (invisibles.indexOf(data.token[a]) < 0) {
+                            if (typeof meta[a] === "number") {
+                                scope = scope + 1;
+                                if (scope > 16) {
+                                    scope = 16;
+                                }
+                                build.push(data.token[a]);
+                            } else if (typeof meta[a] !== "string" && typeof meta[a] !== "number") {
+                                build.push(data.token[a]);
+                                scope    = scope - 1;
+                                buildlen = build.length - 1;
+                                do {
+                                    buildlen = buildlen - 1;
+                                } while (buildlen > 0 && build[buildlen].indexOf("</li><li") < 0);
+                                build[buildlen] = build[buildlen].replace(
+                                    /class='l\d+'/,
+                                    "class='l" + scope + "'"
+                                );
+                            } else if (invisibles.indexOf(data.token[a]) < 0) {
+                                if (data.types[a] === "markup") {
+                                    if (levels[a] > -9) {
+                                        if (data.types[a - 1] === "operator") {
+                                            nl(indent, false);
+                                        } else if (data.token[a - 1] !== "return") {
+                                            nl(indent + 1, false);
+                                        }
+                                    }
+                                    /*if (typeof global.prettydiff.markuppretty === "function") {
+                                        markupBuild();
+                                    } else {*/
+                                        build.push(data.token[a].replace(/\r?\n(\s*)/g, " "));
+                                    //}
+                                } else if (data.types[a] === "comment") {
+                                    if (data.types[a - 1] !== "comment") {
+                                        nl(indent, false);
+                                    }
+                                    if (a === 0) {
+                                        build[0] = "<ol class='data'><li class='c0'>";
+                                    } else {
+                                        buildlen = build.length - 1;
+                                        if (build[buildlen].indexOf("<li") < 0) {
+                                            do {
+                                                build[buildlen] = build[buildlen]
+                                                    .replace(/<em\u0020class='[a-z]\d+'>/g, "")
+                                                    .replace(/<\/em>/g, "");
+                                                buildlen        = buildlen - 1;
+                                                if (buildlen > 0 && build[buildlen] === undefined) {
+                                                    buildlen = buildlen - 1;
+                                                }
+                                            } while (
+                                                buildlen > 0 && build[buildlen - 1] !== undefined && build[buildlen].indexOf("<li") < 0
+                                            );
+                                        }
+                                        if ((/^(<em>&#xA;<\/em><\/li><li\u0020class='l\d+'>)$/).test(build[buildlen - 1]) === true) {
+                                            build[buildlen - 1] = build[buildlen - 1].replace(
+                                                /class='l\d+'/,
+                                                "class='c0'"
+                                            );
+                                        }
+                                        build[buildlen] = build[buildlen].replace(/class='l\d+'/, "class='c0'");
+                                    }
+                                    build.push(data.token[a]);
+                                } else {
+                                    if (data.types[a] === "literal" && data.token[a].indexOf("\n") > 0) {
+                                        multiline(data.token[a]);
+                                    } else {
+                                        build.push(data.token[a]);
+                                    }
+                                }
+                            }
+                        }
+                        // this condition performs additional calculations for options.preserve.
+                        // options.preserve determines whether empty lines should be preserved from the
+                        // code input
+                        if (options.preserve > 0 && data.lines[a] > 0 && levels[a] > -9 && data.token[a] !== "+") {
+                            //special treatment for math operators
+                            if (data.token[a] === "+" || data.token[a] === "-" || data.token[a] === "*" || data.token[a] === "/") {
+                                //comments get special treatment
+                                if (a < len - 1 && data.types[a + 1] !== "comment") {
+                                    nl(levels[a], false);
+                                    build.push(tab);
+                                    levels[a] = -20;
+                                } else {
+                                    indent = levels[a];
+                                    if (data.lines[a] > 1) {
+                                        do {
+                                            build.push(lf);
+                                            data.lines[a] = data.lines[a] - 1;
+                                        } while (data.lines[a] > 1);
+                                    }
+                                    nl(indent, false);
+                                    build.push(tab);
+                                    build.push(data.token[a + 1]);
+                                    nl(indent, false);
+                                    build.push(tab);
+                                    levels[a + 1] = -20;
+                                    a            = a + 1;
+                                }
+                            } else if (
+                                data.lines[a] > 1 &&
+                                data.token[a].charAt(0) !== "=" &&
+                                data.token[a].charAt(0) !== "!" &&
+                                (data.types[a] !== "start" || (a < len - 1 && data.types[a + 1] !== "end"))
+                            ) {
+                                if (
+                                    (data.token[a] !== "x}" || levels[a] < 0) &&
+                                    (a < len - 1 && (
+                                        data.types[a + 1] === "comment" ||
+                                        (data.token[a] !== "." && data.types[a + 1] !== "separator")
+                                    ))
+                                ) {
+                                    do {
+                                        nl(0, true);
+                                        data.lines[a] = data.lines[a] - 1;
+                                    } while (data.lines[a] > 1);
+                                    if (data.types[a] === "comment") {
+                                        build.push("<em>&#xA;</em></li><li class='c0'>");
+                                    } else {
+                                        commentfix = commentfix + 1;
+                                        nl(levels[a], true);
+                                    }
+                                }
+                            }
+                        }
+                        if (
+                            (data.token[a] === ";" || data.token[a] === "x;") &&
+                            data.token[a + 1] === "x}" &&
+                            ((/<em\u0020class='s\d+'>\}<\/em>/).test(data.token[a + 2]) === true || data.token[a + 2] === "x}")
+                        ) {
+                            rl(indent);
+                        } else if (data.token[a] === "x{" && levels[a] === -10 && levels[a - 1] === -10) {
+                            build.push("");
+                        } else if (a < len - 1 && data.types[a + 1] === "comment" && options.comments === "noindent") {
+                            nl(options.inlevel, false);
+                        } else if (levels[a] === -10 && data.token[a] !== "x}") {
+                            build.push(" ");
+                        } else if (
+                            data.token[a] !== "" &&
+                            levels[a] !== -20 &&
+                            (data.token[a] !== "x}" || (
+                                data.token[a] === "x}" &&
+                                (data.token[a - 1] === "x;" || data.token[a - 1] === ";") &&
+                                data.types[a + 1] !== "word"
+                            ) || data.lines[a] > 1)) {
+                            indent = levels[a];
+                            nl(indent, false);
+                        }
+                        if (folderItem.length > 0) {
+                            if (a === folderItem[folderItem.length - 1][1] && comfold === -1) {
+                                foldclose();
+                            }
+                        }
+                        a = a + 1;
+                    } while (a < len);
+                    a = build.length - 1;
+                    do {
+                        if (build[a] === tab) {
+                            build.pop();
+                        } else {
+                            break;
+                        }
+                        a = a - 1;
+                    } while (a > -1);
+                    //this logic is necessary to some line counting corrections to the HTML output
+                    last = build[build.length - 1];
+                    if (last.indexOf("<li") > 0) {
+                        build[build.length - 1] = "<em>&#xA;</em></li>";
+                    } else if (last.indexOf("</li>") < 0) {
+                        build.push("<em>&#xA;</em></li>");
+                    }
+                    build.push("</ol></div>");
+                    last = build.join("");
+                    if (last.match(/<li/g) !== null) {
+                        scope = last
+                            .match(/<li/g)
+                            .length;
+                        if (linecount - 1 > scope) {
+                            linecount = linecount - 1;
+                            do {
+                                code.pop();
+                                code.pop();
+                                code.pop();
+                                linecount = linecount - 1;
+                            } while (linecount > scope);
+                        }
+                    }
+                    code.push("</ol>");
+                    if (options.jsscope === "html") {
+                        code.push(last);
+                        if (options.newline === true) {
+                            if (options.crlf === true) {
+                                code.push("\r\n");
+                            } else {
+                                code.push("\n");
+                            }
+                        }
+                        return code.join("");
+                    }
+                    return [
+                        "<p>Scope analysis does not provide support for undeclared variables.</p>",
+                        "<p><em>",
+                        scolon,
+                        "</em> instances of <strong>missing semicolons</strong> counted.</p>",
+                        "<p><em>",
+                        news,
+                        "</em> unnecessary instances of the keyword <strong>new</strong> counted.</p>",
+                        code.join(""),
+                        last
+                    ].join("").replace(/(\s+)$/, "").replace(options.binaryCheck, "");
+                }
+                do {
+                    const nl = function beautify_script_output_nl(tabs):string {
                         const linesout:string[] = [],
                             end:string = (options.crlf === true)
                                 ? "\r\n"
@@ -2190,8 +3057,6 @@
                         }
                         return linesout.join("");
                     };
-                let a:number = 0;
-                do {
                     if (data.token[a].length === 1 || data.token[a].charAt(0) !== "x") {
                         build.push(data.token[a]);
                         if (levels[a] > -20) {

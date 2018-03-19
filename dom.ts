@@ -626,7 +626,7 @@
                         parent = <HTMLElement>title.parentNode;
                         title.onmousedown                         = method.event.grab;
                         title.ontouchstart                        = method.event.grab;
-                        title.onclick                             = method.event.minimize;
+                        title.onfocus                             = method.event.minimize;
                         title.onblur                              = function dom_load_prepBox_blur():void {
                             title.onclick = null;
                         };
@@ -2337,15 +2337,11 @@
                 {
                     let inca:number  = 0,
                         incb:number  = 0,
-                        x:HTMLElement,
                         ol:NodeListOf<HTMLOListElement>,
                         li:NodeListOf<HTMLLIElement>,
                         lilen:number = 0;
                     const div:NodeListOf<HTMLDivElement> = document.getElementsByTagName("div"),
-                        len:number   = div.length,
-                        foldwrapper = function dom_load_pagefold() {
-                            x.onclick = method.event.beaufold(x);
-                        };
+                        len:number   = div.length;
                     inca = 0;
                     do {
                         if (div[inca].getAttribute("class") === "beautify") {
@@ -2356,8 +2352,7 @@
                                 incb  = 0;
                                 do {
                                     if (li[incb].getAttribute("class") === "fold") {
-                                        x = li[incb];
-                                        foldwrapper();
+                                        li[incb].onclick = method.event.beaufold;
                                     }
                                     incb = incb + 1;
                                 } while (incb < lilen);
@@ -2650,10 +2645,11 @@
         }
     };
     //allows visual folding of function in the JSPretty jsscope HTML output
-    method.event.beaufold = function dom_event_beaufold(el:HTMLElement):void {
+    method.event.beaufold = function dom_event_beaufold(event:Event):void {
         let a:number     = 0,
             b:string     = "";
-        const title:string[] = el
+        const el:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
+            title:string[] = el
                 .getAttribute("title")
                 .split("line "),
             parent:[HTMLElement, HTMLElement] = [<HTMLElement>el.parentNode, <HTMLElement>el.parentNode.nextSibling],
@@ -3140,7 +3136,7 @@
                                         report.code.body.innerHTML = output;
                                     }
                                     if (report.code.body.style.display === "none") {
-                                        report.code.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0].click();
+                                        report.code.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0].focus();
                                     }
                                     report.code.box.style.top   = (data.settings.report.code.top / 10) + "em";
                                     report.code.box.style.right = "auto";
@@ -3159,45 +3155,39 @@
                             }
                         }
                     } else if (options.mode === "beautify") {
-                        prettydiff.api.finalFile.order[12] = prettydiff.api.finalFile.script.beautify;
-                        if (options.jsscope !== "report") {
-                            if (test.ace === true) {
-                                aceStore
-                                    .codeOut
-                                    .setValue(output);
-                                aceStore
-                                    .codeOut
-                                    .clearSelection();
-                            } else {
-                                textarea.codeOut.value = output;
+                        if (options.jsscope === "report" && report.code.box !== null && data.langvalue[0] === "javascript" && output.indexOf("Error:") !== 0) {
+                            report.code.body.innerHTML = output;
+                            if (report.code.body.style.display === "none") {
+                                report.code.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0].focus();
                             }
+                            report.code.box.style.top   = (data.settings.report.code.top / 10) + "em";
+                            report.code.box.style.right = "auto";
+                            diffList                                 = report
+                                .code
+                                .body
+                                .getElementsByTagName("ol");
+                            if (diffList.length > 0) {
+                                const list:NodeListOf<HTMLLIElement> = diffList[0].getElementsByTagName("li");
+                                let a:number    = 0,
+                                    b:number    = list.length;
+                                do {
+                                    if (list[a].getAttribute("class") === "fold") {
+                                        list[a].onclick = method.event.beaufold;
+                                    }
+                                    a = a + 1;
+                                } while (a < b);
+                            }
+                            return;
                         }
-                        if (report.code.box !== null) {
-                            if (options.jsscope === "report" && data.langvalue[1] === "javascript" && output.indexOf("Error:") !== 0) {
-                                report.code.body.innerHTML = output;
-                                if (report.code.body.style.display === "none") {
-                                    report.code.box.getElementsByTagName("h3")[0].click();
-                                }
-                                report.code.box.style.top   = (data.settings.report.code.top / 10) + "em";
-                                report.code.box.style.right = "auto";
-                                diffList                                 = report
-                                    .code
-                                    .body
-                                    .getElementsByTagName("ol");
-                                if (diffList.length > 0) {
-                                    const list:NodeListOf<HTMLLIElement> = diffList[0].getElementsByTagName("li");
-                                    let a:number    = 0,
-                                        b:number    = list.length;
-                                    do {
-                                        if (list[a].getAttribute("class") === "fold") {
-                                            list[a].onclick = function dom_event_execute_app_execOutput_beaufold() {
-                                                method.event.beaufold(list[a]);
-                                            }
-                                        }
-                                        a = a + 1;
-                                    } while (a < b);
-                                }
-                            }
+                        if (test.ace === true) {
+                            aceStore
+                                .codeOut
+                                .setValue(output);
+                            aceStore
+                                .codeOut
+                                .clearSelection();
+                        } else {
+                            textarea.codeOut.value = output;
                         }
                     } else if (options.mode === "diff" && report.code.box !== null) {
                         buttons          = report
@@ -3390,6 +3380,19 @@
                     }
                 }
                 delete options.parsed;
+                if (options.completeDocument === true) {
+                    const jsscope:HTMLSelectElement = id("option-jsscope");
+                    prettydiff.api.finalFile.order[7] = id("option-color")[id("option-color").selectedIndex].value;
+                    prettydiff.api.finalFile.order[10] = output;
+                    if (options.mode === "diff") {
+                        prettydiff.api.finalFile.order[12] = prettydiff.api.finalFile.script.diff;
+                    } else if (options.mode === "beautify" && data.langvalue[0] === "javascript" && (jsscope !== null && jsscope[jsscope.selectedIndex].value !== "none")) {
+                        prettydiff.api.finalFile.order[12] = prettydiff.api.finalFile.script.beautify;
+                    } else {
+                        prettydiff.api.finalFile.order[12] = prettydiff.api.finalFile.script.minimal;
+                    }
+                    output = prettydiff.api.finalFile.order.join("");
+                }
                 execOutput();
             };
 
@@ -4268,10 +4271,11 @@
         location.reload();
     };
     //resize report window to custom width and height on drag
-    method.event.resize = function dom_event_resize(e:MouseEvent, x:HTMLElement):void {
+    method.event.resize = function dom_event_resize(e:MouseEvent):void {
         let bodyWidth:number  = 0,
             bodyHeight:number = 0;
-        const parent:HTMLElement     = <HTMLElement>x.parentNode,
+        const node:HTMLElement = <HTMLElement>e.srcElement || <HTMLElement>e.target,
+            parent:HTMLElement     = <HTMLElement>node.parentNode,
             save:boolean       = (parent.innerHTML.indexOf("save") > -1),
             box:HTMLElement        = <HTMLElement>parent.parentNode,
             body:HTMLDivElement       = box.getElementsByTagName("div")[0],
@@ -4314,17 +4318,7 @@
     };
     //toggle between parsed html diff report and raw text representation
     method.event.save = function dom_event_save():void {
-        const jsscope:HTMLSelectElement = id("option-jsscope");
-        prettydiff.api.finalFile.order[7] = id("option-color")[id("option-color").selectedIndex].value;
-        prettydiff.api.finalFile.order[10] = report.code.body.innerHTML;
-        if (options.mode === "diff") {
-            prettydiff.api.finalFile.order[12] = prettydiff.api.finalFile.script.diff;
-        } else if (options.mode === "beautify" && data.langvalue[0] === "javascript" && (jsscope !== null && jsscope[jsscope.selectedIndex].value !== "none")) {
-            prettydiff.api.finalFile.order[12] = prettydiff.api.finalFile.script.beautify;
-        } else {
-            prettydiff.api.finalFile.order[12] = prettydiff.api.finalFile.script.minimal;
-        }
-        prettydiff.saveAs(new File([prettydiff.api.finalFile.order.join("")], "prettydiff.xhtml", {type: "application/xhtml+xml;charset=utf-8"}));
+        prettydiff.saveAs(new File([report.code.body.innerHTML], "prettydiff.xhtml", {type: "application/xhtml+xml;charset=utf-8"}));
     };
     //analyzes combinations of consecutive key presses
     method.event.sequence = function dom_event_sequence(event:KeyboardEvent):void {

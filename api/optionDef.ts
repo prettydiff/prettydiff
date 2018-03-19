@@ -91,6 +91,15 @@
                 definition: "If a blank new line should be forced above comments.",
                 default   : false
             },
+            completeDocument: {
+                api: "any",
+                mode: "any",
+                lexer: "markup",
+                label: "Generate A Complete HTML File",
+                type: "boolean",
+                definition: "Allows a preference for generating a complete HTML document instead of only generating content.",
+                default: false
+            },
             compressedcss  : {
                 api       : "any",
                 mode      : "beautify",
