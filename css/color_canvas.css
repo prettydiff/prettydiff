@@ -55,6 +55,7 @@
 #prettydiff.canvas .segment,
 #prettydiff.canvas .count li,
 #prettydiff.canvas .data li,
+#prettydiff.canvas .data li span,
 #prettydiff.canvas .diff-right{border-color:#ccccc8}
 #prettydiff.canvas .count{background:#eed;border-color:#999}
 #prettydiff.canvas .count li.fold{color:#900}
@@ -70,23 +71,23 @@
 #prettydiff.canvas .data .replace{background:#fec}
 #prettydiff.canvas .data .replace em{background:#ffe;border-color:#a86;color:#852}
 #prettydiff.canvas .data .empty{background:#ddd}
-#prettydiff.canvas .data em.s0{color:#000}
-#prettydiff.canvas .data em.s1{color:#f66}
-#prettydiff.canvas .data em.s2{color:#12f}
-#prettydiff.canvas .data em.s3{color:#090}
-#prettydiff.canvas .data em.s4{color:#d6d}
-#prettydiff.canvas .data em.s5{color:#7cc}
-#prettydiff.canvas .data em.s6{color:#c85}
-#prettydiff.canvas .data em.s7{color:#737}
-#prettydiff.canvas .data em.s8{color:#6d0}
-#prettydiff.canvas .data em.s9{color:#dd0}
-#prettydiff.canvas .data em.s10{color:#893}
-#prettydiff.canvas .data em.s11{color:#b97}
-#prettydiff.canvas .data em.s12{color:#bbb}
-#prettydiff.canvas .data em.s13{color:#cc3}
-#prettydiff.canvas .data em.s14{color:#333}
-#prettydiff.canvas .data em.s15{color:#9d9}
-#prettydiff.canvas .data em.s16{color:#880}
+#prettydiff.canvas .data em.s0{border-color:#000;color:#000}
+#prettydiff.canvas .data em.s1{border-color:#f66;color:#f66}
+#prettydiff.canvas .data em.s2{border-color:#12f;color:#12f}
+#prettydiff.canvas .data em.s3{border-color:#090;color:#090}
+#prettydiff.canvas .data em.s4{border-color:#d6d;color:#d6d}
+#prettydiff.canvas .data em.s5{border-color:#7cc;color:#7cc}
+#prettydiff.canvas .data em.s6{border-color:#c85;color:#c85}
+#prettydiff.canvas .data em.s7{border-color:#737;color:#737}
+#prettydiff.canvas .data em.s8{border-color:#6d0;color:#6d0}
+#prettydiff.canvas .data em.s9{border-color:#dd0;color:#dd0}
+#prettydiff.canvas .data em.s10{border-color:#893;color:#893}
+#prettydiff.canvas .data em.s11{border-color:#b97;color:#b97}
+#prettydiff.canvas .data em.s12{border-color:#bbb;color:#bbb}
+#prettydiff.canvas .data em.s13{border-color:#cc3;color:#cc3}
+#prettydiff.canvas .data em.s14{border-color:#333;color:#333}
+#prettydiff.canvas .data em.s15{border-color:#9d9;color:#9d9}
+#prettydiff.canvas .data em.s16{border-color:#880;color:#880}
 #prettydiff.canvas .data .l0{background:#eeeee8}
 #prettydiff.canvas .data .l1{background:#fed}
 #prettydiff.canvas .data .l2{background:#def}

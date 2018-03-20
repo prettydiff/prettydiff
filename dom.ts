@@ -920,6 +920,9 @@
                                 sel = <HTMLSelectElement>el;
                                 sel.selectedIndex = data.settings[keys[a]];
                                 options[keys[a].replace("option-", "")] = sel[sel.selectedIndex].value;
+                                if (keys[a] === "option-color") {
+                                    method.event.colorScheme(null);
+                                }
                             } else {
                                 if (keys[a] === "mode") {
                                     id(data.settings[keys[a]]).checked = true;

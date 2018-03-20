@@ -2294,15 +2294,15 @@
                                         lets = true;
                                     }
                                     if (build[gg].indexOf("><li") > 0) {
-                                        build[gg] = build[gg].replace(/class='l\d+'/, `class="l${scope + 1}`);
+                                        build[gg] = build[gg].replace(/class="l\d+"/, `class="l${scope + 1}"`);
                                         if (lets === true) {
                                             break;
                                         }
                                     }
-                                    if (build[gg].indexOf(`<em class="l${scope}">${tab}`) > -1) {
+                                    if (build[gg].indexOf(`<span class="l${scope}">${tab}`) > -1) {
                                         build[gg] = build[gg].replace(
-                                            `<em class="l${scope}">${tab}`,
-                                            `<em class="l${scope + 1}">${tab}`
+                                            `<span class="l${scope}">${tab}`,
+                                            `<span class="l${scope + 1}">${tab}`
                                         );
                                     }
                                     gg = gg - 1;
@@ -2349,12 +2349,11 @@
                                 code.push(String(linecount));
                                 code.push("</li>");
                                 linecount        = linecount + 1;
-                                commentLines[hh] = commentLines[hh] + "<em>&#xA;</em></li><li class='c0'>";
+                                commentLines[hh] = commentLines[hh] + "<em>&#xA;</em></li><li class=\"c0\">";
                                 hh = hh + 1;
                             } while (hh < ii);
                             return commentLines.join("");
                         },
-                        //finds the variables if the jsscope option is true
                         findvars           = function beautify_script_output_scope_findvars(x:number):void {
                             let lettest:boolean       = false,
                                 ee:number            = 0,
@@ -2498,7 +2497,7 @@
                                 const indentation:string[] = [];
                                 let aa:number = 0;
                                 do {
-                                    indentation.push(`<em class="l${aa}">${tab}</em>`);
+                                    indentation.push(`<span class="l${aa}">${tab}</span>`);
                                     aa = aa + 1;
                                 } while (aa < depth);
                                 return indentation.join("");
@@ -2509,31 +2508,32 @@
                                 code.push("</li>");
                                 linecount = linecount + 1;
                                 if (a < len - 1 && data.token[a + 1].indexOf("/*") === 0) {
-                                    build.push("<em>&#xA;</em></li><li class='c0'>");
+                                    build.push("<em>&#xA;</em></li><li class=\"c0\">");
                                 } else {
                                     build.push(`<em>&#xA;</em></li><li class="l${scope}">`);
                                     if (x > 0 && scope > 0) {
                                         dd = scope;
-                                        if (scope === x + 1 && x > 0 && linetest === false) {
+                                        if (data.types[a + 1] === "end" || (scope === x + 1 && x > 0 && linetest === false)) {
                                             dd = dd - 1;
                                         }
-                                        build.push(lscope(dd));
+                                        build.push(lscope(dd));console.log(a+" "+data.types[a + 1]);
                                     } else if (linetest === true) {
                                         build.push(lscope(0));
                                     }
                                 }
                             } else if (x > 0 && scope > 0) {
-                                if (scope === x + 1 && x > 0 && linetest === false) {
-                                    dd = scope - 1;
+                                dd = scope;
+                                if (data.types[a + 1] === "end" || (scope === x + 1 && x > 0 && linetest === false)) {
+                                    dd = dd - 1;
                                 }
                                 build.push(lscope(dd));
                             }
-                            /*if (x > 0) {
+                            if (x > scope) {
                                 do {
                                     build.push(tab);
                                     dd = dd + 1;
                                 } while (dd < x);
-                            }*/
+                            }
                         },
                         rl                 = function beautify_script_output_scope_rl(x:number):void {
                             let cc:number = 2,
@@ -2705,7 +2705,7 @@
                             }
                             data.token[c] = data.token[c] + ",";
                         };
-                    code.push("<div class='beautify' data-prettydiff-ignore='true'><ol class='count'>");
+                    code.push("<div class=\"beautify\" data-prettydiff-ignore=\"true\"><ol class=\"count\">");
                     code.push("<li>");
                     code.push("1");
                     code.push("</li>");
@@ -2713,9 +2713,9 @@
                         vertical();
                     }*/
                     if (data.types[a] === "comment" && data.token[a].indexOf("/*") === 0) {
-                        build.push("<ol class='data'><li class='c0'>");
+                        build.push("<ol class=\"data\"><li class=\"c0\">");
                     } else {
-                        build.push("<ol class='data'><li>");
+                        build.push("<ol class=\"data\"><li>");
                     }
                     if (indent > 0) {
                         do {
@@ -2726,8 +2726,8 @@
                     // its important to find the variables separately from building the output so
                     // that recursive flows in the loop incrementation do not present simple
                     // counting collisions as to what gets modified versus what gets included
+                    a = len - 1;
                     if (a > 0) {
-                        a = len - 1;
                         do {
                             if (typeof meta[a] === "number") {
                                 scope = scope - 1;
@@ -2739,7 +2739,7 @@
                                 a > 0 &&
                                 invisibles.indexOf(data.token[a]) < 0
                             ) {
-                                data.token[a] = `<em class='s${scope}'>${data.token[a]}</em>`;
+                                data.token[a] = `<em class="s${scope}">${data.token[a]}</em>`;
                                 scope    = scope + 1;
                                 if (scope > 16) {
                                     scope = 16;
@@ -2838,8 +2838,8 @@
                                     buildlen = buildlen - 1;
                                 } while (buildlen > 0 && build[buildlen].indexOf("</li><li") < 0);
                                 build[buildlen] = build[buildlen].replace(
-                                    /class='l\d+'/,
-                                    "class='l" + scope + "'"
+                                    /class="l\d+"/,
+                                    `class="l${scope}"`
                                 );
                             } else if (invisibles.indexOf(data.token[a]) < 0) {
                                 if (data.types[a] === "markup") {
@@ -2860,13 +2860,13 @@
                                         nl(indent, false);
                                     }
                                     if (a === 0) {
-                                        build[0] = "<ol class='data'><li class='c0'>";
+                                        build[0] = "<ol class=\"data\"><li class=\"c0\">";
                                     } else {
                                         buildlen = build.length - 1;
                                         if (build[buildlen].indexOf("<li") < 0) {
                                             do {
                                                 build[buildlen] = build[buildlen]
-                                                    .replace(/<em\u0020class='[a-z]\d+'>/g, "")
+                                                    .replace(/<em\u0020class="[a-z]\d+">/g, "")
                                                     .replace(/<\/em>/g, "");
                                                 buildlen        = buildlen - 1;
                                                 if (buildlen > 0 && build[buildlen] === undefined) {
@@ -2876,13 +2876,13 @@
                                                 buildlen > 0 && build[buildlen - 1] !== undefined && build[buildlen].indexOf("<li") < 0
                                             );
                                         }
-                                        if ((/^(<em>&#xA;<\/em><\/li><li\u0020class='l\d+'>)$/).test(build[buildlen - 1]) === true) {
+                                        if ((/^(<em>&#xA;<\/em><\/li><li\u0020class="l\d+">)$/).test(build[buildlen - 1]) === true) {
                                             build[buildlen - 1] = build[buildlen - 1].replace(
-                                                /class='l\d+'/,
-                                                "class='c0'"
+                                                /class="l\d+"/,
+                                                "class=\"c0\""
                                             );
                                         }
-                                        build[buildlen] = build[buildlen].replace(/class='l\d+'/, "class='c0'");
+                                        build[buildlen] = build[buildlen].replace(/class="l\d+"/, "class=\"c0\"");
                                     }
                                     build.push(data.token[a]);
                                 } else {
@@ -2939,7 +2939,7 @@
                                         data.lines[a] = data.lines[a] - 1;
                                     } while (data.lines[a] > 1);
                                     if (data.types[a] === "comment") {
-                                        build.push("<em>&#xA;</em></li><li class='c0'>");
+                                        build.push("<em>&#xA;</em></li><li class=\"c0\">");
                                     } else {
                                         commentfix = commentfix + 1;
                                         nl(levels[a], true);
@@ -2950,7 +2950,7 @@
                         if (
                             (data.token[a] === ";" || data.token[a] === "x;") &&
                             data.token[a + 1] === "x}" &&
-                            ((/<em\u0020class='s\d+'>\}<\/em>/).test(data.token[a + 2]) === true || data.token[a + 2] === "x}")
+                            ((/<em\u0020class="s\d+">\}<\/em>/).test(data.token[a + 2]) === true || data.token[a + 2] === "x}")
                         ) {
                             rl(indent);
                         } else if (data.token[a] === "x{" && levels[a] === -10 && levels[a - 1] === -10) {
