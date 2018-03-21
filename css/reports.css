@@ -99,6 +99,7 @@
 #prettydiff .beautify ol,
 #prettydiff .diff ol{display:table-cell;margin:0;padding:0}
 #prettydiff .beautify li em{border-style:none none solid;border-width:0 0 0.1em;padding:0 0 0.2em}
+#prettydiff .beautify li .line{border-style:none}
 #prettydiff .beautify li span{border-style:none none solid;border-width:0 0 0.1em;height:2em;margin:0 0 -1em;position:relative;top:-0.5em}
 #prettydiff .beautify span.l0{margin-left:-0.5em;padding-left:0.5em}
 #prettydiff #webtool table table{margin:0 -0.1em -0.1em;width:100%}

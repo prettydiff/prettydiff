@@ -995,9 +995,6 @@
                             if (ltoke === "-" && (data.token[a - 2] === "(" || data.token[a - 2] === "x(")) {
                                 level[a - 2] = -20;
                             }
-                            if ((options.jsscope !== "none" || options.mode === "minify") && (ltoke === "function" || data.token[a - 2] === "function")) {
-                                meta[meta.length - 1] = 0;
-                            }
                             if (ltype === "end" && deeper !== "if" && deeper !== "for" && deeper !== "catch" && deeper !== "else" && deeper !== "do" && deeper !== "try" && deeper !== "finally" && deeper !== "catch") {
                                 if (data.types[a - 1] === "comment") {
                                     level[a - 1] = indent;
@@ -1159,48 +1156,30 @@
                             if (data.stack[a] === "function" && (options.jsscope !== "none" || options.mode === "minify")) {
                                 let c:number     = a - 1,
                                     d:number     = 1,
-                                    build:string[] = [],
-                                    paren:boolean = false;
+                                    build:string[] = [];
                                 do {
                                     if (data.types[c] === "end") {
-                                        d = d + 1;
-                                    } else if (data.types[c] === "start") {
-                                        d = d - 1;
-                                    }
-                                    if (d < 0) {
-                                        break;
-                                    }
-                                    if (meta[c] > "v" && data.token[c] !== build[build.length - 1]) {
+                                        c = data.begin[c];
+                                    } else if (meta[c] === "v" && build.indexOf(data.token[c]) < 0) {
                                         build.push(data.token[c]);
-                                    } else if (d === 1 && data.token[c] === ")") {
-                                        paren = true;
-                                    } else if (d === 1 && paren === true && data.types[c] === "word" && data.token[c] !== build[build.length - 1]) {
-                                        build.push(data.token[c]);
-                                    }
-                                    if (c === lettest) {
-                                        meta[c] = a - 1;
-                                        if (data.token[c] === "let" || data.token[c] === "const") {
-                                            meta[meta.length - 2] = [build, true];
-                                        }
-                                        build   = [];
-                                        lettest = -1;
-                                    }
-                                    if (c > 0 && data.token[c - 1] === "function" && data.types[c] === "word" && data.token[c] !== build[build.length - 1]) {
-                                        build.push(data.token[c]);
-                                    }
-                                    if (d === 0) {
-                                        if (data.token[c] === "function") {
-                                            if (data.types[c + 1] === "word") {
-                                                meta[c + 2] = a;
-                                            } else {
-                                                meta[c + 1] = a;
-                                            }
-                                            meta[meta.length - 1] = [build, false];
-                                            return;
-                                        }
                                     }
                                     c = c - 1;
-                                } while (c > -1);
+                                } while (c > data.begin[a]);
+                                meta[c] = a;
+                                if (data.stack[a] === "function") {
+                                    c = c - 1;
+                                    d = data.begin[c];
+                                    do {
+                                        if (data.types[c] === "word" && (data.token[c - 1] === "," || data.token[c - 1] === "(") && data.begin[c] === d) {
+                                            build.push(data.token[c]);
+                                        }
+                                        c = c - 1;
+                                    } while (c > d);
+                                    if (data.token[c - 1] !== "function" && data.types[c - 1] === "word") {
+                                        build.push(data.token[c - 1]);
+                                    }
+                                }
+                                meta[meta.length - 1] = [build, false];
                             }
                         }
                         if (options.bracepadding === false && ctoke !== "}" && ltype !== "markup") {
@@ -2349,7 +2328,7 @@
                                 code.push(String(linecount));
                                 code.push("</li>");
                                 linecount        = linecount + 1;
-                                commentLines[hh] = commentLines[hh] + "<em>&#xA;</em></li><li class=\"c0\">";
+                                commentLines[hh] = commentLines[hh] + "<em class=\"line\">&#xA;</em></li><li class=\"c0\">";
                                 hh = hh + 1;
                             } while (hh < ii);
                             return commentLines.join("");
@@ -2360,7 +2339,6 @@
                                 ff:number            = 0,
                                 hh:number            = 0,
                                 adjustment:number    = 1,
-                                functionBlock:boolean = true,
                                 varbuild:string[]      = [],
                                 varbuildlen:number   = 0;
                             const metax         = meta[x],
@@ -2395,7 +2373,6 @@
                                 return;
                             }
                             lettest = meta[metax][1];
-                            hh      = metameta.length;
                             if (data.types[a - 1] === "word" && data.token[a - 1] !== "function" && lettest === false) {
                                 varbuild     = data.token[a - 1].split(" ");
                                 data.token[a - 1] = `<em class="s${scope}">${varbuild[0]}</em>`;
@@ -2407,6 +2384,22 @@
                                     } while (varbuildlen > 1);
                                 }
                             }
+                            if (data.stack[a + 1] === "function") {
+                                ee = a - 2;
+                                ff = data.begin[a - 1];
+                                do {
+                                    if (data.types[ee] === "end") {
+                                        ee = data.begin[ee];
+                                    } else if (data.types[ee] === "word" && (data.token[ee - 1] === "," || data.token[ee - 1] === "(")) {
+                                        data.token[ee] = `<em class="s${scope}">${data.token[ee]}</em>`;
+                                    }
+                                    ee = ee - 1;
+                                } while (ee > ff);
+                                if (data.types[ee - 1] === "word" && data.token[ee - 1] !== "function") {
+                                    data.token[ee - 1] = `<em class="s${scope}">${data.token[ee - 1]}</em>`;
+                                }
+                            }
+                            hh = metameta.length;
                             if (hh > 0) {
                                 ee = metax - 1;
                                 if (lettest === true) {
@@ -2456,17 +2449,6 @@
                                             ff = ff + 1;
                                         } while (ff < hh);
                                     }
-                                    if (functionBlock === true) {
-                                        if (data.types[ee] === "end") {
-                                            adjustment = adjustment + 1;
-                                        } else if (data.types[ee] === "start") {
-                                            adjustment = adjustment - 1;
-                                        }
-                                        if (adjustment === 0 && data.token[ee] === "{") {
-                                            data.token[ee]     = `<em class="s${scope}">{</em>`;
-                                            functionBlock = false;
-                                        }
-                                    }
                                     ee = ee - 1;
                                 } while (ee > a);
                             } else {
@@ -2508,15 +2490,15 @@
                                 code.push("</li>");
                                 linecount = linecount + 1;
                                 if (a < len - 1 && data.token[a + 1].indexOf("/*") === 0) {
-                                    build.push("<em>&#xA;</em></li><li class=\"c0\">");
+                                    build.push("<em class=\"line\">&#xA;</em></li><li class=\"c0\">");
                                 } else {
-                                    build.push(`<em>&#xA;</em></li><li class="l${scope}">`);
+                                    build.push(`<em class="line">&#xA;</em></li><li class="l${scope}">`);
                                     if (x > 0 && scope > 0) {
                                         dd = scope;
                                         if (data.types[a + 1] === "end" || (scope === x + 1 && x > 0 && linetest === false)) {
                                             dd = dd - 1;
                                         }
-                                        build.push(lscope(dd));console.log(a+" "+data.types[a + 1]);
+                                        build.push(lscope(dd));
                                     } else if (linetest === true) {
                                         build.push(lscope(0));
                                     }
@@ -2876,7 +2858,7 @@
                                                 buildlen > 0 && build[buildlen - 1] !== undefined && build[buildlen].indexOf("<li") < 0
                                             );
                                         }
-                                        if ((/^(<em>&#xA;<\/em><\/li><li\u0020class="l\d+">)$/).test(build[buildlen - 1]) === true) {
+                                        if ((/^(<em\u0020class="line">&#xA;<\/em><\/li><li\u0020class="l\d+">)$/).test(build[buildlen - 1]) === true) {
                                             build[buildlen - 1] = build[buildlen - 1].replace(
                                                 /class="l\d+"/,
                                                 "class=\"c0\""
@@ -2939,7 +2921,7 @@
                                         data.lines[a] = data.lines[a] - 1;
                                     } while (data.lines[a] > 1);
                                     if (data.types[a] === "comment") {
-                                        build.push("<em>&#xA;</em></li><li class=\"c0\">");
+                                        build.push("<em class=\"line\">&#xA;</em></li><li class=\"c0\">");
                                     } else {
                                         commentfix = commentfix + 1;
                                         nl(levels[a], true);
@@ -2989,9 +2971,9 @@
                     //this logic is necessary to some line counting corrections to the HTML output
                     last = build[build.length - 1];
                     if (last.indexOf("<li") > 0) {
-                        build[build.length - 1] = "<em>&#xA;</em></li>";
+                        build[build.length - 1] = "<em class=\"line\">&#xA;</em></li>";
                     } else if (last.indexOf("</li>") < 0) {
-                        build.push("<em>&#xA;</em></li>");
+                        build.push("<em class=\"line\">&#xA;</em></li>");
                     }
                     build.push("</ol></div>");
                     last = build.join("");

@@ -2179,9 +2179,44 @@
                 document.onkeydown  = backspace;
 
                 // sets vertical responsive design layout
-                // must occur last
+                // must occur after all other visual and interactive changes
                 fixHeight();
                 method.app.hideOutput();
+
+                // connecting to web sockets if running as localhost
+                if (location.href.indexOf("//localhost:") > 0) {
+                    let ws = new WebSocket("ws://localhost:" + ((function dom_load_webSocketsPort():number {
+                        const uri = location.href;
+                        let str:string = uri.slice(location.href.indexOf("host:") + 5),
+                            ind:number = str.indexOf("/");
+                        if (ind > 0) {
+                            str = str.slice(0, ind);
+                        }
+                        ind = str.indexOf("?");
+                        if (ind > 0) {
+                            str = str.slice(0, ind);
+                        }
+                        ind = str.indexOf("#");
+                        if (ind > 0) {
+                            str = str.slice(0, ind);
+                        }
+                        ind = Number(str);
+                        if (isNaN(ind) === true) {
+                            return 8080;
+                        }
+                        return ind;
+                    }()) + 1));
+                    ws.addEventListener("message", function dom_load_webSockets(event):void {
+                        if (event.data === "reload") {
+                            location.reload();
+                        }
+                    });
+                    document.getElementsByTagName("body")[0].style.display = "none";
+                    window.onload = function dom_load_webSocketLoaded():void {
+                        document.getElementsByTagName("body")[0].style.display = "block";
+                        id("button-primary").getElementsByTagName("button")[0].click();
+                    };
+                }
             }
             if (pages === "documentation") {
                 let a:number = 0,

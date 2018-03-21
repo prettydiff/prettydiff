@@ -15,7 +15,8 @@ import { Hash } from "crypto";
             fs    : require("fs"),
             http  : require("http"),
             https : require("https"),
-            path  : require("path")
+            path  : require("path"),
+            socket: require("ws")
         },
         /*stats = {
             source: "",
@@ -63,10 +64,16 @@ import { Hash } from "crypto";
             },
             build: {
                 description: "Rebuilds the application.",
-                example: [{
-                    code: "prettydiff build",
-                    defined: "Compiles from TypeScript into JavaScript, compiles libraries, and lints the code."
-                }]
+                example: [
+                    {
+                        code: "prettydiff build",
+                        defined: "Compiles from TypeScript into JavaScript, compiles libraries, and lints the code."
+                    },
+                    {
+                        code: "prettydiff build nolint",
+                        defined: "Runs the build without running any of the sanity checks."
+                    }
+                ]
             },
             commands: {
                 description: "List all supported commands to the console or examples of a specific command.",
@@ -187,6 +194,19 @@ import { Hash } from "crypto";
                     {
                         code: "prettydiff remove \"C:\\Program Files\"",
                         defined: "Quote the path if it contains non-alphanumeric characters."
+                    }
+                ]
+            },
+            server: {
+                description: "Launches a HTTP service and web sockets so that the web tool is automatically refreshed once code changes in the local file system.",
+                example: [
+                    {
+                        code: "prettydiff server",
+                        defined: "Launches the server on default port 9001 and web sockets on port 9002."
+                    },
+                    {
+                        code: "prettydiff server 8080",
+                        defined: "If a numeric argument is supplied the web server starts on the port specified and web sockets on the following port."
                     }
                 ]
             },
@@ -956,6 +976,9 @@ import { Hash } from "crypto";
                     });
                 }
             };
+        if (process.argv.indexOf("nolint") > -1) {
+            order.splice(order.indexOf("lint"), 1);
+        }
         next();
     };
     apps.commands = function node_apps_commands():void {
@@ -1919,11 +1942,11 @@ import { Hash } from "crypto";
                             }
                             str = [];
                             if (outputArrays.lexer[a] === "markup") {
-                                str.push("\u001b[31m");
+                                str.push(text.red);
                             } else if (outputArrays.lexer[a] === "script") {
-                                str.push("\u001b[32m");
+                                str.push(text.green);
                             } else if (outputArrays.lexer[a] === "style") {
-                                str.push("\u001b[33m");
+                                str.push(text.yellow);
                             }
                             pad(a.toString(), 5);
                             pad(outputArrays.begin[a].toString(), 5);
@@ -1933,7 +1956,7 @@ import { Hash } from "crypto";
                             pad(outputArrays.stack[a].toString(), 11);
                             pad(outputArrays.types[a].toString(), 11);
                             str.push(outputArrays.token[a].replace(/\s/g, " "));
-                            str.push("\u001b[39m");
+                            str.push(text.none);
                             console.log(str.join(""));
                             a = a + 1;
                         } while (a < b);
@@ -2311,6 +2334,193 @@ import { Hash } from "crypto";
             };
         }
         util.stat(filepath, filepath);
+    };
+    apps.server = function node_apps_server() {
+        if (process.argv[0] !== undefined && isNaN(Number(process.argv[0])) === true) {
+            apps.errout([`Specified port, ${text.angry + process.argv[0] + text.none}, is not a number.`]);
+            return;
+        }
+        let timeStore:number = 0;
+        const port:number = (isNaN(Number(process.argv[0])))
+                ? 9001
+                : Number(process.argv[0]),
+            server = node.http.createServer(function node_apps_server_create(request, response):void {
+                let quest:number = request.url.indexOf("?"),
+                    uri:string = (quest > 0)
+                        ? request.url.slice(0, quest)
+                        : request.url,
+                    file:string = projectPath + node.path.sep + uri.slice(1);
+                if (uri === "/") {
+                    file = `${projectPath + node.path.sep}index.xhtml`;
+                }
+                if (request.url.indexOf("favicon.ico") < 0 && request.url.indexOf("images/apple") < 0) {
+                    node.fs.readFile(file, "utf8", function node_apps_server_create_readFile(err, data):void {
+                        if (err !== undefined && err !== null) {
+                            if (err.toString().indexOf("no such file or directory") > 0) {
+                                response.writeHead(404, {"Content-Type": "text/plain"});
+                                console.log(`${text.angry}404${text.none} for ${file}`);
+                                return;
+                            }
+                            response.write(JSON.stringify(err));
+                            console.log(err);
+                            return;
+                        }
+                        if (file.indexOf(".js") === file.length - 3) {
+                            response.writeHead(200, {"Content-Type": "application/javascript"});
+                        } else if (file.indexOf(".css") === file.length - 4) {
+                            response.writeHead(200, {"Content-Type": "text/css"});
+                        } else if (file.indexOf(".xhtml") === file.length - 6) {
+                            response.writeHead(200, {"Content-Type": "application/xhtml+xml"});
+                        }
+                        response.write(data);
+                        response.end();
+                        //console.log(`Responded with ${file}`);
+                    });
+                } else {
+                    response.end();
+                }
+            }),
+            serverError = function node_apps_server_serverError(error):void {
+                if (error.code === "EADDRINUSE") {
+                    if (error.port === port + 1) {
+                        apps.errout([`Web socket channel port, ${text.cyan + port + text.none}, is in use!  The web socket channel is 1 higher than the port designated for the HTTP server.`]);
+                    } else {
+                        apps.errout([`Specified port, ${text.cyan + port + text.none}, is in use!`]);
+                    }
+                } else {
+                    apps.errout([`${error.Error}`]);
+                }
+                return
+            },
+            ignore   = function node_apps_server_ignore(input:string):boolean {
+                if (input.indexOf(".git") === 0) {
+                    return true;
+                }
+                if (input.indexOf("node_modules") === 0) {
+                    return true;
+                }
+                if (input.indexOf("js") === 0) {
+                    return true;
+                }
+                //if (input.indexOf(`test${node.path.sep}samples_code`) === 0) {
+                //    return true;
+                //}
+                return false;
+            },
+            ws = new node.socket.Server({port: port + 1});
+        if (process.cwd() !== projectPath) {
+            process.chdir(projectPath);
+        }
+        ws.broadcast = function node_apps_server_broadcast(data:string):void {
+            ws.clients.forEach(function node_apps_server_broadcast_clients(client):void {
+                if (client.readyState === node.socket.OPEN) {
+                    client.send(data);
+                }
+            });
+        };
+        console.log(`HTTP server is up at: ${text.bold + text.green}http://localhost:${port + text.none}`);
+        console.log(`${text.green}Starting web server and file system watcher!${text.none}`);
+        node.fs.watch(projectPath, {
+            recursive: true
+        }, function node_apps_server_watch(type, filename) {
+            if (ignore(filename) === true) {
+                return;
+            }
+            const extension:string = (function node_apps_server_watch_extension() {
+                    const list = filename.split(".");
+                    return list[list.length - 1];
+                }()),
+                time = function node_apps_server_watch_time(message:string):number {
+                    const date:Date = new Date(),
+                        datearr:string[] = [];
+                    let hours:string = String(date.getHours()),
+                        minutes:string = String(date.getMinutes()),
+                        seconds:string = String(date.getSeconds()),
+                        mseconds:string = String(date.getMilliseconds());
+                    if (hours.length === 1) {
+                        hours = `0${hours}`;
+                    }
+                    if (minutes.length === 1) {
+                        minutes = `0${minutes}`;
+                    }
+                    if (seconds.length === 1) {
+                        seconds = `0${seconds}`;
+                    }
+                    if (mseconds.length < 3) {
+                        do {
+                            mseconds = `0${mseconds}`;
+                        } while (mseconds.length < 3);
+                    }
+                    datearr.push(hours);
+                    datearr.push(minutes);
+                    datearr.push(seconds);
+                    datearr.push(mseconds);
+                    console.log(`[${text.cyan + datearr.join(":") + text.none}] ${message}`);
+                    timeStore = date.valueOf();
+                    return timeStore;
+                };
+            if (extension === "ts" && timeStore < Date.now() - 1000) {
+                let start:number,
+                    compile:number,
+                    duration = function node_apps_server_watch_duration(length:number):void {
+                        let hours:number = 0,
+                            minutes:number = 0,
+                            seconds:number = 0,
+                            list:string[] = [];
+                        if (length > 3600000) {
+                            hours = Math.floor(length / 3600000);
+                            length = length - (hours * 3600000);
+                        }
+                        list.push(hours.toString());
+                        if (list[0].length < 2) {
+                            list[0] = `0${list[0]}`;
+                        }
+                        if (length > 60000) {
+                            minutes = Math.floor(length / 60000);
+                            length = length - (minutes * 60000);
+                        }
+                        list.push(minutes.toString());
+                        if (list[1].length < 2) {
+                            list[1] = `0${list[1]}`;
+                        }
+                        if (length > 1000) {
+                            seconds = Math.floor(length / 1000);
+                            length = length - (seconds * 1000);
+                        }
+                        list.push(seconds.toString());
+                        if (list[2].length < 2) {
+                            list[2] = `0${list[2]}`;
+                        }
+                        list.push(length.toString());
+                        if (list[3].length < 3) {
+                            do {
+                                list[3] = `0${list[3]}`;
+                            } while (list[3].length < 3);
+                        }
+                        console.log(`[${text.purple + list.join(":") + text.none}] Total compile time.`);
+                    };
+                console.log("");
+                start = time(`Compiling TypeScript for ${text.green + filename + text.none}`);
+                node.child(`node js/services build nolint`, {
+                    cwd: projectPath
+                }, function node_apps_server_watch_child(err, stdout, stderr):void {
+                    if (err !== null) {
+                        console.log(err);
+                        return;
+                    }
+                    if (stderr !== null && stderr !== "") {
+                        console.log(stderr);
+                        return;
+                    }
+                    compile = time("TypeScript Compiled") - start;
+                    duration(compile);
+                    ws.broadcast("reload");
+                    return;
+                });
+            }
+        });
+        server.on("error", serverError);
+        server.listen(port);
     };
     apps.version = function () {
         verbose = true;
