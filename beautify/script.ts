@@ -2495,20 +2495,26 @@
                                     build.push(`<em class="line">&#xA;</em></li><li class="l${scope}">`);
                                     if (x > 0 && scope > 0) {
                                         dd = scope;
-                                        if (data.types[a + 1] === "end" || (scope === x + 1 && x > 0 && linetest === false)) {
+                                        if (scope === x + 1 && x > 0 && linetest === false) {
                                             dd = dd - 1;
                                         }
                                         build.push(lscope(dd));
+                                        if (data.types[a + 1] === "end") {
+                                            dd = dd - 1;
+                                        }
                                     } else if (linetest === true) {
                                         build.push(lscope(0));
                                     }
                                 }
                             } else if (x > 0 && scope > 0) {
                                 dd = scope;
-                                if (data.types[a + 1] === "end" || (scope === x + 1 && x > 0 && linetest === false)) {
+                                if (scope === x + 1 && x > 0 && linetest === false) {
                                     dd = dd - 1;
                                 }
                                 build.push(lscope(dd));
+                                if (data.types[a + 1] === "end") {
+                                    dd = dd - 1;
+                                }
                             }
                             if (x > scope) {
                                 do {
