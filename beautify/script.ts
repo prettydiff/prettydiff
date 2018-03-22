@@ -129,7 +129,6 @@
             news:number = 0;
         const data:parsedArray = options.parsed,
             markupvar:number[] = [],
-            globals:string[] = [],
             meta:any = [],
             levels:number[] = (function beautify_script_level():number[] {
                 let a             = 0, //will store the current level of indentation
@@ -141,9 +140,10 @@
                     ctype:string         = "", //ctype stands for "current type"
                     ctoke:string         = "", //ctoke standa for "current token"
                     ltype:string         = data.types[0], //ltype stands for "last type"
-                    ltoke:string         = data.token[0], //ltype stands for "last token"
-                    lettest:number       = -1;
-                const list:boolean[]          = [], //stores comma status of current block
+                    ltoke:string         = data.token[0]; //ltype stands for "last token"
+                const varindex:number[] = [-1], //index in current scope of last var, let, or const keyword
+                    hoisted:Array<[string, number]> = [], //meta array population for cross-scope (block) variable hoisting
+                    list:boolean[]          = [], //stores comma status of current block
                     level:number[] = [],
                     ternary:number[]       = [], //used to identify ternary statments
                     varline       = [], //determines if a current list of the given block is a list of variables following the "var" keyword
@@ -854,6 +854,7 @@
                             return;
                         }
                         if (ctoke === ";" || ctoke === "x;") {
+                            varindex[varindex.length - 1] = -1;
                             endExtraInd();
                             if (data.token[data.begin[a] - 1] !== "for") {
                                 destructfix(false, false);
@@ -947,6 +948,7 @@
                             //}
                         }
                         if (ctoke === "{" || ctoke === "x{") {
+                            varindex.push(-1);
                             if (ctoke === "{") {
                                 varline.push(false);
                             }
@@ -1153,34 +1155,57 @@
                                 } while (c > -1);
                             }
                             //this is the bulk of logic identifying scope start and end
-                            if (data.stack[a] === "function" && (options.jsscope !== "none" || options.mode === "minify")) {
+                            if (options.jsscope !== "none" || options.mode === "minify") {
                                 let c:number     = a - 1,
                                     d:number     = 1,
-                                    build:string[] = [];
+                                    build:Array<[string, number]> = [];
                                 do {
                                     if (data.types[c] === "end") {
                                         c = data.begin[c];
-                                    } else if (meta[c] === "v" && build.indexOf(data.token[c]) < 0) {
-                                        build.push(data.token[c]);
+                                    } else if (typeof meta[c] === "number" && data.types[c] === "word") {
+                                        if (data.token[meta[c]] === "{" && data.stack[c] !== "function") {
+                                            hoisted.push([data.token[c], meta[c]]);
+                                        } else {
+                                            build.push([data.token[c], meta[c]]);
+                                        }
                                     }
                                     c = c - 1;
                                 } while (c > data.begin[a]);
                                 meta[c] = a;
+                                // function arguments and name
                                 if (data.stack[a] === "function") {
                                     c = c - 1;
                                     d = data.begin[c];
                                     do {
+                                        // function arguments
                                         if (data.types[c] === "word" && (data.token[c - 1] === "," || data.token[c - 1] === "(") && data.begin[c] === d) {
-                                            build.push(data.token[c]);
+                                            build.push([data.token[c], data.begin[a]]);
                                         }
                                         c = c - 1;
                                     } while (c > d);
+                                    c = hoisted.length - 1;
+                                    if (c > -1) {
+                                        do {
+                                            if (hoisted[c][1] === data.begin[a]) {
+                                                build.push(hoisted[c]);
+                                                hoisted.splice(c, 1);
+                                            }
+                                            c = c - 1;
+                                        } while (c > 0);
+                                    }
+                                    // function name
                                     if (data.token[c - 1] !== "function" && data.types[c - 1] === "word") {
-                                        build.push(data.token[c - 1]);
+                                        build.push([data.token[c - 1], data.begin[a]]);
                                     }
                                 }
-                                meta[meta.length - 1] = [build, false];
+                                if (build.length < 1 && data.stack[a] !== "function") {
+                                    meta[data.begin[a]] = "";
+                                    meta[meta.length - 1] = "";
+                                } else {
+                                    meta[meta.length - 1] = build;
+                                }
                             }
+                            varindex.pop();
                         }
                         if (options.bracepadding === false && ctoke !== "}" && ltype !== "markup") {
                             level[a - 1] = -20;
@@ -1908,10 +1933,22 @@
                                 }
                             }
                             if (options.jsscope !== "none" || options.mode === "minify") {
-                                meta[meta.length - 1] = "v";
+                                if (data.token[varindex[varindex.length - 1]] === "var") {
+                                    if (data.stack[a] === "global") {
+                                        meta[a] = 0;
+                                    } else if (data.stack[a] === "function") {
+                                        meta[a] = data.begin[a];
+                                    } else {
+                                        let begin:number = data.begin[a];
+                                        do {
+                                            begin = data.begin[begin - 1];
+                                        } while (data.stack[begin + 1] !== "function" && begin > 0);
+                                        meta[a] = begin;
+                                    }
+                                } else {
+                                    meta[a] = varindex[varindex.length - 1];
+                                }
                             }
-                        } else if ((options.jsscope !== "none" || options.mode === "minify") && ltoke === "function") {
-                            meta[meta.length - 1] = "v";
                         }
                         if ((ltoke === ")" || ltoke === "x)") && data.stack[a] === "class" && (data.token[data.begin[a - 1] - 1] === "static" || data.token[data.begin[a - 1] - 1] === "final" || data.token[data.begin[a - 1] - 1] === "void")) {
                             level[a - 1]            = -10;
@@ -1925,9 +1962,6 @@
                         }
                         if (ctoke === "else" && ltoke === "}" && data.token[a - 2] === "x}") {
                             level[a - 3] = level[a - 3] - 1;
-                        }
-                        if ((ctoke === "let" || ctoke === "const") && lettest < 0) {
-                            lettest = a;
                         }
                         if (ctoke === "new") {
                             let apiword:string[] = [
@@ -2058,6 +2092,7 @@
                             } else if (data.stack[a] !== "method") {
                                 varlen[varlen.length - 1] = [];
                             }
+                            varindex[varindex.length - 1] = a;
                             if (ltype === "end") {
                                 level[a - 1] = indent;
                             }
@@ -2164,6 +2199,21 @@
                     }
                     a = a + 1;
                 } while (a < b);
+                if (options.jsscope !== "none" || options.mode === "minify") {
+                    let c:number     = a - 1,
+                        build:Array<[string, number]> = [];
+                    do {
+                        if (data.types[c] === "end") {
+                            c = data.begin[c];
+                        } else if (typeof meta[c] === "number" && data.types[c] === "word") {
+                            build.push([data.token[c], meta[c]]);
+                        }
+                        c = c - 1;
+                    } while (c > 0);
+                    if (build.length > 0) {
+                        meta.push(build);
+                    }
+                }
                 if (assignlist[assignlist.length - 1] === true && varlen[varlen.length - 1].length > 1 && ltoke === ";") {
                     varlist.push(varlen[varlen.length - 1]);
                 }
@@ -2191,7 +2241,7 @@
                 if (options.jsscope !== "none") {
                     let linecount:number          = 2,
                         last:string               = "",
-                        scope:number              = 1,
+                        scope:number              = 0,
                         buildlen:number           = 0,
                         commentfix:number         = (function beautify_script_output_scope_commentfix():number {
                             let aa:number = 1,
@@ -2334,59 +2384,45 @@
                             return commentLines.join("");
                         },
                         findvars           = function beautify_script_output_scope_findvars(x:number):void {
-                            let lettest:boolean       = false,
-                                ee:number            = 0,
-                                ff:number            = 0,
-                                hh:number            = 0,
-                                adjustment:number    = 1,
-                                varbuild:string[]      = [],
-                                varbuildlen:number   = 0;
-                            const metax         = meta[x],
-                                metameta      = meta[metax][0],
-                                letcomma      = function beautify_script_output_scope_findvars_letcomma():void {
-                                    let aa:number = a,
-                                        bb:number = 0;
-                                    if (a > -1) {
-                                        do {
-                                            if (data.types[aa] === "end") {
-                                                bb = bb - 1;
-                                            }
-                                            if (data.types[aa] === "start") {
-                                                bb = bb + 1;
-                                            }
-                                            if (bb > 0) {
-                                                return;
-                                            }
-                                            if (bb === 0) {
-                                                if (data.token[aa] === "var" || data.token[aa] === ";" || data.token[aa] === "x;") {
-                                                    return;
-                                                }
-                                                if (data.token[aa] === "let" || data.token[aa] === "const") {
-                                                    data.token[ee] = `<em class="s${scope}">${varbuild[0]}</em>`;
-                                                }
-                                            }
-                                            aa = aa - 1;
-                                        } while (aa > -1);
-                                    }
-                                };
-                            if (metameta === undefined) {
+                            let ee:number            = 0,
+                                index:number = 0;
+                            const metax:number         = (x === len)
+                                    ? len
+                                    : meta[x],
+                                metameta:Array<[string, number]>      = meta[metax],
+                                words:string[] = (function beautify_script_output_scope_findvars_words():string[] {
+                                    const wordout:string[] = [],
+                                        metalen:number = metameta.length;
+                                    let metac:number = 0;
+                                    do {
+                                        wordout.push(metameta[metac][0]);
+                                        metac = metac + 1;
+                                    } while (metac < metalen);
+                                    return wordout;
+                                }());
+                            if (metameta.length < 1) {
                                 return;
                             }
-                            lettest = meta[metax][1];
-                            if (data.types[a - 1] === "word" && data.token[a - 1] !== "function" && lettest === false) {
-                                varbuild     = data.token[a - 1].split(" ");
-                                data.token[a - 1] = `<em class="s${scope}">${varbuild[0]}</em>`;
-                                varbuildlen  = varbuild.length;
-                                if (varbuildlen > 1) {
-                                    do {
-                                        data.token[ee]   = data.token[ee] + " ";
-                                        varbuildlen = varbuildlen - 1;
-                                    } while (varbuildlen > 1);
+                            ee = metax - 1;
+                            do {
+                                index = words.indexOf(data.token[ee])
+                                if (index > -1) {
+                                    if (ee < metameta[index][1]) {
+                                        metameta.splice(index, 1);
+                                    } else {
+                                        data.token[ee] = `<em class="s${scope}">${data.token[ee]}</em>`;
+                                    }
                                 }
+                                ee = ee - 1;
+                            } while (ee > a);
+                            if (x === len) {
+                                return;
                             }
+                            data.token[a] = `<em class="s${scope}">{</em>`;
+                            data.token[metax] = `<em class="s${scope}">}</em>`;
                             if (data.stack[a + 1] === "function") {
-                                ee = a - 2;
-                                ff = data.begin[a - 1];
+                                ee = ee - 2;
+                                index = data.begin[ee];
                                 do {
                                     if (data.types[ee] === "end") {
                                         ee = data.begin[ee];
@@ -2394,81 +2430,9 @@
                                         data.token[ee] = `<em class="s${scope}">${data.token[ee]}</em>`;
                                     }
                                     ee = ee - 1;
-                                } while (ee > ff);
+                                } while (ee > index);
                                 if (data.types[ee - 1] === "word" && data.token[ee - 1] !== "function") {
                                     data.token[ee - 1] = `<em class="s${scope}">${data.token[ee - 1]}</em>`;
-                                }
-                            }
-                            hh = metameta.length;
-                            if (hh > 0) {
-                                ee = metax - 1;
-                                if (lettest === true) {
-                                    ee = ee - 1;
-                                }
-                                do {
-                                    if (data.types[ee] === "word") {
-                                        varbuild = data.token[ee].split(" ");
-                                        ff = 0;
-                                        do {
-                                            if (varbuild[0] === metameta[ff] && data.token[ee - 1] !== ".") {
-                                                if (data.token[ee - 1] === "function" && data.token[ee + 1] === "(") {
-                                                    data.token[ee]   = `<em class="s${scope + 1}">${varbuild[0]}</em>`;
-                                                    varbuildlen = varbuild.length;
-                                                    if (varbuildlen > 1) {
-                                                        do {
-                                                            data.token[ee]   = data.token[ee] + " ";
-                                                            varbuildlen = varbuildlen - 1;
-                                                        } while (varbuildlen > 1);
-                                                    }
-                                                } else if (
-                                                    data.token[ee - 1] === "case" ||
-                                                    data.token[ee + 1] !== ":" ||
-                                                    (data.token[ee + 1] === ":" && levels[ee] > -20)
-                                                ) {
-                                                    if (lettest === true) {
-                                                        if (data.token[ee - 1] === "let" || data.token[ee - 1] === "const") {
-                                                            data.token[ee] = `<em class="s${scope}">${varbuild[0]}</em>`;
-                                                        } else if (data.token[ee - 1] === ",") {
-                                                            letcomma();
-                                                        } else {
-                                                            data.token[ee] = `<em class="s${scope}">${varbuild[0]}</em>`;
-                                                        }
-                                                    } else {
-                                                        data.token[ee] = `<em class="s${scope}">${varbuild[0]}</em>`;
-                                                    }
-                                                    varbuildlen = varbuild.length;
-                                                    if (varbuildlen > 1) {
-                                                        do {
-                                                            data.token[ee]   = data.token[ee] + " ";
-                                                            varbuildlen = varbuildlen - 1;
-                                                        } while (varbuildlen > 1);
-                                                    }
-                                                }
-                                                break;
-                                            }
-                                            ff = ff + 1;
-                                        } while (ff < hh);
-                                    }
-                                    ee = ee - 1;
-                                } while (ee > a);
-                            } else {
-                                ee = a + 1;
-                                if (lettest === true) {
-                                    ee = ee - 1;
-                                }
-                                if (ee < metax) {
-                                    do {
-                                        if (data.types[ee] === "end") {
-                                            adjustment = adjustment - 1;
-                                        } else if (data.types[ee] === "start") {
-                                            adjustment = adjustment + 1;
-                                        }
-                                        if (adjustment === 1 && data.token[ee] === "{") {
-                                            data.token[ee] = `<em class="s${scope}">{</em>`;
-                                            return;
-                                        }
-                                        ee = ee + 1;
-                                    } while (ee < metax);
                                 }
                             }
                         },
@@ -2714,10 +2678,15 @@
                     // its important to find the variables separately from building the output so
                     // that recursive flows in the loop incrementation do not present simple
                     // counting collisions as to what gets modified versus what gets included
+                    if (meta[len] !== undefined) {
+                        a = 0;
+                        findvars(len);
+                    }
+                    scope = 1;
                     a = len - 1;
                     if (a > 0) {
                         do {
-                            if (typeof meta[a] === "number") {
+                            if (typeof meta[a] === "number" && data.types[a] === "start") {
                                 scope = scope - 1;
                                 findvars(a);
                             } else if (
@@ -2727,7 +2696,6 @@
                                 a > 0 &&
                                 invisibles.indexOf(data.token[a]) < 0
                             ) {
-                                data.token[a] = `<em class="s${scope}">${data.token[a]}</em>`;
                                 scope    = scope + 1;
                                 if (scope > 16) {
                                     scope = 16;
@@ -2736,56 +2704,12 @@
                             a = a - 1;
                         } while (a > -1);
                     }
-                    (function beautify_script_output_scope_globals():void {
-                        let aa:number          = len,
-                            ee:number          = globals.length - 1,
-                            word:string[]        = [],
-                            wordlen:number     = 0;
-                        if (ee < 0) {
-                            return;
-                        }
-                        do {
-                            if (
-                                data.types[aa] === "word" &&
-                                (data.token[aa + 1] !== ":" || (data.token[aa + 1] === ":" && levels[aa + 1] === -20)) &&
-                                data.token[aa].indexOf("<em ") < 0
-                            ) {
-                                word = data.token[aa].split(" ");
-                                do {
-                                    if (word[0] === globals[ee] && data.token[aa - 1] !== ".") {
-                                        if (data.token[aa - 1] === "function" && data.stack[aa + 1] === "method") {
-                                            data.token[aa] = `<em class="s1">${word[0]}</em>`;
-                                            wordlen   = word.length;
-                                            if (wordlen > 1) {
-                                                do {
-                                                    data.token[aa] = data.token[aa] + " ";
-                                                    wordlen   = wordlen - 1;
-                                                } while (wordlen > 1);
-                                            }
-                                        } else {
-                                            data.token[aa] = `<em class="s0">${word[0]}</em>`;
-                                            wordlen   = word.length;
-                                            if (wordlen > 1) {
-                                                do {
-                                                    data.token[aa] = data.token[aa] + " ";
-                                                    wordlen   = wordlen - 1;
-                                                } while (wordlen > 1);
-                                            }
-                                        }
-                                        break;
-                                    }
-                                    ee = ee - 1;
-                                } while (ee > -1);
-                            }
-                            aa = aa - 1;
-                        } while (a > 0);
-                    }());
                     scope = 0;
                     // this loops combines the white space as determined from the algorithm with the
                     // tokens to create the output
                     a = 0;
                     do {
-                        if (typeof meta[a] === "number") {
+                        if (typeof meta[a] === "number" && data.types[a] === "start") {
                             folder();
                         }
                         if (
@@ -2812,7 +2736,7 @@
                         if (data.types[a] === "comment" && data.token[a].indexOf("/*") === 0) {
                             build.push(blockline(data.token[a]));
                         } else if (invisibles.indexOf(data.token[a]) < 0) {
-                            if (typeof meta[a] === "number") {
+                            if (typeof meta[a] === "number" && data.types[a] === "start") {
                                 scope = scope + 1;
                                 if (scope > 16) {
                                     scope = 16;
