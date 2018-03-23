@@ -2232,6 +2232,29 @@
                         } while (index > 0);
                         return tabby.join("");
                     }()),
+                    outnl = function beautify_script_output_outnl(tabs):string {
+                        const linesout:string[] = [],
+                            end:string = (options.crlf === true)
+                                ? "\r\n"
+                                : "\n",
+                            total:number = Math.min((data.lines[a + 1] - 1), pres);
+                        let index = 0;
+                        if (tabs < 0) {
+                            tabs = 0;
+                        }
+                        do {
+                            linesout.push(end);
+                            index = index + 1;
+                        } while (index < total);
+                        if (tabs > 0) {
+                            index = 0;
+                            do {
+                                linesout.push(tab);
+                                index = index + 1;
+                            } while (index < tabs);
+                        }
+                        return linesout.join("");
+                    },
                     lf:"\r\n"|"\n" = (options.crlf === true)
                         ? "\r\n"
                         : "\n",
@@ -2946,37 +2969,14 @@
                     ].join("").replace(/(\s+)$/, "").replace(options.binaryCheck, "");
                 }
                 do {
-                    const nl = function beautify_script_output_nl(tabs):string {
-                        const linesout:string[] = [],
-                            end:string = (options.crlf === true)
-                                ? "\r\n"
-                                : "\n",
-                            total:number = Math.min((data.lines[a + 1] - 1), pres);
-                        let index = 0;
-                        if (tabs < 0) {
-                            tabs = 0;
-                        }
-                        do {
-                            linesout.push(end);
-                            index = index + 1;
-                        } while (index < total);
-                        if (tabs > 0) {
-                            index = 0;
-                            do {
-                                linesout.push(tab);
-                                index = index + 1;
-                            } while (index < tabs);
-                        }
-                        return linesout.join("");
-                    };
-                    if (data.token[a].length === 1 || data.token[a].charAt(0) !== "x") {
+                    if (invisibles.indexOf(data.token[a]) < 0) {
                         build.push(data.token[a]);
-                        if (levels[a] > -20) {
-                            if (levels[a] === -10) {
-                                build.push(" ");
-                            } else {
-                                build.push(nl(levels[a]));
-                            }
+                    }
+                    if (levels[a] > -20) {
+                        if (levels[a] === -10) {
+                            build.push(" ");
+                        } else {
+                            build.push(outnl(levels[a]));
                         }
                     }
                     a = a + 1;

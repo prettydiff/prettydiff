@@ -15,6 +15,7 @@ import { Hash } from "crypto";
             fs    : require("fs"),
             http  : require("http"),
             https : require("https"),
+            os    : require("os"),
             path  : require("path"),
             socket: require("ws")
         },
@@ -512,6 +513,7 @@ import { Hash } from "crypto";
     apps.build = function node_apps_build():void {
         let firstOrder:boolean = true;
         const order = [
+                "language",
                 "typescript",
                 "libraries",
                 "lint"
@@ -540,6 +542,24 @@ import { Hash } from "crypto";
                 console.log("");
             },
             phases = {
+                language: function node_apps_build_language():void {
+                    heading("Sourcing Language File");
+                    node.fs.readFile(`${projectPath}node_modules${sep}parse-framework${sep}language.ts`, "utf8", function node_args_language(err:Error, fileData:string) {
+                        if (err !== null) {
+                            console.log(err.toString());
+                            return;
+                        }
+                        fileData = fileData.replace("global.parseFramework.language", "module.exports");
+                        node.fs.writeFile(`api${sep}language.ts`, fileData, function node_args_language_write(errw:Error) {
+                            if (errw !== null) {
+                                console.log(errw.toString());
+                                return;
+                            }
+                            console.log(`${apps.humantime(false) + text.green}Language dependency file sourced from parse-framework.${text.none}`);
+                            next();
+                        });
+                    });
+                },
                 libraries: function node_apps_build_libraries():void {
                     let domlibs:string = "";
                     const flag = {
@@ -770,7 +790,7 @@ import { Hash } from "crypto";
                             })
                         },
                         libraries = function node_apps_build_libraries_libraries(callback:Function) {
-                            const pathes:string[] = [`${js}beautify`, `${api}`, `${projectPath}node_modules${sep}file-saver${sep}FileSaver.min.js`],
+                            const pathes:string[] = [`${js}beautify`, `${api}`, `${projectPath}node_modules${sep}file-saver${sep}dist${sep}FileSaver.min.js`],
                                 len:number = pathes.length,
                                 appendFile = function node_apps_build_libraries_libraries_appendFile(filePath:string):void {
                                     node.fs.readFile(filePath, "utf8", function node_apps_build_libraries_libraries_appendFile_read(errr:Error, filedata:string):void {
@@ -780,10 +800,11 @@ import { Hash } from "crypto";
                                         }
                                         if (filePath.indexOf("FileSaver") > 0) {
                                             filedata = filedata
-                                                .replace("var saveAs=saveAs||function(", "// eslint-disable-next-line\r\nprettydiff.saveAs=function prettydiff_saveAs(")
+                                                .slice(filedata.indexOf("var b=a.saveAs=b||function("), filedata.indexOf("(\"undefined\"!=typeof self"))
+                                                .replace(/var\s*b=a\.saveAs=b\|\|function\(/, `// eslint-disable-next-line${node.os.EOL}prettydiff.saveAs=function prettydiff_saveAs(`)
                                                 .replace(/[{|}|;|(*/)]\s*var\s/g, function node_apps_build_libraries_libraries_appendFile_read_saveAsFix(str:string):string {
                                                 return str.replace("var", "let");
-                                            });
+                                            }) + ";";
                                         } else {
                                             const assign = function node_apps_build_libraries_libraries_assign(x:string):string {
                                                 const itemname:string = x.split("=")[1].replace(/\s+/g, ""),
@@ -793,7 +814,8 @@ import { Hash } from "crypto";
                                                         : itemgroups[itemgroups.length - 2];
                                                 return `prettydiff.${itemgroup}.${itemname}=${itemname}`;
                                             };
-                                            filedata = filedata.replace(/module\.exports\s=\s\w+/, assign);
+                                            filedata = filedata
+                                                .replace(/module\.exports\s*=\s*\w+/, assign);
                                         }
                                         domlibs = domlibs + filedata;
                                         b = b + 1;
@@ -1339,12 +1361,7 @@ import { Hash } from "crypto";
         apps.mode();
     };
     apps.errout = function node_apps_errout(errtext:string[]):void {
-        let stack:string = new Error().stack;
-        if (process.platform.toLowerCase() === "win32") {
-            stack = stack.replace("Error", `${text.cyan}Stack trace${text.none}\r\n-----------`);
-        } else {
-            stack = stack.replace("Error", `${text.cyan}Stack trace${text.none}\n-----------`);
-        }
+        const stack:string = new Error().stack.replace("Error", `${text.cyan}Stack trace${text.none + node.os.EOL}-----------`);
         console.log("");
         console.log(stack);
         console.log("");
@@ -2497,19 +2514,19 @@ import { Hash } from "crypto";
                                 list[3] = `0${list[3]}`;
                             } while (list[3].length < 3);
                         }
-                        console.log(`[${text.purple + list.join(":") + text.none}] Total compile time.`);
+                        console.log(`[${text.bold + text.purple + list.join(":") + text.none}] Total compile time.`);
                     };
                 console.log("");
                 start = time(`Compiling TypeScript for ${text.green + filename + text.none}`);
                 node.child(`node js/services build nolint`, {
                     cwd: projectPath
-                }, function node_apps_server_watch_child(err, stdout, stderr):void {
+                }, function node_apps_server_watch_child(err:Error, stdout:string, stderr:string):void {
                     if (err !== null) {
-                        console.log(err);
+                        apps.errout([err.toString()]);
                         return;
                     }
-                    if (stderr !== null && stderr !== "") {
-                        console.log(stderr);
+                    if (stderr !== "") {
+                        apps.errout([stderr]);
                         return;
                     }
                     compile = time("TypeScript Compiled") - start;
