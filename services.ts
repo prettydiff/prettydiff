@@ -790,7 +790,7 @@ import { Hash } from "crypto";
                             })
                         },
                         libraries = function node_apps_build_libraries_libraries(callback:Function) {
-                            const pathes:string[] = [`${js}beautify`, `${api}`, `${projectPath}node_modules${sep}file-saver${sep}dist${sep}FileSaver.min.js`],
+                            const pathes:string[] = [`${js}beautify`, `${api}`, `${projectPath}node_modules${sep}file-saver${sep}FileSaver.min.js`],
                                 len:number = pathes.length,
                                 appendFile = function node_apps_build_libraries_libraries_appendFile(filePath:string):void {
                                     node.fs.readFile(filePath, "utf8", function node_apps_build_libraries_libraries_appendFile_read(errr:Error, filedata:string):void {
@@ -800,11 +800,10 @@ import { Hash } from "crypto";
                                         }
                                         if (filePath.indexOf("FileSaver") > 0) {
                                             filedata = filedata
-                                                .slice(filedata.indexOf("var b=a.saveAs=b||function("), filedata.indexOf("(\"undefined\"!=typeof self"))
-                                                .replace(/var\s*b=a\.saveAs=b\|\|function\(/, `// eslint-disable-next-line${node.os.EOL}prettydiff.saveAs=function prettydiff_saveAs(`)
+                                                .replace(/var\s+saveAs\s*=\s*saveAs\s*\|\|\s*function\(/, `// eslint-disable-next-line${node.os.EOL}prettydiff.saveAs=function prettydiff_saveAs(`)
                                                 .replace(/[{|}|;|(*/)]\s*var\s/g, function node_apps_build_libraries_libraries_appendFile_read_saveAsFix(str:string):string {
                                                 return str.replace("var", "let");
-                                            }) + ";";
+                                            });
                                         } else {
                                             const assign = function node_apps_build_libraries_libraries_assign(x:string):string {
                                                 const itemname:string = x.split("=")[1].replace(/\s+/g, ""),
