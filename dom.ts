@@ -3169,10 +3169,9 @@
                                     table.push("</div>");
                                     output = table.join("");
                                     if (autotest === true) {
-                                        report.code.body.innerHTML = `<p>Code type is set to <strong>auto</strong>. <span>Presumed language is <em>${data.langvalue[2]}</em>.</span></p>${output}`;
-                                    } else {
-                                        report.code.body.innerHTML = output;
+                                        output = `<p>Code type is set to <strong>auto</strong>. <span>Presumed language is <em>${data.langvalue[2]}</em>.</span></p>${output}`;
                                     }
+                                    report.code.body.innerHTML = output;
                                     if (report.code.body.style.display === "none") {
                                         report.code.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0].focus();
                                     }
