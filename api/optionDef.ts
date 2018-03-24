@@ -1,3 +1,4 @@
+/*global global*/
 (function options_init():void {
     "use strict";
     const optionDef = {
@@ -816,5 +817,5 @@
                 default   : 0
             }
         };
-    module.exports = optionDef;
+    global.prettydiff.api.optionDef = optionDef;
 }());

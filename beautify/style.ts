@@ -1,3 +1,4 @@
+/*global global*/
 (function beautify_style_init():void {
     "use strict";
     const style = function beautify_style(options:any):string {
@@ -406,5 +407,5 @@
         }
         return output;
     };
-    module.exports = style;
+    global.prettydiff.beautify.style = style;
 }());

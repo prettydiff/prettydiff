@@ -1,3 +1,4 @@
+/*global global*/
 (function beautify_script_init():void {
     "use strict";
     const script = function beautify_script(options:any):string {
@@ -2785,7 +2786,7 @@
                                             nl(indent + 1, false);
                                         }
                                     }
-                                    /*if (typeof global.prettydiff.markuppretty === "function") {
+                                    /*if (typeof prettydiff.markuppretty === "function") {
                                         markupBuild();
                                     } else {*/
                                         build.push(data.token[a].replace(/\r?\n(\s*)/g, " "));
@@ -2985,5 +2986,5 @@
             }());
         return output;
     };
-    module.exports = script;
+    global.prettydiff.beautify.script = script;
 }());

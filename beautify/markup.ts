@@ -1,4 +1,4 @@
-/*global prettydiff*/
+/*global global, prettydiff*/
 (function beautify_markup_init():void {
     "use strict";
     const markup = function beautify_markup(options:any):string {
@@ -688,5 +688,5 @@
         level[0] = 0;
         return apply();
     };
-    module.exports = markup;
+    global.prettydiff.beautify.markup = markup;
 }());

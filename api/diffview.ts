@@ -1,3 +1,4 @@
+/*global global*/
 (function diffview_init():void {
     "use strict";
     const diffview = function diffview_(options:any):[string, number, number] {
@@ -1320,5 +1321,5 @@
             ];
         }());
     };
-    module.exports = diffview;
+    global.prettydiff.api.diffview = diffview;
 }());

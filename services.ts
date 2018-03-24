@@ -354,12 +354,7 @@ import { Hash } from "crypto";
                                         return;
                                     }
                                     if (stats.isFile() === true) {
-                                        const fileName:string = (function node_args_requireDir_dirwrapper_readdir_each_stat_fileName():string {
-                                                const filedirs:string[] = valpath.split(sep);
-                                                return filedirs[filedirs.length - 1].split(".")[0];
-                                            }()),
-                                            file:Function = require(valpath);
-                                        prettydiff[dirname][fileName] = file;
+                                        require(valpath);
                                         counts.items = counts.items + 1;
                                     } else if (stats.isDirectory() === true) {
                                         node_args_requireDir_dirwrapper(valpath);
@@ -499,6 +494,7 @@ import { Hash } from "crypto";
         options.binaryCheck = (
             /\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u000b|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g
         );
+        global.prettydiff = prettydiff;
         requireDir(`${js}api`);
         requireDir(`${js}beautify`);
     }());
@@ -549,7 +545,7 @@ import { Hash } from "crypto";
                             console.log(err.toString());
                             return;
                         }
-                        fileData = fileData.replace("global.parseFramework.language", "module.exports");
+                        fileData = fileData.replace("global.parseFramework.language", "global.prettydiff.api.language");
                         node.fs.writeFile(`api${sep}language.ts`, fileData, function node_args_language_write(errw:Error) {
                             if (errw !== null) {
                                 console.log(errw.toString());
@@ -805,16 +801,9 @@ import { Hash } from "crypto";
                                                 return str.replace("var", "let");
                                             });
                                         } else {
-                                            const assign = function node_apps_build_libraries_libraries_assign(x:string):string {
-                                                const itemname:string = x.split("=")[1].replace(/\s+/g, ""),
-                                                    itemgroups:string[] = filePath.split(sep),
-                                                    itemgroup:string = (itemgroups[itemgroups.length - 2] === "")
-                                                        ? itemgroups[itemgroups.length - 3]
-                                                        : itemgroups[itemgroups.length - 2];
-                                                return `prettydiff.${itemgroup}.${itemname}=${itemname}`;
-                                            };
                                             filedata = filedata
-                                                .replace(/module\.exports\s*=\s*\w+/, assign);
+                                                .replace(/\/\*global\s+global(,\s*prettydiff)?\s*\*\//, "")
+                                                .replace("global.prettydiff.", "prettydiff.");
                                         }
                                         domlibs = domlibs + filedata;
                                         b = b + 1;
@@ -2438,11 +2427,11 @@ import { Hash } from "crypto";
         console.log(`${text.green}Starting web server and file system watcher!${text.none}`);
         node.fs.watch(projectPath, {
             recursive: true
-        }, function node_apps_server_watch(type, filename) {
+        }, function node_apps_server_watch(type:"rename"|"change", filename:string):void {console.log(filename);
             if (ignore(filename) === true) {
                 return;
             }
-            const extension:string = (function node_apps_server_watch_extension() {
+            const extension:string = (function node_apps_server_watch_extension():string {
                     const list = filename.split(".");
                     return list[list.length - 1];
                 }()),
