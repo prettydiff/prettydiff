@@ -721,7 +721,7 @@
                 // prep default announcement text
                 {
                     const headline  = id("headline"),
-                        ann         = (headline === null)
+                        headtext    = (headline === null)
                             ? null
                             : headline.getElementsByTagName("p")[0],
                         x           = Math.random(),
@@ -729,7 +729,7 @@
                             "Pretty Diff now at version 3.0.0"
                         ];
                     if (headline !== null) {
-                        ann.innerHTML = circulation[Math.floor(x * circulation.length)];
+                        headtext.innerHTML = circulation[Math.floor(x * circulation.length)];
                         if (location.href.indexOf("ignore") > 0) {
                             headline.innerHTML = "<h2>BETA TEST SITE.</h2> <p>Official Pretty Diff is at <a href=\"http://prettydiff.com/\">http://prettydiff.com/</a></p> <span class=\"clear\"></span>";
                         }
@@ -2682,6 +2682,7 @@
             localStorage.commentString = JSON.stringify(data.commentString);
         }
     };
+
     //allows visual folding of function in the JSPretty jsscope HTML output
     method.event.beaufold = function dom_event_beaufold(event:Event):void {
         let a:number     = 0,
@@ -2950,6 +2951,7 @@
             diffout:[string, number, number],
             node:HTMLSelectElement        = id("option-jsscope");
         const startTime:number = Date.now(),
+            ann:HTMLParagraphElement = id("announcement"),
             domain:RegExp      = (/^((https?:\/\/)|(file:\/\/\/))/),
             lf:HTMLInputElement        = id("option-crlf"),
             textout:boolean     = (options.jsscope !== "report" && (node === null || node[node.selectedIndex].value !== "report")),
@@ -3303,23 +3305,22 @@
                             textarea.codeOut.value = output.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
                         }
                     }
-                    if (id("announcement") !== null) {
-                        const announce = id("announcement");
+                    if (ann !== null) {
                         if (errortext.indexOf("end tag") > 0 || errortext.indexOf("Duplicate id") > 0) {
-                            announce.setAttribute("class", "error");
-                            announce.innerHTML = errortext;
+                            ann.setAttribute("class", "error");
+                            ann.innerHTML = errortext;
                         } else if (id("jserror") !== null) {
-                            announce.removeAttribute("class");
-                            announce.innerHTML = "<strong>" + id("jserror")
+                            ann.removeAttribute("class");
+                            ann.innerHTML = "<strong>" + id("jserror")
                                 .getElementsByTagName("strong")[0]
                                 .innerHTML + "</strong> <span>See 'Code Report' for details</span>";
                         } else {
                             if (meta.lang[0] === "jsx") {
-                                announce.innerHTML = "Presumed language is <strong>React JSX</strong>.";
+                                ann.innerHTML = "Presumed language is <strong>React JSX</strong>.";
                             } else if (autotest === true) {
-                                announce.innerHTML = `Code type is set to <em>auto</em>. Presumed language is <strong>${data.langvalue[2]}</strong>.`;
+                                ann.innerHTML = `Code type is set to <em>auto</em>. Presumed language is <strong>${data.langvalue[2]}</strong>.`;
                             } else {
-                                announce.innerHTML = "Language set to <strong>" + data.langvalue[2] + "</strong>.";
+                                ann.innerHTML = "Language set to <strong>" + data.langvalue[2] + "</strong>.";
                             }
                             if (options.mode === "parse" && options.parseFormat !== "htmltable") {
                                 pdlang = "tokens";
@@ -3327,9 +3328,9 @@
                                 pdlang = "characters";
                             }
                             if (meta.error === "" || meta.error === undefined) {
-                                announce.innerHTML = `${announce.innerHTML}<span><em>Execution time:</em> <strong>${meta.time.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</strong>. <em>Output size:</em> <strong>${commanumb(meta.outsize)} ${pdlang}</strong></span>`;
+                                ann.innerHTML = `${ann.innerHTML}<span><em>Execution time:</em> <strong>${meta.time.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</strong>. <em>Output size:</em> <strong>${commanumb(meta.outsize)} ${pdlang}</strong></span>`;
                             } else {
-                                announce.innerHTML = `${announce.innerHTML}<span><strong>${meta.error.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</strong></span>`;
+                                ann.innerHTML = `${ann.innerHTML}<span><strong>${meta.error.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</strong></span>`;
                             }
                         }
                     }
@@ -3346,24 +3347,48 @@
                         buttons[1].click();
                     }
                 };
+                if (lang[0] === "text") {
+                    lang[2] = "Plain Text";
+                } else if (lang[0] === "csv") {
+                    lang[2] = "CSV";
+                }
+                data.langvalue = lang;
+                options.lang = lang[0];
+                options.lexer = lang[1];
                 if (options.mode === "diff") {
-                    meta.insize = options.source.length + options.diff.length;
-                    if (options.lexer !== "text") {
-                        let source:string;
-                        options.parsed = window.parseFramework.parserArrays(options);
-                        source = prettydiff.beautify[options.lexer](options);
-                        options.source = options.diff;
-                        options.parsed = window.parseFramework.parserArrays(options);
-                        options.diff = prettydiff.beautify[options.lexer](options);
-                        options.source = source;
+                    if (prettydiff.beautify[options.lexer] === undefined) {
+                        if (ann !== null) {
+                            ann.innerHTML = `Library <em>prettydiff.beautify.${options.lexer}</em> is <strong>undefined</strong>.`;
+                        }
+                        output = "";
+                    } else {
+                        meta.insize = options.source.length + options.diff.length;
+                        if (options.lexer !== "text") {
+                            let source:string;
+                            options.parsed = window.parseFramework.parserArrays(options);
+                            if (window.parseFramework.parseerror !== "" && ann !== null) {
+                                ann.innerHTML = `<strong>Parse Error:</strong> ${window.parseFramework.parseerror}`;
+                            }
+                            source = prettydiff.beautify[options.lexer](options);
+                            options.source = options.diff;
+                            options.parsed = window.parseFramework.parserArrays(options);
+                            if (window.parseFramework.parseerror !== "" && ann !== null) {
+                                ann.innerHTML = `<strong>Parse Error:</strong> ${window.parseFramework.parseerror}`;
+                            }
+                            options.diff = prettydiff.beautify[options.lexer](options);
+                            options.source = source;
+                        }
+                        diffout = prettydiff.api.diffview(options);
+                        meta.difftotal = diffout[1] + diffout[2];
+                        meta.difflines = diffout[2];
+                        output = diffout[0];
                     }
-                    diffout = prettydiff.api.diffview(options);
-                    meta.difftotal = diffout[1] + diffout[2];
-                    meta.difflines = diffout[2];
-                    output = diffout[0];
                 } else {
                     meta.insize = options.source.length;
                     options.parsed = window.parseFramework.parserArrays(options);
+                    if (window.parseFramework.parseerror !== "" && ann !== null) {
+                        ann.innerHTML = `<strong>Parse Error:</strong> ${window.parseFramework.parseerror}`;
+                    }
                     if (options.mode === "parse") {
                         if (options.parseFormat === "htmltable" || options.parseFormat === "renderhtml") {
                             const parsLen:number = options.parsed.token.length,
@@ -3413,7 +3438,14 @@
                             output = JSON.stringify(options.parsed);
                         }
                     } else {
-                        output = prettydiff[options.mode][options.lexer](options);
+                        if (prettydiff[options.mode][options.lexer] === undefined) {
+                            if (ann !== null) {
+                                ann.innerHTML = `Library <em>prettydiff.${options.mode}.${options.lexer}</em> is <strong>undefined</strong>.`;
+                            }
+                            output = options.source;
+                        } else {
+                            output = prettydiff[options.mode][options.lexer](options);
+                        }
                     }
                 }
                 delete options.parsed;
@@ -3468,6 +3500,9 @@
             options.source = textarea.codeIn.value;
         }
         if (options.source === undefined || options.source === "") {
+            if (ann !== null) {
+                ann.innerHTML = "No source sample to process.";
+            }
             return false;
         }
         localStorage.source = options.source;
@@ -3488,20 +3523,48 @@
             }
             localStorage.diff = options.diff;
         }
-        if (options.lexer === "text" && options.mode !== "diff") {
-            return false;
+        if (options.lexer === "text" && options.mode !== "diff" && ann !== null) {
+            ann.innerHTML = "The value of <em>options.lexer</em> is <strong>text</strong> but <em>options.mode</em> is not <strong>diff</strong>.";
         }
 
         //gather updated dom nodes
         options.api         = "dom";
         options.diffcli     = false;
-        node            = id("option-csvchar");
-        options.csvchar     = (node === null || node.value.length === 0)
-            ? ","
-            : node.value;
-        options.lang        = id("option-lang").value;
-        options.langdefault = id("option-langdefault").value;
-        options.newline     = (id("newline-yes") !== null && id("newline-yes").checked === true);
+        {
+            const li:NodeListOf<HTMLLIElement> = id("addOptions").getElementsByTagName("li"),
+                reg:RegExp = (/option-((true-)|(false-))?/);
+            let a:number = li.length,
+                select:HTMLSelectElement,
+                input:HTMLInputElement;
+            do {
+                a = a - 1;
+                if (li[a].getElementsByTagName("div")[0].style.display === "none") {
+                    select = li[a].getElementsByTagName("select")[0];
+                    if (select === undefined) {
+                        input = li[a].getElementsByTagName("input")[0];
+                        if (input.getAttribute("type") === "radio") {
+                            if (input.value === "false" && input.checked === true) {
+                                options[input.getAttribute("id").replace(reg, "")] = false;
+                            } else if (input.value === "false" && input.checked === false) {
+                                options[input.getAttribute("id").replace(reg, "")] = true;
+                            } else if (input.value === "true" && input.checked === true) {
+                                options[input.getAttribute("id").replace(reg, "")] = true;
+                            } else if (input.value === "true" && input.checked === false) {
+                                options[input.getAttribute("id").replace(reg, "")] = false;
+                            }
+                        } else {
+                            if (input.getAttribute("data-type") === "number") {
+                                options[input.getAttribute("id").replace(reg, "")] = Number(input.value);
+                            } else {
+                                options[input.getAttribute("id").replace(reg, "")] = input.value;
+                            }
+                        }
+                    } else {
+                        options[select.getAttribute("id").replace(reg, "")] = select[select.selectedIndex].value;
+                    }
+                }
+            } while (a > 0);
+        }
         if (options.lang === "auto") {
             autotest = true;
         }
@@ -3528,19 +3591,9 @@
                                 .replace(/\r\n/g, "\n");
                             if (options.mode !== "diff" || requestd === false || (requestd === true && completed === true)) {
                                 if (test.ace === true) {
-                                    if (options.mode !== "diff") {
-                                        lang = method
-                                            .app
-                                            .langkey(aceStore.codeIn, "");
-                                    } else if (data.langvalue[1] === "text") {
-                                        lang = ["text", "text", "Plain Text"];
-                                    } else {
-                                        lang = method
-                                            .app
-                                            .langkey(aceStore.codeIn, "");
-                                    }
-                                } else if (options.mode === "diff" && data.langvalue[1] === "text") {
-                                    lang = ["text", "text", "Plain Text"];
+                                    lang = method
+                                        .app
+                                        .langkey(aceStore.codeIn, "");
                                 } else {
                                     lang = method
                                         .app
@@ -3548,8 +3601,6 @@
                                             value: options.source
                                         }, "");
                                 }
-                                options.lang = lang[0];
-                                options.lexer = lang[1];
                                 app();
                                 return;
                             }
@@ -3590,15 +3641,9 @@
                                 .replace(/\r\n/g, "\n");
                             if (requests === false || (requests === true && completes === true)) {
                                 if (test.ace === true) {
-                                    if (data.langvalue[1] === "text") {
-                                        lang = ["text", "text", "Plain Text"];
-                                    } else {
-                                        lang = method
-                                            .app
-                                            .langkey(aceStore.codeIn, "");
-                                    }
-                                } else if (data.langvalue[1] === "text") {
-                                    lang = ["text", "text", "Plain Text"];
+                                    lang = method
+                                        .app
+                                        .langkey(aceStore.codeIn, "");
                                 } else {
                                     lang = method
                                         .app
@@ -3606,8 +3651,6 @@
                                             value: options.diff
                                         }, "");
                                 }
-                                options.lang = lang[0];
-                                options.lexer = lang[1];
                                 app();
                                 return;
                             }
@@ -3626,11 +3669,7 @@
             }
         }
         if (requests === false && requestd === false) {
-            if (data.langvalue[1] === "text") {
-                lang = ["text", "text", "Plain Text"];
-            } else if (data.langvalue[1] === "csv") {
-                lang = ["csv", "csv", "CSV"];
-            } else if (test.ace === true) {
+            if (test.ace === true) {
                 lang = method
                     .app
                     .langkey(aceStore.codeIn, "");
@@ -3641,8 +3680,6 @@
                         value: options.source
                     }, "");
             }
-            options.lang = lang[0];
-            options.lexer = lang[1];
             app();
         }
     };

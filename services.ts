@@ -654,6 +654,7 @@ import { Hash } from "crypto";
                                             exclusions = {
                                                 "diff": "",
                                                 "difflabel": "",
+                                                "mode": "",
                                                 "source": "",
                                                 "sourcelabel": ""
                                             };
@@ -2359,7 +2360,7 @@ import { Hash } from "crypto";
                     file = `${projectPath + node.path.sep}index.xhtml`;
                 }
                 if (request.url.indexOf("favicon.ico") < 0 && request.url.indexOf("images/apple") < 0) {
-                    node.fs.readFile(file, "utf8", function node_apps_server_create_readFile(err, data):void {
+                    node.fs.readFile(file, "utf8", function node_apps_server_create_readFile(err:Error, data:string):void {
                         if (err !== undefined && err !== null) {
                             if (err.toString().indexOf("no such file or directory") > 0) {
                                 response.writeHead(404, {"Content-Type": "text/plain"});
@@ -2379,7 +2380,6 @@ import { Hash } from "crypto";
                         }
                         response.write(data);
                         response.end();
-                        //console.log(`Responded with ${file}`);
                     });
                 } else {
                     response.end();
@@ -2427,7 +2427,7 @@ import { Hash } from "crypto";
         console.log(`${text.green}Starting web server and file system watcher!${text.none}`);
         node.fs.watch(projectPath, {
             recursive: true
-        }, function node_apps_server_watch(type:"rename"|"change", filename:string):void {console.log(filename);
+        }, function node_apps_server_watch(type:"rename"|"change", filename:string):void {
             if (ignore(filename) === true) {
                 return;
             }

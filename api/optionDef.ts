@@ -251,6 +251,15 @@
                 definition: "If elseline is true then the keyword 'else' is forced onto a new line.",
                 default   : false
             },
+            end            : {
+                api: "any",
+                mode: "any",
+                lexer: "any",
+                label: "End Index",
+                type: "number",
+                definition: "Which index of the parse table should the application stop. This option is useful internally when recursively sliding between various libraries. The default value of 0 means to ignore this option.",
+                default: 0
+            },
             endcomma       : {
                 api       : "any",
                 mode      : "beautify",
@@ -364,7 +373,7 @@
                 lexer     : "any",
                 label     : "Indentation Padding",
                 type      : "number",
-                definition: "How much indentation padding should be applied to beautification?",
+                definition: "How much indentation padding should be applied to beautification? This option is internally used for code requires switching between libraries.",
                 default   : 0
             },
             insize         : {
@@ -685,6 +694,15 @@
                 type      : "boolean",
                 definition: "Markup self-closing tags end will end with ' />' instead of '/>'.",
                 default   : false
+            },
+            start          : {
+                api: "any",
+                mode: "any",
+                lexer: "any",
+                label: "Start Index",
+                type: "number",
+                definition: "The parse table index to start working from. This is internally used for code samples that require switching between different libraries.",
+                default: 0
             },
             styleguide     : {
                 api       : "any",

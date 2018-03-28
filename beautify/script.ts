@@ -1,4 +1,4 @@
-/*global global*/
+/*global global, prettydiff*/
 (function beautify_script_init():void {
     "use strict";
     const script = function beautify_script(options:any):string {
@@ -132,11 +132,14 @@
             markupvar:number[] = [],
             meta:any = [],
             levels:number[] = (function beautify_script_level():number[] {
-                let a             = 0, //will store the current level of indentation
-                    b:number = data.token.length,
+                let a             = options.start, //will store the current level of indentation
+                    b:number = (options.end < 1)
+                        ? data.token.length
+                        : options.end,
                     indent:number        = (isNaN(options.inlevel) === true)
                         ? 0
                         : Number(options.inlevel),
+                    skip:number = 0,
                     lastlist:boolean      = false, //remembers the list status of the most recently closed block
                     ctype:string         = "", //ctype stands for "current type"
                     ctoke:string         = "", //ctoke standa for "current token"
@@ -145,7 +148,9 @@
                 const varindex:number[] = [-1], //index in current scope of last var, let, or const keyword
                     hoisted:Array<[string, number]> = [], //meta array population for cross-scope (block) variable hoisting
                     list:boolean[]          = [], //stores comma status of current block
-                    level:number[] = [],
+                    level:number[] = (options.start > 0)
+                        ? Array(options.start).fill(0, 0, options.start)
+                        : [],
                     ternary:number[]       = [], //used to identify ternary statments
                     varline       = [], //determines if a current list of the given block is a list of variables following the "var" keyword
                     varlist       = [],
@@ -1156,7 +1161,7 @@
                                 } while (c > -1);
                             }
                             //this is the bulk of logic identifying scope start and end
-                            if (options.jsscope !== "none" || options.mode === "minify") {
+                            if (options.jsscope !== "none") {
                                 let c:number     = a - 1,
                                     d:number     = 1,
                                     build:Array<[string, number]> = [];
@@ -1933,7 +1938,7 @@
                                     varlen[varlen.length - 1].push(a);
                                 }
                             }
-                            if (options.jsscope !== "none" || options.mode === "minify") {
+                            if (options.jsscope !== "none") {
                                 if (data.token[varindex[varindex.length - 1]] === "var") {
                                     if (data.stack[a] === "global") {
                                         meta[a] = 0;
@@ -2153,54 +2158,69 @@
                     indent = indent - 1;
                 }
                 do {
-                    if (options.jsscope !== "none" || options.mode === "minify") {
-                        meta.push("");
-                    }
-                    ctype = data.types[a];
-                    ctoke = data.token[a];
-                    if (ctype === "comment") {
-                        if (data.lines[a - 1] < 2) {
-                            commentInline();
-                        } else {
-                            comment();
+                    if (data.lexer[a] === "script") {
+                        if (options.jsscope !== "none") {
+                            meta.push("");
                         }
-                    } else if (ctype === "regex") {
-                        level.push(-20);
-                    } else if (ctype === "literal") {
-                        literal();
-                    } else if (ctype === "separator") {
-                        separator();
-                    } else if (ctype === "start") {
-                        start();
-                    } else if (ctype === "end") {
-                        end();
-                    } else if (ctype === "operator") {
-                        operator();
-                    } else if (ctype === "word") {
-                        word();
-                    } else if (ctype === "markup") {
-                        markup();
-                    } else if (ctype.indexOf("template") === 0) {
-                        template();
-                    } else if (ctype === "generic") {
-                        if (ltoke !== "return" && ltoke.charAt(0) !== "#" && ltype !== "operator" && ltoke !== "public" && ltoke !== "private" && ltoke !== "static" && ltoke !== "final" && ltoke !== "implements" && ltoke !== "class" && ltoke !== "void") {
-                            level[a - 1] = -20;
-                        }
-                        if (data.token[a + 1] === "(" || data.token[a + 1] === "x(") {
+                        ctype = data.types[a];
+                        ctoke = data.token[a];
+                        if (ctype === "comment") {
+                            if (data.lines[a - 1] < 2) {
+                                commentInline();
+                            } else {
+                                comment();
+                            }
+                        } else if (ctype === "regex") {
                             level.push(-20);
+                        } else if (ctype === "literal") {
+                            literal();
+                        } else if (ctype === "separator") {
+                            separator();
+                        } else if (ctype === "start") {
+                            start();
+                        } else if (ctype === "end") {
+                            end();
+                        } else if (ctype === "operator") {
+                            operator();
+                        } else if (ctype === "word") {
+                            word();
+                        } else if (ctype === "markup") {
+                            markup();
+                        } else if (ctype.indexOf("template") === 0) {
+                            template();
+                        } else if (ctype === "generic") {
+                            if (ltoke !== "return" && ltoke.charAt(0) !== "#" && ltype !== "operator" && ltoke !== "public" && ltoke !== "private" && ltoke !== "static" && ltoke !== "final" && ltoke !== "implements" && ltoke !== "class" && ltoke !== "void") {
+                                level[a - 1] = -20;
+                            }
+                            if (data.token[a + 1] === "(" || data.token[a + 1] === "x(") {
+                                level.push(-20);
+                            } else {
+                                level.push(-10);
+                            }
                         } else {
                             level.push(-10);
                         }
+                        if (ctype !== "comment") {
+                            ltype = ctype;
+                            ltoke = ctoke;
+                        }
                     } else {
-                        level.push(-10);
-                    }
-                    if (ctype !== "comment") {
-                        ltype = ctype;
-                        ltoke = ctoke;
+                        if (data.lexer[a - 1] === "script") {
+                            skip = a;
+                            do {
+                                if (data.lexer[skip + 1] === "script" && data.lexer[data.begin[skip + 1]] === "script") {
+                                    break;
+                                }
+                                skip = skip + 1;
+                            } while (skip < b);
+                            level.push(skip + 1);
+                        } else {
+                            level.push(level[a - 1]);
+                        }
                     }
                     a = a + 1;
                 } while (a < b);
-                if (options.jsscope !== "none" || options.mode === "minify") {
+                if (options.jsscope !== "none") {
                     let c:number     = a - 1,
                         build:Array<[string, number]> = [];
                     do {
@@ -2261,7 +2281,9 @@
                         : "\n",
                     pres:number = options.preserve + 1,
                     invisibles:string[] = ["x;", "x}", "x{", "x(", "x)"];
-                let a:number = 0;
+                let a:number = options.start,
+                    external:string = "",
+                    lastLevel:number = 0;
                 if (options.jsscope !== "none") {
                     let linecount:number          = 2,
                         last:string               = "",
@@ -2786,11 +2808,7 @@
                                             nl(indent + 1, false);
                                         }
                                     }
-                                    /*if (typeof prettydiff.markuppretty === "function") {
-                                        markupBuild();
-                                    } else {*/
-                                        build.push(data.token[a].replace(/\r?\n(\s*)/g, " "));
-                                    //}
+                                    build.push(data.token[a].replace(/\r?\n(\s*)/g, " "));
                                 } else if (data.types[a] === "comment") {
                                     if (data.types[a - 1] !== "comment") {
                                         nl(indent, false);
@@ -2970,15 +2988,27 @@
                     ].join("").replace(/(\s+)$/, "").replace(options.binaryCheck, "");
                 }
                 do {
-                    if (invisibles.indexOf(data.token[a]) < 0) {
-                        build.push(data.token[a]);
-                    }
-                    if (levels[a] > -20) {
-                        if (levels[a] === -10) {
-                            build.push(" ");
-                        } else {
-                            build.push(outnl(levels[a]));
+                    if (data.lexer[a] === "script") {
+                        if (invisibles.indexOf(data.token[a]) < 0) {
+                            build.push(data.token[a]);
                         }
+                        if (levels[a] > -20) {
+                            if (levels[a] > -1) {
+                                lastLevel = levels[a];
+                            }
+                            if (levels[a] === -10) {
+                                build.push(" ");
+                            } else {
+                                build.push(outnl(levels[a]));
+                            }
+                        }
+                    } else {
+                        options.end = levels[a];
+                        options.start = a;
+                        options.inlevel = lastLevel;
+                        external = prettydiff.beautify[data.lexer[a]](options);
+                        build.push(external);
+                        a = levels[a];
                     }
                     a = a + 1;
                 } while (a < len);
