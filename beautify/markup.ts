@@ -254,7 +254,6 @@
                 wrapper      = function beautify_markup_apply_wrapper():void {
                     const list:string[] = data.token[x].replace(/\s+/g, " ").split(" "),
                         len:number = list.length;
-                        //tname:string  = tagName(data.token[x]),
                     let b:number      = 0,
                         xlen:number   = 0,
                         lev:number    = levels[x],
@@ -314,6 +313,30 @@
                         }
                     }
                 },
+                attribute = function beautify_markup_apply_attribute():void {
+                    const ending:string = (/\/?>$/).exec(data.token[x])[0],
+                        findEnd = function beautify_markup_apply_attribute_findEnd() {
+                            const begin:number = y;
+                            if (data.types[y] === "jsx_attribute_start") {
+                                do {
+                                    if (data.types[y] === "jsx_attribute_end" && data.begin[y] === begin) {
+                                        break;
+                                    }
+                                    y = y + 1;
+                                } while (y < len);
+                            }
+                            y = y + 1;
+                            if (data.types[y] === "attribute" || data.types[y] === "jsx_attribute_start") {
+                                beautify_markup_apply_attribute_findEnd();
+                            } else {
+                                data.token[y - 1] = data.token[y - 1] + ending;
+                            }
+                        };
+                    let y:number = x + 1;
+                    data.token[x] = data.token[x].replace(ending, "");
+                    levels[y] = -10;
+                    findEnd();
+                },
                 linepreserve = function beautify_markup_apply_linepreserve():void {
                     let aa:number   = 0;
                     const taby = new RegExp("^(" + ind + "+)"),
@@ -359,16 +382,12 @@
                     if (data.types[x] === "content" && x < c - 1) {
                         if (data.presv[x] === true) {
                             linepreserve();
-                        } else if (options.wrap > 0 && data.token[x].length > options.wrap && (options.mode === "beautify" || options.mode === "diff")) {
+                        } else if (options.wrap > 0 && data.token[x].length > options.wrap) {
                             wrapper();
                         }
                     } else if (
                         data.types[x] !== "content" &&
                         options.unformatted === false &&
-                        (
-                            options.mode === "beautify" ||
-                            options.mode === "diff"
-                        ) &&
                         data.presv[x] === false &&
                         options.wrap > 0 &&
                         data.token[x].length > options.wrap &&
@@ -395,11 +414,14 @@
                     if (data.token[x] === "</prettydiffli>" && options.correct === true) {
                         data.token[x] = "</li>";
                     }
-                    if (data.token[x] !== "</prettydiffli>" && (data.types[x] !== "attribute" || (data.token[x].slice(0, 2) !== "//" && data.token[x].slice(0, 2) !== "/*"))) {
+                    if (data.types[x + 1].indexOf("attribute") > -1 && data.types[x].indexOf("attribute") < 0) {
+                        attribute();
+                    }
+                    if (data.token[x] !== "</prettydiffli>" && data.token[x].slice(0, 2) !== "//" && data.token[x].slice(0, 2) !== "/*") {
                         if ((data.types[x] === "template" || data.types[x] === "template_start") && data.types[x - 1] === "content" && data.presv[x - 1] === true && options.mode === "beautify" && levels[x] === -20) {
                             build.push(" ");
                         }
-                        if (levels[x] > -9) {
+                        if (levels[x] > -1) {
                             nl(levels[x], build);
                         } else if (levels[x] === -10) {
                             build.push(" ");
@@ -415,7 +437,7 @@
                     options.inlevel = lastLevel;
                     external = prettydiff.beautify[data.lexer[x]](options);
                     build.push(external);
-                    x = levels[x];
+                    x = levels[x] - 1;
                 }
                 x = x + 1;
             } while (x < len);

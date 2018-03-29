@@ -3008,7 +3008,7 @@
                         options.inlevel = lastLevel;
                         external = prettydiff.beautify[data.lexer[a]](options);
                         build.push(external);
-                        a = levels[a];
+                        a = levels[a] - 1;
                     }
                     a = a + 1;
                 } while (a < len);
