@@ -129,6 +129,7 @@
         let scolon:number = 0,
             news:number = 0;
         const data:parsedArray = options.parsed,
+            lexer:string = "script",
             markupvar:number[] = [],
             meta:any = [],
             levels:number[] = (function beautify_script_level():number[] {
@@ -2158,7 +2159,7 @@
                     indent = indent - 1;
                 }
                 do {
-                    if (data.lexer[a] === "script") {
+                    if (data.lexer[a] === lexer) {
                         if (options.jsscope !== "none") {
                             meta.push("");
                         }
@@ -2205,17 +2206,17 @@
                             ltoke = ctoke;
                         }
                     } else {
-                        if (data.lexer[a - 1] === "script") {
+                        if (data.lexer[a - 1] === lexer) {
                             skip = a;
                             do {
-                                if (data.lexer[skip + 1] === "script" && data.lexer[data.begin[skip + 1]] === "script") {
+                                if (data.lexer[skip + 1] === lexer && data.lexer[data.begin[skip + 1]] === lexer) {
                                     break;
                                 }
                                 skip = skip + 1;
                             } while (skip < b);
                             level.push(skip + 1);
                         } else {
-                            level.push(level[a - 1]);
+                            level.push(skip);
                         }
                     }
                     a = a + 1;
@@ -2253,7 +2254,7 @@
                         } while (index > 0);
                         return tabby.join("");
                     }()),
-                    outnl = function beautify_script_output_outnl(tabs):string {
+                    nl = function beautify_script_output_outnl(tabs:number):string {
                         const linesout:string[] = [],
                             end:string = (options.crlf === true)
                                 ? "\r\n"
@@ -2483,9 +2484,9 @@
                             }
                         },
                         //a function for calculating indentation after each new line
-                        nl                 = function beautify_script_output_scope_nl(x:number, linetest:boolean):void {
+                        nlscope            = function beautify_script_output_scope_nlscope(x:number, linetest:boolean):void {
                             let dd = 0;
-                            const lscope             = function beautify_script_output_scope_lscope(depth:number):string {
+                            const lscope             = function beautify_script_output_scope_nlscope_lscope(depth:number):string {
                                 const indentation:string[] = [];
                                 let aa:number = 0;
                                 do {
@@ -2546,150 +2547,16 @@
                                     dd = dd + 1;
                                 } while (dd < len);
                             }
-                            nl(x - cc, false);
+                            nlscope(x - cc, false);
                             a = a + 1;
                         },
-                        /*markupBuild        = function beautify_script_output_scope_markupBuild() {
-                            let c:number        = 1,
-                                spaces:number   = 0,
-                                synthtab:string = "\\" + tab.charAt(0),
-                                tabreg:RegExp,
-                                markuplen:number      = tab.length,
-                                mindent  = (function beautify_script_output_scope_markupBuild_offset():number {
-                                    let d = a - 1;
-                                    if (a === markupvar[0]) {
-                                        markupvar.splice(0, 1);
-                                        return 1;
-                                    }
-                                    if (data.token[d] === "return" || data.token[0] === "{") {
-                                        return 1;
-                                    }
-                                    if (levels[a] < -9) {
-                                        return 0;
-                                    }
-                                    do {
-                                        if (data.token[d] !== "(" && data.token[d] !== "x(") {
-                                            if (data.token[d] === "=") {
-                                                return 1;
-                                            }
-                                            return 0;
-                                        }
-                                        d = d - 1;
-                                    } while (d > -1);
-                                    return 0;
-                                }());
-                            const markup   = (function beautify_script_output_scope_markupBuild_varscope():string[] {
-                                    const lena:number    = meta.length,
-                                        emscope = function jsscope__result_scope_markupBuild_varscope_emscope(x:string):string {
-                                            return `<em class="s${x.replace("[pdjsxem", "").replace("]", "")}">`;
-                                        };
-                                    let item:string    = "",
-                                        word:string    = "",
-                                        newword:string = "",
-                                        inca:number    = 0,
-                                        incb:number    = 0,
-                                        lenb:number    = 0,
-                                        vars    = [],
-                                        mode:mode    = options.mode,
-                                        inle:number    = options.inlevel,
-                                        jsx:boolean     = (options.lang === "jsx");
-                                    //options.source  = data.token[a];
-                                    //options.mode    = "beautify";
-                                    //options.inlevel = mindent;
-                                    //options.jsx     = true;
-                                    //item            = extlib().replace(/return\s+</g, "return <");
-                                    //options.mode    = mode;
-                                    //options.inlevel = inle;
-                                    //options.jsx     = jsx;
-                                    //if (item.indexOf("[pdjsxscope]") < 0) {
-                                    //    return item
-                                    //        .replace(/&/g, "&amp;")
-                                    //        .replace(/</g, "&lt;")
-                                    //        .replace(/>/g, "&gt;")
-                                    //        .split(lf);
-                                    //}
-                                    do {
-                                        newword = "";
-                                        vars    = [];
-                                        word    = item.slice(
-                                            item.indexOf("[pdjsxscope]") + 12,
-                                            item.indexOf("[/pdjsxscope]")
-                                        );
-                                        do {
-                                            if (typeof meta[inca] === "number" && inca < a && a < meta[inca]) {
-                                                vars.push(meta[inca]);
-                                                lenb = meta[meta[inca]].length;
-                                                do {
-                                                    if (meta[meta[inca]][incb] === word) {
-                                                        newword = `[pdjsxem${vars.length + 1}]${word}[/pdjsxem]`;
-                                                    }
-                                                    incb = incb + 1;
-                                                } while (incb < lenb);
-                                                if (incb < lenb) {
-                                                    break;
-                                                }
-                                                vars.pop();
-                                            }
-                                            inca = inca - 1;
-                                        } while (inca < lena);
-                                        if (newword === "") {
-                                            lenb = globals.length;
-                                            incb = 0;
-                                            do {
-                                                if (word === globals[incb]) {
-                                                    newword = `[pdjsxem0]${word}[/pdjsxem]`;
-                                                }
-                                                incb = incb + 1;
-                                            } while (incb < lenb);
-                                            if (newword === "") {
-                                                newword = word;
-                                            }
-                                        }
-                                        item = item.replace(`[pdjsxscope]${word}[/pdjsxscope]`, newword);
-                                    } while (item.indexOf("[pdjsxscope]") > -1);
-                                    return item
-                                        .replace(/&/g, "&amp;")
-                                        .replace(/</g, "&lt;")
-                                        .replace(/>/g, "&gt;")
-                                        .replace(/\[pdjsxem\d+\]/g, emscope)
-                                        .replace(/\[\/pdjsxem\]/g, "</em>")
-                                        .split(lf);
-                                }());
-                            do {
-                                synthtab = synthtab + "\\" + tab.charAt(c);
-                                c = c + 1;
-                            } while (c < markuplen);
-                            tabreg  = new RegExp(`^(${synthtab})`);
-                            mindent = indent + 2;
-                            if (levels[a] < -9) {
-                                markup[0] = markup[0].replace(tabreg, "");
-                                mindent   = mindent - 1;
-                            }
-                            markuplen = markup.length;
-                            c = 0;
-                            do {
-                                if (markup[c].indexOf(tab) !== 0 && c > 0) {
-                                    spaces = markup[c - 1]
-                                        .split(tab)
-                                        .length - 1;
-                                    do {
-                                        spaces    = spaces - 1;
-                                        markup[c] = tab + markup[c];
-                                    } while (spaces > 0);
-                                }
-                                build.push(markup[c]);
-                                nl(mindent - 1, false);
-                                c = c + 1;
-                            } while (c < markuplen - 1);
-                            build.push(markup[markup.length - 1]);
-                        },*/
                         multiline          = function beautify_script_output_scope_multiline(x:string):void {
                             const temparray:string[] = x.split(lf),
                                 d:number         = temparray.length;
                             let c:number         = 1;
                             build.push(temparray[0]);
                             do {
-                                nl(indent, false);
+                                nlscope(indent, false);
                                 build.push(temparray[c]);
                                 c = c + 1;
                             } while (c < d);
@@ -2803,15 +2670,15 @@
                                 if (data.types[a] === "markup") {
                                     if (levels[a] > -9) {
                                         if (data.types[a - 1] === "operator") {
-                                            nl(indent, false);
+                                            nlscope(indent, false);
                                         } else if (data.token[a - 1] !== "return") {
-                                            nl(indent + 1, false);
+                                            nlscope(indent + 1, false);
                                         }
                                     }
                                     build.push(data.token[a].replace(/\r?\n(\s*)/g, " "));
                                 } else if (data.types[a] === "comment") {
                                     if (data.types[a - 1] !== "comment") {
-                                        nl(indent, false);
+                                        nlscope(indent, false);
                                     }
                                     if (a === 0) {
                                         build[0] = "<ol class=\"data\"><li class=\"c0\">";
@@ -2856,7 +2723,7 @@
                             if (data.token[a] === "+" || data.token[a] === "-" || data.token[a] === "*" || data.token[a] === "/") {
                                 //comments get special treatment
                                 if (a < len - 1 && data.types[a + 1] !== "comment") {
-                                    nl(levels[a], false);
+                                    nlscope(levels[a], false);
                                     build.push(tab);
                                     levels[a] = -20;
                                 } else {
@@ -2867,10 +2734,10 @@
                                             data.lines[a] = data.lines[a] - 1;
                                         } while (data.lines[a] > 1);
                                     }
-                                    nl(indent, false);
+                                    nlscope(indent, false);
                                     build.push(tab);
                                     build.push(data.token[a + 1]);
-                                    nl(indent, false);
+                                    nlscope(indent, false);
                                     build.push(tab);
                                     levels[a + 1] = -20;
                                     a            = a + 1;
@@ -2889,14 +2756,14 @@
                                     ))
                                 ) {
                                     do {
-                                        nl(0, true);
+                                        nlscope(0, true);
                                         data.lines[a] = data.lines[a] - 1;
                                     } while (data.lines[a] > 1);
                                     if (data.types[a] === "comment") {
                                         build.push("<em class=\"line\">&#xA;</em></li><li class=\"c0\">");
                                     } else {
                                         commentfix = commentfix + 1;
-                                        nl(levels[a], true);
+                                        nlscope(levels[a], true);
                                     }
                                 }
                             }
@@ -2910,7 +2777,7 @@
                         } else if (data.token[a] === "x{" && levels[a] === -10 && levels[a - 1] === -10) {
                             build.push("");
                         } else if (a < len - 1 && data.types[a + 1] === "comment" && options.comments === "noindent") {
-                            nl(options.inlevel, false);
+                            nlscope(options.inlevel, false);
                         } else if (levels[a] === -10 && data.token[a] !== "x}") {
                             build.push(" ");
                         } else if (
@@ -2922,7 +2789,7 @@
                                 data.types[a + 1] !== "word"
                             ) || data.lines[a] > 1)) {
                             indent = levels[a];
-                            nl(indent, false);
+                            nlscope(indent, false);
                         }
                         if (folderItem.length > 0) {
                             if (a === folderItem[folderItem.length - 1][1] && comfold === -1) {
@@ -2988,25 +2855,21 @@
                     ].join("").replace(/(\s+)$/, "").replace(options.binaryCheck, "");
                 }
                 do {
-                    if (data.lexer[a] === "script") {
+                    if (data.lexer[a] === lexer) {
                         if (invisibles.indexOf(data.token[a]) < 0) {
                             build.push(data.token[a]);
                         }
-                        if (levels[a] > -20) {
-                            if (levels[a] > -1) {
-                                lastLevel = levels[a];
-                            }
-                            if (levels[a] === -10) {
-                                build.push(" ");
-                            } else {
-                                build.push(outnl(levels[a]));
-                            }
+                        if (levels[a] > -1) {
+                            lastLevel = levels[a];
+                            build.push(nl(levels[a]));
+                        } else if (levels[a] === -10) {
+                            build.push(" ");
                         }
                     } else {
                         options.end = levels[a];
+                        options.inlevel = lastLevel + 1;
                         options.start = a;
-                        options.inlevel = lastLevel;
-                        external = prettydiff.beautify[data.lexer[a]](options);
+                        external = nl(lastLevel + 1) + prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "") + nl(lastLevel);
                         build.push(external);
                         a = levels[a] - 1;
                     }
