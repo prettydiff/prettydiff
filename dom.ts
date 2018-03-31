@@ -681,6 +681,19 @@
                             id("feedsubmit").onclick = feedsubmit;
                         }
                     },
+                    select = function dom_load_select(event:Event):void {
+                        const elly:HTMLSelectElement = <HTMLSelectElement>event.target || <HTMLSelectElement>event.srcElement;
+                        selectDescription(elly);
+                        method.app.options(event);
+                    },
+                    selectDescription = function dom_load_selectDescription(el:HTMLSelectElement):void {
+                        const options:NodeListOf<HTMLOptionElement> = el.getElementsByTagName("option"),
+                            desc:string = options[el.selectedIndex].getAttribute("data-description"),
+                            value:string = el[el.selectedIndex].value,
+                            parent:HTMLElement = <HTMLElement>el.parentNode,
+                            span:HTMLSpanElement = parent.getElementsByTagName("span")[0];
+                        span.innerHTML = ` <strong>${value}</strong> \u2014 ${desc}`;
+                    },
                     textareablur    = function dom_load_textareablur(event:Event):void {
                         const el:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
                             tabkey = id("textareaTabKey");
@@ -774,127 +787,6 @@
                 x = id("ace-no");
                 if (test.ace === false && x !== null && x.checked === false) {
                     x.checked = true;
-                }
-
-                //  feedback dialogue config data (current disabled)
-                if (data.settings.feedback === undefined) {
-                    data.settings.feedback         = {};
-                    data.settings.feedback.newb    = false;
-                    data.settings.feedback.veteran = false;
-                }
-                x = id("feedsubmit");
-                if (x !== null) {
-                    x.onclick = feedsubmit;
-                }
-
-                // assigns event handlers to input elements
-                inputs    = document.getElementsByTagName("input");
-                inputsLen = inputs.length;
-                a = 0;
-                do {
-                    x = inputs[a];
-                    type = x.getAttribute("type");
-                    idval   = x.getAttribute("id");
-                    if (type === "radio") {
-                        name = x.getAttribute("name");
-                        if (id === data.settings[name]) {
-                            x.checked = true;
-                        }
-                        if (idval.indexOf("feedradio") === 0) {
-                            feeds(x);
-                        } else if (name === "mode") {
-                            x.onclick = modes;
-                        } else if (name === "ace-radio") {
-                            x.onclick = aces;
-                        } else {
-                            x.onclick = method.app.options;
-                        }
-                    } else if (type === "text") {
-                        if (x.getAttribute("data-type") === "number") {
-                            x.onkeyup = numeric;
-                        } else {
-                            x.onkeyup = method.app.options;
-                        }
-                        if (data.settings[idval] !== undefined) {
-                            x.value = data.settings[idval];
-                        }
-                        if (idval === "option-lang" && options.mode !== "diff" && x.value === "text") {
-                            x.value = "auto";
-                        }
-                    } else if (type === "file") {
-                        x.onchange = file;
-                        x.onfocus  = function dom_load_filefocus():void {
-                            x.setAttribute("class", "filefocus");
-                        };
-                        x.onblur   = function dom_load_fileblur():void {
-                            x.removeAttribute("class");
-                        };
-                    }
-                    a = a + 1;
-                } while (a < inputsLen);
-
-                // assigns event handlers to select elements
-                selects    = document.getElementsByTagName("select");
-                inputsLen = selects.length;
-                a = 0;
-                if (inputsLen > 0) { 
-                    do {
-                        idval = selects[a].getAttribute("id");
-                        if (idval === "option-color") {
-                            selects[a].onchange = method.event.colorScheme;
-                            if (data.settings["option-color"] !== undefined) {
-                                selects[a].selectedIndex = Number(data.settings["option-color"]);
-                                selects[a].onchange = method.event.colorScheme;
-                            }
-                        } else {
-                            if (typeof data.settings[idval] === "number") {
-                                selects[a].selectedIndex = data.settings[idval];
-                            }
-                            selects[a].onchange = method.app.options;
-                        }
-                        a = a + 1;
-                    } while (a < inputsLen);
-                }
-
-                // assigns event handlers to buttons
-                buttons    = document.getElementsByTagName("button");
-                inputsLen = buttons.length;
-                a = 0;
-                do {
-                    name  = buttons[a].getAttribute("class");
-                    idval = buttons[a].getAttribute("id");
-                    if (name === null) {
-                        if (buttons[a].value === "Execute") {
-                            buttons[a].onclick = method.event.execute;
-                        } else if (idval === "resetOptions") {
-                            buttons[a].onclick = method.event.reset;
-                        }
-                    } else if (name === "minimize") {
-                        buttons[a].onclick = method.event.minimize;
-                    } else if (name === "maximize") {
-                        buttons[a].onclick = method.event.maximize;
-                        parent = <HTMLElement>buttons[a].parentNode.parentNode;
-                        if (data.settings[parent.getAttribute("id")] !== undefined && data.settings[parent.getAttribute("id")].max === true) {
-                            buttons[a].click();
-                        }
-                    } else if (name === "resize") {
-                        buttons[a].onmousedown = method.event.resize;
-                    } else if (name === "save") {
-                        buttons[a].onclick = method.event.save;
-                    }
-                    a = a + 1;
-                } while (a < inputsLen);
-
-                // preps the file inputs
-                if (test.fs === false) {
-                    x = id("inputfile");
-                    if (x !== null) {
-                        x.disabled = true;
-                    }
-                    x = id("outputfile");
-                    if (x !== null) {
-                        x.disabled = true;
-                    }
                 }
 
                 // preps stored settings
@@ -1000,6 +892,127 @@
                         } else {
                             textarea.codeOut.value = options.diff;
                         }
+                    }
+                }
+
+                //  feedback dialogue config data (current disabled)
+                if (data.settings.feedback === undefined) {
+                    data.settings.feedback         = {};
+                    data.settings.feedback.newb    = false;
+                    data.settings.feedback.veteran = false;
+                }
+                x = id("feedsubmit");
+                if (x !== null) {
+                    x.onclick = feedsubmit;
+                }
+
+                // assigns event handlers to input elements
+                inputs    = document.getElementsByTagName("input");
+                inputsLen = inputs.length;
+                a = 0;
+                do {
+                    x = inputs[a];
+                    type = x.getAttribute("type");
+                    idval   = x.getAttribute("id");
+                    if (type === "radio") {
+                        name = x.getAttribute("name");
+                        if (id === data.settings[name]) {
+                            x.checked = true;
+                        }
+                        if (idval.indexOf("feedradio") === 0) {
+                            feeds(x);
+                        } else if (name === "mode") {
+                            x.onclick = modes;
+                        } else if (name === "ace-radio") {
+                            x.onclick = aces;
+                        } else {
+                            x.onclick = method.app.options;
+                        }
+                    } else if (type === "text") {
+                        if (x.getAttribute("data-type") === "number") {
+                            x.onkeyup = numeric;
+                        } else {
+                            x.onkeyup = method.app.options;
+                        }
+                        if (data.settings[idval] !== undefined) {
+                            x.value = data.settings[idval];
+                        }
+                        if (idval === "option-lang" && options.mode !== "diff" && x.value === "text") {
+                            x.value = "auto";
+                        }
+                    } else if (type === "file") {
+                        x.onchange = file;
+                        x.onfocus  = function dom_load_filefocus():void {
+                            x.setAttribute("class", "filefocus");
+                        };
+                        x.onblur   = function dom_load_fileblur():void {
+                            x.removeAttribute("class");
+                        };
+                    }
+                    a = a + 1;
+                } while (a < inputsLen);
+
+                // assigns event handlers to select elements
+                selects    = document.getElementsByTagName("select");
+                inputsLen = selects.length;
+                a = 0;
+                if (inputsLen > 0) { 
+                    do {
+                        idval = selects[a].getAttribute("id");
+                        if (idval === "option-color") {
+                            if (data.settings["option-color"] !== undefined) {
+                                selects[a].selectedIndex = Number(data.settings["option-color"]);
+                                selectDescription(selects[a]);
+                            }
+                        } else {
+                            if (typeof data.settings[idval] === "number") {
+                                selects[a].selectedIndex = data.settings[idval];
+                                selectDescription(selects[a]);
+                            }
+                        }
+                        selects[a].onchange = select;
+                        a = a + 1;
+                    } while (a < inputsLen);
+                }
+
+                // assigns event handlers to buttons
+                buttons    = document.getElementsByTagName("button");
+                inputsLen = buttons.length;
+                a = 0;
+                do {
+                    name  = buttons[a].getAttribute("class");
+                    idval = buttons[a].getAttribute("id");
+                    if (name === null) {
+                        if (buttons[a].value === "Execute") {
+                            buttons[a].onclick = method.event.execute;
+                        } else if (idval === "resetOptions") {
+                            buttons[a].onclick = method.event.reset;
+                        }
+                    } else if (name === "minimize") {
+                        buttons[a].onclick = method.event.minimize;
+                    } else if (name === "maximize") {
+                        buttons[a].onclick = method.event.maximize;
+                        parent = <HTMLElement>buttons[a].parentNode.parentNode;
+                        if (data.settings[parent.getAttribute("id")] !== undefined && data.settings[parent.getAttribute("id")].max === true) {
+                            buttons[a].click();
+                        }
+                    } else if (name === "resize") {
+                        buttons[a].onmousedown = method.event.resize;
+                    } else if (name === "save") {
+                        buttons[a].onclick = method.event.save;
+                    }
+                    a = a + 1;
+                } while (a < inputsLen);
+
+                // preps the file inputs
+                if (test.fs === false) {
+                    x = id("inputfile");
+                    if (x !== null) {
+                        x.disabled = true;
+                    }
+                    x = id("outputfile");
+                    if (x !== null) {
+                        x.disabled = true;
                     }
                 }
 

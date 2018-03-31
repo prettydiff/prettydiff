@@ -664,7 +664,8 @@ import { Hash } from "crypto";
                                             optName:string,
                                             opt:option,
                                             vals:string[],
-                                            vallen:number;
+                                            vallen:number,
+                                            select:boolean = false;
                                         do {
                                             optName = optkeys[a];
                                             opt = prettydiff.api.optionDef[optName];
@@ -679,12 +680,14 @@ import { Hash } from "crypto";
                                                         item.push(`<span><input type="radio" checked="checked" id="option-false-${optName}" name="option-${optName}" value="false"/> <label for="option-false-${optName}">false</label></span>`);
                                                         item.push(`<span><input type="radio" id="option-true-${optName}" name="option-${optName}" value="true"/> <label for="option-true-${optName}">true</label></span>`);
                                                     }
+                                                    select = false;
                                                 } else {
                                                     item.push(`<label for="option-${optName}" class="label">${opt.label}`);
                                                     item.push(` <a class="apiname" href="documentation.xhtml#${optName}">(${optName})</a>`);
                                                     item.push(`</label>`);
                                                     if (opt.type === "number" || (opt.type === "string" && opt.values === undefined)) {
                                                         item.push(`<input type="text" id="option-${optName}" value="${opt.default}" data-type="${opt.type}"/>`);
+                                                        select = false;
                                                     } else {
                                                         item.push(`<select id="option-${optName}">`);
                                                         vals = Object.keys(opt.values);
@@ -699,9 +702,14 @@ import { Hash } from "crypto";
                                                             b = b + 1;
                                                         } while (b < vallen);
                                                         item.push(`</select>`);
+                                                        select = true;
                                                     }
                                                 }
-                                                item.push(`<p class="option-description">${opt.definition.replace(/"/g, "&quot;")}</p>`);
+                                                item.push(`<p class="option-description">${opt.definition.replace(/"/g, "&quot;")}`);
+                                                if (select === true) {
+                                                    item.push(` <span><strong>${opt.default}</strong> &mdash; ${opt.values[String(opt.default)]}</span>`);
+                                                }
+                                                item.push("</p>");
                                                 item.push(`<div class="disabled" style="display:none"></div>`);
                                                 item.push(`</li>`);
                                                 allItems.push(item.join(""));

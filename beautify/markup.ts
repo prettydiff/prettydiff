@@ -40,50 +40,9 @@
                     skip:number     = 0,
                     indent:number       = (isNaN(options.inlevel) === true)
                         ? 0
-                        : Number(options.inlevel),
-                    lprescount:string[]   = [];
+                        : Number(options.inlevel);
                 do {
                     if (data.lexer[a] === lexer) {
-                        /*if (data.types[a] === "start") {
-                            level.push(indent);
-                            indent = indent + 1;
-                            xslline();
-                        } else if (data.types[a] === "template_start" || data.types[a] === "linepreserve") {
-                            if (data.types[a] === "linepreserve") {
-                                lprescount.push(tagName(data.token[a]));
-                            }
-                            level.push(indent);
-                            indent = indent + 1;
-                        } else if (data.types[a] === "template_else") {
-                            level.push(indent - 1);
-                        } else if (data.types[a] === "end") {
-                            end();
-                        } else if (data.types[a] === "template_end") {
-                            if (lprescount.length > 0 && tagName(data.token[a]) === "/" + lprescount[lprescount.length - 1]) {
-                                lprescount.pop();
-                            }
-                            end();
-                        } else if (data.lines[a] === 0 && (data.types[a] === "singleton" || data.types[a] === "content" || data.types[a] === "template")) {
-                            if (data.types[a] === "content" && options.textpreserve === true) {
-                                level.push(-20);
-                            } else {
-                                content();
-                            }
-                            xslline();
-                        } else if (data.types[a] === "comment" && options.comments === false) {
-                            level.push(0);
-                        } else if (data.types[a] === "linepreserve") {
-                            level.push(indent);
-                        } else {
-                            level.push(indent);
-                            xslline();
-                        }
-                        if (data.types[a] !== "content" && data.types[a] !== "comment" && data.types[a - 1] === "content" && data.types[a - 2] !== "linepreserve" && lprescount.length > 0) {
-                            level[a] = -20;
-                        }
-                        if (data.lines[a] === 0 && (ltype === "content" || (ltype === "script" && data.token[a - 1].charAt(0) === "{" && options.lang === "jsx"))) {
-                            level[a] = -20;
-                        }*/
                         next = nextIndex();
                         if (
                             data.types[a] !== "attribute" &&
