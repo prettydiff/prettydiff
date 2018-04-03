@@ -30,6 +30,7 @@ import { Hash } from "crypto";
         }()),
         js:string = `${projectPath}js${sep}`,
         api:string = `${js}api${sep}`,
+        libFiles:string[] = [api, `${js}beautify`, `${js}minify`],
         // node option default start
         options:any = {},
         version:any = {},
@@ -322,7 +323,9 @@ import { Hash } from "crypto";
                     total: 0
                 };
                 const dirlist:string[] = dirName.split(sep),
-                    dirname:string = dirlist[dirlist.length - 1],
+                    dirname:string = (dirlist[dirlist.length - 1] === "")
+                        ? dirlist[dirlist.length - 2]
+                        : dirlist[dirlist.length - 1],
                     completeTest = function node_args_requireDir_completeTest(filesLength:number):boolean {
                         counts.total = counts.total + filesLength;
                         if (counts.total === counts.items) {
@@ -495,8 +498,9 @@ import { Hash } from "crypto";
             /\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u000b|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g
         );
         global.prettydiff = prettydiff;
-        requireDir(`${js}api`);
-        requireDir(`${js}beautify`);
+        libFiles.forEach(function node_args_each(value:string) {
+            requireDir(value);
+        });
     }());
     apps.analysis = function node_apps_analysis():void {
         options.mode = "analysis";
@@ -794,11 +798,10 @@ import { Hash } from "crypto";
                                 });
                             })
                         },
-                        libraries = function node_apps_build_libraries_libraries(callback:Function) {
-                            const pathes:string[] = [`${js}beautify`, `${api}`, `${projectPath}node_modules${sep}file-saver${sep}FileSaver.min.js`],
-                                len:number = pathes.length,
-                                appendFile = function node_apps_build_libraries_libraries_appendFile(filePath:string):void {
-                                    node.fs.readFile(filePath, "utf8", function node_apps_build_libraries_libraries_appendFile_read(errr:Error, filedata:string):void {
+                        libraryFiles = function node_apps_build_libraries_libraryFiles(callback:Function) {
+                            libFiles.push(`${projectPath}node_modules${sep}file-saver${sep}FileSaver.min.js`);
+                            const appendFile = function node_apps_build_libraries_libraryFiles_appendFile(filePath:string):void {
+                                    node.fs.readFile(filePath, "utf8", function node_apps_build_libraries_libraryFiles_appendFile_read(errr:Error, filedata:string):void {
                                         if (errr !== null) {
                                             apps.errout([errr.toString()]);
                                             return;
@@ -806,7 +809,7 @@ import { Hash } from "crypto";
                                         if (filePath.indexOf("FileSaver") > 0) {
                                             filedata = filedata
                                                 .replace(/var\s+saveAs\s*=\s*saveAs\s*\|\|\s*function\(/, `// eslint-disable-next-line${node.os.EOL}prettydiff.saveAs=function prettydiff_saveAs(`)
-                                                .replace(/[{|}|;|(*/)]\s*var\s/g, function node_apps_build_libraries_libraries_appendFile_read_saveAsFix(str:string):string {
+                                                .replace(/[{|}|;|(*/)]\s*var\s/g, function node_apps_build_libraries_libraryFiles_appendFile_read_saveAsFix(str:string):string {
                                                 return str.replace("var", "let");
                                             });
                                         } else {
@@ -815,20 +818,20 @@ import { Hash } from "crypto";
                                                 .replace("global.prettydiff.", "prettydiff.");
                                         }
                                         domlibs = domlibs + filedata;
-                                        b = b + 1;
-                                        if (b === filelen) {
+                                        a = a + 1;
+                                        if (a === filelen) {
                                             callback();
                                         }
                                     });
                                 },
-                                stat = function node_apps_build_libraries_libraries_stat(pathitem:string) {
-                                    node.fs.stat(pathitem, function node_apps_build_libraries_libraries_stat_callback(errs:Error, stats:Stats):void {
+                                stat = function node_apps_build_libraries_libraryFiles_stat(pathitem:string) {
+                                    node.fs.stat(pathitem, function node_apps_build_libraries_libraryFiles_stat_callback(errs:Error, stats:Stats):void {
                                         if (errs !== null) {
                                             apps.errout([errs.toString()]);
                                             return;
                                         }
                                         if (stats.isDirectory() === true) {
-                                            node.fs.readdir(pathitem, "utf8", function node_apps_build_libraries_libraries_stat_callback_readdir(errd:Error, filelist:string[]):void {
+                                            node.fs.readdir(pathitem, "utf8", function node_apps_build_libraries_libraryFiles_stat_callback_readdir(errd:Error, filelist:string[]):void {
                                                 if (errd !== null) {
                                                     apps.errout([errd.toString()]);
                                                     return;
@@ -837,27 +840,23 @@ import { Hash } from "crypto";
                                                     groupname:string = dirnames[dirnames.length - 1];
                                                 domlibs = domlibs + `prettydiff.${groupname}={};`;
                                                 filelen = filelen + (filelist.length - 1);
-                                                filelist.forEach(function node_apps_build_libraries_libraries_stat_callback_readdir_each(value:string):void {
-                                                    node_apps_build_libraries_libraries_stat(pathitem + sep + value);
+                                                filelist.forEach(function node_apps_build_libraries_libraryFiles_stat_callback_readdir_each(value:string):void {
+                                                    node_apps_build_libraries_libraryFiles_stat(pathitem + sep + value);
                                                 });
                                             });
                                         } else if (stats.isFile() === true) {
                                             appendFile(pathitem);
-                                        } else {
-                                            filelen = filelen - 1;
                                         }
                                     });
                                 };
                             let a:number = 0,
-                                b:number = 0,
-                                filelen: number = len;
-                            do {
-                                stat(pathes[a]);
-                                a = a + 1;
-                            } while (a < len);
+                                filelen: number = libFiles.length;
+                            libFiles.forEach(function node_apps_build_libraries_libraryFiles_each(value:string) {
+                                stat(value);
+                            });
                         };
                     heading("Building Options");
-                    libraries(function node_apps_build_libraries_libraryCallback() {
+                    libraryFiles(function node_apps_build_libraries_libraryCallback() {
                         modifyFile(`${js}dom.js`, "dom");
                         version(`${js}services.js`, "node");
                     });

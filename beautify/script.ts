@@ -134,7 +134,7 @@
             meta:any = [],
             levels:number[] = (function beautify_script_level():number[] {
                 let a             = options.start, //will store the current level of indentation
-                    b:number = (options.end < 1)
+                    b:number = (options.end < 1 || options.end > data.token.length)
                         ? data.token.length
                         : options.end,
                     indent:number        = (isNaN(options.inlevel) === true)

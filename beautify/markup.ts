@@ -4,7 +4,7 @@
     const markup = function beautify_markup(options:any):string {
         const data:parsedArray = options.parsed,
             lexer:string = "markup",
-            c:number            = (options.end < 1)
+            c:number            = (options.end < 1 || options.end > data.token.length)
                 ? data.token.length
                 : options.end,
             lf:"\r\n"|"\n"      = (options.crlf === true)
@@ -17,65 +17,117 @@
                     nextIndex = function beautify_markup_levels_next():number {
                         let x:number = a + 1,
                             y:number = 0;
-                        if (data.types[a] === "comment" || data.types[a] === "attribute" || data.types[a] === "jsx_attribute_start") {
+                        if (data.types[x] === "comment" || data.types[x] === "attribute" || data.types[x] === "jsx_attribute_start") {
                             do {
-                                if (data.types[a] === "jsx_attribute_start") {
+                                if (data.types[x] === "jsx_attribute_start") {
                                     y = x;
                                     do {
-                                        if (data.types[a] === "jsx_attribute_end" && data.begin[a] === y) {
+                                        if (data.types[x] === "jsx_attribute_end" && data.begin[x] === y) {
                                             break;
                                         }
                                         x = x + 1;
                                     } while (x < c);
-                                } else if (data.types[a] !== "comment" && data.types[a] !== "attribute") {
+                                } else if (data.types[x] !== "comment" && data.types[x] !== "attribute") {
                                     return x;
                                 }
                                 x = x + 1;
                             } while (x < c);
                         }
                         return x;
+                    },
+                    comment = function beautify_markup_levels_comment():void {
+                        let x:number = a,
+                            test:boolean = false;
+                        if (data.lines[a + 1] === 0) {
+                            do {
+                                if (data.lines[x] > 0) {
+                                    test = true;
+                                    break;
+                                }
+                                x = x - 1;
+                            } while (x > comstart);
+                            x = a;
+                        } else {
+                            test = true;
+                        }
+
+                        // the first condition applies indentation while the else block does not
+                        if (test === true) {
+                            let ind = (data.types[next] === "end" || data.types[next] === "template_end")
+                                ? indent + 1
+                                : indent;
+                            do {
+                                level.push(ind);
+                                x = x - 1;
+                            } while (x > comstart);
+
+                            // correction so that a following end tag is not indented 1 too much
+                            if (ind === indent + 1) {
+                                level[a] = indent;
+                            }
+
+                            // indentation must be applied to the tag preceeding the comment
+                            if (data.types[x] === "attribute" || data.types[x] === "jsx_attribute_start") {
+                                level[data.begin[x]] = ind;
+                            } else {
+                                level[x] = ind;
+                            }
+                        } else {
+                            do {
+                                level.push(-20);
+                                x = x - 1;
+                            } while (x > comstart);
+                            level[x] = -20;
+                        }
+                        comstart = -1;
                     };
                 let a:number     = options.start,
+                    comstart:number = -1,
                     next:number = 0,
                     skip:number     = 0,
                     indent:number       = (isNaN(options.inlevel) === true)
                         ? 0
                         : Number(options.inlevel);
+                // data.lines -> space before token
+                // level -> space after token
                 do {
                     if (data.lexer[a] === lexer) {
-                        next = nextIndex();
-                        if (
-                            data.types[a] !== "attribute" &&
-                            data.types[a] !== "jsx_attribute_start" &&
-                            (data.types[next] === "end" || data.types[next] === "template_end")
-                        ) {
-                            indent = indent - 1;
-                        }
-                        if (data.types[a] === "start" || data.types[a] === "template_start") {
-                            indent = indent + 1;
-                            if (data.lines[next] === 0 && (data.types[next] === "content" || data.types[next] === "singleton")) {
-                                level.push(-20);
-                            } else {
-                                level.push(indent);
-                            }
-                        } else if (data.types[a] === "end" || data.types[a] === "template_end") {
-                            if (data.lines[next] === 0 && (data.types[next] === "content" || data.types[next] === "singleton")) {
-                                level.push(-20);
-                            } else {
-                                level.push(indent);
-                            }
-                        } else if (data.lines[a] === 0 && (data.types[a] === "content" || data.types[a] === "singleton")) {
-                            level.push(-20);
-                        } else if (data.types[a] === "attribute") {
+                        if (data.types[a] === "attribute") {
                             level.push(-10);
                         } else if (data.types[a] === "jsx_attribute_start") {
                             level.push(-20);
                         } else if (data.types[a] === "jsx_attribute_end") {
                             level.push(-10);
-                        } else if (data.lines[a] === 0 && (data.types[a] === "content" || data.types[a] === "singleton")) {
-                            level.push(-20);
-                        } else {
-                            level.push(indent);
+                        } else if (data.types[a] === "comment") {
+                            if (comstart < 0) {
+                                comstart = a;
+                            }
+                            if (data.types[a + 1] !== "comment") {
+                                comment();
+                            }
+                        } else if (data.types[a] !== "comment") {
+                            next = nextIndex();
+                            if (data.types[next] === "end" || data.types[next] === "template_end") {
+                                indent = indent - 1;
+                            }
+                            if (data.lines[next] === 0 && (data.types[a] === "content" || data.types[a] === "singleton")) {
+                                level.push(-20);
+                            } else if (data.types[a] === "start" || data.types[a] === "template_start") {
+                                indent = indent + 1;
+                                if (data.types[a] === "start" && data.types[next] === "end") {
+                                    level.push(-20);
+                                } else if (data.types[a] === "template_start" && data.types[next] === "template_end") {
+                                    level.push(-20);
+                                } else if (data.lines[next] === 0 && (data.types[next] === "content" || data.types[next] === "singleton")) {
+                                    level.push(-20);
+                                } else {
+                                    level.push(indent);
+                                }
+                            } else if (data.lines[next] === 0 && (data.types[next] === "content" || data.types[next] === "singleton")) {
+                                level.push(-20);
+                            } else {
+                                level.push(indent);
+                            }
                         }
                     } else {
                         if (data.lexer[a - 1] === lexer) {
