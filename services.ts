@@ -2404,7 +2404,7 @@ import { Hash } from "crypto";
                 }
                 return
             },
-            ignore   = function node_apps_server_ignore(input:string):boolean {
+            ignore   = function node_apps_server_ignore(input:string|null):boolean {
                 if (input.indexOf(".git") === 0) {
                     return true;
                 }
@@ -2434,8 +2434,8 @@ import { Hash } from "crypto";
         console.log(`${text.green}Starting web server and file system watcher!${text.none}`);
         node.fs.watch(projectPath, {
             recursive: true
-        }, function node_apps_server_watch(type:"rename"|"change", filename:string):void {
-            if (ignore(filename) === true) {
+        }, function node_apps_server_watch(type:"rename"|"change", filename:string|null):void {
+            if (filename === null || ignore(filename) === true) {
                 return;
             }
             const extension:string = (function node_apps_server_watch_extension():string {

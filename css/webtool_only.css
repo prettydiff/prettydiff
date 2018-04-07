@@ -24,10 +24,7 @@
 #prettydiff.white #options,
 #prettydiff.white #addOptions,
 #prettydiff.white #footer{box-shadow:0 0.5em 1em #999}
-#prettydiff.white #beautyoutput,
-#prettydiff.white #minifyoutput,
-#prettydiff.white #parseoutput,
-#prettydiff.white #analysisoutput{background:#f2f2f2;border-color:#999}
+#prettydiff.white #output{background:#f2f2f2;border-color:#999}
 #prettydiff.white .ace_gutter{background:#ddd;border-color:#999}
 #prettydiff.white #update{background:#ddd;border-color:#999}
 #prettydiff.white #reports h3 button{background:#ddd;border-color:#999;color:#555}
@@ -75,16 +72,10 @@
 #prettydiff.canvas #options,
 #prettydiff.canvas #addOptions,
 #prettydiff.canvas #footer{box-shadow:0 0.5em 1em #b8a899}
-#prettydiff.canvas #beautyinput,
-#prettydiff.canvas #minifyinput,
-#prettydiff.canvas #parseoinput,
-#prettydiff.canvas #analysisinput,
+#prettydiff.canvas #input,
 #prettydiff.canvas #baseText,
 #prettydiff.canvas #newText{background:#f2f2f2;border-color:#999}
-#prettydiff.canvas #beautyoutput,
-#prettydiff.canvas #minifyoutput,
-#prettydiff.canvas #parseoutput,
-#prettydiff.canvas #analysisoutput{background:#ccccc8;border-color:#999}
+#prettydiff.canvas #output{background:#ccccc8;border-color:#999}
 #prettydiff.canvas #update{background:#ddd;border-color:#999}
 #prettydiff.canvas .save{background:#fc0;border-color:#a30;color:#a30}
 #prettydiff.canvas .minimize{background:#fcc;border-color:#c00;color:#c00}
@@ -134,16 +125,10 @@
 #prettydiff.shadow #options,
 #prettydiff.shadow #addOptions,
 #prettydiff.shadow #footer{box-shadow:0 0.5em 1em #000}
-#prettydiff.shadow #beautyinput,
-#prettydiff.shadow #minifyinput,
-#prettydiff.shadow #parseoinput,
-#prettydiff.shadow #analysisinput,
+#prettydiff.shadow #input,
 #prettydiff.shadow #input.ace_editor,
 #prettydiff.shadow #output.ace_editor{background:#111;border-color:#666}
-#prettydiff.shadow #beautyoutput,
-#prettydiff.shadow #minifyoutput,
-#prettydiff.shadow #parseoutput,
-#prettydiff.shadow #analysisoutput{background:#333;border-color:#666}
+#prettydiff.shadow #output{background:#333;border-color:#666}
 #prettydiff.shadow #textareaTabKey,
 #prettydiff.shadow #update{background:#666;border-color:#999}
 #prettydiff.shadow .save{background:#fc0;border-color:#a30;color:#a30}

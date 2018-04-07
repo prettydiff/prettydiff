@@ -827,7 +827,7 @@
             },
             wrap           : {
                 api       : "any",
-                mode      : "beautify",
+                mode      : "any",
                 lexer     : "any",
                 label     : "Wrap",
                 type      : "number",

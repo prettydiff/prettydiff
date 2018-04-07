@@ -155,7 +155,9 @@
             lf         = (options.crlf === true)
                 ? "\r\n"
                 : "\n",
-            len:number      = data.token.length,
+            len:number      = (options.end > 0)
+                ? options.end
+                : data.token.length,
             build:string[]    = [],
             //a single unit of indentation
             tab:string      = (function beautify_style_beautify_tab():string {
@@ -267,7 +269,7 @@
         }
 
         //beautification loop
-        a = 0;
+        a = options.start;
         do {
             if (data.types[a] === "start") {
                 if (data.types[a - 1] === "propvar" && options.compressedcss === false) {

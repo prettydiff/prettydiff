@@ -739,7 +739,7 @@
                             : headline.getElementsByTagName("p")[0],
                         x           = Math.random(),
                         circulation = [
-                            "Pretty Diff now at version 3.0.0"
+                            "Architecture is largely complete. Option support and code sample testing underway. Many features are missing support at this time."
                         ];
                     if (headline !== null) {
                         headtext.innerHTML = circulation[Math.floor(x * circulation.length)];
@@ -2797,7 +2797,7 @@
     };
     // allows grabbing and resizing columns (from the third column) in the diff
     // side-by-side report
-    method.event.colSliderGrab = function dom_event_colSliderGrab(event:Event, node:HTMLElement):boolean {
+    method.event.colSliderGrab = function dom_event_colSliderGrab(event:Event):boolean {
         let subOffset:number   = 0,
             withinRange:boolean = false,
             offset:number      = 0,
@@ -2807,7 +2807,8 @@
             diffLeft:HTMLElement,
             par1:HTMLElement,
             par2:HTMLElement;
-        const touch:boolean       = (event !== null && event.type === "touchstart"),
+        const node:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
+            touch:boolean       = (event !== null && event.type === "touchstart"),
             diffRight:HTMLElement   = <HTMLElement>node.parentNode,
             diff:HTMLElement        = <HTMLElement>diffRight.parentNode,
             lists:NodeListOf<HTMLOListElement>       = diff.getElementsByTagName("ol"),
@@ -2900,12 +2901,13 @@
         return false;
     };
     //allows visual folding of consecutive equal lines in a diff report
-    method.event.difffold = function dom_event_difffold(node:HTMLElement):void {
+    method.event.difffold = function dom_event_difffold(event:Event):void {
         let a:number         = 0,
             b:number         = 0,
             max:number,
-            lists:NodeListOf<HTMLLIElement>[];
-        const title:string[]     = node
+            lists:NodeListOf<HTMLLIElement>[] = [];
+        const node:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
+            title:string[]     = node
                 .getAttribute("title")
                 .split("line "),
             min:number       = Number(title[1].substr(0, title[1].indexOf(" "))),
@@ -3268,9 +3270,7 @@
                                 let a:number     = 0;
                                 do {
                                     if (cells[a].getAttribute("class") === "fold") {
-                                        cells[a].onclick = function dom_event_execute_app_execOutput_difffold() {
-                                            method.event.difffold(cells[a]);
-                                        }
+                                        cells[a].onclick = method.event.difffold;
                                     }
                                     a = a + 1;
                                 } while (a < len);

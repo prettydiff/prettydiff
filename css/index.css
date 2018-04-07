@@ -19,10 +19,6 @@ This is written by Austin Cheney on 3 Mar 2009.
     #prettydiff #webtool td{font-size:0.8em;white-space:normal}
     #prettydiff #webtool p,
     #prettydiff .options,
-    #prettydiff #Beautify,
-    #prettydiff #Minify,
-    #prettydiff #Parse,
-    #prettydiff #diff,
     #prettydiff #webtool ul,
     #prettydiff ul{display:none}
 }
