@@ -2875,6 +2875,9 @@
                     }
                     a = a + 1;
                 } while (a < len);
+                if (options.newline === true && options.end === data.token.length) {
+                    build.push(lf);
+                }
                 return build.join("");
             }());
         return output;

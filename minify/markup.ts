@@ -35,7 +35,7 @@
                         }
                         return x;
                     },
-                    comment = function beautify_markup_levels_comment():void {
+                    comment = function minify_markup_levels_comment():void {
                         let x:number = a,
                             test:boolean = false;
                         if (data.lines[a + 1] === 0) {
@@ -155,15 +155,22 @@
             let a:number            = options.start,
                 external:string = "",
                 lastLevel:number = 0;
+            if (options.topcoms === true && data.types[a] === "comment") {
+                if (a > 0) {
+                    build.push(lf);
+                }
+                do {
+                    build.push(data.token[a]);
+                    build.push(lf);
+                    a = a + 1;
+                } while (a < len && data.types[a] === "comment");
+            }
             do {
                 if (data.lexer[a] === lexer) {
-                    if (data.token[a] === "</prettydiffli>" && options.correct === true) {
-                        data.token[a] = "</li>";
-                    }
                     if (a < len - 1 && data.types[a + 1].indexOf("attribute") > -1 && data.types[a].indexOf("attribute") < 0) {
                         attribute();
                     }
-                    if (data.token[a] !== "</prettydiffli>" && data.types[a] !== "comment" && data.token[a].slice(0, 2) !== "//" && data.token[a].slice(0, 2) !== "/*") {
+                    if (data.types[a] !== "comment") {
                         build.push(data.token[a]);
                         if ((data.types[a] === "template" || data.types[a] === "template_start") && data.types[a - 1] === "content" && data.presv[a - 1] === true && options.mode === "minify" && levels[a] === -20) {
                             build.push(" ");
@@ -187,12 +194,8 @@
             if (build[0] === lf || build[0] === " ") {
                 build[0] = "";
             }
-            if (options.newline === true) {
-                if (options.crlf === true) {
-                    build.push("\r\n");
-                } else {
-                    build.push("\n");
-                }
+            if (options.newline === true && options.end === data.token.length) {
+                build.push(lf);
             }
             return build.join("");
         }());

@@ -254,12 +254,8 @@
             if (build[0] === lf || build[0] === " ") {
                 build[0] = "";
             }
-            if (options.newline === true) {
-                if (options.crlf === true) {
-                    build.push("\r\n");
-                } else {
-                    build.push("\n");
-                }
+            if (options.newline === true && options.end === data.token.length) {
+                build.push(lf);
             }
             return build.join("");
         }());

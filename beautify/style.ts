@@ -152,7 +152,7 @@
                 yellow              : 0.9278,
                 yellowgreen         : 0.5076295720870697
             },*/
-            lf         = (options.crlf === true)
+            lf:"\r\n"|"\n"         = (options.crlf === true)
                 ? "\r\n"
                 : "\n",
             len:number      = (options.end > 0)
@@ -391,21 +391,8 @@
             }
             a = a + 1;
         } while (a < len);
-        if (options.newline === true) {
-            if (options.crlf === true) {
-                build.push("\r\n");
-            } else {
-                build.push("\n");
-            }
-        }
-        if (options.preserve > 0 && (data.lines[data.lines.length - 1] > 0)) {
-            output = build
-                .join("")
-                .replace(/(\s+)$/, lf);
-        } else {
-            output = build
-                .join("")
-                .replace(/(\s+)$/, "");
+        if (options.newline === true && options.end === data.token.length) {
+            build.push(lf);
         }
         return output;
     };
