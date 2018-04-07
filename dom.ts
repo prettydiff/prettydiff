@@ -739,7 +739,7 @@
                             : headline.getElementsByTagName("p")[0],
                         x           = Math.random(),
                         circulation = [
-                            "Architecture is largely complete. Option support and code sample testing underway. Many features are missing support at this time."
+                            "Status, <a href=\"https://github.com/prettydiff/prettydiff/issues/511\">https://github.com/prettydiff/prettydiff/issues/511</a>"
                         ];
                     if (headline !== null) {
                         headtext.innerHTML = circulation[Math.floor(x * circulation.length)];

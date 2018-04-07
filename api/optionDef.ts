@@ -2,15 +2,15 @@
 (function options_init():void {
     "use strict";
     const optionDef = {
-            accessibility    : {
-                api       : "any",
-                mode      : "analysis",
-                lexer     : "markup",
-                label     : "Accessibility Analysis",
-                type      : "boolean",
-                definition: "Whether analysis of HTML should include an accessibility report.",
-                default   : false
-            },
+            //accessibility    : {
+            //    api       : "any",
+            //    mode      : "analysis",
+            //    lexer     : "markup",
+            //    label     : "Accessibility Analysis",
+            //    type      : "boolean",
+            //    definition: "Whether analysis of HTML should include an accessibility report.",
+            //    default   : false
+            //},
             brace_style    : {
                 api       : "any",
                 mode      : "beautify",
@@ -448,15 +448,9 @@
                 mode      : "beautify",
                 lexer     : "script",
                 label     : "Method Chains",
-                type      : "string",
-                definition: "Whether consecutively referenced methods should be chained onto a single line of" +
-                        " code instead of indented.",
-                values    : {
-                    "chain": "Ensure a chain of methods not separated by whitespace",
-                    "indent": "Indent each on each method",
-                    "none": "Ignore this option"
-                },
-                default   : "indent"
+                type      : "number",
+                definition: "When to break consecutively chained methods and properties onto separate lines. A negative value disables this option. A value of 0 ensures method chains are never broken.",
+                default   : "3"
             },
             miniwrap       : {
                 api       : "any",
@@ -476,7 +470,7 @@
                 type      : "string",
                 definition: "The operation to be performed.",
                 values    : {
-                    analysis: "returns a code examination report",
+                    //analysis: "returns a code examination report",
                     beautify: "beautifies code and returns a string",
                     diff    : "returns either command line list of differences or an HTML report",
                     minify  : "minifies code and returns a string",

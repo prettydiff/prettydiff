@@ -37,8 +37,7 @@
                     aa = aa - 1;
                 } while (aa > -1);
             };
-        var a:number        = options.start,
-            lex:string = "",
+        let a:number        = options.start,
             external:string = "",
             linelen:number  = 0;
         if (options.topcoms === true && data.types[a] === "comment") {
@@ -96,7 +95,6 @@
                     }
                 }
             } else {
-                lex = data.lexer[a];
                 options.start = a;
                 do {
                     if (data.lexer[a + 1] === lexer && data.lexer[data.begin[a + 1]] === lexer) {
