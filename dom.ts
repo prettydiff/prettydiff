@@ -807,41 +807,43 @@
                     do {
                         if (keys[a] !== "report" && keys[a] !== "knownname" && keys[a] !== "feedback") {
                             el = id(keys[a]) || id(data.settings[keys[a]]);
-                            name = el.nodeName.toLowerCase();
-                            if (name === "select") {
-                                sel = <HTMLSelectElement>el;
-                                sel.selectedIndex = data.settings[keys[a]];
-                                options[keys[a].replace("option-", "")] = sel[sel.selectedIndex].value;
-                                if (keys[a] === "option-color") {
-                                    method.event.colorScheme(null);
-                                }
-                            } else {
-                                if (keys[a] === "mode") {
-                                    id(data.settings[keys[a]]).checked = true;
-                                    options.mode = data.settings[keys[a]].replace("mode", "");
-                                    method.event.modeToggle(options.mode);
-                                } else if (typeof data.settings[keys[a]] === "string" && data.settings[keys[a]].indexOf("option-true-") === 0) {
-                                    id(data.settings[keys[a]]).checked = true;
-                                    options[keys[a].replace("option-", "")] = true;
-                                } else if (typeof data.settings[keys[a]] === "string" && data.settings[keys[a]].indexOf("option-false-") === 0) {
-                                    id(data.settings[keys[a]]).checked = true;
-                                } else if (keys[a].indexOf("option-") === 0) {
-                                    if (id(keys[a]).getAttribute("data-type") === "number") {
-                                        if (isNaN(Number(data.settings[keys[a]])) === false) {
+                            if (el !== null) {
+                                name = el.nodeName.toLowerCase();
+                                if (name === "select") {
+                                    sel = <HTMLSelectElement>el;
+                                    sel.selectedIndex = data.settings[keys[a]];
+                                    options[keys[a].replace("option-", "")] = sel[sel.selectedIndex].value;
+                                    if (keys[a] === "option-color") {
+                                        method.event.colorScheme(null);
+                                    }
+                                } else {
+                                    if (keys[a] === "mode") {
+                                        id(data.settings[keys[a]]).checked = true;
+                                        options.mode = data.settings[keys[a]].replace("mode", "");
+                                        method.event.modeToggle(options.mode);
+                                    } else if (typeof data.settings[keys[a]] === "string" && data.settings[keys[a]].indexOf("option-true-") === 0) {
+                                        id(data.settings[keys[a]]).checked = true;
+                                        options[keys[a].replace("option-", "")] = true;
+                                    } else if (typeof data.settings[keys[a]] === "string" && data.settings[keys[a]].indexOf("option-false-") === 0) {
+                                        id(data.settings[keys[a]]).checked = true;
+                                    } else if (keys[a].indexOf("option-") === 0) {
+                                        if (id(keys[a]).getAttribute("data-type") === "number") {
+                                            if (isNaN(Number(data.settings[keys[a]])) === false) {
+                                                id(keys[a]).value = data.settings[keys[a]];
+                                                options[keys[a].replace("option-", "")] = Number(data.settings[keys[a]]);
+                                            }
+                                        } else {
                                             id(keys[a]).value = data.settings[keys[a]];
-                                            options[keys[a].replace("option-", "")] = Number(data.settings[keys[a]]);
+                                            options[keys[a].replace("option-", "")] = data.settings[keys[a]];
                                         }
-                                    } else {
-                                        id(keys[a]).value = data.settings[keys[a]];
-                                        options[keys[a].replace("option-", "")] = data.settings[keys[a]];
+                                        if (keys[a] === "option-insize") {
+                                            insize();
+                                        } else if (keys[a] === "option-inchar") {
+                                            indentchar();
+                                        }
+                                    } else if (id(data.settings[keys[a]]) !== null) {
+                                        id(data.settings[keys[a]]).checked = true;
                                     }
-                                    if (keys[a] === "option-insize") {
-                                        insize();
-                                    } else if (keys[a] === "option-inchar") {
-                                        indentchar();
-                                    }
-                                } else if (id(data.settings[keys[a]]) !== null) {
-                                    id(data.settings[keys[a]]).checked = true;
                                 }
                             }
                         }
