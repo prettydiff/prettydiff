@@ -514,23 +514,13 @@ import { Hash } from "crypto";
     apps.build = function node_apps_build():void {
         let firstOrder:boolean = true;
         const order = [
+                "npminstall",
                 "language",
                 "typescript",
                 "libraries",
                 "lint"
             ],
             orderlen:number = order.length,
-            next = function node_apps_build_next():void {
-                let phase = order[0];
-                if (order.length < 1) {
-                    verbose = true;
-                    apps.output(["All tasks complete... Exiting clean!"]);
-                    process.exit(0);
-                    return;
-                }
-                order.splice(0, 1);
-                phases[phase]();
-            },
             heading = function node_apps_build_heading(message:string):void {
                 if (firstOrder === true) {
                     console.log("");
@@ -541,6 +531,18 @@ import { Hash } from "crypto";
                 }
                 console.log(text.cyan + message + text.none);
                 console.log("");
+            },
+            next = function node_apps_build_next():void {
+                let phase = order[0];
+                if (order.length < 1) {
+                    verbose = true;
+                    heading("All tasks complete... Exiting clean!");
+                    apps.output([""]);
+                    process.exit(0);
+                    return;
+                }
+                order.splice(0, 1);
+                phases[phase]();
             },
             phases = {
                 language: function node_apps_build_language():void {
@@ -909,89 +911,173 @@ import { Hash } from "crypto";
                             files.forEach(lintit);
                         };
                     heading("Linting");
-                    (function node_apps_build_lint_getFiles():void {
-                        let total:number    = 1,
-                            count:number    = 0;
-                        const idLen:number    = ignoreDirectory.length,
-                            readDir  = function node_apps_build_lint_getFiles_readDir(filepath:string):void {
-                                node.fs.readdir(
-                                    filepath,
-                                    function node_apps_build_lint_getFiles_readDir_callback(erra:Error, list:string[]) {
-                                        const fileEval = function node_apps_build_lint_getFiles_readDir_callback_fileEval(val:string):void {
-                                            const filename:string = (filepath.charAt(filepath.length - 1) === sep)
-                                                ? filepath + val
-                                                : filepath + sep + val;
-                                            node.fs.stat(
-                                                filename,
-                                                function node_apps_build_lint_getFiles_readDir_callback_fileEval_stat(errb:Error, stat:Stats) {
-                                                    let a:number         = 0,
-                                                        ignoreDir:boolean = false;
-                                                    const dirtest:string   = `${filepath.replace(/\\/g, "/")}/${val}`;
-                                                    if (errb !== null) {
-                                                        apps.errout([errb.toString()]);
-                                                        return;
-                                                    }
-                                                    count = count + 1;
-                                                    if (stat.isFile() === true && (/(\.js)$/).test(val) === true) {
-                                                        files.push(filename);
-                                                    }
-                                                    if (stat.isDirectory() === true) {
-                                                        do {
-                                                            if (dirtest.indexOf(ignoreDirectory[a]) === dirtest.length - ignoreDirectory[a].length) {
-                                                                ignoreDir = true;
-                                                                break;
-                                                            }
-                                                            a = a + 1;
-                                                        } while (a < idLen);
-                                                        if (ignoreDir === true) {
-                                                            if (count === total) {
-                                                                lintrun();
-                                                            }
-                                                        } else {
-                                                            total = total + 1;
-                                                            node_apps_build_lint_getFiles_readDir(filename);
+                    node.child("eslint", function node_apps_build_lint_eslintCheck(eserr:Error) {
+                        if (eserr !== null) {
+                            console.log("ESLint is not globally installed or is corrupt.");
+                            console.log(`Install ESLint using the command: ${text.green}npm install eslint -g${text.none}`);
+                            console.log("");
+                            console.log("Skipping code validation...");
+                            next();
+                            return;
+                        }
+                        (function node_apps_build_lint_getFiles():void {
+                            let total:number    = 1,
+                                count:number    = 0;
+                            const idLen:number    = ignoreDirectory.length,
+                                readDir  = function node_apps_build_lint_getFiles_readDir(filepath:string):void {
+                                    node.fs.readdir(
+                                        filepath,
+                                        function node_apps_build_lint_getFiles_readDir_callback(erra:Error, list:string[]) {
+                                            const fileEval = function node_apps_build_lint_getFiles_readDir_callback_fileEval(val:string):void {
+                                                const filename:string = (filepath.charAt(filepath.length - 1) === sep)
+                                                    ? filepath + val
+                                                    : filepath + sep + val;
+                                                node.fs.stat(
+                                                    filename,
+                                                    function node_apps_build_lint_getFiles_readDir_callback_fileEval_stat(errb:Error, stat:Stats) {
+                                                        let a:number         = 0,
+                                                            ignoreDir:boolean = false;
+                                                        const dirtest:string   = `${filepath.replace(/\\/g, "/")}/${val}`;
+                                                        if (errb !== null) {
+                                                            apps.errout([errb.toString()]);
+                                                            return;
                                                         }
-                                                    } else if (count === total) {
-                                                        lintrun();
+                                                        count = count + 1;
+                                                        if (stat.isFile() === true && (/(\.js)$/).test(val) === true) {
+                                                            files.push(filename);
+                                                        }
+                                                        if (stat.isDirectory() === true) {
+                                                            do {
+                                                                if (dirtest.indexOf(ignoreDirectory[a]) === dirtest.length - ignoreDirectory[a].length) {
+                                                                    ignoreDir = true;
+                                                                    break;
+                                                                }
+                                                                a = a + 1;
+                                                            } while (a < idLen);
+                                                            if (ignoreDir === true) {
+                                                                if (count === total) {
+                                                                    lintrun();
+                                                                }
+                                                            } else {
+                                                                total = total + 1;
+                                                                node_apps_build_lint_getFiles_readDir(filename);
+                                                            }
+                                                        } else if (count === total) {
+                                                            lintrun();
+                                                        }
                                                     }
-                                                }
-                                            );
-                                        };
-                                        if (erra !== null) {
-                                            apps.errout([
-                                                `Error reading path: ${filepath}`,
-                                                erra.toString()
-                                            ]);
-                                            return;
+                                                );
+                                            };
+                                            if (erra !== null) {
+                                                apps.errout([
+                                                    `Error reading path: ${filepath}`,
+                                                    erra.toString()
+                                                ]);
+                                                return;
+                                            }
+                                            total = total + list.length - 1;
+                                            list.forEach(fileEval);
                                         }
-                                        total = total + list.length - 1;
-                                        list.forEach(fileEval);
+                                    );
+                                };
+                            readDir(js);
+                        }());
+                    });
+                },
+                npminstall: function node_apps_build_npminstall():void {
+                    heading("First Time Developer Dependency Installation");
+                    node.fs.stat(`${projectPath}node_modules${sep}ace-builds`, function node_apps_build_npminstall_stat(errs:Error):void {
+                        if (errs !== null) {
+                            if (errs.toString().indexOf("no such file or directory") > 0) {
+                                node.child("npm install", {
+                                    cwd: projectPath
+                                }, function node_apps_build_npminstall_stat_child(err:Error, stdout:string, stderr:string) {
+                                    if (err !== null) {
+                                        apps.errout([err.toString()]);
+                                        return;
                                     }
-                                );
-                            };
-                        readDir(js);
-                    }());
+                                    if (stderr !== "") {
+                                        apps.errout([stderr]);
+                                        return;
+                                    }
+                                    console.log(`${apps.humantime(false) + text.green}Installed dependencies.${text.none}`);
+                                    next();
+                                });
+                            } else {
+                                apps.errout([errs.toString()]);
+                                return;
+                            }
+                        } else {
+                            console.log(`${apps.humantime(false) + text.green}Dependencies appear to be already installed...${text.none}`);
+                            next();
+                        }
+                    });
                 },
                 typescript: function node_apps_build_typescript():void {
+                    const flag = {
+                            services: false,
+                            typescript: false
+                        },
+                        ts = function node_apps_build_typescript_ts() {
+                            node.child("tsc --pretty", {
+                                cwd: projectPath
+                            }, function node_apps_build_typescript_callback(err:Error, stdout:string, stderr:string):void {
+                                if (stdout !== "" && stdout.indexOf(` \u001b[91merror${text.none} `) > -1) {
+                                    console.log(`${text.red}TypeScript reported warnings.${text.none}`);
+                                    apps.errout([stdout]);
+                                    return;
+                                }
+                                if (err !== null) {
+                                    apps.errout([err.toString()]);
+                                    return;
+                                }
+                                if (stderr !== null && stderr !== "") {
+                                    apps.errout([stderr]);
+                                    return;
+                                }
+                                console.log(`${apps.humantime(false) + text.green}TypeScript build completed without warnings.${text.none}`);
+                                next();
+                            });
+                        };
                     heading("TypeScript Compilation");
-                    node.child("tsc --pretty", {
-                        cwd: projectPath
-                    }, function node_apps_build_typescript_callback(err:Error, stdout:string, stderr:string):void {
-                        if (stdout !== "" && stdout.indexOf(` \u001b[91merror${text.none} `) > -1) {
-                            console.log(`${text.red}TypeScript reported warnings.${text.none}`);
-                            apps.errout([stdout]);
-                            return;
-                        }
+                    node.fs.stat(`${projectPath}services.ts`, function node_apps_build_typescript_services(err:Error) {
                         if (err !== null) {
-                            apps.errout([err.toString()]);
-                            return;
+                            if (err.toString().indexOf("no such file or directory") > 0) {
+                                console.log(`${apps.humantime(false) + text.angry}TypeScript code files not present.${text.none}`);
+                                flag.services = true;
+                                if (flag.typescript === true) {
+                                    next();
+                                }
+                            } else {
+                                apps.errout([err]);
+                                return;
+                            }
+                        } else {
+                            flag.services = true;
+                            if (flag.typescript === true) {
+                                ts();
+                            }
                         }
-                        if (stderr !== null && stderr !== "") {
-                            apps.errout([stderr]);
-                            return;
+                    });
+                    node.child("tsc --version", function node_apps_build_typescript_tsc(err:Error, stdout:string, stderr:string) {
+                        if (err !== null) {
+                            const str = err.toString();
+                            if (str.indexOf("command not found") > 0 || str.indexOf("is not recognized") > 0) {
+                                console.log(`${apps.humantime(false) + text.angry}TypeScript does not appear to be installed.`);
+                                console.log(`Install TypeScript with this command: ${text.green}npm install typescript -g${text.none}`);
+                                flag.typescript = true;
+                                if (flag.services === true) {
+                                    next();
+                                }
+                            } else {
+                                apps.errout([err]);
+                            }
+                        } else {
+                            flag.typescript = true;
+                            if (flag.services === true) {
+                                ts();
+                            }
                         }
-                        console.log(`${apps.humantime(false) + text.green}TypeScript build completed without warnings.${text.none}`);
-                        next();
                     });
                 }
             };
