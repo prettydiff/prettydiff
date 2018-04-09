@@ -50,19 +50,25 @@ import { Hash } from "crypto";
         },
         prettydiff:any = {},
         commands:commandList = {
-            analysis: {
-                description: "Perform Pretty Diff's code analysis operation.",
-                example: [{
-                    code: "",
-                    defined: "Performs Pretty Diff's code analysis operation."
-                }]
-            },
+            //analysis: {
+            //    description: "Perform Pretty Diff's code analysis operation.",
+            //    example: [{
+            //        code: "",
+            //        defined: "Performs Pretty Diff's code analysis operation."
+            //    }]
+            //},
             beautify: {
                 description: "Perform Pretty Diff's code beautification.",
-                example: [{
-                    code: "",
-                    defined: "Performs Pretty Diff's beautify operation."
-                }]
+                example: [
+                    {
+                        code: "prettydiff beautify my/path/toFile.xml",
+                        defined: "Performs Pretty Diff's beautify operation."
+                    },
+                    {
+                        code: "prettydiff beautify http://example.com/webThing.xml",
+                        defined: "Performs a HTTP get operation for URI values and then beautifies the specified resource."
+                    }
+                ]
             },
             build: {
                 description: "Rebuilds the application.",
@@ -113,10 +119,16 @@ import { Hash } from "crypto";
             },
             diff: {
                 description: "Compare code samples the Pretty Diff way.",
-                example: [{
-                    code: "",
-                    defined: "Performs Pretty Diff's diff operation."
-                }]
+                example: [
+                    {
+                        code: "prettydiff diff firstFile.xml secondFile.xml",
+                        defined: "Performs Pretty Diff's diff operation against the specified locations."
+                    },
+                    {
+                        code: "prettydiff diff firstDirectory secondDirectory",
+                        defined: "Performs Pretty Diff's diff operation against the files in the specified directories. The two locations must be of the same file system type or Pretty Diff will give you an error."
+                    }
+                ]
             },
             get: {
                 description: "Retrieve a resource via an absolute URI.",
@@ -155,12 +167,39 @@ import { Hash } from "crypto";
                     defined: "Writes help text to shell."
                 }]
             },
+            lint: {
+                description: "Use ESLint against all JavaScript files in a specified directory tree.",
+                example: [
+                    {
+                        code: "prettydiff lint ../tools",
+                        defined: "Lints all the JavaScript files in that location and in its subdirectories."
+                    },
+                    {
+                        code: "prettydiff lint",
+                        defined: "Specifying no location defaults to the Pretty Diff application directory."
+                    },
+                    {
+                        code: "prettydiff lint ../tools ignore [node_modules, .git, test, units]",
+                        defined: "An ignore list is also accepted if there is a list wrapped in square braces following the word 'ignore'."
+                    }
+                ]
+            },
             minify: {
                 description: "Remove all unnecessary white space and comments from code.",
-                example: [{
-                    code: "",
-                    defined: "Performs Pretty Diff's minify operation."
-                }]
+                example: [
+                    {
+                        code: "prettydiff minify my/file/path/file.js",
+                        defined: "Performs Pretty Diff's minify operation."
+                    },
+                    {
+                        code: "prettydiff minify my/file/path/directory",
+                        defined: "Performs Pretty Diff's minify operation against all files in the directory."
+                    },
+                    {
+                        code: "prettydiff minify http://example.com/webThing.xml",
+                        defined: "Performs a HTTP get operation for URI values and then minifies the specified resource."
+                    }
+                ]
             },
             options: {
                 description: "List all Pretty Diff's options to the console or gather instructions on a specific option.",
@@ -181,10 +220,16 @@ import { Hash } from "crypto";
             },
             parse: {
                 description: "Generate a parse table of a code sample.",
-                example: [{
-                    code: "",
-                    defined: "Performs Pretty Diff's parse operation."
-                }]
+                example: [
+                    {
+                        code: "prettydiff parse my/file/path.js",
+                        defined: "Returns the parse table for the specified resource."
+                    },
+                    {
+                        code: "prettydiff parse http://example.com/webThing.xml",
+                        defined: "Performs a HTTP get operation for URI values and then returns the parse table for the specified resource."
+                    }
+                ]
             },
             remove: {
                 description: "Remove a file or directory tree from the local file system.",
@@ -215,8 +260,8 @@ import { Hash } from "crypto";
             validation: {
                 description: "Run the validation tests.",
                 example: [{
-                    code: "",
-                    defined: ""
+                    code: "prettydiff validation",
+                    defined: "Runs he Pretty Diff validation task, which tests Pretty Diff against many code samples to ensure it is performing as designed."
                 }]
             },
             version: {
@@ -503,14 +548,16 @@ import { Hash } from "crypto";
             requireDir(value);
         });
     }());
-    apps.analysis = function node_apps_analysis():void {
-        options.mode = "analysis";
-        apps.mode();
-    };
+    //apps.analysis = function node_apps_analysis():void {
+    //    options.mode = "analysis";
+    //    apps.mode();
+    //};
+    // beautify mode wrapper
     apps.beautify = function node_apps_beautify():void {
         options.mode = "beautify";
         apps.mode();
     };
+    // 
     apps.build = function node_apps_build():void {
         let firstOrder:boolean = true;
         const order = [
@@ -867,122 +914,8 @@ import { Hash } from "crypto";
                     modifyFile(`${projectPath}documentation.xhtml`, "documentation");
                 },
                 lint     : function node_apps_build_lint():void {
-                    const ignoreDirectory = [
-                            ".git",
-                            ".vscode",
-                            "bin",
-                            "coverage",
-                            "guide",
-                            "ignore",
-                            "node_modules",
-                            "test"
-                        ],
-                        files:string[]           = [],
-                        lintrun         = function node_apps_build_lint_lintrun() {
-                            let filesCount:number = 0;
-                            const filesTotal = files.length,
-                                lintit = function node_apps_build_lint_lintrun_lintit(val:string):void {
-                                    node.child(`eslint ${val}`, {
-                                        cwd: projectPath
-                                    }, function node_apps_build_lint_lintrun_lintit_eslint(err:Error, stdout:string, stderr:string) {
-                                        if (stdout === "" || stdout.indexOf("0:0  warning  File ignored because of a matching ignore pattern.") > -1) {
-                                            if (err !== null) {
-                                                apps.errout([err.toString()]);
-                                                return;
-                                            }
-                                            if (stderr !== null && stderr !== "") {
-                                                apps.errout([stderr]);
-                                                return;
-                                            }
-                                            filesCount = filesCount + 1;
-                                            console.log(`${apps.humantime(false) + text.green}Lint passed:${text.none} ${val}`);
-                                            if (filesCount === filesTotal) {
-                                                console.log(`${text.green}Lint complete!${text.none}`);
-                                                next();
-                                                return;
-                                            }
-                                        } else {
-                                            console.log(stdout);
-                                            apps.errout(["Lint failure."]);
-                                            return;
-                                        }
-                                    })
-                                };
-                            files.forEach(lintit);
-                        };
                     heading("Linting");
-                    node.child("eslint", function node_apps_build_lint_eslintCheck(eserr:Error) {
-                        if (eserr !== null) {
-                            console.log("ESLint is not globally installed or is corrupt.");
-                            console.log(`Install ESLint using the command: ${text.green}npm install eslint -g${text.none}`);
-                            console.log("");
-                            console.log("Skipping code validation...");
-                            next();
-                            return;
-                        }
-                        (function node_apps_build_lint_getFiles():void {
-                            let total:number    = 1,
-                                count:number    = 0;
-                            const idLen:number    = ignoreDirectory.length,
-                                readDir  = function node_apps_build_lint_getFiles_readDir(filepath:string):void {
-                                    node.fs.readdir(
-                                        filepath,
-                                        function node_apps_build_lint_getFiles_readDir_callback(erra:Error, list:string[]) {
-                                            const fileEval = function node_apps_build_lint_getFiles_readDir_callback_fileEval(val:string):void {
-                                                const filename:string = (filepath.charAt(filepath.length - 1) === sep)
-                                                    ? filepath + val
-                                                    : filepath + sep + val;
-                                                node.fs.stat(
-                                                    filename,
-                                                    function node_apps_build_lint_getFiles_readDir_callback_fileEval_stat(errb:Error, stat:Stats) {
-                                                        let a:number         = 0,
-                                                            ignoreDir:boolean = false;
-                                                        const dirtest:string   = `${filepath.replace(/\\/g, "/")}/${val}`;
-                                                        if (errb !== null) {
-                                                            apps.errout([errb.toString()]);
-                                                            return;
-                                                        }
-                                                        count = count + 1;
-                                                        if (stat.isFile() === true && (/(\.js)$/).test(val) === true) {
-                                                            files.push(filename);
-                                                        }
-                                                        if (stat.isDirectory() === true) {
-                                                            do {
-                                                                if (dirtest.indexOf(ignoreDirectory[a]) === dirtest.length - ignoreDirectory[a].length) {
-                                                                    ignoreDir = true;
-                                                                    break;
-                                                                }
-                                                                a = a + 1;
-                                                            } while (a < idLen);
-                                                            if (ignoreDir === true) {
-                                                                if (count === total) {
-                                                                    lintrun();
-                                                                }
-                                                            } else {
-                                                                total = total + 1;
-                                                                node_apps_build_lint_getFiles_readDir(filename);
-                                                            }
-                                                        } else if (count === total) {
-                                                            lintrun();
-                                                        }
-                                                    }
-                                                );
-                                            };
-                                            if (erra !== null) {
-                                                apps.errout([
-                                                    `Error reading path: ${filepath}`,
-                                                    erra.toString()
-                                                ]);
-                                                return;
-                                            }
-                                            total = total + list.length - 1;
-                                            list.forEach(fileEval);
-                                        }
-                                    );
-                                };
-                            readDir(js);
-                        }());
-                    });
+                    apps.lint(next);
                 },
                 npminstall: function node_apps_build_npminstall():void {
                     heading("First Time Developer Dependency Installation");
@@ -1073,6 +1006,10 @@ import { Hash } from "crypto";
                                 apps.errout([err]);
                             }
                         } else {
+                            if (stderr !== "") {
+                                apps.errout([stderr]);
+                                return;
+                            }
                             flag.typescript = true;
                             if (flag.services === true) {
                                 ts();
@@ -1793,6 +1730,156 @@ import { Hash } from "crypto";
         }
         return `${text.cyan}[${hourString}:${minuteString}:${secondString}]${text.none} `;
     };
+    apps.lint = function node_apps_lint(callback?:Function):void {
+        node.child("eslint", function node_apps_build_lint_eslintCheck(eserr:Error) {
+            if (eserr !== null) {
+                console.log("ESLint is not globally installed or is corrupt.");
+                console.log(`Install ESLint using the command: ${text.green}npm install eslint -g${text.none}`);
+                console.log("");
+                console.log("Skipping code validation...");
+                if (callback !== undefined) {
+                    callback();
+                }
+                return;
+            }
+            (function node_apps_build_lint_getFiles():void {
+                let total:number    = 1,
+                    count:number    = 0;
+                const files:string[]           = [],
+                    lintrun         = function node_apps_build_lint_lintrun() {
+                        let filesCount:number = 0;
+                        const filesTotal = files.length,
+                            lintit = function node_apps_build_lint_lintrun_lintit(val:string):void {
+                                node.child(`eslint ${val}`, {
+                                    cwd: projectPath
+                                }, function node_apps_build_lint_lintrun_lintit_eslint(err:Error, stdout:string, stderr:string) {
+                                    if (stdout === "" || stdout.indexOf("0:0  warning  File ignored because of a matching ignore pattern.") > -1) {
+                                        if (err !== null) {
+                                            apps.errout([err.toString()]);
+                                            return;
+                                        }
+                                        if (stderr !== null && stderr !== "") {
+                                            apps.errout([stderr]);
+                                            return;
+                                        }
+                                        filesCount = filesCount + 1;
+                                        console.log(`${apps.humantime(false) + text.green}Lint passed:${text.none} ${val}`);
+                                        if (filesCount === filesTotal) {
+                                            console.log(`${text.green}Lint complete!${text.none}`);
+                                            if (callback !== undefined) {
+                                                callback();
+                                            }
+                                            return;
+                                        }
+                                    } else {
+                                        console.log(stdout);
+                                        apps.errout(["Lint failure."]);
+                                        return;
+                                    }
+                                })
+                            };
+                        files.forEach(lintit);
+                    },
+                    ignoreDirectory:string[] = (function node_apps_build_lint_getFiles_ignoreDirectory():string[] {
+                        const defaultList = [
+                                ".git",
+                                ".vscode",
+                                "bin",
+                                "coverage",
+                                "guide",
+                                "ignore",
+                                "node_modules",
+                                "test"
+                            ],
+                            igindex:number = process.argv.indexOf("ignore");
+                        if (command === "build") {
+                            return defaultList;
+                        }
+                        if (igindex > -1 && process.argv[igindex + 1].charAt(0) === "[") {
+                            let str:string = process.argv.join("").replace(/ignore\s+\[/, "ignore["),
+                                a:number = 0,
+                                len:number = 0,
+                                list:string[] = [];
+                            str = str.slice(str.indexOf("ignore[") + 7);
+                            len = str.length;
+                            do {
+                                if (str.charAt(a) === "]" && str.charAt(a - 1) !== "\\") {
+                                    break;
+                                }
+                                a = a + 1;
+                            } while (a < len);
+                            str = str.slice(0, a);
+                            list = str.split(",");
+                            if (list.length > 0) {
+                                return list;
+                            }
+                        }
+                        return defaultList;
+                    }()),
+                    startDir:string = (command === "lint" && process.argv[0] !== undefined)
+                        ? process.argv[0]
+                        : js,
+                    idLen:number    = ignoreDirectory.length,
+                    readDir  = function node_apps_build_lint_getFiles_readDir(filepath:string):void {
+                        node.fs.readdir(
+                            filepath,
+                            function node_apps_build_lint_getFiles_readDir_callback(erra:Error, list:string[]) {
+                                const fileEval = function node_apps_build_lint_getFiles_readDir_callback_fileEval(val:string):void {
+                                    const filename:string = (filepath.charAt(filepath.length - 1) === sep)
+                                        ? filepath + val
+                                        : filepath + sep + val;
+                                    node.fs.stat(
+                                        filename,
+                                        function node_apps_build_lint_getFiles_readDir_callback_fileEval_stat(errb:Error, stat:Stats) {
+                                            let a:number         = 0,
+                                                ignoreDir:boolean = false;
+                                            const dirtest:string   = `${filepath.replace(/\\/g, "/")}/${val}`;
+                                            if (errb !== null) {
+                                                apps.errout([errb.toString()]);
+                                                return;
+                                            }
+                                            count = count + 1;
+                                            if (stat.isFile() === true && (/(\.js)$/).test(val) === true) {
+                                                files.push(filename);
+                                            }
+                                            if (stat.isDirectory() === true) {
+                                                do {
+                                                    if (dirtest.slice(dirtest.lastIndexOf("/") + 1) === ignoreDirectory[a]) {
+                                                        ignoreDir = true;
+                                                        break;
+                                                    }
+                                                    a = a + 1;
+                                                } while (a < idLen);
+                                                if (ignoreDir === true) {
+                                                    if (count === total) {
+                                                        lintrun();
+                                                    }
+                                                } else {
+                                                    total = total + 1;
+                                                    node_apps_build_lint_getFiles_readDir(filename);
+                                                }
+                                            } else if (count === total) {
+                                                lintrun();
+                                            }
+                                        }
+                                    );
+                                };
+                                if (erra !== null) {
+                                    apps.errout([
+                                        `Error reading path: ${filepath}`,
+                                        erra.toString()
+                                    ]);
+                                    return;
+                                }
+                                total = total + list.length - 1;
+                                list.forEach(fileEval);
+                            }
+                        );
+                    };
+                readDir(startDir);
+            }());
+        });
+    };
     apps.lists = function node_apps_lists(lists:nodeLists):void {
         // * lists.emptyline - boolean - if each key should be separated by an empty line
         // * lists.heading   - string  - a text heading to precede the list
@@ -2435,7 +2522,7 @@ import { Hash } from "crypto";
         }
         util.stat(filepath, filepath);
     };
-    apps.server = function node_apps_server() {
+    apps.server = function node_apps_server():void {
         if (process.argv[0] !== undefined && isNaN(Number(process.argv[0])) === true) {
             apps.errout([`Specified port, ${text.angry + process.argv[0] + text.none}, is not a number.`]);
             return;
@@ -2621,7 +2708,8 @@ import { Hash } from "crypto";
         server.on("error", serverError);
         server.listen(port);
     };
-    apps.version = function () {
+    apps.validation = function node_apps_validation():void {};
+    apps.version = function ():void {
         verbose = true;
         apps.output([""]);
     };
