@@ -50,6 +50,9 @@ interface library {
 interface dom {
     [key: string]: any;
 }
+interface ReaderEvent extends ProgressEvent {
+    error: Error;
+}
 type languageAuto = [string, string, string];
 interface language {
     auto(sample:string, defaultLang:string): languageAuto;

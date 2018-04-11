@@ -16,8 +16,7 @@ import { Hash } from "crypto";
             http  : require("http"),
             https : require("https"),
             os    : require("os"),
-            path  : require("path"),
-            socket: require("ws")
+            path  : require("path")
         },
         /*stats = {
             source: "",
@@ -2593,13 +2592,14 @@ import { Hash } from "crypto";
                 //}
                 return false;
             },
-            ws = new node.socket.Server({port: port + 1});
+            socket = require("ws"),
+            ws = new socket.Server({port: port + 1});
         if (process.cwd() !== projectPath) {
             process.chdir(projectPath);
         }
         ws.broadcast = function node_apps_server_broadcast(data:string):void {
             ws.clients.forEach(function node_apps_server_broadcast_clients(client):void {
-                if (client.readyState === node.socket.OPEN) {
+                if (client.readyState === socket.OPEN) {
                     client.send(data);
                 }
             });

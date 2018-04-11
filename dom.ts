@@ -448,18 +448,17 @@
                                                 .execute();
                                         }
                                     }
-                                },
-                                fileError = function dom_event_file_onerror(event:ErrorEvent):void {
+                                };
+                            fileCount = files.length;
+                            do {
+                                reader  = new FileReader();
+                                reader.onload  = fileLoad;
+                                reader.onerror = function dom_event_file_onerror(event:ReaderEvent):void {
                                     if (textareaEl !== undefined) {
                                         textareaEl.value = "Error reading file:\n\nThis is the browser's descriptiong: " + event.error.name;
                                     }
                                     fileCount   = -1;
                                 };
-                            fileCount = files.length;
-                            do {
-                                reader         = new FileReader();
-                                reader.onload  = fileLoad;
-                                reader.onerror = fileError;
                                 if (files[a] !== undefined) {
                                     reader.readAsText(files[a], "UTF-8");
                                 }
