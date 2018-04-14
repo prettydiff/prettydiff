@@ -555,6 +555,7 @@ import { Http2Stream, Http2Session } from "http2";
             // eslint-disable-next-line
             /\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u000b|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g
         );
+        options.lexerOptions = {};
         global.prettydiff = prettydiff;
         libFiles.forEach(function node_args_each(value:string) {
             requireDir(value);
@@ -2323,7 +2324,6 @@ import { Http2Stream, Http2Session } from "http2";
                 })
             };
         let lang:[string, string, string] = ["javascript", "script", "JavaScript"];
-        options.lexerOptions = {};
         all(options, function node_apps_mode_allLexers() {
             if (options.readmethod === "screen") {
                 pdwrap("screen");
@@ -2798,7 +2798,8 @@ import { Http2Stream, Http2Session } from "http2";
     apps.validation = function node_apps_validation():void {
         let count_raw = 0,
             count_formatted = 0;
-        const flag = {
+        const all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`),
+            flag = {
                 raw: false,
                 formatted: false
             },
@@ -2839,18 +2840,21 @@ import { Http2Stream, Http2Session } from "http2";
                         options.lang       = notes[2];
                         options.lexer      = notes[1];
                         options.mode       = notes[0];
+                        options.source     = raw[a][1];
                         options.parsed     = global.parseFramework.parserArrays(options);
                         options.readmethod = "screen";
-                        options.source     = raw[a][1];
                         output = prettydiff[options.mode][options.lexer](options);
                         if (output === formatted[a][1]) {
                             filecount = filecount + 1;
                             console.log(`${apps.humantime(false) + text.green}Pass ${filecount}:${text.none} ${formatted[a][0]}`);
                         } else {
+                            console.log(`${apps.humantime(false) + text.angry}Fail: ${text.cyan + raw[a][0] + text.none}`);
                             options.diff   = formatted[a][1];
-                            options.source = output;
+                            options.lang   = "text";
                             options.mode   = "diff";
+                            options.source = output;
                             apps.mode();
+                            break;
                         }
                     } else {
                         if (raw[a][0] < formatted[a][0]) {
@@ -2903,9 +2907,10 @@ import { Http2Stream, Http2Session } from "http2";
             };
         
         require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}parse`);
-        options.lexerOptions = {};
-        readDir("raw");
-        readDir("formatted");
+        all(options, function node_apps_validation_allLexers() {
+            readDir("raw");
+            readDir("formatted");
+        });
     };
     // runs apps.output
     apps.version = function ():void {
