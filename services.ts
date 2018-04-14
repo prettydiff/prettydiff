@@ -1,11 +1,17 @@
 import { Stats } from "fs";
-import { Http2Stream } from "http2";
+import * as http from "http";
 import { Stream, Writable } from "stream";
 import { Hash } from "crypto";
+import { Http2Stream, Http2Session } from "http2";
 /*jslint node:true */
 /*eslint-env node*/
 /*eslint no-console: 0*/
 /*global global */
+
+//things to test
+//hash get
+//get save to file
+//get save to file again (same file name already present)
 (function node():void {
     "use strict";
     const startTime:[number, number]      = process.hrtime(),
@@ -143,11 +149,11 @@ import { Hash } from "crypto";
                 ]
             },
             hash: {
-                description: "Generate a SHA512 hash of a file.",
+                description: "Generate a SHA512 hash of a file or a string.",
                 example: [
                     {
                         code: "prettydiff hash path/to/file",
-                        defined: "Prints a SHA512 hash to the shell for the specified file system resource."
+                        defined: "Prints a SHA512 hash to the shell for the specified file in the local file system."
                     },
                     {
                         code: "prettydiff hash verbose path/to/file",
@@ -156,6 +162,10 @@ import { Hash } from "crypto";
                     {
                         code: "prettydiff hash string \"I love kittens.\"",
                         defined: "Hash an arbitrary string directly from shell input."
+                    },
+                    {
+                        code: "prettydiff hash http://prettydiff.com/",
+                        defined: "Hash a resource from the web."
                     }
                 ]
             },
@@ -256,11 +266,18 @@ import { Hash } from "crypto";
                     }
                 ]
             },
+            simulation: {
+                description: "Launches a test runner to execute the various commands of the services file.",
+                example: [{
+                    code: "prettydiff simulation",
+                    defined: "Runs tests against the commands offered by the services file."
+                }]
+            },
             validation: {
-                description: "Run the validation tests.",
+                description: "Runs Pretty Diff against various code samples and compares the generated output against known good output looking for regression errors.",
                 example: [{
                     code: "prettydiff validation",
-                    defined: "Runs he Pretty Diff validation task, which tests Pretty Diff against many code samples to ensure it is performing as designed."
+                    defined: "Runs the unit test runner against Pretty Diff"
                 }]
             },
             version: {
@@ -353,10 +370,6 @@ import { Hash } from "crypto";
             }
             return filtered[0];
         }()),
-        sample = {
-            source: "",
-            diff: ""
-        },
         apps:any = {};
     let verbose:boolean = false;
     
@@ -547,16 +560,17 @@ import { Hash } from "crypto";
             requireDir(value);
         });
     }());
+    // mode analysis wrapper, see apps.mode
     //apps.analysis = function node_apps_analysis():void {
     //    options.mode = "analysis";
     //    apps.mode();
     //};
-    // beautify mode wrapper
+    // mode beautify wrapper, see apps.mode
     apps.beautify = function node_apps_beautify():void {
         options.mode = "beautify";
         apps.mode();
     };
-    // 
+    // build system
     apps.build = function node_apps_build():void {
         let firstOrder:boolean = true;
         const order = [
@@ -1022,6 +1036,7 @@ import { Hash } from "crypto";
         }
         next();
     };
+    // CLI commands documentation generator
     apps.commands = function node_apps_commands():void {
         const output:string[] = [];
         verbose = true;
@@ -1055,7 +1070,8 @@ import { Hash } from "crypto";
             apps.output(output);
         }
     };
-    apps.commas   = function node_apps_commas(number:number):string {
+    // converts numbers into a string of comma separated triplets
+    apps.commas = function node_apps_commas(number:number):string {
         const str:string = String(number);
         let arr:string[] = [],
             a:number   = str.length;
@@ -1070,6 +1086,7 @@ import { Hash } from "crypto";
         } while (a > 3);
         return arr.join("");
     };
+    // bit-by-bit copy stream for the file system
     apps.copy = function node_apps_copy(params:nodeCopyParams):void {
         const numb:any  = {
                 dirs : 0,
@@ -1368,6 +1385,7 @@ import { Hash } from "crypto";
         start         = node.path.resolve(target);
         util.stat(start, start);
     };
+    // mode diff wrapper, see apps.mode
     apps.diff = function node_apps_diff():void {
         if (options.diff === "" || options.source === "") {
             apps.errout([
@@ -1379,6 +1397,7 @@ import { Hash } from "crypto";
         options.mode = "diff";
         apps.mode();
     };
+    // uniform error formatting
     apps.errout = function node_apps_errout(errtext:string[]):void {
         const stack:string = new Error().stack.replace("Error", `${text.cyan}Stack trace${text.none + node.os.EOL}-----------`);
         console.log("");
@@ -1396,28 +1415,60 @@ import { Hash } from "crypto";
         console.log("");
         process.exit(1);
     };
-    apps.get = function node_apps_get(address:string, flag:"source"|"diff", callback:Function):void {
-        const scheme:string = (address.indexOf("https") === 0)
-            ? "https"
-            : "http";
+    // http(s) get function
+    apps.get = function node_apps_get(address:string, flag:"source"|"diff", callback:Function|null):void {
         let file:string = "";
+        const scheme:string = (address.indexOf("https") === 0)
+                ? "https"
+                : "http",
+            getcall = function node_apps_getFile_callback(file:string|Blob) {
+                const addy:string = (command === "hash")
+                    ? process.argv[0]
+                    : process.argv[1];
+                if (addy !== undefined) {
+                    const dirs:string[] = addy.split("/"),
+                        statWrapper = function node_apps_getFile_callback_fileName_statWrapper() {
+                            node.fs.stat(process.cwd() + name, function node_apps_getFile_callback_fileName_statWrapper_stat(ers:Error) {
+                                if (ers !== null) {
+                                    if (ers.toString().indexOf("no such file or directory")) {
+                                        node.fs.writeFile(name, file, "utf8", function node_apps_getFile_callback_write(err:Error) {
+                                            if (err !== null) {
+                                                apps.errout([err.toString()]);
+                                                return;
+                                            }
+                                            if (command === "hash") {
+                                                callback(process.cwd() + sep + name);
+                                            } else {
+                                                apps.output([`File ${text.cyan + name + text.none} written with ${apps.commas(file.toString().length)} characters.`]);
+                                            }
+                                        });
+                                    } else {
+                                        apps.errout([ers.toString()]);
+                                    }
+                                } else {
+                                    if (name.indexOf(".") < 0) {
+                                        name = `${name}0.txt`;
+                                    } else {
+                                        const names:string[] = name.split(".");
+                                        names[names.length - 2] = names[names.length - 2].replace(/\d+$/, inc.toString());
+                                        inc = inc + 1;
+                                        node_apps_getFile_callback_fileName_statWrapper();
+                                    }
+                                }
+                            });
+                        };
+                    let name:string = (dirs.length < 4 || dirs[dirs.length - 1] === "")
+                            ? "get.txt"
+                            : dirs[dirs.length - 1],
+                        inc:number = 0;
+                    statWrapper();
+                } else {
+                    apps.output([file.toString()]);
+                }
+            };
         if (command === "get") {
             verbose = true;
             address = process.argv[0];
-            callback = function node_apps_getFile_callback() {
-                if (process.argv[1] !== undefined) {
-                    let path = node.path.resolve(process.argv[1]);
-                    node.fs.writeFile(path, sample.source, "utf8", function node_apps_getFile_callback_write(err:Error) {
-                        if (err !== null) {
-                            apps.errout([err.toString()]);
-                            return;
-                        }
-                        apps.output([`File ${text.cyan + path + text.none} written with ${apps.commas(sample.source.length)} characters.`]);
-                    });
-                } else {
-                    apps.output([sample.source]);
-                }
-            };
         }
         if (address === undefined) {
             apps.errout([
@@ -1434,24 +1485,147 @@ import { Hash } from "crypto";
             ]);
             return;
         }
-        node[scheme].get(address, function node_apps_get_callback(res:Http2Stream) {
-            res.setEncoding("utf8");
+        node[scheme].get(address, function node_apps_get_callback(res:http.IncomingMessage) {
             res.on("data", function node_apps_get_callback_data(chunk:string):void {
                 file = file + chunk;
             });
             res.on("end", function node_apps_get_callback_end() {
-                sample[flag] = file;
-                callback();
+                if (res.statusCode !== 200) {
+                    if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 303 || res.statusCode === 307 || res.statusCode === 308) {
+                        console.log(`${res.statusCode} ${node.http.STATUS_CODES[res.statusCode]}, for request ${address}`);
+                        process.argv[0] = res.headers.location;
+                        address = process.argv[0];
+                        apps.get(address, flag, callback);
+                    } else {
+                        apps.errout([`${scheme}.get failed with status code ${res.statusCode}`]);
+                    }
+                } else {
+                    if (command === "get" || command === "hash") {
+                        getcall(file);
+                    } else if (callback !== null) {
+                        callback(file);
+                    }
+                }
             });
         });
     };
+    // hash utility for strings or files
     apps.hash = function node_apps_hash(filepath:string):void {
-        const hash:Hash = node
-            .crypto
-            .createHash("sha512");
+        const http:RegExp = (/^https?:\/\//),
+            hash:Hash = node
+                .crypto
+                .createHash("sha512"),
+            statWrapper = function node_apps_hash_wrapper(path:string) {
+                node
+                .fs
+                .stat(path, function node_apps_hash_wrapper_stat(er:Error, stat:Stats):void {
+                    if (er !== null) {
+                        if (er.toString().indexOf("no such file or directory") > 0) {
+                            apps.errout([`filepath ${path} is not a file.`]);
+                            return;
+                        }
+                        apps.errout([er.toString()]);
+                        return;
+                    }
+                    if (stat === undefined || stat.isFile() === false) {
+                        apps.errout([`filepath ${path} is not a file.`]);
+                        return;
+                    }
+                    node
+                        .fs
+                        .open(path, "r", function node_apps_hash_wrapper_stat_open(ero:Error, fd:number):void {
+                            const msize = (stat.size < 100)
+                                    ? stat.size
+                                    : 100;
+                            let buff  = new Buffer(msize);
+                            if (ero !== null) {
+                                apps.errout([ero.toString()]);
+                                return;
+                            }
+                            node
+                                .fs
+                                .read(
+                                    fd,
+                                    buff,
+                                    0,
+                                    msize,
+                                    1,
+                                    function node_apps_hash_wrapper_stat_open_read(erra:Error, bytesa:number, buffera:Buffer):number {
+                                        const hashit = function node_apps_hash_wrapper_stat_open_read(item:string|Buffer) {
+                                            hash.on("readable", function node_apps_hash_wrapper_stat_open_read_readFile_hash():void {
+                                                const hashdata = <Buffer>hash.read();
+                                                if (hashdata !== null) {
+                                                    hashstring = hashdata.toString("hex").replace(/\s+/g, "");
+                                                    if (verbose === true) {
+                                                        apps.output(hashstring, [
+                                                            `Pretty Diff hashed ${text.cyan + path + text.none}`,
+                                                            hashstring
+                                                        ]);
+                                                    } else {
+                                                        apps.output([hashstring]);
+                                                    }
+                                                }
+                                            });
+                                            hash.write(item);
+                                            hash.end();
+                                            if (http.test(filepath) === true) {
+                                                apps.remove(path, function node_apps_hash_wrapper_stat_open_read_readFile_hash_remove() {
+                                                    return true;
+                                                });
+                                            }
+                                        };
+                                        let bstring:string = "";
+                                        if (erra !== null) {
+                                            apps.errout([erra.toString()]);
+                                            return;
+                                        }
+                                        bstring = buffera.toString("utf8", 0, buffera.length);
+                                        bstring = bstring.slice(2, bstring.length - 2);
+                                        if (options.binaryCheck.test(bstring) === true) {
+                                            buff = new Buffer(stat.size);
+                                            node
+                                                .fs
+                                                .read(
+                                                    fd,
+                                                    buff,
+                                                    0,
+                                                    stat.size,
+                                                    0,
+                                                    function node_apps_hash_wrapper_stat_open_read_readBinary(errb:Error, bytesb:number, bufferb:Buffer):void {
+                                                        if (errb !== null) {
+                                                            apps.errout([errb.toString()]);
+                                                            return;
+                                                        }
+                                                        if (bytesb > 0) {
+                                                            hashit(bufferb);
+                                                        }
+                                                    }
+                                                );
+                                        } else {
+                                            node
+                                                .fs
+                                                .readFile(path, {
+                                                    encoding: "utf8"
+                                                }, function node_apps_hash_wrapper_stat_open_read_readFile(errc:Error, dump:string):void {
+                                                    if (errc !== null && errc !== undefined) {
+                                                        apps.errout([errc.toString()]);
+                                                        return;
+                                                    }
+                                                    hashit(dump);
+                                                });
+                                        }
+                                        return bytesa;
+                                    }
+                                );
+                        });
+                });
+            };
         let hashstring:string = "";
         if (command === "hash") {
-            filepath = node.path.resolve(process.argv[0]);
+            filepath = process.argv[0];
+            if (http.test(filepath) === false) {
+                filepath = node.path.resolve(process.argv[0]);
+            }
             if (process.argv.indexOf("string") > -1) {
                 process.argv.splice(process.argv.indexOf("string"), 1);
                 hash.update(process.argv[0]);
@@ -1459,117 +1633,13 @@ import { Hash } from "crypto";
                 return;
             }
         }
-        node
-            .fs
-            .stat(filepath, function node_apps_hash_stat(er:Error, stat:Stats):void {
-                if (er !== null) {
-                    if (er.toString().indexOf("no such file or directory") > 0) {
-                        apps.errout([`filepath ${filepath} is not a file.`]);
-                        return;
-                    }
-                    apps.errout([er.toString()]);
-                    return;
-                }
-                if (stat === undefined || stat.isFile() === false) {
-                    apps.errout([`filepath ${filepath} is not a file.`]);
-                    return;
-                }
-                node
-                    .fs
-                    .open(filepath, "r", function node_apps_hash_stat_open(ero:Error, fd:number):void {
-                        const msize = (stat.size < 100)
-                                ? stat.size
-                                : 100;
-                        let buff  = new Buffer(msize);
-                        if (ero !== null) {
-                            apps.errout([ero.toString()]);
-                            return;
-                        }
-                        node
-                            .fs
-                            .read(
-                                fd,
-                                buff,
-                                0,
-                                msize,
-                                1,
-                                function node_apps_hash_stat_open_read(erra:Error, bytesa:number, buffera:Buffer):number {
-                                    let bstring:string = "";
-                                    if (erra !== null) {
-                                        apps.errout([erra.toString()]);
-                                        return;
-                                    }
-                                    bstring = buffera.toString("utf8", 0, buffera.length);
-                                    bstring = bstring.slice(2, bstring.length - 2);
-                                    if (options.binaryCheck.test(bstring) === true) {
-                                        buff = new Buffer(stat.size);
-                                        node
-                                            .fs
-                                            .read(
-                                                fd,
-                                                buff,
-                                                0,
-                                                stat.size,
-                                                0,
-                                                function node_apps_hash_stat_open_read_readBinary(errb:Error, bytesb:number, bufferb:Buffer):void {
-                                                    if (errb !== null) {
-                                                        apps.errout([errb.toString()]);
-                                                        return;
-                                                    }
-                                                    if (bytesb > 0) {
-                                                        hash.on("readable", function node_apps_hash_stat_open_read_readBinary_hash():void {
-                                                            const hashdata = <Buffer>hash.read();
-                                                            if (hashdata !== null) {
-                                                                hashstring = hashdata.toString("hex").replace(/\s+/g, "");
-                                                                if (verbose === true) {
-                                                                    apps.output(hashstring, [
-                                                                        `Pretty Diff hashed ${text.cyan + filepath + text.none}`,
-                                                                        hashstring
-                                                                    ]);
-                                                                } else {
-                                                                    apps.output([hashstring]);
-                                                                }
-                                                            }
-                                                        });
-                                                        hash.write(bufferb);
-                                                        hash.end();
-                                                    }
-                                                }
-                                            );
-                                    } else {
-                                        node
-                                            .fs
-                                            .readFile(filepath, {
-                                                encoding: "utf8"
-                                            }, function node_apps_hash_stat_open_read_readFile(errc:Error, dump:string):void {
-                                                if (errc !== null && errc !== undefined) {
-                                                    apps.errout([errc.toString()]);
-                                                    return;
-                                                }
-                                                hash.on("readable", function node_apps_hash_stat_open_read_readFile_hash():void {
-                                                    const hashdata = <Buffer>hash.read();
-                                                    if (hashdata !== null) {
-                                                        hashstring = hashdata.toString("hex").replace(/\s+/g, "");
-                                                        if (verbose === true) {
-                                                            apps.output(hashstring, [
-                                                                `Pretty Diff hashed ${text.cyan + filepath + text.none}`,
-                                                                hashstring
-                                                            ]);
-                                                        } else {
-                                                            apps.output([hashstring]);
-                                                        }
-                                                    }
-                                                });
-                                                hash.write(dump);
-                                                hash.end();
-                                            });
-                                    }
-                                    return bytesa;
-                                }
-                            );
-                    });
-            });
+        if (http.test(filepath) === true) {
+            apps.get(filepath, "source", statWrapper);
+        } else {
+            statWrapper(filepath);
+        }
     };
+    // general static messaging
     apps.help = function node_apps_help():void {
         const output:string[] = [];
         output.push(`${text.bold + text.underline}Pretty Diff${text.none}`);
@@ -1584,7 +1654,8 @@ import { Hash } from "crypto";
         verbose = true;
         apps.output(output);
     };
-    apps.humantime  = function node_apps_humantime(finished:boolean):string {
+    // converting time durations into something people read
+    apps.humantime = function node_apps_humantime(finished:boolean):string {
         let minuteString:string = "",
             hourString:string   = "",
             secondString:string = "",
@@ -1729,6 +1800,7 @@ import { Hash } from "crypto";
         }
         return `${text.cyan}[${hourString}:${minuteString}:${secondString}]${text.none} `;
     };
+    // wrapper for ESLint usage
     apps.lint = function node_apps_lint(callback?:Function):void {
         node.child("eslint", function node_apps_build_lint_eslintCheck(eserr:Error) {
             if (eserr !== null) {
@@ -1879,6 +1951,7 @@ import { Hash } from "crypto";
             }());
         });
     };
+    // CLI string output formatting for lists of items
     apps.lists = function node_apps_lists(lists:nodeLists):void {
         // * lists.emptyline - boolean - if each key should be separated by an empty line
         // * lists.heading   - string  - a text heading to precede the list
@@ -1941,8 +2014,15 @@ import { Hash } from "crypto";
         output.push(`${text.underline + text.bold}Pretty Diff - ${lists.heading + text.none}`);
         output.push("");
         displayKeys("", keys);
+        if (command === "commands") {
+            output.push("");
+            output.push("For examples and usage instructions specify a command name, for example:");
+            output.push(`globally installed - ${text.green}prettydiff commands hash${text.none}`);
+            output.push(`locally installed - ${text.green}node js/services commands hash${text.none}`);
+        }
         apps.output(output);
     };
+    // makes specified directory structures in the local file system
     apps.makedir = function node_apps_makedir(dirToMake:string, callback:Function):void {
         node
             .fs
@@ -2020,10 +2100,12 @@ import { Hash } from "crypto";
                 callback();
             });
     };
+    // mode minify wrapper, see apps.mode
     apps.minify = function node_apps_minify():void {
         options.mode = "minify";
         apps.mode();
     };
+    // processes Pretty Diff mode commands
     apps.mode = function node_apps_mode():void {
         if (options.source === "") {
             apps.errout([`Pretty Diff requires use of the ${text.angry}source${text.none} option.`]);
@@ -2251,6 +2333,7 @@ import { Hash } from "crypto";
         });
         return;
     };
+    // CLI documentation for supported Pretty Diff options
     apps.options = function node_apps_options():void {
         const def:any = prettydiff.api.optionDef;
         if (def[process.argv[0]] === undefined) {
@@ -2333,6 +2416,7 @@ import { Hash } from "crypto";
             });
         }
     };
+    // verbose metadata printed to the shell about Pretty Diff 
     apps.output = function node_apps_output(output:string[]):void {
         if (verbose === true) {
             console.log("");
@@ -2350,10 +2434,12 @@ import { Hash } from "crypto";
             apps.humantime(true);
         }
     };
+    // mode parse wrapper, see apps.mode
     apps.parse = function node_apps_parse():void {
         options.mode = "parse";
         apps.mode();
     };
+    // similar to posix "rm -rf" command
     apps.remove = function node_apps_remove(filepath:string, callback:Function):void {
         const numb    = {
                 dirs: 0,
@@ -2521,6 +2607,7 @@ import { Hash } from "crypto";
         }
         util.stat(filepath, filepath);
     };
+    // runs services: http, web sockets, and file system watch.  Allows rapid testing with automated rebuilds
     apps.server = function node_apps_server():void {
         if (process.argv[0] !== undefined && isNaN(Number(process.argv[0])) === true) {
             apps.errout([`Specified port, ${text.angry + process.argv[0] + text.none}, is not a number.`]);
@@ -2587,9 +2674,6 @@ import { Hash } from "crypto";
                 if (input.indexOf("js") === 0) {
                     return true;
                 }
-                //if (input.indexOf(`test${node.path.sep}samples_code`) === 0) {
-                //    return true;
-                //}
                 return false;
             },
             socket = require("ws"),
@@ -2708,11 +2792,127 @@ import { Hash } from "crypto";
         server.on("error", serverError);
         server.listen(port);
     };
-    apps.validation = function node_apps_validation():void {};
+    // tests the commands of the services file
+    apps.simulation = function node_apps_simulation():void {};
+    // unit test validation runner for Pretty Diff mode commands
+    apps.validation = function node_apps_validation():void {
+        let count_raw = 0,
+            count_formatted = 0;
+        const flag = {
+                raw: false,
+                formatted: false
+            },
+            raw:[string, string][] = [],
+            formatted:[string, string][] = [],
+            compare = function node_apps_validation_compare():void {
+                const len:number = (raw.length > formatted.length)
+                        ? raw.length
+                        : formatted.length,
+                    sort = function node_apps_validation_compare_sort(a:[string, string], b:[string, string]):number {
+                        if (a[0] > b[0]) {
+                            return 1;
+                        }
+                        return -1;
+                    };
+                let a:number = 0,
+                    filecount:number = 0,
+                    output:string = "";
+                raw.sort(sort);
+                formatted.sort(sort);
+                options.mode = "diff";
+                do {
+                    if (raw[a] === undefined || formatted[a] === undefined) {
+                        if (raw[a] === undefined) {
+                            console.log(`${text.yellow}raw directory is missing file:${text.none} ${formatted[a][0]}`);
+                            formatted.splice(a, 1);
+                        } else {
+                            console.log(`${text.yellow}formatted directory is missing file:${text.none} ${raw[a][0]}`);
+                            raw.splice(a, 1);
+                        }
+                        if (a === len - 1) {
+                            console.log("");
+                            console.log(`${text.green}ore Unit Testing Complete${text.none}`);
+                            return;
+                        }
+                    } else if (raw[a][0] === formatted[a][0]) {
+                        const notes:string[] = raw[a][0].split("_");
+                        options.lang       = notes[2];
+                        options.lexer      = notes[1];
+                        options.mode       = notes[0];
+                        options.parsed     = global.parseFramework.parserArrays(options);
+                        options.readmethod = "screen";
+                        options.source     = raw[a][1];
+                        output = prettydiff[options.mode][options.lexer](options);
+                        if (output === formatted[a][1]) {
+                            filecount = filecount + 1;
+                            console.log(`${apps.humantime(false) + text.green}Pass ${filecount}:${text.none} ${formatted[a][0]}`);
+                        } else {
+                            options.diff   = formatted[a][1];
+                            options.source = output;
+                            options.mode   = "diff";
+                            apps.mode();
+                        }
+                    } else {
+                        if (raw[a][0] < formatted[a][0]) {
+                            console.log(`${text.yellow}formatted directory is missing file:${text.none} ${raw[a][0]}`);
+                            raw.splice(a, 1);
+                        } else {
+                            console.log(`${text.yellow}raw directory is missing file:${text.none} ${formatted[a][0]}`);
+                            formatted.splice(a, 1);
+                        }
+                    }
+                    a = a + 1;
+                } while (a < len);
+            },
+            readDir = function node_apps_validation_readDir(type:string):void {
+                const dir:string = `${projectPath}tests${sep + type}`;
+                node.fs.readdir(dir, function node_apps_validation_readDir_reading(err:Error, list:string[]) {
+                    if (err !== null) {
+                        apps.errout([err.toString()]);
+                        return;
+                    }
+                    const pusher = function node_apps_validation_readDir_reading_pusher(value:string, index:number, arr:string[]) {
+                        node.fs.readFile(dir + sep + value, "utf8", function node_apps_validation_readDir_reading_pusher_readFile(er:Error, fileData:string) {
+                            if (er !== null) {
+                                apps.errout([er.toString()]);
+                                return;
+                            }
+                            if (type === "raw") {
+                                raw.push([value, fileData]);
+                                count_raw = count_raw + 1;
+                                if (count_raw === arr.length) {
+                                    flag.raw = true;
+                                    if (flag.formatted === true) {
+                                        compare();
+                                    }
+                                }
+                            } else if (type === "formatted") {
+                                formatted.push([value, fileData]);
+                                count_formatted = count_formatted + 1;
+                                if (count_formatted === arr.length) {
+                                    flag.formatted = true;
+                                    if (flag.raw === true) {
+                                        compare();
+                                    }
+                                }
+                            }
+                        });
+                    };
+                    list.forEach(pusher);
+                });
+            };
+        
+        require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}parse`);
+        options.lexerOptions = {};
+        readDir("raw");
+        readDir("formatted");
+    };
+    // runs apps.output
     apps.version = function ():void {
         verbose = true;
         apps.output([""]);
     };
+    // performs word wrap when printing text to the shell
     apps.wrapit = function node_apps_lists_wrapit(outputArray:string[], string:string):void {
         const wrap:number = 100;
         if (string.length > wrap) {

@@ -2855,7 +2855,7 @@
                     ].join("").replace(/(\s+)$/, "").replace(options.binaryCheck, "");
                 }
                 do {
-                    if (data.lexer[a] === lexer) {
+                    if (data.lexer[a] === lexer || prettydiff.beautify[data.lexer[a]] === undefined) {
                         if (invisibles.indexOf(data.token[a]) < 0) {
                             build.push(data.token[a]);
                         }

@@ -166,7 +166,7 @@
                 } while (a < len && data.types[a] === "comment");
             }
             do {
-                if (data.lexer[a] === lexer) {
+                if (data.lexer[a] === lexer || prettydiff.minify[data.lexer[a]] === undefined) {
                     if (a < len - 1 && data.types[a + 1].indexOf("attribute") > -1 && data.types[a].indexOf("attribute") < 0) {
                         attribute();
                     }

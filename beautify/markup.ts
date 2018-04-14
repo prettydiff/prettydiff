@@ -222,7 +222,7 @@
                 external:string = "",
                 lastLevel:number = 0;
             do {
-                if (data.lexer[a] === lexer) {
+                if (data.lexer[a] === lexer || prettydiff.beautify[data.lexer[a]] === undefined) {
                     if (data.token[a] === "</prettydiffli>" && options.correct === true) {
                         data.token[a] = "</li>";
                     }

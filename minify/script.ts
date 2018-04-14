@@ -51,7 +51,7 @@
             } while (a < end && data.types[a] === "comment");
         }
         do {
-            if (data.lexer[a] === lexer) {
+            if (data.lexer[a] === lexer || prettydiff.minify[data.lexer[a]] === undefined) {
                 if (data.types[a] !== "comment") {
                     if (data.types[a - 1] === "operator" && data.types[a] === "operator" && data.token[a] !== "!") {
                         build.push(" ");

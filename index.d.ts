@@ -1,4 +1,3 @@
-
 declare var options: any;
 declare var ace: any;
 declare var prettydiff: any;
@@ -49,9 +48,6 @@ interface library {
 }
 interface dom {
     [key: string]: any;
-}
-interface ReaderEvent extends ProgressEvent {
-    error: Error;
 }
 type languageAuto = [string, string, string];
 interface language {
@@ -119,15 +115,18 @@ interface meta {
     difftotal: number;
     difflines: number;
 }
+interface ReaderEvent extends ProgressEvent {
+    error: Error;
+}
 type codes = [string, number, number, number, number];
 interface opcodes extends Array<codes> {
     [index: number]: codes;
 }
-interface difftable {
-    [key: string]: [number, number];
-}
 interface compareStore extends Array<[number, number]>{
     [index:number]: [number, number];
+}
+interface difftable {
+    [key: string]: [number, number];
 }
 interface modifyOps {
     end: string;
