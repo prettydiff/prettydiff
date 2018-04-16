@@ -4,9 +4,9 @@
         "url": "https://github.com/prettydiff/prettydiff/issues"
     },
     "dependencies": {
-        "@types/node": "^9.6.2",
+        "@types/node": "^9.6.5",
         "file-saver": "^1.3.8",
-        "parse-framework": "^1.1.21"
+        "parse-framework": "^1.1.23"
     },
     "description": "A language aware diff tool.",
     "devDependencies": {
@@ -27,7 +27,7 @@
         "table"
     ],
     "license": "CC0-1.0",
-    "main": "js/api/node.js",
+    "main": "js/services.js",
     "name": "prettydiff3",
     "repository": {
         "type": "git",

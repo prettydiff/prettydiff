@@ -453,9 +453,9 @@
                             do {
                                 reader  = new FileReader();
                                 reader.onload  = fileLoad;
-                                reader.onerror = function dom_event_file_onerror(event:ReaderEvent):void {
+                                reader.onerror = function dom_event_file_onerror(event:any):void {
                                     if (textareaEl !== undefined) {
-                                        textareaEl.value = "Error reading file:\n\nThis is the browser's descriptiong: " + event.error.name;
+                                        textareaEl.value = "Error reading file:\n\nThis is the browser's description: " + event.error.name;
                                     }
                                     fileCount   = -1;
                                 };

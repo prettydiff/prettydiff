@@ -115,9 +115,6 @@ interface meta {
     difftotal: number;
     difflines: number;
 }
-interface ReaderEvent extends ProgressEvent {
-    error: Error;
-}
 type codes = [string, number, number, number, number];
 interface opcodes extends Array<codes> {
     [index: number]: codes;

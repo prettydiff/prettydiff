@@ -502,8 +502,6 @@
                         destructfix(false, false);
                         if (data.token[a - 1] === ",") {
                             level[a - 1] = indent;
-                        } else if (data.lines[a - 1] === 0 && data.types[a - 1] !== "comment") {
-                            level[a - 1] = -20;
                         } else if (ltoke === "=" && (/^(\/\*\*\s*@[a-z_]+\s)/).test(ctoke) === true) {
                             level[a - 1] = -10;
                         } else {
@@ -949,7 +947,7 @@
                                 destruct.push(false);
                             }
                         }
-                        if (ctoke !== "(" && ctoke !== "x(" && data.stack[a] !== "attribute") {
+                        if (ctoke !== "(" && ctoke !== "x(" && data.stack[a + 1] !== "attribute") {
                             //if (ctoke !== "[" || (ctoke === "[" && data.token[a + 1] !== "(")) {
                                 indent = indent + 1;
                             //}
@@ -1044,7 +1042,7 @@
                                 level[a - 1] = -10;
                             } else if (data.types[a - 1] !== "comment" && data.stack[a - 1] !== "attribute" && (ltype === "end" || ltype === "word")) {
                                 level[a - 1] = -20;
-                            } else if (ltoke !== "{" && (ltoke === "[" || ltoke === "{" || ltoke === "x{")) {
+                            } else if (ltoke === "[" || ltoke === "{" || ltoke === "x{") {
                                 level[a - 1] = indent - 1;
                             }
                             if (data.stack[a] === "attribute") {
@@ -2166,7 +2164,7 @@
                         ctype = data.types[a];
                         ctoke = data.token[a];
                         if (ctype === "comment") {
-                            if (data.lines[a - 1] < 2) {
+                            if (data.lines[a] < 2) {
                                 commentInline();
                             } else {
                                 comment();
@@ -2254,18 +2252,19 @@
                         } while (index > 0);
                         return tabby.join("");
                     }()),
+                    lf:"\r\n"|"\n" = (options.crlf === true)
+                        ? "\r\n"
+                        : "\n",
+                    pres:number = options.preserve,
                     nl = function beautify_script_output_outnl(tabs:number):string {
                         const linesout:string[] = [],
-                            end:string = (options.crlf === true)
-                                ? "\r\n"
-                                : "\n",
-                            total:number = Math.min((data.lines[a + 1] - 1), pres);
+                            total:number = Math.min(data.lines[a + 1] - 1, pres);
                         let index = 0;
                         if (tabs < 0) {
                             tabs = 0;
                         }
                         do {
-                            linesout.push(end);
+                            linesout.push(lf);
                             index = index + 1;
                         } while (index < total);
                         if (tabs > 0) {
@@ -2277,10 +2276,6 @@
                         }
                         return linesout.join("");
                     },
-                    lf:"\r\n"|"\n" = (options.crlf === true)
-                        ? "\r\n"
-                        : "\n",
-                    pres:number = options.preserve + 1,
                     invisibles:string[] = ["x;", "x}", "x{", "x(", "x)"];
                 let a:number = options.start,
                     external:string = "",

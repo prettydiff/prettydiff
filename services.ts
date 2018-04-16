@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { Stats } from "fs";
 import * as http from "http";
 import { Stream, Writable } from "stream";
