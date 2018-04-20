@@ -41,6 +41,7 @@
         options:any = {
             lang: "",
             lexer: "",
+            lexerOptions: {},
             source: ""
         },
         // end option defaults

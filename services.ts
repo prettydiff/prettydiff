@@ -672,6 +672,7 @@ import { Http2Stream, Http2Session } from "http2";
                                             }
                                             a = a + 1;
                                         } while (a < keyslen);
+                                        obj.lexerOptions = {};
                                         return `options=${JSON.stringify(obj)},${verse}`;
                                     },
                                     buildDocumentation = function node_apps_build_libraries_modifyFile_buildDocumentation():string {
@@ -2843,14 +2844,17 @@ import { Http2Stream, Http2Session } from "http2";
                         options.lexer      = notes[1];
                         options.mode       = notes[0];
                         options.source     = raw[a][1];
-                        options.parsed     = global.parseFramework.parserArrays(options);
+                        options.preserve   = 2;
                         options.readmethod = "screen";
+                        options.wrap       = 80;
+                        options.parsed     = global.parseFramework.parserArrays(options);
                         output = prettydiff[options.mode][options.lexer](options);
                         if (output === formatted[a][1]) {
                             filecount = filecount + 1;
                             console.log(`${apps.humantime(false) + text.green}Pass ${filecount}:${text.none} ${formatted[a][0]}`);
                         } else {
                             console.log(`${apps.humantime(false) + text.angry}Fail: ${text.cyan + raw[a][0] + text.none}`);
+                            console.log(`Diff output colors: ${text.angry}red = beautified${text.none} and ${text.green}green = control${text.none}`);
                             options.diff   = formatted[a][1];
                             options.lang   = "text";
                             options.mode   = "diff";
