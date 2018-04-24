@@ -2859,6 +2859,7 @@ import { Http2Stream, Http2Session } from "http2";
                             options.lang   = "text";
                             options.mode   = "diff";
                             options.source = output;
+                            options.sourcelabel = raw[a][1];
                             apps.mode();
                             break;
                         }

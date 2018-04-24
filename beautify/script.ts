@@ -500,7 +500,25 @@
                     },
                     comment       = function beautify_script_comment():void {
                         destructfix(false, false);
-                        if (data.token[a - 1] === ",") {
+                        if (data.lines[a] < 2) {
+                            if (a < b - 1 && data.stack[a + 1] !== "block" && (data.token[a + 1] === "{" || data.token[a + 1] === "x{")) {
+                                data.token[a]     = data.token[a + 1];
+                                data.types[a]     = "start";
+                                data.stack[a]     = data.stack[a + 1];
+                                data.begin[a]     = data.begin[a + 1];
+                                data.lines[a]     = data.lines[a + 1];
+                                data.token[a + 1] = ctoke;
+                                data.types[a + 1] = ctype;
+                                a            = a - 1;
+                            } else {
+                                level[a - 1] = -10;
+                                if (data.stack[a] === "paren" || data.stack[a] === "method") {
+                                    level.push(indent + 2);
+                                } else {
+                                    level.push(indent);
+                                }
+                            }
+                        } else if (data.token[a - 1] === ",") {
                             level[a - 1] = indent;
                         } else if (ltoke === "=" && (/^(\/\*\*\s*@[a-z_]+\s)/).test(ctoke) === true) {
                             level[a - 1] = -10;
@@ -508,26 +526,6 @@
                             level[a - 1] = indent;
                         }
                         level.push(indent);
-                    },
-                    commentInline = function beautify_script_commentInline():void {
-                        destructfix(false, false);
-                        if (a < b - 1 && data.stack[a + 1] !== "block" && (data.token[a + 1] === "{" || data.token[a + 1] === "x{")) {
-                            data.token[a]     = data.token[a + 1];
-                            data.types[a]     = "start";
-                            data.stack[a]     = data.stack[a + 1];
-                            data.begin[a]     = data.begin[a + 1];
-                            data.lines[a]     = data.lines[a + 1];
-                            data.token[a + 1] = ctoke;
-                            data.types[a + 1] = ctype;
-                            a            = a - 1;
-                        } else {
-                            level[a - 1] = -10;
-                            if (data.stack[a] === "paren" || data.stack[a] === "method") {
-                                level.push(indent + 2);
-                            } else {
-                                level.push(indent);
-                            }
-                        }
                     },
                     template      = function beautify_script_template():void {
                         if (ctype === "template_else") {
@@ -585,77 +583,40 @@
                                 ? []
                                 : extraindent[extraindent.length - 1],
                             propertybreak = function beautify_script_separator_propertybreak():void {
-                                let c:number = a - 2,
-                                    d:number = data.begin[a],
-                                    e:number = 1;
-                                if (ctoke === "." && ltype !== "end" && data.types[a + 2] !== "start") {
-                                    level[a - 1] = -20;
-                                    return;
-                                }
-                                do {
-                                    if (data.begin[c] === d) {
-                                        if (data.token[c] === ".") {
-                                            e = e + 1;
+                                if (options.methodchain > 0) {
+                                    let x:number = a,
+                                        y:number = data.begin[a],
+                                        z:number[] = [];
+                                    do {
+                                        if (data.types[x] === "end") {
+                                            x = data.begin[x];
                                         }
-                                        if (data.token[c] === ";" || data.token[c] === "," || data.types[c] === "operator" || data.token[c] === "return" || data.token[c] === "break" || data.token[c] === "continue" || data.types[c] === "comment") {
-                                            break;
-                                        }
-                                        if (data.types[c - 1] === "end") {
-                                            if (data.types[c] !== "start" && data.types[c] !== "operator" && data.token[c] !== ".") {
+                                        if (data.begin[x] === y) {
+                                            if (data.token[x] === ".") {
+                                                z.push(x);
+                                            } else if (data.token[x] === ";" || data.token[x] === "," || (data.types[x] === "word" && data.types[x - 1] === "word")) {
                                                 break;
                                             }
-                                            c = data.begin[c - 1];
                                         }
+                                        x = x - 1;
+                                    } while (x > y);
+                                    if (z.length < options.methodchain) {
+                                        level[a - 1] = -20;
+                                        return;
                                     }
-                                    c = c - 1;
-                                } while (c > d);
-                                if (e < 2) {
-                                    level[a - 1] = -20;
-                                    return;
-                                }
-                                indent = indent + 1;
-                                if (data.token[c] !== ".") {
+                                    x = 0;
+                                    y = z.length;
                                     do {
-                                        c = c + 1;
-                                    } while (c < a && (data.token[c] !== "." || data.begin[c] !== d));
+                                        level[z[x] - 1] = indent + 1;
+                                        x = x + 1;
+                                    } while (x < y);
                                 }
-                                e = c;
-                                do {
-                                    if (data.token[e] === "." && data.begin[e] === d) {
-                                        level[e - 1] = indent;
-                                    } else if (level[e] > -9) {
-                                        level[e] = level[e] + 1;
-                                    }
-                                    e = e + 1;
-                                } while (e < a);
-                                level[a - 1] = indent;
-                                ei.push(a);
+                                level[a - 1] = indent + 1;
                             };
                         if (ctoke === "::") {
                             level[a - 1] = -20;
                             level.push(-20);
                             return;
-                        }
-                        if ((options.methodchain === "chain" || options.methodchain === "none") && data.lines[a] < 2 && data.types[a - 1] === "comment" && a > 1) {
-                            let c:number    = a,
-                                d:number    = b;
-                            const last:string = data.token[a - 1];
-                            level[a - 2] = -20;
-                            level[a - 1] = -20;
-                            do {
-                                data.token[c - 1] = data.token[c];
-                                data.types[c - 1] = data.types[c];
-                                if (data.token[c] === ";" || data.token[c] === "x;" || data.token[c] === "{" || data.token[c] === "x{" || data.lines[c] > 0) {
-                                    data.token[c] = last;
-                                    data.types[c] = "comment";
-                                    a        = a - 1;
-                                    break;
-                                }
-                                c = c + 1;
-                            } while (c < d);
-                            data.token[c - 1] = last;
-                            data.types[c - 1] = "comment";
-                            a            = a - 1;
                         }
                         if (ctoke === ".") {
                             if (data.token[data.begin[a]] !== "(" && data.token[data.begin[a]] !== "x(" && ei.length > 0) {
@@ -665,29 +626,18 @@
                                     destructfix(false, false);
                                 }
                             }
-                            if (data.types[a - 1] === "comment") {
-                                if (ei[ei.length - 1] > 0) {
-                                    level[a - 1] = indent;
-                                } else {
-                                    level[a - 1] = indent + 1;
-                                }
-                            } else if (
-                                (options.methodchain === "chain" || (options.methodchain === "none" && data.lines[a] < 1)) &&
-                                data.types[a - 1] !== "comment"
-                            ) {
-                                level[a - 1] = -20;
-                            } else {
-                                if (data.token[data.begin[a]] !== "(" && data.token[data.begin[a]] !== "x(" && (data.types[a + 2] === "start" || ltoke === ")" || (data.token[ei[ei.length - 1]] !== "."))) {
-                                    if (data.token[ei[ei.length - 1]] !== "." && options.nochainindent === false) {
-                                        propertybreak();
-                                    } else {
-                                        level[a - 1] = indent + 1;
-                                    }
-                                } else if (data.token[ei[ei.length - 1]] === ".") {
-                                    level[a - 1] = indent + 1;
+                            if (options.methodchain === 0) {
+                                // methodchain is 0 so methods and properties should be chained together
+                                level[a- 1] = -20;
+                            } else if (options.methodchain < 0) {
+                                if (data.lines[a] > 0) {
+                                    propertybreak();
                                 } else {
                                     level[a - 1] = -20;
                                 }
+                            } else {
+                                // methodchain is greater than 0 and should break methods if the chain reaches this value
+                                propertybreak();
                             }
                             level.push(-20);
                             return;
@@ -2164,11 +2114,7 @@
                         ctype = data.types[a];
                         ctoke = data.token[a];
                         if (ctype === "comment") {
-                            if (data.lines[a] < 2) {
-                                commentInline();
-                            } else {
-                                comment();
-                            }
+                            comment();
                         } else if (ctype === "regex") {
                             level.push(-20);
                         } else if (ctype === "literal") {

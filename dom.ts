@@ -41,7 +41,6 @@
         options:any = {
             lang: "",
             lexer: "",
-            lexerOptions: {},
             source: ""
         },
         // end option defaults
@@ -1167,7 +1166,10 @@
                                     .getSession()
                                     .setMode("ace/mode/" + param[1]);
                             }
-                            method.app.langkey(aceStore.codeIn, param[1]);
+                            method.app.langkey({
+                                sample: aceStore.codeIn.getValue(),
+                                name: param[1]
+                            });
                         } else if (param[0] === "c" || param[0] === "color") {
                             param[0] = "color";
                             c = colors.length - 1;
@@ -2418,14 +2420,9 @@
             test.load = false;
         };
     prettydiff.meta = meta;
-    // determine the specific language if auto or unknown all - change all language
-    // modes? comes from pd.codeops, which is      fired on change of language
-    // select list obj - the ace obj passed in. {} empty object if `all` is true
-    // lang - a language passed in. "" empty string means auto detect
-    method.app.langkey  = function dom_app_langkey(obj:any, lang:string):[string, string, string] {
-        let sample:string      = "",
-            // defaultt      = actual default lang value from the select list
-            defaultval:string  = "",
+    // determine the specific language if auto or unknown
+    method.app.langkey  = function dom_app_langkey(obj:any):[string, string, string] {
+        let defaultval:string  = "",
             defaultt:string    = "",
             value:languageAuto;
         const language:language    = prettydiff.api.language,
@@ -2437,40 +2434,22 @@
             ? "javascript"
             : langdefault.value;
         defaultt = language.setlangmode(defaultval);
-        if (obj !== undefined && obj !== null) {
-            if (test.ace === true && obj.getValue !== undefined) {
-                sample = obj.getValue();
-                if (sample.indexOf("http") === 0 || sample.indexOf("file:///") === 0) {
-                    if (obj === aceStore.codeOut) {
-                        sample = options.diff;
-                    } else {
-                        sample = options.source;
-                    }
-                }
-            } else if (typeof obj.value === "string") {
-                sample = obj.value;
-            }
-        }
         if (defaultval === "auto") {
-            lang = "auto";
+            obj.name = "auto";
         }
-        if (lang === "csv") {
+        if (obj.name === "csv") {
             data.langvalue = ["plain_text", "csv", "CSV"];
-        } else if (lang === "text") {
+        } else if (obj.name === "text") {
             data.langvalue = ["plain_text", "text", "Plain Text"];
-        } else if (lang !== "") {
-            data.langvalue = [lang, language.setlangmode(lang), language.nameproper(lang)];
-        } else if (sample !== "" || test.ace === false) {
-            data.langvalue = language.auto(sample, defaultt);
+        } else if (obj.name !== "") {
+            data.langvalue = [obj.name, language.setlangmode(obj.name), language.nameproper(obj.name)];
+        } else if (obj.sample !== "" || test.ace === false) {
+            data.langvalue = language.auto(obj.sample, defaultt);
         } else {
             data.langvalue = [defaultt, language.setlangmode(defaultt), language.nameproper(defaultt)];
         }
         value = data.langvalue;
         if (test.ace === true) {
-            if (lang === "") {
-                value          = language.auto(aceStore.codeIn.getValue(), defaultt);
-                data.langvalue = value;
-            }
             if (value[0] === "tss") {
                 value[0] = "javascript";
             } else if (value[0] === "dustjs") {
@@ -2491,13 +2470,13 @@
                     .setMode("ace/mode/" + value[0]);
             }
         }
-        if (lang === "text") {
+        if (obj.name === "text") {
             return ["text", "text", "Plain Text"];
         }
-        if (lang !== "") {
+        if (obj.name !== "") {
             return value;
         }
-        if (value.length < 1 && lang === "") {
+        if (value.length < 1 && obj.name === "") {
             if (textarea.codeIn !== null) {
                 value = language.auto(textarea.codeIn.value, defaultt);
             }
@@ -2968,6 +2947,9 @@
             diffout:[string, number, number],
             node:HTMLSelectElement        = id("option-jsscope");
         const startTime:number = Date.now(),
+            langvalue:string = (id("option-lang") === null)
+                ? "auto"
+                : id("option-lang").value,
             ann:HTMLParagraphElement = id("announcement"),
             domain:RegExp      = (/^((https?:\/\/)|(file:\/\/\/))/),
             lf:HTMLInputElement        = id("option-crlf"),
@@ -3608,13 +3590,17 @@
                                 if (test.ace === true) {
                                     lang = method
                                         .app
-                                        .langkey(aceStore.codeIn, "");
+                                        .langkey({
+                                            sample: aceStore.codeIn.getValue(),
+                                            name: "auto"
+                                        });
                                 } else {
                                     lang = method
                                         .app
                                         .langkey({
-                                            value: options.source
-                                        }, "");
+                                            sample: options.source,
+                                            name: "auto"
+                                        });
                                 }
                                 app();
                                 return;
@@ -3655,17 +3641,6 @@
                                 .responseText
                                 .replace(/\r\n/g, "\n");
                             if (requests === false || (requests === true && completes === true)) {
-                                if (test.ace === true) {
-                                    lang = method
-                                        .app
-                                        .langkey(aceStore.codeIn, "");
-                                } else {
-                                    lang = method
-                                        .app
-                                        .langkey({
-                                            value: options.diff
-                                        }, "");
-                                }
                                 app();
                                 return;
                             }
@@ -3684,16 +3659,27 @@
             }
         }
         if (requests === false && requestd === false) {
-            if (test.ace === true) {
-                lang = method
-                    .app
-                    .langkey(aceStore.codeIn, "");
+            if (langvalue === "auto") {
+                if (test.ace === true) {
+                    lang = method
+                        .app
+                        .langkey({
+                            sample: aceStore.codeIn.getValue(),
+                            name: "auto"
+                        });
+                } else {
+                    lang = method
+                        .app
+                        .langkey({
+                            sample: id("input").value,
+                            name: "auto"
+                        });
+                }
             } else {
-                lang = method
-                    .app
-                    .langkey({
-                        value: options.source
-                    }, "");
+                lang = method.app.langkey({
+                    sample: "",
+                    name: langvalue
+                });
             }
             app();
         }
@@ -4288,7 +4274,8 @@
                     cilabel[0].innerHTML = `${text} file`;
                     cilabel[2].innerHTML = `${text} code sample`;
                     cilabel[5].innerHTML = `${text} output`;
-                    outLabel.style.marginTop = "3.6em";
+                    parent = <HTMLElement>document.getElementById("inputfile").parentNode;
+                    outLabel.style.marginTop = `${(parent.clientHeight + 11.5) / 10}em`;
                     sourceLabel.style.display = "none";
                     outputLabel.style.display = "none";
                     outputFile.style.display = "none";
