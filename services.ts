@@ -881,8 +881,8 @@ import { Http2Stream, Http2Session } from "http2";
                                             });
                                         } else {
                                             filedata = filedata
-                                                .replace(/\/\*global\s+global(,\s*prettydiff)?\s*\*\//, "")
-                                                .replace("global.prettydiff.", "prettydiff.");
+                                                .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\//, "")
+                                                .replace(/global\.prettydiff\./g, "prettydiff.");
                                         }
                                         domlibs = domlibs + filedata;
                                         a = a + 1;
@@ -2327,6 +2327,7 @@ import { Http2Stream, Http2Session } from "http2";
                 })
             };
         let lang:[string, string, string] = ["javascript", "script", "JavaScript"];
+        prettydiff.api.pdcomment(options);
         all(options, function node_apps_mode_allLexers() {
             if (options.readmethod === "screen") {
                 pdwrap("screen");
