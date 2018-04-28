@@ -526,7 +526,7 @@
                         "moved or prevented.",
                 default   : false
             },
-            objsort        : {
+            objectSort        : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "any",

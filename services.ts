@@ -557,7 +557,6 @@ import { Http2Stream, Http2Session } from "http2";
             // eslint-disable-next-line
             /\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u000b|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g
         );
-        options.lexerOptions = {};
         global.prettydiff = prettydiff;
         libFiles.forEach(function node_args_each(value:string) {
             requireDir(value);
@@ -637,8 +636,9 @@ import { Http2Stream, Http2Session } from "http2";
                         optkeys:string[] = Object.keys(prettydiff.api.optionDef),
                         keyslen:number = optkeys.length,
                         versionData = {
+                            date: "",
                             number: "",
-                            date: ""
+                            parse: ""
                         },
                         modifyFile = function node_apps_build_libraries_modifyFile(file:string, fileFlag:string):void {
                             node.fs.readFile(file, "utf8", function node_apps_build_libraries_modifyFile(err:Error, data:string):void {
@@ -861,6 +861,13 @@ import { Http2Stream, Http2Session } from "http2";
                                         return;
                                     }
                                     versionData.number = JSON.parse(data).version;
+                                    node.fs.readFile(`${projectPath}node_modules${sep}parse-framework${sep}package.json`, "utf8", function node_apps_build_libraries_version_child_readPackage_readFramework(errf:Error, frameData:string):void {
+                                        if (errf !== null) {
+                                            apps.errout([errf.toString()]);
+                                            return;
+                                        }
+                                        versionData.parse = JSON.parse(frameData).version;
+                                    });
                                     modifyFile(file, fileFlag);
                                 });
                             })
@@ -2152,6 +2159,11 @@ import { Http2Stream, Http2Session } from "http2";
                     options.lang = lang[0];
                     options.lexer = lang[1];
                 }
+                options.lexerOptions = {};
+                options.lexerOptions[options.lexer] = {};
+                if (options.objectSort === true) {
+                    options.lexerOptions[options.lexer].objectSort = true;
+                }
                 if (options.mode === "diff") {
                     if (options.lang !== "text") {
                         const source:string = options.source;
@@ -2422,7 +2434,7 @@ import { Http2Stream, Http2Session } from "http2";
     };
     // verbose metadata printed to the shell about Pretty Diff 
     apps.output = function node_apps_output(output:string[]):void {
-        if (verbose === true) {
+        if (verbose === true && (output.length > 1 || output[0] !== "")) {
             console.log("");
         }
         if (output[output.length - 1] === "") {
@@ -2434,6 +2446,7 @@ import { Http2Stream, Http2Session } from "http2";
         if (verbose === true) {
             console.log("");
             console.log("");
+            console.log(`parse-framework version ${text.angry + version.parse + text.none}`);
             console.log(`Pretty Diff version ${text.angry + version.number + text.none} dated ${text.cyan + version.date + text.none}`);
             apps.humantime(true);
         }
@@ -2824,7 +2837,13 @@ import { Http2Stream, Http2Session } from "http2";
                     output:string = "";
                 raw.sort(sort);
                 formatted.sort(sort);
-                options.mode = "diff";
+                options.context    = 4;
+                options.mode       = "diff";
+                options.objsort    = true;
+                options.preserve   = 2;
+                options.readmethod = "screen";
+                options.wrap       = 80;
+                console.log("");
                 do {
                     if (raw[a] === undefined || formatted[a] === undefined) {
                         if (raw[a] === undefined) {
@@ -2836,7 +2855,7 @@ import { Http2Stream, Http2Session } from "http2";
                         }
                         if (a === len - 1) {
                             console.log("");
-                            console.log(`${text.green}ore Unit Testing Complete${text.none}`);
+                            console.log(`${text.green}Core Unit Testing Complete${text.none}`);
                             return;
                         }
                     } else if (raw[a][0] === formatted[a][0]) {
@@ -2845,9 +2864,10 @@ import { Http2Stream, Http2Session } from "http2";
                         options.lexer      = notes[1];
                         options.mode       = notes[0];
                         options.source     = raw[a][1];
-                        options.preserve   = 2;
-                        options.readmethod = "screen";
-                        options.wrap       = 80;
+                        options.lexerOptions = {};
+                        options.lexerOptions[options.lexer] = {};
+                        options.lexerOptions[options.lexer].objectSort = true;
+                        prettydiff.api.pdcomment(options);
                         options.parsed     = global.parseFramework.parserArrays(options);
                         output = prettydiff[options.mode][options.lexer](options);
                         if (output === formatted[a][1]) {
@@ -2855,7 +2875,8 @@ import { Http2Stream, Http2Session } from "http2";
                             console.log(`${apps.humantime(false) + text.green}Pass ${filecount}:${text.none} ${formatted[a][0]}`);
                         } else {
                             console.log(`${apps.humantime(false) + text.angry}Fail: ${text.cyan + raw[a][0] + text.none}`);
-                            console.log(`Diff output colors: ${text.angry}red = beautified${text.none} and ${text.green}green = control${text.none}`);
+                            console.log("");
+                            console.log(`Diff output colors: ${text.angry + text.underline}red = beautified${text.none} and ${text.green + text.underline}green = control${text.none}`);
                             options.diff   = formatted[a][1];
                             options.lang   = "text";
                             options.mode   = "diff";
@@ -2875,6 +2896,12 @@ import { Http2Stream, Http2Session } from "http2";
                     }
                     a = a + 1;
                 } while (a < len);
+                if (a === len) {
+                    console.log(`${text.green}All ${len} files passed.${text.none}`);
+                    if (command === "validation") {
+                        apps.version();
+                    }
+                }
             },
             readDir = function node_apps_validation_readDir(type:string):void {
                 const dir:string = `${projectPath}tests${sep + type}`;

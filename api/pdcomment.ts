@@ -1,5 +1,26 @@
 /*global global*/
 (function pdcomment_init():void {
+    // parses the prettydiff settings comment
+    //
+    // - Source Priorities:
+    // * the prettydiff comment is only accepted if it occurs before non-comments (near the top)
+    // * options.source is the priority material for reading the comment
+    // * the prettydiff comment will be processed from options.diff only if it present there, missing from options.source, and options.mode is diff
+    //
+    // - Examples:
+    //    /*prettydiff.com width:80 preserve:4*/
+    //    /* prettydiff.com width:80 preserve:4 */
+    //    /*prettydiff.com width=80 preserve=4 */
+    //    // prettydiff.com width=80 preserve:4
+    //    <!-- prettydiff.com width:80 preserve=4 -->
+    //    <!--prettydiff.com width:40 preserve:2-->
+    //
+    // - Parsing Considerations:
+    // * there may be any amount of space at the start or end of the comment
+    // * "prettydiff.com" must exist at the start of the comment
+    // * comment must exist prior to non-comment tokens (near top of code)
+    // * parameters are name value pairs separated by white space
+    // * the delimiter separating name and value is either ":" or "=" characters
     "use strict";
     const pdcomment = function pdcomment_(options:any):void {
         if (options.source.search(/((\/(\*|\/))|<!--*)\s*prettydiff\.com/) > -1 || (options.mode === "diff" && options.diff.search(/((\/(\*|\/))|<!--*)\s*prettydiff\.com/) > -1)) {

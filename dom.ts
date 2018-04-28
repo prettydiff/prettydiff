@@ -2432,12 +2432,16 @@
         }
         defaultval = (langdefault === null)
             ? "javascript"
-            : langdefault.value;
+            : (langdefault.value === "text" && options.mode !== "diff")
+                ? "javascript"
+                : langdefault.value;
         defaultt = language.setlangmode(defaultval);
         if (defaultval === "auto") {
             obj.name = "auto";
         }
-        if (obj.name === "csv") {
+        if (obj.name === "auto" && obj.sample !== "") {
+            data.langvalue = language.auto(obj.sample, defaultt);
+        } else if (obj.name === "csv") {
             data.langvalue = ["plain_text", "csv", "CSV"];
         } else if (obj.name === "text") {
             data.langvalue = ["plain_text", "text", "Plain Text"];
@@ -2450,7 +2454,7 @@
         }
         value = data.langvalue;
         if (test.ace === true) {
-            if (value[0] === "tss") {
+            if (value[0] === "script" || value[0] === "tss") {
                 value[0] = "javascript";
             } else if (value[0] === "dustjs") {
                 value[0] = "html";
@@ -2947,7 +2951,7 @@
             diffout:[string, number, number],
             node:HTMLSelectElement        = id("option-jsscope");
         const startTime:number = Date.now(),
-            langvalue:string = (id("option-lang") === null)
+            langvalue:string = (id("option-lang") === null || id("option-lang").value === "")
                 ? "auto"
                 : id("option-lang").value,
             ann:HTMLParagraphElement = id("announcement"),
@@ -3353,6 +3357,15 @@
                 options.lang = lang[0];
                 options.lexer = lang[1];
                 prettydiff.api.pdcomment(options);
+                if (typeof options.lexerOptions !== "object") {
+                    options.lexerOptions = {};
+                }
+                if (typeof options.lexerOptions[options.lexer] !== "object") {
+                    options.lexerOptions[options.lexer] = {};
+                }
+                if (options.objectSort === true) {
+                    options.lexerOptions[options.lexer].objectSort = true;
+                }
                 if (options.mode === "diff") {
                     if (prettydiff.beautify[options.lexer] === undefined) {
                         if (ann !== null) {
@@ -3562,6 +3575,9 @@
                     }
                 }
             } while (a > 0);
+        }
+        if (options.lang === "") {
+            options.lang = "auto";
         }
         if (options.lang === "auto") {
             autotest = true;

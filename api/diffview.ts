@@ -370,7 +370,7 @@
                         [], [], [], []
                     ],
                 clidata:string[] = [],
-                tabFix:RegExp         = new RegExp("^((" + tab.replace(/\\/g, "\\") + ")+)"),
+                tabFix:RegExp         = new RegExp(`^((${tab.replace(/\\/g, "\\")})+)`),
                 noTab          = function diffview__report_noTab(str:string[]):string[] {
                     let b:number      = 0;
                     const strLen:number = str.length,
@@ -813,7 +813,7 @@
                                     clidata.push("</h3>");
                                 } else {
                                     clidata.push("");
-                                    clidata.push("\u001b[36mLine: " + (opcodes[a - 1][2] + 1) + "\u001b[39m");
+                                    clidata.push(`\u001b[36mLine: ${opcodes[a - 1][2] + 1}\u001b[39m`);
                                 }
                                 if (foldcount > 0) {
                                     do {
@@ -837,14 +837,14 @@
                                     clidata.push("</h3>");
                                 } else {
                                     clidata.push("");
-                                    clidata.push("\u001b[36mLine: " + (baseStart + 1) + "\u001b[39m");
+                                    clidata.push(`\u001b[36mLine: ${baseStart + 1}\u001b[39m`);
                                 }
                                 if (foldcount > 0) {
                                     do {
                                         if (baseStart - foldcount > -1) {
                                             if (options.api === "dom") {
                                                 clidata.push("<p>");
-                                                clidata.push(htmlfix(newTextArray[newStart - foldcount]));
+                                                clidata.push(htmlfix(baseTextArray[baseStart - foldcount]));
                                                 clidata.push("</p>");
                                             } else {
                                                 clidata.push(baseTextArray[baseStart - foldcount]);
@@ -871,7 +871,11 @@
                                     clidata.push(htmlfix(newTextArray[newStart + foldcount]));
                                     clidata.push("</ins>");
                                 } else {
-                                    clidata.push("\u001b[32m" + newTextArray[newStart + foldcount] + "\u001b[39m");
+                                    if (newTextArray[newStart + foldcount] === "") {
+                                        clidata.push("\u001b[32m(empty line)\u001b[39m");
+                                    } else {
+                                        clidata.push(`\u001b[32m${newTextArray[newStart + foldcount]}\u001b[39m`);
+                                    }
                                 }
                                 foldcount = foldcount + 1;
                             } while (foldcount < 7 && foldcount + newStart < newEnd);
@@ -882,7 +886,11 @@
                                     clidata.push(htmlfix(baseTextArray[baseStart + foldcount]))
                                     clidata.push("</del>");
                                 } else {
-                                    clidata.push("\u001b[31m" + baseTextArray[baseStart + foldcount] + "\u001b[39m");
+                                    if (baseTextArray[baseStart + foldcount] === "") {
+                                        clidata.push("\u001b[31m(empty line)\u001b[39m");
+                                    } else {
+                                        clidata.push(`\u001b[31m${baseTextArray[baseStart + foldcount]}\u001b[39m`);
+                                    }
                                 }
                                 foldcount = foldcount + 1;
                             } while (foldcount < 7 && foldcount + baseStart < baseEnd);
@@ -899,8 +907,20 @@
                                     clidata.push(htmlfix(charcompOutput[1]).replace(/&lt;pd&gt;/g, "<em>").replace(/&lt;\/pd&gt;/g, "</em>"));
                                     clidata.push("</ins>");
                                 } else {
-                                    clidata.push("\u001b[31m" + charcompOutput[0].replace(/<pd>/g, "\u001b[1m").replace(/<\/pd>/g, "\u001b[22m") + "\u001b[39m");
-                                    clidata.push("\u001b[32m" + charcompOutput[1].replace(/<pd>/g, "\u001b[1m").replace(/<\/pd>/g, "\u001b[22m") + "\u001b[39m");
+                                    if (charcompOutput[0] === "") {
+                                        clidata.push("\u001b[31m(empty line)\u001b[31m");
+                                    } else if ((/^\s+$/).test(charcompOutput[0]) === true) {
+                                        clidata.push("\u001b[31m(white space)\u001b[31m");
+                                    } else {
+                                        clidata.push(`\u001b[31m${charcompOutput[0].replace(/<pd>/g, "\u001b[1m").replace(/<\/pd>/g, "\u001b[22m")}\u001b[39m`);
+                                    }
+                                    if (charcompOutput[1] === "") {
+                                        clidata.push("\u001b[32m(empty line)\u001b[31m");
+                                    } else if ((/^\s+$/).test(charcompOutput[1]) === true) {
+                                        clidata.push("\u001b[32m(white space)\u001b[31m");
+                                    } else {
+                                        clidata.push(`\u001b[32m${charcompOutput[1].replace(/<pd>/g, "\u001b[1m").replace(/<\/pd>/g, "\u001b[22m")}\u001b[39m`);
+                                    }
                                 }
                                 foldcount = foldcount + 1;
                             } while (foldcount < 7 && foldcount + baseStart < baseEnd);
@@ -975,11 +995,11 @@
                                 rowItem = a;
                                 if (foldstart > -1) {
                                     if (data[0][foldstart + 1] === String(foldcount - 1)) {
-                                        data[0][foldstart] = "<li class=\"" + data[0][foldstart].slice(
+                                        data[0][foldstart] = `<li class="${data[0][foldstart].slice(
                                             data[0][foldstart].indexOf(
                                                 "line xxx\">- "
                                             ) + 12
-                                        );
+                                        )}`;
                                     } else {
                                         data[0][foldstart] = data[0][foldstart].replace(
                                             "xxx",
@@ -989,9 +1009,7 @@
                                 }
                                 if (change !== "replace") {
                                     if (baseEnd - baseStart > 1 || newEnd - newStart > 1) {
-                                        data[0].push("<li class=\"fold\" title=\"folds from line " + (
-                                            foldcount + rcount
-                                        ) + " to line xxx\">- ");
+                                        data[0].push(`<li class="fold" title="folds from line ${foldcount + rcount} to line xxx">- `);
                                         foldstart = data[0].length - 1;
                                     } else {
                                         data[0].push("<li>");
@@ -1051,9 +1069,7 @@
                                     }
                                 }
                                 if (baseStart < baseEnd) {
-                                    data[0].push("<li>" + (
-                                        baseStart + 1
-                                    ) + "</li>");
+                                    data[0].push(`<li>${baseStart + 1}</li>`);
                                     data[2].push("<li class=\"empty\">&#10;</li>");
                                     if (options.diffspaceignore === true && baseTextArray[baseStart].replace(/\s+/g, "") === "") {
                                         data[3].push("<li class=\"equal\">");
@@ -1128,17 +1144,10 @@
                                     if (baseStart < baseEnd) {
                                         if (options.context < 0 && rowItem < a && (opcodes[a][2] - opcodes[a][1] > 1 || opcodes[a][4] - opcodes[a][3] > 1)) {
                                             rowItem = a;
-                                            data[0].push(
-                                                "<li class=\"fold\" title=\"folds from line " + foldcount +
-                                                " to line xxx\">- " + (
-                                                    baseStart + 1
-                                                ) + "</li>"
-                                            );
+                                            data[0].push(`<li class="fold" title="folds from line ${foldcount} to line xxx">- ${baseStart + 1}</li>`);
                                             foldstart = data[0].length - 1;
                                         } else {
-                                            data[0].push("<li>" + (
-                                                baseStart + 1
-                                            ) + "</li>");
+                                            data[0].push(`<li>${baseStart + 1}</li>`);
                                         }
                                         data[1].push("<li class=\"");
                                         if (newStart >= newEnd) {
@@ -1162,10 +1171,7 @@
                                             if (foldstart > -1) {
                                                 data[0][foldstart] = data[0][foldstart].replace("xxx", String(foldcount - 1));
                                             }
-                                            data[0].push(
-                                                "<li class=\"fold\" title=\"folds from line " + foldcount + " to line xxx\">- &" +
-                                                "#10;</li>"
-                                            );
+                                            data[0].push(`<li class="fold" title="folds from line ${foldcount} to line xxx">- &#10;</li>`);
                                             foldstart = data[0].length - 1;
                                         } else {
                                             data[0].push("<li class=\"empty\">&#10;</li>");
@@ -1173,9 +1179,7 @@
                                         data[1].push("<li class=\"empty\"></li>");
                                     }
                                     if (newStart < newEnd) {
-                                        data[2].push("<li>" + (
-                                            newStart + 1
-                                        ) + "</li>");
+                                        data[2].push(`<li>${newStart + 1}</li>`);
                                         data[3].push("<li class=\"");
                                         if (baseStart >= baseEnd) {
                                             if (options.diffspaceignore === true && newTextArray[newStart].replace(/\s+/g, "") === "") {
@@ -1212,17 +1216,10 @@
                                 )) - 1) {
                                     if (options.context < 0 && rowItem < a && opcodes[a][2] - opcodes[a][1] > 1) {
                                         rowItem = a;
-                                        data[0].push(
-                                            "<li class=\"fold\" title=\"folds from line " + foldcount +
-                                            " to line xxx\">- " + (
-                                                baseStart + 1
-                                            ) + "</li>"
-                                        );
+                                        data[0].push(`<li class="fold" title="folds from line ${foldcount} to line xxx">- ${baseStart + 1}</li>`);
                                         foldstart = data[0].length - 1;
                                     } else {
-                                        data[0].push("<li>" + (
-                                            baseStart + 1
-                                        ) + "</li>");
+                                        data[0].push(`<li>${baseStart + 1}</li>`);
                                     }
                                     data[1].push("<li class=\"delete\">");
                                     data[1].push(baseTextArray[baseStart]);
@@ -1239,18 +1236,13 @@
                                 )) - 1) {
                                     if (options.context < 0 && rowItem < a && opcodes[a][4] - opcodes[a][3] > 1) {
                                         rowItem = a;
-                                        data[0].push(
-                                            "<li class=\"fold\" title=\"folds from line " + foldcount + " to line xxx\">-</" +
-                                            "li>"
-                                        );
+                                        data[0].push(`<li class="fold" title="folds from line ${foldcount} to line xxx">-</li>`);
                                         foldstart = data[0].length - 1;
                                     } else {
                                         data[0].push("<li class=\"empty\">&#10;</li>");
                                     }
                                     data[1].push("<li class=\"empty\"></li>");
-                                    data[2].push("<li>" + (
-                                        newStart + 1
-                                    ) + "</li>");
+                                    data[2].push(`<li>${newStart + 1}</li>`);
                                     data[3].push("<li class=\"insert\">");
                                     data[3].push(newTextArray[newStart]);
                                     data[3].push("&#10;</li>");

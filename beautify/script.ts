@@ -504,11 +504,11 @@
                             if (a < b - 1 && data.stack[a + 1] !== "block" && (data.token[a + 1] === "{" || data.token[a + 1] === "x{")) {
                                 data.token[a]     = data.token[a + 1];
                                 data.types[a]     = "start";
-                                data.stack[a]     = data.stack[a + 1];
                                 data.begin[a]     = data.begin[a + 1];
                                 data.lines[a]     = data.lines[a + 1];
                                 data.token[a + 1] = ctoke;
                                 data.types[a + 1] = ctype;
+                                data.stack[a + 1] = data.stack[a + 2];
                                 a            = a - 1;
                             } else {
                                 level[a - 1] = -10;
@@ -518,9 +518,12 @@
                                     level.push(indent);
                                 }
                             }
+                            return;
                         } else if (data.token[a - 1] === ",") {
                             level[a - 1] = indent;
                         } else if (ltoke === "=" && (/^(\/\*\*\s*@[a-z_]+\s)/).test(ctoke) === true) {
+                            level[a - 1] = -10;
+                        } else if (ltoke === "{" && data.lines[0] < 2) {
                             level[a - 1] = -10;
                         } else {
                             level[a - 1] = indent;
