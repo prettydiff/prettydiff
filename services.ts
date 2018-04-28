@@ -155,7 +155,7 @@ import { Http2Stream, Http2Session } from "http2";
                 example: [
                     {
                         code: "prettydiff hash path/to/file",
-                        defined: "Prints a SHA512 hash to the shell for the specified file in the local file system."
+                        defined: "Prints a SHA512 hash to the shell for the specified file's contents in the local file system."
                     },
                     {
                         code: "prettydiff hash verbose path/to/file",
@@ -168,6 +168,10 @@ import { Http2Stream, Http2Session } from "http2";
                     {
                         code: "prettydiff hash http://prettydiff.com/",
                         defined: "Hash a resource from the web."
+                    },
+                    {
+                        code: "prettydiff hash path/to/directory",
+                        defined: "Directory hash recursively gathers paths relative to the requested directory for all descendent file system items into a sorted list, which is converted to a string and that string is hashed."
                     }
                 ]
             },
@@ -1530,16 +1534,71 @@ import { Http2Stream, Http2Session } from "http2";
                 node
                 .fs
                 .stat(path, function node_apps_hash_wrapper_stat(er:Error, stat:Stats):void {
+                    const angrypath:string = `filepath ${text.angry + path + text.none} is not a file or directory.`;
                     if (er !== null) {
                         if (er.toString().indexOf("no such file or directory") > 0) {
-                            apps.errout([`filepath ${path} is not a file.`]);
+                            apps.errout([angrypath]);
                             return;
                         }
                         apps.errout([er.toString()]);
                         return;
                     }
-                    if (stat === undefined || stat.isFile() === false) {
-                        apps.errout([`filepath ${path} is not a file.`]);
+                    if (stat === undefined) {
+                        apps.errout([angrypath]);
+                        return;
+                    }
+                    if (stat.isDirectory() === true) {
+                        let dircount:number = 0;
+                        const list:string[] = [],
+                            hashdir = function node_apps_hash_wrapper_stat_hashdir():void {
+                                hash.update(list.sort().join(""));
+                                apps.output([hash.digest("hex")]);
+                            },
+                            dirs = function node_apps_hash_wrapper_stat_dirs(item:string):void {
+                                node.fs.readdir(item, {encoding: "utf8"}, function node_apps_hash_wrapper_stat_dirs_readdirs(erd:Error, files:string[]):void {
+                                    if (erd !== null) {
+                                        apps.errout([erd.toString()]);
+                                        return;
+                                    }
+                                    let filecount:number = files.length;
+                                    if (filecount < 1) {
+                                        dircount = dircount - 1;
+                                        if (dircount < 1) {
+                                            hashdir();
+                                        }
+                                    }
+                                    files.forEach(function node_apps_hash_wrapper_stat_dirs_readdirs_each(value:string) {
+                                        const file:string = item + sep + value;
+                                        list.push(file.replace(path + sep, ""));
+                                        node.fs.stat(file, function node_apps_hash_wrapper_stat_dirs_readdirs_each_stat(ers:Error, statd:Stats) {
+                                            if (ers !== null) {
+                                                apps.errout([ers.toString()]);
+                                                return;
+                                            }
+                                            if (statd === undefined) {
+                                                apps.errout([`no such file or directory: ${text.angry + file + text.none}`]);
+                                            }
+                                            if (statd.isDirectory() === true) {
+                                                dircount = dircount + 1;
+                                                node_apps_hash_wrapper_stat_dirs(file);
+                                            }
+                                            filecount = filecount - 1;
+                                            if (filecount < 1) {
+                                                dircount = dircount - 1;
+                                                if (dircount < 1) {
+                                                    hashdir();
+                                                }
+                                            }
+                                        });
+                                    });
+                                });
+                            };
+                            dircount = dircount + 1;
+                            dirs(path);
+                        return;
+                    }
+                    if (stat.isFile() === false) {
+                        apps.errout([angrypath]);
                         return;
                     }
                     node
@@ -1548,7 +1607,7 @@ import { Http2Stream, Http2Session } from "http2";
                             const msize = (stat.size < 100)
                                     ? stat.size
                                     : 100;
-                            let buff  = new Buffer(msize);
+                            let buff  = Buffer.alloc(msize);
                             if (ero !== null) {
                                 apps.errout([ero.toString()]);
                                 return;
@@ -1593,7 +1652,7 @@ import { Http2Stream, Http2Session } from "http2";
                                         bstring = buffera.toString("utf8", 0, buffera.length);
                                         bstring = bstring.slice(2, bstring.length - 2);
                                         if (options.binaryCheck.test(bstring) === true) {
-                                            buff = new Buffer(stat.size);
+                                            buff = Buffer.alloc(stat.size);
                                             node
                                                 .fs
                                                 .read(
