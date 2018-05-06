@@ -56,8 +56,9 @@
                     if (data.types[a - 1] === "operator" && data.types[a] === "operator" && data.token[a] !== "!") {
                         build.push(" ");
                     }
-                    if (data.types[a] === "word" && (
+                    if ((data.types[a] === "word" || data.types[a] === "references") && (
                         data.types[a + 1] === "word" ||
+                        data.types[a + 1] === "reference" ||
                         data.types[a + 1] === "literal" ||
                         data.types[a + 1] === "number" ||
                         data.token[a + 1] === "x{"

@@ -110,11 +110,13 @@
                             if (data.types[next] === "end" || data.types[next] === "template_end") {
                                 indent = indent - 1;
                             }
-                            if (data.lines[next] === 0 && (data.types[a] === "content" || data.types[a] === "singleton")) {
+                            if (options.force_indent === false && data.lines[next] === 0 && (data.types[a] === "content" || data.types[a] === "singleton")) {
                                 level.push(-20);
                             } else if (data.types[a] === "start" || data.types[a] === "template_start") {
                                 indent = indent + 1;
-                                if (data.types[a] === "start" && data.types[next] === "end") {
+                                if (options.force_indent === true) {
+                                    level.push(indent);
+                                } else if (data.types[a] === "start" && data.types[next] === "end") {
                                     level.push(-20);
                                 } else if (data.types[a] === "template_start" && data.types[next] === "template_end") {
                                     level.push(-20);
@@ -123,7 +125,7 @@
                                 } else {
                                     level.push(indent);
                                 }
-                            } else if (data.lines[next] === 0 && (data.types[next] === "content" || data.types[next] === "singleton")) {
+                            } else if (options.force_indent === false && data.lines[next] === 0 && (data.types[next] === "content" || data.types[next] === "singleton")) {
                                 level.push(-20);
                             } else {
                                 level.push(indent);
@@ -234,7 +236,7 @@
                         if ((data.types[a] === "template" || data.types[a] === "template_start") && data.types[a - 1] === "content" && data.presv[a - 1] === true && options.mode === "beautify" && levels[a] === -20) {
                             build.push(" ");
                         }
-                        if (levels[a] > -1) {
+                        if (levels[a] > -1 || (options.force_indent === true && a < len - 1 && data.types[a + 1].indexOf("attribute") < 0)) {
                             lastLevel = levels[a];
                             build.push(nl(levels[a]));
                         } else if (levels[a] === -10) {

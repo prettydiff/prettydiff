@@ -26,10 +26,10 @@ import { Http2Stream, Http2Session } from "http2";
             os    : require("os"),
             path  : require("path")
         },
-        /*stats = {
-            source: "",
-            diff: ""
-        },*/
+        //stats = {
+         //   source: "",
+         //   diff: ""
+        //},
         sep:string = node.path.sep,
         projectPath:string = (function node_project() {
             const dirs:string[] = __dirname.split(sep);
@@ -1550,7 +1550,7 @@ import { Http2Stream, Http2Session } from "http2";
                 hash.update(list.sort().join(""));
                 hashstring = hash.digest("hex").replace(/\s+$/, "");
                 if (verbose === true) {
-                    apps.output(hashstring, [
+                    apps.output([
                         `Pretty Diff hashed ${text.cyan + filepath + text.none}`,
                         hashstring
                     ]);
@@ -2250,6 +2250,9 @@ import { Http2Stream, Http2Session } from "http2";
                 if (options.objectSort === true) {
                     options.lexerOptions[options.lexer].objectSort = true;
                 }
+                if (options.lexer === "script") {
+                    options.lexerOptions.script.varword = options.varword;
+                }
                 if (options.mode === "diff") {
                     if (options.lang !== "text") {
                         const source:string = options.source;
@@ -2734,7 +2737,9 @@ import { Http2Stream, Http2Session } from "http2";
                         if (err !== undefined && err !== null) {
                             if (err.toString().indexOf("no such file or directory") > 0) {
                                 response.writeHead(404, {"Content-Type": "text/plain"});
-                                console.log(`${text.angry}404${text.none} for ${file}`);
+                                if (file.indexOf("apple-touch") < 0 && file.indexOf("favicon") < 0) {
+                                    console.log(`${text.angry}404${text.none} for ${file}`);
+                                }
                                 return;
                             }
                             response.write(JSON.stringify(err));

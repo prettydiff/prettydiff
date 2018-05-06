@@ -2,12 +2,12 @@
 /*global ace, ArrayBuffer, AudioContext, console, document, FileReader, localStorage, location, navigator, setTimeout, Uint8Array, window, XMLHttpRequest*/
 /*jshint laxbreak: true*/
 /*jslint for: true*/
-/***********************************************************************
+/*****************************************************************************
  This is written by Austin Cheney on 3 Mar 2009.
 
  Please see the license.txt file associated with the Pretty Diff
  application for license information.
- ***********************************************************************/
+ ****************************************************************************/
 (function dom_init():void {
     "use strict";
     const meta:meta = {
@@ -2960,7 +2960,10 @@
             textout:boolean     = (options.jsscope !== "report" && (node === null || node[node.selectedIndex].value !== "report")),
             app = function dom_event_execute_app() {
                 let output:string = "";
-                const execOutput  = function dom_event_execute_app_execOutput():void {
+                const sanitize = function dom_event_execute_app_sanitize(input:string):string {
+                        return input.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                    },
+                    execOutput  = function dom_event_execute_app_execOutput():void {
                         let diffList:NodeListOf<HTMLOListElement>,
                             button:HTMLButtonElement,
                             buttons:NodeListOf<HTMLButtonElement>,
@@ -3309,7 +3312,7 @@
                         if (ann !== null) {
                             if (errortext.indexOf("end tag") > 0 || errortext.indexOf("Duplicate id") > 0) {
                                 ann.setAttribute("class", "error");
-                                ann.innerHTML = errortext;
+                                ann.innerHTML = sanitize(errortext);
                             } else if (id("jserror") !== null) {
                                 ann.removeAttribute("class");
                                 ann.innerHTML = "<strong>" + id("jserror")
@@ -3366,6 +3369,9 @@
                 if (options.objectSort === true) {
                     options.lexerOptions[options.lexer].objectSort = true;
                 }
+                if (options.lexer === "script") {
+                    options.lexerOptions.script.varword = options.varword;
+                }
                 if (options.mode === "diff") {
                     if (prettydiff.beautify[options.lexer] === undefined) {
                         if (ann !== null) {
@@ -3378,13 +3384,13 @@
                             let source:string;
                             options.parsed = window.parseFramework.parserArrays(options);
                             if (window.parseFramework.parseerror !== "" && ann !== null) {
-                                ann.innerHTML = `<strong>Parse Error:</strong> ${window.parseFramework.parseerror}`;
+                                ann.innerHTML = `<strong>Parse Error:</strong> ${sanitize(window.parseFramework.parseerror)}`;
                             }
                             source = prettydiff.beautify[options.lexer](options);
                             options.source = options.diff;
                             options.parsed = window.parseFramework.parserArrays(options);
                             if (window.parseFramework.parseerror !== "" && ann !== null) {
-                                ann.innerHTML = `<strong>Parse Error:</strong> ${window.parseFramework.parseerror}`;
+                                ann.innerHTML = `<strong>Parse Error:</strong> ${sanitize(window.parseFramework.parseerror)}`;
                             }
                             options.diff = prettydiff.beautify[options.lexer](options);
                             options.source = source;
@@ -3398,7 +3404,7 @@
                     meta.insize = options.source.length;
                     options.parsed = window.parseFramework.parserArrays(options);
                     if (window.parseFramework.parseerror !== "" && ann !== null) {
-                        ann.innerHTML = `<strong>Parse Error:</strong> ${window.parseFramework.parseerror}`;
+                        ann.innerHTML = `<strong>Parse Error:</strong> ${sanitize(window.parseFramework.parseerror)}`;
                     }
                     if (options.mode === "parse") {
                         if (options.parseFormat === "htmltable" || options.parseFormat === "renderhtml") {

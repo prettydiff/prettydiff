@@ -122,6 +122,9 @@ interface opcodes extends Array<codes> {
 interface compareStore extends Array<[number, number]>{
     [index:number]: [number, number];
 }
+interface scriptScopes extends Array<[string, number]>{
+    [index:number]: [string, number];
+}
 interface difftable {
     [key: string]: [number, number];
 }

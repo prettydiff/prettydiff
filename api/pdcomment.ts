@@ -30,6 +30,7 @@
                     : options.diff.search(/((\/(\*|\/))|<!--*)\s*prettydiff\.com/),
                 b:number = 0,
                 quote:string = "",
+                item:string = "",
                 op:string[] = [];
             const ops:string[] = [],
                 source:string = (pdcom > -1)
@@ -65,15 +66,40 @@
                     if (quote === "") {
                         if (source.charAt(a) === "\"") {
                             quote = "\"";
+                            if (ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === ":" || ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === "=") {
+                                b = a;
+                            }
                         } else if (source.charAt(a) === "'") {
                             quote = "'";
+                            if (ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === ":" || ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === "=") {
+                                b = a;
+                            }
                         } else if (source.charAt(a) === "`") {
                             quote = "`";
+                            if (ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === ":" || ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === "=") {
+                                b = a;
+                            }
                         } else if ((/\s/).test(source.charAt(a)) === false && b === 0) {
                             b = a;
-                        } else if ((/\s/).test(source.charAt(a)) === true && b > 0) {
-                            ops.push(source.slice(b, a));
-                            b = 0;
+                        } else if (source.charAt(a) === "," || ((/\s/).test(source.charAt(a)) === true && b > 0)) {
+                            item = source.slice(b, a);
+                            if (ops.length > 0) {
+                                if (ops.length > 0 && (item === ":" || item === "=") && ops[ops.length - 1].indexOf("=") < 0 && ops[ops.length - 1].indexOf(":") < 0) {
+                                    // for cases where white space is between option name and assignment operator
+                                    ops[ops.length - 1] = ops[ops.length - 1] + item;
+                                    b = a;
+                                } else if (ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === ":" || ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === "=") {
+                                    // for cases where white space is between assignment operator and value
+                                    ops[ops.length - 1] = ops[ops.length - 1] + item;
+                                    b = 0;
+                                } else {
+                                    ops.push(item);
+                                    b = 0;
+                                }
+                            } else {
+                                ops.push(item);
+                                b = 0;
+                            }
                         }
                         if (comment === "<!--" && source.slice(a - 2, a + 1) === "-->") {
                             break;
@@ -121,6 +147,9 @@
                         options[ops[a]] = true;
                     }
                     if (op.length === 2 && global.prettydiff.api.optionDef[op[0]] !== undefined) {
+                        if ((op[1].charAt(0) === "\"" || op[1].charAt(0) === "'" || op[1].charAt(0) === "`") && op[1].charAt(op[1].length - 1) === op[1].charAt(0)) {
+                            op[1] = op[1].slice(1, op[1].length - 1);
+                        }
                         if (global.prettydiff.api.optionDef[op[0]].type === "number" && isNaN(Number(op[1])) === false) {
                             options[op[0]] = Number(op[1]);
                         } else if (global.prettydiff.api.optionDef[op[0]].type === "boolean") {
@@ -130,7 +159,7 @@
                                 options[op[0]] = false;
                             }
                         } else {
-                            if (global.prettydiff.api.optionDef[op[0]].values === undefined) {
+                            if (global.prettydiff.api.optionDef[op[0]].values !== undefined) {
                                 b = global.prettydiff.api.optionDef[op[0]].values.length;
                                 do {
                                     b = b - 1;

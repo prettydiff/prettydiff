@@ -130,8 +130,11 @@
             news:number = 0;
         const data:parsedArray = options.parsed,
             lexer:string = "script",
-            markupvar:number[] = [],
-            meta:any = [],
+            scopes:scriptScopes = [],
+            // levels sets the white space value between the current token and the next token
+            // * -20 value means no white space
+            // * -10 means to separate with a space
+            // * 0 and above is the number of indentation to insert
             levels:number[] = (function beautify_script_level():number[] {
                 let a             = options.start, //will store the current level of indentation
                     b:number = (options.end < 1 || options.end > data.token.length)
@@ -147,17 +150,11 @@
                     ltype:string         = data.types[0], //ltype stands for "last type"
                     ltoke:string         = data.token[0]; //ltype stands for "last token"
                 const varindex:number[] = [-1], //index in current scope of last var, let, or const keyword
-                    hoisted:Array<[string, number]> = [], //meta array population for cross-scope (block) variable hoisting
                     list:boolean[]          = [], //stores comma status of current block
                     level:number[] = (options.start > 0)
                         ? Array(options.start).fill(0, 0, options.start)
                         : [],
                     ternary:number[]       = [], //used to identify ternary statments
-                    varline       = [], //determines if a current list of the given block is a list of variables following the "var" keyword
-                    varlist       = [],
-                    varlen        = [
-                        []
-                    ], //stores lists of variables, assignments, and object properties for white space padding
                     extraindent   = [
                         []
                     ], //stores token indexes where extra indentation occurs from ternaries and broken method chains
@@ -501,15 +498,55 @@
                     comment       = function beautify_script_comment():void {
                         destructfix(false, false);
                         if (data.lines[a] < 2) {
-                            if (a < b - 1 && data.stack[a + 1] !== "block" && (data.token[a + 1] === "{" || data.token[a + 1] === "x{")) {
-                                data.token[a]     = data.token[a + 1];
-                                data.types[a]     = "start";
-                                data.begin[a]     = data.begin[a + 1];
-                                data.lines[a]     = data.lines[a + 1];
-                                data.token[a + 1] = ctoke;
-                                data.types[a + 1] = ctype;
-                                data.stack[a + 1] = data.stack[a + 2];
-                                a            = a - 1;
+                            let aa:number = a + 1;
+                            if (data.types[aa] === "comment") {
+                                do {
+                                    aa = aa + 1;
+                                } while (aa < b && data.types[aa] === "comment");
+                            }
+                            if (a < b - 1 && data.stack[aa] !== "block" && (data.token[aa] === "{" || data.token[aa] === "x{")) {
+                                let bb:number = scopes.length;
+                                data.begin.splice(a, 0, data.begin[aa]);
+                                data.lexer.splice(a, 0, data.lexer[aa]);
+                                data.lines.splice(a, 0, data.lines[aa]);
+                                data.presv.splice(a, 0, data.presv[aa]);
+                                data.stack.splice(a, 0, data.stack[aa]);
+                                data.token.splice(a, 0, data.token[aa]);
+                                data.types.splice(a, 0, data.types[aa]);
+                                do {
+                                    bb = bb - 1;
+                                    if (scopes[bb][1] === aa) {
+                                        scopes[bb][1] = a;
+                                    } else if (scopes[bb][1] < a) {
+                                        break;
+                                    }
+                                } while (bb > 0);
+                                aa = aa + 1;
+                                data.begin.splice(aa, 1);
+                                data.lexer.splice(aa, 1);
+                                data.lines.splice(aa, 1);
+                                data.presv.splice(aa, 1);
+                                data.stack.splice(aa, 1);
+                                data.token.splice(aa, 1);
+                                data.types.splice(aa, 1);
+                                bb = a + 1;
+                                do {
+                                    data.begin[bb] = a;
+                                    data.stack[bb] = data.stack[aa];
+                                    bb = bb + 1;
+                                } while (bb < aa);
+                                bb = bb + 1;
+                                do {
+                                    if (data.begin[bb] === data.begin[aa]) {
+                                        data.begin[bb] = a;
+                                        if (data.types[bb] === "end") {
+                                            break;
+                                        }
+                                    }
+                                    bb = bb + 1;
+                                } while (bb < b - 1);
+                                data.begin[aa] = a;
+                                a = a - 1;
                             } else {
                                 level[a - 1] = -10;
                                 if (data.stack[a] === "paren" || data.stack[a] === "method") {
@@ -521,9 +558,9 @@
                             return;
                         } else if (data.token[a - 1] === ",") {
                             level[a - 1] = indent;
-                        } else if (ltoke === "=" && (/^(\/\*\*\s*@[a-z_]+\s)/).test(ctoke) === true) {
+                        } else if (ltoke === "=" && data.types[a - 1] !== "comment" && (/^(\/\*\*\s*@[a-z_]+\s)/).test(ctoke) === true) {
                             level[a - 1] = -10;
-                        } else if (ltoke === "{" && data.lines[0] < 2) {
+                        } else if (ltoke === "{" && data.types[a - 1] !== "comment" && data.lines[0] < 2) {
                             level[a - 1] = -10;
                         } else {
                             level[a - 1] = indent;
@@ -576,9 +613,6 @@
                         } else {
                             level.push(-20);
                         }
-                        if (varline[varline.length - 1] === true) {
-                            markupvar.push(a);
-                        }
                     },
                     separator     = function beautify_script_separator():void {
                         let methtest:boolean      = false;
@@ -597,7 +631,14 @@
                                         if (data.begin[x] === y) {
                                             if (data.token[x] === ".") {
                                                 z.push(x);
-                                            } else if (data.token[x] === ";" || data.token[x] === "," || (data.types[x] === "word" && data.types[x - 1] === "word")) {
+                                            } else if (
+                                                data.token[x] === ";" ||
+                                                data.token[x] === "," ||
+                                                (
+                                                    (data.types[x] === "word" || data.types[x] === "reference") &&
+                                                    (data.types[x - 1] === "word" || data.types[x] === "reference")
+                                                )
+                                             ) {
                                                 break;
                                             }
                                         }
@@ -677,7 +718,7 @@
                                 level.push(-10);
                                 return;
                             }
-                            if (ltype === "word" && data.types[a - 2] === "word" && "var-let-const-from".indexOf(data.token[a - 2]) < 0 && (data.types[a - 3] === "end" || data.token[a - 3] === ";")) {
+                            if (ltype === "reference" && data.types[a - 2] === "word" && "var-let-const-from".indexOf(data.token[a - 2]) < 0 && (data.types[a - 3] === "end" || data.token[a - 3] === ";")) {
                                 wordlist[wordlist.length - 1] = true;
                                 level.push(-10);
                                 return;
@@ -690,27 +731,24 @@
                                 destructfix(true, true);
                             }
                             if (data.stack[a] === "object") {
-                                if (destruct[destruct.length - 1] === true && data.types[data.begin[a] - 1] !== "word" && data.token[data.begin[a] - 1] !== "(" && data.token[data.begin[a] - 1] !== "x(") {
-                                    let aa:number = a - 1,
-                                        bb:number = 0;
+                                if (destruct[destruct.length - 1] === true && data.types[data.begin[a] - 1] !== "word" && data.types[data.begin[a] - 1] !== "reference" && data.token[data.begin[a] - 1] !== "(" && data.token[data.begin[a] - 1] !== "x(") {
+                                    const bb:number = data.begin[a];
+                                    let aa:number = a - 1;
                                     do {
-                                        if (data.types[aa] === "end") {
-                                            bb = bb + 1;
-                                        } else if (data.types[aa] === "start") {
-                                            bb = bb - 1;
-                                        }
-                                        if (bb < 0 || (bb === 0 && data.token[aa] === ",")) {
-                                            break;
-                                        }
-                                        if (bb === 0 && data.token[aa] === ":") {
-                                            destructfix(true, false);
-                                            break;
+                                        if (data.begin[aa] === bb) {
+                                            if (data.token[aa] === ",") {
+                                                break;
+                                            }
+                                            if (data.token[aa] === ":") {
+                                                destructfix(true, false);
+                                                break;
+                                            }
                                         }
                                         aa = aa - 1;
-                                    } while (aa > -1);
+                                    } while (aa > bb);
                                 }
                             }
-                            if (data.types[a - 1] === "word" && data.token[a - 2] === "for") {
+                            if ((data.types[a - 1] === "word" || data.types[a - 1] === "reference") && data.token[a - 2] === "for") {
                                 //This is for Volt templates
                                 level.push(-10);
                                 return;
@@ -730,10 +768,6 @@
                                 return;
                             }
                             if (list[list.length - 1] === true) {
-                                if (assignlist[assignlist.length - 1] === true && varline[varline.length - 1] === false) {
-                                    assignlist[assignlist.length - 1] = false;
-                                    varlen[varlen.length - 1]         = [];
-                                }
                                 let c:number = 0,
                                     d:number = 0;
                                 do {
@@ -780,30 +814,6 @@
                                 level.push(-10);
                                 return;
                             }
-                            if (varline[varline.length - 1] === true && data.token[data.begin[a] - 1] !== "for") {
-                                if (ltoke !== "]") {
-                                    let c:number     = a - 1,
-                                        brace:boolean = false;
-                                    do {
-                                        if (data.token[c] === "]") {
-                                            brace = true;
-                                        }
-                                        if (data.types[c] === "start") {
-                                            if (data.token[c] === "[" && data.token[c + 1] !== "]" && brace === false) {
-                                                level[c] = indent;
-                                            }
-                                            break;
-                                        }
-                                        c = c - 1;
-                                    } while (c > -1);
-                                }
-                                if (ltype === "literal" && data.token[a - 2] === "+" && (ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'")) {
-                                    level.push(indent);
-                                    return;
-                                }
-                                level.push(indent);
-                                return;
-                            }
                             if (destruct[destruct.length - 1] === true && data.stack[a] !== "object") {
                                 level.push(-10);
                                 return;
@@ -822,36 +832,6 @@
                             }
                             wordlist[wordlist.length - 1] = false;
                             level[a - 1] = -20;
-                            if (varline[varline.length - 1] === true) {
-                                varline[varline.length - 1] = false;
-                                if (data.stack[a] !== "method" && varlen.length > 0 && varlen[varlen.length - 1].length > 1) {
-                                    varlist.push(varlen[varlen.length - 1]);
-                                }
-                                varlen[varlen.length - 1] = [];
-                                let c:number = a - 1,
-                                    d:number = 0;
-                                do {
-                                    if (data.types[c] === "start") {
-                                        d = d + 1;
-                                    }
-                                    if (data.types[c] === "end") {
-                                        d = d - 1;
-                                    }
-                                    if (d > 0) {
-                                        break;
-                                    }
-                                    if (d === 0) {
-                                        if (data.token[c] === "var" || data.token[c] === "let" || data.token[c] === "const") {
-                                            break;
-                                        }
-                                        if (data.token[c] === ",") {
-                                            indent = indent - 1;
-                                            break;
-                                        }
-                                    }
-                                    c = c - 1;
-                                } while (c > -1);
-                            }
                             if (data.begin[a] > 0 && data.token[data.begin[a] - 1] === "for" && data.stack[a] !== "for") {
                                 level.push(-10);
                                 return;
@@ -880,13 +860,12 @@
                         arrbreak.push(false);
                         wordlist.push(false);
                         itemcount.push(0);
-                        varlen.push([]);
                         if (options.neverflatten === true || options.lang === "qml" || deep === "attribute" || ltype === "generic" || (deep === "class" && ltoke !== "(" && ltoke !== "x(") || (ctoke === "[" && data.token[a + 1] === "function")) {
                             destruct.push(false);
                         } else {
                             if (deep === "expression" || deep === "method") {
                                 destruct.push(true);
-                            } else if ((deep === "object" || deep === "class") && (ltoke === "(" || ltoke === "x(" || ltype === "word")) {
+                            } else if ((deep === "object" || deep === "class") && (ltoke === "(" || ltoke === "x(" || ltype === "word" || ltype === "reference")) {
                                 //array or object literal following `return` or `(`
                                 destruct.push(true);
                             } else if (deep === "array" || ctoke === "(" || ctoke === "x(") {
@@ -901,15 +880,9 @@
                             }
                         }
                         if (ctoke !== "(" && ctoke !== "x(" && data.stack[a + 1] !== "attribute") {
-                            //if (ctoke !== "[" || (ctoke === "[" && data.token[a + 1] !== "(")) {
-                                indent = indent + 1;
-                            //}
+                            indent = indent + 1;
                         }
                         if (ctoke === "{" || ctoke === "x{") {
-                            varindex.push(-1);
-                            if (ctoke === "{") {
-                                varline.push(false);
-                            }
                             if (data.types[a - 1] !== "comment") {
                                 if (ltype === "markup") {
                                     level[a - 1] = indent;
@@ -943,7 +916,7 @@
                                 return;
                             }
                             if (destruct[destruct.length - 1] === true) {
-                                if (ltype !== "word") {
+                                if (ltype !== "word" && ltype !== "reference") {
                                     level.push(-20);
                                     return;
                                 }
@@ -964,10 +937,10 @@
                             }
                             if (ltoke === "async") {
                                 level[a - 1] = -10;
-                            } else if (deep === "method" || (data.token[a - 2] === "function" && ltype === "word")) {
+                            } else if (deep === "method" || (data.token[a - 2] === "function" && ltype === "reference")) {
                                 if (ltoke === "import" || ltoke === "in" || options.functionname === true) {
                                     level[a - 1] = -10;
-                                } else if ((ltoke === "}" && data.stack[a - 1] === "function") || ltype === "word") {
+                                } else if ((ltoke === "}" && data.stack[a - 1] === "function") || ltype === "word" || ltype === "reference") {
                                     level[a - 1] = -20;
                                 } else if (deeper !== "method" && deep !== "method") {
                                     level[a - 1] = indent;
@@ -981,7 +954,7 @@
                                 level.push(-20);
                                 return;
                             }
-                            if ((ltoke === "-" && (a < 2 || (data.token[a - 2] !== ")" && data.token[a - 2] !== "x)" && data.token[a - 2] !== "]" && data.types[a - 2] !== "word" && data.types[a - 2] !== "literal"))) || (options.space === false && ltoke === "function")) {
+                            if ((ltoke === "-" && (a < 2 || (data.token[a - 2] !== ")" && data.token[a - 2] !== "x)" && data.token[a - 2] !== "]" && data.types[a - 2] !== "reference" && data.types[a - 2] !== "literal"))) || (options.space === false && ltoke === "function")) {
                                 level[a - 1] = -20;
                             }
                             level.push(-20);
@@ -993,7 +966,7 @@
                             }
                             if (ltoke === "return" || ltoke === "var" || ltoke === "let" || ltoke === "const") {
                                 level[a - 1] = -10;
-                            } else if (data.types[a - 1] !== "comment" && data.stack[a - 1] !== "attribute" && (ltype === "end" || ltype === "word")) {
+                            } else if (data.types[a - 1] !== "comment" && data.stack[a - 1] !== "attribute" && (ltype === "end" || ltype === "word" || ltype === "reference")) {
                                 level[a - 1] = -20;
                             } else if (ltoke === "[" || ltoke === "{" || ltoke === "x{") {
                                 level[a - 1] = indent - 1;
@@ -1075,7 +1048,17 @@
                             }
                         }
                         if (ctoke === "}" || ctoke === "x}") {
-                            if (data.types[a - 1] !== "comment" && ltoke !== "{" && ltoke !== "x{" && ltype !== "end" && ltype !== "literal" && ltype !== "separator" && ltoke !== "++" && ltoke !== "--" && varline[varline.length - 1] === false && (a < 2 || data.token[a - 2] !== ";" || data.token[a - 2] !== "x;" || ltoke === "break" || ltoke === "return")) {
+                            if (
+                                data.types[a - 1] !== "comment" &&
+                                ltoke !== "{" &&
+                                ltoke !== "x{" &&
+                                ltype !== "end" &&
+                                ltype !== "literal" &&
+                                ltype !== "separator" &&
+                                ltoke !== "++" &&
+                                ltoke !== "--" &&
+                                (a < 2 || data.token[a - 2] !== ";" || data.token[a - 2] !== "x;" || ltoke === "break" || ltoke === "return")
+                            ) {
                                 let c:number       = a - 1,
                                     d:number       = 1,
                                     assign:boolean  = false,
@@ -1096,14 +1079,14 @@
                                             level[a - 1] = indent;
                                             break;
                                         }
-                                        if ((data.token[c] === ":" && ternary.length === 0) || (data.token[c] === "," && assign === false && varline[varline.length - 1] === false)) {
+                                        if (
+                                            (data.token[c] === ":" && ternary.length === 0) ||
+                                            (data.token[c] === "," && assign === false)
+                                        ) {
                                             break;
                                         }
                                         if ((c === 0 || data.token[c - 1] === "{" || data.token[c - 1] === "x{") || data.token[c] === "for" || data.token[c] === "if" || data.token[c] === "do" || data.token[c] === "function" || data.token[c] === "while" || data.token[c] === "var" || data.token[c] === "let" || data.token[c] === "const" || data.token[c] === "with") {
                                             if (list[listlen - 1] === false && listlen > 1 && (a === b - 1 || (data.token[a + 1] !== ")" && data.token[a + 1] !== "x)")) && data.stack[a] !== "object") {
-                                                indent = indent - 1;
-                                            }
-                                            if (varline[varline.length - 1] === true) {
                                                 indent = indent - 1;
                                             }
                                             break;
@@ -1111,57 +1094,6 @@
                                     }
                                     c = c - 1;
                                 } while (c > -1);
-                            }
-                            //this is the bulk of logic identifying scope start and end
-                            if (options.jsscope !== "none") {
-                                let c:number     = a - 1,
-                                    d:number     = 1,
-                                    build:Array<[string, number]> = [];
-                                do {
-                                    if (data.types[c] === "end") {
-                                        c = data.begin[c];
-                                    } else if (typeof meta[c] === "number" && data.types[c] === "word") {
-                                        if (data.token[meta[c]] === "{" && data.stack[c] !== "function") {
-                                            hoisted.push([data.token[c], meta[c]]);
-                                        } else {
-                                            build.push([data.token[c], meta[c]]);
-                                        }
-                                    }
-                                    c = c - 1;
-                                } while (c > data.begin[a]);
-                                meta[c] = a;
-                                // function arguments and name
-                                if (data.stack[a] === "function") {
-                                    c = c - 1;
-                                    d = data.begin[c];
-                                    do {
-                                        // function arguments
-                                        if (data.types[c] === "word" && (data.token[c - 1] === "," || data.token[c - 1] === "(") && data.begin[c] === d) {
-                                            build.push([data.token[c], data.begin[a]]);
-                                        }
-                                        c = c - 1;
-                                    } while (c > d);
-                                    c = hoisted.length - 1;
-                                    if (c > -1) {
-                                        do {
-                                            if (hoisted[c][1] === data.begin[a]) {
-                                                build.push(hoisted[c]);
-                                                hoisted.splice(c, 1);
-                                            }
-                                            c = c - 1;
-                                        } while (c > 0);
-                                    }
-                                    // function name
-                                    if (data.token[c - 1] !== "function" && data.types[c - 1] === "word") {
-                                        build.push([data.token[c - 1], data.begin[a]]);
-                                    }
-                                }
-                                if (build.length < 1 && data.stack[a] !== "function") {
-                                    meta[data.begin[a]] = "";
-                                    meta[meta.length - 1] = "";
-                                } else {
-                                    meta[meta.length - 1] = build;
-                                }
                             }
                             varindex.pop();
                         }
@@ -1323,9 +1255,6 @@
                                                         break;
                                                     }
                                                 } while (len > open);
-                                                if (data.token[len] !== ";" && varlen.length > 0) {
-                                                    varlen[varlen.length - 1].push(aa - 1);
-                                                }
                                             } else if (data.token[aa] === ",") {
                                                 level[aa] = ind;
                                             } else if (level[aa] > -9 && array === false && (data.token[open - 1] !== "for" || data.token[aa + 1] === "?" || data.token[aa + 1] === ":") && (data.token[data.begin[a]] !== "(" || data.token[aa] !== "+")) {
@@ -1426,18 +1355,7 @@
                         extraindent.pop();
                         arrbreak.pop();
                         itemcount.pop();
-                        if (ctoke === "}" || (ctoke === ")" && level[a - 1] > -9)) {
-                            if (varline[varline.length - 1] === true || ltoke !== "{" || data.token[data.begin[a] - 2] === "interface") {
-                                if (varlen.length > 0 && varlen[varlen.length - 1].length > 1 && destruct[destruct.length - 1] === false) {
-                                    varlist.push(varlen[varlen.length - 1]);
-                                }
-                            }
-                            if (ctoke === "}") {
-                                varline.pop();
-                            }
-                        }
                         wordlist.pop();
-                        varlen.pop();
                         destruct.pop();
                         assignlist.pop();
                     },
@@ -1504,10 +1422,10 @@
                             return;
                         }
                         if (ctoke === "?") {
-                            if (data.lines[a] === 0 && data.types[a - 2] === "word" && data.token[a - 2] !== "return" && data.token[a - 2] !== "in" && data.token[a - 2] !== "instanceof" && data.token[a - 2] !== "typeof" && ltype === "word") {
-                                if (data.types[a + 1] === "word" || ((data.token[a + 1] === "(" || data.token[a + 1] === "x(") && data.token[a - 2] === "new")) {
+                            if (data.lines[a] === 0 && data.types[a - 2] === "word" && data.token[a - 2] !== "return" && data.token[a - 2] !== "in" && data.token[a - 2] !== "instanceof" && data.token[a - 2] !== "typeof" && ltype === "reference") {
+                                if (data.types[a + 1] === "word" || data.types[a + 1] === "reference" || ((data.token[a + 1] === "(" || data.token[a + 1] === "x(") && data.token[a - 2] === "new")) {
                                     level[a - 1] = -20;
-                                    if (data.types[a + 1] === "word") {
+                                    if (data.types[a + 1] === "word" || data.types[a + 1] === "reference") {
                                         level.push(-10);
                                         return;
                                     }
@@ -1561,17 +1479,8 @@
                                 level.push(-10);
                                 return;
                             }
-                            if ((data.token[a - 2] === "var" || data.token[a - 2] === "let" || data.token[a - 2] === "const" || data.token[a - 2] === "," || (data.stack[a] === "global" && options.lang === "jsx" && ternary.length < 1)) && ltype === "word" && data.token[data.begin[a]] !== "(" && data.token[data.begin[a]] !== "x(") {
+                            if (ltype === "reference" && data.token[data.begin[a]] !== "(" && data.token[data.begin[a]] !== "x(") {
                                 level[a - 1] = -20;
-                                if (data.stack[a] === "object" || (varline[varline.length - 1] === true && data.token[data.begin[a]] !== "(" && data.token[data.begin[a]] !== "x(")) {
-                                    if (varlen.length > 0 && varlen[varlen.length - 1].length > 0 && data.token[varlen[varlen.length - 1][varlen[varlen.length - 1].length - 1] + 1] !== ctoke) {
-                                        if (varlen[varlen.length - 1].length > 1) {
-                                            varlist.push(varlen[varlen.length - 1]);
-                                        }
-                                        varlen[varlen.length - 1] = [];
-                                    }
-                                    varlen[varlen.length - 1].push(a - 1);
-                                }
                                 level.push(-10);
                                 return;
                             }
@@ -1585,9 +1494,15 @@
                                 level.push(-10);
                                 return;
                             }
-                            if (data.token[data.begin[a]] !== "(" && data.token[data.begin[a]] !== "x(" && (ltype === "word" || ltoke === ")" || ltoke === "]" || ltoke === "?") && (data.stack[a] === "map" || data.stack[a] === "class" || data.types[a + 1] === "word") && (ternary.length === 0 || ternary[ternary.length - 1] < data.begin[a]) && ("mapclassexpressionmethodglobalparen".indexOf(data.stack[a]) > -1 || (data.types[a - 2] === "word" && data.stack[a] !== "switch"))) {
+                            if (
+                                data.token[data.begin[a]] !== "(" &&
+                                data.token[data.begin[a]] !== "x(" &&
+                                (ltype === "reference" || ltoke === ")" || ltoke === "]" || ltoke === "?") &&
+                                (data.stack[a] === "map" || data.stack[a] === "class" || data.types[a + 1] === "reference") &&
+                                (ternary.length === 0 || ternary[ternary.length - 1] < data.begin[a]) &&
+                                ("mapclassexpressionmethodglobalparen".indexOf(data.stack[a]) > -1 || (data.types[a - 2] === "word" && data.stack[a] !== "switch"))
+                            ) {
                                 level[a - 1] = -20;
-                                varlen[varlen.length - 1].push(a - 1);
                                 level.push(-10);
                                 return;
                             }
@@ -1615,7 +1530,6 @@
                                 } while (c > d);
                             } else if (data.stack[a] === "object") {
                                 level[a - 1] = -20;
-                                varlen[varlen.length - 1].push(a - 1);
                             } else if (ternary.length > 0) {
                                 level[a - 1] = indent;
                             } else {
@@ -1625,10 +1539,10 @@
                             return;
                         }
                         if (ctoke === "++" || ctoke === "--") {
-                            if (ltype === "literal" || ltype === "word") {
+                            if (ltype === "literal" || ltype === "reference") {
                                 level[a - 1] = -20;
                                 level.push(-10);
-                            } else if (a < b - 1 && (data.types[a + 1] === "literal" || data.types[a + 1] === "word")) {
+                            } else if (a < b - 1 && (data.types[a + 1] === "literal" || data.types[a + 1] === "reference")) {
                                 level.push(-20);
                             } else {
                                 level.push(-10);
@@ -1656,7 +1570,7 @@
                                 return;
                             }
                             if (data.types[a - 1] === "operator" || data.types[a - 1] === "start") {
-                                if (data.types[a + 1] === "word" || aa === "(" || aa === "[") {
+                                if (data.types[a + 1] === "reference" || aa === "(" || aa === "[") {
                                     level.push(-20);
                                     return;
                                 }
@@ -1752,12 +1666,7 @@
                                 }
                                 if (line - aa.length < options.wrap - 1 && (aa.charAt(0) === "\"" || aa.charAt(0) === "'")) {
                                     a = a + 1;
-                                    if (varline[varline.length - 1] === true && data.token[c] === "=") {
-                                        line = line + (options.inchar.length * options.insize) - 1;
-                                    } else {
-                                        line = line + 3;
-                                    }
-                                    //strwrap(options.wrap - (line - aa.length));
+                                    line = line + 3;
                                     if (line - aa.length > options.wrap - 4) {
                                         level.push(ind);
                                         return;
@@ -1774,33 +1683,13 @@
                         if (data.types[a - 1] !== "comment") {
                             if (ltoke === "(") {
                                 level[a - 1] = -20;
-                            } else if (ctoke === "*" && data.stack[a] === "object" && data.types[a + 1] === "word" && (ltoke === "{" || ltoke === ",")) {
+                            } else if (ctoke === "*" && data.stack[a] === "object" && data.types[a + 1] === "reference" && (ltoke === "{" || ltoke === ",")) {
                                 level[a - 1] = indent;
                             } else if (ctoke !== "?" || ternary.length === 0) {
                                 level[a - 1] = -10;
                             }
                         }
                         if (ctoke.indexOf("=") > -1 && ctoke !== "==" && ctoke !== "===" && ctoke !== "!=" && ctoke !== "!==" && ctoke !== ">=" && ctoke !== "<=" && ctoke !== "=>" && data.stack[a] !== "method" && data.stack[a] !== "object") {
-                            if (assignlist[assignlist.length - 1] === true && data.token[data.begin[a] - 1] !== "for") {
-                                let c:number = a - 1,
-                                    d:string = "",
-                                    e:number = data.begin[a];
-                                if (data.stack[a] === "class") {
-                                    varlen[varlen.length - 1].push(a - 1);
-                                } else {
-                                    do {
-                                        d = data.token[c];
-                                        if (d === ";" || d === "x;" || d === "," || d === "?" || d === ":" || c === e + 1) {
-                                            varlen[varlen.length - 1].push(a - 1);
-                                            break;
-                                        }
-                                        if (d.indexOf("=") > -1 && d !== "==" && d !== "===" && d !== "!=" && d !== "!==" && d !== ">=" && d !== "<=") {
-                                            break;
-                                        }
-                                        c = c - 1;
-                                    } while (c > e);
-                                }
-                            }
                             let c:number = a + 1,
                                 d:number = 0,
                                 e:boolean = false,
@@ -1813,10 +1702,6 @@
                                     if (e === true && data.token[c] !== "[") {
                                         if (assignlist[assignlist.length - 1] === true) {
                                             assignlist[assignlist.length - 1] = false;
-                                            if (varlen[varlen.length - 1].length > 1) {
-                                                varlist.push(varlen[varlen.length - 1]);
-                                            }
-                                            varlen[varlen.length - 1] = [];
                                         }
                                         break;
                                     }
@@ -1828,10 +1713,6 @@
                                 if (d < 0) {
                                     if (assignlist[assignlist.length - 1] === true) {
                                         assignlist[assignlist.length - 1] = false;
-                                        if (varlen[varlen.length - 1].length > 1) {
-                                            varlist.push(varlen[varlen.length - 1]);
-                                        }
-                                        varlen[varlen.length - 1] = [];
                                     }
                                     break;
                                 }
@@ -1840,26 +1721,17 @@
                                     if (e === true) {
                                         if (data.types[c] === "operator" || data.token[c] === ";" || data.token[c] === "x;" || data.token[c] === "?" || data.token[c] === "var" || data.token[c] === "let" || data.token[c] === "const") {
                                             if (f !== undefined && (f === "?" || (f.indexOf("=") > -1 && f !== "==" && f !== "===" && f !== "!=" && f !== "!==" && f !== ">=" && f !== "<="))) {
-                                                if (assignlist[assignlist.length - 1] === false && (varlen[varlen.length - 1].length === 0 || data.token[varlen[varlen.length - 1][varlen[varlen.length - 1].length - 1] + 1] === ctoke)) {
-                                                    varlen[varlen.length - 1].push(a - 1);
+                                                if (assignlist[assignlist.length - 1] === false) {
                                                     assignlist[assignlist.length - 1] = true;
                                                 }
                                             }
                                             if ((f === ";" || f === "x;" || f === "var" || f === "let" || f === "const") && assignlist[assignlist.length - 1] === true) {
                                                 assignlist[assignlist.length - 1] = false;
-                                                if (varlen[varlen.length - 1].length > 1) {
-                                                    varlist.push(varlen[varlen.length - 1]);
-                                                }
-                                                varlen[varlen.length - 1] = [];
                                             }
                                             break;
                                         }
                                         if (assignlist[assignlist.length - 1] === true && (f === "return" || f === "break" || f === "continue" || f === "throw")) {
                                             assignlist[assignlist.length - 1] = false;
-                                            if (varlen[varlen.length - 1].length > 1) {
-                                                varlist.push(varlen[varlen.length - 1]);
-                                            }
-                                            varlen[varlen.length - 1] = [];
                                         }
                                     }
                                     if (f === ";" || f === "x;" || f === ",") {
@@ -1873,41 +1745,58 @@
                             level.push(-20);
                             return;
                         }
-                        if (ltype === "operator" && data.types[a + 1] === "word" && ltoke !== "--" && ltoke !== "++" && ctoke !== "&&" && ctoke !== "||") {
+                        if (ltype === "operator" && data.types[a + 1] === "reference" && ltoke !== "--" && ltoke !== "++" && ctoke !== "&&" && ctoke !== "||") {
                             level.push(-20);
                             return;
                         }
                         level.push(-10);
                     },
-                    word          = function beautify_script_word():void {
-                        const next    = data.token[a + 1],
-                            compare = (
-                                next !== undefined && next !== "==" && next !== "===" && next !== "!=" && next !== "!==" && next !== ">=" && next !== "<=" && next.indexOf("=") > -1
-                            );
-                        if (varline[varline.length - 1] === true && (ltoke === "," || ltoke === "var" || ltoke === "let" || ltoke === "const")) {
-                            if (data.token[data.begin[a] - 1] !== "for" && data.stack[a] !== "method" && data.token[data.begin[a]] !== "(" && data.token[data.begin[a]] !== "x(") {
-                                if (data.types[a + 1] === "operator" && compare === true && data.token[varlen[varlen.length - 1][varlen[varlen.length - 1].length - 1] + 1] !== ":") {
-                                    varlen[varlen.length - 1].push(a);
-                                }
-                            }
-                            if (options.jsscope !== "none") {
-                                if (data.token[varindex[varindex.length - 1]] === "var") {
-                                    if (data.stack[a] === "global") {
-                                        meta[a] = 0;
-                                    } else if (data.stack[a] === "function") {
-                                        meta[a] = data.begin[a];
-                                    } else {
-                                        let begin:number = data.begin[a];
-                                        do {
-                                            begin = data.begin[begin - 1];
-                                        } while (data.stack[begin + 1] !== "function" && begin > 0);
-                                        meta[a] = begin;
-                                    }
+                    reference = function beautify_script_reference():void {
+                        const hoist = function beautify_script_reference_hoist():void {
+                                let func:number = data.begin[a];
+                                if (func < 0) {
+                                    scopes.push([data.token[a], -1]);
                                 } else {
-                                    meta[a] = varindex[varindex.length - 1];
+                                    if (data.stack[func + 1] !== "function") {
+                                        do {
+                                            func = data.begin[func];
+                                        } while (func > -1 && data.stack[func + 1] !== "function");
+                                    }
+                                    scopes.push([data.token[a], func]);
                                 }
+                            };
+                        if (ltype !== "separator" && ltype !== "start") {
+                            if (ltype === "word" || ltype === "operator") {
+                                level[a - 1] = -10;
+                            } else {
+                                level[a - 1] = -20;
                             }
                         }
+                        if (ltoke === "var") {
+                            // hoisted references following declaration keyword
+                            hoist();
+                        } else if (ltoke === "function" && (data.token[a - 2] === "=" || data.types[a - 2] !== "operator") && data.types[a - 2] !== "start" && data.types[a - 2] !== "end") {
+                            scopes.push([data.token[a], a]);
+                        } else if (data.stack[a] === "arguments") {
+                            scopes.push([data.token[a], a]);
+                        } else if (ltoke === "let" || ltoke === "const") {
+                            // not hoisted references following declaration keyword
+                            scopes.push([data.token[a], a]);
+                        } else if (ltoke === ",") {
+                            // references following a comma, must be tested to see if a declaration list
+                            let index:number = a;
+                            do {
+                                index = index - 1;
+                            } while (index > data.begin[a] && data.token[index] !== "var" && data.token[index] !== "let" && data.token[index] !== "const");
+                            if (data.token[index] === "var") {
+                                hoist();
+                            } else if (data.token[index] === "let" || data.token[index] === "const") {
+                                scopes.push([data.token[a], a])
+                            }
+                        }
+                        level.push(-10);
+                    },
+                    word          = function beautify_script_word():void {
                         if ((ltoke === ")" || ltoke === "x)") && data.stack[a] === "class" && (data.token[data.begin[a - 1] - 1] === "static" || data.token[data.begin[a - 1] - 1] === "final" || data.token[data.begin[a - 1] - 1] === "void")) {
                             level[a - 1]            = -10;
                             level[data.begin[a - 1] - 1] = -10;
@@ -2043,23 +1932,11 @@
                         } else if (ctoke === "in" || (((ctoke === "else" && options.elseline === false) || ctoke === "catch") && (ltoke === "}" || ltoke === "x}"))) {
                             level[a - 1] = -10;
                         } else if (ctoke === "var" || ctoke === "let" || ctoke === "const") {
-                            if (assignlist[assignlist.length - 1] === true && varlen.length > 0 && varlen[varlen.length - 1].length > 1) {
-                                assignlist[assignlist.length - 1] = false;
-                                varlist.push(varlen[varlen.length - 1]);
-                                varlen[varlen.length - 1] = [];
-                            } else if (data.stack[a] !== "method") {
-                                varlen[varlen.length - 1] = [];
-                            }
                             varindex[varindex.length - 1] = a;
                             if (ltype === "end") {
                                 level[a - 1] = indent;
                             }
                             if (data.token[data.begin[a] - 1] !== "for") {
-                                if (varline.length === 0) {
-                                    varline.push(true);
-                                } else {
-                                    varline[varline.length - 1] = true;
-                                }
                                 let c:number = a + 1,
                                     d:number = 0;
                                 do {
@@ -2111,9 +1988,6 @@
                 }
                 do {
                     if (data.lexer[a] === lexer) {
-                        if (options.jsscope !== "none") {
-                            meta.push("");
-                        }
                         ctype = data.types[a];
                         ctoke = data.token[a];
                         if (ctype === "comment") {
@@ -2132,6 +2006,8 @@
                             operator();
                         } else if (ctype === "word") {
                             word();
+                        } else if (ctype === "reference") {
+                            reference();
                         } else if (ctype === "markup") {
                             markup();
                         } else if (ctype.indexOf("template") === 0) {
@@ -2168,24 +2044,6 @@
                     }
                     a = a + 1;
                 } while (a < b);
-                if (options.jsscope !== "none") {
-                    let c:number     = a - 1,
-                        build:Array<[string, number]> = [];
-                    do {
-                        if (data.types[c] === "end") {
-                            c = data.begin[c];
-                        } else if (typeof meta[c] === "number" && data.types[c] === "word") {
-                            build.push([data.token[c], meta[c]]);
-                        }
-                        c = c - 1;
-                    } while (c > 0);
-                    if (build.length > 0) {
-                        meta.push(build);
-                    }
-                }
-                if (assignlist[assignlist.length - 1] === true && varlen[varlen.length - 1].length > 1 && ltoke === ";") {
-                    varlist.push(varlen[varlen.length - 1]);
-                }
                 return level;
             }()),
             output:string = (function beautify_script_output():string {
@@ -2230,7 +2088,7 @@
                     external:string = "",
                     lastLevel:number = 0;
                 if (options.jsscope !== "none") {
-                    let linecount:number          = 2,
+                    let linecount:number          = 1,
                         last:string               = "",
                         scope:number              = 0,
                         buildlen:number           = 0,
@@ -2253,105 +2111,99 @@
                             return bb + 1;
                         }()),
                         indent:number             = options.inlevel,
+                        foldindex:[number, number][] = [],
                         comfold:number            = -1;
                     const code:string[] = [],
                         folderItem:[number, number, boolean][]         = [],
-                        folder             = function beautify_script_output_scope_folder():void {
-                            let codelen:number = (code.length - (commentfix * 3) > 0)
-                                    ? code.length - (commentfix * 3)
-                                    : 1,
-                                index:number   = a,
-                                start:number   = Number(code[codelen + 1]) || 1,
-                                assign:boolean  = true,
-                                kk:number      = index;
-                            if (data.types[a] === "comment" && comfold === -1) {
-                                comfold = a;
-                            } else if (data.types[a] !== "comment") {
-                                index = meta[a];
-                                do {
-                                    kk = kk - 1;
-                                } while (data.token[kk] !== "function" && kk > -1);
-                                kk = kk - 1;
-                                if (data.token[kk] === "(" || data.token[kk] === "x(") {
-                                    do {
-                                        kk = kk - 1;
-                                    } while (kk > -1 && (data.token[kk] === "(" || data.token[kk] === "x("));
-                                }
-                                if (
-                                    data.token[kk] === "=" ||
-                                    data.token[kk] === ":" ||
-                                    data.token[kk] === "," ||
-                                    data.token[kk + 1] === "(" ||
-                                    data.token[kk + 1] === "x("
-                                ) {
-                                    assign = false;
-                                }
+                        foldstart = function beautify_script_output_scope_foldstart():void {
+                            let index:number = code.length;
+                            do {
+                                index = index - 1;
+                            } while (index > 0 && code[index] !== "<li>");
+                            if (code[index] === "<li>") {
+                                code[index] = `<li class="fold" title="folds from line ${linecount} to line xxx">`;
+                                code[index + 1] = `-${code[index + 1]}`;
+                                foldindex.push([index, a]);
                             }
-                            if (data.types[a] === "comment" && data.lines[a] > 1) {
-                                codelen = codelen - 3;
-                                start   = start - 1;
-                            }
-                            code[codelen]     = `<li class="fold" title="folds from line ${start} to line xxx">`;
-                            code[codelen + 1] = `- ${start}`;
-                            folderItem.push([codelen, index, assign]);
                         },
-                        // determines where folding ends function assignments require one more line for
-                        // closing than everything else
-                        foldclose          = function beautify_script_output_scope_foldclose():void {
-                            const semi:boolean = (/(>;<\/em>)$/).test(data.token[a]);
-                            let gg:number   = build.length - 1,
-                                lets:boolean = false,
-                                end:number  = (function beautify_script_output_scope_foldclose_end():number {
-                                    if (comfold > -1 || folderItem[folderItem.length - 1][2] === true) {
-                                        return linecount - commentfix - 1;
-                                    }
-                                    return linecount - commentfix;
-                                }());
-                            if (semi === true) {
-                                end = end - 1;
+                        foldend = function beautify_script_output_scope_foldend():void {
+                            if (foldindex.length < 1) {
+                                return;
+                            }
+                            let index:number = code.length;
+                            const lastfold:[number, number] = foldindex[foldindex.length - 1];
+                            if (data.types[a] === "end" && lastfold[1] === data.begin[a]) {
+                                code[lastfold[0]] = code[lastfold[0]].replace("xxx", String(linecount));
+                                foldindex.pop();
+                            } else if (data.types[a - 1] === "comment") {
+                                code[lastfold[0]] = code[lastfold[0]].replace("xxx", String(linecount - 1));
+                                foldindex.pop();
+                            }
+                        },
+                        reference = function beautify_script_output_scope_reference():void {
+                            let cscope:number = scope,
+                                i:number = 0,
+                                s:number = scopes.length - 1;
+                            if (data.stack[a] === "arguments") {
+                                if (scopes[s - 1][1] > a) {
+                                    do {
+                                        s = s - 1;
+                                    } while (s > 0 && scopes[s][1] > a);
+                                }
                                 do {
-                                    if (build[gg] === "let" || build[gg] === "const") {
-                                        lets = true;
+                                    if (scopes[s][1] === a) {
+                                        scopes[s].push(scope + 1);
+                                        break;
                                     }
-                                    if (build[gg].indexOf("><li") > 0) {
-                                        build[gg] = build[gg].replace(/class="l\d+"/, `class="l${scope + 1}"`);
-                                        if (lets === true) {
-                                            break;
+                                    s = s - 1;
+                                } while (s > -1);
+                                build.push(`<em class="s${scope + 1}">${data.token[a]}</em>`);
+                                return;
+                            }
+                            if (data.stack[a + 2] === "arguments") {
+                                if (s > 0 && scopes[s - 1][1] > a) {
+                                    do {
+                                        s = s - 1;
+                                    } while (s > 0 && scopes[s][1] > a);
+                                }
+                                do {
+                                    if (scopes[s][1] === a) {
+                                        scopes[s].push(scope);
+                                        break;
+                                    }
+                                    s = s - 1;
+                                } while (s > -1);
+                                build.push(`<em class="s${scope}">${data.token[a]}</em>`);
+                                return;
+                            }
+                            if (s > 0 && scopes[s - 1][1] > a) {
+                                do {
+                                    s = s - 1;
+                                } while (s > 0 && scopes[s][1] > a);
+                            }
+                            if (scopes[s][0] === data.token[a]) {
+                                if (scopes[s].length === 2) {
+                                    build.push(`<em class="s${scope}">${data.token[a]}</em>`);
+                                    scopes[s].push(scope);
+                                } else {
+                                    build.push(`<em class="s${scopes[s][2]}">${data.token[a]}</em>`);
+                                }
+                            } else {
+                                do {
+                                    s = s - 1;
+                                    if (scopes[s][0] === data.token[a]) {
+                                        i = scopes[s][1];
+                                        if (i === -1) {
+                                            build.push(`<em class="s0">${data.token[a]}</em>`);
+                                        } else if (i === data.begin[a]) {
+                                            build.push(`<em class="s${scope}">${data.token[a]}</em>`);
+                                        } else {
+                                            build.push(`<em class="s${scopes[s][2]}">${data.token[a]}</em>`);
                                         }
+                                        break;
                                     }
-                                    if (build[gg].indexOf(`<span class="l${scope}">${tab}`) > -1) {
-                                        build[gg] = build[gg].replace(
-                                            `<span class="l${scope}">${tab}`,
-                                            `<span class="l${scope + 1}">${tab}`
-                                        );
-                                    }
-                                    gg = gg - 1;
-                                } while (gg > 0);
+                                } while (s > 0);
                             }
-                            if (
-                                a > 1 &&
-                                data.token[a].indexOf("}</em>") === data.token[a].length - 6 &&
-                                data.token[a - 1].indexOf("{</em>") === data.token[a - 1].length - 6
-                            ) {
-                                gg = code.length - 1;
-                                do {
-                                    if (code[gg].charAt(0) === "-") {
-                                        code[gg - 1] = "<li>";
-                                        code[gg]     = code[gg].slice(0, 1);
-                                        folderItem.pop();
-                                        return;
-                                    }
-                                    gg = gg - 1;
-                                } while (gg > 0);
-                            }
-                            if (folderItem[folderItem.length - 1][1] === len - 1 && data.token[a].indexOf("<em ") === 0) {
-                                end = end + 1;
-                            }
-                            code[folderItem[folderItem.length - 1][0]] = code[folderItem[folderItem.length - 1][0]].replace(
-                                "xxx",
-                                String(end)
-                            );
-                            folderItem.pop();
                         },
                         // splits block comments, which are single tokens, into multiple lines of output
                         blockline          = function beautify_script_output_scope_blockline(x:string):string {
@@ -2364,71 +2216,20 @@
                                 code.push("</li>");
                                 linecount = linecount + 1;
                             }
-                            do {
-                                code.push("<li>");
-                                code.push(String(linecount));
-                                code.push("</li>");
-                                linecount        = linecount + 1;
-                                commentLines[hh] = commentLines[hh] + "<em class=\"line\">&#xA;</em></li><li class=\"c0\">";
-                                hh = hh + 1;
-                            } while (hh < ii);
+                            if (data.types[a + 1] === "comment") {
+                                do {
+                                    code.push("<li>");
+                                    code.push(String(linecount));
+                                    code.push("</li>");
+                                    linecount        = linecount + 1;
+                                    commentLines[hh] = commentLines[hh] + "<em class=\"line\">&#xA;</em></li><li class=\"c0\">";
+                                    hh = hh + 1;
+                                } while (hh < ii);
+                            }
                             return commentLines.join("");
                         },
-                        findvars           = function beautify_script_output_scope_findvars(x:number):void {
-                            let ee:number            = 0,
-                                index:number = 0;
-                            const metax:number         = (x === len)
-                                    ? len
-                                    : meta[x],
-                                metameta:Array<[string, number]>      = meta[metax],
-                                words:string[] = (function beautify_script_output_scope_findvars_words():string[] {
-                                    const wordout:string[] = [],
-                                        metalen:number = metameta.length;
-                                    let metac:number = 0;
-                                    do {
-                                        wordout.push(metameta[metac][0]);
-                                        metac = metac + 1;
-                                    } while (metac < metalen);
-                                    return wordout;
-                                }());
-                            if (metameta.length < 1) {
-                                return;
-                            }
-                            ee = metax - 1;
-                            do {
-                                index = words.indexOf(data.token[ee])
-                                if (index > -1) {
-                                    if (ee < metameta[index][1]) {
-                                        metameta.splice(index, 1);
-                                    } else {
-                                        data.token[ee] = `<em class="s${scope}">${data.token[ee]}</em>`;
-                                    }
-                                }
-                                ee = ee - 1;
-                            } while (ee > a);
-                            if (x === len) {
-                                return;
-                            }
-                            data.token[a] = `<em class="s${scope}">{</em>`;
-                            data.token[metax] = `<em class="s${scope}">}</em>`;
-                            if (data.stack[a + 1] === "function") {
-                                ee = ee - 2;
-                                index = data.begin[ee];
-                                do {
-                                    if (data.types[ee] === "end") {
-                                        ee = data.begin[ee];
-                                    } else if (data.types[ee] === "word" && (data.token[ee - 1] === "," || data.token[ee - 1] === "(")) {
-                                        data.token[ee] = `<em class="s${scope}">${data.token[ee]}</em>`;
-                                    }
-                                    ee = ee - 1;
-                                } while (ee > index);
-                                if (data.types[ee - 1] === "word" && data.token[ee - 1] !== "function") {
-                                    data.token[ee - 1] = `<em class="s${scope}">${data.token[ee - 1]}</em>`;
-                                }
-                            }
-                        },
                         //a function for calculating indentation after each new line
-                        nlscope            = function beautify_script_output_scope_nlscope(x:number, linetest:boolean):void {
+                        nlscope            = function beautify_script_output_scope_nlscope(x:number):void {
                             let dd = 0;
                             const lscope             = function beautify_script_output_scope_nlscope_lscope(depth:number):string {
                                 const indentation:string[] = [];
@@ -2440,30 +2241,36 @@
                                 return indentation.join("");
                             };
                             if (data.token[a] !== "x}" || (data.token[a] === "x}" && data.token[a + 1] !== "}")) {
+                                linecount = linecount + 1;
                                 code.push("<li>");
                                 code.push(String(linecount));
                                 code.push("</li>");
-                                linecount = linecount + 1;
-                                if (a < len - 1 && data.token[a + 1].indexOf("/*") === 0) {
+                                if (a < len - 1 && data.types[a + 1] === "comment") {
                                     build.push("<em class=\"line\">&#xA;</em></li><li class=\"c0\">");
+                                    do {
+                                        build.push(tab);
+                                        dd = dd + 1;
+                                    } while (dd < levels[a]);
                                 } else {
-                                    build.push(`<em class="line">&#xA;</em></li><li class="l${scope}">`);
+                                    if (data.types[a + 1] === "end") {
+                                        build.push(`<em class="line">&#xA;</em></li><li class="l${x}">`);
+                                    } else {
+                                        build.push(`<em class="line">&#xA;</em></li><li class="l${scope}">`);
+                                    }
                                     if (x > 0 && scope > 0) {
                                         dd = scope;
-                                        if (scope === x + 1 && x > 0 && linetest === false) {
+                                        if (scope === x + 1 && x > 0) {
                                             dd = dd - 1;
                                         }
                                         build.push(lscope(dd));
                                         if (data.types[a + 1] === "end") {
                                             dd = dd - 1;
                                         }
-                                    } else if (linetest === true) {
-                                        build.push(lscope(0));
                                     }
                                 }
                             } else if (x > 0 && scope > 0) {
                                 dd = scope;
-                                if (scope === x + 1 && x > 0 && linetest === false) {
+                                if (scope === x + 1 && x > 0) {
                                     dd = dd - 1;
                                 }
                                 build.push(lscope(dd));
@@ -2491,7 +2298,7 @@
                                     dd = dd + 1;
                                 } while (dd < len);
                             }
-                            nlscope(x - cc, false);
+                            nlscope(x - cc);
                             a = a + 1;
                         },
                         multiline          = function beautify_script_output_scope_multiline(x:string):void {
@@ -2500,27 +2307,18 @@
                             let c:number         = 1;
                             build.push(temparray[0]);
                             do {
-                                nlscope(indent, false);
+                                nlscope(indent);
                                 build.push(temparray[c]);
                                 c = c + 1;
                             } while (c < d);
-                        },
-                        endcomma_multiline = function beautify_script_output_scope_endcommaMultiline():void {
-                            let c:number = a;
-                            if (data.types[c] === "comment") {
-                                do {
-                                    c = c - 1;
-                                } while (c > 0 && data.types[c] === "comment");
-                            }
-                            data.token[c] = data.token[c] + ",";
                         };
                     code.push("<div class=\"beautify\" data-prettydiff-ignore=\"true\"><ol class=\"count\">");
                     code.push("<li>");
                     code.push("1");
                     code.push("</li>");
-                    /*if (options.vertical === true) {
-                        vertical();
-                    }*/
+                    //if (options.vertical === true) {
+                    //    vertical();
+                    //}
                     if (data.types[a] === "comment" && data.token[a].indexOf("/*") === 0) {
                         build.push("<ol class=\"data\"><li class=\"c0\">");
                     } else {
@@ -2532,213 +2330,48 @@
                             a = a + 1;
                         } while (a < indent);
                     }
-                    // its important to find the variables separately from building the output so
-                    // that recursive flows in the loop incrementation do not present simple
-                    // counting collisions as to what gets modified versus what gets included
-                    if (meta[len] !== undefined) {
-                        a = 0;
-                        findvars(len);
-                    }
-                    scope = 1;
-                    a = len - 1;
-                    if (a > 0) {
-                        do {
-                            if (typeof meta[a] === "number" && data.types[a] === "start") {
-                                scope = scope - 1;
-                                findvars(a);
-                            } else if (
-                                meta[a] !== undefined &&
-                                typeof meta[a] !== "string" &&
-                                typeof meta[a] !== "number" &&
-                                a > 0 &&
-                                invisibles.indexOf(data.token[a]) < 0
-                            ) {
-                                scope    = scope + 1;
-                                if (scope > 16) {
-                                    scope = 16;
-                                }
-                            }
-                            a = a - 1;
-                        } while (a > -1);
-                    }
                     scope = 0;
                     // this loops combines the white space as determined from the algorithm with the
                     // tokens to create the output
                     a = 0;
                     do {
-                        if (typeof meta[a] === "number" && data.types[a] === "start") {
-                            folder();
-                        }
-                        if (
-                            comfold === -1 &&
-                            data.types[a] === "comment" &&
-                            (
-                                (data.token[a].indexOf("/*") === 0 && data.token[a].indexOf("\n") > 0) ||
-                                data.types[a + 1] === "comment" || data.lines[a] > 1
-                            )
-                        ) {
-                            folder();
-                            comfold = a;
-                        }
-                        if (comfold > -1 && data.types[a] !== "comment") {
-                            foldclose();
-                            comfold = -1;
-                        }
-                        if (options.endcomma === "multiline" && (
-                            data.token[a + 1] === "]" ||
-                            data.token[a + 1] === "}"
-                        ) && levels[a] !== -20) {
-                            endcomma_multiline();
-                        }
                         if (data.types[a] === "comment" && data.token[a].indexOf("/*") === 0) {
                             build.push(blockline(data.token[a]));
                         } else if (invisibles.indexOf(data.token[a]) < 0) {
-                            if (typeof meta[a] === "number" && data.types[a] === "start") {
+                            if (data.types[a] === "start" && (levels[a] > -1 || data.types[a + 1] === "comment")) {
+                                foldstart();
+                            } else if (data.token[a].indexOf("//") === 0 && data.token[a + 1].indexOf("//") === 0 && levels[a - 1] > -1) {
+                                foldstart();
+                            } else if (data.types[a] === "end") {
+                                foldend();
+                            } else if (foldindex.length > 0 && data.token[a].indexOf("//") !== 0 && data.token[foldindex[foldindex.length - 1][1]].indexOf("//") === 0) {
+                                foldend();
+                            }
+                            if (data.types[a] === "reference") {
+                                reference();
+                            } else if (data.token[a] === "{" && data.stack[a + 1] !== "object" && data.stack[a + 1] !== "class") {
+                                build.push(`<em class="s${scope}">${data.token[a]}</em>`);
                                 scope = scope + 1;
                                 if (scope > 16) {
                                     scope = 16;
                                 }
-                                build.push(data.token[a]);
-                            } else if (typeof meta[a] !== "string" && typeof meta[a] !== "number") {
-                                build.push(data.token[a]);
-                                scope    = scope - 1;
-                                buildlen = build.length - 1;
-                                do {
-                                    buildlen = buildlen - 1;
-                                } while (buildlen > 0 && build[buildlen].indexOf("</li><li") < 0);
-                                build[buildlen] = build[buildlen].replace(
-                                    /class="l\d+"/,
-                                    `class="l${scope}"`
-                                );
-                            } else if (invisibles.indexOf(data.token[a]) < 0) {
-                                if (data.types[a] === "markup") {
-                                    if (levels[a] > -9) {
-                                        if (data.types[a - 1] === "operator") {
-                                            nlscope(indent, false);
-                                        } else if (data.token[a - 1] !== "return") {
-                                            nlscope(indent + 1, false);
-                                        }
-                                    }
-                                    build.push(data.token[a].replace(/\r?\n(\s*)/g, " "));
-                                } else if (data.types[a] === "comment") {
-                                    if (data.types[a - 1] !== "comment") {
-                                        nlscope(indent, false);
-                                    }
-                                    if (a === 0) {
-                                        build[0] = "<ol class=\"data\"><li class=\"c0\">";
-                                    } else {
-                                        buildlen = build.length - 1;
-                                        if (build[buildlen].indexOf("<li") < 0) {
-                                            do {
-                                                build[buildlen] = build[buildlen]
-                                                    .replace(/<em\u0020class="[a-z]\d+">/g, "")
-                                                    .replace(/<\/em>/g, "");
-                                                buildlen        = buildlen - 1;
-                                                if (buildlen > 0 && build[buildlen] === undefined) {
-                                                    buildlen = buildlen - 1;
-                                                }
-                                            } while (
-                                                buildlen > 0 && build[buildlen - 1] !== undefined && build[buildlen].indexOf("<li") < 0
-                                            );
-                                        }
-                                        if ((/^(<em\u0020class="line">&#xA;<\/em><\/li><li\u0020class="l\d+">)$/).test(build[buildlen - 1]) === true) {
-                                            build[buildlen - 1] = build[buildlen - 1].replace(
-                                                /class="l\d+"/,
-                                                "class=\"c0\""
-                                            );
-                                        }
-                                        build[buildlen] = build[buildlen].replace(/class="l\d+"/, "class=\"c0\"");
-                                    }
+                            } else if (data.token[a] === "}" && data.stack[a] !== "object" && data.stack[a] !== "class") {
+                                scope = scope - 1;
+                                build.push(`<em class="s${scope}">${data.token[a]}</em>`);
+                            } else {
+                                if (data.types[a] === "string" && data.token[a].indexOf("\n") > 0) {
+                                    multiline(data.token[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                } else if (data.types[a] === "operator" || data.types[a] === "comment" || data.types[a] === "string" || data.types[a] === "regex") {
+                                    build.push(data.token[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                } else {
                                     build.push(data.token[a]);
-                                } else {
-                                    if (data.types[a] === "literal" && data.token[a].indexOf("\n") > 0) {
-                                        multiline(data.token[a]);
-                                    } else {
-                                        build.push(data.token[a]);
-                                    }
                                 }
                             }
                         }
-                        // this condition performs additional calculations for options.preserve.
-                        // options.preserve determines whether empty lines should be preserved from the
-                        // code input
-                        if (options.preserve > 0 && data.lines[a] > 0 && levels[a] > -9 && data.token[a] !== "+") {
-                            //special treatment for math operators
-                            if (data.token[a] === "+" || data.token[a] === "-" || data.token[a] === "*" || data.token[a] === "/") {
-                                //comments get special treatment
-                                if (a < len - 1 && data.types[a + 1] !== "comment") {
-                                    nlscope(levels[a], false);
-                                    build.push(tab);
-                                    levels[a] = -20;
-                                } else {
-                                    indent = levels[a];
-                                    if (data.lines[a] > 1) {
-                                        do {
-                                            build.push(lf);
-                                            data.lines[a] = data.lines[a] - 1;
-                                        } while (data.lines[a] > 1);
-                                    }
-                                    nlscope(indent, false);
-                                    build.push(tab);
-                                    build.push(data.token[a + 1]);
-                                    nlscope(indent, false);
-                                    build.push(tab);
-                                    levels[a + 1] = -20;
-                                    a            = a + 1;
-                                }
-                            } else if (
-                                data.lines[a] > 1 &&
-                                data.token[a].charAt(0) !== "=" &&
-                                data.token[a].charAt(0) !== "!" &&
-                                (data.types[a] !== "start" || (a < len - 1 && data.types[a + 1] !== "end"))
-                            ) {
-                                if (
-                                    (data.token[a] !== "x}" || levels[a] < 0) &&
-                                    (a < len - 1 && (
-                                        data.types[a + 1] === "comment" ||
-                                        (data.token[a] !== "." && data.types[a + 1] !== "separator")
-                                    ))
-                                ) {
-                                    do {
-                                        nlscope(0, true);
-                                        data.lines[a] = data.lines[a] - 1;
-                                    } while (data.lines[a] > 1);
-                                    if (data.types[a] === "comment") {
-                                        build.push("<em class=\"line\">&#xA;</em></li><li class=\"c0\">");
-                                    } else {
-                                        commentfix = commentfix + 1;
-                                        nlscope(levels[a], true);
-                                    }
-                                }
-                            }
-                        }
-                        if (
-                            (data.token[a] === ";" || data.token[a] === "x;") &&
-                            data.token[a + 1] === "x}" &&
-                            ((/<em\u0020class="s\d+">\}<\/em>/).test(data.token[a + 2]) === true || data.token[a + 2] === "x}")
-                        ) {
-                            rl(indent);
-                        } else if (data.token[a] === "x{" && levels[a] === -10 && levels[a - 1] === -10) {
-                            build.push("");
-                        } else if (a < len - 1 && data.types[a + 1] === "comment" && options.comments === "noindent") {
-                            nlscope(options.inlevel, false);
-                        } else if (levels[a] === -10 && data.token[a] !== "x}") {
+                        if (levels[a] === -10) {
                             build.push(" ");
-                        } else if (
-                            data.token[a] !== "" &&
-                            levels[a] !== -20 &&
-                            (data.token[a] !== "x}" || (
-                                data.token[a] === "x}" &&
-                                (data.token[a - 1] === "x;" || data.token[a - 1] === ";") &&
-                                data.types[a + 1] !== "word"
-                            ) || data.lines[a] > 1)) {
-                            indent = levels[a];
-                            nlscope(indent, false);
-                        }
-                        if (folderItem.length > 0) {
-                            if (a === folderItem[folderItem.length - 1][1] && comfold === -1) {
-                                foldclose();
-                            }
+                        } else if (levels[a] > -1 && a < len - 1) {
+                            nlscope(levels[a]);
                         }
                         a = a + 1;
                     } while (a < len);
