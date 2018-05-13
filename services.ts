@@ -64,6 +64,27 @@ import { Http2Stream, Http2Session } from "http2";
             //        defined: "Performs Pretty Diff's code analysis operation."
             //    }]
             //},
+            base64: {
+                description: "Convert a file or string into a base64 encoding.",
+                example: [
+                    {
+                        code: "prettydiff base64 encode string:\"my string to encode\"",
+                        defined: "Converts the provided string into a base64 encoding."
+                    },
+                    {
+                        code: "prettydiff base64 encode path/to/file",
+                        defined: "Converts the provided file into a base64 encoding."
+                    },
+                    {
+                        code: "prettydiff base64 encode http://file.from.internet.com",
+                        defined: "Reads a file from a URI and outputs a base64 encoding."
+                    },
+                    {
+                        code: "prettydiff base64 decode string:\"a big base64 string\"",
+                        defined: "Decodes base64 strings into decoded output."
+                    }
+                ]
+            },
             beautify: {
                 description: "Perform Pretty Diff's code beautification.",
                 example: [
@@ -297,7 +318,8 @@ import { Http2Stream, Http2Session } from "http2";
         command:string = (function node_command():string {
             let comkeys:string[] = Object.keys(commands),
                 filtered:string[] = [],
-                a:number = 1,
+                a:number = 0,
+                b:number = 0,
                 mode:string = "";
             if (process.argv[2] === undefined) {
                 console.log("");
@@ -349,6 +371,15 @@ import { Http2Stream, Http2Session } from "http2";
                     return false;
                 };
             process.argv = process.argv.slice(3);
+            b = process.argv.length;
+            do {
+                if (process.argv[a] === "") {
+                    process.argv.splice(a, 1);
+                    b = b - 1;
+                }
+                a = a + 1;
+            } while (a < b);
+            a = 1;
             do {
                 filtered = comkeys.filter(commandFilter);
                 a = a + 1;
@@ -566,11 +597,113 @@ import { Http2Stream, Http2Session } from "http2";
             requireDir(value);
         });
     }());
-    // mode analysis wrapper, see apps.mode
-    //apps.analysis = function node_apps_analysis():void {
-    //    options.mode = "analysis";
-    //    apps.mode();
-    //};
+    apps.base64 = function node_apps_base64():void {
+        let direction:string = (process.argv[0] === "encode" || process.argv[0] === "decode")
+                ? process.argv[0]
+                : "encode",
+            http:boolean = false,
+            path:string = (process.argv[0] === "encode" || process.argv[0] === "decode")
+                ? process.argv[1]
+                : process.argv[0];
+        const fileWrapper = function node_apps_base64_fileWrapper(filepath):void {
+            node
+            .fs
+            .stat(filepath, function node_apps_base64_fileWrapper_stat(er:Error, stat:Stats):void {
+                const angrypath:string = `filepath ${text.angry + filepath + text.none} is not a file or directory.`,
+                    file = function node_apps_base64_fileWrapper_stat_file():void {
+                        node
+                        .fs
+                        .open(filepath, "r", function node_apps_base64_fileWrapper_stat_file_open(ero:Error, fd:number):void {
+                            const msize = (stat.size < 100)
+                                    ? stat.size
+                                    : 100;
+                            let buff  = Buffer.alloc(msize);
+                            if (ero !== null) {
+                                if (http === true) {
+                                    apps.remove(filepath);
+                                }
+                                apps.errout([ero.toString()]);
+                                return;
+                            }
+                            node
+                                .fs
+                                .read(
+                                    fd,
+                                    buff,
+                                    0,
+                                    msize,
+                                    0,
+                                    function node_apps_base64_fileWrapper_stat_file_open_read(erra:Error, bytesa:number, buffera:Buffer):number {
+                                        if (http === true) {
+                                            apps.remove(filepath);
+                                        }
+                                        if (erra !== null) {
+                                            apps.errout([erra.toString()]);
+                                            return;
+                                        }
+                                        const output = (direction === "decode")
+                                            ? Buffer.from(buffera.toString("utf8"), "base64").toString("utf8")
+                                            : buffera.toString("base64");
+                                        if (verbose === true) {
+                                            apps.output([output]);
+                                        } else {
+                                            console.log(output);
+                                        }
+                                    }
+                                );
+                        });
+                    };
+                if (er !== null) {
+                    if (http === true) {
+                        apps.remove(filepath);
+                    }
+                    if (er.toString().indexOf("no such file or directory") > 0) {
+                        apps.errout([angrypath]);
+                        return;
+                    }
+                    apps.errout([er.toString()]);
+                    return;
+                }
+                if (stat === undefined) {
+                    if (http === true) {
+                        apps.remove(filepath);
+                    }
+                    apps.errout([angrypath]);
+                    return;
+                }
+                if (stat.isFile() === true) {
+                    file();
+                }
+            });
+        };
+        if (path === undefined) {
+            apps.errout([`No path to encode.  Please see ${text.cyan}prettydiff commands base64${text.none} for examples.`]);
+            return;
+        }
+        if (path.indexOf("string:") === 0) {
+            path = path.replace("string:", "");
+            if (path.charAt(0) === "\"" && path.charAt(path.length - 1) === "\"") {
+                path.slice(1, path.length - 1);
+            } else if (path.charAt(0) === "'" && path.charAt(path.length - 1) === "'") {
+                path.slice(1, path.length - 1);
+            }
+            const output = (direction === "decode")
+                ? Buffer.from(path, "base64").toString("utf8")
+                : Buffer.from(path).toString("base64");
+            if (verbose === true) {
+                apps.output([output]);
+            } else {
+                console.log(output);
+            }
+            return;
+        }
+        if ((/https?:\/\//).test(path) === true) {
+            http = true;
+            apps.get(path, "source", fileWrapper);
+        } else {
+            fileWrapper(path);
+        }
+    };
     // mode beautify wrapper, see apps.mode
     apps.beautify = function node_apps_beautify():void {
         options.mode = "beautify";
@@ -1451,7 +1584,7 @@ import { Http2Stream, Http2Session } from "http2";
                                                 apps.errout([err.toString()]);
                                                 return;
                                             }
-                                            if (command === "hash") {
+                                            if (command === "hash" || command === "base64") {
                                                 callback(process.cwd() + sep + name);
                                             } else {
                                                 apps.output([`File ${text.cyan + name + text.none} written with ${apps.commas(file.toString().length)} characters.`]);
@@ -1527,6 +1660,7 @@ import { Http2Stream, Http2Session } from "http2";
     // hash utility for strings or files
     apps.hash = function node_apps_hash(filepath:string):void {
         let dircount:any = {},
+            httptest:boolean = false,
             dirtest:boolean = false;
         const http:RegExp = (/^https?:\/\//),
             list:Array<[string, string]> = [],
@@ -1590,6 +1724,9 @@ import { Http2Stream, Http2Session } from "http2";
                                         : 100;
                                 let buff  = Buffer.alloc(msize);
                                 if (ero !== null) {
+                                    if (httptest === true) {
+                                        apps.remove(path);
+                                    }
                                     apps.errout([ero.toString()]);
                                     return;
                                 }
@@ -1633,6 +1770,9 @@ import { Http2Stream, Http2Session } from "http2";
                                             };
                                             let bstring:string = "";
                                             if (erra !== null) {
+                                                if (httptest === true) {
+                                                    apps.remove(path);
+                                                }
                                                 apps.errout([erra.toString()]);
                                                 return;
                                             }
@@ -1650,6 +1790,9 @@ import { Http2Stream, Http2Session } from "http2";
                                                         0,
                                                         function node_apps_hash_wrapper_stat_file_open_read_readBinary(errb:Error, bytesb:number, bufferb:Buffer):void {
                                                             if (errb !== null) {
+                                                                if (httptest === true) {
+                                                                    apps.remove(path);
+                                                                }
                                                                 apps.errout([errb.toString()]);
                                                                 return;
                                                             }
@@ -1665,6 +1808,9 @@ import { Http2Stream, Http2Session } from "http2";
                                                         encoding: "utf8"
                                                     }, function node_apps_hash_wrapper_stat_file_open_read_readFile(errc:Error, dump:string):void {
                                                         if (errc !== null && errc !== undefined) {
+                                                            if (httptest === true) {
+                                                                apps.remove(path);
+                                                            }
                                                             apps.errout([errc.toString()]);
                                                             return;
                                                         }
@@ -1697,6 +1843,9 @@ import { Http2Stream, Http2Session } from "http2";
                             });
                         };
                     if (er !== null) {
+                        if (httptest === true) {
+                            apps.remove(path);
+                        }
                         if (er.toString().indexOf("no such file or directory") > 0) {
                             apps.errout([angrypath]);
                             return;
@@ -1705,14 +1854,23 @@ import { Http2Stream, Http2Session } from "http2";
                         return;
                     }
                     if (stat === undefined) {
+                        if (httptest === true) {
+                            apps.remove(path);
+                        }
                         apps.errout([angrypath]);
                         return;
                     }
                     if (stat.isDirectory() === true) {
+                        if (httptest === true) {
+                            apps.remove(path);
+                        }
                         dir(path);
                         return;
                     }
                     if (stat.isFile() === true) {
+                        if (httptest === true) {
+                            apps.remove(path);
+                        }
                         file();
                     }
                 });
@@ -1731,6 +1889,7 @@ import { Http2Stream, Http2Session } from "http2";
             }
         }
         if (http.test(filepath) === true) {
+            httptest = true;
             apps.get(filepath, "source", statWrapper);
         } else {
             statWrapper(filepath);

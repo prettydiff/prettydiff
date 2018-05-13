@@ -684,6 +684,9 @@
                         const elly:HTMLSelectElement = <HTMLSelectElement>event.target || <HTMLSelectElement>event.srcElement;
                         selectDescription(elly);
                         method.app.options(event);
+                        if (elly.getAttribute("id") === "option-color") {
+                            method.event.colorScheme(event);
+                        }
                     },
                     selectDescription = function dom_load_selectDescription(el:HTMLSelectElement):void {
                         const options:NodeListOf<HTMLOptionElement> = el.getElementsByTagName("option"),

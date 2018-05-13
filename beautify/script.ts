@@ -497,7 +497,12 @@
                     },
                     comment       = function beautify_script_comment():void {
                         destructfix(false, false);
-                        if (data.lines[a] < 2) {
+                        let ind:number = (options.comments === true)
+                            ? 0
+                            : indent;
+                        if (data.types[a - 1] === "comment") {
+                            level[a - 1] = ind;
+                        } else if (data.lines[a] < 2) {
                             let aa:number = a + 1;
                             if (data.types[aa] === "comment") {
                                 do {
@@ -557,13 +562,13 @@
                             }
                             return;
                         } else if (data.token[a - 1] === ",") {
-                            level[a - 1] = indent;
+                            level[a - 1] = ind;
                         } else if (ltoke === "=" && data.types[a - 1] !== "comment" && (/^(\/\*\*\s*@[a-z_]+\s)/).test(ctoke) === true) {
                             level[a - 1] = -10;
                         } else if (ltoke === "{" && data.types[a - 1] !== "comment" && data.lines[0] < 2) {
                             level[a - 1] = -10;
                         } else {
-                            level[a - 1] = indent;
+                            level[a - 1] = ind;
                         }
                         level.push(indent);
                     },
@@ -822,7 +827,23 @@
                             return;
                         }
                         if (ctoke === ";" || ctoke === "x;") {
-                            varindex[varindex.length - 1] = -1;
+                            if (varindex[varindex.length - 1] > -1) {
+                                let aa = a;
+                                do {
+                                    aa = aa - 1;
+                                    if (data.token[aa] === ";") {
+                                        break;
+                                    }
+                                    if (data.token[aa] === ",") {
+                                        indent = indent - 1;
+                                        break;
+                                    }
+                                    if (data.types[aa] === "end") {
+                                        aa = data.begin[aa];
+                                    }
+                                } while (aa > 0 && aa > data.begin[a]);
+                                varindex[varindex.length - 1] = -1;
+                            }
                             endExtraInd();
                             if (data.token[data.begin[a] - 1] !== "for") {
                                 destructfix(false, false);
@@ -883,6 +904,7 @@
                             indent = indent + 1;
                         }
                         if (ctoke === "{" || ctoke === "x{") {
+                            varindex.push(-1);
                             if (data.types[a - 1] !== "comment") {
                                 if (ltype === "markup") {
                                     level[a - 1] = indent;
@@ -1186,6 +1208,9 @@
                                 }
                                 aa  = a;
                                 len = 0;
+                                if (open < 0) {
+                                    open = 0;
+                                }
                                 do {
                                     aa = aa - 1;
                                     if (data.stack[aa] === "function") {
@@ -1775,12 +1800,12 @@
                         if (ltoke === "var") {
                             // hoisted references following declaration keyword
                             hoist();
-                        } else if (ltoke === "function" && (data.token[a - 2] === "=" || data.types[a - 2] !== "operator") && data.types[a - 2] !== "start" && data.types[a - 2] !== "end") {
-                            scopes.push([data.token[a], a]);
-                        } else if (data.stack[a] === "arguments") {
+                        } else if (ltoke === "function") {// && (data.token[a - 2] === "=" || data.types[a - 2] !== "operator") && data.types[a - 2] !== "start" && data.types[a - 2] !== "end") {
                             scopes.push([data.token[a], a]);
                         } else if (ltoke === "let" || ltoke === "const") {
                             // not hoisted references following declaration keyword
+                            scopes.push([data.token[a], a]);
+                        } else if (data.stack[a] === "arguments") {
                             scopes.push([data.token[a], a]);
                         } else if (ltoke === ",") {
                             // references following a comma, must be tested to see if a declaration list
@@ -1791,7 +1816,7 @@
                             if (data.token[index] === "var") {
                                 hoist();
                             } else if (data.token[index] === "let" || data.token[index] === "const") {
-                                scopes.push([data.token[a], a])
+                                scopes.push([data.token[a], a]);
                             }
                         }
                         level.push(-10);
@@ -2091,30 +2116,10 @@
                     let linecount:number          = 1,
                         last:string               = "",
                         scope:number              = 0,
-                        buildlen:number           = 0,
-                        commentfix:number         = (function beautify_script_output_scope_commentfix():number {
-                            let aa:number = 1,
-                                bb:number = 1;
-                            if (
-                                data.types[0] !== "comment" ||
-                                (data.token[0].indexOf("//") === 0 && data.lines[0] > 0) ||
-                                data.types[1] !== "comment"
-                            ) {
-                                return 1;
-                            }
-                            do {
-                                if (data.token[aa].indexOf("/*") === 0) {
-                                    bb = bb + 1;
-                                }
-                                aa = aa + 1;
-                            } while (data.types[aa] === "comment" && aa < len);
-                            return bb + 1;
-                        }()),
+                        scoped:boolean[] = [],
                         indent:number             = options.inlevel,
-                        foldindex:[number, number][] = [],
-                        comfold:number            = -1;
+                        foldindex:[number, number][] = [];
                     const code:string[] = [],
-                        folderItem:[number, number, boolean][]         = [],
                         foldstart = function beautify_script_output_scope_foldstart():void {
                             let index:number = code.length;
                             do {
@@ -2130,7 +2135,6 @@
                             if (foldindex.length < 1) {
                                 return;
                             }
-                            let index:number = code.length;
                             const lastfold:[number, number] = foldindex[foldindex.length - 1];
                             if (data.types[a] === "end" && lastfold[1] === data.begin[a]) {
                                 code[lastfold[0]] = code[lastfold[0]].replace("xxx", String(linecount));
@@ -2141,8 +2145,7 @@
                             }
                         },
                         reference = function beautify_script_output_scope_reference():void {
-                            let cscope:number = scope,
-                                i:number = 0,
+                            let i:number = 0,
                                 s:number = scopes.length - 1;
                             if (data.stack[a] === "arguments") {
                                 if (scopes[s - 1][1] > a) {
@@ -2160,7 +2163,7 @@
                                 build.push(`<em class="s${scope + 1}">${data.token[a]}</em>`);
                                 return;
                             }
-                            if (data.stack[a + 2] === "arguments") {
+                            if (data.stack[a + 2] === "arguments" || data.token[a - 1] === "let" || data.token[a - 1] === "const" || data.token[a - 1] === "var") {
                                 if (s > 0 && scopes[s - 1][1] > a) {
                                     do {
                                         s = s - 1;
@@ -2186,6 +2189,7 @@
                                     build.push(`<em class="s${scope}">${data.token[a]}</em>`);
                                     scopes[s].push(scope);
                                 } else {
+                                    //console.log(scopes[s]+" "+data.token[a]+" "+data.token[a+1]+" "+data.token[a+2]);
                                     build.push(`<em class="s${scopes[s][2]}">${data.token[a]}</em>`);
                                 }
                             } else {
@@ -2231,14 +2235,18 @@
                         //a function for calculating indentation after each new line
                         nlscope            = function beautify_script_output_scope_nlscope(x:number):void {
                             let dd = 0;
-                            const lscope             = function beautify_script_output_scope_nlscope_lscope(depth:number):string {
-                                const indentation:string[] = [];
-                                let aa:number = 0;
-                                do {
-                                    indentation.push(`<span class="l${aa}">${tab}</span>`);
-                                    aa = aa + 1;
-                                } while (aa < depth);
-                                return indentation.join("");
+                            const scopepush = function beautify_script_output_scope_nlscope_scopepush():void {
+                                let aa:number = 0,
+                                    bb:number = 0;
+                                if (x > 0) {
+                                    do {
+                                        build.push(`<span class="l${bb}">${tab}</span>`);
+                                        if (scoped[aa] === true) {
+                                            bb = bb + 1;
+                                        }
+                                        aa = aa + 1;
+                                    } while (aa < x);
+                                }
                             };
                             if (data.token[a] !== "x}" || (data.token[a] === "x}" && data.token[a + 1] !== "}")) {
                                 linecount = linecount + 1;
@@ -2252,54 +2260,16 @@
                                         dd = dd + 1;
                                     } while (dd < levels[a]);
                                 } else {
-                                    if (data.types[a + 1] === "end") {
-                                        build.push(`<em class="line">&#xA;</em></li><li class="l${x}">`);
+                                    if (data.types[a + 1] === "end" && data.stack[a + 1] !== "object" && data.stack[a + 1] !== "class") {
+                                        build.push(`<em class="line">&#xA;</em></li><li class="l${scope - 1}">`);
                                     } else {
                                         build.push(`<em class="line">&#xA;</em></li><li class="l${scope}">`);
                                     }
-                                    if (x > 0 && scope > 0) {
-                                        dd = scope;
-                                        if (scope === x + 1 && x > 0) {
-                                            dd = dd - 1;
-                                        }
-                                        build.push(lscope(dd));
-                                        if (data.types[a + 1] === "end") {
-                                            dd = dd - 1;
-                                        }
-                                    }
+                                    scopepush();
                                 }
-                            } else if (x > 0 && scope > 0) {
-                                dd = scope;
-                                if (scope === x + 1 && x > 0) {
-                                    dd = dd - 1;
-                                }
-                                build.push(lscope(dd));
-                                if (data.types[a + 1] === "end") {
-                                    dd = dd - 1;
-                                }
+                            } else {
+                                scopepush();
                             }
-                            if (x > scope) {
-                                do {
-                                    build.push(tab);
-                                    dd = dd + 1;
-                                } while (dd < x);
-                            }
-                        },
-                        rl                 = function beautify_script_output_scope_rl(x:number):void {
-                            let cc:number = 2,
-                                dd:number = a + 2;
-                            if (dd < len) {
-                                do {
-                                    if (data.token[dd] === "x}") {
-                                        cc = cc + 1;
-                                    } else {
-                                        break;
-                                    }
-                                    dd = dd + 1;
-                                } while (dd < len);
-                            }
-                            nlscope(x - cc);
-                            a = a + 1;
                         },
                         multiline          = function beautify_script_output_scope_multiline(x:string):void {
                             const temparray:string[] = x.split(lf),
@@ -2349,21 +2319,34 @@
                             }
                             if (data.types[a] === "reference") {
                                 reference();
-                            } else if (data.token[a] === "{" && data.stack[a + 1] !== "object" && data.stack[a + 1] !== "class") {
-                                build.push(`<em class="s${scope}">${data.token[a]}</em>`);
-                                scope = scope + 1;
-                                if (scope > 16) {
-                                    scope = 16;
+                            } else if (data.token[a] === "{") {
+                                if (data.stack[a + 1] === "object" || data.stack[a + 1] === "class") {
+                                    scoped.push(false);
+                                    build.push("{");
+                                } else {
+                                    scope = scope + 1;
+                                    scoped.push(true);
+                                    build.push(`<em class="s${scope}">${data.token[a]}</em>`);
                                 }
-                            } else if (data.token[a] === "}" && data.stack[a] !== "object" && data.stack[a] !== "class") {
-                                scope = scope - 1;
-                                build.push(`<em class="s${scope}">${data.token[a]}</em>`);
+                            } else if (data.token[a] === "}") {
+                                scoped.pop();
+                                if (data.stack[a] === "object" || data.stack[a] === "class") {
+                                    build.push("}");
+                                } else {
+                                    build.push(`<em class="s${scope}">${data.token[a]}</em>`);
+                                    scope = scope - 1;
+                                }
                             } else {
                                 if (data.types[a] === "string" && data.token[a].indexOf("\n") > 0) {
                                     multiline(data.token[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
                                 } else if (data.types[a] === "operator" || data.types[a] === "comment" || data.types[a] === "string" || data.types[a] === "regex") {
                                     build.push(data.token[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
                                 } else {
+                                    if (data.types[a] === "start" && levels[a] > -1) {
+                                        scoped.push(false);
+                                    } else if (data.types[a] === "end" && levels[a - 1] > -1) {
+                                        scoped.pop();
+                                    }
                                     build.push(data.token[a]);
                                 }
                             }
@@ -2371,6 +2354,9 @@
                         if (levels[a] === -10) {
                             build.push(" ");
                         } else if (levels[a] > -1 && a < len - 1) {
+                            if (scoped.length > levels[a]) {
+                                scoped.pop();
+                            }
                             nlscope(levels[a]);
                         }
                         a = a + 1;
