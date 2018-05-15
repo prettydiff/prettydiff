@@ -336,7 +336,7 @@ import { Http2Stream, Http2Session } from "http2";
             }
             const arg:string = process.argv[2],
                 boldarg:string = text.angry + arg + text.none,
-                len:number = arg.length,
+                len:number = arg.length + 1,
                 commandFilter = function node_command_commandFilter(item:string):boolean {
                     if (item.indexOf(arg.slice(0, a)) === 0) {
                         return true;
@@ -346,31 +346,33 @@ import { Http2Stream, Http2Session } from "http2";
                 modeval = function node_command_modeval():boolean {
                     let a:number = 0;
                     const len:number = process.argv.length;
-                    do {
-                        if (process.argv[a].indexOf("mode") === 0) {
-                            if (process.argv[a].indexOf("analysis") > 0) {
-                                mode = "analysis";
-                            } else if (process.argv[a].indexOf("beautify") > 0) {
-                                mode = "beautify";
-                            } else if (process.argv[a].indexOf("diff") > 0) {
-                                mode = "diff";
-                            } else if (process.argv[a].indexOf("minify") > 0) {
-                                mode = "minify";
-                            } else if (process.argv[a].indexOf("parse") > 0) {
-                                mode = "parse";
-                            } else {
-                                return false;
+                    if (len > 0) {
+                        do {
+                            if (process.argv[a].indexOf("mode") === 0) {
+                                if (process.argv[a].indexOf("beautify") > 0) {
+                                    mode = "beautify";
+                                } else if (process.argv[a].indexOf("diff") > 0) {
+                                    mode = "diff";
+                                } else if (process.argv[a].indexOf("minify") > 0) {
+                                    mode = "minify";
+                                } else if (process.argv[a].indexOf("parse") > 0) {
+                                    mode = "parse";
+                                } else {
+                                    return false;
+                                }
+                                console.log("");
+                                console.log(`${boldarg} is not a supported command. Pretty Diff is assuming command ${text.bold + text.cyan + mode + text.none}.`);
+                                console.log("");
+                                return true;
                             }
-                            console.log("");
-                            console.log(`${boldarg} is not a supported command. Pretty Diff is assuming command ${text.bold + text.cyan + mode + text.none}.`);
-                            console.log("");
-                            return true;
-                        }
-                        a = a + 1;
-                    } while (a < len);
+                            a = a + 1;
+                        } while (a < len);
+                    }
                     return false;
                 };
             process.argv = process.argv.slice(3);
+
+            // trim empty values
             b = process.argv.length;
             do {
                 if (process.argv[a] === "") {
@@ -379,16 +381,20 @@ import { Http2Stream, Http2Session } from "http2";
                 }
                 a = a + 1;
             } while (a < b);
+
+            // filter available commands against incomplete input
             a = 1;
             do {
                 filtered = comkeys.filter(commandFilter);
                 a = a + 1;
             } while (filtered.length > 1 && a < len);
+
             if (filtered.length < 1) {
                 if (modeval() === true) {
                     return mode;
                 }
                 console.log(`Command ${boldarg} is not a supported command.`);
+                console.log(`Please try: ${text.cyan}prettydiff commands${text.none}`);
                 process.exit(1);
                 return "";
             }

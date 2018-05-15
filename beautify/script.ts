@@ -530,14 +530,16 @@
                                 data.stack.splice(a, 0, data.stack[aa]);
                                 data.token.splice(a, 0, data.token[aa]);
                                 data.types.splice(a, 0, data.types[aa]);
-                                do {
-                                    bb = bb - 1;
-                                    if (scopes[bb][1] === aa) {
-                                        scopes[bb][1] = a;
-                                    } else if (scopes[bb][1] < a) {
-                                        break;
-                                    }
-                                } while (bb > 0);
+                                if (bb > 0) {
+                                    do {
+                                        bb = bb - 1;
+                                        if (scopes[bb][1] === aa) {
+                                            scopes[bb][1] = a;
+                                        } else if (scopes[bb][1] < a) {
+                                            break;
+                                        }
+                                    } while (bb > 0);
+                                }
                                 aa = aa + 1;
                                 data.begin.splice(aa, 1);
                                 data.lexer.splice(aa, 1);
