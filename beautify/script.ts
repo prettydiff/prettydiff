@@ -659,7 +659,7 @@
                                                 data.token[x] === "," ||
                                                 (
                                                     (data.types[x] === "word" || data.types[x] === "reference") &&
-                                                    (data.types[x - 1] === "word" || data.types[x] === "reference")
+                                                    (data.types[x - 1] === "word" || data.types[x - 1] === "reference")
                                                 )
                                              ) {
                                                 break;
@@ -878,6 +878,7 @@
                             level.push(indent);
                             return;
                         }
+                        level.push(-20);
                     },
                     start         = function beautify_script_start():void {
                         const deep:string   = data.stack[a + 1],
@@ -2328,7 +2329,9 @@
                     do {
                         if (levels[a] > -1 && a < len - 1) {
                             if (levels[a] < scoped.length) {
-                                scoped.pop();
+                                do {
+                                    scoped.pop();
+                                } while (levels[a] < scoped.length);
                             }
                         }
                         if (data.types[a] === "comment" && data.token[a].indexOf("/*") === 0) {
@@ -2350,15 +2353,27 @@
                                     scoped.push(false);
                                     build.push("{");
                                 } else {
-                                    scope = scope + 1;
-                                    scoped.push(true);
-                                    build.push(`<em class="s${scope}">${data.token[a]}</em>`);
+                                    if (scoped.length === levels[a]) {
+                                        if (scoped[scoped.length - 1] === false) {
+                                            scoped[scoped.length - 1] = true;
+                                            scope = scope + 1;
+                                        }
+                                    } else {
+                                        scoped.push(true);
+                                        scope = scope + 1;
+                                    }
+                                    build.push(`<em class="s${scope}">{</em>`);
+                                }
+                                if (levels[a] > scoped.length) {
+                                    do {
+                                        scoped.push(false);
+                                    } while (levels[a] > scoped.length);
                                 }
                             } else if (data.token[a] === "}") {
                                 if (data.stack[a] === "object" || data.stack[a] === "class") {
                                     build.push("}");
                                 } else {
-                                    build.push(`<em class="s${scope}">${data.token[a]}</em>`);
+                                    build.push(`<em class="s${scope}">}</em>`);
                                     scope = scope - 1;
                                 }
                             } else {
@@ -2378,7 +2393,9 @@
                             build.push(" ");
                         } else if (levels[a] > -1 && a < len - 1) {
                             if (levels[a] > scoped.length) {
-                                scoped.push(false);
+                                do {
+                                    scoped.push(false);
+                                } while (levels[a] > scoped.length);
                             }
                             nlscope(levels[a]);
                         }
