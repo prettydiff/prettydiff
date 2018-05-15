@@ -144,6 +144,7 @@
                         ? 0
                         : Number(options.inlevel),
                     skip:number = 0,
+                    notcomment:boolean = false, // if in comments before any code
                     lastlist:boolean      = false, //remembers the list status of the most recently closed block
                     ctype:string         = "", //ctype stands for "current type"
                     ctoke:string         = "", //ctoke standa for "current token"
@@ -500,6 +501,17 @@
                         let ind:number = (options.comments === true)
                             ? 0
                             : indent;
+                        if (notcomment === false && (/\/\u002a\s*global\s/).test(data.token[a]) === true) {
+                            let globallist:string[] = data.token[a].replace(/\/\u002a\s*global\s+/, "").replace(/\s*\u002a\/$/, "").split(","),
+                                aa:number = globallist.length;
+                            do {
+                                aa = aa - 1;
+                                globallist[aa] = globallist[aa].replace(/\s+/g, "");
+                                if (globallist[aa] !== "") {
+                                    scopes.push([globallist[aa], -1]);
+                                }
+                            } while (aa > 0);
+                        }
                         if (data.types[a - 1] === "comment") {
                             level[a - 1] = ind;
                         } else if (data.lines[a] < 2) {
@@ -560,6 +572,9 @@
                                     level.push(indent);
                                 }
                             }
+                            if (data.types[a + 1] !== "comment") {
+                                notcomment = true;
+                            }
                             return;
                         } else if (data.token[a - 1] === ",") {
                             level[a - 1] = ind;
@@ -569,6 +584,9 @@
                             level[a - 1] = -10;
                         } else {
                             level[a - 1] = ind;
+                        }
+                        if (data.types[a + 1] !== "comment") {
+                            notcomment = true;
                         }
                         level.push(indent);
                     },
@@ -1790,7 +1808,7 @@
                                     scopes.push([data.token[a], func]);
                                 }
                             };
-                        if (ltype !== "separator" && ltype !== "start") {
+                        if (ltype !== "separator" && ltype !== "start" && ltype !== "end") {
                             if (ltype === "word" || ltype === "operator") {
                                 level[a - 1] = -10;
                             } else {
@@ -2112,7 +2130,7 @@
                 let a:number = options.start,
                     external:string = "",
                     lastLevel:number = 0;
-                if (options.jsscope !== "none") {
+                if (options.jsscope !== "none" && options.lang === "javascript") {
                     let linecount:number          = 1,
                         last:string               = "",
                         scope:number              = 0,
@@ -2189,25 +2207,28 @@
                                     build.push(`<em class="s${scope}">${data.token[a]}</em>`);
                                     scopes[s].push(scope);
                                 } else {
-                                    //console.log(scopes[s]+" "+data.token[a]+" "+data.token[a+1]+" "+data.token[a+2]);
                                     build.push(`<em class="s${scopes[s][2]}">${data.token[a]}</em>`);
                                 }
-                            } else {
-                                do {
-                                    s = s - 1;
-                                    if (scopes[s][0] === data.token[a]) {
-                                        i = scopes[s][1];
-                                        if (i === -1) {
-                                            build.push(`<em class="s0">${data.token[a]}</em>`);
-                                        } else if (i === data.begin[a]) {
-                                            build.push(`<em class="s${scope}">${data.token[a]}</em>`);
-                                        } else {
-                                            build.push(`<em class="s${scopes[s][2]}">${data.token[a]}</em>`);
-                                        }
-                                        break;
-                                    }
-                                } while (s > 0);
+                                return;
                             }
+                            do {
+                                s = s - 1;
+                                if (scopes[s][0] === data.token[a]) {
+                                    i = scopes[s][1];
+                                    if (i === -1) {
+                                        build.push(`<em class="s0">${data.token[a]}</em>`);
+                                    } else if (i === data.begin[a]) {
+                                        build.push(`<em class="s${scope}">${data.token[a]}</em>`);
+                                    } else if (scopes[s].length < 3) {
+                                        build.push(`<em class="s${scope}">${data.token[a]}</em>`);
+                                        scopes[s].push(scope);
+                                    } else {
+                                        build.push(`<em class="s${scopes[s][2]}">${data.token[a]}</em>`);
+                                    }
+                                    return;
+                                }
+                            } while (s > 0);
+                            build.push(data.token[a]);
                         },
                         // splits block comments, which are single tokens, into multiple lines of output
                         blockline          = function beautify_script_output_scope_blockline(x:string):string {
@@ -2260,7 +2281,7 @@
                                         dd = dd + 1;
                                     } while (dd < levels[a]);
                                 } else {
-                                    if (data.types[a + 1] === "end" && data.stack[a + 1] !== "object" && data.stack[a + 1] !== "class") {
+                                    if (data.token[a + 1] === "}" && data.stack[a + 1] !== "object" && data.stack[a + 1] !== "class") {
                                         build.push(`<em class="line">&#xA;</em></li><li class="l${scope - 1}">`);
                                     } else {
                                         build.push(`<em class="line">&#xA;</em></li><li class="l${scope}">`);
@@ -2305,6 +2326,11 @@
                     // tokens to create the output
                     a = 0;
                     do {
+                        if (levels[a] > -1 && a < len - 1) {
+                            if (levels[a] < scoped.length) {
+                                scoped.pop();
+                            }
+                        }
                         if (data.types[a] === "comment" && data.token[a].indexOf("/*") === 0) {
                             build.push(blockline(data.token[a]));
                         } else if (invisibles.indexOf(data.token[a]) < 0) {
@@ -2329,7 +2355,6 @@
                                     build.push(`<em class="s${scope}">${data.token[a]}</em>`);
                                 }
                             } else if (data.token[a] === "}") {
-                                scoped.pop();
                                 if (data.stack[a] === "object" || data.stack[a] === "class") {
                                     build.push("}");
                                 } else {
@@ -2344,8 +2369,6 @@
                                 } else {
                                     if (data.types[a] === "start" && levels[a] > -1) {
                                         scoped.push(false);
-                                    } else if (data.types[a] === "end" && levels[a - 1] > -1) {
-                                        scoped.pop();
                                     }
                                     build.push(data.token[a]);
                                 }
@@ -2354,8 +2377,8 @@
                         if (levels[a] === -10) {
                             build.push(" ");
                         } else if (levels[a] > -1 && a < len - 1) {
-                            if (scoped.length > levels[a]) {
-                                scoped.pop();
+                            if (levels[a] > scoped.length) {
+                                scoped.push(false);
                             }
                             nlscope(levels[a]);
                         }
