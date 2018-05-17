@@ -9,11 +9,6 @@ import { Http2Stream, Http2Session } from "http2";
 /*eslint-env node*/
 /*eslint no-console: 0*/
 /*global global */
-
-//things to test
-//hash get
-//get save to file
-//get save to file again (same file name already present)
 (function node():void {
     "use strict";
     const startTime:[number, number]      = process.hrtime(),
@@ -1567,6 +1562,8 @@ import { Http2Stream, Http2Session } from "http2";
             });
         }
         console.log("");
+        apps.humantime(true);
+        console.log("");
         process.exit(1);
     };
     // http(s) get function
@@ -1666,53 +1663,248 @@ import { Http2Stream, Http2Session } from "http2";
     // hash utility for strings or files
     apps.hash = function node_apps_hash(filepath:string):void {
         let dircount:any = {},
+            limit:number = 0,
+            shortlimit:number = 0,
             httptest:boolean = false,
             dirtest:boolean = false;
         const http:RegExp = (/^https?:\/\//),
-            list:Array<[string, string]> = [],
-            dirComplete = function node_apps_hash_dirComplete():void {
-                const hash:Hash = node.crypto.createHash("sha512"),
-                    sorty = function node_apps_hash_dirComplete_sorty(a, b):number {
-                        if (a[0] < b[0]) {
-                            return -1;
+            list:Array<[string, Stats, string]> = [],
+            file = function node_apps_hash_file(args:any):void {
+                node
+                .fs
+                .open(args.path, "r", function node_apps_hash_file_open(ero:Error, fd:number):void {
+                    const failure = function node_apps_hash_file_open_failure(message:string) {
+                            if (dirtest === true) {
+                                apps.errout([
+                                    `Failed after ${args.index} files.`,
+                                    message
+                                ]);
+                            } else {
+                                apps.errout([message]);
+                            }
+                        },
+                        msize = (args.stat.size < 100)
+                            ? args.stat.size
+                            : 100;
+                    let buff  = Buffer.alloc(msize);
+                    if (ero !== null) {
+                        if (httptest === true) {
+                            apps.remove(args.path);
                         }
-                        return 1;
-                    },
-                    hashlist:string[] = [],
-                    len:number = list.length;
+                        if (dirtest === true)
+                        failure(ero.toString());
+                        return;
+                    }
+                    node
+                        .fs
+                        .read(
+                            fd,
+                            buff,
+                            0,
+                            msize,
+                            1,
+                            function node_apps_hash_file_open_read(erra:Error, bytesa:number, buffera:Buffer):number {
+                                const hashit = function node_apps_hash_file_open_read(item:string|Buffer) {
+                                    const hash:Hash = node.crypto.createHash("sha512");
+                                    hash.on("readable", function node_apps_hash_file_open_read_readFile_hash():void {
+                                        let hashstring:string = "";
+                                        const hashdata:Buffer = <Buffer>hash.read();
+                                        if (hashdata !== null) {
+                                            hashstring = hashdata.toString("hex").replace(/\s+/g, "");
+                                            args.callback(hashstring, args.index);
+                                        }
+                                    });
+                                    hash.write(item);
+                                    hash.end();
+                                    if (http.test(filepath) === true) {
+                                        apps.remove(args.path, function node_apps_hash_file_open_read_readFile_hash_remove() {
+                                            return true;
+                                        });
+                                    }
+                                };
+                                let bstring:string = "";
+                                if (erra !== null) {
+                                    if (httptest === true) {
+                                        apps.remove(args.path);
+                                    }
+                                    failure(erra.toString());
+                                    return;
+                                }
+                                bstring = buffera.toString("utf8", 0, buffera.length);
+                                bstring = bstring.slice(2, bstring.length - 2);
+                                if (options.binaryCheck.test(bstring) === true) {
+                                    buff = Buffer.alloc(args.stat.size);
+                                    node
+                                        .fs
+                                        .read(
+                                            fd,
+                                            buff,
+                                            0,
+                                            args.stat.size,
+                                            0,
+                                            function node_apps_hash_file_open_read_readBinary(errb:Error, bytesb:number, bufferb:Buffer):void {
+                                                if (errb !== null) {
+                                                    if (httptest === true) {
+                                                        apps.remove(args.path);
+                                                    }
+                                                    failure(errb.toString());
+                                                    return;
+                                                }
+                                                if (bytesb > 0) {
+                                                    node.fs.close(fd, function node_apps_hash_file_open_read_readBinary_close():void {
+                                                        hashit(bufferb);
+                                                    });
+                                                }
+                                            }
+                                        );
+                                } else {
+                                    node
+                                        .fs
+                                        .readFile(args.path, {
+                                            encoding: "utf8"
+                                        }, function node_apps_hash_wrapper_stat_file_open_read_readFile(errc:Error, dump:string):void {
+                                            if (errc !== null && errc !== undefined) {
+                                                if (httptest === true) {
+                                                    apps.remove(args.path);
+                                                }
+                                                failure(errc.toString());
+                                                return;
+                                            }
+                                            node.fs.close(fd, function node_apps_hash_wrapper_stat_file_open_read_readFile_close() {
+                                                hashit(dump);
+                                            });
+                                        });
+                                }
+                                return bytesa;
+                            }
+                        );
+                });
+            },
+            dirComplete = function node_apps_hash_dirComplete():void {
                 let a:number = 0,
-                    hashstring:string = "";
-                list.sort(sorty);
-                do {
-                    hashlist.push(list[a][0]);
-                    a = a + 1;
-                } while (a < len);
-                hash.update(list.sort().join(""));
-                hashstring = hash.digest("hex").replace(/\s+$/, "");
+                    c:number = 0;
+                const listlen:number = list.length,
+                    hashDir = function node_apps_hash_dirComplete_hashDir():void {
+                        const hash:Hash = node.crypto.createHash("sha512"),
+                            sorty = function node_apps_hash_dirComplete_sorty(a, b):number {
+                                if (a[0] < b[0]) {
+                                    return -1;
+                                }
+                                return 1;
+                            },
+                            hashlist:string[] = [],
+                            len:number = list.length;
+                        let a:number = 0,
+                            hashstring:string = "";
+                        list.sort(sorty);
+                        do {
+                            hashlist.push(list[a][2]);
+                            a = a + 1;
+                        } while (a < len);
+                        hash.update(list.sort().join(""));
+                        hashstring = hash.digest("hex").replace(/\s+$/, "");
+                        if (verbose === true) {
+                            apps.output([
+                                `Pretty Diff hashed ${text.cyan + filepath + text.none}`,
+                                hashstring
+                            ]);
+                        } else {
+                            apps.output([hashstring]);
+                        }
+                    },
+                    typeHash = function node_apps_hash_dirComplete_typeHash(index:number, end:number) {
+                        const terminate = function node_apps_hash_dirComplete_typeHash_terminate():void {
+                            c = c + 1;
+                            if (c === end) {
+                                if (a === listlen) {
+                                    hashDir();
+                                } else {
+                                    if (verbose === true) {
+                                        console.log(`${apps.humantime(false)}${text.green + apps.commas(a) + text.none} files hashed so far...`);
+                                    }
+                                    c = 0;
+                                    recurse();
+                                }
+                            }
+                        };
+                        if (list[index][1] === null) {
+                            const hash:Hash = node.crypto.createHash("sha512");
+                            hash.update(list[index][0]);
+                            list[index][2] = hash.digest("hex");
+                            terminate();
+                        } else {
+                            file({
+                                path: list[index][0],
+                                stat: list[index][1],
+                                index: index,
+                                callback: function node_apps_hash_dirComplete_typeHash_callback(hashstring:string, item:number) {
+                                    list[item][2] = hashstring;
+                                    terminate();
+                                }
+                            });
+                        }
+                    },
+                    recurse = function node_apps_hash_dirComplete_recurse():void {
+                        let b = 0,
+                            end = (listlen - a < shortlimit)
+                                ? listlen - a
+                                : shortlimit;
+                        do {
+                            typeHash(a, end);
+                            a = a + 1;
+                            b = b + 1;
+                        } while (b < shortlimit && a < listlen);
+                    };
                 if (verbose === true) {
-                    apps.output([
-                        `Pretty Diff hashed ${text.cyan + filepath + text.none}`,
-                        hashstring
-                    ]);
+                    console.log(`${apps.humantime(false)}Completed analyzing the directory tree in the file system and found ${text.green + apps.commas(listlen) + text.none} file system objects.`);
+                }
+                if (limit < 1 || listlen < limit) {
+                    do {
+                        if (list[a][1] === null) {
+                            const hash:Hash = node.crypto.createHash("sha512");
+                            hash.update(list[a][0]);
+                            list[a][2] = hash.digest("hex");
+                            c = c + 1;
+                            if (c === listlen) {
+                                hashDir();
+                            }
+                        } else {
+                            file({
+                                path: list[a][0],
+                                stat: list[a][1],
+                                index: a,
+                                callback: function node_apps_hash_dirComplete_callback(hashstring:string, item:number) {
+                                    list[item][2] = hashstring;
+                                    c = c + 1;
+                                    if (c === listlen) {
+                                        hashDir();
+                                    }
+                                }
+                            });
+                        }
+                        a = a + 1;
+                    } while (a < listlen);
                 } else {
-                    apps.output([hashstring]);
+                    if (verbose === true) {
+                        console.log(`Due to a ulimit setting of ${text.angry + apps.commas(limit) + text.none} Pretty Diff will read only ${text.cyan + apps.commas(shortlimit) + text.none} files at a time.`);
+                        console.log("");
+                    }
+                    recurse();
                 }
             },
-            dirCounter = function node_apps_hash_dirCounter(path:string, hashstring:string):void {
+            dirCounter = function node_apps_hash_dirCounter(path:string, stat:Stats):void {
                 let dirlist:string[] = path.split(sep),
                     dirpath:string = "";
                 dirlist.pop();
                 dirpath = dirlist.join(sep);
                 dircount[dirpath] = dircount[dirpath] - 1;
-                if (hashstring !== "") {
-                    list.push([path, hashstring]);
-                }
+                list.push([path, stat, ""]);
                 if (dircount[dirpath] < 1) {
                     delete dircount[dirpath];
                     if (Object.keys(dircount).length < 1) {
                         dirComplete();
                     } else {
-                        node_apps_hash_dirCounter(dirpath, "");
+                        node_apps_hash_dirCounter(dirpath, null);
                     }
                 }
             },
@@ -1721,113 +1913,6 @@ import { Http2Stream, Http2Session } from "http2";
                 .fs
                 .stat(path, function node_apps_hash_wrapper_stat(er:Error, stat:Stats):void {
                     const angrypath:string = `filepath ${text.angry + path + text.none} is not a file or directory.`,
-                        file = function node_apps_hash_wrapper_stat_file():void {
-                            node
-                            .fs
-                            .open(path, "r", function node_apps_hash_wrapper_stat_file_open(ero:Error, fd:number):void {
-                                const msize = (stat.size < 100)
-                                        ? stat.size
-                                        : 100;
-                                let buff  = Buffer.alloc(msize);
-                                if (ero !== null) {
-                                    if (httptest === true) {
-                                        apps.remove(path);
-                                    }
-                                    apps.errout([ero.toString()]);
-                                    return;
-                                }
-                                node
-                                    .fs
-                                    .read(
-                                        fd,
-                                        buff,
-                                        0,
-                                        msize,
-                                        1,
-                                        function node_apps_hash_wrapper_stat_file_open_read(erra:Error, bytesa:number, buffera:Buffer):number {
-                                            const hashit = function node_apps_hash_wrapper_stat_file_open_read(item:string|Buffer) {
-                                                const hash:Hash = node.crypto.createHash("sha512");
-                                                hash.on("readable", function node_apps_hash_wrapper_stat_file_open_read_readFile_hash():void {
-                                                    let hashstring:string = "";
-                                                    const hashdata:Buffer = <Buffer>hash.read();
-                                                    if (hashdata !== null) {
-                                                        hashstring = hashdata.toString("hex").replace(/\s+/g, "");
-                                                        if (dirtest === true) {
-                                                            dirCounter(path, hashstring);
-                                                        } else {
-                                                            if (verbose === true) {
-                                                                apps.output(hashstring, [
-                                                                    `Pretty Diff hashed ${text.cyan + path + text.none}`,
-                                                                    hashstring
-                                                                ]);
-                                                            } else {
-                                                                apps.output([hashstring]);
-                                                            }
-                                                        }
-                                                    }
-                                                });
-                                                hash.write(item);
-                                                hash.end();
-                                                if (http.test(filepath) === true) {
-                                                    apps.remove(path, function node_apps_hash_wrapper_stat_file_open_read_readFile_hash_remove() {
-                                                        return true;
-                                                    });
-                                                }
-                                            };
-                                            let bstring:string = "";
-                                            if (erra !== null) {
-                                                if (httptest === true) {
-                                                    apps.remove(path);
-                                                }
-                                                apps.errout([erra.toString()]);
-                                                return;
-                                            }
-                                            bstring = buffera.toString("utf8", 0, buffera.length);
-                                            bstring = bstring.slice(2, bstring.length - 2);
-                                            if (options.binaryCheck.test(bstring) === true) {
-                                                buff = Buffer.alloc(stat.size);
-                                                node
-                                                    .fs
-                                                    .read(
-                                                        fd,
-                                                        buff,
-                                                        0,
-                                                        stat.size,
-                                                        0,
-                                                        function node_apps_hash_wrapper_stat_file_open_read_readBinary(errb:Error, bytesb:number, bufferb:Buffer):void {
-                                                            if (errb !== null) {
-                                                                if (httptest === true) {
-                                                                    apps.remove(path);
-                                                                }
-                                                                apps.errout([errb.toString()]);
-                                                                return;
-                                                            }
-                                                            if (bytesb > 0) {
-                                                                hashit(bufferb);
-                                                            }
-                                                        }
-                                                    );
-                                            } else {
-                                                node
-                                                    .fs
-                                                    .readFile(path, {
-                                                        encoding: "utf8"
-                                                    }, function node_apps_hash_wrapper_stat_file_open_read_readFile(errc:Error, dump:string):void {
-                                                        if (errc !== null && errc !== undefined) {
-                                                            if (httptest === true) {
-                                                                apps.remove(path);
-                                                            }
-                                                            apps.errout([errc.toString()]);
-                                                            return;
-                                                        }
-                                                        hashit(dump);
-                                                    });
-                                            }
-                                            return bytesa;
-                                        }
-                                    );
-                            });
-                        },
                         dir = function node_apps_hash_wrapper_stat_dir(item:string):void {
                             dirtest = true;
                             node.fs.readdir(item, {encoding: "utf8"}, function node_apps_hash_wrapper_stat_dir_readdirs(erd:Error, files:string[]):void {
@@ -1835,11 +1920,8 @@ import { Http2Stream, Http2Session } from "http2";
                                     apps.errout([erd.toString()]);
                                     return;
                                 }
-                                const hash:Hash = node.crypto.createHash("sha512");
-                                hash.update(item);
-                                list.push([item, hash.digest("hex")]);
                                 if (files.length < 1) {
-                                    dirCounter(item, "");
+                                    dirCounter(item, null);
                                 } else {
                                     dircount[item] = files.length;
                                 }
@@ -1873,11 +1955,29 @@ import { Http2Stream, Http2Session } from "http2";
                         dir(path);
                         return;
                     }
-                    if (stat.isFile() === true) {
+                    if (stat.isFile() === true || stat.isBlockDevice() === true || stat.isCharacterDevice() === true) {
                         if (httptest === true) {
                             apps.remove(path);
                         }
-                        file();
+                        if (dirtest === false) {
+                            file({
+                                path: path,
+                                stat: stat,
+                                index: 0,
+                                callback: function node_apps_hash_wrapper_stat(hashstring:string, index:number) {
+                                    if (verbose === true) {
+                                        apps.output(hashstring, [
+                                            `Pretty Diff hashed ${text.cyan + path + text.none}`,
+                                            hashstring
+                                        ]);
+                                    } else {
+                                        apps.output([hashstring]);
+                                    }
+                                }
+                            });
+                        } else {
+                            dirCounter(path, stat);
+                        }
                     }
                 });
             };
@@ -1898,7 +1998,13 @@ import { Http2Stream, Http2Session } from "http2";
             httptest = true;
             apps.get(filepath, "source", statWrapper);
         } else {
-            statWrapper(filepath);
+            node.child("ulimit -n", function node_apps_hash_ulimit(uerr:Error, uout:string) {
+                if (uerr === null && uout !== "unlimited" && isNaN(Number(uout)) === false) {
+                    limit = Number(uout);
+                    shortlimit = Math.ceil(limit / 5);
+                }
+                statWrapper(filepath);
+            });
         }
     };
     // general static messaging
@@ -1936,16 +2042,19 @@ import { Http2Stream, Http2Session } from "http2";
             }());
         const numberString = function node_apps_humantime_numberString(numb:number):string {
                 const strSplit:string[] = String(numb).split(".");
-                if (strSplit[1].length < 9) {
-                    do {
-                        strSplit[1]  = strSplit[1] + 0;
-                    } while (strSplit[1].length < 9);
+                if (strSplit.length > 1) {
+                    if (strSplit[1].length < 9) {
+                        do {
+                            strSplit[1]  = strSplit[1] + 0;
+                        } while (strSplit[1].length < 9);
+                        return `${strSplit[0]}.${strSplit[1]}`;
+                    }
+                    if (strSplit[1].length > 9) {
+                        return `${strSplit[0]}.${strSplit[1].slice(0, 9)}`;
+                    }
                     return `${strSplit[0]}.${strSplit[1]}`;
                 }
-                if (strSplit[1].length > 9) {
-                    return `${strSplit[0]}.${strSplit[1].slice(0, 9)}`;
-                }
-                return `${strSplit[0]}.${strSplit[1]}`;
+                return `${strSplit[0]}`;
             },
             prettybytes  = function node_apps_humantime_prettybytes(an_integer:number):string {
                 //find the string length of input and divide into triplets
@@ -2893,7 +3002,7 @@ import { Http2Stream, Http2Session } from "http2";
                     uri:string = (quest > 0)
                         ? request.url.slice(0, quest)
                         : request.url,
-                    file:string = projectPath + node.path.sep + uri.slice(1);
+                    file:string = projectPath + uri.slice(1);
                 if (uri === "/") {
                     file = `${projectPath + node.path.sep}index.xhtml`;
                 }
