@@ -1,6 +1,16 @@
 declare var options: any;
 declare var ace: any;
 declare var prettydiff: any;
+declare var window: Window;
+interface nodeError extends Error {
+    code: string;
+}
+declare module NodeJS {
+    interface Global {
+        parseFramework: any;
+        prettydiff: any
+    }
+}
 interface Window {
     parseFramework: any;
 }
@@ -159,13 +169,9 @@ interface commandList {
         }[];
     }
 }
-declare var window: Window;
-interface nodeError extends Error {
-    code: string;
-}
-declare module NodeJS {
-    interface Global {
-        parseFramework: any;
-        prettydiff: any
-    }
+interface readDirectory {
+    path: string,
+    recursive: boolean,
+    symbolic: boolean,
+    callback: Function
 }

@@ -5,6 +5,10 @@ import * as http from "http";
 import { Stream, Writable } from "stream";
 import { Hash } from "crypto";
 import { Http2Stream, Http2Session } from "http2";
+type directoryItem = [string, "file" | "directory", Stats];
+interface directoryList extends Array<directoryItem> {
+    [key:number]: directoryItem;
+}
 /*jslint node:true */
 /*eslint-env node*/
 /*eslint no-console: 0*/
@@ -409,7 +413,8 @@ import { Http2Stream, Http2Session } from "http2";
             return filtered[0];
         }()),
         apps:any = {};
-    let verbose:boolean = false;
+    let verbose:boolean = false,
+        httpflag:string = "";
     
     (function node_args():void {
         const requireDir = function node_args_requireDir(dirName:string):void {
@@ -1548,6 +1553,9 @@ import { Http2Stream, Http2Session } from "http2";
     };
     // uniform error formatting
     apps.errout = function node_apps_errout(errtext:string[]):void {
+        if (httpflag !== "") {
+            apps.remove(httpflag);
+        }
         const stack:string = new Error().stack.replace("Error", `${text.cyan}Stack trace${text.none + node.os.EOL}-----------`);
         console.log("");
         console.log(stack);
@@ -1583,6 +1591,7 @@ import { Http2Stream, Http2Session } from "http2";
                                 if (ers !== null) {
                                     if (ers.toString().indexOf("no such file or directory")) {
                                         node.fs.writeFile(name, file, "utf8", function node_apps_getFile_callback_write(err:Error) {
+                                            httpflag = name;
                                             if (err !== null) {
                                                 apps.errout([err.toString()]);
                                                 return;
@@ -1662,13 +1671,10 @@ import { Http2Stream, Http2Session } from "http2";
     };
     // hash utility for strings or files
     apps.hash = function node_apps_hash(filepath:string):void {
-        let dircount:any = {},
-            limit:number = 0,
+        let limit:number = 0,
             shortlimit:number = 0,
-            httptest:boolean = false,
             dirtest:boolean = false;
         const http:RegExp = (/^https?:\/\//),
-            list:Array<[string, Stats, string]> = [],
             file = function node_apps_hash_file(args:any):void {
                 node
                 .fs
@@ -1688,10 +1694,6 @@ import { Http2Stream, Http2Session } from "http2";
                             : 100;
                     let buff  = Buffer.alloc(msize);
                     if (ero !== null) {
-                        if (httptest === true) {
-                            apps.remove(args.path);
-                        }
-                        if (dirtest === true)
                         failure(ero.toString());
                         return;
                     }
@@ -1724,9 +1726,6 @@ import { Http2Stream, Http2Session } from "http2";
                                 };
                                 let bstring:string = "";
                                 if (erra !== null) {
-                                    if (httptest === true) {
-                                        apps.remove(args.path);
-                                    }
                                     failure(erra.toString());
                                     return;
                                 }
@@ -1744,9 +1743,6 @@ import { Http2Stream, Http2Session } from "http2";
                                             0,
                                             function node_apps_hash_file_open_read_readBinary(errb:Error, bytesb:number, bufferb:Buffer):void {
                                                 if (errb !== null) {
-                                                    if (httptest === true) {
-                                                        apps.remove(args.path);
-                                                    }
                                                     failure(errb.toString());
                                                     return;
                                                 }
@@ -1764,9 +1760,6 @@ import { Http2Stream, Http2Session } from "http2";
                                             encoding: "utf8"
                                         }, function node_apps_hash_wrapper_stat_file_open_read_readFile(errc:Error, dump:string):void {
                                             if (errc !== null && errc !== undefined) {
-                                                if (httptest === true) {
-                                                    apps.remove(args.path);
-                                                }
                                                 failure(errc.toString());
                                                 return;
                                             }
@@ -1780,28 +1773,18 @@ import { Http2Stream, Http2Session } from "http2";
                         );
                 });
             },
-            dirComplete = function node_apps_hash_dirComplete():void {
+            dirComplete = function node_apps_hash_dirComplete(list:directoryList):void {
                 let a:number = 0,
                     c:number = 0;
                 const listlen:number = list.length,
-                    hashDir = function node_apps_hash_dirComplete_hashDir():void {
-                        const hash:Hash = node.crypto.createHash("sha512"),
-                            sorty = function node_apps_hash_dirComplete_sorty(a, b):number {
-                                if (a[0] < b[0]) {
-                                    return -1;
-                                }
-                                return 1;
-                            },
-                            hashlist:string[] = [],
-                            len:number = list.length;
-                        let a:number = 0,
-                            hashstring:string = "";
-                        list.sort(sorty);
-                        do {
-                            hashlist.push(list[a][2]);
-                            a = a + 1;
-                        } while (a < len);
-                        hash.update(list.sort().join(""));
+                    hashes:string[] = [],
+                    hashComplete = function node_apps_hash_dirComplete_hashComplete():void {
+                        const hash:Hash = node.crypto.createHash("sha512");
+                        let hashstring:string = "";
+                        if (verbose === true) {
+                            console.log(`${apps.humantime(false)}File hashing complete. Working on a final hash to represent the directory structure.`);
+                        }
+                        hash.update(hashes.join(""));
                         hashstring = hash.digest("hex").replace(/\s+$/, "");
                         if (verbose === true) {
                             apps.output([
@@ -1817,7 +1800,7 @@ import { Http2Stream, Http2Session } from "http2";
                             c = c + 1;
                             if (c === end) {
                                 if (a === listlen) {
-                                    hashDir();
+                                    hashComplete();
                                 } else {
                                     if (verbose === true) {
                                         console.log(`${apps.humantime(false)}${text.green + apps.commas(a) + text.none} files hashed so far...`);
@@ -1827,18 +1810,18 @@ import { Http2Stream, Http2Session } from "http2";
                                 }
                             }
                         };
-                        if (list[index][1] === null) {
+                        if (list[index][1] === "directory") {
                             const hash:Hash = node.crypto.createHash("sha512");
                             hash.update(list[index][0]);
-                            list[index][2] = hash.digest("hex");
+                            hashes[index] = hash.digest("hex");
                             terminate();
                         } else {
                             file({
                                 path: list[index][0],
-                                stat: list[index][1],
+                                stat: list[index][2],
                                 index: index,
                                 callback: function node_apps_hash_dirComplete_typeHash_callback(hashstring:string, item:number) {
-                                    list[item][2] = hashstring;
+                                    hashes[item[0]] = hashstring;
                                     terminate();
                                 }
                             });
@@ -1860,24 +1843,24 @@ import { Http2Stream, Http2Session } from "http2";
                 }
                 if (limit < 1 || listlen < limit) {
                     do {
-                        if (list[a][1] === null) {
+                        if (list[a][1] === "directory") {
                             const hash:Hash = node.crypto.createHash("sha512");
                             hash.update(list[a][0]);
-                            list[a][2] = hash.digest("hex");
+                            hashes[a] = hash.digest("hex");
                             c = c + 1;
                             if (c === listlen) {
-                                hashDir();
+                                hashComplete();
                             }
                         } else {
                             file({
                                 path: list[a][0],
-                                stat: list[a][1],
+                                stat: list[a][2],
                                 index: a,
                                 callback: function node_apps_hash_dirComplete_callback(hashstring:string, item:number) {
-                                    list[item][2] = hashstring;
+                                    hashes[item[0]] = hashstring;
                                     c = c + 1;
                                     if (c === listlen) {
-                                        hashDir();
+                                        hashComplete();
                                     }
                                 }
                             });
@@ -1891,95 +1874,6 @@ import { Http2Stream, Http2Session } from "http2";
                     }
                     recurse();
                 }
-            },
-            dirCounter = function node_apps_hash_dirCounter(path:string, stat:Stats):void {
-                let dirlist:string[] = path.split(sep),
-                    dirpath:string = "";
-                dirlist.pop();
-                dirpath = dirlist.join(sep);
-                dircount[dirpath] = dircount[dirpath] - 1;
-                list.push([path, stat, ""]);
-                if (dircount[dirpath] < 1) {
-                    delete dircount[dirpath];
-                    if (Object.keys(dircount).length < 1) {
-                        dirComplete();
-                    } else {
-                        node_apps_hash_dirCounter(dirpath, null);
-                    }
-                }
-            },
-            statWrapper = function node_apps_hash_wrapper(path:string) {
-                node
-                .fs
-                .stat(path, function node_apps_hash_wrapper_stat(er:Error, stat:Stats):void {
-                    const angrypath:string = `filepath ${text.angry + path + text.none} is not a file or directory.`,
-                        dir = function node_apps_hash_wrapper_stat_dir(item:string):void {
-                            dirtest = true;
-                            node.fs.readdir(item, {encoding: "utf8"}, function node_apps_hash_wrapper_stat_dir_readdirs(erd:Error, files:string[]):void {
-                                if (erd !== null) {
-                                    apps.errout([erd.toString()]);
-                                    return;
-                                }
-                                if (files.length < 1) {
-                                    dirCounter(item, null);
-                                } else {
-                                    dircount[item] = files.length;
-                                }
-                                files.forEach(function node_apps_hash_wrapper_stat_dir_readdirs_each(value:string) {
-                                    statWrapper(item + sep + value);
-                                });
-                            });
-                        };
-                    if (er !== null) {
-                        if (httptest === true) {
-                            apps.remove(path);
-                        }
-                        if (er.toString().indexOf("no such file or directory") > 0) {
-                            apps.errout([angrypath]);
-                            return;
-                        }
-                        apps.errout([er.toString()]);
-                        return;
-                    }
-                    if (stat === undefined) {
-                        if (httptest === true) {
-                            apps.remove(path);
-                        }
-                        apps.errout([angrypath]);
-                        return;
-                    }
-                    if (stat.isDirectory() === true) {
-                        if (httptest === true) {
-                            apps.remove(path);
-                        }
-                        dir(path);
-                        return;
-                    }
-                    if (stat.isFile() === true || stat.isBlockDevice() === true || stat.isCharacterDevice() === true) {
-                        if (httptest === true) {
-                            apps.remove(path);
-                        }
-                        if (dirtest === false) {
-                            file({
-                                path: path,
-                                stat: stat,
-                                index: 0,
-                                callback: function node_apps_hash_wrapper_stat(hashstring:string, index:number) {
-                                    if (verbose === true) {
-                                        apps.output(hashstring, [
-                                            `Pretty Diff hashed ${text.cyan + path + text.none}`,
-                                            hashstring
-                                        ]);
-                                    } else {
-                                        apps.output([hashstring]);
-                                    }
-                                }
-                            });
-                        } else {
-                            dirCounter(path, stat);
-                        }
-                    }
-                });
             };
         if (command === "hash") {
             filepath = process.argv[0];
@@ -1995,15 +1889,30 @@ import { Http2Stream, Http2Session } from "http2";
             }
         }
         if (http.test(filepath) === true) {
-            httptest = true;
-            apps.get(filepath, "source", statWrapper);
+            apps.get(filepath, "source", function node_apps_hash_get() {
+                apps.readDirectory({
+                    path: filepath,
+                    recursive: true,
+                    symbolic: false,
+                    callback: function node_apps_hash_get_localCallback(list:directoryList) {
+                        dirComplete(list);
+                    }
+                });
+            });
         } else {
             node.child("ulimit -n", function node_apps_hash_ulimit(uerr:Error, uout:string) {
                 if (uerr === null && uout !== "unlimited" && isNaN(Number(uout)) === false) {
                     limit = Number(uout);
                     shortlimit = Math.ceil(limit / 5);
                 }
-                statWrapper(filepath);
+                apps.readDirectory({
+                    path: filepath,
+                    recursive: true,
+                    symbolic: false,
+                    callback: function node_apps_hash_localCallback(list:directoryList) {
+                        dirComplete(list);
+                    }
+                });
             });
         }
     };
@@ -2818,6 +2727,89 @@ import { Http2Stream, Http2Session } from "http2";
     apps.parse = function node_apps_parse():void {
         options.mode = "parse";
         apps.mode();
+    };
+    // similar to node's fs.readdir, but recursive
+    apps.readDirectory = function node_apps_readDirectory(args:readDirectory):void {
+        // arguments:
+        // * path - string - where to start in the local file system
+        // * recursive - boolean - if child directories should be scanned
+        // * symbolic - boolean - if symbolic links should be identified
+        // * callback - function - the output is passed into the callback as an argument
+        const dircount:any = {},
+            list:directoryList = [],
+            method:string = (args.symbolic === true)
+                ? "lstat"
+                : "stat",
+            dirCounter = function node_apps_readDirectory_dirCounter(item:string):void {
+                let dirlist:string[] = item.split(sep),
+                    dirpath:string = "";
+                dirlist.pop();
+                dirpath = dirlist.join(sep);
+                dircount[dirpath] = dircount[dirpath] - 1;
+                if (dircount[dirpath] < 1) {
+                    delete dircount[dirpath];
+                    if (Object.keys(dircount).length < 1) {
+                        const sorty = function node_apps_readDirectory_sort(a:directoryItem, b:directoryItem) {
+                            if (a[0] < b[0]) {
+                                return -1;
+                            }
+                            return 1;
+                        };
+                        args.callback(list.sort(sorty));
+                    } else {
+                        node_apps_readDirectory_dirCounter(dirpath);
+                    }
+                }
+            },
+            statWrapper = function node_apps_readDirectory_wrapper(filepath:string) {
+                node
+                .fs[method](filepath, function node_apps_readDirectory_wrapper_stat(er:Error, stat:Stats):void {
+                    const angrypath:string = `filepath ${text.angry + filepath + text.none} is not a file or directory.`,
+                        dir = function node_apps_readDirectory_wrapper_stat_dir(item:string):void {
+                            node.fs.readdir(item, {encoding: "utf8"}, function node_apps_readDirectory_wrapper_stat_dir_readdirs(erd:Error, files:string[]):void {
+                                if (erd !== null) {
+                                    apps.errout([erd.toString()]);
+                                    return;
+                                }
+                                list.push([item, "directory", stat]);
+                                if (files.length < 1) {
+                                    dirCounter(item);
+                                } else {
+                                    dircount[item] = files.length;
+                                }
+                                files.forEach(function node_apps_readDirectory_wrapper_stat_dir_readdirs_each(value:string) {
+                                    node_apps_readDirectory_wrapper(item + sep + value);
+                                });
+                            });
+                        };
+                    if (er !== null) {
+                        if (er.toString().indexOf("no such file or directory") > 0) {
+                            apps.errout([angrypath]);
+                            return;
+                        }
+                        apps.errout([er.toString()]);
+                        return;
+                    }
+                    if (stat === undefined) {
+                        apps.errout([angrypath]);
+                        return;
+                    }
+                    if (stat.isDirectory() === true) {
+                        if (args.recursive === true) {
+                            dir(filepath);
+                        } else {
+                            list.push([filepath, "directory", stat]);
+                            dirCounter(filepath);
+                        }
+                        return;
+                    }
+                    if (stat.isFile() === true || stat.isBlockDevice() === true || stat.isCharacterDevice() === true) {
+                        list.push([filepath, "file", stat]);
+                        dirCounter(filepath);
+                    }
+                });
+            };
+        statWrapper(args.path);
     };
     // similar to posix "rm -rf" command
     apps.remove = function node_apps_remove(filepath:string, callback:Function):void {
