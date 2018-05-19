@@ -9,6 +9,12 @@ type directoryItem = [string, "file" | "directory", Stats];
 interface directoryList extends Array<directoryItem> {
     [key:number]: directoryItem;
 }
+interface readFile {
+    callback: Function;
+    index: number;
+    path: string;
+    stat: Stats;
+}
 /*jslint node:true */
 /*eslint-env node*/
 /*eslint no-console: 0*/
@@ -1672,107 +1678,8 @@ interface directoryList extends Array<directoryItem> {
     // hash utility for strings or files
     apps.hash = function node_apps_hash(filepath:string):void {
         let limit:number = 0,
-            shortlimit:number = 0,
-            dirtest:boolean = false;
+            shortlimit:number = 0;
         const http:RegExp = (/^https?:\/\//),
-            file = function node_apps_hash_file(args:any):void {
-                node
-                .fs
-                .open(args.path, "r", function node_apps_hash_file_open(ero:Error, fd:number):void {
-                    const failure = function node_apps_hash_file_open_failure(message:string) {
-                            if (dirtest === true) {
-                                apps.errout([
-                                    `Failed after ${args.index} files.`,
-                                    message
-                                ]);
-                            } else {
-                                apps.errout([message]);
-                            }
-                        },
-                        msize = (args.stat.size < 100)
-                            ? args.stat.size
-                            : 100;
-                    let buff  = Buffer.alloc(msize);
-                    if (ero !== null) {
-                        failure(ero.toString());
-                        return;
-                    }
-                    node
-                        .fs
-                        .read(
-                            fd,
-                            buff,
-                            0,
-                            msize,
-                            1,
-                            function node_apps_hash_file_open_read(erra:Error, bytesa:number, buffera:Buffer):number {
-                                const hashit = function node_apps_hash_file_open_read(item:string|Buffer) {
-                                    const hash:Hash = node.crypto.createHash("sha512");
-                                    hash.on("readable", function node_apps_hash_file_open_read_readFile_hash():void {
-                                        let hashstring:string = "";
-                                        const hashdata:Buffer = <Buffer>hash.read();
-                                        if (hashdata !== null) {
-                                            hashstring = hashdata.toString("hex").replace(/\s+/g, "");
-                                            args.callback(hashstring, args.index);
-                                        }
-                                    });
-                                    hash.write(item);
-                                    hash.end();
-                                    if (http.test(filepath) === true) {
-                                        apps.remove(args.path, function node_apps_hash_file_open_read_readFile_hash_remove() {
-                                            return true;
-                                        });
-                                    }
-                                };
-                                let bstring:string = "";
-                                if (erra !== null) {
-                                    failure(erra.toString());
-                                    return;
-                                }
-                                bstring = buffera.toString("utf8", 0, buffera.length);
-                                bstring = bstring.slice(2, bstring.length - 2);
-                                if (options.binaryCheck.test(bstring) === true) {
-                                    buff = Buffer.alloc(args.stat.size);
-                                    node
-                                        .fs
-                                        .read(
-                                            fd,
-                                            buff,
-                                            0,
-                                            args.stat.size,
-                                            0,
-                                            function node_apps_hash_file_open_read_readBinary(errb:Error, bytesb:number, bufferb:Buffer):void {
-                                                if (errb !== null) {
-                                                    failure(errb.toString());
-                                                    return;
-                                                }
-                                                if (bytesb > 0) {
-                                                    node.fs.close(fd, function node_apps_hash_file_open_read_readBinary_close():void {
-                                                        hashit(bufferb);
-                                                    });
-                                                }
-                                            }
-                                        );
-                                } else {
-                                    node
-                                        .fs
-                                        .readFile(args.path, {
-                                            encoding: "utf8"
-                                        }, function node_apps_hash_wrapper_stat_file_open_read_readFile(errc:Error, dump:string):void {
-                                            if (errc !== null && errc !== undefined) {
-                                                failure(errc.toString());
-                                                return;
-                                            }
-                                            node.fs.close(fd, function node_apps_hash_wrapper_stat_file_open_read_readFile_close() {
-                                                hashit(dump);
-                                            });
-                                        });
-                                }
-                                return bytesa;
-                            }
-                        );
-                });
-            },
             dirComplete = function node_apps_hash_dirComplete(list:directoryList):void {
                 let a:number = 0,
                     c:number = 0;
@@ -1793,6 +1700,24 @@ interface directoryList extends Array<directoryItem> {
                             ]);
                         } else {
                             apps.output([hashstring]);
+                        }
+                    },
+                    hashback = function node_apps_hash_dirComplete_hashback(data:readFile, item:string|Buffer, callback:Function):void {
+                        const hash:Hash = node.crypto.createHash("sha512");
+                        hash.on("readable", function node_apps_hash_dirComplete_hashback_hash():void {
+                            let hashstring:string = "";
+                            const hashdata:Buffer = <Buffer>hash.read();
+                            if (hashdata !== null) {
+                                hashstring = hashdata.toString("hex").replace(/\s+/g, "");
+                                callback(hashstring, data.index);
+                            }
+                        });
+                        hash.write(item);
+                        hash.end();
+                        if (http.test(filepath) === true) {
+                            apps.remove(data.path, function node_apps_hash_dirComplete_hashback_hash_remove():boolean {
+                                return true;
+                            });
                         }
                     },
                     typeHash = function node_apps_hash_dirComplete_typeHash(index:number, end:number) {
@@ -1816,13 +1741,15 @@ interface directoryList extends Array<directoryItem> {
                             hashes[index] = hash.digest("hex");
                             terminate();
                         } else {
-                            file({
+                            apps.readFile({
                                 path: list[index][0],
                                 stat: list[index][2],
                                 index: index,
-                                callback: function node_apps_hash_dirComplete_typeHash_callback(hashstring:string, item:number) {
-                                    hashes[item[0]] = hashstring;
-                                    terminate();
+                                callback: function node_apps_hash_dirComplete_typehash_callback(data:readFile, item:string|Buffer):void {
+                                    hashback(data, item, function node_apps_hash_dirComplete_typeHash_callback(hashstring:string, item:number) {
+                                        hashes[item[0]] = hashstring;
+                                        terminate();
+                                    });
                                 }
                             });
                         }
@@ -1852,16 +1779,18 @@ interface directoryList extends Array<directoryItem> {
                                 hashComplete();
                             }
                         } else {
-                            file({
+                            apps.readFile({
                                 path: list[a][0],
                                 stat: list[a][2],
                                 index: a,
-                                callback: function node_apps_hash_dirComplete_callback(hashstring:string, item:number) {
-                                    hashes[item[0]] = hashstring;
-                                    c = c + 1;
-                                    if (c === listlen) {
-                                        hashComplete();
-                                    }
+                                callback: function node_apps_hash_dirComplete_file(data:readFile, item:string|Buffer):void {
+                                    hashback(data, item, function node_apps_hash_dirComplete_file_hashback(hashstring:string, item:number):void {
+                                        hashes[item[0]] = hashstring;
+                                        c = c + 1;
+                                        if (c === listlen) {
+                                            hashComplete();
+                                        }
+                                    });
                                 }
                             });
                         }
@@ -2810,6 +2739,92 @@ interface directoryList extends Array<directoryItem> {
                 });
             };
         statWrapper(args.path);
+    };
+    // similar to node's fs.readFile, but determines if the file is binary or text so that it can create eithr a buffer or text dump
+    apps.readFile = function node_apps_readFile(args:readFile):void {
+        // arguments
+        // * path - string - the file to open
+        // * stat - Stats - the Stats object for the given file
+        // * index - number - if the file is opened as a part of a directory operation then the index represents the index out of the entire directory list
+        // * callback - function - What to do next, the file data is passed into the callback as an argument
+        node
+            .fs
+            .open(args.path, "r", function node_apps_readFile_file_open(ero:Error, fd:number):void {
+                const failure = function node_apps_readFile_file_open_failure(message:string) {
+                        if (args.index > 0) {
+                            apps.errout([
+                                `Failed after ${args.index} files.`,
+                                message
+                            ]);
+                        } else {
+                            apps.errout([message]);
+                        }
+                    },
+                    msize = (args.stat.size < 100)
+                        ? args.stat.size
+                        : 100;
+                let buff  = Buffer.alloc(msize);
+                if (ero !== null) {
+                    failure(ero.toString());
+                    return;
+                }
+                node
+                    .fs
+                    .read(
+                        fd,
+                        buff,
+                        0,
+                        msize,
+                        1,
+                        function node_apps_readFile_file_open_read(erra:Error, bytesa:number, buffera:Buffer):number {
+                            let bstring:string = "";
+                            if (erra !== null) {
+                                failure(erra.toString());
+                                return;
+                            }
+                            bstring = buffera.toString("utf8", 0, buffera.length);
+                            bstring = bstring.slice(2, bstring.length - 2);
+                            if (options.binaryCheck.test(bstring) === true) {
+                                buff = Buffer.alloc(args.stat.size);
+                                node
+                                    .fs
+                                    .read(
+                                        fd,
+                                        buff,
+                                        0,
+                                        args.stat.size,
+                                        0,
+                                        function node_apps_readFile_file_open_read_readBinary(errb:Error, bytesb:number, bufferb:Buffer):void {
+                                            if (errb !== null) {
+                                                failure(errb.toString());
+                                                return;
+                                            }
+                                            if (bytesb > 0) {
+                                                node.fs.close(fd, function node_apps_readFile_file_open_read_readBinary_close():void {
+                                                    args.callback(args, bufferb);
+                                                });
+                                            }
+                                        }
+                                    );
+                            } else {
+                                node
+                                    .fs
+                                    .readFile(args.path, {
+                                        encoding: "utf8"
+                                    }, function node_apps_readFile_wrapper_stat_file_open_read_readFile(errc:Error, dump:string):void {
+                                        if (errc !== null && errc !== undefined) {
+                                            failure(errc.toString());
+                                            return;
+                                        }
+                                        node.fs.close(fd, function node_apps_readFile_wrapper_stat_file_open_read_readFile_close() {
+                                            args.callback(args, dump);
+                                        });
+                                    });
+                            }
+                            return bytesa;
+                        }
+                    );
+            });
     };
     // similar to posix "rm -rf" command
     apps.remove = function node_apps_remove(filepath:string, callback:Function):void {

@@ -170,8 +170,8 @@ interface commandList {
     }
 }
 interface readDirectory {
-    path: string,
-    recursive: boolean,
-    symbolic: boolean,
-    callback: Function
+    callback: Function;
+    path: string;
+    recursive: boolean;
+    symbolic: boolean;
 }
