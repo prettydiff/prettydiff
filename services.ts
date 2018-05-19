@@ -5,7 +5,7 @@ import * as http from "http";
 import { Stream, Writable } from "stream";
 import { Hash } from "crypto";
 import { Http2Stream, Http2Session } from "http2";
-type directoryItem = [string, "file" | "directory", Stats];
+type directoryItem = [string, "file" | "directory" | "link", Stats];
 interface directoryList extends Array<directoryItem> {
     [key:number]: directoryItem;
 }
@@ -1735,7 +1735,7 @@ interface readFile {
                                 }
                             }
                         };
-                        if (list[index][1] === "directory") {
+                        if (list[index][1] === "directory" || list[index][1] === "link") {
                             const hash:Hash = node.crypto.createHash("sha512");
                             hash.update(list[index][0]);
                             hashes[index] = hash.digest("hex");
@@ -1770,7 +1770,7 @@ interface readFile {
                 }
                 if (limit < 1 || listlen < limit) {
                     do {
-                        if (list[a][1] === "directory") {
+                        if (list[a][1] === "directory" || list[a][1] === "link") {
                             const hash:Hash = node.crypto.createHash("sha512");
                             hash.update(list[a][0]);
                             hashes[a] = hash.digest("hex");
@@ -1820,12 +1820,13 @@ interface readFile {
         if (http.test(filepath) === true) {
             apps.get(filepath, "source", function node_apps_hash_get() {
                 apps.readDirectory({
-                    path: filepath,
-                    recursive: true,
-                    symbolic: false,
                     callback: function node_apps_hash_get_localCallback(list:directoryList) {
                         dirComplete(list);
-                    }
+                    },
+                    exclusions: [],
+                    path: filepath,
+                    recursive: true,
+                    symbolic: true
                 });
             });
         } else {
@@ -1835,12 +1836,13 @@ interface readFile {
                     shortlimit = Math.ceil(limit / 5);
                 }
                 apps.readDirectory({
-                    path: filepath,
-                    recursive: true,
-                    symbolic: false,
                     callback: function node_apps_hash_localCallback(list:directoryList) {
                         dirComplete(list);
-                    }
+                    },
+                    exclusions: [],
+                    path: filepath,
+                    recursive: true,
+                    symbolic: true
                 });
             });
         }
@@ -2660,10 +2662,11 @@ interface readFile {
     // similar to node's fs.readdir, but recursive
     apps.readDirectory = function node_apps_readDirectory(args:readDirectory):void {
         // arguments:
+        // * callback - function - the output is passed into the callback as an argument
+        // * exclusions - string array - a list of items to exclude
         // * path - string - where to start in the local file system
         // * recursive - boolean - if child directories should be scanned
         // * symbolic - boolean - if symbolic links should be identified
-        // * callback - function - the output is passed into the callback as an argument
         const dircount:any = {},
             list:directoryList = [],
             method:string = (args.symbolic === true)
@@ -2732,7 +2735,10 @@ interface readFile {
                         }
                         return;
                     }
-                    if (stat.isFile() === true || stat.isBlockDevice() === true || stat.isCharacterDevice() === true) {
+                    if (stat.isSymbolicLink() === true) {
+                        list.push([filepath, "link", stat]);
+                        dirCounter(filepath);
+                    } else if (stat.isFile() === true || stat.isBlockDevice() === true || stat.isCharacterDevice() === true) {
                         list.push([filepath, "file", stat]);
                         dirCounter(filepath);
                     }
@@ -2743,10 +2749,10 @@ interface readFile {
     // similar to node's fs.readFile, but determines if the file is binary or text so that it can create eithr a buffer or text dump
     apps.readFile = function node_apps_readFile(args:readFile):void {
         // arguments
+        // * callback - function - What to do next, the file data is passed into the callback as an argument
+        // * index - number - if the file is opened as a part of a directory operation then the index represents the index out of the entire directory list
         // * path - string - the file to open
         // * stat - Stats - the Stats object for the given file
-        // * index - number - if the file is opened as a part of a directory operation then the index represents the index out of the entire directory list
-        // * callback - function - What to do next, the file data is passed into the callback as an argument
         node
             .fs
             .open(args.path, "r", function node_apps_readFile_file_open(ero:Error, fd:number):void {
@@ -2828,18 +2834,67 @@ interface readFile {
     };
     // similar to posix "rm -rf" command
     apps.remove = function node_apps_remove(filepath:string, callback:Function):void {
-        const numb    = {
+        let type:"file"|"directory" = "file";
+        const numb:any = {
                 dirs: 0,
                 file: 0,
-                othr: 0,
-                size: 0,
-                symb: 0
+                link: 0,
+                size: 0
             },
-            dirs:any    = {},
-            util:any    = {};
-        util.complete = function node_apps_remove_complete():void {
-            const out = ["Pretty Diff removed "];
-            if (command === "remove") {
+            removeItems = function node_apps_remove_removeItems(filelist:directoryList):void {
+                let a:number = 0,
+                    b:number = 0,
+                    c:number = 0;
+                const len:number = filelist.length,
+                    destroy = function node_apps_remove_removeItems_destroy(itempath:string) {
+                        const task:"unlink"|"rmdir" = (type === "file")
+                            ? "unlink"
+                            : "rmdir";
+                        node.fs[task](itempath, function node_apps_remove_removeItems_destroy_callback(er:Error):void {
+                            if (verbose === true && er !== null && er.toString().indexOf("no such file or directory") < 0) {
+                                apps.errout([er.toString()]);
+                                return;
+                            }
+                            c = c + 1;
+                            if (c === b) {
+                                if (type === "directory") {
+                                    callback();
+                                } else {
+                                    type = "directory";
+                                    node_apps_remove_removeItems(filelist);
+                                }
+                            }
+                        });
+                    };
+                do {
+                    if (filelist[a][1] === type || (filelist[a][1] === "link" && type === "file")) {
+                        b = b + 1;
+                        if (command === "remove") {
+                            if (filelist[a][1] === "file") {
+                                numb.file = numb.file + 1;
+                                numb.size = numb.size + filelist[a][2].size;
+                            } else if (filelist[a][1] === "directory") {
+                                numb.dirs = numb.dirs + 1;
+                            } else if (filelist[a][1] === "link") {
+                                numb.link = numb.link + 1;
+                            }
+                        }
+                        destroy(filelist[a][0]);
+                    }
+                    a = a + 1;
+                } while (a < len);
+            };
+        if (command === "remove") {
+            if (process.argv.length < 1) {
+                apps.errout([
+                    "Command remove requires a filepath",
+                    `${text.cyan}prettydiff remove ../jsFiles${text.none}`
+                ]);
+                return;
+            }
+            filepath = node.path.resolve(process.argv[0]);
+            callback = function node_apps_remove_callback() {
+                const out = ["Pretty Diff removed "];
                 verbose = true;
                 console.log("");
                 out.push(text.angry);
@@ -2860,17 +2915,9 @@ interface readFile {
                 }
                 out.push(", ");
                 out.push(text.angry);
-                out.push(String(numb.symb));
+                out.push(String(numb.link));
                 out.push(text.none);
                 out.push(" symbolic link");
-                if (numb.symb !== 1) {
-                    out.push("s");
-                }
-                out.push(", and ");
-                out.push(text.angry);
-                out.push(String(numb.symb));
-                out.push(text.none);
-                out.push(" other type");
                 if (numb.symb !== 1) {
                     out.push("s");
                 }
@@ -2880,119 +2927,15 @@ interface readFile {
                 out.push(text.none);
                 out.push(" bytes.");
                 apps.output([out.join(""), `Removed ${text.cyan + filepath + text.nocolor}`]);
-            }
-            callback();
-        };
-        util.destroy  = function node_apps_remove_destroy(item:string, dir:string):void {
-            node
-                .fs
-                .unlink(item, function node_apps_remove_destroy_callback(er:Error):void {
-                    if (verbose === true && er !== null && er.toString().indexOf("no such file or directory") < 0) {
-                        apps.errout([er.toString()]);
-                        return;
-                    }
-                    if (item === dir) {
-                        util.complete();
-                    }
-                    dirs[dir] = dirs[dir] - 1;
-                    if (dirs[dir] < 1) {
-                        util.rmdir(dir);
-                    }
-                });
-        };
-        util.readdir  = function node_apps_remove_readdir(item:string):void {
-            node
-                .fs
-                .readdir(item, function node_apps_remove_readdir_callback(er:Error, files:string[]):void {
-                    if (verbose === true && er !== null && er.toString().indexOf("no such file or directory") < 0) {
-                        apps.errout([er.toString()]);
-                        return;
-                    }
-                    dirs[item] = 0;
-                    if (files === undefined || files.length < 1) {
-                        util.rmdir(item);
-                    } else {
-                        files.forEach(function node_apps_remove_readdir_callback_each(value) {
-                            dirs[item] = dirs[item] + 1;
-                            util.stat(item + sep + value, item);
-                        });
-                    }
-                });
-        };
-        util.rmdir    = function node_apps_remove_rmdir(item:string):void {
-            node
-                .fs
-                .rmdir(item, function node_apps_remove_delete_callback_rmdir(er:Error):void {
-                    const dirlist:string[] = item.split(sep);
-                    let dir:string     = "";
-                    if (er !== null && er.toString().indexOf("resource busy or locked") > 0) {
-                        setTimeout(function node_apps_remove_rmdir_delay() {
-                            node_apps_remove_rmdir(item);
-                        }, 1000);
-                        return;
-                    }
-                    if (verbose === true && er !== null && er.toString().indexOf("no such file or directory") < 0) {
-                        apps.errout([er.toString()]);
-                        return;
-                    }
-                    delete dirs[item];
-                    if (Object.keys(dirs).length < 1) {
-                        util.complete();
-                    } else {
-                        dirlist.pop();
-                        dir       = dirlist.join(sep);
-                        dirs[dir] = dirs[dir] - 1;
-                        if (dirs[dir] < 1) {
-                            node_apps_remove_rmdir(dir);
-                        }
-                    }
-                });
-        };
-        util.stat     = function node_apps_remove_stat(item:string, dir:string):void {
-            node
-                .fs
-                .lstat(item, function node_apps_remove_stat_callback(er:Error, stats:Stats) {
-                    if (verbose === true && er !== null && er.toString().indexOf("no such file or directory") < 0) {
-                        apps.errout([er.toString()]);
-                        return;
-                    }
-                    if (stats !== undefined && stats.isFile !== undefined) {
-                        if (stats.isDirectory() === true) {
-                            numb.dirs = numb.dirs + 1;
-                            util.readdir(item);
-                        } else {
-                            if (stats.isFile() === true) {
-                                numb.file = numb.file + 1;
-                                numb.size = numb.size + stats.size;
-                            } else if (stats.isSymbolicLink() === true) {
-                                numb.symb = numb.symb + 1;
-                            } else {
-                                numb.othr = numb.othr + 1;
-                            }
-                            util.destroy(item, dir);
-                        }
-                    } else if (item === dir) {
-                        if (command === "remove") {
-                            console.log("Item not found - " + text.cyan + filepath + text.nocolor);
-                        }
-                        callback();
-                    }
-                });
-        };
-        if (command === "remove") {
-            if (process.argv.length < 1) {
-                apps.errout([
-                    "Command remove requires a filepath",
-                    `${text.cyan}prettydiff remove ../jsFiles${text.none}`
-                ]);
-                return;
-            }
-            filepath = node.path.resolve(process.argv[0]);
-            callback = function node_apps_remove_callback() {
-                return;
             };
         }
-        util.stat(filepath, filepath);
+        apps.readDirectory({
+            callback: removeItems,
+            exclusions: [],
+            path: filepath,
+            recursive: true,
+            symbolic: true
+        });
     };
     // runs services: http, web sockets, and file system watch.  Allows rapid testing with automated rebuilds
     apps.server = function node_apps_server():void {
@@ -3397,3 +3340,4 @@ interface readFile {
         }
     };
 }());
+//copy, lint, validation

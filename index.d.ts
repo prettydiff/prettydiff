@@ -171,6 +171,7 @@ interface commandList {
 }
 interface readDirectory {
     callback: Function;
+    exclusions: string[];
     path: string;
     recursive: boolean;
     symbolic: boolean;
