@@ -163,6 +163,31 @@ interface readFile {
                     }
                 ]
             },
+            directory: {
+                description: "Traverses a directory in the local file system and generates a list.",
+                example: [
+                    {
+                        code: "prettydiff directory source:\"my/directory/path\"",
+                        defined: "Returns an array where each index is an array of [absolute path, type, stat]. Type can refer to 'file', 'directory', or 'link' for symbolic links."
+                    },
+                    {
+                        code: "prettydiff directory source:\"my/directory/path\" shallow",
+                        defined: "Does not traverse child directories."
+                    },
+                    {
+                        code: "prettydiff directory source:\"my/directory/path\" listonly",
+                        defined: "Returns an array of strings where each index is an absolute path"
+                    },
+                    {
+                        code: "prettydiff directory source:\"my/directory/path\" symbolic",
+                        defined: "Identifies symbolic links instead of the object the links point to"
+                    },
+                    {
+                        code: "prettydiff directory source:\"my/directory/path\" ignore [.git, node_modules, \"program files\"]",
+                        defined: "Sets an exclusion list of things to ignore"
+                    }
+                ]
+            },
             get: {
                 description: "Retrieve a resource via an absolute URI.",
                 example: [
@@ -320,6 +345,37 @@ interface readFile {
                 }]
             }
         },
+        exclusions = (function node_exclusions():string[] {
+            const args = process.argv.join(" "),
+                match = args.match(/\signore\s*\[/);
+            if (match !== null) {
+                const start:number = args.indexOf(match[0]);
+                let a:number = start,
+                    len:number = args.length,
+                    list:string[] = [];
+                do {
+                    if (args.charAt(a) === "]" && (a === len - 1 || (/\s/).test(args.charAt(a + 1)) === true)) {
+                        break;
+                    }
+                    a = a + 1;
+                } while (a < len);
+                if (a < len) {
+                    const exs:string = args.slice(start, a + 1);
+                    process.argv = args.replace(exs, "").split(" ");
+                    list = exs.replace(/\signore\s*\[/, "").replace(/\]$/, "").replace(/\s*,\s*/g, ",").split(",");
+                    a = 0;
+                    len = list.length;
+                    do {
+                        if ((list[a].charAt(0) === "\"" || list[a].charAt(0) === "'") && list[a].charAt(list[a].length - 1) === list[a].charAt(0)) {
+                            list[a] = list[a].slice(1, list[a].length - 1);
+                        }
+                        a = a + 1;
+                    } while (a < len);
+                    return list;
+                }
+            }
+            return [];
+        }()),
         command:string = (function node_command():string {
             let comkeys:string[] = Object.keys(commands),
                 filtered:string[] = [],
@@ -1557,6 +1613,143 @@ interface readFile {
         options.mode = "diff";
         apps.mode();
     };
+    // similar to node's fs.readdir, but recursive
+    apps.directory = function node_apps_directory(args:readDirectory):void {
+        // arguments:
+        // * callback - function - the output is passed into the callback as an argument
+        // * exclusions - string array - a list of items to exclude
+        // * path - string - where to start in the local file system
+        // * recursive - boolean - if child directories should be scanned
+        // * symbolic - boolean - if symbolic links should be identified
+        const dircount:any = {},
+            listonly:boolean = (command === "directory" && process.argv.indexOf("listonly") > -1),
+            startPath:string = (function node_apps_directory_startPath():string {
+                if (command === "directory") {
+                    const len:number = process.argv.length;
+                    let a:number = 0;
+                    args = {
+                        callback: function node_apps_directory_startPath_callback(result:string[]|directoryList) {
+                            console.log(result);
+                            if (verbose === true) {
+                                console.log("");
+                                console.log(`PrettyDiff found ${text.green + result.length + text.none} items, after esclusions, from address ${text.cyan + startPath + text.none}`);
+                                apps.output([]);
+                            }
+                        },
+                        exclusions: exclusions,
+                        path: "",
+                        recursive: (process.argv.indexOf("shallow") > -1)
+                            ? false
+                            : true,
+                        symbolic: (process.argv.indexOf("symbolic") > -1)
+                    };
+                    do {
+                        if (process.argv[a].indexOf("source:") === 0) {
+                            return node.path.resolve(process.argv[a].replace(/source:("|')?/, "").replace(/("|')$/, ""));
+                        }
+                        a = a + 1;
+                    } while (a < len);
+                    apps.errout([
+                        "No path supplied for the directory command. For an example please see:",
+                        `    ${text.cyan}prettydiff commands directory${text.none}`
+                    ]);
+                    return "";
+                }
+                return args.path.replace(/(\/|\\)+$/, "");
+            }()),
+            list:directoryList = [],
+            filelist:string[] = [],
+            method:string = (args.symbolic === true)
+                ? "lstat"
+                : "stat",
+            dirCounter = function node_apps_directory_dirCounter(item:string):void {
+                let dirlist:string[] = item.split(sep),
+                    dirpath:string = "";
+                dirlist.pop();
+                dirpath = dirlist.join(sep);
+                dircount[dirpath] = dircount[dirpath] - 1;
+                if (dircount[dirpath] < 1) {
+                    delete dircount[dirpath];
+                    if (Object.keys(dircount).length < 1) {
+                        const sorty = function node_apps_directory_sort(a:directoryItem, b:directoryItem) {
+                            if (a[0] < b[0]) {
+                                return -1;
+                            }
+                            return 1;
+                        };
+                        if (listonly === true) {
+                            args.callback(filelist.sort());
+                        } else {
+                            args.callback(list.sort(sorty));
+                        }
+                    } else {
+                        node_apps_directory_dirCounter(dirpath);
+                    }
+                }
+            },
+            statWrapper = function node_apps_directory_wrapper(filepath:string):void {
+                node.fs[method](filepath, function node_apps_directory_wrapper_stat(er:Error, stat:Stats):void {
+                    const angrypath:string = `Filepath ${text.angry + filepath + text.none} is not a file or directory.`,
+                        dir = function node_apps_directory_wrapper_stat_dir(item:string):void {
+                            node.fs.readdir(item, {encoding: "utf8"}, function node_apps_directory_wrapper_stat_dir_readdirs(erd:Error, files:string[]):void {
+                                if (erd !== null) {
+                                    apps.errout([erd.toString()]);
+                                    return;
+                                }
+                                if (listonly === true) {
+                                    filelist.push(item);
+                                } else {
+                                    list.push([item, "directory", stat]);
+                                }
+                                if (files.length < 1) {
+                                    dirCounter(item);
+                                } else {
+                                    dircount[item] = files.length;
+                                }
+                                files.forEach(function node_apps_directory_wrapper_stat_dir_readdirs_each(value:string):void {
+                                    node_apps_directory_wrapper(item + sep + value);
+                                });
+                            });
+                        },
+                        populate = function node_apps_directory_wrapper_stat_populate(type:"link"|"file"|"directory"):void {
+                            if (exclusions.indexOf(filepath.replace(startPath + sep, "")) < 0) {
+                                if (listonly === true) {
+                                    filelist.push(filepath);
+                                } else {
+                                    list.push([filepath, type, stat]);
+                                }
+                            }
+                            dirCounter(filepath);
+                        };
+                    if (er !== null) {
+                        if (er.toString().indexOf("no such file or directory") > 0) {
+                            apps.errout([angrypath]);
+                            return;
+                        }
+                        apps.errout([er.toString()]);
+                        return;
+                    }
+                    if (stat === undefined) {
+                        apps.errout([angrypath]);
+                        return;
+                    }
+                    if (stat.isDirectory() === true) {
+                        if (args.recursive === true && exclusions.indexOf(filepath.replace(startPath + sep, "")) < 0) {
+                            dir(filepath);
+                        } else {
+                            populate("directory");
+                        }
+                        return;
+                    }
+                    if (stat.isSymbolicLink() === true) {
+                        populate("link");
+                    } else if (stat.isFile() === true || stat.isBlockDevice() === true || stat.isCharacterDevice() === true) {
+                        populate("file");
+                    }
+                });
+            };
+        statWrapper(startPath);
+    };
     // uniform error formatting
     apps.errout = function node_apps_errout(errtext:string[]):void {
         if (httpflag !== "") {
@@ -1819,7 +2012,7 @@ interface readFile {
         }
         if (http.test(filepath) === true) {
             apps.get(filepath, "source", function node_apps_hash_get() {
-                apps.readDirectory({
+                apps.directory({
                     callback: function node_apps_hash_get_localCallback(list:directoryList) {
                         dirComplete(list);
                     },
@@ -1835,7 +2028,7 @@ interface readFile {
                     limit = Number(uout);
                     shortlimit = Math.ceil(limit / 5);
                 }
-                apps.readDirectory({
+                apps.directory({
                     callback: function node_apps_hash_localCallback(list:directoryList) {
                         dirComplete(list);
                     },
@@ -2025,140 +2218,68 @@ interface readFile {
                 return;
             }
             (function node_apps_build_lint_getFiles():void {
-                let total:number    = 1,
-                    count:number    = 0;
-                const files:string[]           = [],
-                    lintrun         = function node_apps_build_lint_lintrun() {
-                        let filesCount:number = 0;
-                        const filesTotal = files.length,
-                            lintit = function node_apps_build_lint_lintrun_lintit(val:string):void {
-                                node.child(`eslint ${val}`, {
-                                    cwd: projectPath
-                                }, function node_apps_build_lint_lintrun_lintit_eslint(err:Error, stdout:string, stderr:string) {
-                                    if (stdout === "" || stdout.indexOf("0:0  warning  File ignored because of a matching ignore pattern.") > -1) {
-                                        if (err !== null) {
-                                            apps.errout([err.toString()]);
-                                            return;
-                                        }
-                                        if (stderr !== null && stderr !== "") {
-                                            apps.errout([stderr]);
-                                            return;
-                                        }
-                                        filesCount = filesCount + 1;
-                                        console.log(`${apps.humantime(false) + text.green}Lint passed:${text.none} ${val}`);
-                                        if (filesCount === filesTotal) {
-                                            console.log(`${text.green}Lint complete!${text.none}`);
-                                            if (callback !== undefined) {
-                                                callback();
-                                            }
-                                            return;
-                                        }
-                                    } else {
-                                        console.log(stdout);
-                                        apps.errout(["Lint failure."]);
+                const lintrun         = function node_apps_build_lint_lintrun(list:directoryList) {
+                    let filesRead:number = 0,
+                        filesLinted:number = 0,
+                        a:number = 0;
+                    const len = list.length,
+                        lintit = function node_apps_build_lint_lintrun_lintit(val:string):void {
+                            filesRead = filesRead + 1;
+                            node.child(`eslint ${val}`, {
+                                cwd: projectPath
+                            }, function node_apps_build_lint_lintrun_lintit_eslint(err:Error, stdout:string, stderr:string) {
+                                if (stdout === "" || stdout.indexOf("0:0  warning  File ignored because of a matching ignore pattern.") > -1) {
+                                    if (err !== null) {
+                                        apps.errout([err.toString()]);
                                         return;
                                     }
-                                })
-                            };
-                        files.forEach(lintit);
-                    },
-                    ignoreDirectory:string[] = (function node_apps_build_lint_getFiles_ignoreDirectory():string[] {
-                        const defaultList = [
-                                ".git",
-                                ".vscode",
-                                "bin",
-                                "coverage",
-                                "guide",
-                                "ignore",
-                                "node_modules",
-                                "test"
-                            ],
-                            igindex:number = process.argv.indexOf("ignore");
-                        if (command === "build") {
-                            return defaultList;
-                        }
-                        if (igindex > -1 && process.argv[igindex + 1].charAt(0) === "[") {
-                            let str:string = process.argv.join("").replace(/ignore\s+\[/, "ignore["),
-                                a:number = 0,
-                                len:number = 0,
-                                list:string[] = [];
-                            str = str.slice(str.indexOf("ignore[") + 7);
-                            len = str.length;
-                            do {
-                                if (str.charAt(a) === "]" && str.charAt(a - 1) !== "\\") {
-                                    break;
-                                }
-                                a = a + 1;
-                            } while (a < len);
-                            str = str.slice(0, a);
-                            list = str.split(",");
-                            if (list.length > 0) {
-                                return list;
-                            }
-                        }
-                        return defaultList;
-                    }()),
-                    startDir:string = (command === "lint" && process.argv[0] !== undefined)
-                        ? process.argv[0]
-                        : js,
-                    idLen:number    = ignoreDirectory.length,
-                    readDir  = function node_apps_build_lint_getFiles_readDir(filepath:string):void {
-                        node.fs.readdir(
-                            filepath,
-                            function node_apps_build_lint_getFiles_readDir_callback(erra:Error, list:string[]) {
-                                const fileEval = function node_apps_build_lint_getFiles_readDir_callback_fileEval(val:string):void {
-                                    const filename:string = (filepath.charAt(filepath.length - 1) === sep)
-                                        ? filepath + val
-                                        : filepath + sep + val;
-                                    node.fs.stat(
-                                        filename,
-                                        function node_apps_build_lint_getFiles_readDir_callback_fileEval_stat(errb:Error, stat:Stats) {
-                                            let a:number         = 0,
-                                                ignoreDir:boolean = false;
-                                            const dirtest:string   = `${filepath.replace(/\\/g, "/")}/${val}`;
-                                            if (errb !== null) {
-                                                apps.errout([errb.toString()]);
-                                                return;
-                                            }
-                                            count = count + 1;
-                                            if (stat.isFile() === true && (/(\.js)$/).test(val) === true) {
-                                                files.push(filename);
-                                            }
-                                            if (stat.isDirectory() === true) {
-                                                do {
-                                                    if (dirtest.slice(dirtest.lastIndexOf("/") + 1) === ignoreDirectory[a]) {
-                                                        ignoreDir = true;
-                                                        break;
-                                                    }
-                                                    a = a + 1;
-                                                } while (a < idLen);
-                                                if (ignoreDir === true) {
-                                                    if (count === total) {
-                                                        lintrun();
-                                                    }
-                                                } else {
-                                                    total = total + 1;
-                                                    node_apps_build_lint_getFiles_readDir(filename);
-                                                }
-                                            } else if (count === total) {
-                                                lintrun();
-                                            }
+                                    if (stderr !== null && stderr !== "") {
+                                        apps.errout([stderr]);
+                                        return;
+                                    }
+                                    filesLinted = filesLinted + 1;
+                                    console.log(`${apps.humantime(false) + text.green}Lint passed:${text.none} ${val}`);
+                                    if (filesRead === filesLinted) {
+                                        console.log(`${text.green}Lint complete!${text.none}`);
+                                        if (callback !== undefined) {
+                                            callback();
                                         }
-                                    );
-                                };
-                                if (erra !== null) {
-                                    apps.errout([
-                                        `Error reading path: ${filepath}`,
-                                        erra.toString()
-                                    ]);
+                                        return;
+                                    }
+                                } else {
+                                    console.log(stdout);
+                                    apps.errout(["Lint failure."]);
                                     return;
                                 }
-                                total = total + list.length - 1;
-                                list.forEach(fileEval);
-                            }
-                        );
-                    };
-                readDir(startDir);
+                            })
+                        };
+                    do {
+                        if (list[a][1] === "file" && (/\.js$/).test(list[a][0]) === true) {
+                            lintit(list[a][0]);
+                        }
+                        a = a + 1;
+                    } while (a < len);
+                };
+                apps.directory({
+                    callback: lintrun,
+                    exclusions: (command === "build")
+                        ? [
+                            ".git",
+                            ".vscode",
+                            "bin",
+                            "coverage",
+                            "guide",
+                            "ignore",
+                            "node_modules",
+                            "test"
+                        ]
+                        : exclusions,
+                    path: (command === "lint" && process.argv[0] !== undefined)
+                        ? process.argv[0]
+                        : js,
+                    recursive: true,
+                    symbolic: false
+                });
             }());
         });
     };
@@ -2659,93 +2780,6 @@ interface readFile {
         options.mode = "parse";
         apps.mode();
     };
-    // similar to node's fs.readdir, but recursive
-    apps.readDirectory = function node_apps_readDirectory(args:readDirectory):void {
-        // arguments:
-        // * callback - function - the output is passed into the callback as an argument
-        // * exclusions - string array - a list of items to exclude
-        // * path - string - where to start in the local file system
-        // * recursive - boolean - if child directories should be scanned
-        // * symbolic - boolean - if symbolic links should be identified
-        const dircount:any = {},
-            list:directoryList = [],
-            method:string = (args.symbolic === true)
-                ? "lstat"
-                : "stat",
-            dirCounter = function node_apps_readDirectory_dirCounter(item:string):void {
-                let dirlist:string[] = item.split(sep),
-                    dirpath:string = "";
-                dirlist.pop();
-                dirpath = dirlist.join(sep);
-                dircount[dirpath] = dircount[dirpath] - 1;
-                if (dircount[dirpath] < 1) {
-                    delete dircount[dirpath];
-                    if (Object.keys(dircount).length < 1) {
-                        const sorty = function node_apps_readDirectory_sort(a:directoryItem, b:directoryItem) {
-                            if (a[0] < b[0]) {
-                                return -1;
-                            }
-                            return 1;
-                        };
-                        args.callback(list.sort(sorty));
-                    } else {
-                        node_apps_readDirectory_dirCounter(dirpath);
-                    }
-                }
-            },
-            statWrapper = function node_apps_readDirectory_wrapper(filepath:string) {
-                node
-                .fs[method](filepath, function node_apps_readDirectory_wrapper_stat(er:Error, stat:Stats):void {
-                    const angrypath:string = `filepath ${text.angry + filepath + text.none} is not a file or directory.`,
-                        dir = function node_apps_readDirectory_wrapper_stat_dir(item:string):void {
-                            node.fs.readdir(item, {encoding: "utf8"}, function node_apps_readDirectory_wrapper_stat_dir_readdirs(erd:Error, files:string[]):void {
-                                if (erd !== null) {
-                                    apps.errout([erd.toString()]);
-                                    return;
-                                }
-                                list.push([item, "directory", stat]);
-                                if (files.length < 1) {
-                                    dirCounter(item);
-                                } else {
-                                    dircount[item] = files.length;
-                                }
-                                files.forEach(function node_apps_readDirectory_wrapper_stat_dir_readdirs_each(value:string) {
-                                    node_apps_readDirectory_wrapper(item + sep + value);
-                                });
-                            });
-                        };
-                    if (er !== null) {
-                        if (er.toString().indexOf("no such file or directory") > 0) {
-                            apps.errout([angrypath]);
-                            return;
-                        }
-                        apps.errout([er.toString()]);
-                        return;
-                    }
-                    if (stat === undefined) {
-                        apps.errout([angrypath]);
-                        return;
-                    }
-                    if (stat.isDirectory() === true) {
-                        if (args.recursive === true) {
-                            dir(filepath);
-                        } else {
-                            list.push([filepath, "directory", stat]);
-                            dirCounter(filepath);
-                        }
-                        return;
-                    }
-                    if (stat.isSymbolicLink() === true) {
-                        list.push([filepath, "link", stat]);
-                        dirCounter(filepath);
-                    } else if (stat.isFile() === true || stat.isBlockDevice() === true || stat.isCharacterDevice() === true) {
-                        list.push([filepath, "file", stat]);
-                        dirCounter(filepath);
-                    }
-                });
-            };
-        statWrapper(args.path);
-    };
     // similar to node's fs.readFile, but determines if the file is binary or text so that it can create eithr a buffer or text dump
     apps.readFile = function node_apps_readFile(args:readFile):void {
         // arguments
@@ -2929,7 +2963,7 @@ interface readFile {
                 apps.output([out.join(""), `Removed ${text.cyan + filepath + text.nocolor}`]);
             };
         }
-        apps.readDirectory({
+        apps.directory({
             callback: removeItems,
             exclusions: [],
             path: filepath,
@@ -3340,4 +3374,3 @@ interface readFile {
         }
     };
 }());
-//copy, lint, validation
