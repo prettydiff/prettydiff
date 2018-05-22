@@ -359,9 +359,16 @@ interface readFile {
                     a = a + 1;
                 } while (a < len);
                 if (a < len) {
-                    const exs:string = args.slice(start, a + 1);
+                    const exs:string = args.slice(start, a + 1),
+                        list:string[] = exs.replace(/\signore\s*\[/, "").replace(/\]$/, "").replace(/\s*,\s*/g, ",").split(",");
                     process.argv = args.replace(exs, "").split(" ");
-                    return exs.replace(/\signore\s*\[/, "").replace(/\]$/, "").replace(/\s*,\s*/g, ",").split(",");
+                    a = 0;
+                    len = list.length;
+                    do {
+                        list[a] = list[a].replace(/\/|\\/g, sep);
+                        a = a + 1;
+                    } while (a < len);
+                    return list;
                 }
             }
             return [];
@@ -1611,7 +1618,8 @@ interface readFile {
         // * path - string - where to start in the local file system
         // * recursive - boolean - if child directories should be scanned
         // * symbolic - boolean - if symbolic links should be identified
-        let dirtest:boolean = false;
+        let dirtest:boolean = false,
+            size:number = 0;
         const dircount:number[] = [],
             dirnames:string[] = [],
             listonly:boolean = (command === "directory" && process.argv.indexOf("listonly") > -1),
@@ -1625,7 +1633,7 @@ interface readFile {
                             if (verbose === true) {
                                 let output:string[] = [];
                                 console.log("");
-                                apps.wrapit(output, `PrettyDiff found ${text.green + result.length + text.none} matching items from address ${text.cyan + startPath + text.none}`);
+                                apps.wrapit(output, `PrettyDiff found ${text.green + result.length + text.none} matching items from address ${text.cyan + startPath + text.none} with a total file size of ${text.green + apps.commas(size) + text.none} bytes.`);
                                 apps.output(output);
                             }
                         },
@@ -1648,7 +1656,7 @@ interface readFile {
                     ]);
                     return "";
                 }
-                return args.path.replace(/(\/|\\)+$/, "");
+                return node.path.resolve(args.path);
             }()),
             list:directoryList = [],
             filelist:string[] = [],
@@ -1668,15 +1676,15 @@ interface readFile {
                     dircount.splice(index, 1);
                     dirnames.splice(index, 1);
                     if (dircount.length < 1) {
-                        const sorty = function node_apps_directory_sort(a:directoryItem, b:directoryItem) {
-                            if (a[0] < b[0]) {
-                                return -1;
-                            }
-                            return 1;
-                        };
                         if (listonly === true) {
                             args.callback(filelist.sort());
                         } else {
+                            const sorty = function node_apps_directory_sort(a:directoryItem, b:directoryItem) {
+                                if (a[0] < b[0]) {
+                                    return -1;
+                                }
+                                return 1;
+                            };
                             args.callback(list.sort(sorty));
                         }
                     } else {
@@ -1718,7 +1726,21 @@ interface readFile {
                                     list.push([filepath, type, stat]);
                                 }
                             }
-                            dirCounter(filepath);
+                            if (dircount.length > 0) {
+                                dirCounter(filepath);
+                            } else {
+                                if (listonly === true) {
+                                    args.callback(filelist.sort());
+                                } else {
+                                    const sorty = function node_apps_directory_sort(a:directoryItem, b:directoryItem) {
+                                        if (a[0] < b[0]) {
+                                            return -1;
+                                        }
+                                        return 1;
+                                    };
+                                    args.callback(list.sort(sorty));
+                                }
+                            }
                         };
                     if (er !== null) {
                         if (er.toString().indexOf("no such file or directory") > 0) {
@@ -1742,6 +1764,7 @@ interface readFile {
                     } else if (stat.isSymbolicLink() === true) {
                         populate("link");
                     } else if (stat.isFile() === true || stat.isBlockDevice() === true || stat.isCharacterDevice() === true) {
+                        size = size + stat.size;
                         populate("file");
                     }
                 });
@@ -2590,12 +2613,39 @@ interface readFile {
                 // 7 global installation
                 // 8 open defects
             },
-            file = function node_apps_mode_diff_file():void {},
+            file = function node_apps_mode_diff_file(item:directoryList):void {
+                const status:[boolean, boolean] = [false, false],
+                    callback = function node_apps_mode_diff_file_callback(itemdata:readFile, data:string|Buffer) {
+                        status[itemdata.index];
+                        if (itemdata.index === 0) {
+                            options.source = data;
+                        } else {
+                            options.diff = data;
+                        }
+                        if (item.length < 2 || (status[0] === true && status[1] === true)) {
+                            pdiff();
+                        }
+                    };
+                apps.readFile({
+                    callback: callback,
+                    index: 0,
+                    path: item[0][0],
+                    stat: item[0][2]
+                });
+                if (item.length > 1) {
+                    apps.readFile({
+                        callback: callback,
+                        index: 1,
+                        path: item[1][0],
+                        stat: item[1][2]
+                    });
+                }
+            },
             directory = function node_apps_mode_diff_directory():void {},
             // the screenTest function makes a guess if input input is readmethod "screen" opposed to a filesystem object
             screenTest = function node_apps_mode_screenTest(item:"source"|"diff") {
                 node.fs.stat(options[item], function node_apps_mode_screenTest_stat(err:Error):void {
-                    if (options.readmethod === true) {
+                    if (options.readmethod === "auto") {
                         if (err !== null) {
                             const index:any = {
                                 "sep": options[item].indexOf(node.path.sep),
@@ -2636,8 +2686,12 @@ interface readFile {
                                 difflist = list;
                             }
                             if (options.mode !== "diff" || (difflist.length > 0 && sourcelist.length > 0)) {
-                                if (list[0][1] === "file") {
-                                    file();
+                                if (sourcelist[0][1] === "file") {
+                                    if (options.mode === "diff") {
+                                        file([sourcelist[0], difflist[0]]);
+                                    } else {
+                                        file([sourcelist[0]]);
+                                    }
                                 } else if (list[0][1] === "directory") {
                                     directory();
                                 }
@@ -2769,7 +2823,7 @@ interface readFile {
         options.mode = "parse";
         apps.mode();
     };
-    // similar to node's fs.readFile, but determines if the file is binary or text so that it can create eithr a buffer or text dump
+    // similar to node's fs.readFile, but determines if the file is binary or text so that it can create either a buffer or text dump
     apps.readFile = function node_apps_readFile(args:readFile):void {
         // arguments
         // * callback - function - What to do next, the file data is passed into the callback as an argument
