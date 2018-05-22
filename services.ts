@@ -5,7 +5,7 @@ import * as http from "http";
 import { Stream, Writable } from "stream";
 import { Hash } from "crypto";
 import { Http2Stream, Http2Session } from "http2";
-type directoryItem = [string, "file" | "directory" | "link", Stats];
+type directoryItem = [string, "file" | "directory" | "link" | "screen", Stats];
 interface directoryList extends Array<directoryItem> {
     [key:number]: directoryItem;
 }
@@ -351,8 +351,7 @@ interface readFile {
             if (match !== null) {
                 const start:number = args.indexOf(match[0]);
                 let a:number = start,
-                    len:number = args.length,
-                    list:string[] = [];
+                    len:number = args.length;
                 do {
                     if (args.charAt(a) === "]" && (a === len - 1 || (/\s/).test(args.charAt(a + 1)) === true)) {
                         break;
@@ -362,16 +361,7 @@ interface readFile {
                 if (a < len) {
                     const exs:string = args.slice(start, a + 1);
                     process.argv = args.replace(exs, "").split(" ");
-                    list = exs.replace(/\signore\s*\[/, "").replace(/\]$/, "").replace(/\s*,\s*/g, ",").split(",");
-                    a = 0;
-                    len = list.length;
-                    do {
-                        if ((list[a].charAt(0) === "\"" || list[a].charAt(0) === "'") && list[a].charAt(list[a].length - 1) === list[a].charAt(0)) {
-                            list[a] = list[a].slice(1, list[a].length - 1);
-                        }
-                        a = a + 1;
-                    } while (a < len);
-                    return list;
+                    return exs.replace(/\signore\s*\[/, "").replace(/\]$/, "").replace(/\s*,\s*/g, ",").split(",");
                 }
             }
             return [];
@@ -1621,7 +1611,9 @@ interface readFile {
         // * path - string - where to start in the local file system
         // * recursive - boolean - if child directories should be scanned
         // * symbolic - boolean - if symbolic links should be identified
-        const dircount:any = {},
+        let dirtest:boolean = false;
+        const dircount:number[] = [],
+            dirnames:string[] = [],
             listonly:boolean = (command === "directory" && process.argv.indexOf("listonly") > -1),
             startPath:string = (function node_apps_directory_startPath():string {
                 if (command === "directory") {
@@ -1631,9 +1623,10 @@ interface readFile {
                         callback: function node_apps_directory_startPath_callback(result:string[]|directoryList) {
                             console.log(result);
                             if (verbose === true) {
+                                let output:string[] = [];
                                 console.log("");
-                                console.log(`PrettyDiff found ${text.green + result.length + text.none} items, after esclusions, from address ${text.cyan + startPath + text.none}`);
-                                apps.output([]);
+                                apps.wrapit(output, `PrettyDiff found ${text.green + result.length + text.none} matching items from address ${text.cyan + startPath + text.none}`);
+                                apps.output(output);
                             }
                         },
                         exclusions: exclusions,
@@ -1664,13 +1657,17 @@ interface readFile {
                 : "stat",
             dirCounter = function node_apps_directory_dirCounter(item:string):void {
                 let dirlist:string[] = item.split(sep),
-                    dirpath:string = "";
+                    dirpath:string = "",
+                    index:number = 0;
                 dirlist.pop();
                 dirpath = dirlist.join(sep);
-                dircount[dirpath] = dircount[dirpath] - 1;
-                if (dircount[dirpath] < 1) {
-                    delete dircount[dirpath];
-                    if (Object.keys(dircount).length < 1) {
+                index = dirnames.indexOf(dirpath);
+                dircount[index] = dircount[index] - 1;
+                if (dircount[index] < 1) {
+                    // dircount and dirnames are parallel arrays
+                    dircount.splice(index, 1);
+                    dirnames.splice(index, 1);
+                    if (dircount.length < 1) {
                         const sorty = function node_apps_directory_sort(a:directoryItem, b:directoryItem) {
                             if (a[0] < b[0]) {
                                 return -1;
@@ -1704,7 +1701,9 @@ interface readFile {
                                 if (files.length < 1) {
                                     dirCounter(item);
                                 } else {
-                                    dircount[item] = files.length;
+                                    // dircount and dirnames are parallel arrays
+                                    dircount.push(files.length);
+                                    dirnames.push(item);
                                 }
                                 files.forEach(function node_apps_directory_wrapper_stat_dir_readdirs_each(value:string):void {
                                     node_apps_directory_wrapper(item + sep + value);
@@ -1734,14 +1733,13 @@ interface readFile {
                         return;
                     }
                     if (stat.isDirectory() === true) {
-                        if (args.recursive === true && exclusions.indexOf(filepath.replace(startPath + sep, "")) < 0) {
+                        if ((args.recursive === true || dirtest === false) && exclusions.indexOf(filepath.replace(startPath + sep, "")) < 0) {
+                            dirtest = true;
                             dir(filepath);
                         } else {
                             populate("directory");
                         }
-                        return;
-                    }
-                    if (stat.isSymbolicLink() === true) {
+                    } else if (stat.isSymbolicLink() === true) {
                         populate("link");
                     } else if (stat.isFile() === true || stat.isBlockDevice() === true || stat.isCharacterDevice() === true) {
                         populate("file");
@@ -2444,26 +2442,30 @@ interface readFile {
             return;
         }
         require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}parse`);
+        let sourcelist:directoryList = [],
+            difflist:directoryList = [];
         const all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`),
-            auto:any = {
-                lang: (options.lang === "auto"),
-                readmethod: (options.readmethod === "auto")
-            },
-            status:any = {
-                source: false,
-                diff: false
-            },
-            pdwrap = function node_apps_mode_pdwrap(stattype:"directory"|"file"|"screen"):void {
-                const output:string[] = [],
+            pdiff = function node_apps_mode_pdiff():void {
+                let lang:[string, string, string] = ["javascript", "script", "JavaScript"];
+                const langAuto:boolean = (function node_apps_mode_pdiff_lang():boolean {
+                        if (options.lang === "auto") {
+                            lang = prettydiff.api.language.auto(options.source, "javascript");
+                            options.lang = lang[0];
+                            options.lexer = lang[1];
+                            return true;
+                        }
+                        return false;
+                    }()),
+                    output:string[] = [],
                     final = function node_apps_mode_pdwrap_final(inject?:string) {
                         if (verbose === true) {
-                            if (auto.lang === true || auto.readmethod === true) {
+                            if (langAuto === true || options.readmethod === true) {
                                 output.push("");
                             }
-                            if (auto.readmethod === true) {
+                            if (options.readmethod === "auto") {
                                 apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}readmethod${text.none} set to ${text.angry}auto${text.none}. Option ${text.cyan}source${text.none} was not provided a valid file system path so Pretty Diff processed the source value literally.`);
                             }
-                            if (auto.lang === true) {
+                            if (langAuto === true) {
                                 apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}lang${text.none} set to ${text.angry}auto${text.none} and evaluated by Pretty Diff as ${text.green + text.bold + lang[2] + text.none} by lexer ${text.green + text.bold + lang[1] + text.none}.`);
                             }
                         }
@@ -2472,28 +2474,12 @@ interface readFile {
                         }
                         apps.output(output);
                     };
-                if (options.lang === "auto") {
-                    lang = prettydiff.api.language.auto(options.source, "javascript");
-                    if (lang[2] === "unknown") {
-                        lang[2] = "JavaScript";
-                    }
-                    options.lang = lang[0];
-                    options.lexer = lang[1];
-                }
-                options.lexerOptions = {};
-                options.lexerOptions[options.lexer] = {};
-                if (options.objectSort === true) {
-                    options.lexerOptions[options.lexer].objectSort = true;
-                }
-                if (options.lexer === "script") {
-                    options.lexerOptions.script.varword = options.varword;
-                }
                 if (options.mode === "diff") {
                     if (options.lang !== "text") {
                         const source:string = options.source;
                         options.source = options.diff;
                         options.parsed = global.parseFramework.parserArrays(options);
-                        options.diff = prettydiff.beautify[options.lexer](options);
+                        options.diff   = prettydiff.beautify[options.lexer](options);
                         options.source = source;
                         options.parsed = global.parseFramework.parserArrays(options);
                         options.source = prettydiff.beautify[options.lexer](options);
@@ -2576,7 +2562,7 @@ interface readFile {
                 }
                 if (options.readmethod === "screen" || options.readmethod === "filescreen") {
                     final();
-                } else if (stattype === "file") {
+                } else if (sourcelist[0][1] === "file") {
                     if (options.output === "") {
                         apps.errout([
                             `Pretty Diff requires use of option ${text.angry}output${text.none} to indicate where to write output.`,
@@ -2604,9 +2590,12 @@ interface readFile {
                 // 7 global installation
                 // 8 open defects
             },
-            statWrapper = function node_apps_mode_statWrapper(item:"source"|"diff") {
-                node.fs.stat(options[item], function node_apps_mode_statWrapper_stat(err:Error, stats:Stats):void {
-                    if (auto.readmethod === true) {
+            file = function node_apps_mode_diff_file():void {},
+            directory = function node_apps_mode_diff_directory():void {},
+            // the screenTest function makes a guess if input input is readmethod "screen" opposed to a filesystem object
+            screenTest = function node_apps_mode_screenTest(item:"source"|"diff") {
+                node.fs.stat(options[item], function node_apps_mode_screenTest_stat(err:Error):void {
+                    if (options.readmethod === true) {
                         if (err !== null) {
                             const index:any = {
                                 "sep": options[item].indexOf(node.path.sep),
@@ -2623,52 +2612,53 @@ interface readFile {
                                 index["{"] > -1
                             )) {
                                 // readmethod:auto evaluated as "screen"
-                                status[item] = true;
-                                if (options.mode !== "diff" || (status.source === true && status.diff === true)) {
-                                    pdwrap("screen");
-                                }
+                                pdiff();
                             } else {
-                                // readmethod:auto evaluated as filesystem path
+                                // readmethod:auto evaluated as filesystem path pointing to missing resource
                                 apps.errout([err.toString()]);
                             }
                             return;
                         }
-                    } else {
-                        if (err !== null) {
-                            apps.errout([err.toString()]);
-                            return;
-                        }
-                        if ((options.readmethod === "file" || options.readmethod === "filescreen") && stats.isFile() === false) {
-                            apps.errout([`The value for the source option is ${text.angry}not an address to a file${text.none} but option readmethod is ${text.angry + options.readmethod + text.none}.`]);
-                            return;
-                        }
-                        if ((options.readmethod === "directory" || options.readmethod === "subdirectory") && stats.isDirectory() === false) {
-                            apps.errout([`The value for the source option is ${text.angry}not an address to a directory${text.none} but option readmethod is ${text.angry + options.readmethod + text.none}.`]);
-                            return;
-                        }
                     }
-                    if (stats.isFile() === true) {
-                        node.fs.readFile(options[item], "utf8", function node_apps_mode_statWrapper_stat_readFile(erread:Error, filedata:string):void {
-                            if (erread !== null) {
-                                apps.errout([erread.toString()]);
+                    apps.directory({
+                        callback: function node_apps_mode_screenTest_callback(list:directoryList) {
+                            if (list[0][1] !== "file" && (options.readmethod === "file" || options.readmethod === "filescreen")) {
+                                apps.errout([`The value for the source option is ${text.angry}not an address to a file${text.none} but option readmethod is ${text.angry + options.readmethod + text.none}.`]);
                                 return;
                             }
-                            options[item] = filedata;
-                            status[item] = true;
-                            if (options.mode !== "diff" || (status.diff === true && status.source === true)) {
-                                pdwrap("file");
+                            if (list[0][1] !== "directory" && (options.readmethod === "subdirectory" || options.readmethod === "directory")) {
+                                apps.errout([`The value for the source option is ${text.angry}not an address to a directory${text.none} but option readmethod is ${text.angry + options.readmethod + text.none}.`]);
+                                return;
                             }
-                        });
-                    }
+                            if (item === "source") {
+                                sourcelist = list;
+                            } else {
+                                difflist = list;
+                            }
+                            if (options.mode !== "diff" || (difflist.length > 0 && sourcelist.length > 0)) {
+                                if (list[0][1] === "file") {
+                                    file();
+                                } else if (list[0][1] === "directory") {
+                                    directory();
+                                }
+                            }
+                        },
+                        exclusions: exclusions,
+                        path: options.source,
+                        recursive: (options.readmethod === "auto" || options.readmethod === "subdirectory"),
+                        symbolic: true
+                    });
                 })
             };
-        let lang:[string, string, string] = ["javascript", "script", "JavaScript"];
         prettydiff.api.pdcomment(options);
         all(options, function node_apps_mode_allLexers() {
             if (options.readmethod === "screen") {
-                pdwrap("screen");
+                pdiff();
             } else {
-                statWrapper("source");
+                screenTest("source");
+                if (options.mode === "diff") {
+                    screenTest("diff");
+                }
             }
         });
         return;
@@ -2768,7 +2758,6 @@ interface readFile {
             console.log(value);
         });
         if (verbose === true) {
-            console.log("");
             console.log("");
             console.log(`parse-framework version ${text.angry + version.parse + text.none}`);
             console.log(`Pretty Diff version ${text.angry + version.number + text.none} dated ${text.cyan + version.date + text.none}`);
