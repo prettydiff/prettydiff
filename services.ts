@@ -2460,6 +2460,8 @@ interface readFile {
     };
     // processes Pretty Diff mode commands
     apps.mode = function node_apps_mode():void {
+        // options.output - different from file versus directory
+        // write file
         if (options.source === "") {
             apps.errout([`Pretty Diff requires use of the ${text.angry}source${text.none} option.`]);
             return;
@@ -2468,9 +2470,9 @@ interface readFile {
         let sourcelist:directoryList = [],
             difflist:directoryList = [];
         const all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`),
-            pdiff = function node_apps_mode_pdiff():void {
+            application = function node_apps_mode_application(path:string):void {
                 let lang:[string, string, string] = ["javascript", "script", "JavaScript"];
-                const langAuto:boolean = (function node_apps_mode_pdiff_lang():boolean {
+                const langAuto:boolean = (function node_apps_mode_application_lang():boolean {
                         if (options.lang === "auto") {
                             lang = prettydiff.api.language.auto(options.source, "javascript");
                             options.lang = lang[0];
@@ -2480,7 +2482,7 @@ interface readFile {
                         return false;
                     }()),
                     output:string[] = [],
-                    final = function node_apps_mode_pdwrap_final(inject?:string) {
+                    final = function node_apps_mode_application_final(inject:string) {
                         if (verbose === true) {
                             if (langAuto === true || options.readmethod === true) {
                                 output.push("");
@@ -2492,12 +2494,16 @@ interface readFile {
                                 apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}lang${text.none} set to ${text.angry}auto${text.none} and evaluated by Pretty Diff as ${text.green + text.bold + lang[2] + text.none} by lexer ${text.green + text.bold + lang[1] + text.none}.`);
                             }
                         }
-                        if (inject !== undefined && inject !== "") {
+                        if (inject !== "") {
                             output.push(inject);
                         }
                         apps.output(output);
                     };
                 if (options.mode === "diff") {
+                    if (options.diffcli === true) {
+                        verbose = true;
+                        options.readmethod = "screen";
+                    }
                     if (options.lang !== "text") {
                         const source:string = options.source;
                         options.source = options.diff;
@@ -2532,7 +2538,7 @@ interface readFile {
                             str:string[] = [];
                         const outputArrays:parsedArray = options.parsed,
                             b:number = outputArrays.token.length,
-                            pad = function node_apps_mode_pdwrap_pad(x:string, y:number):void {
+                            pad = function node_apps_mode_application_parsePad(x:string, y:number):void {
                                 const cc:string = x
                                         .toString()
                                         .replace(/\s/g, " ");
@@ -2584,18 +2590,18 @@ interface readFile {
                     }
                 }
                 if (options.readmethod === "screen" || options.readmethod === "filescreen") {
-                    final();
+                    final("");
                 } else if (sourcelist[0][1] === "file") {
                     if (options.output === "") {
                         apps.errout([
                             `Pretty Diff requires use of option ${text.angry}output${text.none} to indicate where to write output.`,
-                            `To print output to the console try using option ${text.cyan}readmethod:screen${text.none} or ${text.cyan}readmethod:filescreen${text.none}`,
+                            `To print output to the console try using option ${text.cyan}readmethod:${text.green}screen${text.none} or ${text.cyan}readmethod:${text.green}filescreen${text.none}`,
                             "Example:",
                             `${text.cyan}prettydiff ${options.mode} source:"myfile1.txt"${(options.mode === "diff") ? " diff:\"myfile2.txt\"" : ""} readmethod:filescreen${text.none}`
                         ]);
                         return;
                     }
-                    node.fs.writeFile(options.output, options.source, "utf8", function node_apps_mode_pdwrap_writeFile(err:Error) {
+                    node.fs.writeFile(options.output, options.source, "utf8", function node_apps_mode_application_writeFile(err:Error) {
                         if (err !== null) {
                             apps.errout([err.toString()]);
                             return;
@@ -2616,14 +2622,14 @@ interface readFile {
             file = function node_apps_mode_diff_file(item:directoryList):void {
                 const status:[boolean, boolean] = [false, false],
                     callback = function node_apps_mode_diff_file_callback(itemdata:readFile, data:string|Buffer) {
-                        status[itemdata.index];
+                        status[itemdata.index] = true;
                         if (itemdata.index === 0) {
                             options.source = data;
                         } else {
                             options.diff = data;
                         }
                         if (item.length < 2 || (status[0] === true && status[1] === true)) {
-                            pdiff();
+                            application(itemdata.path);
                         }
                     };
                 apps.readFile({
@@ -2662,7 +2668,7 @@ interface readFile {
                                 index["{"] > -1
                             )) {
                                 // readmethod:auto evaluated as "screen"
-                                pdiff();
+                                application("");
                             } else {
                                 // readmethod:auto evaluated as filesystem path pointing to missing resource
                                 apps.errout([err.toString()]);
@@ -2670,44 +2676,67 @@ interface readFile {
                             return;
                         }
                     }
-                    apps.directory({
-                        callback: function node_apps_mode_screenTest_callback(list:directoryList) {
-                            if (list[0][1] !== "file" && (options.readmethod === "file" || options.readmethod === "filescreen")) {
-                                apps.errout([`The value for the source option is ${text.angry}not an address to a file${text.none} but option readmethod is ${text.angry + options.readmethod + text.none}.`]);
-                                return;
-                            }
-                            if (list[0][1] !== "directory" && (options.readmethod === "subdirectory" || options.readmethod === "directory")) {
-                                apps.errout([`The value for the source option is ${text.angry}not an address to a directory${text.none} but option readmethod is ${text.angry + options.readmethod + text.none}.`]);
-                                return;
-                            }
-                            if (item === "source") {
-                                sourcelist = list;
-                            } else {
-                                difflist = list;
-                            }
-                            if (options.mode !== "diff" || (difflist.length > 0 && sourcelist.length > 0)) {
-                                if (sourcelist[0][1] === "file") {
-                                    if (options.mode === "diff") {
-                                        file([sourcelist[0], difflist[0]]);
-                                    } else {
-                                        file([sourcelist[0]]);
-                                    }
-                                } else if (list[0][1] === "directory") {
-                                    directory();
+                    options.output = node.path.resolve(options.output);
+                    node.fs.stat(options.output, function node_apps_mode_screenTest_stat_statOutput(ers:Error, stat:Stats):void {
+                        if (ers !== null) {
+                            apps.errout([ers.toString()]);
+                            return;
+                        }
+                        if (item === "source") {
+                            if (stat.isFile() === true) {
+                                if (options.readmethod === "directory" || options.readmethod === "subdirectory") {
+                                    apps.errout([`Option ${text.cyan}output${text.none} received value ${options.output} which is a file, but when option ${text.cyan}readmethod${text.none} has value ${text.green}directory${text.none} or ${text.green}subdirectory${text.none} the output option must point to a directory or new location.`]);
+                                    return;
+                                }
+                                if (options.readmethod === "file") {
+                                    console.log(`Overwriting file ${text.green + options.output + text.none}.`);
+                                }
+                            } else if (stat.isDirectory() === true && options.readmethod === "file") {
+                                options.output = options.output.replace(/(\/|\\)$/, "") + sep + options.source.replace(/\/|\\/g, "/").split("/").pop();
+                                if (options.mode === "diff" && options.diffcli === false) {
+                                    options.output = `${options.output}-diff.txt`;
                                 }
                             }
-                        },
-                        exclusions: exclusions,
-                        path: options.source,
-                        recursive: (options.readmethod === "auto" || options.readmethod === "subdirectory"),
-                        symbolic: true
+                        }
+                        apps.directory({
+                            callback: function node_apps_mode_screenTest_callback(list:directoryList):void {
+                                if (list[0][1] !== "file" && (options.readmethod === "file" || options.readmethod === "filescreen")) {
+                                    apps.errout([`The value for the source option is ${text.angry}not an address to a file${text.none} but option readmethod is ${text.angry + options.readmethod + text.none}.`]);
+                                    return;
+                                }
+                                if (list[0][1] !== "directory" && (options.readmethod === "subdirectory" || options.readmethod === "directory")) {
+                                    apps.errout([`The value for the source option is ${text.angry}not an address to a directory${text.none} but option readmethod is ${text.angry + options.readmethod + text.none}.`]);
+                                    return;
+                                }
+                                if (item === "source") {
+                                    sourcelist = list;
+                                } else {
+                                    difflist = list;
+                                }
+                                if (options.mode !== "diff" || (difflist.length > 0 && sourcelist.length > 0)) {
+                                    if (sourcelist[0][1] === "file") {
+                                        if (options.mode === "diff") {
+                                            file([sourcelist[0], difflist[0]]);
+                                        } else {
+                                            file([sourcelist[0]]);
+                                        }
+                                    } else if (list[0][1] === "directory") {
+                                        directory();
+                                    }
+                                }
+                            },
+                            exclusions: exclusions,
+                            path: options.source,
+                            recursive: (options.readmethod === "auto" || options.readmethod === "subdirectory"),
+                            symbolic: true
+                        });
                     });
                 })
             };
         prettydiff.api.pdcomment(options);
         all(options, function node_apps_mode_allLexers() {
             if (options.readmethod === "screen") {
-                pdiff();
+                application("");
             } else {
                 screenTest("source");
                 if (options.mode === "diff") {
