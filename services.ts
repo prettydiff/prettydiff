@@ -1619,7 +1619,8 @@ interface readFile {
         // * recursive - boolean - if child directories should be scanned
         // * symbolic - boolean - if symbolic links should be identified
         let dirtest:boolean = false,
-            size:number = 0;
+            size:number = 0,
+            dirs:number = 0;
         const dircount:number[] = [],
             dirnames:string[] = [],
             listonly:boolean = (command === "directory" && process.argv.indexOf("listonly") > -1),
@@ -1633,28 +1634,39 @@ interface readFile {
                             if (verbose === true) {
                                 let output:string[] = [];
                                 console.log("");
-                                apps.wrapit(output, `PrettyDiff found ${text.green + result.length + text.none} matching items from address ${text.cyan + startPath + text.none} with a total file size of ${text.green + apps.commas(size) + text.none} bytes.`);
+                                apps.wrapit(output, `PrettyDiff found ${text.green + apps.commas(result.length) + text.none} matching items from address ${text.cyan + startPath + text.none} with a total file size of ${text.green + apps.commas(size) + text.none} bytes.`);
                                 apps.output(output);
                             }
                         },
                         exclusions: exclusions,
                         path: "",
                         recursive: (process.argv.indexOf("shallow") > -1)
-                            ? false
+                            ? (function node_apps_directory_startPath_recursive():boolean {
+                                process.argv.splice(process.argv.indexOf("shallow"), 1);
+                                return false;
+                            }())
                             : true,
                         symbolic: (process.argv.indexOf("symbolic") > -1)
+                            ? (function node_apps_directory_startPath_symbolic():boolean {
+                                process.argv.splice(process.argv.indexOf("symbolic"), 1);
+                                return true;
+                            }())
+                            : false
                     };
+                    if (process.argv.length < 1) {
+                        apps.errout([
+                            "No path supplied for the directory command. For an example please see:",
+                            `    ${text.cyan}prettydiff commands directory${text.none}`
+                        ]);
+                        return "";
+                    }
                     do {
                         if (process.argv[a].indexOf("source:") === 0) {
                             return node.path.resolve(process.argv[a].replace(/source:("|')?/, "").replace(/("|')$/, ""));
                         }
                         a = a + 1;
                     } while (a < len);
-                    apps.errout([
-                        "No path supplied for the directory command. For an example please see:",
-                        `    ${text.cyan}prettydiff commands directory${text.none}`
-                    ]);
-                    return "";
+                    return node.path.resolve(process.argv[0]);
                 }
                 return node.path.resolve(args.path);
             }()),
@@ -1675,7 +1687,8 @@ interface readFile {
                     // dircount and dirnames are parallel arrays
                     dircount.splice(index, 1);
                     dirnames.splice(index, 1);
-                    if (dircount.length < 1) {
+                    dirs = dirs - 1;
+                    if (dirs < 1) {
                         if (listonly === true) {
                             args.callback(filelist.sort());
                         } else {
@@ -1712,6 +1725,7 @@ interface readFile {
                                     // dircount and dirnames are parallel arrays
                                     dircount.push(files.length);
                                     dirnames.push(item);
+                                    dirs = dirs + 1;
                                 }
                                 files.forEach(function node_apps_directory_wrapper_stat_dir_readdirs_each(value:string):void {
                                     node_apps_directory_wrapper(item + sep + value);
@@ -1726,7 +1740,7 @@ interface readFile {
                                     list.push([filepath, type, stat]);
                                 }
                             }
-                            if (dircount.length > 0) {
+                            if (dirs > 0) {
                                 dirCounter(filepath);
                             } else {
                                 if (listonly === true) {
