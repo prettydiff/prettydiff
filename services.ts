@@ -771,8 +771,9 @@ interface readFile {
     };
     // mode beautify wrapper, see apps.mode
     apps.beautify = function node_apps_beautify():void {
-        options.mode = "beautify";
-        apps.mode();
+        apps.mode(false, function node_apps_beautify_callback() {
+            return;
+        });
     };
     // build system
     apps.build = function node_apps_build():void {
@@ -1602,13 +1603,19 @@ interface readFile {
     apps.diff = function node_apps_diff():void {
         if (options.diff === "" || options.source === "") {
             apps.errout([
-                "Pretty Diff requires option diff when using command diff. Example:",
+                `Pretty Diff requires option ${text.angry}diff${text.none} and option ${text.angry}source${text.none} when using command diff. Example:`,
                 `${text.cyan}prettydiff diff source:"myFile.js" diff:"myFile1.js"${text.none}`
             ]);
             return;
         }
-        options.mode = "diff";
-        apps.mode();
+        options.mode = "beautify";
+        if (options.lang !== "text") {
+            const all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`);
+            all(options, function node_apps_mode_allLexers() {
+                require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}parse`);
+                apps.mode(false);
+            });
+        }
     };
     // similar to node's fs.readdir, but recursive
     apps.directory = function node_apps_directory(args:readDirectory):void {
@@ -2469,12 +2476,130 @@ interface readFile {
     };
     // mode minify wrapper, see apps.mode
     apps.minify = function node_apps_minify():void {
-        options.mode = "minify";
-        apps.mode();
+        apps.mode(false, function node_apps_minify_callback() {
+            return;
+        });
     };
     // processes Pretty Diff mode commands
-    apps.mode = function node_apps_mode():void {
-        // options.output - different from file versus directory
+    apps.mode = function node_apps_mode(diff:boolean, modeCallback:Function):void {
+        if (options.source === "") {
+            apps.errout([
+                `Pretty Diff requires option ${text.cyan}source${text.none} when using command ${text.green + command + text.none}. Example:`,
+                `${text.cyan}prettydiff ${command} source:"myFile.js"${text.none}`
+            ]);
+            return;
+        }
+        if (options.lang === "text") {
+            apps.errout([`Language value ${text.angry}text${text.none} is not compatible with command ${text.green + command + text.none}.`]);
+            return;
+        }
+        const all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`),
+            item:string = (diff === true)
+                ? "diff"
+                : "source",
+            readmethod = function node_apps_mode_readmethod() {
+                node.fs.stat(options[item], function node_apps_mode_screenTest_stat(err:Error, stat:Stats):void {
+                    const resolveItem = function node_apps_mode_screenTest_stat_resolveItem() {
+                        if (options.readmethod === "directory" || options.readmethod === "subdirectory") {
+                            apps.directory({
+                                callback: function node_apps_mode_screenTest_stat_resolveItem_directoryCallback(list:directoryList):void {
+                                    modeCallback("directory", list);
+                                },
+                                exclusions: exclusions,
+                                path: options.source,
+                                recursive: (options.readmethod === "auto" || options.readmethod === "subdirectory"),
+                                symbolic: true
+                            });
+                        } else {
+                            apps.readFile({
+                                callback: function node_apps_mode_screenTest_stat_resolveItem_fileCallback(args:readFile, dump:string|Buffer):void {
+                                    if (typeof dump === "string") {
+                                        modeCallback("file", dump);
+                                    } else {
+                                        apps.errout([`The file at ${options[item]} contains a binary buffer.  Pretty Diff does not analyze binary at this time.`]);
+                                    }
+                                },
+                                index: 0,
+                                path: options.source,
+                                stat: stat
+                            });
+                        }
+                    };
+                    if (options.readmethod === "auto") {
+                        if (err !== null) {
+                            const index:any = {
+                                "sep": options[item].indexOf(node.path.sep),
+                                "<": options[item].indexOf("<"),
+                                "=": options[item].indexOf("="),
+                                ";": options[item].indexOf(";"),
+                                "{": options[item].indexOf("}")
+                            };
+                            if (err.toString().indexOf("ENOENT") > -1 && (
+                                index["sep"] < 0 ||
+                                index["<"] > -1 ||
+                                index["="] > -1 ||
+                                index[";"] > -1 ||
+                                index["{"] > -1
+                            )) {
+                                // readmethod:auto evaluated as "screen"
+                                modeCallback("screen", options[item]);
+                            } else {
+                                // readmethod:auto evaluated as filesystem path pointing to missing resource
+                                apps.errout([err.toString()]);
+                            }
+                            return;
+                        }
+                    }
+                    options[item] = node.path.resolve(options.item);
+                    if (stat.isDirectory() === false && (options.readmethod === "directory" || options.readmethod === "subdirectory")) {
+                        apps.errout([`Option ${text.cyan}readmethod${text.none} has value ${text.green + options.readmethod + text.none} but ${text.angry}option ${item} does not point to a directory${text.none}.`]);
+                        return;
+                    }
+                    if ((stat.isDirectory() === true || stat.isSymbolicLink() === true || stat.isFIFO() === true) && (options.readmethod === "file" || options.readmethod === "filescreen")) {
+                        apps.errout([`Option ${text.cyan}readmethod${text.none} has value ${text.green + options.readmethod + text.none} but ${text.angry}option ${item} does not point to a file${text.none}.`]);
+                        return;
+                    }
+                    // resolving options.output path...
+                    if (options.readmethod !== "screen" && options.readmethod !== "filescreen" && diff === false) {
+                        options.output = node.path.resolve(options.output);
+                        node.fs.stat(options.output, function node_apps_mode_screenTest_stat_statOutput(ers:Error, ostat:Stats):void {
+                            if (ers !== null && ers.toString().indexOf("ENOENT") > -1) {
+                                apps.errout([ers.toString()]);
+                                return;
+                            }
+                            if (ers === null) {
+                                if (stat.isDirectory() === false && stat.isSymbolicLink() === false && stat.isFIFO() === false) {
+                                    if (options.readmethod === "directory" || options.readmethod === "subdirectory") {
+                                        apps.errout([`Option ${text.cyan}output${text.none} received value ${options.output} which is a file, but when option ${text.cyan}readmethod${text.none} has value ${text.green}directory${text.none} or ${text.green}subdirectory${text.none} the output option must point to a directory or new location.`]);
+                                        return;
+                                    }
+                                    if (options.readmethod === "file") {
+                                        console.log(`Overwriting file ${text.green + options.output + text.none}.`);
+                                    }
+                                } else if (stat.isDirectory() === true && options.readmethod === "file") {
+                                    options.output = options.output.replace(/(\/|\\)$/, "") + sep + options.source.replace(/\/|\\/g, "/").split("/").pop();
+                                    if (options.mode === "diff" && options.diffcli === false) {
+                                        options.output = `${options.output}-diff.txt`;
+                                    }
+                                }
+                            }
+                            resolveItem();
+                        });
+                    } else if (options.readmethod === "screen") {
+                        modeCallback("screen", options[item]);
+                    } else {
+                        resolveItem();
+                    }
+                });
+            };
+        options.mode = (command === "diff")
+            ? "beautify"
+            : command;
+        all(options, function node_apps_mode_allLexers() {
+            require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}parse`);
+            readmethod();
+        });
+        /*// options.output - different from file versus directory
         // write file
         if (options.source === "") {
             apps.errout([`Pretty Diff requires use of the ${text.angry}source${text.none} option.`]);
@@ -2758,7 +2883,7 @@ interface readFile {
                 }
             }
         });
-        return;
+        return;*/
     };
     // CLI documentation for supported Pretty Diff options
     apps.options = function node_apps_options():void {
@@ -2863,8 +2988,9 @@ interface readFile {
     };
     // mode parse wrapper, see apps.mode
     apps.parse = function node_apps_parse():void {
-        options.mode = "parse";
-        apps.mode();
+        apps.mode(false, function node_apps_parse_callback() {
+            return;
+        });
     };
     // similar to node's fs.readFile, but determines if the file is binary or text so that it can create either a buffer or text dump
     apps.readFile = function node_apps_readFile(args:readFile):void {
