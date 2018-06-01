@@ -5,7 +5,7 @@ import * as http from "http";
 import { Stream, Writable } from "stream";
 import { Hash } from "crypto";
 import { Http2Stream, Http2Session } from "http2";
-type directoryItem = [string, "file" | "directory" | "link" | "screen", Stats];
+type directoryItem = [string, "file" | "directory" | "link" | "screen", number, number, Stats];
 interface directoryList extends Array<directoryItem> {
     [key:number]: directoryItem;
 }
@@ -141,11 +141,15 @@ interface readFile {
                         defined: "Quote values that contain non-alphanumeric characters."
                     },
                     {
-                        code: "prettydiff copy source destination [build, .git, node_modules]",
-                        defined: "Exclusions are permitted as a comma separated list in square brackets."
+                        code: "prettydiff copy source destination ignore [build, .git, node_modules]",
+                        defined: "Exclusions are permitted as a comma separated list in square brackets following the ignore keyword."
                     },
                     {
-                        code: "prettydiff copy ../prettydiff3 ../prettydiffXX [build, .git, node_modules]",
+                        code: "prettydiff copy source destination ignore[build, .git, node_modules]",
+                        defined: "A space between the 'ignore' keyword and the opening square brace is optional."
+                    },
+                    {
+                        code: "prettydiff copy ../prettydiff3 ../prettydiffXX ignore [build, .git, node_modules]",
                         defined: "Exclusions are relative to the source directory."
                     }
                 ]
@@ -473,7 +477,7 @@ interface readFile {
         }()),
         apps:any = {};
     let verbose:boolean = false,
-        httpflag:string = "";
+        writeflag:string = ""; // location of written assets in case of an error and they need to be deleted
     
     (function node_args():void {
         const requireDir = function node_args_requireDir(dirName:string):void {
@@ -650,6 +654,9 @@ interface readFile {
                     }
                     a = a + 1;
                 } while (a < len);
+                if (options.source === "" && process.argv[0].indexOf(":") < 0 && process.argv[0].indexOf("=") < 0) {
+                    options.source = process.argv[0];
+                }
             };
         let dirs:number = 0,
             dirstotal:number = 0;
@@ -679,10 +686,7 @@ interface readFile {
                         node
                         .fs
                         .open(filepath, "r", function node_apps_base64_fileWrapper_stat_file_open(ero:Error, fd:number):void {
-                            const msize = (stat.size < 100)
-                                    ? stat.size
-                                    : 100;
-                            let buff  = Buffer.alloc(msize);
+                            let buff  = Buffer.alloc(stat.size);
                             if (ero !== null) {
                                 if (http === true) {
                                     apps.remove(filepath);
@@ -696,7 +700,7 @@ interface readFile {
                                     fd,
                                     buff,
                                     0,
-                                    msize,
+                                    stat.size,
                                     0,
                                     function node_apps_base64_fileWrapper_stat_file_open_read(erra:Error, bytesa:number, buffera:Buffer):number {
                                         if (http === true) {
@@ -769,10 +773,11 @@ interface readFile {
             fileWrapper(path);
         }
     };
-    // mode beautify wrapper, see apps.mode
+    // mode beautify
     apps.beautify = function node_apps_beautify():void {
-        options.mode = "beautify";
-        apps.mode();
+        apps.readMethod(false, function node_apps_beautify_callback() {
+            return;
+        });
     };
     // build system
     apps.build = function node_apps_build():void {
@@ -1229,7 +1234,7 @@ interface readFile {
                                     next();
                                 }
                             } else {
-                                apps.errout([err]);
+                                apps.errout([err.toString(), stdout]);
                             }
                         } else {
                             if (stderr !== "") {
@@ -1554,43 +1559,12 @@ interface readFile {
                     verbose = true;
                     apps.output([out.join(""), `Copied ${text.cyan + target + text.nocolor} to ${text.green + destination + text.nocolor}`]);
                 },
-                exclusions: (function node_copy_exclusions():string[] {
-                    const out:string[] = [],
-                        len:number = process.argv.length;
-                    let a:number = 0,
-                        length:number = 0,
-                        start:number = 0;
-                    do {
-                        if (out.length < 1 && process.argv[a].indexOf("[") === 0) {
-                            out.push(process.argv[a].slice(1));
-                            start = a;
-                            if (process.argv[a].indexOf("]") === length) {
-                                if (process.argv[a].slice(0, length) !== "") {
-                                    out.push(process.argv[a].slice(0, length));
-                                }
-                                process.argv.splice(start, 1);
-                                return out;
-                            }
-                        } else if (out.length > 0) {
-                            length = process.argv[a].length - 1;
-                            if (process.argv[a].indexOf("]") === length) {
-                                if (process.argv[a].slice(0, length) !== "") {
-                                    out.push(process.argv[a].slice(0, length));
-                                }
-                                process.argv.splice(start, a - start);
-                                return out;
-                            }
-                            out.push(process.argv[a]);
-                        }
-                        a = a + 1;
-                    } while (a < len);
-                    return out;
-                }()),
+                exclusions: exclusions,
                 destination: process.argv[1].replace(/(\\|\/)/g, sep),
                 target: process.argv[0].replace(/(\\|\/)/g, sep)
             };
-            console.log(params.exclusions);
         }
+        writeflag = target;
         target =  params.target.replace(/(\\|\/)/g, sep);
         destination = params.destination.replace(/(\\|\/)/g, sep);
         exlen = params.exclusions.length;
@@ -1598,17 +1572,24 @@ interface readFile {
         start         = node.path.resolve(target);
         util.stat(start, start);
     };
-    // mode diff wrapper, see apps.mode
+    // mode diff
     apps.diff = function node_apps_diff():void {
         if (options.diff === "" || options.source === "") {
             apps.errout([
-                "Pretty Diff requires option diff when using command diff. Example:",
+                `Pretty Diff requires option ${text.angry}diff${text.none} and option ${text.angry}source${text.none} when using command diff. Example:`,
                 `${text.cyan}prettydiff diff source:"myFile.js" diff:"myFile1.js"${text.none}`
             ]);
             return;
         }
-        options.mode = "diff";
-        apps.mode();
+        options.mode = "beautify";
+        if (options.lang !== "text") {
+            const all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`);
+            all(options, function node_apps_mode_allLexers() {
+                apps.readMethod(false, function node_apps_beautify_callback(code:string) {
+                    
+                });
+            });
+        }
     };
     // similar to node's fs.readdir, but recursive
     apps.directory = function node_apps_directory(args:readDirectory):void {
@@ -1630,7 +1611,7 @@ interface readFile {
                     let a:number = 0;
                     args = {
                         callback: function node_apps_directory_startPath_callback(result:string[]|directoryList) {
-                            console.log(result);
+                            console.log(JSON.stringify(result));
                             if (verbose === true) {
                                 let output:string[] = [];
                                 console.log("");
@@ -1692,20 +1673,14 @@ interface readFile {
                         if (listonly === true) {
                             args.callback(filelist.sort());
                         } else {
-                            const sorty = function node_apps_directory_sort(a:directoryItem, b:directoryItem) {
-                                if (a[0] < b[0]) {
-                                    return -1;
-                                }
-                                return 1;
-                            };
-                            args.callback(list.sort(sorty));
+                            args.callback(list);
                         }
                     } else {
                         node_apps_directory_dirCounter(dirpath);
                     }
                 }
             },
-            statWrapper = function node_apps_directory_wrapper(filepath:string):void {
+            statWrapper = function node_apps_directory_wrapper(filepath:string, parent:number):void {
                 node.fs[method](filepath, function node_apps_directory_wrapper_stat(er:Error, stat:Stats):void {
                     const angrypath:string = `Filepath ${text.angry + filepath + text.none} is not a file or directory.`,
                         dir = function node_apps_directory_wrapper_stat_dir(item:string):void {
@@ -1714,10 +1689,11 @@ interface readFile {
                                     apps.errout([erd.toString()]);
                                     return;
                                 }
+                                const index:number = list.length;
                                 if (listonly === true) {
                                     filelist.push(item);
                                 } else {
-                                    list.push([item, "directory", stat]);
+                                    list.push([item, "directory", parent, files.length, stat]);
                                 }
                                 if (files.length < 1) {
                                     dirCounter(item);
@@ -1728,7 +1704,7 @@ interface readFile {
                                     dirs = dirs + 1;
                                 }
                                 files.forEach(function node_apps_directory_wrapper_stat_dir_readdirs_each(value:string):void {
-                                    node_apps_directory_wrapper(item + sep + value);
+                                    node_apps_directory_wrapper(item + sep + value, index);
                                 });
                             });
                         },
@@ -1737,7 +1713,7 @@ interface readFile {
                                 if (listonly === true) {
                                     filelist.push(filepath);
                                 } else {
-                                    list.push([filepath, type, stat]);
+                                    list.push([filepath, type, parent, 0, stat]);
                                 }
                             }
                             if (dirs > 0) {
@@ -1746,13 +1722,7 @@ interface readFile {
                                 if (listonly === true) {
                                     args.callback(filelist.sort());
                                 } else {
-                                    const sorty = function node_apps_directory_sort(a:directoryItem, b:directoryItem) {
-                                        if (a[0] < b[0]) {
-                                            return -1;
-                                        }
-                                        return 1;
-                                    };
-                                    args.callback(list.sort(sorty));
+                                    args.callback(list);
                                 }
                             }
                         };
@@ -1780,15 +1750,17 @@ interface readFile {
                     } else if (stat.isFile() === true || stat.isBlockDevice() === true || stat.isCharacterDevice() === true) {
                         size = size + stat.size;
                         populate("file");
+                    } else {
+                        list[parent][3] = list[parent][3] - 1;
                     }
                 });
             };
-        statWrapper(startPath);
+        statWrapper(startPath, 0);
     };
     // uniform error formatting
     apps.errout = function node_apps_errout(errtext:string[]):void {
-        if (httpflag !== "") {
-            apps.remove(httpflag);
+        if (writeflag !== "") {
+            apps.remove(writeflag);
         }
         const stack:string = new Error().stack.replace("Error", `${text.cyan}Stack trace${text.none + node.os.EOL}-----------`);
         console.log("");
@@ -1825,7 +1797,7 @@ interface readFile {
                                 if (ers !== null) {
                                     if (ers.toString().indexOf("no such file or directory")) {
                                         node.fs.writeFile(name, file, "utf8", function node_apps_getFile_callback_write(err:Error) {
-                                            httpflag = name;
+                                            writeflag = name;
                                             if (err !== null) {
                                                 apps.errout([err.toString()]);
                                                 return;
@@ -1971,7 +1943,7 @@ interface readFile {
                         } else {
                             apps.readFile({
                                 path: list[index][0],
-                                stat: list[index][2],
+                                stat: list[index][4],
                                 index: index,
                                 callback: function node_apps_hash_dirComplete_typehash_callback(data:readFile, item:string|Buffer):void {
                                     hashback(data, item, function node_apps_hash_dirComplete_typeHash_callback(hashstring:string, item:number) {
@@ -1992,7 +1964,14 @@ interface readFile {
                             a = a + 1;
                             b = b + 1;
                         } while (b < shortlimit && a < listlen);
+                    },
+                    sorty = function node_apps_hash_dirComplete_sorty(a:directoryItem, b:directoryItem) {
+                        if (a[0] < b[0]) {
+                            return -1;
+                        }
+                        return 1;
                     };
+                list.sort(sorty);
                 if (verbose === true) {
                     console.log(`${apps.humantime(false)}Completed analyzing the directory tree in the file system and found ${text.green + apps.commas(listlen) + text.none} file system objects.`);
                 }
@@ -2009,7 +1988,7 @@ interface readFile {
                         } else {
                             apps.readFile({
                                 path: list[a][0],
-                                stat: list[a][2],
+                                stat: list[a][4],
                                 index: a,
                                 callback: function node_apps_hash_dirComplete_file(data:readFile, item:string|Buffer):void {
                                     hashback(data, item, function node_apps_hash_dirComplete_file_hashback(hashstring:string, item:number):void {
@@ -2386,6 +2365,8 @@ interface readFile {
             output.push("For examples and usage instructions specify a command name, for example:");
             output.push(`globally installed - ${text.green}prettydiff commands hash${text.none}`);
             output.push(`locally installed - ${text.green}node js/services commands hash${text.none}`);
+            output.push("");
+            output.push(`Commands are tested using the ${text.green}simulation${text.none} command.`);
         }
         apps.output(output);
     };
@@ -2467,23 +2448,452 @@ interface readFile {
                 callback();
             });
     };
-    // mode minify wrapper, see apps.mode
+    // mode minify
     apps.minify = function node_apps_minify():void {
-        options.mode = "minify";
-        apps.mode();
+        apps.readMethod(false, function node_apps_minify_callback() {
+            return;
+        });
+    };
+    // CLI documentation for supported Pretty Diff options
+    apps.options = function node_apps_options():void {
+        const def:any = prettydiff.api.optionDef;
+        if (def[process.argv[0]] === undefined) {
+            if (process.argv.length < 1) {
+                // all options in a list
+                apps.lists({
+                    emptyline: true,
+                    heading: "Options",
+                    obj: def,
+                    property: "definition"
+                });
+            } else {
+                // queried list of options
+                const keys:string[] = Object.keys(def),
+                    arglen:number = process.argv.length,
+                    output:any = {},
+                    namevalue = function node_apps_options_namevalue(item:string):void {
+                        const si:number = item.indexOf(":");
+                        if (si < 1) {
+                            name = item;
+                            value = "";
+                            return;
+                        }
+                        if (
+                            (si < item.indexOf("\"") && item.indexOf("\"") > -1) ||
+                            (si < item.indexOf("'") && item.indexOf("'") > -1) ||
+                            (item.indexOf("\"") < 0 && item.indexOf("'") < 0)
+                        ) {
+                            name = item.slice(0, si);
+                            value = item.slice(si + 1);
+                            return;
+                        }
+                        name = item;
+                        value = "";
+                    };
+                let keylen:number = keys.length,
+                    a:number = 0,
+                    b:number = 0,
+                    name:string = "",
+                    value:string = "";
+                do {
+                    namevalue(process.argv[a]);
+                    b = 0;
+                    do {
+                        if (def[keys[b]][name] === undefined || (value !== "" && def[keys[b]][name] !== value)) {
+                            keys.splice(b, 1);
+                            b = b - 1;
+                            keylen = keylen - 1;
+                        }
+                        b = b + 1;
+                    } while (b < keylen);
+                    if (keylen < 1) {
+                        break;
+                    }
+                    a = a + 1;
+                } while (a < arglen);
+                a = 0;
+                do {
+                    output[keys[a]] = def[keys[a]];
+                    a = a + 1;
+                } while (a < keylen);
+                if (keylen < 1) {
+                    apps.output([`${text.angry}Pretty Diff has no options matching the query criteria.${text.none}`]);
+                } else {
+                    apps.lists({
+                        emptyline: true,
+                        heading: "Options",
+                        obj: output,
+                        property: "definition"
+                    });
+                }
+            }
+        } else {
+            // specificly mentioned option
+            apps.lists({
+                emptyLine: false,
+                heading: `Option: ${text.green + process.argv[0] + text.nocolor}`,
+                obj: def[process.argv[0]],
+                property: "eachkey"
+            });
+        }
+    };
+    // verbose metadata printed to the shell about Pretty Diff 
+    apps.output = function node_apps_output(output:string[]):void {
+        if (verbose === true && (output.length > 1 || output[0] !== "")) {
+            console.log("");
+        }
+        if (output[output.length - 1] === "") {
+            output.pop();
+        }
+        output.forEach(function node_apps_output_each(value:string) {
+            console.log(value);
+        });
+        if (verbose === true) {
+            console.log("");
+            console.log(`parse-framework version ${text.angry + version.parse + text.none}`);
+            console.log(`Pretty Diff version ${text.angry + version.number + text.none} dated ${text.cyan + version.date + text.none}`);
+            apps.humantime(true);
+        }
+    };
+    // mode parse
+    apps.parse = function node_apps_parse():void {
+        if (options.parseFormat === "clitable") {
+            verbose = true;
+        }
+        apps.readMethod(false, function node_apps_parse_callback() {
+            return;
+        });
+    };
+    // where parsing actually occurs.  The apps.parse is a vanity function to map to the parse command
+    apps.parser = function node_apps_parser(path:string, code:string):void {
+        options.source = code;
+        if (options.lang === "auto") {
+            const lang:language = prettydiff.api.language.auto(options.source, "javascript");
+            options.lang = lang[0];
+            options.lexer = lang[1];
+        }
+        if (options.parseFormat === "clitable") {
+            options.readmethod = "screen";
+        }
+        if (command === "parse" && options.parseFormat === "sequential") {
+            options.parsed = global.parseFramework.parserObjects(options);
+        } else {
+            options.parsed = global.parseFramework.parserArrays(options);
+        }
+        if (command === "parse" && options.parseFormat === "clitable") {
+            let a:number   = 0,
+                str:string[] = [];
+            const outputArrays:parsedArray = options.parsed,
+                output:string[] = [],
+                b:number = outputArrays.token.length,
+                pad = function node_apps_mode_application_parsePad(x:string, y:number):void {
+                    const cc:string = x
+                            .toString()
+                            .replace(/\s/g, " ");
+                    let dd:number = y - cc.length;
+                    str.push(cc);
+                    if (dd > 0) {
+                        do {
+                            str.push(" ");
+                            dd = dd - 1;
+                        } while (dd > 0);
+                    }
+                    str.push(" | ");
+                },
+                heading:string = "index | begin | lexer  | lines | presv | stack       | types       | token",
+                bar:string     = "------|-------|--------|-------|-------|-------------|-------------|------";
+            output.push("");
+            output.push(heading);
+            output.push(bar);
+            do {
+                if (a % 100 === 0 && a > 0) {
+                    output.push("");
+                    output.push(heading);
+                    output.push(bar);
+                }
+                str = [];
+                if (outputArrays.lexer[a] === "markup") {
+                    str.push(text.red);
+                } else if (outputArrays.lexer[a] === "script") {
+                    str.push(text.green);
+                } else if (outputArrays.lexer[a] === "style") {
+                    str.push(text.yellow);
+                }
+                pad(a.toString(), 5);
+                pad(outputArrays.begin[a].toString(), 5);
+                pad(outputArrays.lexer[a].toString(), 5);
+                pad(outputArrays.lines[a].toString(), 5);
+                pad(outputArrays.presv[a].toString(), 5);
+                pad(outputArrays.stack[a].toString(), 11);
+                pad(outputArrays.types[a].toString(), 11);
+                str.push(outputArrays.token[a].replace(/\s/g, " "));
+                str.push(text.none);
+                output.push(str.join(""));
+                a = a + 1;
+            } while (a < b);
+            console.log(output.join(node.os.EOL));
+        } else if (options.readmethod === "filescreen" || options.readmethod === "screen") {
+            if (options.readmethod === "filescreen") {
+                console.log(`Parsed input from file ${text.cyan + path + text.none}`);
+            } else {
+                console.log("Parsed input from terminal.");
+            }
+            console.log(JSON.stringify(options.parsed));
+        } else {
+            // must return parse table
+        }
+    };
+    // similar to node's fs.readFile, but determines if the file is binary or text so that it can create either a buffer or text dump
+    apps.readFile = function node_apps_readFile(args:readFile):void {
+        // arguments
+        // * callback - function - What to do next, the file data is passed into the callback as an argument
+        // * index - number - if the file is opened as a part of a directory operation then the index represents the index out of the entire directory list
+        // * path - string - the file to open
+        // * stat - Stats - the Stats object for the given file
+        node
+            .fs
+            .open(args.path, "r", function node_apps_readFile_file_open(ero:Error, fd:number):void {
+                const failure = function node_apps_readFile_file_open_failure(message:string) {
+                        if (args.index > 0) {
+                            apps.errout([
+                                `Failed after ${args.index} files.`,
+                                message
+                            ]);
+                        } else {
+                            apps.errout([message]);
+                        }
+                    },
+                    msize = (args.stat.size < 100)
+                        ? args.stat.size
+                        : 100;
+                let buff  = Buffer.alloc(msize);
+                if (ero !== null) {
+                    failure(ero.toString());
+                    return;
+                }
+                node
+                    .fs
+                    .read(
+                        fd,
+                        buff,
+                        0,
+                        msize,
+                        1,
+                        function node_apps_readFile_file_open_read(erra:Error, bytesa:number, buffera:Buffer):number {
+                            let bstring:string = "";
+                            if (erra !== null) {
+                                failure(erra.toString());
+                                return;
+                            }
+                            bstring = buffera.toString("utf8", 0, buffera.length);
+                            bstring = bstring.slice(2, bstring.length - 2);
+                            if (options.binaryCheck.test(bstring) === true) {
+                                buff = Buffer.alloc(args.stat.size);
+                                node
+                                    .fs
+                                    .read(
+                                        fd,
+                                        buff,
+                                        0,
+                                        args.stat.size,
+                                        0,
+                                        function node_apps_readFile_file_open_read_readBinary(errb:Error, bytesb:number, bufferb:Buffer):void {
+                                            if (errb !== null) {
+                                                failure(errb.toString());
+                                                return;
+                                            }
+                                            if (bytesb > 0) {
+                                                node.fs.close(fd, function node_apps_readFile_file_open_read_readBinary_close():void {
+                                                    args.callback(args, bufferb);
+                                                });
+                                            }
+                                        }
+                                    );
+                            } else {
+                                node
+                                    .fs
+                                    .readFile(args.path, {
+                                        encoding: "utf8"
+                                    }, function node_apps_readFile_wrapper_stat_file_open_read_readFile(errc:Error, dump:string):void {
+                                        if (errc !== null && errc !== undefined) {
+                                            failure(errc.toString());
+                                            return;
+                                        }
+                                        node.fs.close(fd, function node_apps_readFile_wrapper_stat_file_open_read_readFile_close() {
+                                            args.callback(args, dump);
+                                        });
+                                    });
+                            }
+                            return bytesa;
+                        }
+                    );
+            });
     };
     // processes Pretty Diff mode commands
-    apps.mode = function node_apps_mode():void {
-        // options.output - different from file versus directory
-        // write file
+    apps.readMethod = function node_apps_readMethod(diff:boolean, modeCallback:Function):void {
         if (options.source === "") {
-            apps.errout([`Pretty Diff requires use of the ${text.angry}source${text.none} option.`]);
+            apps.errout([
+                `Pretty Diff requires option ${text.cyan}source${text.none} when using command ${text.green + command + text.none}. Example:`,
+                `${text.cyan}prettydiff ${command} source:"myFile.js"${text.none}`
+            ]);
             return;
         }
-        require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}parse`);
-        let sourcelist:directoryList = [],
-            difflist:directoryList = [];
-        const all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`),
+        if (options.lang === "text") {
+            apps.errout([`Language value ${text.angry}text${text.none} is not compatible with command ${text.green + command + text.none}.`]);
+            return;
+        }
+        const readmethod:string = options.readmethod,
+            auto:boolean = (readmethod === "auto"),
+            all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`),
+            item:string = (diff === true)
+                ? "diff"
+                : "source",
+            resolve = function node_apps_mode_resolve() {
+                node.fs.stat(options[item], function node_apps_mode_resolve_stat(err:Error, stat:Stats):void {
+                    const resolveItem = function node_apps_mode_resolve_stat_resolveItem() {
+                        const final = function node_apps_mode_application_final():void {
+                                const output:string[] = [];
+                                if (verbose === true) {
+                                    if (auto === true) {
+                                        output.push("");
+                                    }
+                                    if (auto === true) {
+                                        apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}readmethod${text.none} set to ${text.angry}auto${text.none} and interpreted as ${text.green + options.readmethod + text.none}.`);
+                                    }
+                                    //if (flags.lang === true && flags.directory === false) {
+                                        //apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}lang${text.none} set to ${text.angry}auto${text.none} and evaluated by Pretty Diff as ${text.green + text.bold + lang[2] + text.none} by lexer ${text.green + text.bold + lang[1] + text.none}.`);
+                                    //}
+                                }
+                                if (options.readmethod !== "screen" && options.readmethod !== "filescreen") {
+                                    output.push(`Output written to ${text.cyan + options.output + text.none} at ${text.green + apps.commas(options.source.length) + text.none} characters.`);
+                                }
+                                apps.output(output);
+                            };
+                        if (options.readmethod === "directory" || options.readmethod === "subdirectory") {
+                            apps.directory({
+                                callback: function node_apps_mode_resolve_stat_resolveItem_directoryCallback(list:directoryList):void {
+                                    //modeCallback(list);
+                                },
+                                exclusions: exclusions,
+                                path: options.source,
+                                recursive: (options.readmethod === "auto" || options.readmethod === "subdirectory"),
+                                symbolic: true
+                            });
+                        } else {
+                            apps.readFile({
+                                callback: function node_apps_mode_resolve_stat_resolveItem_fileCallback(args:readFile, dump:string|Buffer):void {
+                                    if (typeof dump === "string") {
+                                        // 1 parse code
+                                        // 2 execute mode
+                                        // 3 output result
+                                        apps.parser(args.path, dump);
+                                        final();
+                                    } else {
+                                        apps.errout([`The file at ${options[item]} contains a binary buffer.  Pretty Diff does not analyze binary at this time.`]);
+                                    }
+                                },
+                                index: 0,
+                                path: options.source,
+                                stat: stat
+                            });
+                        }
+                    };
+                    if (readmethod === "auto") {
+                        if (err !== null) {
+                            const index:any = {
+                                "sep": options[item].indexOf(node.path.sep),
+                                "<": options[item].indexOf("<"),
+                                "=": options[item].indexOf("="),
+                                ";": options[item].indexOf(";"),
+                                "{": options[item].indexOf("}")
+                            };
+                            if (err.toString().indexOf("ENOENT") > -1 && (
+                                index["sep"] < 0 ||
+                                index["<"] > -1 ||
+                                index["="] > -1 ||
+                                index[";"] > -1 ||
+                                index["{"] > -1
+                            )) {
+                                // readmethod:auto evaluated as "screen"
+                                options.readmethod = "screen";
+                                apps.parser("", options[item]);
+                            } else {
+                                // readmethod:auto evaluated as filesystem path pointing to missing resource
+                                apps.errout([err.toString()]);
+                            }
+                            return;
+                        }
+                        if (stat.isDirectory() === true) {
+                            options.readmethod = "subdirectory";
+                        } else if (stat.isDirectory() === false && stat.isSymbolicLink() === false && stat.isFIFO() === false) {
+                            if (options.output === "") {
+                                const wrapped:string[] = [];
+                                options.readmethod = "filescreen";
+                                apps.wrapit(wrapped, `Option ${text.angry}output${text.none} was not specified and the value provided for option ${text.cyan}source${text.none} appears to be a file. Output will be printed to the terminal. Please specify a value to option ${text.cyan}output${text.none} for file output to be written to a file.`);
+                                console.log(wrapped.join(node.os.EOL));
+                                console.log("");
+                            } else {
+                                options.readmethod = "file";
+                            }
+                        }
+                    }
+                    options[item] = node.path.resolve(options[item]);
+                    if (stat.isDirectory() === false && (options.readmethod === "directory" || options.readmethod === "subdirectory")) {
+                        apps.errout([`Option ${text.cyan}readmethod${text.none} has value ${text.green + options.readmethod + text.none} but ${text.angry}option ${item} does not point to a directory${text.none}.`]);
+                        return;
+                    }
+                    if ((stat.isDirectory() === true || stat.isSymbolicLink() === true || stat.isFIFO() === true) && (options.readmethod === "file" || options.readmethod === "filescreen")) {
+                        apps.errout([`Option ${text.cyan}readmethod${text.none} has value ${text.green + options.readmethod + text.none} but ${text.angry}option ${item} does not point to a file${text.none}.`]);
+                        return;
+                    }
+                    // resolving options.output path...
+                    if (options.readmethod !== "screen" && options.readmethod !== "filescreen" && diff === false) {
+                        if (options.output === "") {
+                            apps.errout([`If option readmethod evaluates to value ${text.cyan + options.readmethod + text.none} option ${text.angry}output${text.none} is required.`]);
+                            return;
+                        }
+                        options.output = node.path.resolve(options.output);
+                        node.fs.stat(options.output, function node_apps_mode_resolve_stat_statOutput(ers:Error, ostat:Stats):void {
+                            if (ers !== null && ers.toString().indexOf("ENOENT") > -1) {
+                                apps.errout([ers.toString()]);
+                                return;
+                            }
+                            if (ers === null) {
+                                if (ostat.isDirectory() === false && ostat.isSymbolicLink() === false && ostat.isFIFO() === false) {
+                                    if (options.readmethod === "directory" || options.readmethod === "subdirectory") {
+                                        apps.errout([`Option ${text.cyan}output${text.none} received value ${options.output} which is a file, but when option ${text.cyan}readmethod${text.none} has value ${text.green}directory${text.none} or ${text.green}subdirectory${text.none} the output option must point to a directory or new location.`]);
+                                        return;
+                                    }
+                                    if (options.readmethod === "file") {
+                                        console.log(`Overwriting file ${text.green + options.output + text.none}.`);
+                                    }
+                                } else if (ostat.isDirectory() === true && options.readmethod === "file") {
+                                    options.output = options.output.replace(/(\/|\\)$/, "") + sep + options.source.replace(/\/|\\/g, "/").split("/").pop();
+                                    if (options.mode === "diff" && options.diffcli === false) {
+                                        options.output = `${options.output}-diff.txt`;
+                                    }
+                                }
+                            }
+                            writeflag = options.output;
+                            resolveItem();
+                        });
+                    } else if (options.readmethod === "screen") {
+                        apps.parser("", options[item]);
+                    } else {
+                        resolveItem();
+                    }
+                });
+            };
+        options.mode = (command === "diff")
+            ? "beautify"
+            : command;
+        if (global.parseFramework === undefined) {
+            require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}parse`);
+        }
+        all(options, function node_apps_mode_allLexers() {
+            resolve();
+        });
+        /*const all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`),
             application = function node_apps_mode_application(path:string):void {
                 let lang:[string, string, string] = ["javascript", "script", "JavaScript"];
                 const langAuto:boolean = (function node_apps_mode_application_lang():boolean {
@@ -2537,71 +2947,6 @@ interface readFile {
                         output.push(`Number of differences: ${text.cyan + (diff[1] + diff[2]) + text.none} from ${text.cyan + (diff[2] + 1) + text.none} line${plural} of code.`);
                     }
                 } else {
-                    if (options.mode === "parse" && options.parseFormat === "sequential") {
-                        options.parsed = global.parseFramework.parserObjects(options);
-                    } else {
-                        options.parsed = global.parseFramework.parserArrays(options);
-                    }
-                    if (options.mode === "parse") {
-                        options.source = JSON.stringify(options.parsed);
-                    } else {
-                        options.source = prettydiff[options.mode][options.lexer](options);
-                    }
-                    if (options.mode === "parse" && options.parseFormat === "clitable") {
-                        let a:number   = 0,
-                            str:string[] = [];
-                        const outputArrays:parsedArray = options.parsed,
-                            b:number = outputArrays.token.length,
-                            pad = function node_apps_mode_application_parsePad(x:string, y:number):void {
-                                const cc:string = x
-                                        .toString()
-                                        .replace(/\s/g, " ");
-                                let dd:number = y - cc.length;
-                                str.push(cc);
-                                if (dd > 0) {
-                                    do {
-                                        str.push(" ");
-                                        dd = dd - 1;
-                                    } while (dd > 0);
-                                }
-                                str.push(" | ");
-                            },
-                            heading:string = "index | begin | lexer  | lines | presv | stack       | types       | token",
-                            bar:string     = "------|-------|--------|-------|-------|-------------|-------------|------";
-                        console.log("");
-                        console.log(heading);
-                        console.log(bar);
-                        do {
-                            if (a % 100 === 0 && a > 0) {
-                                console.log("");
-                                console.log(heading);
-                                console.log(bar);
-                            }
-                            str = [];
-                            if (outputArrays.lexer[a] === "markup") {
-                                str.push(text.red);
-                            } else if (outputArrays.lexer[a] === "script") {
-                                str.push(text.green);
-                            } else if (outputArrays.lexer[a] === "style") {
-                                str.push(text.yellow);
-                            }
-                            pad(a.toString(), 5);
-                            pad(outputArrays.begin[a].toString(), 5);
-                            pad(outputArrays.lexer[a].toString(), 5);
-                            pad(outputArrays.lines[a].toString(), 5);
-                            pad(outputArrays.presv[a].toString(), 5);
-                            pad(outputArrays.stack[a].toString(), 11);
-                            pad(outputArrays.types[a].toString(), 11);
-                            str.push(outputArrays.token[a].replace(/\s/g, " "));
-                            str.push(text.none);
-                            console.log(str.join(""));
-                            a = a + 1;
-                        } while (a < b);
-                        options.readmethod = "screen";
-                        verbose = true;
-                    } else if (options.readmethod === "screen" || options.readmethod === "filescreen") {
-                        output.push(options.source);
-                    }
                 }
                 if (options.readmethod === "screen" || options.readmethod === "filescreen") {
                     final("");
@@ -2758,203 +3103,10 @@ interface readFile {
                 }
             }
         });
-        return;
-    };
-    // CLI documentation for supported Pretty Diff options
-    apps.options = function node_apps_options():void {
-        const def:any = prettydiff.api.optionDef;
-        if (def[process.argv[0]] === undefined) {
-            if (process.argv.length < 1) {
-                // all options in a list
-                apps.lists({
-                    emptyline: true,
-                    heading: "Options",
-                    obj: def,
-                    property: "definition"
-                });
-            } else {
-                // queried list of options
-                const keys:string[] = Object.keys(def),
-                    arglen:number = process.argv.length,
-                    output:any = {},
-                    namevalue = function node_apps_options_namevalue(item:string):void {
-                        const si:number = item.indexOf(":");
-                        if (si < 1) {
-                            name = item;
-                            value = "";
-                            return;
-                        }
-                        if (
-                            (si < item.indexOf("\"") && item.indexOf("\"") > -1) ||
-                            (si < item.indexOf("'") && item.indexOf("'") > -1) ||
-                            (item.indexOf("\"") < 0 && item.indexOf("'") < 0)
-                        ) {
-                            name = item.slice(0, si);
-                            value = item.slice(si + 1);
-                            return;
-                        }
-                        name = item;
-                        value = "";
-                    };
-                let keylen:number = keys.length,
-                    a:number = 0,
-                    b:number = 0,
-                    name:string = "",
-                    value:string = "";
-                do {
-                    namevalue(process.argv[a]);
-                    b = 0;
-                    do {
-                        if (def[keys[b]][name] === undefined || (value !== "" && def[keys[b]][name] !== value)) {
-                            keys.splice(b, 1);
-                            b = b - 1;
-                            keylen = keylen - 1;
-                        }
-                        b = b + 1;
-                    } while (b < keylen);
-                    if (keylen < 1) {
-                        break;
-                    }
-                    a = a + 1;
-                } while (a < arglen);
-                a = 0;
-                do {
-                    output[keys[a]] = def[keys[a]];
-                    a = a + 1;
-                } while (a < keylen);
-                if (keylen < 1) {
-                    apps.output([`${text.angry}Pretty Diff has no options matching the query criteria.${text.none}`]);
-                } else {
-                    apps.lists({
-                        emptyline: true,
-                        heading: "Options",
-                        obj: output,
-                        property: "definition"
-                    });
-                }
-            }
-        } else {
-            // specificly mentioned option
-            apps.lists({
-                emptyLine: false,
-                heading: `Option: ${text.green + process.argv[0] + text.nocolor}`,
-                obj: def[process.argv[0]],
-                property: "eachkey"
-            });
-        }
-    };
-    // verbose metadata printed to the shell about Pretty Diff 
-    apps.output = function node_apps_output(output:string[]):void {
-        if (verbose === true && (output.length > 1 || output[0] !== "")) {
-            console.log("");
-        }
-        if (output[output.length - 1] === "") {
-            output.pop();
-        }
-        output.forEach(function node_apps_output_each(value:string) {
-            console.log(value);
-        });
-        if (verbose === true) {
-            console.log("");
-            console.log(`parse-framework version ${text.angry + version.parse + text.none}`);
-            console.log(`Pretty Diff version ${text.angry + version.number + text.none} dated ${text.cyan + version.date + text.none}`);
-            apps.humantime(true);
-        }
-    };
-    // mode parse wrapper, see apps.mode
-    apps.parse = function node_apps_parse():void {
-        options.mode = "parse";
-        apps.mode();
-    };
-    // similar to node's fs.readFile, but determines if the file is binary or text so that it can create either a buffer or text dump
-    apps.readFile = function node_apps_readFile(args:readFile):void {
-        // arguments
-        // * callback - function - What to do next, the file data is passed into the callback as an argument
-        // * index - number - if the file is opened as a part of a directory operation then the index represents the index out of the entire directory list
-        // * path - string - the file to open
-        // * stat - Stats - the Stats object for the given file
-        node
-            .fs
-            .open(args.path, "r", function node_apps_readFile_file_open(ero:Error, fd:number):void {
-                const failure = function node_apps_readFile_file_open_failure(message:string) {
-                        if (args.index > 0) {
-                            apps.errout([
-                                `Failed after ${args.index} files.`,
-                                message
-                            ]);
-                        } else {
-                            apps.errout([message]);
-                        }
-                    },
-                    msize = (args.stat.size < 100)
-                        ? args.stat.size
-                        : 100;
-                let buff  = Buffer.alloc(msize);
-                if (ero !== null) {
-                    failure(ero.toString());
-                    return;
-                }
-                node
-                    .fs
-                    .read(
-                        fd,
-                        buff,
-                        0,
-                        msize,
-                        1,
-                        function node_apps_readFile_file_open_read(erra:Error, bytesa:number, buffera:Buffer):number {
-                            let bstring:string = "";
-                            if (erra !== null) {
-                                failure(erra.toString());
-                                return;
-                            }
-                            bstring = buffera.toString("utf8", 0, buffera.length);
-                            bstring = bstring.slice(2, bstring.length - 2);
-                            if (options.binaryCheck.test(bstring) === true) {
-                                buff = Buffer.alloc(args.stat.size);
-                                node
-                                    .fs
-                                    .read(
-                                        fd,
-                                        buff,
-                                        0,
-                                        args.stat.size,
-                                        0,
-                                        function node_apps_readFile_file_open_read_readBinary(errb:Error, bytesb:number, bufferb:Buffer):void {
-                                            if (errb !== null) {
-                                                failure(errb.toString());
-                                                return;
-                                            }
-                                            if (bytesb > 0) {
-                                                node.fs.close(fd, function node_apps_readFile_file_open_read_readBinary_close():void {
-                                                    args.callback(args, bufferb);
-                                                });
-                                            }
-                                        }
-                                    );
-                            } else {
-                                node
-                                    .fs
-                                    .readFile(args.path, {
-                                        encoding: "utf8"
-                                    }, function node_apps_readFile_wrapper_stat_file_open_read_readFile(errc:Error, dump:string):void {
-                                        if (errc !== null && errc !== undefined) {
-                                            failure(errc.toString());
-                                            return;
-                                        }
-                                        node.fs.close(fd, function node_apps_readFile_wrapper_stat_file_open_read_readFile_close() {
-                                            args.callback(args, dump);
-                                        });
-                                    });
-                            }
-                            return bytesa;
-                        }
-                    );
-            });
+        return;*/
     };
     // similar to posix "rm -rf" command
     apps.remove = function node_apps_remove(filepath:string, callback:Function):void {
-        let type:"file"|"directory" = "file";
         const numb:any = {
                 dirs: 0,
                 file: 0,
@@ -2962,44 +3114,40 @@ interface readFile {
                 size: 0
             },
             removeItems = function node_apps_remove_removeItems(filelist:directoryList):void {
-                let a:number = 0,
-                    b:number = 0,
-                    c:number = 0;
+                let a:number = 0;
                 const len:number = filelist.length,
-                    destroy = function node_apps_remove_removeItems_destroy(itempath:string) {
-                        const task:"unlink"|"rmdir" = (type === "file")
-                            ? "unlink"
-                            : "rmdir";
-                        node.fs[task](itempath, function node_apps_remove_removeItems_destroy_callback(er:Error):void {
+                    destroy = function node_apps_remove_removeItems_destroy(item:directoryItem) {
+                        const type:"rmdir"|"unlink" = (item[1] === "directory")
+                            ? "rmdir"
+                            : "unlink";
+                        node.fs[type](item[0], function node_apps_remove_removeItems_destroy_callback(er:Error):void {
                             if (verbose === true && er !== null && er.toString().indexOf("no such file or directory") < 0) {
                                 apps.errout([er.toString()]);
                                 return;
                             }
-                            c = c + 1;
-                            if (c === b) {
-                                if (type === "directory") {
-                                    callback();
-                                } else {
-                                    type = "directory";
-                                    node_apps_remove_removeItems(filelist);
+                            if (item[0] === filelist[0][0]) {
+                                callback();
+                            } else {
+                                filelist[item[2]][3] = filelist[item[2]][3] - 1;
+                                if (filelist[item[2]][3] < 1) {
+                                    node_apps_remove_removeItems_destroy(filelist[item[2]]);
                                 }
                             }
                         });
                     };
                 do {
-                    if (filelist[a][1] === type || (filelist[a][1] === "link" && type === "file")) {
-                        b = b + 1;
-                        if (command === "remove") {
-                            if (filelist[a][1] === "file") {
-                                numb.file = numb.file + 1;
-                                numb.size = numb.size + filelist[a][2].size;
-                            } else if (filelist[a][1] === "directory") {
-                                numb.dirs = numb.dirs + 1;
-                            } else if (filelist[a][1] === "link") {
-                                numb.link = numb.link + 1;
-                            }
+                    if (command === "remove") {
+                        if (filelist[a][1] === "file") {
+                            numb.file = numb.file + 1;
+                            numb.size = numb.size + filelist[a][4].size;
+                        } else if (filelist[a][1] === "directory") {
+                            numb.dirs = numb.dirs + 1;
+                        } else if (filelist[a][1] === "link") {
+                            numb.link = numb.link + 1;
                         }
-                        destroy(filelist[a][0]);
+                    }
+                    if ((filelist[a][1] === "directory" && filelist[a][3] === 0) || filelist[a][1] !== "directory") {
+                        destroy(filelist[a]);
                     }
                     a = a + 1;
                 } while (a < len);
@@ -3245,7 +3393,321 @@ interface readFile {
         server.listen(port);
     };
     // tests the commands of the services file
-    apps.simulation = function node_apps_simulation():void {};
+    apps.simulation = function node_apps_simulation(callback?:Function):void {
+        // tests structure
+        // * artifact - the address of anything written to disk, so that it can be removed
+        // * command - the command to execute minus the `node js/services` part
+        // * qualifier - how to test, see simulationItem in index.d.ts for appropriate values
+        // * test - the value to compare against
+        const tests:simulationItem[] = [
+                {
+                    artifact: "",
+                    command: "base64 license",
+                    qualifier: "is",
+                    test: "U3RhdGVtZW50IG9mIFB1cnBvc2UKClRoZSBsYXdzIG9mIG1vc3QganVyaXNkaWN0aW9ucyB0aHJvdWdob3V0IHRoZSB3b3JsZCBhdXRvbWF0aWNhbGx5IGNvbmZlcgpleGNsdXNpdmUgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyAoZGVmaW5lZCBiZWxvdykgdXBvbiB0aGUgY3JlYXRvcgphbmQgc3Vic2VxdWVudCBvd25lcihzKSAoZWFjaCBhbmQgYWxsLCBhbiAib3duZXIiKSBvZiBhbiBvcmlnaW5hbCB3b3JrCm9mIGF1dGhvcnNoaXAgYW5kL29yIGEgZGF0YWJhc2UgKGVhY2gsIGEgIldvcmsiKS4KCkNlcnRhaW4gb3duZXJzIHdpc2ggdG8gcGVybWFuZW50bHkgcmVsaW5xdWlzaCB0aG9zZSByaWdodHMgdG8gYSBXb3JrIGZvcgp0aGUgcHVycG9zZSBvZiBjb250cmlidXRpbmcgdG8gYSBjb21tb25zIG9mIGNyZWF0aXZlLCBjdWx0dXJhbCBhbmQKc2NpZW50aWZpYyB3b3JrcyAoIkNvbW1vbnMiKSB0aGF0IHRoZSBwdWJsaWMgY2FuIHJlbGlhYmx5IGFuZCB3aXRob3V0CmZlYXIgb2YgbGF0ZXIgY2xhaW1zIG9mIGluZnJpbmdlbWVudCBidWlsZCB1cG9uLCBtb2RpZnksIGluY29ycG9yYXRlIGluCm90aGVyIHdvcmtzLCByZXVzZSBhbmQgcmVkaXN0cmlidXRlIGFzIGZyZWVseSBhcyBwb3NzaWJsZSBpbiBhbnkgZm9ybQp3aGF0c29ldmVyIGFuZCBmb3IgYW55IHB1cnBvc2VzLCBpbmNsdWRpbmcgd2l0aG91dCBsaW1pdGF0aW9uIGNvbW1lcmNpYWwKcHVycG9zZXMuIFRoZXNlIG93bmVycyBtYXkgY29udHJpYnV0ZSB0byB0aGUgQ29tbW9ucyB0byBwcm9tb3RlIHRoZQppZGVhbCBvZiBhIGZyZWUgY3VsdHVyZSBhbmQgdGhlIGZ1cnRoZXIgcHJvZHVjdGlvbiBvZiBjcmVhdGl2ZSwgY3VsdHVyYWwKYW5kIHNjaWVudGlmaWMgd29ya3MsIG9yIHRvIGdhaW4gcmVwdXRhdGlvbiBvciBncmVhdGVyIGRpc3RyaWJ1dGlvbiBmb3IKdGhlaXIgV29yayBpbiBwYXJ0IHRocm91Z2ggdGhlIHVzZSBhbmQgZWZmb3J0cyBvZiBvdGhlcnMuCgpGb3IgdGhlc2UgYW5kL29yIG90aGVyIHB1cnBvc2VzIGFuZCBtb3RpdmF0aW9ucywgYW5kIHdpdGhvdXQgYW55CmV4cGVjdGF0aW9uIG9mIGFkZGl0aW9uYWwgY29uc2lkZXJhdGlvbiBvciBjb21wZW5zYXRpb24sIHRoZSBwZXJzb24KYXNzb2NpYXRpbmcgQ0MwIHdpdGggYSBXb3JrICh0aGUgIkFmZmlybWVyIiksIHRvIHRoZSBleHRlbnQgdGhhdCBoZSBvcgpzaGUgaXMgYW4gb3duZXIgb2YgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyBpbiB0aGUgV29yaywgdm9sdW50YXJpbHkKZWxlY3RzIHRvIGFwcGx5IENDMCB0byB0aGUgV29yayBhbmQgcHVibGljbHkgZGlzdHJpYnV0ZSB0aGUgV29yayB1bmRlcgppdHMgdGVybXMsIHdpdGgga25vd2xlZGdlIG9mIGhpcyBvciBoZXIgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyBpbgp0aGUgV29yayBhbmQgdGhlIG1lYW5pbmcgYW5kIGludGVuZGVkIGxlZ2FsIGVmZmVjdCBvZiBDQzAgb24gdGhvc2UKcmlnaHRzLgoKMS4gQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cy4KCiAgIEEgV29yayBtYWRlIGF2YWlsYWJsZSB1bmRlciBDQzAgbWF5IGJlIHByb3RlY3RlZCBieSBjb3B5cmlnaHQgYW5kCiAgIHJlbGF0ZWQgb3IgbmVpZ2hib3JpbmcgcmlnaHRzICgiQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyIpLgogICBDb3B5cmlnaHQgYW5kIFJlbGF0ZWQgUmlnaHRzIGluY2x1ZGUsIGJ1dCBhcmUgbm90IGxpbWl0ZWQgdG8sIHRoZQogICBmb2xsb3dpbmc6CgogICAgaS4gdGhlIHJpZ2h0IHRvIHJlcHJvZHVjZSwgYWRhcHQsIGRpc3RyaWJ1dGUsIHBlcmZvcm0sIGRpc3BsYXksCiAgICBjb21tdW5pY2F0ZSwgYW5kIHRyYW5zbGF0ZSBhIFdvcms7CiAgICAKICAgIGlpLiBtb3JhbCByaWdodHMgcmV0YWluZWQgYnkgdGhlIG9yaWdpbmFsIGF1dGhvcihzKSBhbmQvb3IKICAgIHBlcmZvcm1lcihzKTsKCiAgICBpaWkuIHB1YmxpY2l0eSBhbmQgcHJpdmFjeSByaWdodHMgcGVydGFpbmluZyB0byBhIHBlcnNvbidzIGltYWdlIG9yCiAgICBsaWtlbmVzcyBkZXBpY3RlZCBpbiBhIFdvcms7CgogICAgaXYuIHJpZ2h0cyBwcm90ZWN0aW5nIGFnYWluc3QgdW5mYWlyIGNvbXBldGl0aW9uIGluIHJlZ2FyZHMgdG8gYQogICAgV29yaywgc3ViamVjdCB0byB0aGUgbGltaXRhdGlvbnMgaW4gcGFyYWdyYXBoIDQoYSksIGJlbG93OwoKICAgIHYuIHJpZ2h0cyBwcm90ZWN0aW5nIHRoZSBleHRyYWN0aW9uLCBkaXNzZW1pbmF0aW9uLCB1c2UgYW5kIHJldXNlIG9mCiAgICBkYXRhIGluIGEgV29yazsKCiAgICB2aS4gZGF0YWJhc2UgcmlnaHRzIChzdWNoIGFzIHRob3NlIGFyaXNpbmcgdW5kZXIgRGlyZWN0aXZlIDk2LzkvRUMKICAgIG9mIHRoZSBFdXJvcGVhbiBQYXJsaWFtZW50IGFuZCBvZiB0aGUgQ291bmNpbCBvZiAxMSBNYXJjaCAxOTk2IG9uCiAgICB0aGUgbGVnYWwgcHJvdGVjdGlvbiBvZiBkYXRhYmFzZXMsIGFuZCB1bmRlciBhbnkgbmF0aW9uYWwKICAgIGltcGxlbWVudGF0aW9uIHRoZXJlb2YsIGluY2x1ZGluZyBhbnkgYW1lbmRlZCBvciBzdWNjZXNzb3IgdmVyc2lvbgogICAgb2Ygc3VjaCBkaXJlY3RpdmUpOyBhbmQKCiAgICB2aWkuIG90aGVyIHNpbWlsYXIsIGVxdWl2YWxlbnQgb3IgY29ycmVzcG9uZGluZyByaWdodHMgdGhyb3VnaG91dAogICAgdGhlIHdvcmxkIGJhc2VkIG9uIGFwcGxpY2FibGUgbGF3IG9yIHRyZWF0eSwgYW5kIGFueSBuYXRpb25hbAogICAgaW1wbGVtZW50YXRpb25zIHRoZXJlb2YuCgoyLiBXYWl2ZXIuCgogICBUbyB0aGUgZ3JlYXRlc3QgZXh0ZW50IHBlcm1pdHRlZCBieSwgYnV0IG5vdCBpbiBjb250cmF2ZW50aW9uIG9mLAogICBhcHBsaWNhYmxlIGxhdywgQWZmaXJtZXIgaGVyZWJ5IG92ZXJ0bHksIGZ1bGx5LCBwZXJtYW5lbnRseSwKICAgaXJyZXZvY2FibHkgYW5kIHVuY29uZGl0aW9uYWxseSB3YWl2ZXMsIGFiYW5kb25zLCBhbmQgc3VycmVuZGVycyBhbGwKICAgb2YgQWZmaXJtZXIncyBDb3B5cmlnaHQgYW5kIFJlbGF0ZWQgUmlnaHRzIGFuZCBhc3NvY2lhdGVkIGNsYWltcyBhbmQKICAgY2F1c2VzIG9mIGFjdGlvbiwgd2hldGhlciBub3cga25vd24gb3IgdW5rbm93biAoaW5jbHVkaW5nIGV4aXN0aW5nIGFzCiAgIHdlbGwgYXMgZnV0dXJlIGNsYWltcyBhbmQgY2F1c2VzIG9mIGFjdGlvbiksIGluIHRoZSBXb3JrIChpKSBpbiBhbGwKICAgdGVycml0b3JpZXMgd29ybGR3aWRlLCAoaWkpIGZvciB0aGUgbWF4aW11bSBkdXJhdGlvbiBwcm92aWRlZCBieQogICBhcHBsaWNhYmxlIGxhdyBvciB0cmVhdHkgKGluY2x1ZGluZyBmdXR1cmUgdGltZSBleHRlbnNpb25zKSwgKGlpaSkgaW4KICAgYW55IGN1cnJlbnQgb3IgZnV0dXJlIG1lZGl1bSBhbmQgZm9yIGFueSBudW1iZXIgb2YgY29waWVzLCBhbmQgKGl2KQogICBmb3IgYW55IHB1cnBvc2Ugd2hhdHNvZXZlciwgaW5jbHVkaW5nIHdpdGhvdXQgbGltaXRhdGlvbiBjb21tZXJjaWFsLAogICBhZHZlcnRpc2luZyBvciBwcm9tb3Rpb25hbCBwdXJwb3NlcyAodGhlICJXYWl2ZXIiKS4gQWZmaXJtZXIgbWFrZXMKICAgdGhlIFdhaXZlciBmb3IgdGhlIGJlbmVmaXQgb2YgZWFjaCBtZW1iZXIgb2YgdGhlIHB1YmxpYyBhdCBsYXJnZSBhbmQKICAgdG8gdGhlIGRldHJpbWVudCBvZiBBZmZpcm1lcidzIGhlaXJzIGFuZCBzdWNjZXNzb3JzLCBmdWxseSBpbnRlbmRpbmcKICAgdGhhdCBzdWNoIFdhaXZlciBzaGFsbCBub3QgYmUgc3ViamVjdCB0byByZXZvY2F0aW9uLCByZXNjaXNzaW9uLAogICBjYW5jZWxsYXRpb24sIHRlcm1pbmF0aW9uLCBvciBhbnkgb3RoZXIgbGVnYWwgb3IgZXF1aXRhYmxlIGFjdGlvbiB0bwogICBkaXNydXB0IHRoZSBxdWlldCBlbmpveW1lbnQgb2YgdGhlIFdvcmsgYnkgdGhlIHB1YmxpYyBhcyBjb250ZW1wbGF0ZWQKICAgYnkgQWZmaXJtZXIncyBleHByZXNzIFN0YXRlbWVudCBvZiBQdXJwb3NlLgoKMy4gUHVibGljIExpY2Vuc2UgRmFsbGJhY2suCgogICBTaG91bGQgYW55IHBhcnQgb2YgdGhlIFdhaXZlciBmb3IgYW55IHJlYXNvbiBiZSBqdWRnZWQgbGVnYWxseQogICBpbnZhbGlkIG9yIGluZWZmZWN0aXZlIHVuZGVyIGFwcGxpY2FibGUgbGF3LCB0aGVuIHRoZSBXYWl2ZXIgc2hhbGwgYmUKICAgcHJlc2VydmVkIHRvIHRoZSBtYXhpbXVtIGV4dGVudCBwZXJtaXR0ZWQgdGFraW5nIGludG8gYWNjb3VudAogICBBZmZpcm1lcidzIGV4cHJlc3MgU3RhdGVtZW50IG9mIFB1cnBvc2UuIEluIGFkZGl0aW9uLCB0byB0aGUgZXh0ZW50CiAgIHRoZSBXYWl2ZXIgaXMgc28ganVkZ2VkIEFmZmlybWVyIGhlcmVieSBncmFudHMgdG8gZWFjaCBhZmZlY3RlZAogICBwZXJzb24gYSByb3lhbHR5LWZyZWUsIG5vbiB0cmFuc2ZlcmFibGUsIG5vbiBzdWJsaWNlbnNhYmxlLCBub24KICAgZXhjbHVzaXZlLCBpcnJldm9jYWJsZSBhbmQgdW5jb25kaXRpb25hbCBsaWNlbnNlIHRvIGV4ZXJjaXNlCiAgIEFmZmlybWVyJ3MgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyBpbiB0aGUgV29yawogICAKICAgKGkpIGluIGFsbCB0ZXJyaXRvcmllcyB3b3JsZHdpZGUsCgogICAoaWkpIGZvciB0aGUgbWF4aW11bSBkdXJhdGlvbiBwcm92aWRlZCBieSBhcHBsaWNhYmxlIGxhdyBvciB0cmVhdHkKICAgKGluY2x1ZGluZyBmdXR1cmUgdGltZSBleHRlbnNpb25zKSwKCiAgIChpaWkpIGluIGFueSBjdXJyZW50IG9yIGZ1dHVyZSBtZWRpdW0gYW5kIGZvciBhbnkgbnVtYmVyIG9mIGNvcGllcywKICAgYW5kCgogICAoaXYpIGZvciBhbnkgcHVycG9zZSB3aGF0c29ldmVyLCBpbmNsdWRpbmcgd2l0aG91dCBsaW1pdGF0aW9uCiAgIGNvbW1lcmNpYWwsIGFkdmVydGlzaW5nIG9yIHByb21vdGlvbmFsIHB1cnBvc2VzICh0aGUgIkxpY2Vuc2UiKS4KCiAgIFRoZSBMaWNlbnNlIHNoYWxsIGJlIGRlZW1lZCBlZmZlY3RpdmUgYXMgb2YgdGhlIGRhdGUgQ0MwIHdhcyBhcHBsaWVkCiAgIGJ5IEFmZmlybWVyIHRvIHRoZSBXb3JrLiBTaG91bGQgYW55IHBhcnQgb2YgdGhlIExpY2Vuc2UgZm9yIGFueQogICByZWFzb24gYmUganVkZ2VkIGxlZ2FsbHkgaW52YWxpZCBvciBpbmVmZmVjdGl2ZSB1bmRlciBhcHBsaWNhYmxlIGxhdywKICAgc3VjaCBwYXJ0aWFsIGludmFsaWRpdHkgb3IgaW5lZmZlY3RpdmVuZXNzIHNoYWxsIG5vdCBpbnZhbGlkYXRlIHRoZQogICByZW1haW5kZXIgb2YgdGhlIExpY2Vuc2UsIGFuZCBpbiBzdWNoIGNhc2UgQWZmaXJtZXIgaGVyZWJ5IGFmZmlybXMKICAgdGhhdCBoZSBvciBzaGUgd2lsbCBub3QKCiAgIChpKSBleGVyY2lzZSBhbnkgb2YgaGlzIG9yIGhlciByZW1haW5pbmcgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cwogICBpbiB0aGUgV29yayBvcgoKICAgKGlpKSBhc3NlcnQgYW55IGFzc29jaWF0ZWQgY2xhaW1zIGFuZCBjYXVzZXMgb2YgYWN0aW9uIHdpdGggcmVzcGVjdAogICB0byB0aGUgV29yaywgaW4gZWl0aGVyIGNhc2UgY29udHJhcnkgdG8gQWZmaXJtZXIncyBleHByZXNzIFN0YXRlbWVudAogICBvZiBQdXJwb3NlLgoKNC4gTGltaXRhdGlvbnMgYW5kIERpc2NsYWltZXJzLgoKICAgIGEuIE5vIHRyYWRlbWFyayBvciBwYXRlbnQgcmlnaHRzIGhlbGQgYnkgQWZmaXJtZXIgYXJlIHdhaXZlZCwKICAgIGFiYW5kb25lZCwgc3VycmVuZGVyZWQsIGxpY2Vuc2VkIG9yIG90aGVyd2lzZSBhZmZlY3RlZCBieSB0aGlzCiAgICBkb2N1bWVudC4KCiAgICBiLiBBZmZpcm1lciBvZmZlcnMgdGhlIFdvcmsgYXMtaXMgYW5kIG1ha2VzIG5vIHJlcHJlc2VudGF0aW9ucyBvcgogICAgd2FycmFudGllcyBvZiBhbnkga2luZCBjb25jZXJuaW5nIHRoZSBXb3JrLCBleHByZXNzLCBpbXBsaWVkLAogICAgc3RhdHV0b3J5IG9yIG90aGVyd2lzZSwgaW5jbHVkaW5nIHdpdGhvdXQgbGltaXRhdGlvbiB3YXJyYW50aWVzIG9mCiAgICB0aXRsZSwgbWVyY2hhbnRhYmlsaXR5LCBmaXRuZXNzIGZvciBhIHBhcnRpY3VsYXIgcHVycG9zZSwgbm9uCiAgICBpbmZyaW5nZW1lbnQsIG9yIHRoZSBhYnNlbmNlIG9mIGxhdGVudCBvciBvdGhlciBkZWZlY3RzLCBhY2N1cmFjeSwKICAgIG9yIHRoZSBwcmVzZW50IG9yIGFic2VuY2Ugb2YgZXJyb3JzLCB3aGV0aGVyIG9yIG5vdCBkaXNjb3ZlcmFibGUsCiAgICBhbGwgdG8gdGhlIGdyZWF0ZXN0IGV4dGVudCBwZXJtaXNzaWJsZSB1bmRlciBhcHBsaWNhYmxlIGxhdy4KCiAgICBjLiBBZmZpcm1lciBkaXNjbGFpbXMgcmVzcG9uc2liaWxpdHkgZm9yIGNsZWFyaW5nIHJpZ2h0cyBvZiBvdGhlcgogICAgcGVyc29ucyB0aGF0IG1heSBhcHBseSB0byB0aGUgV29yayBvciBhbnkgdXNlIHRoZXJlb2YsIGluY2x1ZGluZwogICAgd2l0aG91dCBsaW1pdGF0aW9uIGFueSBwZXJzb24ncyBDb3B5cmlnaHQgYW5kIFJlbGF0ZWQgUmlnaHRzIGluIHRoZQogICAgV29yay4gRnVydGhlciwgQWZmaXJtZXIgZGlzY2xhaW1zIHJlc3BvbnNpYmlsaXR5IGZvciBvYnRhaW5pbmcgYW55CiAgICBuZWNlc3NhcnkgY29uc2VudHMsIHBlcm1pc3Npb25zIG9yIG90aGVyIHJpZ2h0cyByZXF1aXJlZCBmb3IgYW55IHVzZQogICAgb2YgdGhlIFdvcmsuCgogICAgZC4gQWZmaXJtZXIgdW5kZXJzdGFuZHMgYW5kIGFja25vd2xlZGdlcyB0aGF0IENyZWF0aXZlIENvbW1vbnMgaXMKICAgIG5vdCBhIHBhcnR5IHRvIHRoaXMgZG9jdW1lbnQgYW5kIGhhcyBubyBkdXR5IG9yIG9ibGlnYXRpb24gd2l0aAogICAgcmVzcGVjdCB0byB0aGlzIENDMCBvciB1c2Ugb2YgdGhlIFdvcmsuCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KCmh0dHBzOi8vY3JlYXRpdmVjb21tb25zLm9yZy9wdWJsaWNkb21haW4vemVyby8xLjAvbGVnYWxjb2RlCg=="
+                },
+                {
+                    artifact: "",
+                    command: "base64 decode string:\"U3RhdGVtZW50IG9mIFB1cnBvc2UKClRoZSBsYXdzIG9mIG1vc3QganVyaXNkaWN0aW9ucyB0aHJvdWdob3V0IHRoZSB3b3JsZCBhdXRvbWF0aWNhbGx5IGNvbmZlcgpleGNsdXNpdmUgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyAoZGVmaW5lZCBiZWxvdykgdXBvbiB0aGUgY3JlYXRvcgphbmQgc3Vic2VxdWVudCBvd25lcihzKSAoZWFjaCBhbmQgYWxsLCBhbiAib3duZXIiKSBvZiBhbiBvcmlnaW5hbCB3b3JrCm9mIGF1dGhvcnNoaXAgYW5kL29yIGEgZGF0YWJhc2UgKGVhY2gsIGEgIldvcmsiKS4KCkNlcnRhaW4gb3duZXJzIHdpc2ggdG8gcGVybWFuZW50bHkgcmVsaW5xdWlzaCB0aG9zZSByaWdodHMgdG8gYSBXb3JrIGZvcgp0aGUgcHVycG9zZSBvZiBjb250cmlidXRpbmcgdG8gYSBjb21tb25zIG9mIGNyZWF0aXZlLCBjdWx0dXJhbCBhbmQKc2NpZW50aWZpYyB3b3JrcyAoIkNvbW1vbnMiKSB0aGF0IHRoZSBwdWJsaWMgY2FuIHJlbGlhYmx5IGFuZCB3aXRob3V0CmZlYXIgb2YgbGF0ZXIgY2xhaW1zIG9mIGluZnJpbmdlbWVudCBidWlsZCB1cG9uLCBtb2RpZnksIGluY29ycG9yYXRlIGluCm90aGVyIHdvcmtzLCByZXVzZSBhbmQgcmVkaXN0cmlidXRlIGFzIGZyZWVseSBhcyBwb3NzaWJsZSBpbiBhbnkgZm9ybQp3aGF0c29ldmVyIGFuZCBmb3IgYW55IHB1cnBvc2VzLCBpbmNsdWRpbmcgd2l0aG91dCBsaW1pdGF0aW9uIGNvbW1lcmNpYWwKcHVycG9zZXMuIFRoZXNlIG93bmVycyBtYXkgY29udHJpYnV0ZSB0byB0aGUgQ29tbW9ucyB0byBwcm9tb3RlIHRoZQppZGVhbCBvZiBhIGZyZWUgY3VsdHVyZSBhbmQgdGhlIGZ1cnRoZXIgcHJvZHVjdGlvbiBvZiBjcmVhdGl2ZSwgY3VsdHVyYWwKYW5kIHNjaWVudGlmaWMgd29ya3MsIG9yIHRvIGdhaW4gcmVwdXRhdGlvbiBvciBncmVhdGVyIGRpc3RyaWJ1dGlvbiBmb3IKdGhlaXIgV29yayBpbiBwYXJ0IHRocm91Z2ggdGhlIHVzZSBhbmQgZWZmb3J0cyBvZiBvdGhlcnMuCgpGb3IgdGhlc2UgYW5kL29yIG90aGVyIHB1cnBvc2VzIGFuZCBtb3RpdmF0aW9ucywgYW5kIHdpdGhvdXQgYW55CmV4cGVjdGF0aW9uIG9mIGFkZGl0aW9uYWwgY29uc2lkZXJhdGlvbiBvciBjb21wZW5zYXRpb24sIHRoZSBwZXJzb24KYXNzb2NpYXRpbmcgQ0MwIHdpdGggYSBXb3JrICh0aGUgIkFmZmlybWVyIiksIHRvIHRoZSBleHRlbnQgdGhhdCBoZSBvcgpzaGUgaXMgYW4gb3duZXIgb2YgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyBpbiB0aGUgV29yaywgdm9sdW50YXJpbHkKZWxlY3RzIHRvIGFwcGx5IENDMCB0byB0aGUgV29yayBhbmQgcHVibGljbHkgZGlzdHJpYnV0ZSB0aGUgV29yayB1bmRlcgppdHMgdGVybXMsIHdpdGgga25vd2xlZGdlIG9mIGhpcyBvciBoZXIgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyBpbgp0aGUgV29yayBhbmQgdGhlIG1lYW5pbmcgYW5kIGludGVuZGVkIGxlZ2FsIGVmZmVjdCBvZiBDQzAgb24gdGhvc2UKcmlnaHRzLgoKMS4gQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cy4KCiAgIEEgV29yayBtYWRlIGF2YWlsYWJsZSB1bmRlciBDQzAgbWF5IGJlIHByb3RlY3RlZCBieSBjb3B5cmlnaHQgYW5kCiAgIHJlbGF0ZWQgb3IgbmVpZ2hib3JpbmcgcmlnaHRzICgiQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyIpLgogICBDb3B5cmlnaHQgYW5kIFJlbGF0ZWQgUmlnaHRzIGluY2x1ZGUsIGJ1dCBhcmUgbm90IGxpbWl0ZWQgdG8sIHRoZQogICBmb2xsb3dpbmc6CgogICAgaS4gdGhlIHJpZ2h0IHRvIHJlcHJvZHVjZSwgYWRhcHQsIGRpc3RyaWJ1dGUsIHBlcmZvcm0sIGRpc3BsYXksCiAgICBjb21tdW5pY2F0ZSwgYW5kIHRyYW5zbGF0ZSBhIFdvcms7CiAgICAKICAgIGlpLiBtb3JhbCByaWdodHMgcmV0YWluZWQgYnkgdGhlIG9yaWdpbmFsIGF1dGhvcihzKSBhbmQvb3IKICAgIHBlcmZvcm1lcihzKTsKCiAgICBpaWkuIHB1YmxpY2l0eSBhbmQgcHJpdmFjeSByaWdodHMgcGVydGFpbmluZyB0byBhIHBlcnNvbidzIGltYWdlIG9yCiAgICBsaWtlbmVzcyBkZXBpY3RlZCBpbiBhIFdvcms7CgogICAgaXYuIHJpZ2h0cyBwcm90ZWN0aW5nIGFnYWluc3QgdW5mYWlyIGNvbXBldGl0aW9uIGluIHJlZ2FyZHMgdG8gYQogICAgV29yaywgc3ViamVjdCB0byB0aGUgbGltaXRhdGlvbnMgaW4gcGFyYWdyYXBoIDQoYSksIGJlbG93OwoKICAgIHYuIHJpZ2h0cyBwcm90ZWN0aW5nIHRoZSBleHRyYWN0aW9uLCBkaXNzZW1pbmF0aW9uLCB1c2UgYW5kIHJldXNlIG9mCiAgICBkYXRhIGluIGEgV29yazsKCiAgICB2aS4gZGF0YWJhc2UgcmlnaHRzIChzdWNoIGFzIHRob3NlIGFyaXNpbmcgdW5kZXIgRGlyZWN0aXZlIDk2LzkvRUMKICAgIG9mIHRoZSBFdXJvcGVhbiBQYXJsaWFtZW50IGFuZCBvZiB0aGUgQ291bmNpbCBvZiAxMSBNYXJjaCAxOTk2IG9uCiAgICB0aGUgbGVnYWwgcHJvdGVjdGlvbiBvZiBkYXRhYmFzZXMsIGFuZCB1bmRlciBhbnkgbmF0aW9uYWwKICAgIGltcGxlbWVudGF0aW9uIHRoZXJlb2YsIGluY2x1ZGluZyBhbnkgYW1lbmRlZCBvciBzdWNjZXNzb3IgdmVyc2lvbgogICAgb2Ygc3VjaCBkaXJlY3RpdmUpOyBhbmQKCiAgICB2aWkuIG90aGVyIHNpbWlsYXIsIGVxdWl2YWxlbnQgb3IgY29ycmVzcG9uZGluZyByaWdodHMgdGhyb3VnaG91dAogICAgdGhlIHdvcmxkIGJhc2VkIG9uIGFwcGxpY2FibGUgbGF3IG9yIHRyZWF0eSwgYW5kIGFueSBuYXRpb25hbAogICAgaW1wbGVtZW50YXRpb25zIHRoZXJlb2YuCgoyLiBXYWl2ZXIuCgogICBUbyB0aGUgZ3JlYXRlc3QgZXh0ZW50IHBlcm1pdHRlZCBieSwgYnV0IG5vdCBpbiBjb250cmF2ZW50aW9uIG9mLAogICBhcHBsaWNhYmxlIGxhdywgQWZmaXJtZXIgaGVyZWJ5IG92ZXJ0bHksIGZ1bGx5LCBwZXJtYW5lbnRseSwKICAgaXJyZXZvY2FibHkgYW5kIHVuY29uZGl0aW9uYWxseSB3YWl2ZXMsIGFiYW5kb25zLCBhbmQgc3VycmVuZGVycyBhbGwKICAgb2YgQWZmaXJtZXIncyBDb3B5cmlnaHQgYW5kIFJlbGF0ZWQgUmlnaHRzIGFuZCBhc3NvY2lhdGVkIGNsYWltcyBhbmQKICAgY2F1c2VzIG9mIGFjdGlvbiwgd2hldGhlciBub3cga25vd24gb3IgdW5rbm93biAoaW5jbHVkaW5nIGV4aXN0aW5nIGFzCiAgIHdlbGwgYXMgZnV0dXJlIGNsYWltcyBhbmQgY2F1c2VzIG9mIGFjdGlvbiksIGluIHRoZSBXb3JrIChpKSBpbiBhbGwKICAgdGVycml0b3JpZXMgd29ybGR3aWRlLCAoaWkpIGZvciB0aGUgbWF4aW11bSBkdXJhdGlvbiBwcm92aWRlZCBieQogICBhcHBsaWNhYmxlIGxhdyBvciB0cmVhdHkgKGluY2x1ZGluZyBmdXR1cmUgdGltZSBleHRlbnNpb25zKSwgKGlpaSkgaW4KICAgYW55IGN1cnJlbnQgb3IgZnV0dXJlIG1lZGl1bSBhbmQgZm9yIGFueSBudW1iZXIgb2YgY29waWVzLCBhbmQgKGl2KQogICBmb3IgYW55IHB1cnBvc2Ugd2hhdHNvZXZlciwgaW5jbHVkaW5nIHdpdGhvdXQgbGltaXRhdGlvbiBjb21tZXJjaWFsLAogICBhZHZlcnRpc2luZyBvciBwcm9tb3Rpb25hbCBwdXJwb3NlcyAodGhlICJXYWl2ZXIiKS4gQWZmaXJtZXIgbWFrZXMKICAgdGhlIFdhaXZlciBmb3IgdGhlIGJlbmVmaXQgb2YgZWFjaCBtZW1iZXIgb2YgdGhlIHB1YmxpYyBhdCBsYXJnZSBhbmQKICAgdG8gdGhlIGRldHJpbWVudCBvZiBBZmZpcm1lcidzIGhlaXJzIGFuZCBzdWNjZXNzb3JzLCBmdWxseSBpbnRlbmRpbmcKICAgdGhhdCBzdWNoIFdhaXZlciBzaGFsbCBub3QgYmUgc3ViamVjdCB0byByZXZvY2F0aW9uLCByZXNjaXNzaW9uLAogICBjYW5jZWxsYXRpb24sIHRlcm1pbmF0aW9uLCBvciBhbnkgb3RoZXIgbGVnYWwgb3IgZXF1aXRhYmxlIGFjdGlvbiB0bwogICBkaXNydXB0IHRoZSBxdWlldCBlbmpveW1lbnQgb2YgdGhlIFdvcmsgYnkgdGhlIHB1YmxpYyBhcyBjb250ZW1wbGF0ZWQKICAgYnkgQWZmaXJtZXIncyBleHByZXNzIFN0YXRlbWVudCBvZiBQdXJwb3NlLgoKMy4gUHVibGljIExpY2Vuc2UgRmFsbGJhY2suCgogICBTaG91bGQgYW55IHBhcnQgb2YgdGhlIFdhaXZlciBmb3IgYW55IHJlYXNvbiBiZSBqdWRnZWQgbGVnYWxseQogICBpbnZhbGlkIG9yIGluZWZmZWN0aXZlIHVuZGVyIGFwcGxpY2FibGUgbGF3LCB0aGVuIHRoZSBXYWl2ZXIgc2hhbGwgYmUKICAgcHJlc2VydmVkIHRvIHRoZSBtYXhpbXVtIGV4dGVudCBwZXJtaXR0ZWQgdGFraW5nIGludG8gYWNjb3VudAogICBBZmZpcm1lcidzIGV4cHJlc3MgU3RhdGVtZW50IG9mIFB1cnBvc2UuIEluIGFkZGl0aW9uLCB0byB0aGUgZXh0ZW50CiAgIHRoZSBXYWl2ZXIgaXMgc28ganVkZ2VkIEFmZmlybWVyIGhlcmVieSBncmFudHMgdG8gZWFjaCBhZmZlY3RlZAogICBwZXJzb24gYSByb3lhbHR5LWZyZWUsIG5vbiB0cmFuc2ZlcmFibGUsIG5vbiBzdWJsaWNlbnNhYmxlLCBub24KICAgZXhjbHVzaXZlLCBpcnJldm9jYWJsZSBhbmQgdW5jb25kaXRpb25hbCBsaWNlbnNlIHRvIGV4ZXJjaXNlCiAgIEFmZmlybWVyJ3MgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyBpbiB0aGUgV29yawogICAKICAgKGkpIGluIGFsbCB0ZXJyaXRvcmllcyB3b3JsZHdpZGUsCgogICAoaWkpIGZvciB0aGUgbWF4aW11bSBkdXJhdGlvbiBwcm92aWRlZCBieSBhcHBsaWNhYmxlIGxhdyBvciB0cmVhdHkKICAgKGluY2x1ZGluZyBmdXR1cmUgdGltZSBleHRlbnNpb25zKSwKCiAgIChpaWkpIGluIGFueSBjdXJyZW50IG9yIGZ1dHVyZSBtZWRpdW0gYW5kIGZvciBhbnkgbnVtYmVyIG9mIGNvcGllcywKICAgYW5kCgogICAoaXYpIGZvciBhbnkgcHVycG9zZSB3aGF0c29ldmVyLCBpbmNsdWRpbmcgd2l0aG91dCBsaW1pdGF0aW9uCiAgIGNvbW1lcmNpYWwsIGFkdmVydGlzaW5nIG9yIHByb21vdGlvbmFsIHB1cnBvc2VzICh0aGUgIkxpY2Vuc2UiKS4KCiAgIFRoZSBMaWNlbnNlIHNoYWxsIGJlIGRlZW1lZCBlZmZlY3RpdmUgYXMgb2YgdGhlIGRhdGUgQ0MwIHdhcyBhcHBsaWVkCiAgIGJ5IEFmZmlybWVyIHRvIHRoZSBXb3JrLiBTaG91bGQgYW55IHBhcnQgb2YgdGhlIExpY2Vuc2UgZm9yIGFueQogICByZWFzb24gYmUganVkZ2VkIGxlZ2FsbHkgaW52YWxpZCBvciBpbmVmZmVjdGl2ZSB1bmRlciBhcHBsaWNhYmxlIGxhdywKICAgc3VjaCBwYXJ0aWFsIGludmFsaWRpdHkgb3IgaW5lZmZlY3RpdmVuZXNzIHNoYWxsIG5vdCBpbnZhbGlkYXRlIHRoZQogICByZW1haW5kZXIgb2YgdGhlIExpY2Vuc2UsIGFuZCBpbiBzdWNoIGNhc2UgQWZmaXJtZXIgaGVyZWJ5IGFmZmlybXMKICAgdGhhdCBoZSBvciBzaGUgd2lsbCBub3QKCiAgIChpKSBleGVyY2lzZSBhbnkgb2YgaGlzIG9yIGhlciByZW1haW5pbmcgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cwogICBpbiB0aGUgV29yayBvcgoKICAgKGlpKSBhc3NlcnQgYW55IGFzc29jaWF0ZWQgY2xhaW1zIGFuZCBjYXVzZXMgb2YgYWN0aW9uIHdpdGggcmVzcGVjdAogICB0byB0aGUgV29yaywgaW4gZWl0aGVyIGNhc2UgY29udHJhcnkgdG8gQWZmaXJtZXIncyBleHByZXNzIFN0YXRlbWVudAogICBvZiBQdXJwb3NlLgoKNC4gTGltaXRhdGlvbnMgYW5kIERpc2NsYWltZXJzLgoKICAgIGEuIE5vIHRyYWRlbWFyayBvciBwYXRlbnQgcmlnaHRzIGhlbGQgYnkgQWZmaXJtZXIgYXJlIHdhaXZlZCwKICAgIGFiYW5kb25lZCwgc3VycmVuZGVyZWQsIGxpY2Vuc2VkIG9yIG90aGVyd2lzZSBhZmZlY3RlZCBieSB0aGlzCiAgICBkb2N1bWVudC4KCiAgICBiLiBBZmZpcm1lciBvZmZlcnMgdGhlIFdvcmsgYXMtaXMgYW5kIG1ha2VzIG5vIHJlcHJlc2VudGF0aW9ucyBvcgogICAgd2FycmFudGllcyBvZiBhbnkga2luZCBjb25jZXJuaW5nIHRoZSBXb3JrLCBleHByZXNzLCBpbXBsaWVkLAogICAgc3RhdHV0b3J5IG9yIG90aGVyd2lzZSwgaW5jbHVkaW5nIHdpdGhvdXQgbGltaXRhdGlvbiB3YXJyYW50aWVzIG9mCiAgICB0aXRsZSwgbWVyY2hhbnRhYmlsaXR5LCBmaXRuZXNzIGZvciBhIHBhcnRpY3VsYXIgcHVycG9zZSwgbm9uCiAgICBpbmZyaW5nZW1lbnQsIG9yIHRoZSBhYnNlbmNlIG9mIGxhdGVudCBvciBvdGhlciBkZWZlY3RzLCBhY2N1cmFjeSwKICAgIG9yIHRoZSBwcmVzZW50IG9yIGFic2VuY2Ugb2YgZXJyb3JzLCB3aGV0aGVyIG9yIG5vdCBkaXNjb3ZlcmFibGUsCiAgICBhbGwgdG8gdGhlIGdyZWF0ZXN0IGV4dGVudCBwZXJtaXNzaWJsZSB1bmRlciBhcHBsaWNhYmxlIGxhdy4KCiAgICBjLiBBZmZpcm1lciBkaXNjbGFpbXMgcmVzcG9uc2liaWxpdHkgZm9yIGNsZWFyaW5nIHJpZ2h0cyBvZiBvdGhlcgogICAgcGVyc29ucyB0aGF0IG1heSBhcHBseSB0byB0aGUgV29yayBvciBhbnkgdXNlIHRoZXJlb2YsIGluY2x1ZGluZwogICAgd2l0aG91dCBsaW1pdGF0aW9uIGFueSBwZXJzb24ncyBDb3B5cmlnaHQgYW5kIFJlbGF0ZWQgUmlnaHRzIGluIHRoZQogICAgV29yay4gRnVydGhlciwgQWZmaXJtZXIgZGlzY2xhaW1zIHJlc3BvbnNpYmlsaXR5IGZvciBvYnRhaW5pbmcgYW55CiAgICBuZWNlc3NhcnkgY29uc2VudHMsIHBlcm1pc3Npb25zIG9yIG90aGVyIHJpZ2h0cyByZXF1aXJlZCBmb3IgYW55IHVzZQogICAgb2YgdGhlIFdvcmsuCgogICAgZC4gQWZmaXJtZXIgdW5kZXJzdGFuZHMgYW5kIGFja25vd2xlZGdlcyB0aGF0IENyZWF0aXZlIENvbW1vbnMgaXMKICAgIG5vdCBhIHBhcnR5IHRvIHRoaXMgZG9jdW1lbnQgYW5kIGhhcyBubyBkdXR5IG9yIG9ibGlnYXRpb24gd2l0aAogICAgcmVzcGVjdCB0byB0aGlzIENDMCBvciB1c2Ugb2YgdGhlIFdvcmsuCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KCmh0dHBzOi8vY3JlYXRpdmVjb21tb25zLm9yZy9wdWJsaWNkb21haW4vemVyby8xLjAvbGVnYWxjb2RlCg==\"",
+                    qualifier: "ends",
+                    test: "https://creativecommons.org/publicdomain/zero/1.0/legalcode"
+                },
+                {
+                    artifact: "",
+                    command: "base64 string:\"my big string sample\"",
+                    qualifier: "is",
+                    test: "bXkgYmlnIHN0cmluZyBzYW1wbGU="
+                },
+                {
+                    artifact: "",
+                    command: "base64 decode string:\"bXkgYmlnIHN0cmluZyBzYW1wbGU=\"",
+                    qualifier: "is",
+                    test: "my big string sample"
+                },
+                {
+                    artifact: "",
+                    command: "base64",
+                    qualifier: "contains",
+                    test: "No path to encode."
+                },
+                {
+                    artifact: "",
+                    command: "commands",
+                    qualifier: "contains",
+                    test: `Commands are tested using the ${text.green}simulation${text.none} command.`
+                },
+                {
+                    artifact: "",
+                    command: "commands base64",
+                    qualifier: "contains",
+                    test: `   ${text.cyan}prettydiff base64 encode string:"my string to encode"${text.none}`
+                },
+                {
+                    artifact: "",
+                    command: "copy",
+                    qualifier: "contains",
+                    test: "The copy command requires a source path and a destination path."
+                },
+                {
+                    artifact: "",
+                    command: "copy js",
+                    qualifier: "contains",
+                    test: "The copy command requires a source path and a destination path."
+                },
+                {
+                    artifact: "temp",
+                    command: "copy js temp",
+                    qualifier: "filesystem contains",
+                    test: `temp${sep}minify${sep}style.js`
+                },
+                {
+                    artifact: "temp",
+                    command: "copy js temp",
+                    file: `temp${sep}minify${sep}style.js`,
+                    qualifier: "file begins",
+                    test: "/*global global*/"
+                },
+                {
+                    artifact: "",
+                    command: "directory",
+                    qualifier: "contains",
+                    test: "No path supplied for the directory command."
+                },
+                {
+                    artifact: "",
+                    command: `directory js`,
+                    qualifier: "contains",
+                    test: `js${sep}minify${sep}style.js","file",`
+                },
+                {
+                    artifact: "",
+                    command: `directory js ignore ["minify"]`,
+                    qualifier: "not contains",
+                    test: `js${sep}minify${sep}style.js"`
+                },
+                {
+                    artifact: "",
+                    command: `directory .${sep} ignore ["node_modules", ".git", ".DS_Store"] --verbose`,
+                    qualifier: "contains",
+                    test: `matching items from address`
+                }
+            ],
+            len:number = tests.length,
+            cwd:string = __dirname.replace(/(\/|\\)js$/, ""),
+            increment = function node_apps_simulation_increment():void {
+                const interval = function node_apps_simulation_increment_interval():void {
+                    a = a + 1;
+                    if (a < len) {
+                        wrapper();
+                    } else {
+                        const complete:string = `${text.green}Successfully completed all ${text.cyan + len + text.green} simulation tests.${text.none}`;
+                        if (command === "simulation") {
+                            console.log("");
+                            console.log(complete);
+                            apps.output([]);
+                        } else {
+                            console.log("");
+                            console.log(complete);
+                            callback();
+                        }
+                    }
+                };
+                console.log(`${apps.humantime(false) + text.green}Passed simulation ${a + 1}: ${text.none + tests[a].command}`);
+                if (tests[a].artifact === "") {
+                    interval();
+                } else {
+                    apps.remove(tests[a].artifact, function node_apps_simulation_wrapper_remove():void {
+                        interval();
+                    });
+                }
+            },
+            wrapper = function node_apps_simulation_wrapper():void {
+                node.child(`node js/services ${tests[a].command}`, {cwd: cwd}, function node_apps_simulation_wrapper_child(err:Error, stdout:string|Buffer, stderror:string|Buffer) {
+                    if (tests[a].artifact === "") {
+                        writeflag = "";
+                    } else {
+                        tests[a].artifact = node.path.resolve(tests[a].artifact);
+                        writeflag = tests[a].artifact;
+                    }
+                    if (err !== null && stdout === "") {
+                        apps.errout([err.toString()]);
+                        return;
+                    }
+                    if (stderror !== "") {
+                        apps.errout([stderror]);
+                        return;
+                    }
+                    if (typeof stdout === "string") {
+                        stdout = stdout.replace(/\s+$/, "");
+                    }
+                    if (tests[a].qualifier.indexOf("file") === 0) {
+                        if (tests[a].qualifier.indexOf("file ") === 0) {
+                            tests[a].file = node.path.resolve(tests[a].file);
+                            node.fs.readFile(tests[a].file, "utf8", function node_apps_simulation_wrapper_file(err:Error, dump:string) {
+                                if (err !== null) {
+                                    apps.errout([err.toString()]);
+                                    return;
+                                }
+                                if (tests[a].qualifier === "file begins" && dump.indexOf(tests[a].test) !== 0) {
+                                    apps.errout([
+                                        `Simulation test string ${text.angry + tests[a].command + text.none} is not starting in file: ${text.green + tests[a].file + text.none}`,
+                                        text.cyan + tests[a].test + text.none,
+                                        "",
+                                        `${text.green}Actual output:${text.none}`,
+                                        dump
+                                    ]);
+                                    return;
+                                }
+                                if (tests[a].qualifier === "file contains" && dump.indexOf(tests[a].test) < 0) {
+                                    apps.errout([
+                                        `Simulation test string ${text.angry + tests[a].command + text.none} is not anywhere in file: ${text.green + tests[a].file + text.none}`,
+                                        text.cyan + tests[a].test + text.none,
+                                        "",
+                                        `${text.green}Actual output:${text.none}`,
+                                        dump
+                                    ]);
+                                    return;
+                                }
+                                if (tests[a].qualifier === "file ends" && dump.indexOf(tests[a].test) === dump.length - tests[a].test.length) {
+                                    apps.errout([
+                                        `Simulation test string ${text.angry + tests[a].command + text.none} is not at end of file: ${text.green + tests[a].file + text.none}`,
+                                        text.cyan + tests[a].test + text.none,
+                                        "",
+                                        `${text.green}Actual output:${text.none}`,
+                                        dump
+                                    ]);
+                                    return;
+                                }
+                                if (tests[a].qualifier === "file is" && dump !== tests[a].test) {
+                                    apps.errout([
+                                        `Simulation test string ${text.angry + tests[a].command + text.none} does not match the file: ${text.green + tests[a].file + text.none}`,
+                                        text.cyan + tests[a].test + text.none,
+                                        "",
+                                        `${text.green}Actual output:${text.none}`,
+                                        dump
+                                    ]);
+                                    return;
+                                }
+                                if (tests[a].qualifier === "file not" && dump === tests[a].test) {
+                                    apps.errout([
+                                        `Simulation test string ${text.angry + tests[a].command + text.none} matches this file, but shouldn't: ${text.green + tests[a].file + text.none}`,
+                                        text.cyan + tests[a].test + text.none,
+                                        "",
+                                        `${text.green}Actual output:${text.none}`,
+                                        dump
+                                    ]);
+                                    return;
+                                }
+                                if (tests[a].qualifier === "file not contains" && dump.indexOf(tests[a].test) > -1) {
+                                    apps.errout([
+                                        `Simulation test string ${text.angry + tests[a].command + text.none} is contained in this file, but shouldn't be: ${text.green + tests[a].file + text.none}`,
+                                        text.cyan + tests[a].test + text.none,
+                                        "",
+                                        `${text.green}Actual output:${text.none}`,
+                                        dump
+                                    ]);
+                                    return;
+                                }
+                                increment();
+                            });
+                        } else if (tests[a].qualifier.indexOf("filesystem ") === 0) {
+                            tests[a].test = node.path.resolve(tests[a].test);
+                            node.fs.stat(tests[a].test, function node_apps_simulation_wrapper_filesystem(ers:Error) {
+                                if (ers !== null) {
+                                    if (tests[a].qualifier === "filesystem contains" && ers.toString().indexOf("ENOENT") > -1) {
+                                        apps.errout([
+                                            `Simulation ${text.angry + tests[a].command + text.none} does not see this address in the local file system:`,
+                                            text.cyan + tests[a].test + text.none
+                                        ]);
+                                        return;
+                                    }
+                                    apps.errout([ers.toString()]);
+                                    return;
+                                }
+                                if (tests[a].qualifier === "filesystem not contains") {
+                                    apps.errout([
+                                        `Simulation ${text.angry + tests[a].command + text.none} see the following address in the local file system, but shouldn't:`,
+                                        text.cyan + tests[a].test + text.none
+                                    ]);
+                                    return;
+                                }
+                                increment();
+                            });
+                        }
+                    } else {
+                        if (tests[a].qualifier === "begins" && (typeof stdout !== "string" || stdout.indexOf(tests[a].test) !== 0)) {
+                            apps.errout([
+                                `Simulation ${text.angry + tests[a].command + text.none} does not begin with the expected output:`,
+                                text.cyan + tests[a].test + text.none,
+                                "",
+                                `${text.green}Actual output:${text.none}`,
+                                stdout
+                            ]);
+                            return;
+                        }
+                        if (tests[a].qualifier === "contains" && (typeof stdout !== "string" || stdout.indexOf(tests[a].test) < 0)) {
+                            apps.errout([
+                                `Simulation ${text.angry + tests[a].command + text.none} does not contain the expected output:`,
+                                text.cyan + tests[a].test + text.none,
+                                "",
+                                `${text.green}Actual output:${text.none}`,
+                                stdout
+                            ]);
+                            return;
+                        }
+                        if (tests[a].qualifier === "ends" && (typeof stdout !== "string" || stdout.indexOf(tests[a].test) !== stdout.length - tests[a].test.length)) {
+                            apps.errout([
+                                `Simulation ${text.angry + tests[a].command + text.none} does not end with the expected output:`,
+                                text.cyan + tests[a].test + text.none,
+                                "",
+                                `${text.green}Actual output:${text.none}`,
+                                stdout
+                            ]);
+                            return;
+                        }
+                        if (tests[a].qualifier === "is" && stdout !== tests[a].test) {
+                            apps.errout([
+                                `Simulation ${text.angry + tests[a].command + text.none} does not match the expected output:`,
+                                text.cyan + tests[a].test + text.none,
+                                "",
+                                `${text.green}Actual output:${text.none}`,
+                                stdout
+                            ]);
+                            return;
+                        }
+                        if (tests[a].qualifier === "not" && stdout === tests[a].test) {
+                            apps.errout([
+                                `Simulation ${text.angry + tests[a].command + text.none} must not be this output:`,
+                                text.cyan + tests[a].test + text.none,
+                                "",
+                                `${text.green}Actual output:${text.none}`,
+                                stdout
+                            ]);
+                            return;
+                        }
+                        if (tests[a].qualifier === "not contains" && (typeof stdout !== "string" || stdout.indexOf(tests[a].test) > -1)) {
+                            apps.errout([
+                                `Simulation ${text.angry + tests[a].command + text.none} must not contain this output:`,
+                                text.cyan + tests[a].test + text.none,
+                                "",
+                                `${text.green}Actual output:${text.none}`,
+                                stdout
+                            ]);
+                            return;
+                        }
+                        increment();
+                    }
+                });
+            };
+        let a:number = 0;
+        if (command === "simulation") {
+            verbose = true;
+            console.log("");
+            console.log(`${text.underline + text.bold}Pretty Diff - services.ts simulation tests${text.none}`);
+            console.log("");
+        }
+        wrapper();
+    };
     // unit test validation runner for Pretty Diff mode commands
     apps.validation = function node_apps_validation():void {
         let count_raw = 0,
@@ -3318,7 +3780,7 @@ interface readFile {
                             options.mode   = "diff";
                             options.source = output;
                             options.sourcelabel = raw[a][1];
-                            apps.mode();
+                            apps.diff();
                             break;
                         }
                     } else {

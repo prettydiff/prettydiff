@@ -11,6 +11,11 @@ declare module NodeJS {
         prettydiff: any
     }
 }
+type api = "any" | "dom" | "node";
+type lexer = "markup" | "script" | "style";
+type mode = "analysis" | "beautify" | "diff" | "minify" | "parse";
+type qualifier = "begins" | "contains" | "ends" | "file begins" | "file contains" | "file ends" | "file is" | "file not" | "file not contains" | "filesystem contains" | "filesystem not contains" | "is" | "not" | "not contains";
+type languageAuto = [string, string, string];
 interface Window {
     parseFramework: any;
 }
@@ -59,7 +64,6 @@ interface library {
 interface dom {
     [key: string]: any;
 }
-type languageAuto = [string, string, string];
 interface language {
     auto(sample:string, defaultLang:string): languageAuto;
     nameproper(input:string): string;
@@ -101,9 +105,6 @@ interface finalFile {
 interface diffview {
     (): [string, number, number]
 }
-type api = "any" | "dom" | "node";
-type lexer = "markup" | "script" | "style";
-type mode = "analysis" | "beautify" | "diff" | "minify" | "parse";
 interface option {
     api: api;
     default: boolean | number | string;
@@ -175,4 +176,11 @@ interface readDirectory {
     path: string;
     recursive: boolean;
     symbolic: boolean;
+}
+interface simulationItem {
+    artifact: string;
+    command: string;
+    file?: string;
+    qualifier: qualifier;
+    test: string;
 }
