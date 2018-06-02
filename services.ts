@@ -349,34 +349,6 @@ interface readFile {
                 }]
             }
         },
-        exclusions = (function node_exclusions():string[] {
-            const args = process.argv.join(" "),
-                match = args.match(/\signore\s*\[/);
-            if (match !== null) {
-                const start:number = args.indexOf(match[0]);
-                let a:number = start,
-                    len:number = args.length;
-                do {
-                    if (args.charAt(a) === "]" && (a === len - 1 || (/\s/).test(args.charAt(a + 1)) === true)) {
-                        break;
-                    }
-                    a = a + 1;
-                } while (a < len);
-                if (a < len) {
-                    const exs:string = args.slice(start, a + 1),
-                        list:string[] = exs.replace(/\signore\s*\[/, "").replace(/\]$/, "").replace(/\s*,\s*/g, ",").split(",");
-                    process.argv = args.replace(exs, "").split(" ");
-                    a = 0;
-                    len = list.length;
-                    do {
-                        list[a] = list[a].replace(/\/|\\/g, sep);
-                        a = a + 1;
-                    } while (a < len);
-                    return list;
-                }
-            }
-            return [];
-        }()),
         command:string = (function node_command():string {
             let comkeys:string[] = Object.keys(commands),
                 filtered:string[] = [],
@@ -474,6 +446,83 @@ interface readFile {
                 console.log("");
             }
             return filtered[0];
+        }()),
+        exclusions = (function node_exclusions():string[] {
+            const args = process.argv.join(" "),
+                match = args.match(/\signore\s*\[/);
+            if (match !== null) {
+                const start:number = args.indexOf(match[0]);
+                let a:number = start,
+                    len:number = args.length;
+                do {
+                    if (args.charAt(a) === "]" && (a === len - 1 || (/\s/).test(args.charAt(a + 1)) === true)) {
+                        break;
+                    }
+                    a = a + 1;
+                } while (a < len);
+                if (a < len) {
+                    const exs:string = args.slice(start, a + 1),
+                        arglist:string[] = [],
+                        list:string[] = exs.replace(/\signore\s*\[/, "").replace(/\]$/, "").replace(/\s*,\s*/g, ",").split(","),
+                        esctest = function node_exclusions_esctest():boolean {
+                            let b:number = a - 1;
+                            if (args.charAt(b) !== "\\") {
+                                return false;
+                            }
+                            do {
+                                b = b - 1;
+                            } while (b > 0 && args.charAt(b) === "\\");
+                            if (a - b % 2 === 0) {
+                                return true;
+                            }
+                            return false;
+                        };
+                    let quote:string = "",
+                        startIndex:number = -1;
+                    a = 0;
+                    len = args.length;console.log(args);
+                    do {
+                        if (a === 0 || ((/\s/).test(args.charAt(a)) === false && quote === "" && startIndex < 0)) {
+                            startIndex = a;
+                            if (args.charAt(a) === "\"" || args.charAt(a) === "'") {
+                                quote = args.charAt(a);
+                            } else if (args.slice(a, a + 6) === "ignore" && (args.charAt(a + 7) === "[" || (/\s/).test(args.charAt(a + 7)) === true)) {
+                                quote = "]";
+                            }
+                        } else if (esctest() === false) {
+                            if (args.charAt(a) === quote) {
+                                if (quote !== "]") {
+                                    arglist.push(args.slice(startIndex, a + 1));
+                                }
+                                quote = "";
+                                startIndex = -1;
+                            } else if (startIndex > -1 && quote === "") {
+                                if ((/\s/).test(args.charAt(a)) === true) {
+                                    arglist.push(args.slice(startIndex, a));
+                                    startIndex = -1;
+                                } else if (args.charAt(a) === "\"" || args.charAt(a) === "'") {
+                                    arglist.push(args.slice(startIndex, a));
+                                    startIndex = a;
+                                    quote = args.charAt(a);
+                                }
+                            }
+                        }
+                        a = a + 1;
+                    } while (a < len);
+                    if (startIndex > -1) {
+                        arglist.push(args.slice(startIndex));
+                    }console.log(arglist);
+                    process.argv = arglist;
+                    a = 0;
+                    len = list.length;
+                    do {
+                        list[a] = list[a].replace(/\/|\\/g, sep);
+                        a = a + 1;
+                    } while (a < len);
+                    return list;
+                }
+            }
+            return [];
         }()),
         apps:any = {};
     let verbose:boolean = false,
@@ -3399,18 +3448,35 @@ interface readFile {
         // * command - the command to execute minus the `node js/services` part
         // * qualifier - how to test, see simulationItem in index.d.ts for appropriate values
         // * test - the value to compare against
-        const tests:simulationItem[] = [
+        const supersep:string = (sep === "\\")
+            ? "\\\\"
+            : sep,
+            tests:simulationItem[] = [
                 {
                     artifact: "",
-                    command: "base64 license",
+                    command: "base64 tsconfig.json",
                     qualifier: "is",
-                    test: "U3RhdGVtZW50IG9mIFB1cnBvc2UKClRoZSBsYXdzIG9mIG1vc3QganVyaXNkaWN0aW9ucyB0aHJvdWdob3V0IHRoZSB3b3JsZCBhdXRvbWF0aWNhbGx5IGNvbmZlcgpleGNsdXNpdmUgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyAoZGVmaW5lZCBiZWxvdykgdXBvbiB0aGUgY3JlYXRvcgphbmQgc3Vic2VxdWVudCBvd25lcihzKSAoZWFjaCBhbmQgYWxsLCBhbiAib3duZXIiKSBvZiBhbiBvcmlnaW5hbCB3b3JrCm9mIGF1dGhvcnNoaXAgYW5kL29yIGEgZGF0YWJhc2UgKGVhY2gsIGEgIldvcmsiKS4KCkNlcnRhaW4gb3duZXJzIHdpc2ggdG8gcGVybWFuZW50bHkgcmVsaW5xdWlzaCB0aG9zZSByaWdodHMgdG8gYSBXb3JrIGZvcgp0aGUgcHVycG9zZSBvZiBjb250cmlidXRpbmcgdG8gYSBjb21tb25zIG9mIGNyZWF0aXZlLCBjdWx0dXJhbCBhbmQKc2NpZW50aWZpYyB3b3JrcyAoIkNvbW1vbnMiKSB0aGF0IHRoZSBwdWJsaWMgY2FuIHJlbGlhYmx5IGFuZCB3aXRob3V0CmZlYXIgb2YgbGF0ZXIgY2xhaW1zIG9mIGluZnJpbmdlbWVudCBidWlsZCB1cG9uLCBtb2RpZnksIGluY29ycG9yYXRlIGluCm90aGVyIHdvcmtzLCByZXVzZSBhbmQgcmVkaXN0cmlidXRlIGFzIGZyZWVseSBhcyBwb3NzaWJsZSBpbiBhbnkgZm9ybQp3aGF0c29ldmVyIGFuZCBmb3IgYW55IHB1cnBvc2VzLCBpbmNsdWRpbmcgd2l0aG91dCBsaW1pdGF0aW9uIGNvbW1lcmNpYWwKcHVycG9zZXMuIFRoZXNlIG93bmVycyBtYXkgY29udHJpYnV0ZSB0byB0aGUgQ29tbW9ucyB0byBwcm9tb3RlIHRoZQppZGVhbCBvZiBhIGZyZWUgY3VsdHVyZSBhbmQgdGhlIGZ1cnRoZXIgcHJvZHVjdGlvbiBvZiBjcmVhdGl2ZSwgY3VsdHVyYWwKYW5kIHNjaWVudGlmaWMgd29ya3MsIG9yIHRvIGdhaW4gcmVwdXRhdGlvbiBvciBncmVhdGVyIGRpc3RyaWJ1dGlvbiBmb3IKdGhlaXIgV29yayBpbiBwYXJ0IHRocm91Z2ggdGhlIHVzZSBhbmQgZWZmb3J0cyBvZiBvdGhlcnMuCgpGb3IgdGhlc2UgYW5kL29yIG90aGVyIHB1cnBvc2VzIGFuZCBtb3RpdmF0aW9ucywgYW5kIHdpdGhvdXQgYW55CmV4cGVjdGF0aW9uIG9mIGFkZGl0aW9uYWwgY29uc2lkZXJhdGlvbiBvciBjb21wZW5zYXRpb24sIHRoZSBwZXJzb24KYXNzb2NpYXRpbmcgQ0MwIHdpdGggYSBXb3JrICh0aGUgIkFmZmlybWVyIiksIHRvIHRoZSBleHRlbnQgdGhhdCBoZSBvcgpzaGUgaXMgYW4gb3duZXIgb2YgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyBpbiB0aGUgV29yaywgdm9sdW50YXJpbHkKZWxlY3RzIHRvIGFwcGx5IENDMCB0byB0aGUgV29yayBhbmQgcHVibGljbHkgZGlzdHJpYnV0ZSB0aGUgV29yayB1bmRlcgppdHMgdGVybXMsIHdpdGgga25vd2xlZGdlIG9mIGhpcyBvciBoZXIgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyBpbgp0aGUgV29yayBhbmQgdGhlIG1lYW5pbmcgYW5kIGludGVuZGVkIGxlZ2FsIGVmZmVjdCBvZiBDQzAgb24gdGhvc2UKcmlnaHRzLgoKMS4gQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cy4KCiAgIEEgV29yayBtYWRlIGF2YWlsYWJsZSB1bmRlciBDQzAgbWF5IGJlIHByb3RlY3RlZCBieSBjb3B5cmlnaHQgYW5kCiAgIHJlbGF0ZWQgb3IgbmVpZ2hib3JpbmcgcmlnaHRzICgiQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyIpLgogICBDb3B5cmlnaHQgYW5kIFJlbGF0ZWQgUmlnaHRzIGluY2x1ZGUsIGJ1dCBhcmUgbm90IGxpbWl0ZWQgdG8sIHRoZQogICBmb2xsb3dpbmc6CgogICAgaS4gdGhlIHJpZ2h0IHRvIHJlcHJvZHVjZSwgYWRhcHQsIGRpc3RyaWJ1dGUsIHBlcmZvcm0sIGRpc3BsYXksCiAgICBjb21tdW5pY2F0ZSwgYW5kIHRyYW5zbGF0ZSBhIFdvcms7CiAgICAKICAgIGlpLiBtb3JhbCByaWdodHMgcmV0YWluZWQgYnkgdGhlIG9yaWdpbmFsIGF1dGhvcihzKSBhbmQvb3IKICAgIHBlcmZvcm1lcihzKTsKCiAgICBpaWkuIHB1YmxpY2l0eSBhbmQgcHJpdmFjeSByaWdodHMgcGVydGFpbmluZyB0byBhIHBlcnNvbidzIGltYWdlIG9yCiAgICBsaWtlbmVzcyBkZXBpY3RlZCBpbiBhIFdvcms7CgogICAgaXYuIHJpZ2h0cyBwcm90ZWN0aW5nIGFnYWluc3QgdW5mYWlyIGNvbXBldGl0aW9uIGluIHJlZ2FyZHMgdG8gYQogICAgV29yaywgc3ViamVjdCB0byB0aGUgbGltaXRhdGlvbnMgaW4gcGFyYWdyYXBoIDQoYSksIGJlbG93OwoKICAgIHYuIHJpZ2h0cyBwcm90ZWN0aW5nIHRoZSBleHRyYWN0aW9uLCBkaXNzZW1pbmF0aW9uLCB1c2UgYW5kIHJldXNlIG9mCiAgICBkYXRhIGluIGEgV29yazsKCiAgICB2aS4gZGF0YWJhc2UgcmlnaHRzIChzdWNoIGFzIHRob3NlIGFyaXNpbmcgdW5kZXIgRGlyZWN0aXZlIDk2LzkvRUMKICAgIG9mIHRoZSBFdXJvcGVhbiBQYXJsaWFtZW50IGFuZCBvZiB0aGUgQ291bmNpbCBvZiAxMSBNYXJjaCAxOTk2IG9uCiAgICB0aGUgbGVnYWwgcHJvdGVjdGlvbiBvZiBkYXRhYmFzZXMsIGFuZCB1bmRlciBhbnkgbmF0aW9uYWwKICAgIGltcGxlbWVudGF0aW9uIHRoZXJlb2YsIGluY2x1ZGluZyBhbnkgYW1lbmRlZCBvciBzdWNjZXNzb3IgdmVyc2lvbgogICAgb2Ygc3VjaCBkaXJlY3RpdmUpOyBhbmQKCiAgICB2aWkuIG90aGVyIHNpbWlsYXIsIGVxdWl2YWxlbnQgb3IgY29ycmVzcG9uZGluZyByaWdodHMgdGhyb3VnaG91dAogICAgdGhlIHdvcmxkIGJhc2VkIG9uIGFwcGxpY2FibGUgbGF3IG9yIHRyZWF0eSwgYW5kIGFueSBuYXRpb25hbAogICAgaW1wbGVtZW50YXRpb25zIHRoZXJlb2YuCgoyLiBXYWl2ZXIuCgogICBUbyB0aGUgZ3JlYXRlc3QgZXh0ZW50IHBlcm1pdHRlZCBieSwgYnV0IG5vdCBpbiBjb250cmF2ZW50aW9uIG9mLAogICBhcHBsaWNhYmxlIGxhdywgQWZmaXJtZXIgaGVyZWJ5IG92ZXJ0bHksIGZ1bGx5LCBwZXJtYW5lbnRseSwKICAgaXJyZXZvY2FibHkgYW5kIHVuY29uZGl0aW9uYWxseSB3YWl2ZXMsIGFiYW5kb25zLCBhbmQgc3VycmVuZGVycyBhbGwKICAgb2YgQWZmaXJtZXIncyBDb3B5cmlnaHQgYW5kIFJlbGF0ZWQgUmlnaHRzIGFuZCBhc3NvY2lhdGVkIGNsYWltcyBhbmQKICAgY2F1c2VzIG9mIGFjdGlvbiwgd2hldGhlciBub3cga25vd24gb3IgdW5rbm93biAoaW5jbHVkaW5nIGV4aXN0aW5nIGFzCiAgIHdlbGwgYXMgZnV0dXJlIGNsYWltcyBhbmQgY2F1c2VzIG9mIGFjdGlvbiksIGluIHRoZSBXb3JrIChpKSBpbiBhbGwKICAgdGVycml0b3JpZXMgd29ybGR3aWRlLCAoaWkpIGZvciB0aGUgbWF4aW11bSBkdXJhdGlvbiBwcm92aWRlZCBieQogICBhcHBsaWNhYmxlIGxhdyBvciB0cmVhdHkgKGluY2x1ZGluZyBmdXR1cmUgdGltZSBleHRlbnNpb25zKSwgKGlpaSkgaW4KICAgYW55IGN1cnJlbnQgb3IgZnV0dXJlIG1lZGl1bSBhbmQgZm9yIGFueSBudW1iZXIgb2YgY29waWVzLCBhbmQgKGl2KQogICBmb3IgYW55IHB1cnBvc2Ugd2hhdHNvZXZlciwgaW5jbHVkaW5nIHdpdGhvdXQgbGltaXRhdGlvbiBjb21tZXJjaWFsLAogICBhZHZlcnRpc2luZyBvciBwcm9tb3Rpb25hbCBwdXJwb3NlcyAodGhlICJXYWl2ZXIiKS4gQWZmaXJtZXIgbWFrZXMKICAgdGhlIFdhaXZlciBmb3IgdGhlIGJlbmVmaXQgb2YgZWFjaCBtZW1iZXIgb2YgdGhlIHB1YmxpYyBhdCBsYXJnZSBhbmQKICAgdG8gdGhlIGRldHJpbWVudCBvZiBBZmZpcm1lcidzIGhlaXJzIGFuZCBzdWNjZXNzb3JzLCBmdWxseSBpbnRlbmRpbmcKICAgdGhhdCBzdWNoIFdhaXZlciBzaGFsbCBub3QgYmUgc3ViamVjdCB0byByZXZvY2F0aW9uLCByZXNjaXNzaW9uLAogICBjYW5jZWxsYXRpb24sIHRlcm1pbmF0aW9uLCBvciBhbnkgb3RoZXIgbGVnYWwgb3IgZXF1aXRhYmxlIGFjdGlvbiB0bwogICBkaXNydXB0IHRoZSBxdWlldCBlbmpveW1lbnQgb2YgdGhlIFdvcmsgYnkgdGhlIHB1YmxpYyBhcyBjb250ZW1wbGF0ZWQKICAgYnkgQWZmaXJtZXIncyBleHByZXNzIFN0YXRlbWVudCBvZiBQdXJwb3NlLgoKMy4gUHVibGljIExpY2Vuc2UgRmFsbGJhY2suCgogICBTaG91bGQgYW55IHBhcnQgb2YgdGhlIFdhaXZlciBmb3IgYW55IHJlYXNvbiBiZSBqdWRnZWQgbGVnYWxseQogICBpbnZhbGlkIG9yIGluZWZmZWN0aXZlIHVuZGVyIGFwcGxpY2FibGUgbGF3LCB0aGVuIHRoZSBXYWl2ZXIgc2hhbGwgYmUKICAgcHJlc2VydmVkIHRvIHRoZSBtYXhpbXVtIGV4dGVudCBwZXJtaXR0ZWQgdGFraW5nIGludG8gYWNjb3VudAogICBBZmZpcm1lcidzIGV4cHJlc3MgU3RhdGVtZW50IG9mIFB1cnBvc2UuIEluIGFkZGl0aW9uLCB0byB0aGUgZXh0ZW50CiAgIHRoZSBXYWl2ZXIgaXMgc28ganVkZ2VkIEFmZmlybWVyIGhlcmVieSBncmFudHMgdG8gZWFjaCBhZmZlY3RlZAogICBwZXJzb24gYSByb3lhbHR5LWZyZWUsIG5vbiB0cmFuc2ZlcmFibGUsIG5vbiBzdWJsaWNlbnNhYmxlLCBub24KICAgZXhjbHVzaXZlLCBpcnJldm9jYWJsZSBhbmQgdW5jb25kaXRpb25hbCBsaWNlbnNlIHRvIGV4ZXJjaXNlCiAgIEFmZmlybWVyJ3MgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyBpbiB0aGUgV29yawogICAKICAgKGkpIGluIGFsbCB0ZXJyaXRvcmllcyB3b3JsZHdpZGUsCgogICAoaWkpIGZvciB0aGUgbWF4aW11bSBkdXJhdGlvbiBwcm92aWRlZCBieSBhcHBsaWNhYmxlIGxhdyBvciB0cmVhdHkKICAgKGluY2x1ZGluZyBmdXR1cmUgdGltZSBleHRlbnNpb25zKSwKCiAgIChpaWkpIGluIGFueSBjdXJyZW50IG9yIGZ1dHVyZSBtZWRpdW0gYW5kIGZvciBhbnkgbnVtYmVyIG9mIGNvcGllcywKICAgYW5kCgogICAoaXYpIGZvciBhbnkgcHVycG9zZSB3aGF0c29ldmVyLCBpbmNsdWRpbmcgd2l0aG91dCBsaW1pdGF0aW9uCiAgIGNvbW1lcmNpYWwsIGFkdmVydGlzaW5nIG9yIHByb21vdGlvbmFsIHB1cnBvc2VzICh0aGUgIkxpY2Vuc2UiKS4KCiAgIFRoZSBMaWNlbnNlIHNoYWxsIGJlIGRlZW1lZCBlZmZlY3RpdmUgYXMgb2YgdGhlIGRhdGUgQ0MwIHdhcyBhcHBsaWVkCiAgIGJ5IEFmZmlybWVyIHRvIHRoZSBXb3JrLiBTaG91bGQgYW55IHBhcnQgb2YgdGhlIExpY2Vuc2UgZm9yIGFueQogICByZWFzb24gYmUganVkZ2VkIGxlZ2FsbHkgaW52YWxpZCBvciBpbmVmZmVjdGl2ZSB1bmRlciBhcHBsaWNhYmxlIGxhdywKICAgc3VjaCBwYXJ0aWFsIGludmFsaWRpdHkgb3IgaW5lZmZlY3RpdmVuZXNzIHNoYWxsIG5vdCBpbnZhbGlkYXRlIHRoZQogICByZW1haW5kZXIgb2YgdGhlIExpY2Vuc2UsIGFuZCBpbiBzdWNoIGNhc2UgQWZmaXJtZXIgaGVyZWJ5IGFmZmlybXMKICAgdGhhdCBoZSBvciBzaGUgd2lsbCBub3QKCiAgIChpKSBleGVyY2lzZSBhbnkgb2YgaGlzIG9yIGhlciByZW1haW5pbmcgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cwogICBpbiB0aGUgV29yayBvcgoKICAgKGlpKSBhc3NlcnQgYW55IGFzc29jaWF0ZWQgY2xhaW1zIGFuZCBjYXVzZXMgb2YgYWN0aW9uIHdpdGggcmVzcGVjdAogICB0byB0aGUgV29yaywgaW4gZWl0aGVyIGNhc2UgY29udHJhcnkgdG8gQWZmaXJtZXIncyBleHByZXNzIFN0YXRlbWVudAogICBvZiBQdXJwb3NlLgoKNC4gTGltaXRhdGlvbnMgYW5kIERpc2NsYWltZXJzLgoKICAgIGEuIE5vIHRyYWRlbWFyayBvciBwYXRlbnQgcmlnaHRzIGhlbGQgYnkgQWZmaXJtZXIgYXJlIHdhaXZlZCwKICAgIGFiYW5kb25lZCwgc3VycmVuZGVyZWQsIGxpY2Vuc2VkIG9yIG90aGVyd2lzZSBhZmZlY3RlZCBieSB0aGlzCiAgICBkb2N1bWVudC4KCiAgICBiLiBBZmZpcm1lciBvZmZlcnMgdGhlIFdvcmsgYXMtaXMgYW5kIG1ha2VzIG5vIHJlcHJlc2VudGF0aW9ucyBvcgogICAgd2FycmFudGllcyBvZiBhbnkga2luZCBjb25jZXJuaW5nIHRoZSBXb3JrLCBleHByZXNzLCBpbXBsaWVkLAogICAgc3RhdHV0b3J5IG9yIG90aGVyd2lzZSwgaW5jbHVkaW5nIHdpdGhvdXQgbGltaXRhdGlvbiB3YXJyYW50aWVzIG9mCiAgICB0aXRsZSwgbWVyY2hhbnRhYmlsaXR5LCBmaXRuZXNzIGZvciBhIHBhcnRpY3VsYXIgcHVycG9zZSwgbm9uCiAgICBpbmZyaW5nZW1lbnQsIG9yIHRoZSBhYnNlbmNlIG9mIGxhdGVudCBvciBvdGhlciBkZWZlY3RzLCBhY2N1cmFjeSwKICAgIG9yIHRoZSBwcmVzZW50IG9yIGFic2VuY2Ugb2YgZXJyb3JzLCB3aGV0aGVyIG9yIG5vdCBkaXNjb3ZlcmFibGUsCiAgICBhbGwgdG8gdGhlIGdyZWF0ZXN0IGV4dGVudCBwZXJtaXNzaWJsZSB1bmRlciBhcHBsaWNhYmxlIGxhdy4KCiAgICBjLiBBZmZpcm1lciBkaXNjbGFpbXMgcmVzcG9uc2liaWxpdHkgZm9yIGNsZWFyaW5nIHJpZ2h0cyBvZiBvdGhlcgogICAgcGVyc29ucyB0aGF0IG1heSBhcHBseSB0byB0aGUgV29yayBvciBhbnkgdXNlIHRoZXJlb2YsIGluY2x1ZGluZwogICAgd2l0aG91dCBsaW1pdGF0aW9uIGFueSBwZXJzb24ncyBDb3B5cmlnaHQgYW5kIFJlbGF0ZWQgUmlnaHRzIGluIHRoZQogICAgV29yay4gRnVydGhlciwgQWZmaXJtZXIgZGlzY2xhaW1zIHJlc3BvbnNpYmlsaXR5IGZvciBvYnRhaW5pbmcgYW55CiAgICBuZWNlc3NhcnkgY29uc2VudHMsIHBlcm1pc3Npb25zIG9yIG90aGVyIHJpZ2h0cyByZXF1aXJlZCBmb3IgYW55IHVzZQogICAgb2YgdGhlIFdvcmsuCgogICAgZC4gQWZmaXJtZXIgdW5kZXJzdGFuZHMgYW5kIGFja25vd2xlZGdlcyB0aGF0IENyZWF0aXZlIENvbW1vbnMgaXMKICAgIG5vdCBhIHBhcnR5IHRvIHRoaXMgZG9jdW1lbnQgYW5kIGhhcyBubyBkdXR5IG9yIG9ibGlnYXRpb24gd2l0aAogICAgcmVzcGVjdCB0byB0aGlzIENDMCBvciB1c2Ugb2YgdGhlIFdvcmsuCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KCmh0dHBzOi8vY3JlYXRpdmVjb21tb25zLm9yZy9wdWJsaWNkb21haW4vemVyby8xLjAvbGVnYWxjb2RlCg=="
+                    test: "ewogICAgImNvbXBpbGVyT3B0aW9ucyI6IHsKICAgICAgICAidGFyZ2V0IjogIkVTNiIsCiAgICAgICAgIm91dERpciI6ICJqcyIKICAgIH0sCiAgICAiaW5jbHVkZSI6IFsKICAgICAgICAiKi50cyIsCiAgICAgICAgIioqLyoudHMiCiAgICBdLAogICAgImV4Y2x1ZGUiOiBbCiAgICAgICAgImpzIiwKICAgICAgICAibm9kZV9tb2R1bGVzIiwKICAgICAgICAidGVzdCIKICAgIF0KfQ=="
                 },
                 {
                     artifact: "",
-                    command: "base64 decode string:\"U3RhdGVtZW50IG9mIFB1cnBvc2UKClRoZSBsYXdzIG9mIG1vc3QganVyaXNkaWN0aW9ucyB0aHJvdWdob3V0IHRoZSB3b3JsZCBhdXRvbWF0aWNhbGx5IGNvbmZlcgpleGNsdXNpdmUgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyAoZGVmaW5lZCBiZWxvdykgdXBvbiB0aGUgY3JlYXRvcgphbmQgc3Vic2VxdWVudCBvd25lcihzKSAoZWFjaCBhbmQgYWxsLCBhbiAib3duZXIiKSBvZiBhbiBvcmlnaW5hbCB3b3JrCm9mIGF1dGhvcnNoaXAgYW5kL29yIGEgZGF0YWJhc2UgKGVhY2gsIGEgIldvcmsiKS4KCkNlcnRhaW4gb3duZXJzIHdpc2ggdG8gcGVybWFuZW50bHkgcmVsaW5xdWlzaCB0aG9zZSByaWdodHMgdG8gYSBXb3JrIGZvcgp0aGUgcHVycG9zZSBvZiBjb250cmlidXRpbmcgdG8gYSBjb21tb25zIG9mIGNyZWF0aXZlLCBjdWx0dXJhbCBhbmQKc2NpZW50aWZpYyB3b3JrcyAoIkNvbW1vbnMiKSB0aGF0IHRoZSBwdWJsaWMgY2FuIHJlbGlhYmx5IGFuZCB3aXRob3V0CmZlYXIgb2YgbGF0ZXIgY2xhaW1zIG9mIGluZnJpbmdlbWVudCBidWlsZCB1cG9uLCBtb2RpZnksIGluY29ycG9yYXRlIGluCm90aGVyIHdvcmtzLCByZXVzZSBhbmQgcmVkaXN0cmlidXRlIGFzIGZyZWVseSBhcyBwb3NzaWJsZSBpbiBhbnkgZm9ybQp3aGF0c29ldmVyIGFuZCBmb3IgYW55IHB1cnBvc2VzLCBpbmNsdWRpbmcgd2l0aG91dCBsaW1pdGF0aW9uIGNvbW1lcmNpYWwKcHVycG9zZXMuIFRoZXNlIG93bmVycyBtYXkgY29udHJpYnV0ZSB0byB0aGUgQ29tbW9ucyB0byBwcm9tb3RlIHRoZQppZGVhbCBvZiBhIGZyZWUgY3VsdHVyZSBhbmQgdGhlIGZ1cnRoZXIgcHJvZHVjdGlvbiBvZiBjcmVhdGl2ZSwgY3VsdHVyYWwKYW5kIHNjaWVudGlmaWMgd29ya3MsIG9yIHRvIGdhaW4gcmVwdXRhdGlvbiBvciBncmVhdGVyIGRpc3RyaWJ1dGlvbiBmb3IKdGhlaXIgV29yayBpbiBwYXJ0IHRocm91Z2ggdGhlIHVzZSBhbmQgZWZmb3J0cyBvZiBvdGhlcnMuCgpGb3IgdGhlc2UgYW5kL29yIG90aGVyIHB1cnBvc2VzIGFuZCBtb3RpdmF0aW9ucywgYW5kIHdpdGhvdXQgYW55CmV4cGVjdGF0aW9uIG9mIGFkZGl0aW9uYWwgY29uc2lkZXJhdGlvbiBvciBjb21wZW5zYXRpb24sIHRoZSBwZXJzb24KYXNzb2NpYXRpbmcgQ0MwIHdpdGggYSBXb3JrICh0aGUgIkFmZmlybWVyIiksIHRvIHRoZSBleHRlbnQgdGhhdCBoZSBvcgpzaGUgaXMgYW4gb3duZXIgb2YgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyBpbiB0aGUgV29yaywgdm9sdW50YXJpbHkKZWxlY3RzIHRvIGFwcGx5IENDMCB0byB0aGUgV29yayBhbmQgcHVibGljbHkgZGlzdHJpYnV0ZSB0aGUgV29yayB1bmRlcgppdHMgdGVybXMsIHdpdGgga25vd2xlZGdlIG9mIGhpcyBvciBoZXIgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyBpbgp0aGUgV29yayBhbmQgdGhlIG1lYW5pbmcgYW5kIGludGVuZGVkIGxlZ2FsIGVmZmVjdCBvZiBDQzAgb24gdGhvc2UKcmlnaHRzLgoKMS4gQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cy4KCiAgIEEgV29yayBtYWRlIGF2YWlsYWJsZSB1bmRlciBDQzAgbWF5IGJlIHByb3RlY3RlZCBieSBjb3B5cmlnaHQgYW5kCiAgIHJlbGF0ZWQgb3IgbmVpZ2hib3JpbmcgcmlnaHRzICgiQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyIpLgogICBDb3B5cmlnaHQgYW5kIFJlbGF0ZWQgUmlnaHRzIGluY2x1ZGUsIGJ1dCBhcmUgbm90IGxpbWl0ZWQgdG8sIHRoZQogICBmb2xsb3dpbmc6CgogICAgaS4gdGhlIHJpZ2h0IHRvIHJlcHJvZHVjZSwgYWRhcHQsIGRpc3RyaWJ1dGUsIHBlcmZvcm0sIGRpc3BsYXksCiAgICBjb21tdW5pY2F0ZSwgYW5kIHRyYW5zbGF0ZSBhIFdvcms7CiAgICAKICAgIGlpLiBtb3JhbCByaWdodHMgcmV0YWluZWQgYnkgdGhlIG9yaWdpbmFsIGF1dGhvcihzKSBhbmQvb3IKICAgIHBlcmZvcm1lcihzKTsKCiAgICBpaWkuIHB1YmxpY2l0eSBhbmQgcHJpdmFjeSByaWdodHMgcGVydGFpbmluZyB0byBhIHBlcnNvbidzIGltYWdlIG9yCiAgICBsaWtlbmVzcyBkZXBpY3RlZCBpbiBhIFdvcms7CgogICAgaXYuIHJpZ2h0cyBwcm90ZWN0aW5nIGFnYWluc3QgdW5mYWlyIGNvbXBldGl0aW9uIGluIHJlZ2FyZHMgdG8gYQogICAgV29yaywgc3ViamVjdCB0byB0aGUgbGltaXRhdGlvbnMgaW4gcGFyYWdyYXBoIDQoYSksIGJlbG93OwoKICAgIHYuIHJpZ2h0cyBwcm90ZWN0aW5nIHRoZSBleHRyYWN0aW9uLCBkaXNzZW1pbmF0aW9uLCB1c2UgYW5kIHJldXNlIG9mCiAgICBkYXRhIGluIGEgV29yazsKCiAgICB2aS4gZGF0YWJhc2UgcmlnaHRzIChzdWNoIGFzIHRob3NlIGFyaXNpbmcgdW5kZXIgRGlyZWN0aXZlIDk2LzkvRUMKICAgIG9mIHRoZSBFdXJvcGVhbiBQYXJsaWFtZW50IGFuZCBvZiB0aGUgQ291bmNpbCBvZiAxMSBNYXJjaCAxOTk2IG9uCiAgICB0aGUgbGVnYWwgcHJvdGVjdGlvbiBvZiBkYXRhYmFzZXMsIGFuZCB1bmRlciBhbnkgbmF0aW9uYWwKICAgIGltcGxlbWVudGF0aW9uIHRoZXJlb2YsIGluY2x1ZGluZyBhbnkgYW1lbmRlZCBvciBzdWNjZXNzb3IgdmVyc2lvbgogICAgb2Ygc3VjaCBkaXJlY3RpdmUpOyBhbmQKCiAgICB2aWkuIG90aGVyIHNpbWlsYXIsIGVxdWl2YWxlbnQgb3IgY29ycmVzcG9uZGluZyByaWdodHMgdGhyb3VnaG91dAogICAgdGhlIHdvcmxkIGJhc2VkIG9uIGFwcGxpY2FibGUgbGF3IG9yIHRyZWF0eSwgYW5kIGFueSBuYXRpb25hbAogICAgaW1wbGVtZW50YXRpb25zIHRoZXJlb2YuCgoyLiBXYWl2ZXIuCgogICBUbyB0aGUgZ3JlYXRlc3QgZXh0ZW50IHBlcm1pdHRlZCBieSwgYnV0IG5vdCBpbiBjb250cmF2ZW50aW9uIG9mLAogICBhcHBsaWNhYmxlIGxhdywgQWZmaXJtZXIgaGVyZWJ5IG92ZXJ0bHksIGZ1bGx5LCBwZXJtYW5lbnRseSwKICAgaXJyZXZvY2FibHkgYW5kIHVuY29uZGl0aW9uYWxseSB3YWl2ZXMsIGFiYW5kb25zLCBhbmQgc3VycmVuZGVycyBhbGwKICAgb2YgQWZmaXJtZXIncyBDb3B5cmlnaHQgYW5kIFJlbGF0ZWQgUmlnaHRzIGFuZCBhc3NvY2lhdGVkIGNsYWltcyBhbmQKICAgY2F1c2VzIG9mIGFjdGlvbiwgd2hldGhlciBub3cga25vd24gb3IgdW5rbm93biAoaW5jbHVkaW5nIGV4aXN0aW5nIGFzCiAgIHdlbGwgYXMgZnV0dXJlIGNsYWltcyBhbmQgY2F1c2VzIG9mIGFjdGlvbiksIGluIHRoZSBXb3JrIChpKSBpbiBhbGwKICAgdGVycml0b3JpZXMgd29ybGR3aWRlLCAoaWkpIGZvciB0aGUgbWF4aW11bSBkdXJhdGlvbiBwcm92aWRlZCBieQogICBhcHBsaWNhYmxlIGxhdyBvciB0cmVhdHkgKGluY2x1ZGluZyBmdXR1cmUgdGltZSBleHRlbnNpb25zKSwgKGlpaSkgaW4KICAgYW55IGN1cnJlbnQgb3IgZnV0dXJlIG1lZGl1bSBhbmQgZm9yIGFueSBudW1iZXIgb2YgY29waWVzLCBhbmQgKGl2KQogICBmb3IgYW55IHB1cnBvc2Ugd2hhdHNvZXZlciwgaW5jbHVkaW5nIHdpdGhvdXQgbGltaXRhdGlvbiBjb21tZXJjaWFsLAogICBhZHZlcnRpc2luZyBvciBwcm9tb3Rpb25hbCBwdXJwb3NlcyAodGhlICJXYWl2ZXIiKS4gQWZmaXJtZXIgbWFrZXMKICAgdGhlIFdhaXZlciBmb3IgdGhlIGJlbmVmaXQgb2YgZWFjaCBtZW1iZXIgb2YgdGhlIHB1YmxpYyBhdCBsYXJnZSBhbmQKICAgdG8gdGhlIGRldHJpbWVudCBvZiBBZmZpcm1lcidzIGhlaXJzIGFuZCBzdWNjZXNzb3JzLCBmdWxseSBpbnRlbmRpbmcKICAgdGhhdCBzdWNoIFdhaXZlciBzaGFsbCBub3QgYmUgc3ViamVjdCB0byByZXZvY2F0aW9uLCByZXNjaXNzaW9uLAogICBjYW5jZWxsYXRpb24sIHRlcm1pbmF0aW9uLCBvciBhbnkgb3RoZXIgbGVnYWwgb3IgZXF1aXRhYmxlIGFjdGlvbiB0bwogICBkaXNydXB0IHRoZSBxdWlldCBlbmpveW1lbnQgb2YgdGhlIFdvcmsgYnkgdGhlIHB1YmxpYyBhcyBjb250ZW1wbGF0ZWQKICAgYnkgQWZmaXJtZXIncyBleHByZXNzIFN0YXRlbWVudCBvZiBQdXJwb3NlLgoKMy4gUHVibGljIExpY2Vuc2UgRmFsbGJhY2suCgogICBTaG91bGQgYW55IHBhcnQgb2YgdGhlIFdhaXZlciBmb3IgYW55IHJlYXNvbiBiZSBqdWRnZWQgbGVnYWxseQogICBpbnZhbGlkIG9yIGluZWZmZWN0aXZlIHVuZGVyIGFwcGxpY2FibGUgbGF3LCB0aGVuIHRoZSBXYWl2ZXIgc2hhbGwgYmUKICAgcHJlc2VydmVkIHRvIHRoZSBtYXhpbXVtIGV4dGVudCBwZXJtaXR0ZWQgdGFraW5nIGludG8gYWNjb3VudAogICBBZmZpcm1lcidzIGV4cHJlc3MgU3RhdGVtZW50IG9mIFB1cnBvc2UuIEluIGFkZGl0aW9uLCB0byB0aGUgZXh0ZW50CiAgIHRoZSBXYWl2ZXIgaXMgc28ganVkZ2VkIEFmZmlybWVyIGhlcmVieSBncmFudHMgdG8gZWFjaCBhZmZlY3RlZAogICBwZXJzb24gYSByb3lhbHR5LWZyZWUsIG5vbiB0cmFuc2ZlcmFibGUsIG5vbiBzdWJsaWNlbnNhYmxlLCBub24KICAgZXhjbHVzaXZlLCBpcnJldm9jYWJsZSBhbmQgdW5jb25kaXRpb25hbCBsaWNlbnNlIHRvIGV4ZXJjaXNlCiAgIEFmZmlybWVyJ3MgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cyBpbiB0aGUgV29yawogICAKICAgKGkpIGluIGFsbCB0ZXJyaXRvcmllcyB3b3JsZHdpZGUsCgogICAoaWkpIGZvciB0aGUgbWF4aW11bSBkdXJhdGlvbiBwcm92aWRlZCBieSBhcHBsaWNhYmxlIGxhdyBvciB0cmVhdHkKICAgKGluY2x1ZGluZyBmdXR1cmUgdGltZSBleHRlbnNpb25zKSwKCiAgIChpaWkpIGluIGFueSBjdXJyZW50IG9yIGZ1dHVyZSBtZWRpdW0gYW5kIGZvciBhbnkgbnVtYmVyIG9mIGNvcGllcywKICAgYW5kCgogICAoaXYpIGZvciBhbnkgcHVycG9zZSB3aGF0c29ldmVyLCBpbmNsdWRpbmcgd2l0aG91dCBsaW1pdGF0aW9uCiAgIGNvbW1lcmNpYWwsIGFkdmVydGlzaW5nIG9yIHByb21vdGlvbmFsIHB1cnBvc2VzICh0aGUgIkxpY2Vuc2UiKS4KCiAgIFRoZSBMaWNlbnNlIHNoYWxsIGJlIGRlZW1lZCBlZmZlY3RpdmUgYXMgb2YgdGhlIGRhdGUgQ0MwIHdhcyBhcHBsaWVkCiAgIGJ5IEFmZmlybWVyIHRvIHRoZSBXb3JrLiBTaG91bGQgYW55IHBhcnQgb2YgdGhlIExpY2Vuc2UgZm9yIGFueQogICByZWFzb24gYmUganVkZ2VkIGxlZ2FsbHkgaW52YWxpZCBvciBpbmVmZmVjdGl2ZSB1bmRlciBhcHBsaWNhYmxlIGxhdywKICAgc3VjaCBwYXJ0aWFsIGludmFsaWRpdHkgb3IgaW5lZmZlY3RpdmVuZXNzIHNoYWxsIG5vdCBpbnZhbGlkYXRlIHRoZQogICByZW1haW5kZXIgb2YgdGhlIExpY2Vuc2UsIGFuZCBpbiBzdWNoIGNhc2UgQWZmaXJtZXIgaGVyZWJ5IGFmZmlybXMKICAgdGhhdCBoZSBvciBzaGUgd2lsbCBub3QKCiAgIChpKSBleGVyY2lzZSBhbnkgb2YgaGlzIG9yIGhlciByZW1haW5pbmcgQ29weXJpZ2h0IGFuZCBSZWxhdGVkIFJpZ2h0cwogICBpbiB0aGUgV29yayBvcgoKICAgKGlpKSBhc3NlcnQgYW55IGFzc29jaWF0ZWQgY2xhaW1zIGFuZCBjYXVzZXMgb2YgYWN0aW9uIHdpdGggcmVzcGVjdAogICB0byB0aGUgV29yaywgaW4gZWl0aGVyIGNhc2UgY29udHJhcnkgdG8gQWZmaXJtZXIncyBleHByZXNzIFN0YXRlbWVudAogICBvZiBQdXJwb3NlLgoKNC4gTGltaXRhdGlvbnMgYW5kIERpc2NsYWltZXJzLgoKICAgIGEuIE5vIHRyYWRlbWFyayBvciBwYXRlbnQgcmlnaHRzIGhlbGQgYnkgQWZmaXJtZXIgYXJlIHdhaXZlZCwKICAgIGFiYW5kb25lZCwgc3VycmVuZGVyZWQsIGxpY2Vuc2VkIG9yIG90aGVyd2lzZSBhZmZlY3RlZCBieSB0aGlzCiAgICBkb2N1bWVudC4KCiAgICBiLiBBZmZpcm1lciBvZmZlcnMgdGhlIFdvcmsgYXMtaXMgYW5kIG1ha2VzIG5vIHJlcHJlc2VudGF0aW9ucyBvcgogICAgd2FycmFudGllcyBvZiBhbnkga2luZCBjb25jZXJuaW5nIHRoZSBXb3JrLCBleHByZXNzLCBpbXBsaWVkLAogICAgc3RhdHV0b3J5IG9yIG90aGVyd2lzZSwgaW5jbHVkaW5nIHdpdGhvdXQgbGltaXRhdGlvbiB3YXJyYW50aWVzIG9mCiAgICB0aXRsZSwgbWVyY2hhbnRhYmlsaXR5LCBmaXRuZXNzIGZvciBhIHBhcnRpY3VsYXIgcHVycG9zZSwgbm9uCiAgICBpbmZyaW5nZW1lbnQsIG9yIHRoZSBhYnNlbmNlIG9mIGxhdGVudCBvciBvdGhlciBkZWZlY3RzLCBhY2N1cmFjeSwKICAgIG9yIHRoZSBwcmVzZW50IG9yIGFic2VuY2Ugb2YgZXJyb3JzLCB3aGV0aGVyIG9yIG5vdCBkaXNjb3ZlcmFibGUsCiAgICBhbGwgdG8gdGhlIGdyZWF0ZXN0IGV4dGVudCBwZXJtaXNzaWJsZSB1bmRlciBhcHBsaWNhYmxlIGxhdy4KCiAgICBjLiBBZmZpcm1lciBkaXNjbGFpbXMgcmVzcG9uc2liaWxpdHkgZm9yIGNsZWFyaW5nIHJpZ2h0cyBvZiBvdGhlcgogICAgcGVyc29ucyB0aGF0IG1heSBhcHBseSB0byB0aGUgV29yayBvciBhbnkgdXNlIHRoZXJlb2YsIGluY2x1ZGluZwogICAgd2l0aG91dCBsaW1pdGF0aW9uIGFueSBwZXJzb24ncyBDb3B5cmlnaHQgYW5kIFJlbGF0ZWQgUmlnaHRzIGluIHRoZQogICAgV29yay4gRnVydGhlciwgQWZmaXJtZXIgZGlzY2xhaW1zIHJlc3BvbnNpYmlsaXR5IGZvciBvYnRhaW5pbmcgYW55CiAgICBuZWNlc3NhcnkgY29uc2VudHMsIHBlcm1pc3Npb25zIG9yIG90aGVyIHJpZ2h0cyByZXF1aXJlZCBmb3IgYW55IHVzZQogICAgb2YgdGhlIFdvcmsuCgogICAgZC4gQWZmaXJtZXIgdW5kZXJzdGFuZHMgYW5kIGFja25vd2xlZGdlcyB0aGF0IENyZWF0aXZlIENvbW1vbnMgaXMKICAgIG5vdCBhIHBhcnR5IHRvIHRoaXMgZG9jdW1lbnQgYW5kIGhhcyBubyBkdXR5IG9yIG9ibGlnYXRpb24gd2l0aAogICAgcmVzcGVjdCB0byB0aGlzIENDMCBvciB1c2Ugb2YgdGhlIFdvcmsuCgotLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0KCmh0dHBzOi8vY3JlYXRpdmVjb21tb25zLm9yZy9wdWJsaWNkb21haW4vemVyby8xLjAvbGVnYWxjb2RlCg==\"",
+                    command: "base64 decode string:\"ewogICAgImNvbXBpbGVyT3B0aW9ucyI6IHsKICAgICAgICAidGFyZ2V0IjogIkVTNiIsCiAgICAgICAgIm91dERpciI6ICJqcyIKICAgIH0sCiAgICAiaW5jbHVkZSI6IFsKICAgICAgICAiKi50cyIsCiAgICAgICAgIioqLyoudHMiCiAgICBdLAogICAgImV4Y2x1ZGUiOiBbCiAgICAgICAgImpzIiwKICAgICAgICAibm9kZV9tb2R1bGVzIiwKICAgICAgICAidGVzdCIKICAgIF0KfQ==\"",
                     qualifier: "ends",
-                    test: "https://creativecommons.org/publicdomain/zero/1.0/legalcode"
+                    test: `{
+    "compilerOptions": {
+        "target": "ES6",
+        "outDir": "js"
+    },
+    "include": [
+        "*.ts",
+        "**/*.ts"
+    ],
+    "exclude": [
+        "js",
+        "node_modules",
+        "test"
+    ]
+}`
                 },
                 {
                     artifact: "",
@@ -3458,12 +3524,12 @@ interface readFile {
                     artifact: "temp",
                     command: "copy js temp",
                     qualifier: "filesystem contains",
-                    test: `temp${sep}minify${sep}style.js`
+                    test: `temp${supersep}minify${supersep}style.js`
                 },
                 {
                     artifact: "temp",
                     command: "copy js temp",
-                    file: `temp${sep}minify${sep}style.js`,
+                    file: `temp${supersep}minify${supersep}style.js`,
                     qualifier: "file begins",
                     test: "/*global global*/"
                 },
@@ -3477,23 +3543,24 @@ interface readFile {
                     artifact: "",
                     command: `directory js`,
                     qualifier: "contains",
-                    test: `js${sep}minify${sep}style.js","file",`
+                    test: `js${supersep}minify${supersep}style.js","file"`
                 },
                 {
                     artifact: "",
                     command: `directory js ignore ["minify"]`,
                     qualifier: "not contains",
-                    test: `js${sep}minify${sep}style.js"`
+                    test: `js${supersep}minify${supersep}style.js"`
                 },
                 {
                     artifact: "",
-                    command: `directory .${sep} ignore ["node_modules", ".git", ".DS_Store"] --verbose`,
+                    command: `directory ".${supersep}" ignore ["node_modules", ".git", ".DS_Store"] --verbose`,
                     qualifier: "contains",
                     test: `matching items from address`
                 }
             ],
             len:number = tests.length,
             cwd:string = __dirname.replace(/(\/|\\)js$/, ""),
+            actual:string = `${text.green}Actual output:${text.none}`,
             increment = function node_apps_simulation_increment():void {
                 const interval = function node_apps_simulation_increment_interval():void {
                     a = a + 1;
@@ -3553,7 +3620,7 @@ interface readFile {
                                         `Simulation test string ${text.angry + tests[a].command + text.none} is not starting in file: ${text.green + tests[a].file + text.none}`,
                                         text.cyan + tests[a].test + text.none,
                                         "",
-                                        `${text.green}Actual output:${text.none}`,
+                                        actual,
                                         dump
                                     ]);
                                     return;
@@ -3563,7 +3630,7 @@ interface readFile {
                                         `Simulation test string ${text.angry + tests[a].command + text.none} is not anywhere in file: ${text.green + tests[a].file + text.none}`,
                                         text.cyan + tests[a].test + text.none,
                                         "",
-                                        `${text.green}Actual output:${text.none}`,
+                                        actual,
                                         dump
                                     ]);
                                     return;
@@ -3573,7 +3640,7 @@ interface readFile {
                                         `Simulation test string ${text.angry + tests[a].command + text.none} is not at end of file: ${text.green + tests[a].file + text.none}`,
                                         text.cyan + tests[a].test + text.none,
                                         "",
-                                        `${text.green}Actual output:${text.none}`,
+                                        actual,
                                         dump
                                     ]);
                                     return;
@@ -3583,7 +3650,7 @@ interface readFile {
                                         `Simulation test string ${text.angry + tests[a].command + text.none} does not match the file: ${text.green + tests[a].file + text.none}`,
                                         text.cyan + tests[a].test + text.none,
                                         "",
-                                        `${text.green}Actual output:${text.none}`,
+                                        actual,
                                         dump
                                     ]);
                                     return;
@@ -3593,7 +3660,7 @@ interface readFile {
                                         `Simulation test string ${text.angry + tests[a].command + text.none} matches this file, but shouldn't: ${text.green + tests[a].file + text.none}`,
                                         text.cyan + tests[a].test + text.none,
                                         "",
-                                        `${text.green}Actual output:${text.none}`,
+                                        actual,
                                         dump
                                     ]);
                                     return;
@@ -3603,7 +3670,7 @@ interface readFile {
                                         `Simulation test string ${text.angry + tests[a].command + text.none} is contained in this file, but shouldn't be: ${text.green + tests[a].file + text.none}`,
                                         text.cyan + tests[a].test + text.none,
                                         "",
-                                        `${text.green}Actual output:${text.none}`,
+                                        actual,
                                         dump
                                     ]);
                                     return;
@@ -3640,7 +3707,7 @@ interface readFile {
                                 `Simulation ${text.angry + tests[a].command + text.none} does not begin with the expected output:`,
                                 text.cyan + tests[a].test + text.none,
                                 "",
-                                `${text.green}Actual output:${text.none}`,
+                                actual,
                                 stdout
                             ]);
                             return;
@@ -3650,7 +3717,7 @@ interface readFile {
                                 `Simulation ${text.angry + tests[a].command + text.none} does not contain the expected output:`,
                                 text.cyan + tests[a].test + text.none,
                                 "",
-                                `${text.green}Actual output:${text.none}`,
+                                actual,
                                 stdout
                             ]);
                             return;
@@ -3660,7 +3727,7 @@ interface readFile {
                                 `Simulation ${text.angry + tests[a].command + text.none} does not end with the expected output:`,
                                 text.cyan + tests[a].test + text.none,
                                 "",
-                                `${text.green}Actual output:${text.none}`,
+                                actual,
                                 stdout
                             ]);
                             return;
@@ -3670,7 +3737,7 @@ interface readFile {
                                 `Simulation ${text.angry + tests[a].command + text.none} does not match the expected output:`,
                                 text.cyan + tests[a].test + text.none,
                                 "",
-                                `${text.green}Actual output:${text.none}`,
+                                actual,
                                 stdout
                             ]);
                             return;
@@ -3680,7 +3747,7 @@ interface readFile {
                                 `Simulation ${text.angry + tests[a].command + text.none} must not be this output:`,
                                 text.cyan + tests[a].test + text.none,
                                 "",
-                                `${text.green}Actual output:${text.none}`,
+                                actual,
                                 stdout
                             ]);
                             return;
@@ -3690,7 +3757,7 @@ interface readFile {
                                 `Simulation ${text.angry + tests[a].command + text.none} must not contain this output:`,
                                 text.cyan + tests[a].test + text.none,
                                 "",
-                                `${text.green}Actual output:${text.none}`,
+                                actual,
                                 stdout
                             ]);
                             return;
