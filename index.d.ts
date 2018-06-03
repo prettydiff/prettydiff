@@ -178,7 +178,7 @@ interface readDirectory {
     symbolic: boolean;
 }
 interface simulationItem {
-    artifact: string;
+    artifact?: string;
     command: string;
     file?: string;
     qualifier: qualifier;

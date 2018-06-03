@@ -480,7 +480,7 @@ interface readFile {
                     let quote:string = "",
                         startIndex:number = -1;
                     a = 0;
-                    len = args.length;console.log(args);
+                    len = args.length;
                     do {
                         if (a === 0 || ((/\s/).test(args.charAt(a)) === false && quote === "" && startIndex < 0)) {
                             startIndex = a;
@@ -496,22 +496,16 @@ interface readFile {
                                 }
                                 quote = "";
                                 startIndex = -1;
-                            } else if (startIndex > -1 && quote === "") {
-                                if ((/\s/).test(args.charAt(a)) === true) {
-                                    arglist.push(args.slice(startIndex, a));
-                                    startIndex = -1;
-                                } else if (args.charAt(a) === "\"" || args.charAt(a) === "'") {
-                                    arglist.push(args.slice(startIndex, a));
-                                    startIndex = a;
-                                    quote = args.charAt(a);
-                                }
+                            } else if (startIndex > -1 && quote === "" && (/\s/).test(args.charAt(a)) === true) {
+                                arglist.push(args.slice(startIndex, a));
+                                startIndex = -1;
                             }
                         }
                         a = a + 1;
                     } while (a < len);
                     if (startIndex > -1) {
                         arglist.push(args.slice(startIndex));
-                    }console.log(arglist);
+                    }
                     process.argv = arglist;
                     a = 0;
                     len = list.length;
@@ -703,7 +697,7 @@ interface readFile {
                     }
                     a = a + 1;
                 } while (a < len);
-                if (options.source === "" && process.argv[0].indexOf(":") < 0 && process.argv[0].indexOf("=") < 0) {
+                if (options.source === "" && (process.argv.length < 1 || process.argv[0].indexOf(":") < 0 && process.argv[0].indexOf("=") < 0)) {
                     options.source = process.argv[0];
                 }
             };
@@ -726,102 +720,105 @@ interface readFile {
             path:string = (process.argv[0] === "encode" || process.argv[0] === "decode")
                 ? process.argv[1]
                 : process.argv[0];
-        const fileWrapper = function node_apps_base64_fileWrapper(filepath):void {
-            node
-            .fs
-            .stat(filepath, function node_apps_base64_fileWrapper_stat(er:Error, stat:Stats):void {
-                const angrypath:string = `filepath ${text.angry + filepath + text.none} is not a file or directory.`,
-                    file = function node_apps_base64_fileWrapper_stat_file():void {
-                        node
-                        .fs
-                        .open(filepath, "r", function node_apps_base64_fileWrapper_stat_file_open(ero:Error, fd:number):void {
-                            let buff  = Buffer.alloc(stat.size);
-                            if (ero !== null) {
-                                if (http === true) {
-                                    apps.remove(filepath);
-                                }
-                                apps.errout([ero.toString()]);
-                                return;
-                            }
+        const screen = function node_apps_base64_screen(string:string) {
+                const output = (direction === "decode")
+                    ? Buffer.from(string, "base64").toString("utf8")
+                    : Buffer.from(string).toString("base64");
+                if (verbose === true) {
+                    apps.output([output]);
+                } else {
+                    console.log(output);
+                }
+            },
+            fileWrapper = function node_apps_base64_fileWrapper(filepath):void {
+                node
+                .fs
+                .stat(filepath, function node_apps_base64_fileWrapper_stat(er:Error, stat:Stats):void {
+                    const angrypath:string = `filepath ${text.angry + filepath + text.none} is not a file or directory.`,
+                        file = function node_apps_base64_fileWrapper_stat_file():void {
                             node
-                                .fs
-                                .read(
-                                    fd,
-                                    buff,
-                                    0,
-                                    stat.size,
-                                    0,
-                                    function node_apps_base64_fileWrapper_stat_file_open_read(erra:Error, bytesa:number, buffera:Buffer):number {
-                                        if (http === true) {
-                                            apps.remove(filepath);
-                                        }
-                                        if (erra !== null) {
-                                            apps.errout([erra.toString()]);
-                                            return;
-                                        }
-                                        const output = (direction === "decode")
-                                            ? Buffer.from(buffera.toString("utf8"), "base64").toString("utf8")
-                                            : buffera.toString("base64");
-                                        if (verbose === true) {
-                                            apps.output([output]);
-                                        } else {
-                                            console.log(output);
-                                        }
+                            .fs
+                            .open(filepath, "r", function node_apps_base64_fileWrapper_stat_file_open(ero:Error, fd:number):void {
+                                let buff  = Buffer.alloc(stat.size);
+                                if (ero !== null) {
+                                    if (http === true) {
+                                        apps.remove(filepath);
                                     }
-                                );
-                        });
-                    };
-                if (er !== null) {
-                    if (http === true) {
-                        apps.remove(filepath);
+                                    apps.errout([ero.toString()]);
+                                    return;
+                                }
+                                node
+                                    .fs
+                                    .read(
+                                        fd,
+                                        buff,
+                                        0,
+                                        stat.size,
+                                        0,
+                                        function node_apps_base64_fileWrapper_stat_file_open_read(erra:Error, bytesa:number, buffera:Buffer):number {
+                                            if (http === true) {
+                                                apps.remove(filepath);
+                                            }
+                                            if (erra !== null) {
+                                                apps.errout([erra.toString()]);
+                                                return;
+                                            }
+                                            const output = (direction === "decode")
+                                                ? Buffer.from(buffera.toString("utf8"), "base64").toString("utf8")
+                                                : buffera.toString("base64");
+                                            if (verbose === true) {
+                                                apps.output([output]);
+                                            } else {
+                                                console.log(output);
+                                            }
+                                        }
+                                    );
+                            });
+                        };
+                    if (er !== null) {
+                        if (http === true) {
+                            apps.remove(filepath);
+                        }
+                        if (er.toString().indexOf("no such file or directory") > 0) {
+                            apps.errout([angrypath]);
+                            return;
+                        }
+                        apps.errout([er.toString()]);
+                        return;
                     }
-                    if (er.toString().indexOf("no such file or directory") > 0) {
+                    if (stat === undefined) {
+                        if (http === true) {
+                            apps.remove(filepath);
+                        }
                         apps.errout([angrypath]);
                         return;
                     }
-                    apps.errout([er.toString()]);
-                    return;
-                }
-                if (stat === undefined) {
-                    if (http === true) {
-                        apps.remove(filepath);
+                    if (stat.isFile() === true) {
+                        file();
                     }
-                    apps.errout([angrypath]);
-                    return;
-                }
-                if (stat.isFile() === true) {
-                    file();
-                }
-            });
-        };
-        if (path === undefined) {
-            apps.errout([`No path to encode.  Please see ${text.cyan}prettydiff commands base64${text.none} for examples.`]);
-            return;
-        }
-        if (path.indexOf("string:") === 0) {
-            path = path.replace("string:", "");
-            if (path.charAt(0) === "\"" && path.charAt(path.length - 1) === "\"") {
-                path.slice(1, path.length - 1);
-            } else if (path.charAt(0) === "'" && path.charAt(path.length - 1) === "'") {
-                path.slice(1, path.length - 1);
+                });
+            };
+            if (path === undefined) {
+                apps.errout([`No path to encode.  Please see ${text.cyan}prettydiff commands base64${text.none} for examples.`]);
+                return;
             }
-            const output = (direction === "decode")
-                ? Buffer.from(path, "base64").toString("utf8")
-                : Buffer.from(path).toString("base64");
-            if (verbose === true) {
-                apps.output([output]);
+            if (path.indexOf("string:") === 0) {
+                path = path.replace("string:", "");
+                if (path.charAt(0) === "\"" && path.charAt(path.length - 1) === "\"") {
+                    path.slice(1, path.length - 1);
+                } else if (path.charAt(0) === "'" && path.charAt(path.length - 1) === "'") {
+                    path.slice(1, path.length - 1);
+                }
+                screen(path);
+                return;
+            }
+            if ((/https?:\/\//).test(path) === true) {
+                http = true;
+                apps.get(path, "source", screen);
             } else {
-                console.log(output);
+                fileWrapper(path);
             }
-            return;
-        }
-        if ((/https?:\/\//).test(path) === true) {
-            http = true;
-            apps.get(path, "source", fileWrapper);
-        } else {
-            fileWrapper(path);
-        }
-    };
+        };
     // mode beautify
     apps.beautify = function node_apps_beautify():void {
         apps.readMethod(false, function node_apps_beautify_callback() {
@@ -1633,8 +1630,8 @@ interface readFile {
         options.mode = "beautify";
         if (options.lang !== "text") {
             const all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`);
-            all(options, function node_apps_mode_allLexers() {
-                apps.readMethod(false, function node_apps_beautify_callback(code:string) {
+            all(options, function node_apps_diff_allLexers() {
+                apps.readMethod(false, function node_apps_beautify_callback() {
                     
                 });
             });
@@ -1664,7 +1661,7 @@ interface readFile {
                             if (verbose === true) {
                                 let output:string[] = [];
                                 console.log("");
-                                apps.wrapit(output, `PrettyDiff found ${text.green + apps.commas(result.length) + text.none} matching items from address ${text.cyan + startPath + text.none} with a total file size of ${text.green + apps.commas(size) + text.none} bytes.`);
+                                apps.wrapit(output, `Pretty Diff found ${text.green + apps.commas(result.length) + text.none} matching items from address ${text.cyan + startPath + text.none} with a total file size of ${text.green + apps.commas(size) + text.none} bytes.`);
                                 apps.output(output);
                             }
                         },
@@ -1831,6 +1828,16 @@ interface readFile {
     };
     // http(s) get function
     apps.get = function node_apps_get(address:string, flag:"source"|"diff", callback:Function|null):void {
+        if (command === "get") {
+            address = process.argv[0];
+        }
+        if (address === undefined) {
+            apps.errout([
+                "The get command requires an address in http/https scheme.",
+                `Please execute ${text.cyan}prettydiff commands get${text.none} for examples.`
+            ]);
+            return;
+        }
         let file:string = "";
         const scheme:string = (address.indexOf("https") === 0)
                 ? "https"
@@ -1881,17 +1888,6 @@ interface readFile {
                     apps.output([file.toString()]);
                 }
             };
-        if (command === "get") {
-            verbose = true;
-            address = process.argv[0];
-        }
-        if (address === undefined) {
-            apps.errout([
-                "The get command requires an address in http/https scheme.",
-                `Please execute ${text.cyan}prettydiff commands get${text.none} for examples.`
-            ]);
-            return;
-        }
         if ((/^(https?:\/\/)/).test(address) === false) {
             apps.errout([
                 `Address: ${text.angry + address + text.none}`,
@@ -1907,19 +1903,21 @@ interface readFile {
             res.on("end", function node_apps_get_callback_end() {
                 if (res.statusCode !== 200) {
                     if (res.statusCode === 301 || res.statusCode === 302 || res.statusCode === 303 || res.statusCode === 307 || res.statusCode === 308) {
-                        console.log(`${res.statusCode} ${node.http.STATUS_CODES[res.statusCode]}, for request ${address}`);
+                        if (verbose === true) {
+                            console.log(`${res.statusCode} ${node.http.STATUS_CODES[res.statusCode]} - ${address}`);
+                        }
                         process.argv[0] = res.headers.location;
                         address = process.argv[0];
                         apps.get(address, flag, callback);
-                    } else {
-                        apps.errout([`${scheme}.get failed with status code ${res.statusCode}`]);
+                        return;
                     }
-                } else {
-                    if (command === "get" || command === "hash") {
-                        getcall(file);
-                    } else if (callback !== null) {
-                        callback(file);
-                    }
+                    apps.errout([`${scheme}.get failed with status code ${res.statusCode}`]);
+                    return;
+                }
+                if (command === "get" || command === "hash") {
+                    getcall(file);
+                } else if (callback !== null) {
+                    callback(file);
                 }
             });
         });
@@ -2061,6 +2059,10 @@ interface readFile {
                 }
             };
         if (command === "hash") {
+            if (process.argv[0] === undefined) {
+                apps.errout([`Command ${text.cyan}hash${text.none} requires some form of address of something to analyze, ${text.angry}but no address is provided${text.none}.`]);
+                return;
+            }
             filepath = process.argv[0];
             if (http.test(filepath) === false) {
                 filepath = node.path.resolve(process.argv[0]);
@@ -2074,13 +2076,13 @@ interface readFile {
             }
         }
         if (http.test(filepath) === true) {
-            apps.get(filepath, "source", function node_apps_hash_get() {
+            apps.get(filepath, "source", function node_apps_hash_get(path:string) {
                 apps.directory({
                     callback: function node_apps_hash_get_localCallback(list:directoryList) {
                         dirComplete(list);
                     },
                     exclusions: [],
-                    path: filepath,
+                    path: path,
                     recursive: true,
                     symbolic: true
                 });
@@ -2268,7 +2270,7 @@ interface readFile {
         return `${text.cyan}[${hourString}:${minuteString}:${secondString}]${text.none} `;
     };
     // wrapper for ESLint usage
-    apps.lint = function node_apps_lint(callback?:Function):void {
+    apps.lint = function node_apps_lint(callback:Function):void {
         node.child("eslint", function node_apps_build_lint_eslintCheck(eserr:Error) {
             if (eserr !== null) {
                 console.log("ESLint is not globally installed or is corrupt.");
@@ -2279,6 +2281,13 @@ interface readFile {
                     callback();
                 }
                 return;
+            }
+            if (command === "lint") {
+                callback = function node_apps_lint_callback():void {
+                    if (verbose === true) {
+                        apps.output([""]);
+                    }
+                };
             }
             (function node_apps_build_lint_getFiles():void {
                 const lintrun         = function node_apps_build_lint_lintrun(list:directoryList) {
@@ -2301,9 +2310,9 @@ interface readFile {
                                         return;
                                     }
                                     filesLinted = filesLinted + 1;
-                                    console.log(`${apps.humantime(false) + text.green}Lint passed:${text.none} ${val}`);
+                                    console.log(`${apps.humantime(false) + text.green}Lint ${filesLinted} passed:${text.none} ${val}`);
                                     if (filesRead === filesLinted) {
-                                        console.log(`${text.green}Lint complete!${text.none}`);
+                                        console.log(`${text.green}Lint complete for ${filesLinted} files!${text.none}`);
                                         if (callback !== undefined) {
                                             callback();
                                         }
@@ -2635,7 +2644,7 @@ interface readFile {
             const outputArrays:parsedArray = options.parsed,
                 output:string[] = [],
                 b:number = outputArrays.token.length,
-                pad = function node_apps_mode_application_parsePad(x:string, y:number):void {
+                pad = function node_apps_parser_parsePad(x:string, y:number):void {
                     const cc:string = x
                             .toString()
                             .replace(/\s/g, " ");
@@ -2797,10 +2806,10 @@ interface readFile {
             item:string = (diff === true)
                 ? "diff"
                 : "source",
-            resolve = function node_apps_mode_resolve() {
-                node.fs.stat(options[item], function node_apps_mode_resolve_stat(err:Error, stat:Stats):void {
-                    const resolveItem = function node_apps_mode_resolve_stat_resolveItem() {
-                        const final = function node_apps_mode_application_final():void {
+            resolve = function node_apps_readmethod_resolve() {
+                node.fs.stat(options[item], function node_apps_readmethod_resolve_stat(err:Error, stat:Stats):void {
+                    const resolveItem = function node_apps_readmethod_resolve_stat_resolveItem() {
+                        const final = function node_apps_readmethod_application_final():void {
                                 const output:string[] = [];
                                 if (verbose === true) {
                                     if (auto === true) {
@@ -2820,8 +2829,8 @@ interface readFile {
                             };
                         if (options.readmethod === "directory" || options.readmethod === "subdirectory") {
                             apps.directory({
-                                callback: function node_apps_mode_resolve_stat_resolveItem_directoryCallback(list:directoryList):void {
-                                    //modeCallback(list);
+                                callback: function node_apps_readmethod_resolve_stat_resolveItem_directoryCallback(list:directoryList):void {
+                                    modeCallback(list);
                                 },
                                 exclusions: exclusions,
                                 path: options.source,
@@ -2830,7 +2839,7 @@ interface readFile {
                             });
                         } else {
                             apps.readFile({
-                                callback: function node_apps_mode_resolve_stat_resolveItem_fileCallback(args:readFile, dump:string|Buffer):void {
+                                callback: function node_apps_readmethod_resolve_stat_resolveItem_fileCallback(args:readFile, dump:string|Buffer):void {
                                     if (typeof dump === "string") {
                                         // 1 parse code
                                         // 2 execute mode
@@ -2902,7 +2911,7 @@ interface readFile {
                             return;
                         }
                         options.output = node.path.resolve(options.output);
-                        node.fs.stat(options.output, function node_apps_mode_resolve_stat_statOutput(ers:Error, ostat:Stats):void {
+                        node.fs.stat(options.output, function node_apps_readmethod_resolve_stat_statOutput(ers:Error, ostat:Stats):void {
                             if (ers !== null && ers.toString().indexOf("ENOENT") > -1) {
                                 apps.errout([ers.toString()]);
                                 return;
@@ -2939,13 +2948,13 @@ interface readFile {
         if (global.parseFramework === undefined) {
             require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}parse`);
         }
-        all(options, function node_apps_mode_allLexers() {
+        all(options, function node_apps_readmethod_allLexers() {
             resolve();
         });
         /*const all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`),
-            application = function node_apps_mode_application(path:string):void {
+            application = function node_apps_readmethod_application(path:string):void {
                 let lang:[string, string, string] = ["javascript", "script", "JavaScript"];
-                const langAuto:boolean = (function node_apps_mode_application_lang():boolean {
+                const langAuto:boolean = (function node_apps_readmethod_application_lang():boolean {
                         if (options.lang === "auto") {
                             lang = prettydiff.api.language.auto(options.source, "javascript");
                             options.lang = lang[0];
@@ -2955,7 +2964,7 @@ interface readFile {
                         return false;
                     }()),
                     output:string[] = [],
-                    final = function node_apps_mode_application_final(inject:string) {
+                    final = function node_apps_readmethod_application_final(inject:string) {
                         if (verbose === true) {
                             if (langAuto === true || options.readmethod === true) {
                                 output.push("");
@@ -3009,7 +3018,7 @@ interface readFile {
                         ]);
                         return;
                     }
-                    node.fs.writeFile(options.output, options.source, "utf8", function node_apps_mode_application_writeFile(err:Error) {
+                    node.fs.writeFile(options.output, options.source, "utf8", function node_apps_readmethod_application_writeFile(err:Error) {
                         if (err !== null) {
                             apps.errout([err.toString()]);
                             return;
@@ -3027,9 +3036,9 @@ interface readFile {
                 // 7 global installation
                 // 8 open defects
             },
-            file = function node_apps_mode_diff_file(item:directoryList):void {
+            file = function node_apps_readmethod_diff_file(item:directoryList):void {
                 const status:[boolean, boolean] = [false, false],
-                    callback = function node_apps_mode_diff_file_callback(itemdata:readFile, data:string|Buffer) {
+                    callback = function node_apps_readmethod_diff_file_callback(itemdata:readFile, data:string|Buffer) {
                         status[itemdata.index] = true;
                         if (itemdata.index === 0) {
                             options.source = data;
@@ -3055,10 +3064,10 @@ interface readFile {
                     });
                 }
             },
-            directory = function node_apps_mode_diff_directory():void {},
+            directory = function node_apps_readmethod_diff_directory():void {},
             // the screenTest function makes a guess if input input is readmethod "screen" opposed to a filesystem object
-            screenTest = function node_apps_mode_screenTest(item:"source"|"diff") {
-                node.fs.stat(options[item], function node_apps_mode_screenTest_stat(err:Error):void {
+            screenTest = function node_apps_readmethod_screenTest(item:"source"|"diff") {
+                node.fs.stat(options[item], function node_apps_readmethod_screenTest_stat(err:Error):void {
                     if (options.readmethod === "auto") {
                         if (err !== null) {
                             const index:any = {
@@ -3085,7 +3094,7 @@ interface readFile {
                         }
                     }
                     options.output = node.path.resolve(options.output);
-                    node.fs.stat(options.output, function node_apps_mode_screenTest_stat_statOutput(ers:Error, stat:Stats):void {
+                    node.fs.stat(options.output, function node_apps_readmethod_screenTest_stat_statOutput(ers:Error, stat:Stats):void {
                         if (ers !== null) {
                             apps.errout([ers.toString()]);
                             return;
@@ -3107,7 +3116,7 @@ interface readFile {
                             }
                         }
                         apps.directory({
-                            callback: function node_apps_mode_screenTest_callback(list:directoryList):void {
+                            callback: function node_apps_readmethod_screenTest_callback(list:directoryList):void {
                                 if (list[0][1] !== "file" && (options.readmethod === "file" || options.readmethod === "filescreen")) {
                                     apps.errout([`The value for the source option is ${text.angry}not an address to a file${text.none} but option readmethod is ${text.angry + options.readmethod + text.none}.`]);
                                     return;
@@ -3142,7 +3151,7 @@ interface readFile {
                 })
             };
         prettydiff.api.pdcomment(options);
-        all(options, function node_apps_mode_allLexers() {
+        all(options, function node_apps_readmethod_allLexers() {
             if (options.readmethod === "screen") {
                 application("");
             } else {
@@ -3479,43 +3488,46 @@ interface readFile {
 }`
                 },
                 {
-                    artifact: "",
                     command: "base64 string:\"my big string sample\"",
                     qualifier: "is",
                     test: "bXkgYmlnIHN0cmluZyBzYW1wbGU="
                 },
                 {
-                    artifact: "",
                     command: "base64 decode string:\"bXkgYmlnIHN0cmluZyBzYW1wbGU=\"",
                     qualifier: "is",
                     test: "my big string sample"
                 },
                 {
-                    artifact: "",
                     command: "base64",
                     qualifier: "contains",
                     test: "No path to encode."
                 },
                 {
-                    artifact: "",
                     command: "commands",
                     qualifier: "contains",
                     test: `Commands are tested using the ${text.green}simulation${text.none} command.`
                 },
                 {
-                    artifact: "",
                     command: "commands base64",
                     qualifier: "contains",
                     test: `   ${text.cyan}prettydiff base64 encode string:"my string to encode"${text.none}`
                 },
                 {
-                    artifact: "",
+                    command: "commands version",
+                    qualifier: "contains",
+                    test: "Prints the current version number and date to the shell."
+                },
+                {
+                    command: "comm version",
+                    qualifier: "contains",
+                    test: "Prints the current version number and date to the shell."
+                },
+                {
                     command: "copy",
                     qualifier: "contains",
                     test: "The copy command requires a source path and a destination path."
                 },
                 {
-                    artifact: "",
                     command: "copy js",
                     qualifier: "contains",
                     test: "The copy command requires a source path and a destination path."
@@ -3528,40 +3540,86 @@ interface readFile {
                 },
                 {
                     artifact: "temp",
-                    command: "copy js temp",
+                    command: "copy js temp 2",
                     file: `temp${supersep}minify${supersep}style.js`,
                     qualifier: "file begins",
                     test: "/*global global*/"
                 },
                 {
-                    artifact: "",
                     command: "directory",
                     qualifier: "contains",
                     test: "No path supplied for the directory command."
                 },
                 {
-                    artifact: "",
                     command: `directory js`,
                     qualifier: "contains",
                     test: `js${supersep}minify${supersep}style.js","file"`
                 },
                 {
-                    artifact: "",
                     command: `directory js ignore ["minify"]`,
                     qualifier: "not contains",
                     test: `js${supersep}minify${supersep}style.js"`
                 },
                 {
-                    artifact: "",
                     command: `directory ".${supersep}" ignore ["node_modules", ".git", ".DS_Store"] --verbose`,
                     qualifier: "contains",
-                    test: `matching items from address`
+                    test: ` matching items from address `
+                },
+                {
+                    command: "get https://duckduckgo.com/",
+                    qualifier: "contains",
+                    test: `DDG.page = new DDG.Pages.Home();`
+                },
+                {
+                    command: "hash",
+                    qualifier: "contains",
+                    test: `Command ${text.cyan}hash${text.none} requires some form of address of something to analyze, ${text.angry}but no address is provided${text.none}.`
+                },
+                {
+                    command: "hash asdf",
+                    qualifier: "contains",
+                    test: `${sep}asdf${text.none} is not a file or directory.`
+                },
+                {
+                    command: "hash tsconfig.json",
+                    qualifier: "is",
+                    test: "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+                },
+                {
+                    command: "hash tsconfig.json --verbose",
+                    qualifier: "contains",
+                    test: "parse-framework version "
+                },
+                {
+                    command: "help",
+                    qualifier: "contains",
+                    test: `To get started try the ${text.green}commands${text.none} command.`
+                },
+                {
+                    command: "help 2",
+                    qualifier: "ends",
+                    test: "XXXX seconds total time"
+                },
+                {
+                    command: "lint",
+                    qualifier: "ends",
+                    test: `${text.green}Lint complete for XXXX files!${text.none}`
+                },
+                {
+                    command: "lint --verbose",
+                    qualifier: "ends",
+                    test: "XXXX seconds total time"
+                },
+                {
+                    command: "lint js/beautify",
+                    qualifier: "ends",
+                    test: `${text.green}Lint complete for XXXX files!${text.none}`
                 }
             ],
             len:number = tests.length,
             cwd:string = __dirname.replace(/(\/|\\)js$/, ""),
             actual:string = `${text.green}Actual output:${text.none}`,
-            increment = function node_apps_simulation_increment():void {
+            increment = function node_apps_simulation_increment(irr:string):void {
                 const interval = function node_apps_simulation_increment_interval():void {
                     a = a + 1;
                     if (a < len) {
@@ -3579,8 +3637,12 @@ interface readFile {
                         }
                     }
                 };
-                console.log(`${apps.humantime(false) + text.green}Passed simulation ${a + 1}: ${text.none + tests[a].command}`);
-                if (tests[a].artifact === "") {
+                if (irr !== "") {
+                    console.log(`${apps.humantime(false) + text.yellow}Test ignored (${irr}) ${a + 1}: ${text.none + tests[a].command}`);
+                } else {
+                    console.log(`${apps.humantime(false) + text.green}Passed simulation ${a + 1}: ${text.none + tests[a].command}`);
+                }
+                if (tests[a].artifact === "" || tests[a].artifact === undefined) {
                     interval();
                 } else {
                     apps.remove(tests[a].artifact, function node_apps_simulation_wrapper_remove():void {
@@ -3589,25 +3651,35 @@ interface readFile {
                 }
             },
             wrapper = function node_apps_simulation_wrapper():void {
-                node.child(`node js/services ${tests[a].command}`, {cwd: cwd}, function node_apps_simulation_wrapper_child(err:Error, stdout:string|Buffer, stderror:string|Buffer) {
-                    if (tests[a].artifact === "") {
+                node.child(`node js/services ${tests[a].command}`, {cwd: cwd}, function node_apps_simulation_wrapper_child(err:nodeError, stdout:string|Buffer, stderror:string|Buffer) {
+                    if (tests[a].artifact === "" || tests[a].artifact === undefined) {
                         writeflag = "";
                     } else {
                         tests[a].artifact = node.path.resolve(tests[a].artifact);
                         writeflag = tests[a].artifact;
                     }
-                    if (err !== null && stdout === "") {
-                        apps.errout([err.toString()]);
-                        return;
+                    if (err !== null) {
+                        if (err.toString().indexOf("getaddrinfo ENOTFOUND") > -1) {
+                            increment("no internet connection");
+                            return;
+                        }
+                        if (stdout === "") {
+                            apps.errout([err.toString()]);
+                            return;
+                        }
                     }
                     if (stderror !== "") {
                         apps.errout([stderror]);
                         return;
                     }
                     if (typeof stdout === "string") {
-                        stdout = stdout.replace(/\s+$/, "");
+                        stdout = stdout.replace(/\s+$/, "").replace(/\s\d+(\.\d+)*\s/g, " XXXX ");
                     }
                     if (tests[a].qualifier.indexOf("file") === 0) {
+                        if (tests[a].artifact === "" || tests[a].artifact === undefined) {
+                            apps.errout([`Tests ${text.cyan + tests[a].command + text.none} uses ${text.angry + tests[a].qualifier + text.none} as a qualifier but does not mention an artifact to remove.`]);
+                            return;
+                        }
                         if (tests[a].qualifier.indexOf("file ") === 0) {
                             tests[a].file = node.path.resolve(tests[a].file);
                             node.fs.readFile(tests[a].file, "utf8", function node_apps_simulation_wrapper_file(err:Error, dump:string) {
@@ -3675,7 +3747,7 @@ interface readFile {
                                     ]);
                                     return;
                                 }
-                                increment();
+                                increment("");
                             });
                         } else if (tests[a].qualifier.indexOf("filesystem ") === 0) {
                             tests[a].test = node.path.resolve(tests[a].test);
@@ -3698,7 +3770,7 @@ interface readFile {
                                     ]);
                                     return;
                                 }
-                                increment();
+                                increment("");
                             });
                         }
                     } else {
@@ -3762,7 +3834,7 @@ interface readFile {
                             ]);
                             return;
                         }
-                        increment();
+                        increment("");
                     }
                 });
             };
