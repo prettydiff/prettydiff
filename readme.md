@@ -1,6 +1,6 @@
 # Pretty Diff version 3
-
 A language aware diff, beautification, and minification tool.
+[![Build Status](https://semaphoreci.com/api/v1/prettydiff/prettydiff/branches/3-0-0/badge.svg)](https://semaphoreci.com/prettydiff/prettydiff)
 
 ## Build
 
@@ -32,3 +32,4 @@ Executing in a terminal shell is powerful when you need access to additional too
 * For detailed documentation on a specific command supply the command name: `node js/services commands base64`
 * To see a list of available Pretty Diff options execute `node js/services options`
 * The option list supports filtering against the documentation headings and values: `node js/services options mode:diff api:node`
+* For detailed documentation about a specific option execute the option command with the named option: `node js/services options readmethod`
