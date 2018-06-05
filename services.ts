@@ -853,7 +853,7 @@ interface readFile {
                 let phase = order[0];
                 if (order.length < 1) {
                     verbose = true;
-                    heading("All tasks complete... Exiting clean!");
+                    heading("All tasks complete... Exiting clean!\u0007");
                     apps.output([""]);
                     process.exit(0);
                     return;
@@ -1841,26 +1841,34 @@ interface readFile {
     };
     // uniform error formatting
     apps.errout = function node_apps_errout(errtext:string[]):void {
+        const error = function node_apps_errout_error():void {
+            const stack:string = new Error().stack.replace("Error", `${text.cyan}Stack trace${text.none + node.os.EOL}-----------`);
+            console.log("");
+            console.log(stack);
+            console.log("");
+            console.log(`${text.angry}Error Message${text.none}`);
+            console.log("------------");
+            if (errtext[0] === "" && errtext.length < 2) {
+                console.log(`${text.yellow}No error message supplied${text.none}`);
+            } else {
+                errtext.forEach(function node_apps_errout_each(value:string):void {
+                    console.log(value);
+                });
+            }
+            console.log("");
+            apps.humantime(true);
+            if (command === "build" || command === "simulation") {
+                console.log("\u0007");
+            } else {
+                console.log("");
+            }
+            process.exit(1);
+        };
         if (writeflag !== "") {
-            apps.remove(writeflag);
-        }
-        const stack:string = new Error().stack.replace("Error", `${text.cyan}Stack trace${text.none + node.os.EOL}-----------`);
-        console.log("");
-        console.log(stack);
-        console.log("");
-        console.log(`${text.angry}Error Message${text.none}`);
-        console.log("------------");
-        if (errtext[0] === "" && errtext.length < 2) {
-            console.log(`${text.yellow}No error message supplied${text.none}`);
+            apps.remove(writeflag, error);
         } else {
-            errtext.forEach(function node_apps_errout_each(value:string):void {
-                console.log(value);
-            });
+            error();
         }
-        console.log("");
-        apps.humantime(true);
-        console.log("");
-        process.exit(1);
     };
     // http(s) get function
     apps.get = function node_apps_get(address:string, flag:"source"|"diff", callback:Function|null):void {
@@ -2733,10 +2741,12 @@ interface readFile {
             } while (a < b);
             console.log(output.join(node.os.EOL));
         } else if (options.readmethod === "filescreen" || options.readmethod === "screen") {
-            if (options.readmethod === "filescreen") {
-                console.log(`Parsed input from file ${text.cyan + path + text.none}`);
-            } else {
-                console.log("Parsed input from terminal.");
+            if (verbose === true) {
+                if (options.readmethod === "filescreen") {
+                    console.log(`Parsed input from file ${text.cyan + path + text.none}`);
+                } else {
+                    console.log("Parsed input from terminal.");
+                }
             }
             console.log(JSON.stringify(options.parsed));
         } else {
@@ -2936,6 +2946,10 @@ interface readFile {
                                 options.readmethod = "file";
                             }
                         }
+                    }
+                    if (err !== null) {
+                        apps.errout([err.toString()]);
+                        return;
                     }
                     options[item] = node.path.resolve(options[item]);
                     if (stat.isDirectory() === false && (options.readmethod === "directory" || options.readmethod === "subdirectory")) {
@@ -3711,6 +3725,41 @@ interface readFile {
                     test: `${text.angry}* ${text.none + text.cyan}summaryonly${text.none}: Node only option to output only number of differences.`
                 },
                 {
+                    command: "parse",
+                    qualifier: "contains",
+                    test: `Pretty Diff requires option ${text.cyan}source${text.none} when using command ${text.green}parse${text.none}. Example:`
+                },
+                {
+                    command: "parse tsconfig verbose",
+                    qualifier: "begins",
+                    test: "Parsed input from terminal."
+                },
+                {
+                    command: "parse tsconfig",
+                    qualifier: "is",
+                    test: `{"begin":[-1,-1],"lexer":["script","script"],"lines":[0,1],"presv":[false,false],"stack":["global","global"],"token":["tsconfig","\\n"],"types":["word","string"]}`
+                },
+                {
+                    command: "parse tsconfig.json",
+                    qualifier: "begins",
+                    test:`Option ${text.angry}output${text.none} was not specified and the value provided for option ${text.cyan}source${text.none} appears to be a file.`
+                },
+                {
+                    command: "parse tsconfig.json 2",
+                    qualifier: "contains",
+                    test: `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,0],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,2,2],"presv":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","end","end"]}`
+                },
+                {
+                    command: "parse tsconfig readmethod:filescreen",
+                    qualifier: "contains",
+                    test: "ENOENT: no such file or directory"
+                },
+                {
+                    command: "parse tsconfig.json readmethod:filescreen",
+                    qualifier: "is",
+                    test: `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,0],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,2,2],"presv":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","end","end"]}`
+                },
+                {
                     command: "version",
                     qualifier: "ends",
                     test: " seconds total time"
@@ -3878,7 +3927,7 @@ interface readFile {
         let a:number = 0;
         if (command === "simulation") {
             callback = function node_apps_lint_callback():void {
-                apps.output([""]);
+                apps.output(["\u0007"]);
             };
             verbose = true;
             console.log("");
