@@ -28,14 +28,14 @@
     ],
     "license": "CC0-1.0",
     "main": "js/services.js",
-    "name": "prettydiff3",
+    "name": "pd3",
     "repository": {
         "type": "git",
         "url": "git+https://github.com/prettydiff/prettydiff.git"
     },
     "scripts": {
         "start": "node js/services build --browser",
-        "test": "node js/services validation"
+        "test": "node js/services build"
     },
     "version": "3.0.0"
 }
