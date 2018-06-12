@@ -111,7 +111,7 @@ interface readFile {
                         defined: "Compiles from TypeScript into JavaScript, compiles libraries, and lints the code."
                     },
                     {
-                        code: "prettydiff build nolint",
+                        code: "prettydiff build nocheck",
                         defined: "Runs the build without running any of the sanity checks."
                     }
                 ]
@@ -189,6 +189,10 @@ interface readFile {
                     {
                         code: "prettydiff directory source:\"my/directory/path\" ignore [.git, node_modules, \"program files\"]",
                         defined: "Sets an exclusion list of things to ignore"
+                    },
+                    {
+                        code: "prettydiff directory source:\"my/path\" typeof",
+                        defined: "returns a string describing the artifact type"
                     }
                 ]
             },
@@ -520,6 +524,7 @@ interface readFile {
         }()),
         apps:any = {};
     let verbose:boolean = false,
+        errorflag:boolean = false,
         writeflag:string = ""; // location of written assets in case of an error and they need to be deleted
     
     (function node_args():void {
@@ -614,6 +619,7 @@ interface readFile {
                 let split:string = "",
                     value:string = "",
                     name:string = "",
+                    nameLow:string = "",
                     a:number = 0,
                     si:number = 0,
                     len:number = list.length;
@@ -660,9 +666,11 @@ interface readFile {
                         } else if (list[a].indexOf(split) > 0 || (list[a].indexOf(split) < 0 && list[a + 1] !== undefined && (list[a + 1].charAt(0) === ":" || list[a + 1].charAt(0) === "="))) {
                             if (list[a].indexOf(split) > 0) {
                                 name = list[a].slice(0, list[a].indexOf(split));
+                                nameLow = name.toLowerCase();
                                 value = list[a].slice(list[a].indexOf(split) + 1);
                             } else {
                                 name = list[a];
+                                nameLow = name.toLowerCase();
                                 value = list[a + 1].slice(1);
                                 list.splice(a + 1, 1);
                                 len = len - 1;
@@ -678,17 +686,17 @@ interface readFile {
                                     list.splice(a, 1);
                                     len = len - 1;
                                 }
-                            } else if (options[name] !== undefined) {
+                            } else if (options[nameLow] !== undefined) {
                                 if (value === "true" && def[name].type === "boolean") {
-                                    options[name] = true;
+                                    options[nameLow] = true;
                                 } else if (value === "false" && def[name].type === "boolean") {
-                                    options[name] = false;
+                                    options[nameLow] = false;
                                 } else if (isNaN(Number(value)) === false && def[name].type === "number") {
-                                    options[name] = Number(value);
+                                    options[nameLow] = Number(value);
                                 } else if (def[name].values !== undefined && def[name].values[value] !== undefined) {
-                                    options[name] = value;
+                                    options[nameLow] = value;
                                 } else if (def[name].values === undefined) {
-                                    options[name] = value;
+                                    options[nameLow] = value;
                                 }
                             }
                         } else if (command === "options") {
@@ -697,7 +705,7 @@ interface readFile {
                     }
                     a = a + 1;
                 } while (a < len);
-                if (options.source === "" && (process.argv.length < 1 || process.argv[0].indexOf(":") < 0 && process.argv[0].indexOf("=") < 0)) {
+                if (options.source === "" && process.argv.length > 0 && process.argv[0].indexOf("=") < 0 && process.argv[0].replace(/^[a-zA-Z]:\\/, "").indexOf(":") < 0) {
                     options.source = process.argv[0];
                 }
             };
@@ -923,7 +931,11 @@ interface readFile {
                                         do {
                                             apikey = prettydiff.api.optionDef[optkeys[a]].api;
                                             if (apikey === "any" || apikey === api) {
-                                                obj[optkeys[a]] = prettydiff.api.optionDef[optkeys[a]].default;
+                                                if (api === "node") {
+                                                    obj[optkeys[a].toLowerCase()] = prettydiff.api.optionDef[optkeys[a]].default;
+                                                } else {
+                                                    obj[optkeys[a]] = prettydiff.api.optionDef[optkeys[a]].default;
+                                                }
                                             }
                                             a = a + 1;
                                         } while (a < keyslen);
@@ -1330,7 +1342,7 @@ interface readFile {
                     });
                 }
             };
-        if (process.argv.indexOf("nolint") > -1) {
+        if (process.argv.indexOf("nocheck") > -1) {
             order.splice(order.indexOf("lint"), 1);
             order.splice(order.indexOf("simulation"), 1);
         }
@@ -1687,6 +1699,14 @@ interface readFile {
         const dircount:number[] = [],
             dirnames:string[] = [],
             listonly:boolean = (command === "directory" && process.argv.indexOf("listonly") > -1),
+            type:boolean = (function node_apps_directory_typeof():boolean {
+                const typeindex:number = process.argv.indexOf("typeof");
+                if (command === "directory" && typeindex > -1) {
+                    process.argv.splice(typeindex, 1);
+                    return true;
+                }
+                return false;
+            }()),
             startPath:string = (function node_apps_directory_startPath():string {
                 if (command === "directory") {
                     const len:number = process.argv.length;
@@ -1810,6 +1830,14 @@ interface readFile {
                         };
                     if (er !== null) {
                         if (er.toString().indexOf("no such file or directory") > 0) {
+                            if (errorflag === true) {
+                                args.callback([]);
+                                return;
+                            }
+                            if (type === true) {
+                                apps.output([`Requested artifact, ${text.cyan + startPath + text.none}, ${text.angry}is missing${text.none}.`]);
+                                return;
+                            }
                             apps.errout([angrypath]);
                             return;
                         }
@@ -1817,10 +1845,18 @@ interface readFile {
                         return;
                     }
                     if (stat === undefined) {
+                        if (type === true) {
+                            apps.output([`Requested artifact, ${text.cyan + startPath + text.none}, ${text.angry}is missing${text.none}.`]);
+                            return;
+                        }
                         apps.errout([angrypath]);
                         return;
                     }
                     if (stat.isDirectory() === true) {
+                        if (type === true) {
+                            apps.output(["directory"]);
+                            return;
+                        }
                         if ((args.recursive === true || dirtest === false) && exclusions.indexOf(filepath.replace(startPath + sep, "")) < 0) {
                             dirtest = true;
                             dir(filepath);
@@ -1828,11 +1864,35 @@ interface readFile {
                             populate("directory");
                         }
                     } else if (stat.isSymbolicLink() === true) {
+                        if (type === true) {
+                            apps.output(["symbolicLink"]);
+                            return;
+                        }
                         populate("link");
                     } else if (stat.isFile() === true || stat.isBlockDevice() === true || stat.isCharacterDevice() === true) {
+                        if (type === true) {
+                            if (stat.isBlockDevice() === true) {
+                                apps.output(["blockDevice"]);
+                            } else if (stat.isCharacterDevice() === true) {
+                                apps.output(["characterDevice"]);
+                            } else {
+                                apps.output(["file"]);
+                            }
+                            return;
+                        }
                         size = size + stat.size;
                         populate("file");
                     } else {
+                        if (type === true) {
+                            if (stat.isFIFO() === true) {
+                                apps.output(["FIFO"]);
+                            } else if (stat.isSocket() === true) {
+                                apps.output(["socket"]);
+                            } else {
+                                apps.output(["unknown"]);
+                            }
+                            return;
+                        }
                         list[parent][3] = list[parent][3] - 1;
                     }
                 });
@@ -1864,8 +1924,10 @@ interface readFile {
             }
             process.exit(1);
         };
+        errorflag = true;
         if (writeflag !== "") {
             apps.remove(writeflag, error);
+            writeflag = "";
         } else {
             error();
         }
@@ -2378,19 +2440,10 @@ interface readFile {
                 };
                 apps.directory({
                     callback: lintrun,
-                    exclusions: (command === "build")
-                        ? [
-                            ".git",
-                            ".vscode",
-                            "bin",
-                            "coverage",
-                            "guide",
-                            "ignore",
-                            "node_modules",
-                            "test"
-                        ]
-                        : exclusions,
-                    path: (command === "lint" && process.argv[0] !== undefined)
+                    exclusions: (command === "lint" && process.argv[0] !== undefined)
+                        ? exclusions
+                        : [],
+                    path      : (command === "lint" && process.argv[0] !== undefined)
                         ? process.argv[0]
                         : js,
                     recursive: true,
@@ -2665,7 +2718,7 @@ interface readFile {
     };
     // mode parse
     apps.parse = function node_apps_parse():void {
-        if (options.parseFormat === "clitable") {
+        if (options.parseformat === "clitable") {
             verbose = true;
         }
         apps.readMethod(false, function node_apps_parse_callback() {
@@ -2680,77 +2733,72 @@ interface readFile {
             options.lang = lang[0];
             options.lexer = lang[1];
         }
-        if (options.parseFormat === "clitable") {
+        if (options.parseformat === "clitable") {
             options.readmethod = "screen";
         }
-        if (command === "parse" && options.parseFormat === "sequential") {
+        if (command === "parse" && options.parseformat === "sequential") {
             options.parsed = global.parseFramework.parserObjects(options);
         } else {
             options.parsed = global.parseFramework.parserArrays(options);
         }
-        if (command === "parse" && options.parseFormat === "clitable") {
-            let a:number   = 0,
-                str:string[] = [];
-            const outputArrays:parsedArray = options.parsed,
-                output:string[] = [],
-                b:number = outputArrays.token.length,
-                pad = function node_apps_parser_parsePad(x:string, y:number):void {
-                    const cc:string = x
-                            .toString()
-                            .replace(/\s/g, " ");
-                    let dd:number = y - cc.length;
-                    str.push(cc);
-                    if (dd > 0) {
-                        do {
-                            str.push(" ");
-                            dd = dd - 1;
-                        } while (dd > 0);
+        if (command === "parse") {
+            if (options.parseformat === "clitable") {
+                let a:number   = 0,
+                    str:string[] = [];
+                const outputArrays:parsedArray = options.parsed,
+                    output:string[] = [],
+                    b:number = outputArrays.token.length,
+                    pad = function node_apps_parser_parsePad(x:string, y:number):void {
+                        const cc:string = x
+                                .toString()
+                                .replace(/\s/g, " ");
+                        let dd:number = y - cc.length;
+                        str.push(cc);
+                        if (dd > 0) {
+                            do {
+                                str.push(" ");
+                                dd = dd - 1;
+                            } while (dd > 0);
+                        }
+                        str.push(" | ");
+                    },
+                    heading:string = "index | begin | lexer  | lines | presv | stack       | types       | token",
+                    bar:string     = "------|-------|--------|-------|-------|-------------|-------------|------";
+                output.push("");
+                output.push(heading);
+                output.push(bar);
+                do {
+                    if (a % 100 === 0 && a > 0) {
+                        output.push("");
+                        output.push(heading);
+                        output.push(bar);
                     }
-                    str.push(" | ");
-                },
-                heading:string = "index | begin | lexer  | lines | presv | stack       | types       | token",
-                bar:string     = "------|-------|--------|-------|-------|-------------|-------------|------";
-            output.push("");
-            output.push(heading);
-            output.push(bar);
-            do {
-                if (a % 100 === 0 && a > 0) {
-                    output.push("");
-                    output.push(heading);
-                    output.push(bar);
-                }
-                str = [];
-                if (outputArrays.lexer[a] === "markup") {
-                    str.push(text.red);
-                } else if (outputArrays.lexer[a] === "script") {
-                    str.push(text.green);
-                } else if (outputArrays.lexer[a] === "style") {
-                    str.push(text.yellow);
-                }
-                pad(a.toString(), 5);
-                pad(outputArrays.begin[a].toString(), 5);
-                pad(outputArrays.lexer[a].toString(), 5);
-                pad(outputArrays.lines[a].toString(), 5);
-                pad(outputArrays.presv[a].toString(), 5);
-                pad(outputArrays.stack[a].toString(), 11);
-                pad(outputArrays.types[a].toString(), 11);
-                str.push(outputArrays.token[a].replace(/\s/g, " "));
-                str.push(text.none);
-                output.push(str.join(""));
-                a = a + 1;
-            } while (a < b);
-            console.log(output.join(node.os.EOL));
-        } else if (options.readmethod === "filescreen" || options.readmethod === "screen") {
-            if (verbose === true) {
-                if (options.readmethod === "filescreen") {
-                    console.log(`Parsed input from file ${text.cyan + path + text.none}`);
-                } else {
-                    console.log("Parsed input from terminal.");
-                }
+                    str = [];
+                    if (outputArrays.lexer[a] === "markup") {
+                        str.push(text.red);
+                    } else if (outputArrays.lexer[a] === "script") {
+                        str.push(text.green);
+                    } else if (outputArrays.lexer[a] === "style") {
+                        str.push(text.yellow);
+                    }
+                    pad(a.toString(), 5);
+                    pad(outputArrays.begin[a].toString(), 5);
+                    pad(outputArrays.lexer[a].toString(), 5);
+                    pad(outputArrays.lines[a].toString(), 5);
+                    pad(outputArrays.presv[a].toString(), 5);
+                    pad(outputArrays.stack[a].toString(), 11);
+                    pad(outputArrays.types[a].toString(), 11);
+                    str.push(outputArrays.token[a].replace(/\s/g, " "));
+                    str.push(text.none);
+                    output.push(str.join(""));
+                    a = a + 1;
+                } while (a < b);
+                console.log(output.join(node.os.EOL));
+            } else {
+                apps.readMethodOutput(path, JSON.stringify(options.parsed));
             }
-            console.log(JSON.stringify(options.parsed));
         } else {
-            // must return parse table
+            // call the next operation (other mode)
         }
     };
     // similar to node's fs.readFile, but determines if the file is binary or text so that it can create either a buffer or text dump
@@ -2853,7 +2901,7 @@ interface readFile {
             return;
         }
         const readmethod:string = options.readmethod,
-            auto:boolean = (readmethod === "auto"),
+            //auto:boolean = (readmethod === "auto"),
             all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`),
             item:string = (diff === true)
                 ? "diff"
@@ -2861,7 +2909,7 @@ interface readFile {
             resolve = function node_apps_readmethod_resolve() {
                 node.fs.stat(options[item], function node_apps_readmethod_resolve_stat(err:Error, stat:Stats):void {
                     const resolveItem = function node_apps_readmethod_resolve_stat_resolveItem() {
-                        const final = function node_apps_readmethod_application_final():void {
+                        /*const final = function node_apps_readmethod_application_final():void {
                                 const output:string[] = [];
                                 if (verbose === true) {
                                     if (auto === true) {
@@ -2870,15 +2918,9 @@ interface readFile {
                                     if (auto === true) {
                                         apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}readmethod${text.none} set to ${text.angry}auto${text.none} and interpreted as ${text.green + options.readmethod + text.none}.`);
                                     }
-                                    //if (flags.lang === true && flags.directory === false) {
-                                        //apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}lang${text.none} set to ${text.angry}auto${text.none} and evaluated by Pretty Diff as ${text.green + text.bold + lang[2] + text.none} by lexer ${text.green + text.bold + lang[1] + text.none}.`);
-                                    //}
-                                }
-                                if (options.readmethod !== "screen" && options.readmethod !== "filescreen") {
-                                    output.push(`Output written to ${text.cyan + options.output + text.none} at ${text.green + apps.commas(options.source.length) + text.none} characters.`);
                                 }
                                 apps.output(output);
-                            };
+                            };*/
                         if (options.readmethod === "directory" || options.readmethod === "subdirectory") {
                             apps.directory({
                                 callback: function node_apps_readmethod_resolve_stat_resolveItem_directoryCallback(list:directoryList):void {
@@ -2897,7 +2939,7 @@ interface readFile {
                                         // 2 execute mode
                                         // 3 output result
                                         apps.parser(args.path, dump);
-                                        final();
+                                        //final();
                                     } else {
                                         apps.errout([`The file at ${options[item]} contains a binary buffer.  Pretty Diff does not analyze binary at this time.`]);
                                     }
@@ -2939,9 +2981,11 @@ interface readFile {
                             if (options.output === "") {
                                 const wrapped:string[] = [];
                                 options.readmethod = "filescreen";
-                                apps.wrapit(wrapped, `Option ${text.angry}output${text.none} was not specified and the value provided for option ${text.cyan}source${text.none} appears to be a file. Output will be printed to the terminal. Please specify a value to option ${text.cyan}output${text.none} for file output to be written to a file.`);
-                                console.log(wrapped.join(node.os.EOL));
-                                console.log("");
+                                if (command !== "parse" || options.parseformat !== "clitable") {
+                                    apps.wrapit(wrapped, `Option ${text.angry}output${text.none} was not specified and the value provided for option ${text.cyan}source${text.none} appears to be a file. Output will be printed to the terminal. Please specify a value to option ${text.cyan}output${text.none} for file output to be written to a file.`);
+                                    console.log(wrapped.join(node.os.EOL));
+                                    console.log("");
+                                }
                             } else {
                                 options.readmethod = "file";
                             }
@@ -2968,7 +3012,7 @@ interface readFile {
                         }
                         options.output = node.path.resolve(options.output);
                         node.fs.stat(options.output, function node_apps_readmethod_resolve_stat_statOutput(ers:Error, ostat:Stats):void {
-                            if (ers !== null && ers.toString().indexOf("ENOENT") > -1) {
+                            if (ers !== null && ers.toString().indexOf("ENOENT") < 0) {
                                 apps.errout([ers.toString()]);
                                 return;
                             }
@@ -3219,6 +3263,47 @@ interface readFile {
         });
         return;*/
     };
+    // outputs Pretty Diff generated code from: beautify, minify, parse commands
+    apps.readMethodOutput = function node_apps_readMethodOutput(path:string, code:string|Buffer) {
+        const tense:string = (function node_apps_readmethodOutput_tense():string {
+                if (options.mode === "beautify") {
+                    return "Beautified";
+                }
+                if (options.mode === "minify") {
+                    return "Minified";
+                }
+                if (options.mode === "parse") {
+                    return "Parsed";
+                }
+            }()),
+            output:string[] = [];
+        if (options.readmethod === "filescreen" || options.readmethod === "screen") {
+            if (verbose === true) {
+                if (options.readmethod === "filescreen") {
+                    output.push(`${tense} input from file ${text.cyan + path + text.none}`);
+                } else {
+                    output.push(`${tense} input from terminal.`);
+                }
+            }
+            if (typeof code === "string") {
+                output.push(code);
+            } else {
+                output.push(code.toString("utf8"));
+            }
+            apps.output(output);
+        } else if (options.readmethod === "file") {
+            const outPath:string = node.path.resolve(options.output);
+            node.fs.writeFile(outPath, code, function node_apps_readmethodOutput_writeFile(err:Error):void {
+                if (err !== null) {
+                    apps.errout([err.toString()]);
+                    return;
+                }
+                output.push(`${tense} input from file ${text.cyan + path + text.none}.`);
+                output.push(`Wrote output to ${text.green + outPath + text.none} at ${text.green + apps.commas(code.length) + text.none} characters.`);
+                apps.output(output);
+            });
+        }
+    };
     // similar to posix "rm -rf" command
     apps.remove = function node_apps_remove(filepath:string, callback:Function):void {
         const numb:any = {
@@ -3253,6 +3338,10 @@ interface readFile {
                             }
                         });
                     };
+                if (filelist.length < 1) {
+                    callback();
+                    return;
+                }
                 do {
                     if (command === "remove") {
                         if (filelist[a][1] === "file") {
@@ -3489,7 +3578,7 @@ interface readFile {
                     };
                 console.log("");
                 start = time(`Compiling TypeScript for ${text.green + filename + text.none}`);
-                node.child(`node js/services build nolint`, {
+                node.child(`node js/services build nocheck`, {
                     cwd: projectPath
                 }, function node_apps_server_watch_child(err:Error, stdout:string, stderr:string):void {
                     if (err !== null) {
@@ -3527,7 +3616,7 @@ interface readFile {
                     test: `Command '${text.angry}b${text.none}' is ambiguous as it could refer to any of: [${text.cyan}base64, beautify, build${text.none}]`
                 },
                 {
-                    command: "base64 tsconfig.json",
+                    command: `base64 ${projectPath}tsconfig.json`,
                     qualifier: "is",
                     test: "ewogICAgImNvbXBpbGVyT3B0aW9ucyI6IHsKICAgICAgICAidGFyZ2V0IjogIkVTNiIsCiAgICAgICAgIm91dERpciI6ICJqcyIKICAgIH0sCiAgICAiaW5jbHVkZSI6IFsKICAgICAgICAiKi50cyIsCiAgICAgICAgIioqLyoudHMiCiAgICBdLAogICAgImV4Y2x1ZGUiOiBbCiAgICAgICAgImpzIiwKICAgICAgICAibm9kZV9tb2R1bGVzIiwKICAgICAgICAidGVzdCIKICAgIF0KfQ=="
                 },
@@ -3587,15 +3676,15 @@ interface readFile {
                     test: "The copy command requires a source path and a destination path."
                 },
                 {
-                    artifact: "temp",
-                    command: "copy js temp",
+                    artifact: `${projectPath}temp`,
+                    command: `copy ${projectPath}js ${projectPath}temp`,
                     qualifier: "filesystem contains",
                     test: `temp${supersep}minify${supersep}style.js`
                 },
                 {
-                    artifact: "temp",
-                    command: "copy js temp 2",
-                    file: `temp${supersep}minify${supersep}style.js`,
+                    artifact: `${projectPath}temp`,
+                    command: `copy ${projectPath}js ${projectPath}temp 2`,
+                    file: `${projectPath}temp${supersep}minify${supersep}style.js`,
                     qualifier: "file begins",
                     test: "/*global global*/"
                 },
@@ -3605,22 +3694,22 @@ interface readFile {
                     test: "No path supplied for the directory command."
                 },
                 {
-                    command: "directory js listonly",
+                    command: `directory ${projectPath}js listonly`,
                     qualifier: "not contains",
                     test: `"ctimeMs":`
                 },
                 {
-                    command: `directory js`,
+                    command: `directory ${projectPath}js`,
                     qualifier: "contains",
                     test: `js${supersep}minify${supersep}style.js","file"`
                 },
                 {
-                    command: `directory js 2`,
+                    command: `directory ${projectPath}js 2`,
                     qualifier: "contains",
                     test: `"ctimeMs":`
                 },
                 {
-                    command: `directory js ignore ["minify"]`,
+                    command: `directory ${projectPath}js ignore ["minify"]`,
                     qualifier: "not contains",
                     test: `js${supersep}minify${supersep}style.js"`
                 },
@@ -3628,6 +3717,21 @@ interface readFile {
                     command: `directory ".${supersep}" ignore ["node_modules", ".git", ".DS_Store"] --verbose`,
                     qualifier: "contains",
                     test: ` matching items from address `
+                },
+                {
+                    command: `directory ${projectPath}js typeof`,
+                    qualifier: "is",
+                    test: "directory"
+                },
+                {
+                    command: `directory typeof ${projectPath}js`,
+                    qualifier: "is",
+                    test: "directory"
+                },
+                {
+                    command: `directory typeof ${projectPath}js${supersep}beautify${supersep}style.js`,
+                    qualifier: "is",
+                    test: "file"
                 },
                 {
                     command: "get https://duckduckgo.com/",
@@ -3645,12 +3749,12 @@ interface readFile {
                     test: `${sep}asdf${text.none} is not a file or directory.`
                 },
                 {
-                    command: "hash tsconfig.json",
+                    command: `hash ${projectPath}tsconfig.json`,
                     qualifier: "is",
                     test: "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
                 },
                 {
-                    command: "hash tsconfig.json --verbose",
+                    command: `hash ${projectPath}tsconfig.json --verbose`,
                     qualifier: "contains",
                     test: "parse-framework version "
                 },
@@ -3680,7 +3784,7 @@ interface readFile {
                     test: "XXXX seconds total time"
                 },
                 {
-                    command: "lint js/beautify",
+                    command: `lint ${projectPath}js${supersep}beautify`,
                     qualifier: "ends",
                     test: `${text.green}Lint complete for XXXX files!${text.none}`
                 },
@@ -3740,12 +3844,12 @@ interface readFile {
                     test: `{"begin":[-1,-1],"lexer":["script","script"],"lines":[0,1],"presv":[false,false],"stack":["global","global"],"token":["tsconfig","\\n"],"types":["word","string"]}`
                 },
                 {
-                    command: "parse tsconfig.json",
+                    command: `parse ${projectPath}tsconfig.json`,
                     qualifier: "begins",
                     test:`Option ${text.angry}output${text.none} was not specified and the value provided for option ${text.cyan}source${text.none} appears to be a file.`
                 },
                 {
-                    command: "parse tsconfig.json 2",
+                    command: `parse ${projectPath}tsconfig.json 2`,
                     qualifier: "contains",
                     test: `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,0],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,2,2],"presv":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","end","end"]}`
                 },
@@ -3755,9 +3859,32 @@ interface readFile {
                     test: "ENOENT: no such file or directory"
                 },
                 {
-                    command: "parse tsconfig.json readmethod:filescreen",
+                    command: `parse ${projectPath}tsconfig.json readmethod:filescreen`,
                     qualifier: "is",
                     test: `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,0],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,2,2],"presv":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","end","end"]}`
+                },
+                {
+                    command: `parse ${projectPath}tsconfig.json parseFormat:clitable`,
+                    qualifier: "begins",
+                    test: `index | begin | lexer  | lines | presv | stack       | types       | token${node.os.EOL}------|-------|--------|-------|-------|-------------|-------------|------${node.os.EOL + text.green}0     | -1    | script | XXXX     | false | global      | start       | {${text.none}`
+                },
+                {
+                    command: `parse ${projectPath}tsconfig.json readmethod:file`,
+                    qualifier: "contains",
+                    test: `If option readmethod evaluates to value ${text.cyan}file${text.none} option ${text.angry}output${text.none} is required.`
+                },
+                {
+                    artifact: `${projectPath}parsetest.txt`,
+                    command: `parse ${projectPath}tsconfig.json readmethod:file output:"${projectPath}parsetest.txt"`,
+                    qualifier: "begins",
+                    test: `Parsed input from file ${text.cyan + projectPath}tsconfig.json${text.none}.`
+                },
+                {
+                    artifact: `${projectPath}parsetest.txt`,
+                    command: `parse ${projectPath}tsconfig.json readmethod:file output:"parsetest.txt"`,
+                    file: `${projectPath}parsetest.txt`,
+                    qualifier: "file is",
+                    test:  `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,0],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,2,2],"presv":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","end","end"]}`
                 },
                 {
                     command: "version",

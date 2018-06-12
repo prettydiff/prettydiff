@@ -1,5 +1,6 @@
 # Pretty Diff version 3
 A language aware diff, beautification, and minification tool.
+
 [![Build Status](https://semaphoreci.com/api/v1/prettydiff/prettydiff/branches/3-0-0/badge.svg)](https://semaphoreci.com/prettydiff/prettydiff)
 
 ## Build
@@ -10,8 +11,9 @@ cd prettydiff3
 
 npm install typescript -g
 npm install eslint -g
+tsc --pretty
 
-node js/services build
+node js/services build nocheck
 ```
 
 ## Usage
@@ -33,3 +35,4 @@ Executing in a terminal shell is powerful when you need access to additional too
 * To see a list of available Pretty Diff options execute `node js/services options`
 * The option list supports filtering against the documentation headings and values: `node js/services options mode:diff api:node`
 * For detailed documentation about a specific option execute the option command with the named option: `node js/services options readmethod`
+* To see execution details of a specific command specify the *verbose* flag: `node js/services options readmethod --verbose`
