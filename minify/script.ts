@@ -3,9 +3,9 @@
     "use strict";
     const script = function minify_script(options:any):string {
         (function minify_script_options() {
-            if (options.lang === "json") {
+            if (options.language === "json") {
                 options.wrap = 0;
-            } else if (options.lang === "titanium") {
+            } else if (options.language === "titanium") {
                 options.correct = false;
             }
         }());
@@ -40,7 +40,7 @@
         let a:number        = options.start,
             external:string = "",
             linelen:number  = 0;
-        if (options.topcoms === true && data.types[a] === "comment") {
+        if (options.top_comments === true && data.types[a] === "comment") {
             if (a > 0) {
                 build.push(lf);
             }
@@ -104,13 +104,13 @@
                     a = a + 1;
                 } while (a < end);
                 options.end = a;
-                options.inlevel = 0;
+                options.indent_level = 0;
                 external = prettydiff.minify[data.lexer[a]](options).replace(/\s+$/, "");
                 build.push(external);
             }
             a = a + 1;
         } while (a < end);
-        if (options.newline === true) {
+        if (options.new_line === true) {
             if (options.crlf === true) {
                 build.push("\r\n");
             } else {

@@ -85,9 +85,9 @@
                     comstart:number = -1,
                     next:number = 0,
                     skip:number     = 0,
-                    indent:number       = (isNaN(options.inlevel) === true)
+                    indent:number       = (isNaN(options.indent_level) === true)
                         ? 0
-                        : Number(options.inlevel);
+                        : Number(options.indent_level);
                 // data.lines -> space before token
                 // level -> space after token
                 do {
@@ -153,12 +153,12 @@
             const build:string[]        = [],
                 len:number = levels.length,
                 ind          = (function beautify_markup_apply_tab():string {
-                    const indy:string[] = [options.inchar],
-                        size:number = options.insize - 1;
+                    const indy:string[] = [options.indent_char],
+                        size:number = options.indent_size - 1;
                     let aa:number   = 0;
                     if (aa < size) {
                         do {
-                            indy.push(options.inchar);
+                            indy.push(options.indent_char);
                             aa = aa + 1;
                         } while (aa < size);
                     }
@@ -245,7 +245,7 @@
                     }
                 } else {
                     options.end = levels[a];
-                    options.inlevel = lastLevel + 1;
+                    options.indent_level = lastLevel + 1;
                     options.start = a;
                     external = nl(lastLevel + 1) + prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "") + nl(lastLevel);
                     build.push(external);
@@ -256,7 +256,7 @@
             if (build[0] === lf || build[0] === " ") {
                 build[0] = "";
             }
-            if (options.newline === true && options.end === data.token.length) {
+            if (options.new_line === true && options.end === data.token.length) {
                 build.push(lf);
             }
             return build.join("");

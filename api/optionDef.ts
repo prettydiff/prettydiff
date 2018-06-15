@@ -26,7 +26,7 @@
                 },
                 default   : "none"
             },
-            braceline      : {
+            brace_line      : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "script",
@@ -36,7 +36,7 @@
                         "efore closing curly braces.",
                 default   : false
             },
-            bracepadding   : {
+            brace_padding   : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "script",
@@ -83,7 +83,7 @@
                         " code.",
                 default   : false
             },
-            commline       : {
+            comm_line       : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "markup",
@@ -92,7 +92,7 @@
                 definition: "If a blank new line should be forced above comments.",
                 default   : false
             },
-            completeDocument: {
+            complete_document: {
                 api: "any",
                 mode: "any",
                 lexer: "markup",
@@ -101,7 +101,7 @@
                 definition: "Allows a preference for generating a complete HTML document instead of only generating content.",
                 default: false
             },
-            compressedcss  : {
+            compressed_css  : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "css",
@@ -160,7 +160,7 @@
                         "default.",
                 default   : false
             },
-            cssinsertlines : {
+            css_insert_lines : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "css",
@@ -169,7 +169,7 @@
                 definition: "Inserts new line characters between every CSS code block.",
                 default   : false
             },
-            csvchar        : {
+            csv_char        : {
                 api       : "any",
                 mode      : "any",
                 lexer     : "csv",
@@ -189,7 +189,7 @@
                         " 'diff'.",
                 default   : ""
             },
-            diffcli        : {
+            diff_cli        : {
                 api       : "node",
                 mode      : "diff",
                 lexer     : "any",
@@ -199,7 +199,7 @@
                         "L diff report.",
                 default   : true
             },
-            diffcomments   : {
+            diff_comments   : {
                 api       : "any",
                 mode      : "diff",
                 lexer     : "any",
@@ -209,7 +209,7 @@
                         "pared by the diff engine.",
                 default   : false
             },
-            difflabel      : {
+            diff_label      : {
                 api       : "any",
                 mode      : "diff",
                 lexer     : "any",
@@ -219,7 +219,7 @@
                         "tput.",
                 default   : "New Sample"
             },
-            diffspaceignore: {
+            diff_space_ignore: {
                 api       : "any",
                 mode      : "diff",
                 lexer     : "any",
@@ -228,7 +228,7 @@
                 definition: "If white space only differences should be ignored by the diff tool.",
                 default   : false
             },
-            diffview       : {
+            diff_view       : {
                 api       : "any",
                 mode      : "diff",
                 lexer     : "any",
@@ -242,7 +242,7 @@
                 },
                 default   : "sidebyside"
             },
-            elseline       : {
+            else_line       : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "script",
@@ -260,7 +260,7 @@
                 definition: "Which index of the parse table should the application stop. This option is useful internally when recursively sliding between various libraries. The default value of 0 means to ignore this option.",
                 default: 0
             },
-            endcomma       : {
+            end_comma       : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "script",
@@ -275,7 +275,7 @@
                 },
                 default   : "never"
             },
-            endquietly     : {
+            end_quietly     : {
                 api       : "node",
                 mode      : "any",
                 lexer     : "any",
@@ -308,7 +308,7 @@
                         "out regard for the creation of new text nodes.",
                 default   : false
             },
-            formatArray    : {
+            format_array    : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "script",
@@ -323,7 +323,7 @@
                 },
                 default   : "default"
             },
-            formatObject   : {
+            format_object   : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "script",
@@ -338,7 +338,7 @@
                 },
                 default   : "default"
             },
-            functionname   : {
+            function_name   : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "script",
@@ -357,7 +357,7 @@
                         " where to wrap text.",
                 default   : 80
             },
-            inchar         : {
+            indent_char         : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "any",
@@ -367,7 +367,7 @@
                         " is accepted.",
                 default   : " "
             },
-            inlevel        : {
+            indent_level        : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "any",
@@ -376,7 +376,7 @@
                 definition: "How much indentation padding should be applied to beautification? This option is internally used for code requires switching between libraries.",
                 default   : 0
             },
-            insize         : {
+            indent_size         : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "any",
@@ -401,7 +401,7 @@
                 },
                 default   : "none"
             },
-            lang           : {
+            language       : {
                 api       : "any",
                 mode      : "any",
                 lexer     : "any",
@@ -410,7 +410,7 @@
                 definition: "The lowercase single word common name of the source code's programming language.",
                 default   : "auto"
             },
-            langdefault    : {
+            language_default: {
                 api       : "any",
                 mode      : "any",
                 lexer     : "any",
@@ -434,7 +434,7 @@
                 },
                 default   : "script"
             },
-            listoptions    : {
+            list_options    : {
                 api       : "node",
                 mode      : "any",
                 lexer     : "any",
@@ -443,7 +443,7 @@
                 definition: "A Node.js only option that writes current option settings to the console.",
                 default   : false
             },
-            methodchain    : {
+            method_chain    : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "script",
@@ -452,7 +452,7 @@
                 definition: "When to break consecutively chained methods and properties onto separate lines. A negative value disables this option. A value of 0 ensures method chains are never broken.",
                 default   : "3"
             },
-            miniwrap       : {
+            minify_wrap       : {
                 api       : "any",
                 mode      : "minify",
                 lexer     : "script",
@@ -479,7 +479,7 @@
                 },
                 default   : "diff"
             },
-            newline        : {
+            new_line        : {
                 api       : "any",
                 mode      : "any",
                 lexer     : "any",
@@ -488,7 +488,7 @@
                 definition: "Insert an empty line at the end of output.",
                 default   : false
             },
-            neverflatten   : {
+            never_flatten   : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "script",
@@ -497,7 +497,16 @@
                 definition: "If destructured lists in script should never be flattend.",
                 default   : false
             },
-            nocaseindent   : {
+            node_error      : {
+                api       : "node",
+                mode      : "any",
+                lexer     : "any",
+                label     : "Write Parse Errors in Node",
+                type      : "boolean",
+                definition: "A Node.js only option if parse errors should be written to the console.",
+                default   : false
+            },
+            no_case_indent   : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "script",
@@ -507,16 +516,7 @@
                         "ch block.",
                 default   : false
             },
-            nodeerror      : {
-                api       : "node",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Write Parse Errors in Node",
-                type      : "boolean",
-                definition: "A Node.js only option if parse errors should be written to the console.",
-                default   : false
-            },
-            noleadzero     : {
+            no_lead_zero     : {
                 api       : "any",
                 mode      : "any",
                 lexer     : "style",
@@ -526,7 +526,7 @@
                         "moved or prevented.",
                 default   : false
             },
-            objectSort        : {
+            object_sort        : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "any",
@@ -545,7 +545,7 @@
                         "e of the file to write the output.  The path will be created or overwritten.",
                 default   : ""
             },
-            parseFormat    : {
+            parse_format    : {
                 api       : "any",
                 mode      : "parse",
                 lexer     : "any",
@@ -561,7 +561,7 @@
                 },
                 default   : "parallel"
             },
-            parseSpace     : {
+            parse_space     : {
                 api       : "any",
                 mode      : "parse",
                 lexer     : "markup",
@@ -579,7 +579,7 @@
                 definition: "The maximum number of consecutive empty lines to retain.",
                 default   : 0
             },
-            preserveComment: {
+            preserve_comment: {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "any",
@@ -599,7 +599,7 @@
                         "inate some differences from the diff report HTML output.",
                 default   : false
             },
-            quoteConvert   : {
+            quote_convert   : {
                 api       : "any",
                 mode      : "any",
                 lexer     : "any",
@@ -614,7 +614,7 @@
                 },
                 default   : "none"
             },
-            readmethod     : {
+            read_method     : {
                 api       : "node",
                 mode      : "any",
                 lexer     : "any",
@@ -631,7 +631,7 @@
                 },
                 default   : "auto"
             },
-            selectorlist   : {
+            selector_list   : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "style",
@@ -661,7 +661,7 @@
                         "l modes.",
                 default   : ""
             },
-            sourcelabel    : {
+            source_label    : {
                 api       : "any",
                 mode      : "diff",
                 lexer     : "any",
@@ -680,7 +680,7 @@
                 definition: "Inserts a space following the function keyword for anonymous functions.",
                 default   : true
             },
-            spaceclose     : {
+            space_close     : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "markup",
@@ -720,7 +720,7 @@
                 },
                 default   : "none"
             },
-            summaryonly    : {
+            summary_only    : {
                 api       : "node",
                 mode      : "diff",
                 lexer     : "any",
@@ -729,7 +729,7 @@
                 definition: "Node only option to output only number of differences.",
                 default   : false
             },
-            tagmerge       : {
+            tag_merge       : {
                 api       : "any",
                 mode      : "any",
                 lexer     : "markup",
@@ -739,7 +739,7 @@
                         " combined into a single self-closing tag.",
                 default   : false
             },
-            tagsort        : {
+            tag_sort        : {
                 api       : "any",
                 mode      : "any",
                 lexer     : "markup",
@@ -748,7 +748,7 @@
                 definition: "Sort child items of each respective markup parent element.",
                 default   : false
             },
-            textpreserve   : {
+            text_preserve   : {
                 api       : "any",
                 mode      : "any",
                 lexer     : "markup",
@@ -758,7 +758,7 @@
                         "his option eliminates beautification and wrapping of text content.",
                 default   : false
             },
-            ternaryline    : {
+            ternary_line    : {
                 api       : "any",
                 mode      : "beautify",
                 lexer     : "script",
@@ -767,7 +767,7 @@
                 definition: "If ternary operators in JavaScript (? and :) should remain on the same line.",
                 default   : false
             },
-            topcoms        : {
+            top_comments    : {
                 api       : "any",
                 mode      : "minify",
                 lexer     : "any",
@@ -786,7 +786,7 @@
                 definition: "If markup tags should have their insides preserved.",
                 default   : false
             },
-            varword        : {
+            variable_list       : {
                 api       : "any",
                 mode      : "any",
                 lexer     : "script",

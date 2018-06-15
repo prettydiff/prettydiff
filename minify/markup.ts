@@ -155,7 +155,7 @@
             let a:number            = options.start,
                 external:string = "",
                 lastLevel:number = 0;
-            if (options.topcoms === true && data.types[a] === "comment") {
+            if (options.top_comments === true && data.types[a] === "comment") {
                 if (a > 0) {
                     build.push(lf);
                 }
@@ -183,7 +183,7 @@
                     }
                 } else {
                     options.end = levels[a];
-                    options.inlevel = lastLevel + 1;
+                    options.indent_level = lastLevel + 1;
                     options.start = a;
                     external = prettydiff.minify[data.lexer[a]](options).replace(/\s+$/, "");
                     build.push(external);
@@ -194,7 +194,7 @@
             if (build[0] === lf || build[0] === " ") {
                 build[0] = "";
             }
-            if (options.newline === true && options.end === data.token.length) {
+            if (options.new_line === true && options.end === data.token.length) {
                 build.push(lf);
             }
             return build.join("");

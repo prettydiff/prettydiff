@@ -619,7 +619,6 @@ interface readFile {
                 let split:string = "",
                     value:string = "",
                     name:string = "",
-                    nameLow:string = "",
                     a:number = 0,
                     si:number = 0,
                     len:number = list.length;
@@ -665,12 +664,10 @@ interface readFile {
                             }
                         } else if (list[a].indexOf(split) > 0 || (list[a].indexOf(split) < 0 && list[a + 1] !== undefined && (list[a + 1].charAt(0) === ":" || list[a + 1].charAt(0) === "="))) {
                             if (list[a].indexOf(split) > 0) {
-                                name = list[a].slice(0, list[a].indexOf(split));
-                                nameLow = name.toLowerCase();
+                                name = list[a].slice(0, list[a].indexOf(split)).toLowerCase();
                                 value = list[a].slice(list[a].indexOf(split) + 1);
                             } else {
-                                name = list[a];
-                                nameLow = name.toLowerCase();
+                                name = list[a].toLowerCase();
                                 value = list[a + 1].slice(1);
                                 list.splice(a + 1, 1);
                                 len = len - 1;
@@ -686,17 +683,17 @@ interface readFile {
                                     list.splice(a, 1);
                                     len = len - 1;
                                 }
-                            } else if (options[nameLow] !== undefined) {
+                            } else if (options[name] !== undefined) {
                                 if (value === "true" && def[name].type === "boolean") {
-                                    options[nameLow] = true;
+                                    options[name] = true;
                                 } else if (value === "false" && def[name].type === "boolean") {
-                                    options[nameLow] = false;
+                                    options[name] = false;
                                 } else if (isNaN(Number(value)) === false && def[name].type === "number") {
-                                    options[nameLow] = Number(value);
+                                    options[name] = Number(value);
                                 } else if (def[name].values !== undefined && def[name].values[value] !== undefined) {
-                                    options[nameLow] = value;
+                                    options[name] = value;
                                 } else if (def[name].values === undefined) {
-                                    options[nameLow] = value;
+                                    options[name] = value;
                                 }
                             }
                         } else if (command === "options") {
@@ -711,7 +708,7 @@ interface readFile {
             };
         let dirs:number = 0,
             dirstotal:number = 0;
-        options.binaryCheck = (
+        options.binary_check = (
             // eslint-disable-next-line
             /\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u000b|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g
         );
@@ -733,7 +730,7 @@ interface readFile {
                     ? Buffer.from(string, "base64").toString("utf8")
                     : Buffer.from(string).toString("base64");
                 if (verbose === true) {
-                    apps.output([output]);
+                    apps.log([output]);
                 } else {
                     console.log(output);
                 }
@@ -775,7 +772,7 @@ interface readFile {
                                                 ? Buffer.from(buffera.toString("utf8"), "base64").toString("utf8")
                                                 : buffera.toString("base64");
                                             if (verbose === true) {
-                                                apps.output([output]);
+                                                apps.log([output]);
                                             } else {
                                                 console.log(output);
                                             }
@@ -862,7 +859,7 @@ interface readFile {
                 if (order.length < 1) {
                     verbose = true;
                     heading("All tasks complete... Exiting clean!\u0007");
-                    apps.output([""]);
+                    apps.log([""]);
                     process.exit(0);
                     return;
                 }
@@ -931,11 +928,7 @@ interface readFile {
                                         do {
                                             apikey = prettydiff.api.optionDef[optkeys[a]].api;
                                             if (apikey === "any" || apikey === api) {
-                                                if (api === "node") {
-                                                    obj[optkeys[a].toLowerCase()] = prettydiff.api.optionDef[optkeys[a]].default;
-                                                } else {
-                                                    obj[optkeys[a]] = prettydiff.api.optionDef[optkeys[a]].default;
-                                                }
+                                                obj[optkeys[a]] = prettydiff.api.optionDef[optkeys[a]].default;
                                             }
                                             a = a + 1;
                                         } while (a < keyslen);
@@ -1238,32 +1231,46 @@ interface readFile {
                     });
                 },
                 parseFramework: function node_apps_build_parseFramework():void {
-                    heading("Building parse-framework");
-                    node.child(`tsc --pretty`, {
-                        cwd: `node_modules${sep}parse-framework`
-                    }, function node_apps_build_parseFramework_tsc(err:Error, stdout:string, stderr:string):void {
-                        if (err !== null) {
-                            apps.errout([err.toString()]);
-                            return;
-                        }
-                        if (stderr !== "") {
-                            apps.errout([stderr]);
-                            return;
-                        }
-                        node.child(`node js${sep}services build`, {
-                            cwd: `node_modules${sep}parse-framework`
-                        }, function node_apps_build_parseFramework_tsc_build(erb:Error, stbout:string, stberr:string):void {
-                            if (erb !== null) {
-                                apps.errout([erb.toString()]);
+                    heading("Checking for built parse-framework");
+                    const frame:string = `node_modules${sep}parse-framework`;
+                    node.fs.stat(`${frame + sep}js${sep}parse.js`, function node_apps_build_parseFramework(ers:nodeError):void {
+                        if (ers !== null) {
+                            if (ers.code === "ENOENT") {
+                                console.log(`${apps.humantime(false)}Parse Framework does not appear to be built... building now.`);
+                                node.child(`tsc --pretty`, {
+                                    cwd: frame
+                                }, function node_apps_build_parseFramework_tsc(err:Error, stdout:string, stderr:string):void {
+                                    if (err !== null) {
+                                        apps.errout([err.toString()]);
+                                        return;
+                                    }
+                                    if (stderr !== "") {
+                                        apps.errout([stderr]);
+                                        return;
+                                    }
+                                    node.child(`node js${sep}services build`, {
+                                        cwd: frame
+                                    }, function node_apps_build_parseFramework_tsc_build(erb:Error, stbout:string, stberr:string):void {
+                                        if (erb !== null) {
+                                            apps.errout([erb.toString()]);
+                                            return;
+                                        }
+                                        if (stberr !== "") {
+                                            apps.errout([stberr]);
+                                            return;
+                                        }
+                                        console.log(`${apps.humantime(false) + text.green}The parse-framework dependency built.${text.none}`);
+                                        next();
+                                    });
+                                });
+                            } else {
+                                apps.errout([ers]);
                                 return;
                             }
-                            if (stberr !== "") {
-                                apps.errout([stberr]);
-                                return;
-                            }
-                            console.log(`${apps.humantime(false) + text.green}The parse-framework dependency built.${text.none}`);
+                        } else {
+                            console.log(`${apps.humantime(false) + text.green}The parse-framework dependency appears to already be built.${text.none}`);
                             next();
-                        });
+                        }
                     });
                 },
                 simulation: function node_apps_build_simulation():void {
@@ -1379,7 +1386,7 @@ interface readFile {
                 output.push("");
                 a = a + 1;
             } while (a < len);
-            apps.output(output);
+            apps.log(output);
         }
     };
     // converts numbers into a string of comma separated triplets
@@ -1651,7 +1658,7 @@ interface readFile {
                     out.push(text.none);
                     out.push(" bytes.");
                     verbose = true;
-                    apps.output([out.join(""), `Copied ${text.cyan + target + text.none} to ${text.green + destination + text.none}`]);
+                    apps.log([out.join(""), `Copied ${text.cyan + target + text.none} to ${text.green + destination + text.none}`]);
                 },
                 exclusions: exclusions,
                 destination: process.argv[1].replace(/(\\|\/)/g, sep),
@@ -1676,7 +1683,7 @@ interface readFile {
             return;
         }
         options.mode = "beautify";
-        if (options.lang !== "text") {
+        if (options.language !== "text") {
             const all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`);
             all(options, function node_apps_diff_allLexers() {
                 apps.readMethod(false, function node_apps_beautify_callback() {
@@ -1718,7 +1725,7 @@ interface readFile {
                                 let output:string[] = [];
                                 console.log("");
                                 apps.wrapit(output, `Pretty Diff found ${text.green + apps.commas(result.length) + text.none} matching items from address ${text.cyan + startPath + text.none} with a total file size of ${text.green + apps.commas(size) + text.none} bytes.`);
-                                apps.output(output);
+                                apps.log(output);
                             }
                         },
                         exclusions: exclusions,
@@ -1835,7 +1842,7 @@ interface readFile {
                                 return;
                             }
                             if (type === true) {
-                                apps.output([`Requested artifact, ${text.cyan + startPath + text.none}, ${text.angry}is missing${text.none}.`]);
+                                apps.log([`Requested artifact, ${text.cyan + startPath + text.none}, ${text.angry}is missing${text.none}.`]);
                                 return;
                             }
                             apps.errout([angrypath]);
@@ -1846,7 +1853,7 @@ interface readFile {
                     }
                     if (stat === undefined) {
                         if (type === true) {
-                            apps.output([`Requested artifact, ${text.cyan + startPath + text.none}, ${text.angry}is missing${text.none}.`]);
+                            apps.log([`Requested artifact, ${text.cyan + startPath + text.none}, ${text.angry}is missing${text.none}.`]);
                             return;
                         }
                         apps.errout([angrypath]);
@@ -1854,7 +1861,7 @@ interface readFile {
                     }
                     if (stat.isDirectory() === true) {
                         if (type === true) {
-                            apps.output(["directory"]);
+                            apps.log(["directory"]);
                             return;
                         }
                         if ((args.recursive === true || dirtest === false) && exclusions.indexOf(filepath.replace(startPath + sep, "")) < 0) {
@@ -1865,18 +1872,18 @@ interface readFile {
                         }
                     } else if (stat.isSymbolicLink() === true) {
                         if (type === true) {
-                            apps.output(["symbolicLink"]);
+                            apps.log(["symbolicLink"]);
                             return;
                         }
                         populate("link");
                     } else if (stat.isFile() === true || stat.isBlockDevice() === true || stat.isCharacterDevice() === true) {
                         if (type === true) {
                             if (stat.isBlockDevice() === true) {
-                                apps.output(["blockDevice"]);
+                                apps.log(["blockDevice"]);
                             } else if (stat.isCharacterDevice() === true) {
-                                apps.output(["characterDevice"]);
+                                apps.log(["characterDevice"]);
                             } else {
-                                apps.output(["file"]);
+                                apps.log(["file"]);
                             }
                             return;
                         }
@@ -1885,11 +1892,11 @@ interface readFile {
                     } else {
                         if (type === true) {
                             if (stat.isFIFO() === true) {
-                                apps.output(["FIFO"]);
+                                apps.log(["FIFO"]);
                             } else if (stat.isSocket() === true) {
-                                apps.output(["socket"]);
+                                apps.log(["socket"]);
                             } else {
-                                apps.output(["unknown"]);
+                                apps.log(["unknown"]);
                             }
                             return;
                         }
@@ -1967,7 +1974,7 @@ interface readFile {
                                             if (command === "hash" || command === "base64") {
                                                 callback(process.cwd() + sep + name);
                                             } else {
-                                                apps.output([`File ${text.cyan + name + text.none} written with ${apps.commas(file.toString().length)} characters.`]);
+                                                apps.log([`File ${text.cyan + name + text.none} written with ${apps.commas(file.toString().length)} characters.`]);
                                             }
                                         });
                                     } else {
@@ -1991,7 +1998,7 @@ interface readFile {
                         inc:number = 0;
                     statWrapper();
                 } else {
-                    apps.output([file.toString()]);
+                    apps.log([file.toString()]);
                 }
             };
         if ((/^(https?:\/\/)/).test(address) === false) {
@@ -2047,12 +2054,12 @@ interface readFile {
                         hash.update(hashes.join(""));
                         hashstring = hash.digest("hex").replace(/\s+$/, "");
                         if (verbose === true) {
-                            apps.output([
+                            apps.log([
                                 `Pretty Diff hashed ${text.cyan + filepath + text.none}`,
                                 hashstring
                             ]);
                         } else {
-                            apps.output([hashstring]);
+                            apps.log([hashstring]);
                         }
                     },
                     hashback = function node_apps_hash_dirComplete_hashback(data:readFile, item:string|Buffer, callback:Function):void {
@@ -2177,7 +2184,7 @@ interface readFile {
                 const hash:Hash = node.crypto.createHash("sha512");
                 process.argv.splice(process.argv.indexOf("string"), 1);
                 hash.update(process.argv[0]);
-                apps.output([hash.digest("hex")]);
+                apps.log([hash.digest("hex")]);
                 return;
             }
         }
@@ -2224,7 +2231,7 @@ interface readFile {
         output.push("or if not globally installed");
         output.push(`${text.cyan}node js/services commands${text.none}`);
         verbose = true;
-        apps.output(output);
+        apps.log(output);
     };
     // converting time durations into something people read
     apps.humantime = function node_apps_humantime(finished:boolean):string {
@@ -2391,7 +2398,7 @@ interface readFile {
             if (command === "lint") {
                 callback = function node_apps_lint_callback():void {
                     if (verbose === true) {
-                        apps.output([""]);
+                        apps.log([""]);
                     }
                 };
             }
@@ -2529,7 +2536,25 @@ interface readFile {
         } else if (command === "options") {
             output.push(`${text.green + lenn + text.none} matching option${plural}.`);
         }
-        apps.output(output);
+        apps.log(output);
+    };
+    // verbose metadata printed to the shell about Pretty Diff
+    apps.log = function node_apps_output(output:string[]):void {
+        if (verbose === true && (output.length > 1 || output[0] !== "")) {
+            console.log("");
+        }
+        if (output[output.length - 1] === "") {
+            output.pop();
+        }
+        output.forEach(function node_apps_output_each(value:string) {
+            console.log(value);
+        });
+        if (verbose === true) {
+            console.log("");
+            console.log(`parse-framework version ${text.angry + version.parse + text.none}`);
+            console.log(`Pretty Diff version ${text.angry + version.number + text.none} dated ${text.cyan + version.date + text.none}`);
+            apps.humantime(true);
+        }
     };
     // makes specified directory structures in the local file system
     apps.makedir = function node_apps_makedir(dirToMake:string, callback:Function):void {
@@ -2678,7 +2703,7 @@ interface readFile {
                     a = a + 1;
                 } while (a < keylen);
                 if (keylen < 1) {
-                    apps.output([`${text.angry}Pretty Diff has no options matching the query criteria.${text.none}`]);
+                    apps.log([`${text.angry}Pretty Diff has no options matching the query criteria.${text.none}`]);
                 } else {
                     apps.lists({
                         emptyline: true,
@@ -2698,27 +2723,50 @@ interface readFile {
             });
         }
     };
-    // verbose metadata printed to the shell about Pretty Diff 
-    apps.output = function node_apps_output(output:string[]):void {
-        if (verbose === true && (output.length > 1 || output[0] !== "")) {
-            console.log("");
-        }
-        if (output[output.length - 1] === "") {
-            output.pop();
-        }
-        output.forEach(function node_apps_output_each(value:string) {
-            console.log(value);
-        });
-        if (verbose === true) {
-            console.log("");
-            console.log(`parse-framework version ${text.angry + version.parse + text.none}`);
-            console.log(`Pretty Diff version ${text.angry + version.number + text.none} dated ${text.cyan + version.date + text.none}`);
-            apps.humantime(true);
+    // outputs Pretty Diff generated code from: beautify, minify, parse commands
+    apps.output = function node_apps_readMethodOutput(path:string, code:string|Buffer) {
+        const tense:string = (function node_apps_output_tense():string {
+                if (options.mode === "beautify") {
+                    return "Beautified";
+                }
+                if (options.mode === "minify") {
+                    return "Minified";
+                }
+                if (options.mode === "parse") {
+                    return "Parsed";
+                }
+            }()),
+            output:string[] = [];
+        if (options.read_method === "filescreen" || options.read_method === "screen") {
+            if (verbose === true) {
+                if (options.read_method === "filescreen") {
+                    output.push(`${tense} input from file ${text.cyan + path + text.none}`);
+                } else {
+                    output.push(`${tense} input from terminal.`);
+                }
+            }
+            if (typeof code === "string") {
+                output.push(code);
+            } else {
+                output.push(code.toString("utf8"));
+            }
+            apps.log(output);
+        } else if (options.read_method === "file") {
+            const outPath:string = node.path.resolve(options.output);
+            node.fs.writeFile(outPath, code, function node_apps_output_writeFile(err:Error):void {
+                if (err !== null) {
+                    apps.errout([err.toString()]);
+                    return;
+                }
+                output.push(`${tense} input from file ${text.cyan + path + text.none}.`);
+                output.push(`Wrote output to ${text.green + outPath + text.none} at ${text.green + apps.commas(code.length) + text.none} characters.`);
+                apps.log(output);
+            });
         }
     };
     // mode parse
     apps.parse = function node_apps_parse():void {
-        if (options.parseformat === "clitable") {
+        if (options.parse_format === "clitable") {
             verbose = true;
         }
         apps.readMethod(false, function node_apps_parse_callback() {
@@ -2728,21 +2776,24 @@ interface readFile {
     // where parsing actually occurs.  The apps.parse is a vanity function to map to the parse command
     apps.parser = function node_apps_parser(path:string, code:string):void {
         options.source = code;
-        if (options.lang === "auto") {
+        if (options.language === "auto") {
             const lang:language = prettydiff.api.language.auto(options.source, "javascript");
-            options.lang = lang[0];
+            options.language = lang[0];
             options.lexer = lang[1];
         }
-        if (options.parseformat === "clitable") {
-            options.readmethod = "screen";
+        if (options.parse_format === "clitable") {
+            options.read_method = "screen";
         }
-        if (command === "parse" && options.parseformat === "sequential") {
+        // necessary, because I have not updated the Parse Framework api to use the same property name
+        options.lang = options.language;
+
+        if (command === "parse" && options.parse_format === "sequential") {
             options.parsed = global.parseFramework.parserObjects(options);
         } else {
             options.parsed = global.parseFramework.parserArrays(options);
         }
         if (command === "parse") {
-            if (options.parseformat === "clitable") {
+            if (options.parse_format === "clitable") {
                 let a:number   = 0,
                     str:string[] = [];
                 const outputArrays:parsedArray = options.parsed,
@@ -2795,7 +2846,7 @@ interface readFile {
                 } while (a < b);
                 console.log(output.join(node.os.EOL));
             } else {
-                apps.readMethodOutput(path, JSON.stringify(options.parsed));
+                apps.output(path, JSON.stringify(options.parsed));
             }
         } else {
             // call the next operation (other mode)
@@ -2845,7 +2896,7 @@ interface readFile {
                             }
                             bstring = buffera.toString("utf8", 0, buffera.length);
                             bstring = bstring.slice(2, bstring.length - 2);
-                            if (options.binaryCheck.test(bstring) === true) {
+                            if (options.binary_check.test(bstring) === true) {
                                 buff = Buffer.alloc(args.stat.size);
                                 node
                                     .fs
@@ -2896,11 +2947,11 @@ interface readFile {
             ]);
             return;
         }
-        if (options.lang === "text") {
+        if (options.language === "text") {
             apps.errout([`Language value ${text.angry}text${text.none} is not compatible with command ${text.green + command + text.none}.`]);
             return;
         }
-        const readmethod:string = options.readmethod,
+        const readmethod:string = options.read_method,
             //auto:boolean = (readmethod === "auto"),
             all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`),
             item:string = (diff === true)
@@ -2916,19 +2967,19 @@ interface readFile {
                                         output.push("");
                                     }
                                     if (auto === true) {
-                                        apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}readmethod${text.none} set to ${text.angry}auto${text.none} and interpreted as ${text.green + options.readmethod + text.none}.`);
+                                        apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}read_method${text.none} set to ${text.angry}auto${text.none} and interpreted as ${text.green + options.read_method + text.none}.`);
                                     }
                                 }
-                                apps.output(output);
+                                apps.log(output);
                             };*/
-                        if (options.readmethod === "directory" || options.readmethod === "subdirectory") {
+                        if (options.read_method === "directory" || options.read_method === "subdirectory") {
                             apps.directory({
                                 callback: function node_apps_readmethod_resolve_stat_resolveItem_directoryCallback(list:directoryList):void {
                                     modeCallback(list);
                                 },
                                 exclusions: exclusions,
                                 path: options.source,
-                                recursive: (options.readmethod === "auto" || options.readmethod === "subdirectory"),
+                                recursive: (options.read_method === "auto" || options.read_method === "subdirectory"),
                                 symbolic: true
                             });
                         } else {
@@ -2966,28 +3017,28 @@ interface readFile {
                                 index[";"] > -1 ||
                                 index["{"] > -1
                             )) {
-                                // readmethod:auto evaluated as "screen"
-                                options.readmethod = "screen";
+                                // read_method:auto evaluated as "screen"
+                                options.read_method = "screen";
                                 apps.parser("", options[item]);
                             } else {
-                                // readmethod:auto evaluated as filesystem path pointing to missing resource
+                                // read_method:auto evaluated as filesystem path pointing to missing resource
                                 apps.errout([err.toString()]);
                             }
                             return;
                         }
                         if (stat.isDirectory() === true) {
-                            options.readmethod = "subdirectory";
+                            options.read_method = "subdirectory";
                         } else if (stat.isDirectory() === false && stat.isSymbolicLink() === false && stat.isFIFO() === false) {
                             if (options.output === "") {
                                 const wrapped:string[] = [];
-                                options.readmethod = "filescreen";
-                                if (command !== "parse" || options.parseformat !== "clitable") {
+                                options.read_method = "filescreen";
+                                if (command !== "parse" || options.parse_format !== "clitable") {
                                     apps.wrapit(wrapped, `Option ${text.angry}output${text.none} was not specified and the value provided for option ${text.cyan}source${text.none} appears to be a file. Output will be printed to the terminal. Please specify a value to option ${text.cyan}output${text.none} for file output to be written to a file.`);
                                     console.log(wrapped.join(node.os.EOL));
                                     console.log("");
                                 }
                             } else {
-                                options.readmethod = "file";
+                                options.read_method = "file";
                             }
                         }
                     }
@@ -2996,18 +3047,18 @@ interface readFile {
                         return;
                     }
                     options[item] = node.path.resolve(options[item]);
-                    if (stat.isDirectory() === false && (options.readmethod === "directory" || options.readmethod === "subdirectory")) {
-                        apps.errout([`Option ${text.cyan}readmethod${text.none} has value ${text.green + options.readmethod + text.none} but ${text.angry}option ${item} does not point to a directory${text.none}.`]);
+                    if (stat.isDirectory() === false && (options.read_method === "directory" || options.read_method === "subdirectory")) {
+                        apps.errout([`Option ${text.cyan}read_method${text.none} has value ${text.green + options.read_method + text.none} but ${text.angry}option ${item} does not point to a directory${text.none}.`]);
                         return;
                     }
-                    if ((stat.isDirectory() === true || stat.isSymbolicLink() === true || stat.isFIFO() === true) && (options.readmethod === "file" || options.readmethod === "filescreen")) {
-                        apps.errout([`Option ${text.cyan}readmethod${text.none} has value ${text.green + options.readmethod + text.none} but ${text.angry}option ${item} does not point to a file${text.none}.`]);
+                    if ((stat.isDirectory() === true || stat.isSymbolicLink() === true || stat.isFIFO() === true) && (options.read_method === "file" || options.read_method === "filescreen")) {
+                        apps.errout([`Option ${text.cyan}read_method${text.none} has value ${text.green + options.read_method + text.none} but ${text.angry}option ${item} does not point to a file${text.none}.`]);
                         return;
                     }
                     // resolving options.output path...
-                    if (options.readmethod !== "screen" && options.readmethod !== "filescreen" && diff === false) {
+                    if (options.read_method !== "screen" && options.read_method !== "filescreen" && diff === false) {
                         if (options.output === "") {
-                            apps.errout([`If option readmethod evaluates to value ${text.cyan + options.readmethod + text.none} option ${text.angry}output${text.none} is required.`]);
+                            apps.errout([`If option read_method evaluates to value ${text.cyan + options.read_method + text.none} option ${text.angry}output${text.none} is required.`]);
                             return;
                         }
                         options.output = node.path.resolve(options.output);
@@ -3018,16 +3069,16 @@ interface readFile {
                             }
                             if (ers === null) {
                                 if (ostat.isDirectory() === false && ostat.isSymbolicLink() === false && ostat.isFIFO() === false) {
-                                    if (options.readmethod === "directory" || options.readmethod === "subdirectory") {
-                                        apps.errout([`Option ${text.cyan}output${text.none} received value ${options.output} which is a file, but when option ${text.cyan}readmethod${text.none} has value ${text.green}directory${text.none} or ${text.green}subdirectory${text.none} the output option must point to a directory or new location.`]);
+                                    if (options.read_method === "directory" || options.read_method === "subdirectory") {
+                                        apps.errout([`Option ${text.cyan}output${text.none} received value ${options.output} which is a file, but when option ${text.cyan}read_method${text.none} has value ${text.green}directory${text.none} or ${text.green}subdirectory${text.none} the output option must point to a directory or new location.`]);
                                         return;
                                     }
-                                    if (options.readmethod === "file") {
+                                    if (options.read_method === "file") {
                                         console.log(`Overwriting file ${text.green + options.output + text.none}.`);
                                     }
-                                } else if (ostat.isDirectory() === true && options.readmethod === "file") {
+                                } else if (ostat.isDirectory() === true && options.read_method === "file") {
                                     options.output = options.output.replace(/(\/|\\)$/, "") + sep + options.source.replace(/\/|\\/g, "/").split("/").pop();
-                                    if (options.mode === "diff" && options.diffcli === false) {
+                                    if (options.mode === "diff" && options.diff_cli === false) {
                                         options.output = `${options.output}-diff.txt`;
                                     }
                                 }
@@ -3035,7 +3086,7 @@ interface readFile {
                             writeflag = options.output;
                             resolveItem();
                         });
-                    } else if (options.readmethod === "screen") {
+                    } else if (options.read_method === "screen") {
                         apps.parser("", options[item]);
                     } else {
                         resolveItem();
@@ -3055,9 +3106,9 @@ interface readFile {
             application = function node_apps_readmethod_application(path:string):void {
                 let lang:[string, string, string] = ["javascript", "script", "JavaScript"];
                 const langAuto:boolean = (function node_apps_readmethod_application_lang():boolean {
-                        if (options.lang === "auto") {
+                        if (options.language === "auto") {
                             lang = prettydiff.api.language.auto(options.source, "javascript");
-                            options.lang = lang[0];
+                            options.language = lang[0];
                             options.lexer = lang[1];
                             return true;
                         }
@@ -3066,11 +3117,11 @@ interface readFile {
                     output:string[] = [],
                     final = function node_apps_readmethod_application_final(inject:string) {
                         if (verbose === true) {
-                            if (langAuto === true || options.readmethod === true) {
+                            if (langAuto === true || options.read_method === true) {
                                 output.push("");
                             }
-                            if (options.readmethod === "auto") {
-                                apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}readmethod${text.none} set to ${text.angry}auto${text.none}. Option ${text.cyan}source${text.none} was not provided a valid file system path so Pretty Diff processed the source value literally.`);
+                            if (options.read_method === "auto") {
+                                apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}read_method${text.none} set to ${text.angry}auto${text.none}. Option ${text.cyan}source${text.none} was not provided a valid file system path so Pretty Diff processed the source value literally.`);
                             }
                             if (langAuto === true) {
                                 apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}lang${text.none} set to ${text.angry}auto${text.none} and evaluated by Pretty Diff as ${text.green + text.bold + lang[2] + text.none} by lexer ${text.green + text.bold + lang[1] + text.none}.`);
@@ -3079,14 +3130,14 @@ interface readFile {
                         if (inject !== "") {
                             output.push(inject);
                         }
-                        apps.output(output);
+                        apps.log(output);
                     };
                 if (options.mode === "diff") {
-                    if (options.diffcli === true) {
+                    if (options.diff_cli === true) {
                         verbose = true;
-                        options.readmethod = "screen";
+                        options.read_method = "screen";
                     }
-                    if (options.lang !== "text") {
+                    if (options.language !== "text") {
                         const source:string = options.source;
                         options.source = options.diff;
                         options.parsed = global.parseFramework.parserArrays(options);
@@ -3099,22 +3150,22 @@ interface readFile {
                         plural:string = (diff[2] > 0)
                             ? "s"
                             : "";
-                    if (options.readmethod === "screen" || options.readmethod === "filescreen" || options.diffcli === true) {
+                    if (options.read_method === "screen" || options.read_method === "filescreen" || options.diff_cli === true) {
                         output.push(diff[0]);
                         output.push("");
                         output.push(`Number of differences: ${text.cyan + (diff[1] + diff[2]) + text.none} from ${text.cyan + (diff[2] + 1) + text.none} line${plural} of code.`);
                     }
                 } else {
                 }
-                if (options.readmethod === "screen" || options.readmethod === "filescreen") {
+                if (options.read_method === "screen" || options.read_method === "filescreen") {
                     final("");
                 } else if (sourcelist[0][1] === "file") {
                     if (options.output === "") {
                         apps.errout([
                             `Pretty Diff requires use of option ${text.angry}output${text.none} to indicate where to write output.`,
-                            `To print output to the console try using option ${text.cyan}readmethod:${text.green}screen${text.none} or ${text.cyan}readmethod:${text.green}filescreen${text.none}`,
+                            `To print output to the console try using option ${text.cyan}read_method:${text.green}screen${text.none} or ${text.cyan}read_method:${text.green}filescreen${text.none}`,
                             "Example:",
-                            `${text.cyan}prettydiff ${options.mode} source:"myfile1.txt"${(options.mode === "diff") ? " diff:\"myfile2.txt\"" : ""} readmethod:filescreen${text.none}`
+                            `${text.cyan}prettydiff ${options.mode} source:"myfile1.txt"${(options.mode === "diff") ? " diff:\"myfile2.txt\"" : ""} read_method:filescreen${text.none}`
                         ]);
                         return;
                     }
@@ -3168,7 +3219,7 @@ interface readFile {
             // the screenTest function makes a guess if input input is readmethod "screen" opposed to a filesystem object
             screenTest = function node_apps_readmethod_screenTest(item:"source"|"diff") {
                 node.fs.stat(options[item], function node_apps_readmethod_screenTest_stat(err:Error):void {
-                    if (options.readmethod === "auto") {
+                    if (options.read_method === "auto") {
                         if (err !== null) {
                             const index:any = {
                                 "sep": options[item].indexOf(node.path.sep),
@@ -3201,28 +3252,28 @@ interface readFile {
                         }
                         if (item === "source") {
                             if (stat.isFile() === true) {
-                                if (options.readmethod === "directory" || options.readmethod === "subdirectory") {
+                                if (options.read_method === "directory" || options.read_method === "subdirectory") {
                                     apps.errout([`Option ${text.cyan}output${text.none} received value ${options.output} which is a file, but when option ${text.cyan}readmethod${text.none} has value ${text.green}directory${text.none} or ${text.green}subdirectory${text.none} the output option must point to a directory or new location.`]);
                                     return;
                                 }
-                                if (options.readmethod === "file") {
+                                if (options.read_method === "file") {
                                     console.log(`Overwriting file ${text.green + options.output + text.none}.`);
                                 }
-                            } else if (stat.isDirectory() === true && options.readmethod === "file") {
+                            } else if (stat.isDirectory() === true && options.read_method === "file") {
                                 options.output = options.output.replace(/(\/|\\)$/, "") + sep + options.source.replace(/\/|\\/g, "/").split("/").pop();
-                                if (options.mode === "diff" && options.diffcli === false) {
+                                if (options.mode === "diff" && options.diff_cli === false) {
                                     options.output = `${options.output}-diff.txt`;
                                 }
                             }
                         }
                         apps.directory({
                             callback: function node_apps_readmethod_screenTest_callback(list:directoryList):void {
-                                if (list[0][1] !== "file" && (options.readmethod === "file" || options.readmethod === "filescreen")) {
-                                    apps.errout([`The value for the source option is ${text.angry}not an address to a file${text.none} but option readmethod is ${text.angry + options.readmethod + text.none}.`]);
+                                if (list[0][1] !== "file" && (options.read_method === "file" || options.read_method === "filescreen")) {
+                                    apps.errout([`The value for the source option is ${text.angry}not an address to a file${text.none} but option readmethod is ${text.angry + options.read_method + text.none}.`]);
                                     return;
                                 }
-                                if (list[0][1] !== "directory" && (options.readmethod === "subdirectory" || options.readmethod === "directory")) {
-                                    apps.errout([`The value for the source option is ${text.angry}not an address to a directory${text.none} but option readmethod is ${text.angry + options.readmethod + text.none}.`]);
+                                if (list[0][1] !== "directory" && (options.read_method === "subdirectory" || options.read_method === "directory")) {
+                                    apps.errout([`The value for the source option is ${text.angry}not an address to a directory${text.none} but option readmethod is ${text.angry + options.read_method + text.none}.`]);
                                     return;
                                 }
                                 if (item === "source") {
@@ -3244,7 +3295,7 @@ interface readFile {
                             },
                             exclusions: exclusions,
                             path: options.source,
-                            recursive: (options.readmethod === "auto" || options.readmethod === "subdirectory"),
+                            recursive: (options.read_method === "auto" || options.read_method === "subdirectory"),
                             symbolic: true
                         });
                     });
@@ -3252,7 +3303,7 @@ interface readFile {
             };
         prettydiff.api.pdcomment(options);
         all(options, function node_apps_readmethod_allLexers() {
-            if (options.readmethod === "screen") {
+            if (options.read_method === "screen") {
                 application("");
             } else {
                 screenTest("source");
@@ -3262,47 +3313,6 @@ interface readFile {
             }
         });
         return;*/
-    };
-    // outputs Pretty Diff generated code from: beautify, minify, parse commands
-    apps.readMethodOutput = function node_apps_readMethodOutput(path:string, code:string|Buffer) {
-        const tense:string = (function node_apps_readmethodOutput_tense():string {
-                if (options.mode === "beautify") {
-                    return "Beautified";
-                }
-                if (options.mode === "minify") {
-                    return "Minified";
-                }
-                if (options.mode === "parse") {
-                    return "Parsed";
-                }
-            }()),
-            output:string[] = [];
-        if (options.readmethod === "filescreen" || options.readmethod === "screen") {
-            if (verbose === true) {
-                if (options.readmethod === "filescreen") {
-                    output.push(`${tense} input from file ${text.cyan + path + text.none}`);
-                } else {
-                    output.push(`${tense} input from terminal.`);
-                }
-            }
-            if (typeof code === "string") {
-                output.push(code);
-            } else {
-                output.push(code.toString("utf8"));
-            }
-            apps.output(output);
-        } else if (options.readmethod === "file") {
-            const outPath:string = node.path.resolve(options.output);
-            node.fs.writeFile(outPath, code, function node_apps_readmethodOutput_writeFile(err:Error):void {
-                if (err !== null) {
-                    apps.errout([err.toString()]);
-                    return;
-                }
-                output.push(`${tense} input from file ${text.cyan + path + text.none}.`);
-                output.push(`Wrote output to ${text.green + outPath + text.none} at ${text.green + apps.commas(code.length) + text.none} characters.`);
-                apps.output(output);
-            });
-        }
     };
     // similar to posix "rm -rf" command
     apps.remove = function node_apps_remove(filepath:string, callback:Function):void {
@@ -3401,7 +3411,7 @@ interface readFile {
                 out.push(apps.commas(numb.size));
                 out.push(text.none);
                 out.push(" bytes.");
-                apps.output([out.join(""), `Removed ${text.cyan + filepath + text.none}`]);
+                apps.log([out.join(""), `Removed ${text.cyan + filepath + text.none}`]);
             };
         }
         apps.directory({
@@ -3791,7 +3801,7 @@ interface readFile {
                 {
                     command: "opts",
                     qualifier: "contains",
-                    test: `${text.angry}* ${text.none + text.cyan}spaceclose      ${text.none}: Markup self-closing tags end will end with ' />' instead of '/>'.`
+                    test: `${text.angry}* ${text.none + text.cyan}space_close      ${text.none}: Markup self-closing tags end will end with ' />' instead of '/>'.`
                 },
                 {
                     command: "opts 2",
@@ -3800,6 +3810,11 @@ interface readFile {
                 },
                 {
                     command: "opts mode",
+                    qualifier: "contains",
+                    test: `${text.angry}* ${text.none + text.cyan}api       ${text.none}: any`
+                },
+                {
+                    command: "opts top_comments",
                     qualifier: "contains",
                     test: `${text.angry}* ${text.none + text.cyan}api       ${text.none}: any`
                 },
@@ -3826,7 +3841,7 @@ interface readFile {
                 {
                     command: "options mode:diff api:node",
                     qualifier: "contains",
-                    test: `${text.angry}* ${text.none + text.cyan}summaryonly${text.none}: Node only option to output only number of differences.`
+                    test: `${text.angry}* ${text.none + text.cyan}summary_only${text.none}: Node only option to output only number of differences.`
                 },
                 {
                     command: "parse",
@@ -3854,34 +3869,34 @@ interface readFile {
                     test: `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,0],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,2,2],"presv":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","end","end"]}`
                 },
                 {
-                    command: "parse tsconfig readmethod:filescreen",
+                    command: "parse tsconfig read_method:filescreen",
                     qualifier: "contains",
                     test: "ENOENT: no such file or directory"
                 },
                 {
-                    command: `parse ${projectPath}tsconfig.json readmethod:filescreen`,
+                    command: `parse ${projectPath}tsconfig.json read_method:filescreen`,
                     qualifier: "is",
                     test: `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,0],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,2,2],"presv":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","end","end"]}`
                 },
                 {
-                    command: `parse ${projectPath}tsconfig.json parseFormat:clitable`,
+                    command: `parse ${projectPath}tsconfig.json parse_format:clitable`,
                     qualifier: "begins",
                     test: `index | begin | lexer  | lines | presv | stack       | types       | token${node.os.EOL}------|-------|--------|-------|-------|-------------|-------------|------${node.os.EOL + text.green}0     | -1    | script | XXXX     | false | global      | start       | {${text.none}`
                 },
                 {
-                    command: `parse ${projectPath}tsconfig.json readmethod:file`,
+                    command: `parse ${projectPath}tsconfig.json read_method:file`,
                     qualifier: "contains",
-                    test: `If option readmethod evaluates to value ${text.cyan}file${text.none} option ${text.angry}output${text.none} is required.`
+                    test: `If option read_method evaluates to value ${text.cyan}file${text.none} option ${text.angry}output${text.none} is required.`
                 },
                 {
                     artifact: `${projectPath}parsetest.txt`,
-                    command: `parse ${projectPath}tsconfig.json readmethod:file output:"${projectPath}parsetest.txt"`,
+                    command: `parse ${projectPath}tsconfig.json read_method:file output:"${projectPath}parsetest.txt"`,
                     qualifier: "begins",
                     test: `Parsed input from file ${text.cyan + projectPath}tsconfig.json${text.none}.`
                 },
                 {
                     artifact: `${projectPath}parsetest.txt`,
-                    command: `parse ${projectPath}tsconfig.json readmethod:file output:"parsetest.txt"`,
+                    command: `parse ${projectPath}tsconfig.json read_method:file output:"parsetest.txt"`,
                     file: `${projectPath}parsetest.txt`,
                     qualifier: "file is",
                     test:  `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,0],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,2,2],"presv":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","end","end"]}`
@@ -4054,7 +4069,7 @@ interface readFile {
         let a:number = 0;
         if (command === "simulation") {
             callback = function node_apps_lint_callback():void {
-                apps.output(["\u0007"]);
+                apps.log(["\u0007"]);
             };
             verbose = true;
             console.log("");
@@ -4092,9 +4107,9 @@ interface readFile {
                 formatted.sort(sort);
                 options.context    = 4;
                 options.mode       = "diff";
-                options.objsort    = true;
+                options.object_sort    = true;
                 options.preserve   = 2;
-                options.readmethod = "screen";
+                options.read_method = "screen";
                 options.vertical   = true;
                 options.wrap       = 80;
                 console.log("");
@@ -4114,7 +4129,7 @@ interface readFile {
                         }
                     } else if (raw[a][0] === formatted[a][0]) {
                         const notes:string[] = raw[a][0].split("_");
-                        options.lang       = notes[2];
+                        options.language   = notes[2];
                         options.lexer      = notes[1];
                         options.mode       = notes[0];
                         options.source     = raw[a][1];
@@ -4122,6 +4137,7 @@ interface readFile {
                         options.lexerOptions[options.lexer] = {};
                         options.lexerOptions[options.lexer].objectSort = true;
                         prettydiff.api.pdcomment(options);
+                        options.lang       = options.language;
                         options.parsed     = global.parseFramework.parserArrays(options);
                         output = prettydiff[options.mode][options.lexer](options);
                         if (output === formatted[a][1]) {
@@ -4132,10 +4148,10 @@ interface readFile {
                             console.log("");
                             console.log(`Diff output colors: ${text.angry + text.underline}red = beautified${text.none} and ${text.green + text.underline}green = control${text.none}`);
                             options.diff   = formatted[a][1];
-                            options.lang   = "text";
+                            options.language   = "text";
                             options.mode   = "diff";
                             options.source = output;
-                            options.sourcelabel = raw[a][1];
+                            options.source_label = raw[a][1];
                             apps.diff();
                             break;
                         }
@@ -4200,10 +4216,10 @@ interface readFile {
             readDir("formatted");
         });
     };
-    // runs apps.output
+    // runs apps.log
     apps.version = function ():void {
         verbose = true;
-        apps.output([""]);
+        apps.log([""]);
     };
     // performs word wrap when printing text to the shell
     apps.wrapit = function node_apps_lists_wrapit(outputArray:string[], string:string):void {

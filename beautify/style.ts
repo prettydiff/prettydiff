@@ -164,9 +164,9 @@
                 let aa:number = 0,
                     bb:string[] = [];
                 do {
-                    bb.push(options.inchar);
+                    bb.push(options.indent_char);
                     aa = aa + 1;
-                } while (aa < options.insize);
+                } while (aa < options.indent_size);
                 return bb.join("");
             }()),
             //new lines plus indentation
@@ -193,7 +193,7 @@
                     leng:number  = item.length,
                     block:string = "";
                 const items:string[] = [];
-                if (options.compressedcss === true && (/\)\s*when\s*\(/).test(item) === true) {
+                if (options.compressed_css === true && (/\)\s*when\s*\(/).test(item) === true) {
                     item = item.replace(
                         /\)\s*when\s*\(/,
                         ")" + lf + (function beautify_style_beautify_selector_whenTab():string {
@@ -243,7 +243,7 @@
                 if (leng === 0) {
                     items.push(item);
                 }
-                if (options.selectorlist === true) {
+                if (options.selector_list === true) {
                     build.push(items.join(" "));
                 } else {
                     build.push(items[0].replace(/,(\s*)/g, ", ").replace(/(,\u0020)$/, ","));
@@ -252,16 +252,16 @@
                         build.push(items[aa].replace(/,(\s*)/g, ", ").replace(/(,\u0020)$/, ","));
                     }
                 }
-                if (options.compressedcss === false) {
+                if (options.compressed_css === false) {
                     build.push(" ");
                 }
             };
         let output:string     = "",
-            indent:number   = options.inlevel,
+            indent:number   = options.indent_level,
             mixin:boolean    = false,
             a:number        = 0;
-        if (options.inlevel > 0) {
-            a = options.inlevel;
+        if (options.indent_level > 0) {
+            a = options.indent_level;
             do {
                 a = a - 1;
                 build.push(tab);
@@ -272,7 +272,7 @@
         a = options.start;
         do {
             if (data.types[a] === "start") {
-                if (data.types[a - 1] === "propvar" && options.compressedcss === false) {
+                if (data.types[a - 1] === "propvar" && options.compressed_css === false) {
                     build.push(" ");
                 }
                 if (a > 0 && data.token[a - 1].charAt(data.token[a - 1].length - 1) === "#") {
@@ -288,7 +288,7 @@
                     }
                     build.push(data.token[a]);
                     indent = indent + 1;
-                    if (data.types[a + 1] !== "end" && (options.compressedcss === false || (options.compressedcss === true && data.types[a + 1] === "start")) && (data.types[a + 1] !== "selector" || options.cssinsertlines === false)) {
+                    if (data.types[a + 1] !== "end" && (options.compressed_css === false || (options.compressed_css === true && data.types[a + 1] === "start")) && (data.types[a + 1] !== "selector" || options.css_insert_lines === false)) {
                         nl(indent);
                     }
                 }
@@ -307,33 +307,33 @@
                     build.push(" ");
                 } else {
                     indent = indent - 1;
-                    if (data.types[a - 1] !== "start" && options.compressedcss === false) {
+                    if (data.types[a - 1] !== "start" && options.compressed_css === false) {
                         nl(indent);
                     }
                     build.push(data.token[a]);
-                    if (options.compressedcss === true && data.types[a + 1] === "end") {
+                    if (options.compressed_css === true && data.types[a + 1] === "end") {
                         nl(indent - 1);
-                    } else if (options.cssinsertlines === true && data.types[a + 1] === "selector" && data.lines[a] < 2 && data.token[a - 1] !== "{") {
+                    } else if (options.css_insert_lines === true && data.types[a + 1] === "selector" && data.lines[a] < 2 && data.token[a - 1] !== "{") {
                         build.push(lf);
                     } else if (data.types[a + 1] !== "end" && data.types[a + 1] !== "semi" && data.types[a + 1] !== "comment") {
                         nl(indent);
                     }
                 }
             } else if (data.types[a] === "semi") {
-                if (data.token[a] !== "x;" && (options.compressedcss === false || (options.compressedcss === true && data.types[a + 1] !== "end"))) {
+                if (data.token[a] !== "x;" && (options.compressed_css === false || (options.compressed_css === true && data.types[a + 1] !== "end"))) {
                     build.push(data.token[a]);
                 }
                 if (data.types[a + 1] === "comment-inline") {
                     build.push(" ");
-                } else if (data.types[a + 1] !== "end" && data.types[a + 1] !== "comment" && options.compressedcss === false) {
-                    if (options.cssinsertlines === true && data.types[a + 1] === "selector") {
+                } else if (data.types[a + 1] !== "end" && data.types[a + 1] !== "comment" && options.compressed_css === false) {
+                    if (options.css_insert_lines === true && data.types[a + 1] === "selector") {
                         build.push(lf);
                     } else if (data.lines[a + 1] > 0 || (data.types[a + 1] !== undefined && data.types[a + 1].indexOf("external") < 0)) {
                         nl(indent);
                     }
                 }
             } else if (data.types[a] === "selector") {
-                if (a > 0 && data.types[a - 1] !== "comment" && (options.cssinsertlines === true || (options.compressedcss === true && (data.types[a - 1] === "start" || data.types[a - 1] === "semi")))) {
+                if (a > 0 && data.types[a - 1] !== "comment" && (options.css_insert_lines === true || (options.compressed_css === true && (data.types[a - 1] === "start" || data.types[a - 1] === "semi")))) {
                     nl(indent);
                 }
                 if (data.token[a].charAt(data.token[a].length - 1) === "#") {
@@ -346,7 +346,7 @@
                         build.pop();
                     }
                     build.push(data.token[a]);
-                    if (options.compressedcss === false) {
+                    if (options.compressed_css === false) {
                         build.push(" ");
                     }
                 }
@@ -354,7 +354,7 @@
                 if (data.types[a - 1] === "value" && data.types[a] === "comment-inline") {
                     build.push(" ");
                 }
-                if (a > 0 && options.compressedcss === true && data.types[a] === "comment" && data.types[a - 1] !== "comment") {
+                if (a > 0 && options.compressed_css === true && data.types[a] === "comment" && data.types[a - 1] !== "comment") {
                     build.push(lf);
                     nl(indent);
                 } else if (a > 0 && data.types[a - 1] !== "start" && data.types[a] !== "comment-inline") {
@@ -365,11 +365,11 @@
                     nl(indent);
                 }
             } else {
-                if (data.types[a - 1] !== "semi" && options.compressedcss === false && (mixin === false || data.token[a - 1] === ":") && data.token[a - 2] !== "filter" && data.token[a - 2] !== "progid") {
+                if (data.types[a - 1] !== "semi" && options.compressed_css === false && (mixin === false || data.token[a - 1] === ":") && data.token[a - 2] !== "filter" && data.token[a - 2] !== "progid") {
                     if (data.types[a] === "value" || (data.types[a].indexOf("external") > -1 && data.types[a - 1] === "colon")) {
                         build.push(" ");
                     }
-                } else if (options.compressedcss === true && (data.types[a] === "value" || data.types[a] === "propvar")) {
+                } else if (options.compressed_css === true && (data.types[a] === "value" || data.types[a] === "propvar")) {
                     data.token[a] = data.token[a].replace(/(\s*,\s*)/g, ",");
                 }
                 if (data.types[a] === "external_start") {
@@ -391,7 +391,7 @@
             }
             a = a + 1;
         } while (a < len);
-        if (options.newline === true && options.end === data.token.length) {
+        if (options.new_line === true && options.end === data.token.length) {
             build.push(lf);
         }
         return output;

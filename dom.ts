@@ -2349,7 +2349,7 @@
             }
             if (pages === "page") {
                 let b:number          = 0,
-                    options:NodeListOf<HTMLOptionElement>,
+                    colorOptions:NodeListOf<HTMLOptionElement>,
                     olen:number       = 0,
                     colorParam:string = (typeof location === "object" && typeof location.href === "string" && location.href.indexOf("?") > -1)
                         ? location
@@ -2358,8 +2358,8 @@
                             .split("?")[1]
                         : "";
                 const node    = id("colorScheme");
-                options = node.getElementsByTagName("option");
-                olen    = options.length;
+                colorOptions = node.getElementsByTagName("option");
+                olen    = colorOptions.length;
                 if (node !== null) {
                     if (localStorage !== null && localStorage.settings !== undefined && localStorage.settings !== null && localStorage.settings.indexOf(":undefined") > 0) {
                         localStorage.settings = localStorage
@@ -2377,7 +2377,7 @@
                         colorParam = colorParam.substr(colorParam.indexOf("=") + 1);
                         b = 0;
                         do {
-                            if (options[b].value.toLowerCase() === colorParam) {
+                            if (colorOptions[b].value.toLowerCase() === colorParam) {
                                 node.selectedIndex = b;
                                 break;
                             }
@@ -2497,7 +2497,7 @@
     // stretches input to 100% width if output is a html report
     method.app.hideOutput = function dom_app_hideOutput():void {
         let hide:boolean;
-        if (options.parseFormat === "renderhtml" && options.mode === "parse") {
+        if (options.parse_format === "renderhtml" && options.mode === "parse") {
             hide = true;
         } else if (options.jsscope === "report" && options.mode === "beautify") {
             hide = true;
@@ -2636,10 +2636,10 @@
             }
         } else if (idval === "inputlabel") {
             classy = "sourcelabel";
-            options.sourcelabel = value;
+            options.source_label = value;
         } else if (idval === "outputlabel") {
             classy = "difflabel";
-            options.difflabel = value;
+            options.diff_label = value;
         }
         if (classy !== null && options[classy] !== undefined && classy !== "source" && classy !== "diff") {
             let a:number = 0;
@@ -3031,14 +3031,14 @@
                             return hourString + minuteString + secondString;
                         }());
                         meta.outsize = output.length;
-                        if (options.newline === true) {
+                        if (options.new_line === true) {
                             output = output.replace(/(\s+)$/, "\r\n");
                         } else {
                             output = output.replace(/(\s+)$/, "");
                         }
                         data.zIndex = data.zIndex + 1;
                         if (autotest === true) {
-                            options.lang = "auto";
+                            options.language = "auto";
                         }
                         button           = report
                             .code
@@ -3054,9 +3054,9 @@
                         } else {
                             test.filled.code = false;
                         }
-                        if (options.mode === "parse" || (options.lang === "csv" && options.mode !== "diff")) {
+                        if (options.mode === "parse" || (options.language === "csv" && options.mode !== "diff")) {
                             if (report.code.box !== null) {
-                                if (options.lang === "csv") {
+                                if (options.language === "csv") {
                                     let a:number       = 0,
                                         b:number       = output.length,
                                         c:number       = 0,
@@ -3158,8 +3158,8 @@
                                         .body
                                         .appendChild(div);
                                 } else if (options.mode === "parse") {
-                                    if (options.parseFormat === false) {
-                                        if (options.lang !== "csv") {
+                                    if (options.parse_format === false) {
+                                        if (options.language !== "csv") {
                                             if (test.ace === true) {
                                                 aceStore
                                                     .codeOut
@@ -3190,7 +3190,7 @@
                                         report.code.box.style.right = "auto";
                                     }
                                 }
-                            } else if (options.lang !== "csv") {
+                            } else if (options.language !== "csv") {
                                 if (test.ace === true) {
                                     aceStore
                                         .codeOut
@@ -3269,7 +3269,7 @@
                                         a = a + 1;
                                     } while (a < len);
                                 }
-                                if (options.diffview === "sidebyside" && diffList.length > 2) {
+                                if (options.diff_view === "sidebyside" && diffList.length > 2) {
                                     diffList[2].onmousedown  = function dom_event_execute_app_execOutput_mouseSlider() {
                                         method.event.colSliderGrab(diffList[2].onmousedown, diffList[2]);
                                     };
@@ -3329,7 +3329,7 @@
                                 } else {
                                     ann.innerHTML = "Language set to <strong>" + data.langvalue[2] + "</strong>.";
                                 }
-                                if (options.mode === "parse" && options.parseFormat !== "htmltable") {
+                                if (options.mode === "parse" && options.parse_format !== "htmltable") {
                                     pdlang = "tokens";
                                 } else {
                                     pdlang = "characters";
@@ -3360,7 +3360,7 @@
                     lang[2] = "CSV";
                 }
                 data.langvalue = lang;
-                options.lang = lang[0];
+                options.language = lang[0];
                 options.lexer = lang[1];
                 prettydiff.api.pdcomment(options);
                 if (typeof options.lexerOptions !== "object") {
@@ -3369,12 +3369,16 @@
                 if (typeof options.lexerOptions[options.lexer] !== "object") {
                     options.lexerOptions[options.lexer] = {};
                 }
-                if (options.objectSort === true) {
+                if (options.object_sort === true) {
                     options.lexerOptions[options.lexer].objectSort = true;
                 }
                 if (options.lexer === "script") {
-                    options.lexerOptions.script.varword = options.varword;
+                    options.lexerOptions.script.varword = options.variable_list;
                 }
+
+                // necessary because I have not updated the Parse Framework API to match the newer Pretty Diff property name
+                options.lang = options.language;
+
                 if (options.mode === "diff") {
                     if (prettydiff.beautify[options.lexer] === undefined) {
                         if (ann !== null) {
@@ -3410,7 +3414,7 @@
                         ann.innerHTML = `<strong>Parse Error:</strong> ${sanitize(window.parseFramework.parseerror)}`;
                     }
                     if (options.mode === "parse") {
-                        if (options.parseFormat === "htmltable" || options.parseFormat === "renderhtml") {
+                        if (options.parse_format === "htmltable" || options.parse_format === "renderhtml") {
                             const parsLen:number = options.parsed.token.length,
                                 keys = Object.keys(options.parsed),
                                 keylen:number = keys.length,
@@ -3469,7 +3473,7 @@
                     }
                 }
                 delete options.parsed;
-                if (options.completeDocument === true) {
+                if (options.complete_document === true) {
                     const jsscope:HTMLSelectElement = id("option-jsscope");
                     prettydiff.api.finalFile.order[7] = id("option-color")[id("option-color").selectedIndex].value;
                     prettydiff.api.finalFile.order[10] = output;
@@ -3528,10 +3532,10 @@
         localStorage.source = options.source;
         if (options.mode === "diff") {
             if (id("inputlabel") !== null) {
-                options.sourcelabel = id("inputlabel").value;
+                options.source_label = id("inputlabel").value;
             }
             if (id("outputlabel") !== null) {
-                options.difflabel = id("outputlabel").value;
+                options.diff_label = id("outputlabel").value;
             }
             if (test.ace === true) {
                 options.diff = aceStore.codeOut.getValue();
@@ -3549,7 +3553,7 @@
 
         //gather updated dom nodes
         options.api         = "dom";
-        options.diffcli     = false;
+        options.diff_cli     = false;
         {
             const li:NodeListOf<HTMLLIElement> = id("addOptions").getElementsByTagName("li"),
                 reg:RegExp = (/option-((true-)|(false-))?/);
@@ -3585,10 +3589,10 @@
                 }
             } while (a > 0);
         }
-        if (options.lang === "") {
-            options.lang = "auto";
+        if (options.language === "") {
+            options.language = "auto";
         }
-        if (options.lang === "auto") {
+        if (options.language === "auto") {
             autotest = true;
         }
         if (domain.test(options.source) === true) {

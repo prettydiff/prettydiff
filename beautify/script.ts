@@ -5,113 +5,111 @@
         (function beautify_script_options() {
             let styleguide = {
                     airbnb: function beautify_script_options_styleairbnb() {
-                        options.bracepadding = true;
+                        options.brace_padding = true;
                         options.correct      = true;
-                        options.endcomma     = "always";
-                        options.inchar       = " ";
-                        options.insize       = 2;
+                        options.end_comma     = "always";
+                        options.indent_char       = " ";
+                        options.indent_size       = 2;
                         options.preserve     = 1;
-                        options.quoteConvert = "single";
-                        options.varword      = "each";
+                        options.quote_convert = "single";
+                        options.variable_list      = "each";
                         options.wrap         = 80;
                     },
                     crockford: function beautify_script_options_stylecrockford() {
-                        options.bracepadding  = false;
+                        options.brace_padding  = false;
                         options.correct       = true;
-                        options.elseline      = false;
-                        options.endcomma      = "never";
-                        options.inchar        = " ";
-                        options.insize        = 4;
-                        options.nocaseindent  = true;
-                        options.nochainindent = false;
+                        options.else_line      = false;
+                        options.end_comma      = "never";
+                        options.indent_char        = " ";
+                        options.indent_size        = 4;
+                        options.no_case_indent  = true;
                         options.space         = true;
-                        options.varword       = "each";
+                        options.variable_list      = "each";
                         options.vertical            = false;
                     },
                     google: function beautify_script_options_stylegoogle() {
                         options.correct      = true;
-                        options.inchar       = " ";
-                        options.insize       = 4;
+                        options.indent_char       = " ";
+                        options.indent_size       = 4;
                         options.preserve     = 1;
-                        options.quoteConvert = "single";
+                        options.quote_convert = "single";
                         options.vertical           = false;
                         options.wrap         = -1;
                     },
                     jquery: function beautify_script_options_stylejquery() {
-                        options.bracepadding = true;
+                        options.brace_padding = true;
                         options.correct      = true;
-                        options.inchar       = "\u0009";
-                        options.insize       = 1;
-                        options.quoteConvert = "double";
-                        options.varword      = "each";
+                        options.indent_char       = "\u0009";
+                        options.indent_size       = 1;
+                        options.quote_convert = "double";
+                        options.variable_list      = "each";
                         options.wrap         = 80;
                     },
                     jslint: function beautify_script_options_stylejslint() {
-                        options.bracepadding  = false;
+                        options.brace_padding  = false;
                         options.correct       = true;
-                        options.elseline      = false;
-                        options.endcomma      = "never";
-                        options.inchar        = " ";
-                        options.insize        = 4;
-                        options.nocaseindent  = true;
-                        options.nochainindent = false;
+                        options.else_line      = false;
+                        options.end_comma      = "never";
+                        options.indent_char        = " ";
+                        options.indent_size        = 4;
+                        options.no_case_indent  = true;
                         options.space         = true;
-                        options.varword       = "each";
+                        options.variable_list       = "each";
                         options.vertical            = false;
                     },
                     mrdoobs: function beautify_script_options_stylemrdoobs() {
-                        options.braceline    = true;
-                        options.bracepadding = true;
+                        options.brace_line    = true;
+                        options.brace_padding = true;
                         options.correct      = true;
-                        options.inchar       = "\u0009";
-                        options.insize       = 1;
+                        options.indent_char       = "\u0009";
+                        options.indent_size       = 1;
                         options.vertical           = false;
                     },
                     mediawiki: function beautify_script_options_stylemediawiki() {
-                        options.bracepadding = true;
+                        options.brace_padding = true;
                         options.correct      = true;
-                        options.inchar       = "\u0009";
-                        options.insize       = 1;
+                        options.indent_char       = "\u0009";
+                        options.indent_size       = 1;
                         options.preserve     = 1;
-                        options.quoteConvert = "single";
+                        options.quote_convert = "single";
                         options.space        = false;
                         options.wrap         = 80;
                     },
                     meteor: function beautify_script_options_stylemeteor() {
                         options.correct = true;
-                        options.inchar  = " ";
-                        options.insize  = 2;
+                        options.indent_char  = " ";
+                        options.indent_size  = 2;
                         options.wrap    = 80;
                     },
                     yandex: function beautify_script_options_styleyandex() {
-                        options.bracepadding = false;
+                        options.brace_padding = false;
                         options.correct      = true;
-                        options.quoteConvert = "single";
-                        options.varword      = "each";
+                        options.quote_convert = "single";
+                        options.variable_list      = "each";
                         options.vertical           = false;
                     }
                 },
                 brace_style = {
                     collapse: function beautify_brace_options_collapse() {
-                        options.braceline    = false;
-                        options.bracepadding = false;
+                        options.brace_line    = false;
+                        options.brace_padding = false;
                         options.braces       = false;
-                        options.formatObject = "indent";
-                        options.neverflatten = true;
+                        options.format_object = "indent";
+                        options.never_flatten = true;
                     },
                     "collapse-preserve-inline": function beautify_brace_options_collapseInline() {
-                        options.braceline    = false;
-                        options.bracepadding = true;
+                        options.brace_line    = false;
+                        options.brace_padding = true;
                         options.braces       = false;
-                        options.formatObject = "inline";
-                        options.neverflatten = false;
+                        options.format_object = "inline";
+                        options.never_flatten = false;
                     },
                     expand: function beautify_brace_options_expand() {
-                        options.braceline    = false;
-                        options.bracepadding = false;
+                        options.brace_line    = false;
+                        options.brace_padding = false;
                         options.braces       = true;
-                        options.formatObject = "indent";
-                        options.neverflatten = true;
+                        options.format_object = "indent";
+                        options.never_flatten = true;
                     }
                 };
             if (styleguide[options.styleguide] !== undefined) {
@@ -120,9 +118,9 @@
             if (brace_style[options.brace_style] !== undefined) {
                 brace_style[options.brace_style]();
             }
-            if (options.lang === "json") {
+            if (options.language === "json") {
                 options.wrap = 0;
-            } else if (options.lang === "titanium") {
+            } else if (options.language === "titanium") {
                 options.correct = false;
             }
         }());
@@ -140,9 +138,9 @@
                     b:number = (options.end < 1 || options.end > data.token.length)
                         ? data.token.length
                         : options.end,
-                    indent:number        = (isNaN(options.inlevel) === true)
+                    indent:number        = (isNaN(options.indent_level) === true)
                         ? 0
-                        : Number(options.inlevel),
+                        : Number(options.indent_level),
                     skip:number = 0,
                     notcomment:boolean = false, // if in comments before any code
                     lastlist:boolean      = false, //remembers the list status of the most recently closed block
@@ -177,7 +175,7 @@
                             arrayCheck:boolean = (
                                 override === false && data.stack[a] === "array" && listFix === true && ctoke !== "["
                             );
-                        if (destruct[destruct.length - 1] === false || (data.stack[a] === "array" && options.formatArray === "inline") || (data.stack[a] === "object" && options.formatObject === "inline")) {
+                        if (destruct[destruct.length - 1] === false || (data.stack[a] === "array" && options.formatArray === "inline") || (data.stack[a] === "object" && options.format_object === "inline")) {
                             return;
                         }
                         destruct[destruct.length - 1] = false;
@@ -448,7 +446,7 @@
                             if (ctoke.charAt(0) === "}") {
                                 level[a - 1] = -20;
                             }
-                            if (options.bracepadding === true && ctoke.charAt(0) === "}" && ctoke.charAt(ctoke.length - 1) === "`") {
+                            if (options.brace_padding === true && ctoke.charAt(0) === "}" && ctoke.charAt(ctoke.length - 1) === "`") {
                                 level[a - 1] = -10;
                             }
                             if (options.wrap > 0 && ctoke.length > options.wrap && (ctoke.charAt(0) === "\"" || ctoke.charAt(0) === "'")) {
@@ -645,7 +643,7 @@
                                 ? []
                                 : extraindent[extraindent.length - 1],
                             propertybreak = function beautify_script_separator_propertybreak():void {
-                                if (options.methodchain > 0) {
+                                if (options.method_chain > 0) {
                                     let x:number = a,
                                         y:number = data.begin[a],
                                         z:number[] = [];
@@ -669,7 +667,7 @@
                                         }
                                         x = x - 1;
                                     } while (x > y);
-                                    if (z.length < options.methodchain) {
+                                    if (z.length < options.method_chain) {
                                         level[a - 1] = -20;
                                         return;
                                     }
@@ -695,10 +693,10 @@
                                     destructfix(false, false);
                                 }
                             }
-                            if (options.methodchain === 0) {
+                            if (options.method_chain === 0) {
                                 // methodchain is 0 so methods and properties should be chained together
                                 level[a- 1] = -20;
-                            } else if (options.methodchain < 0) {
+                            } else if (options.method_chain < 0) {
                                 if (data.lines[a] > 0) {
                                     propertybreak();
                                 } else {
@@ -739,7 +737,7 @@
                             }
                             level[a - 1]                    = -20;
                             itemcount[itemcount.length - 1] = itemcount[itemcount.length - 1] + 1;
-                            if ((data.token[data.begin[a]] === "(" || data.token[data.begin[a]] === "x(") && options.lang !== "jsx" && data.stack[a] !== "global" && (data.types[a - 1] !== "literal" || data.token[a - 2] !== "+" || (data.types[a - 1] === "literal" && data.token[a - 2] === "+" && data.types[a - 3] !== "literal"))) {
+                            if ((data.token[data.begin[a]] === "(" || data.token[data.begin[a]] === "x(") && options.language !== "jsx" && data.stack[a] !== "global" && (data.types[a - 1] !== "literal" || data.token[a - 2] !== "+" || (data.types[a - 1] === "literal" && data.token[a - 2] === "+" && data.types[a - 3] !== "literal"))) {
                                 level.push(-10);
                                 return;
                             }
@@ -902,7 +900,7 @@
                         arrbreak.push(false);
                         wordlist.push(false);
                         itemcount.push(0);
-                        if (options.neverflatten === true || options.lang === "qml" || deep === "attribute" || ltype === "generic" || (deep === "class" && ltoke !== "(" && ltoke !== "x(") || (ctoke === "[" && data.token[a + 1] === "function")) {
+                        if (options.never_flatten === true || options.language === "qml" || deep === "attribute" || ltype === "generic" || (deep === "class" && ltoke !== "(" && ltoke !== "x(") || (ctoke === "[" && data.token[a + 1] === "function")) {
                             destruct.push(false);
                         } else {
                             if (deep === "expression" || deep === "method") {
@@ -938,19 +936,19 @@
                                 }
                             }
                             if (deep === "object") {
-                                if (options.formatObject === "indent") {
+                                if (options.format_object === "indent") {
                                     destruct[destruct.length - 1] = false;
                                     level.push(indent);
                                     return;
                                 }
-                                if (options.formatObject === "inline") {
+                                if (options.format_object === "inline") {
                                     destruct[destruct.length - 1] = true;
                                     level.push(-20);
                                     return;
                                 }
                             }
                             if (deep === "switch") {
-                                if (options.nocaseindent === true) {
+                                if (options.no_case_indent === true) {
                                     level.push(indent - 1);
                                     return;
                                 }
@@ -981,7 +979,7 @@
                             if (ltoke === "async") {
                                 level[a - 1] = -10;
                             } else if (deep === "method" || (data.token[a - 2] === "function" && ltype === "reference")) {
-                                if (ltoke === "import" || ltoke === "in" || options.functionname === true) {
+                                if (ltoke === "import" || ltoke === "in" || options.function_name === true) {
                                     level[a - 1] = -10;
                                 } else if ((ltoke === "}" && data.stack[a - 1] === "function") || ltype === "word" || ltype === "reference") {
                                     level[a - 1] = -20;
@@ -1018,12 +1016,12 @@
                                 level.push(-20);
                                 return;
                             }
-                            if (options.formatArray === "indent") {
+                            if (options.format_array === "indent") {
                                 destruct[destruct.length - 1] = false;
                                 level.push(indent);
                                 return;
                             }
-                            if (options.formatArray === "inline") {
+                            if (options.format_array === "inline") {
                                 destruct[destruct.length - 1] = true;
                                 level.push(-20);
                                 return;
@@ -1086,7 +1084,7 @@
                             if (ctoke !== ")" && ctoke !== "x)" && (ltype !== "markup" || (ltype === "markup" && data.token[a - 2] !== "return"))) {
                                 indent = indent - 1;
                             }
-                            if (ctoke === "}" && data.stack[a] === "switch" && options.nocaseindent === false) {
+                            if (ctoke === "}" && data.stack[a] === "switch" && options.no_case_indent === false) {
                                 indent = indent - 1;
                             }
                         }
@@ -1140,14 +1138,14 @@
                             }
                             varindex.pop();
                         }
-                        if (options.bracepadding === false && ctoke !== "}" && ltype !== "markup") {
+                        if (options.brace_padding === false && ctoke !== "}" && ltype !== "markup") {
                             level[a - 1] = -20;
                         }
-                        if (options.bracepadding === true && ltype !== "start" && ltoke !== ";" && (level[data.begin[a]] < -9 || destruct[destruct.length - 1] === true)) {
+                        if (options.brace_padding === true && ltype !== "start" && ltoke !== ";" && (level[data.begin[a]] < -9 || destruct[destruct.length - 1] === true)) {
                             level[data.begin[a]] = -10;
                             level[a - 1]    = -10;
                             level.push(-20);
-                        } else if (options.lang === "qml") {
+                        } else if (options.language === "qml") {
                             if (ltype === "start" || ctoke === ")" || ctoke === "x)") {
                                 level[a - 1] = -20;
                             } else {
@@ -1339,7 +1337,7 @@
                             level.push(-20);
                         } else if (data.types[a - 1] !== "comment" && ((ltoke === "{" && ctoke === "}") || (ltoke === "[" && ctoke === "]"))) {
                             level[a - 1] = -20;
-                            if (ctoke === "}" && options.lang === "titanium") {
+                            if (ctoke === "}" && options.language === "titanium") {
                                 level.push(indent);
                             } else {
                                 level.push(-20);
@@ -1484,7 +1482,7 @@
                                 level.push(-20);
                                 return;
                             }
-                            if (options.ternaryline === true) {
+                            if (options.ternary_line === true) {
                                 level[a - 1] = -10;
                             } else {
                                 let c = a - 1;
@@ -1688,7 +1686,7 @@
                                 destructfix(true, false);
                             }
                             if (data.token[c] === "var" || data.token[c] === "let" || data.token[c] === "const") {
-                                line = line - (options.insize * options.inchar.length * 2);
+                                line = line - (options.indent_size * options.indent_char.length * 2);
                             }
                             if (meth > 0) {
                                 c = options.wrap - meth;
@@ -1945,7 +1943,7 @@
                             level.push(-10);
                             return;
                         }
-                        if (ltype === "literal" && ltoke.charAt(ltoke.length - 1) === "{" && options.bracepadding === false) {
+                        if (ltype === "literal" && ltoke.charAt(ltoke.length - 1) === "{" && options.brace_padding === false) {
                             level[a - 1] = -20;
                         } else if (ltoke === "-" && a > 1) {
                             if (data.types[a - 2] === "operator" || data.token[a - 2] === ",") {
@@ -1975,7 +1973,7 @@
                                 }
                                 c = c - 1;
                             } while (c > -1);
-                        } else if (ctoke === "in" || (((ctoke === "else" && options.elseline === false) || ctoke === "catch") && (ltoke === "}" || ltoke === "x}"))) {
+                        } else if (ctoke === "in" || (((ctoke === "else" && options.else_line === false) || ctoke === "catch") && (ltoke === "}" || ltoke === "x}"))) {
                             level[a - 1] = -10;
                         } else if (ctoke === "var" || ctoke === "let" || ctoke === "const") {
                             varindex[varindex.length - 1] = a;
@@ -2019,7 +2017,7 @@
                             level.push(-10);
                             return;
                         }
-                        if (options.bracepadding === false && a < b - 1 && data.token[a + 1].charAt(0) === "}") {
+                        if (options.brace_padding === false && a < b - 1 && data.token[a + 1].charAt(0) === "}") {
                             level.push(-20);
                             return;
                         }
@@ -2029,7 +2027,7 @@
                         }
                         level.push(-10);
                     };
-                if (options.lang === "titanium") {
+                if (options.language === "titanium") {
                     indent = indent - 1;
                 }
                 do {
@@ -2096,9 +2094,9 @@
                 const build:string[] = [],
                     len:number = levels.length,
                     tab:string = (function beautify_script_output_tab():string {
-                        const ch = options.inchar,
+                        const ch = options.indent_char,
                             tabby:string[] = [];
-                        let index = options.insize;
+                        let index = options.indent_size;
                         do {
                             tabby.push(ch);
                             index = index - 1;
@@ -2133,12 +2131,12 @@
                 let a:number = options.start,
                     external:string = "",
                     lastLevel:number = 0;
-                if (options.jsscope !== "none" && options.lang === "javascript") {
+                if (options.jsscope !== "none" && options.language === "javascript") {
                     let linecount:number          = 1,
                         last:string               = "",
                         scope:number              = 0,
                         scoped:boolean[] = [],
-                        indent:number             = options.inlevel,
+                        indent:number             = options.indent_level,
                         foldindex:[number, number][] = [];
                     const code:string[] = [],
                         foldstart = function beautify_script_output_scope_foldstart():void {
@@ -2438,7 +2436,7 @@
                     code.push("</ol>");
                     if (options.jsscope === "html") {
                         code.push(last);
-                        if (options.newline === true) {
+                        if (options.new_line === true) {
                             if (options.crlf === true) {
                                 code.push("\r\n");
                             } else {
@@ -2457,7 +2455,7 @@
                         "</em> unnecessary instances of the keyword <strong>new</strong> counted.</p>",
                         code.join(""),
                         last
-                    ].join("").replace(/(\s+)$/, "").replace(options.binaryCheck, "");
+                    ].join("").replace(/(\s+)$/, "").replace(options.binaryC_check, "");
                 }
                 do {
                     if (data.lexer[a] === lexer || prettydiff.beautify[data.lexer[a]] === undefined) {
@@ -2472,7 +2470,7 @@
                         }
                     } else {
                         options.end = levels[a];
-                        options.inlevel = lastLevel + 1;
+                        options.indent_level = lastLevel + 1;
                         options.start = a;
                         external = nl(lastLevel + 1) + prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "") + nl(lastLevel);
                         build.push(external);
@@ -2480,7 +2478,7 @@
                     }
                     a = a + 1;
                 } while (a < len);
-                if (options.newline === true && options.end === data.token.length) {
+                if (options.new_line === true && options.end === data.token.length) {
                     build.push(lf);
                 }
                 return build.join("");
