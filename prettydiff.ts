@@ -1,11 +1,8 @@
-/*global global*/
+/*global global, window*/
 (function mode_init() {
     "use strict";
     const mode = function mode_(options:any):string {
-        const modeValue:"beautify"|"minify" = (options.mode === "diff")
-                ? "beautify"
-                : options.mode,
-            pdcomment = function pdcomment_(options:any):void {
+        const pdcomment = function pdcomment_(options:any):void {
                 // parses the prettydiff settings comment
                 //
                 // - Source Priorities:
@@ -181,8 +178,18 @@
                         } while (a > 0);
                     }
                 }
-                // prettydiff insertion start
-            };
+            },
+            parseMethod:string = (options.mode === "parse" && options.parse_format === "sequential")
+                ? "parserObjects"
+                : "parserArrays",
+            globalAPI:any = (options.api === "dom")
+                ? window
+                : global,
+            modeValue:"beautify"|"minify" = (options.mode === "diff")
+                ? "beautify"
+                : options.mode,
+            // prettydiff insertion start
+            prettydiff:any = {};
         // prettydiff insertion end
         if (options.api !== "node") {
             options.diff_cli = false;
@@ -221,12 +228,7 @@
         // necessary, because I have not updated the Parse Framework api to use the same property name
         options.lang = options.language;
 
-        if (options.mode === "parse" && options.parse_format === "sequential") {
-            options.parsed = global.parseFramework.parserObjects(options);
-        } else {
-            options.parsed = global.parseFramework.parserArrays(options);
-        }
-
+        options.parsed = globalAPI.parseFramework[parseMethod](options);
         if (options.mode === "parse") {
             if (options.parse_format === "clitable") {
                 if (options.api === "dom") {

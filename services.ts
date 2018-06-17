@@ -1100,7 +1100,7 @@ interface readFile {
                                     modify({
                                         end: "// prettydiff insertion end",
                                         injectFlag: saveas + libraries + mode
-                                            .replace(/global\.parseFramework/g, "window.parseFramework")
+                                            .replace(/,\s*\/\/ prettydiff insertion start\s+prettydiff\s*=\s*\{\};/, `;// prettydiff insertion start${node.os.EOL}//filler${node.os.EOL}`)
                                             .replace(/global\.prettydiff/g, "prettydiff"),
                                         start: "// prettydiff insertion start"
                                     });
@@ -1113,7 +1113,7 @@ interface readFile {
                                 } else if (fileFlag === "prettydiff") {
                                     modify({
                                         end: "// prettydiff insertion end",
-                                        injectFlag: `},prettydiff={};${libraries}`,
+                                        injectFlag: `prettydiff={};${libraries}`,
                                         start: "// prettydiff insertion start"
                                     });
                                 }
