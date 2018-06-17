@@ -27,7 +27,7 @@
         "table"
     ],
     "license": "CC0-1.0",
-    "main": "js/services.js",
+    "main": "js/prettydiff.js",
     "name": "pd3",
     "repository": {
         "type": "git",

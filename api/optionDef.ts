@@ -420,6 +420,15 @@
                         " detected.",
                 default   : "text"
             },
+            langauge_name: {
+                api       : "any",
+                mode      : "any",
+                lexer     : "any",
+                label     : "Formatted Name of the Code's Language",
+                type      : "string",
+                definition: "The formatted proper name of the code sample's language for use in reports read by people.",
+                default   : "JavaScript"
+            },
             lexer          : {
                 api       : "any",
                 mode      : "any",

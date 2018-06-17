@@ -133,7 +133,7 @@
                     name:string            = "",
                     type:string            = "",
                     parent:HTMLElement;
-                const parseFormat:HTMLSelectElement = id("option-parseFormat"),
+                const parseFormat:HTMLSelectElement = id("option-parse_format"),
                     aceApply = function dom_load_aceApply(nodeName:string, maxWidth:boolean):any {
                         const div:HTMLDivElement        = document.createElement("div"),
                             node:HTMLDivElement       = textarea[nodeName],
@@ -513,8 +513,8 @@
                         }
                     },
                     indentchar   = function dom_load_indentchar():void {
-                        const insize:HTMLInputElement = id("option-insize"),
-                            inchar:HTMLInputElement = id("option-inchar");
+                        const insize:HTMLInputElement = id("option-indent_size"),
+                            inchar:HTMLInputElement = id("option-indent_char");
                         if (test.ace === true) {
                             if (inchar !== null && inchar.value === " ") {
                                 aceStore
@@ -584,9 +584,9 @@
                             val = `-${val}`;
                         }
                         el.value = val;
-                        if (el === id("option-inchar")) {
+                        if (el === id("option-indent_char")) {
                             indentchar();
-                        } else if (el === id("option-insize")) {
+                        } else if (el === id("option-indent_size")) {
                             insize();
                         }
                         if (test.load === false) {
@@ -768,9 +768,9 @@
 
                 // build the Ace editors
                 if (test.ace === true) {
-                    const val:number = (data.settings["option-insize"] === undefined || isNaN(Number(data.settings["option-insize"])) === true)
+                    const val:number = (data.settings["option-indent_size"] === undefined || isNaN(Number(data.settings["option-indent_size"])) === true)
                         ? 4
-                        : Number(data.settings["option-insize"])
+                        : Number(data.settings["option-indent_size"])
                     if (textarea.codeIn !== null) {
                         aceStore.codeIn = aceApply("codeIn", true);
                     }
@@ -838,9 +838,9 @@
                                             id(keys[a]).value = data.settings[keys[a]];
                                             options[keys[a].replace("option-", "")] = data.settings[keys[a]];
                                         }
-                                        if (keys[a] === "option-insize") {
+                                        if (keys[a] === "option-indent_size") {
                                             insize();
-                                        } else if (keys[a] === "option-inchar") {
+                                        } else if (keys[a] === "option-indent_char") {
                                             indentchar();
                                         }
                                     } else if (id(data.settings[keys[a]]) !== null) {
@@ -941,7 +941,7 @@
                         if (data.settings[idval] !== undefined) {
                             x.value = data.settings[idval];
                         }
-                        if (idval === "option-lang" && options.mode !== "diff" && x.value === "text") {
+                        if (idval === "option-language" && options.mode !== "diff" && x.value === "text") {
                             x.value = "auto";
                         }
                     } else if (type === "file") {
@@ -1072,7 +1072,7 @@
                         paramLen:number = 0,
                         param:string[]    = [],
                         colors:NodeListOf<HTMLOptionElement>,
-                        lang:HTMLInputElement = id("option-lang"),
+                        lang:HTMLInputElement = id("option-language"),
                         source:string   = "",
                         diff:string     = "";
                     const color:HTMLSelectElement    = id("option-color"),
@@ -2429,7 +2429,7 @@
             defaultt:string    = "",
             value:languageAuto;
         const language:language    = prettydiff.api.language,
-            langdefault:HTMLInputElement = id("option-langdefault");
+            langdefault:HTMLInputElement = id("option-language_default");
         if (typeof language !== "object") {
             return ["", "", ""];
         }
@@ -2562,7 +2562,7 @@
             input = <HTMLInputElement>x.getElementsByTagName("input")[0];
             item = input;
         }
-        if (test.load === false && item !== id("option-lang")) {
+        if (test.load === false && item !== id("option-language")) {
             item.focus();
         }
         node   = item
@@ -2942,7 +2942,7 @@
         }
     };
     // execute bundles arguments in preparation for executing prettydiff references
-    // events: beaufold, colSliderGrab, difffold, minimize, save
+    // * events: beaufold, colSliderGrab, difffold, minimize, save
     method.event.execute = function dom_event_execute(event:KeyboardEvent):boolean {
         let lang:[string, string, string],
             errortext:string   = "",
@@ -2954,26 +2954,26 @@
             diffout:[string, number, number],
             node:HTMLSelectElement        = id("option-jsscope");
         const startTime:number = Date.now(),
-            langvalue:string = (id("option-lang") === null || id("option-lang").value === "")
+            langvalue:string = (id("option-language") === null || id("option-language").value === "")
                 ? "auto"
-                : id("option-lang").value,
+                : id("option-language").value,
             ann:HTMLParagraphElement = id("announcement"),
-            domain:RegExp      = (/^((https?:\/\/)|(file:\/\/\/))/),
-            lf:HTMLInputElement        = id("option-crlf"),
+            domain:RegExp       = (/^((https?:\/\/)|(file:\/\/\/))/),
+            lf:HTMLInputElement = id("option-crlf"),
             textout:boolean     = (options.jsscope !== "report" && (node === null || node[node.selectedIndex].value !== "report")),
             app = function dom_event_execute_app() {
                 let output:string = "";
                 const sanitize = function dom_event_execute_app_sanitize(input:string):string {
                         return input.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
                     },
-                    execOutput  = function dom_event_execute_app_execOutput():void {
+                    renderOutput  = function dom_event_execute_app_renderOutput():void {
                         let diffList:NodeListOf<HTMLOListElement>,
                             button:HTMLButtonElement,
                             buttons:NodeListOf<HTMLButtonElement>,
                             pdlang:string     = "",
                             parent:HTMLElement,
                             chromeSave:boolean = false;
-                        const commanumb  = function dom_event_execute_app_execOutput_commanumb(numb):string {
+                        const commanumb  = function dom_event_execute_app_renderOutput_commanumb(numb):string {
                             let str:string = "",
                                 len:number = 0,
                                 arr:string[] = [];
@@ -2992,8 +2992,8 @@
                             } while (len > -1);
                             return arr.join("");
                         };
-                        meta.time = (function dom_event_execute_app_execOutput_proctime() {
-                            const plural       = function dom_event_execute_app_execOutput_proctime_plural(x:number, y:string):string {
+                        meta.time = (function dom_event_execute_app_renderOutput_proctime() {
+                            const plural       = function dom_event_execute_app_renderOutput_proctime_plural(x:number, y:string):string {
                                     let a = x + y;
                                     if (x !== 1) {
                                         a = a + "s";
@@ -3003,7 +3003,7 @@
                                     }
                                     return a;
                                 },
-                                minute       = function dom_event_execute_app_execOutput_proctime_minute():void {
+                                minute       = function dom_event_execute_app_renderOutput_proctime_minute():void {
                                     minutes      = elapsed / 60;
                                     minuteString = plural(minutes, " minute");
                                     minutes      = elapsed - (minutes * 60);
@@ -3270,10 +3270,10 @@
                                     } while (a < len);
                                 }
                                 if (options.diff_view === "sidebyside" && diffList.length > 2) {
-                                    diffList[2].onmousedown  = function dom_event_execute_app_execOutput_mouseSlider() {
+                                    diffList[2].onmousedown  = function dom_event_execute_app_renderOutput_mouseSlider() {
                                         method.event.colSliderGrab(diffList[2].onmousedown, diffList[2]);
                                     };
-                                    diffList[2].ontouchstart = function dom_event_execute_app_execOutput_touchSlider() {
+                                    diffList[2].ontouchstart = function dom_event_execute_app_renderOutput_touchSlider() {
                                         method.event.colSliderGrab(diffList[2].ontouchstart, diffList[2]);
                                     };
                                 }
@@ -3354,30 +3354,8 @@
                             buttons[1].click();
                         }
                     };
-                if (lang[0] === "text") {
-                    lang[2] = "Plain Text";
-                } else if (lang[0] === "csv") {
-                    lang[2] = "CSV";
-                }
                 data.langvalue = lang;
-                options.language = lang[0];
-                options.lexer = lang[1];
-                prettydiff.api.pdcomment(options);
-                if (typeof options.lexerOptions !== "object") {
-                    options.lexerOptions = {};
-                }
-                if (typeof options.lexerOptions[options.lexer] !== "object") {
-                    options.lexerOptions[options.lexer] = {};
-                }
-                if (options.object_sort === true) {
-                    options.lexerOptions[options.lexer].objectSort = true;
-                }
-                if (options.lexer === "script") {
-                    options.lexerOptions.script.varword = options.variable_list;
-                }
 
-                // necessary because I have not updated the Parse Framework API to match the newer Pretty Diff property name
-                options.lang = options.language;
 
                 if (options.mode === "diff") {
                     if (prettydiff.beautify[options.lexer] === undefined) {
@@ -3388,18 +3366,15 @@
                     } else {
                         meta.insize = options.source.length + options.diff.length;
                         if (options.lexer !== "text") {
-                            let source:string;
-                            options.parsed = window.parseFramework.parserArrays(options);
+                            let source:string = prettydiff.mode(options);
                             if (window.parseFramework.parseerror !== "" && ann !== null) {
                                 ann.innerHTML = `<strong>Parse Error:</strong> ${sanitize(window.parseFramework.parseerror)}`;
                             }
-                            source = prettydiff.beautify[options.lexer](options);
                             options.source = options.diff;
-                            options.parsed = window.parseFramework.parserArrays(options);
+                            options.diff   = prettydiff.mode(options);
                             if (window.parseFramework.parseerror !== "" && ann !== null) {
                                 ann.innerHTML = `<strong>Parse Error:</strong> ${sanitize(window.parseFramework.parseerror)}`;
                             }
-                            options.diff = prettydiff.beautify[options.lexer](options);
                             options.source = source;
                         }
                         diffout = prettydiff.api.diffview(options);
@@ -3409,70 +3384,15 @@
                     }
                 } else {
                     meta.insize = options.source.length;
-                    options.parsed = window.parseFramework.parserArrays(options);
                     if (window.parseFramework.parseerror !== "" && ann !== null) {
                         ann.innerHTML = `<strong>Parse Error:</strong> ${sanitize(window.parseFramework.parseerror)}`;
                     }
-                    if (options.mode === "parse") {
-                        if (options.parse_format === "htmltable" || options.parse_format === "renderhtml") {
-                            const parsLen:number = options.parsed.token.length,
-                                keys = Object.keys(options.parsed),
-                                keylen:number = keys.length,
-                                headingString:string = (function dom_event_execute_app_execOutput_heading():string {
-                                    const hout:string[] = ["<tr><th>index</th>"];
-                                    let b:number = 0;
-                                    do {
-                                        if (keys[b] !== "token") {
-                                            hout.push(`<th>${keys[b]}</th>`);
-                                        }
-                                        b = b + 1;
-                                    } while (b < keylen);
-                                    hout.push("<th>token</th></tr>");
-                                    return hout.join("");
-                                }()),
-                                row = function dom_event_execute_app_execOutput_row():string {
-                                    const hout:string[] = ["<tr>"];
-                                    let b = 0;
-                                    hout.push(`<td>${a}</td>`);
-                                    do {
-                                        if (keys[b] !== "token") {
-                                            hout.push(`<td>${options.parsed[keys[b]][a].toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</td>`);
-                                        }
-                                        b = b + 1;
-                                    } while (b < keylen);
-                                    hout.push(`<td>${options.parsed.token[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</td></tr>`);
-                                    return hout.join("");
-                                },
-                                parsOut:string[] = [];
-                            parsOut.push(`<p><strong>${parsLen}</strong> total parsed tokens</p>`);
-                            parsOut.push("<table><thead>");
-                            parsOut.push(headingString);
-                            parsOut.push("</thead><tbody>");
-                            let a:number = 0;
-                            do {
-                                if (a % 100 === 0 && a > 0) {
-                                    parsOut.push(headingString);
-                                }
-                                parsOut.push(row());
-                                a = a + 1;
-                            } while (a < parsLen);
-                            parsOut.push("</tbody></table>");
-                            output = parsOut.join("");
-                        } else {
-                            output = JSON.stringify(options.parsed);
-                        }
-                    } else {
-                        if (prettydiff[options.mode][options.lexer] === undefined) {
-                            if (ann !== null) {
-                                ann.innerHTML = `Library <em>prettydiff.${options.mode}.${options.lexer}</em> is <strong>undefined</strong>.`;
-                            }
-                            output = options.source;
-                        } else {
-                            output = prettydiff[options.mode][options.lexer](options);
-                        }
+                    output = prettydiff.mode(options);
+                    if (output.indexOf("Error: ") === 0) {
+                        ann.innerHTML = output.replace("Error: ", "");
+                        output = options.source;
                     }
                 }
-                delete options.parsed;
                 if (options.complete_document === true) {
                     const jsscope:HTMLSelectElement = id("option-jsscope");
                     prettydiff.api.finalFile.order[7] = id("option-color")[id("option-color").selectedIndex].value;
@@ -3486,10 +3406,11 @@
                     }
                     output = prettydiff.api.finalFile.order.join("");
                 }
-                execOutput();
+                renderOutput();
             };
 
-        meta.error = "";
+        meta.error   = "";
+        options.api  = "dom";
         options.crlf = (lf !== null && lf.checked === true);
         if (typeof event === "object" && event !== null && event.type === "keyup") {
             // jsscope does not get the convenience of keypress execution, because its
@@ -3552,8 +3473,6 @@
         }
 
         //gather updated dom nodes
-        options.api         = "dom";
-        options.diff_cli     = false;
         {
             const li:NodeListOf<HTMLLIElement> = id("addOptions").getElementsByTagName("li"),
                 reg:RegExp = (/option-((true-)|(false-))?/);
