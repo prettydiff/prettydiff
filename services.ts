@@ -51,7 +51,9 @@ interface readFile {
             angry    : "\u001b[1m\u001b[31m",
             blue     : "\u001b[34m",
             bold     : "\u001b[1m",
+            clear    : "\u001b[24m\u001b[22m",
             cyan     : "\u001b[36m",
+            diffchar : "\u001b[1m\u001b[4m",
             green    : "\u001b[32m",
             nocolor  : "\u001b[39m",
             none     : "\u001b[0m",
@@ -59,6 +61,10 @@ interface readFile {
             red      : "\u001b[31m",
             underline: "\u001b[4m",
             yellow   : "\u001b[33m"
+        },
+        store:codeStorage = {
+            diff: {},
+            source: {}
         },
         prettydiff:any = {},
         commands:commandList = {
@@ -526,7 +532,7 @@ interface readFile {
     let verbose:boolean = false,
         errorflag:boolean = false,
         writeflag:string = ""; // location of written assets in case of an error and they need to be deleted
-    
+
     (function node_args():void {
         const requireDir = function node_args_requireDir(item:string):void {
                 let counts = {
@@ -725,6 +731,7 @@ interface readFile {
             };
         let dirs:number = 0,
             dirstotal:number = 0;
+        options.api = "node";
         options.binary_check = (
             // eslint-disable-next-line
             /\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u000b|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g
@@ -844,9 +851,7 @@ interface readFile {
     // handler for the beautify command
     apps.beautify = function node_apps_beautify():void {
         options.mode = "beautify";
-        apps.readMethod(false, function node_apps_beautify_callback() {
-            return;
-        });
+        apps.readMethod(false);
     };
     // build system
     apps.build = function node_apps_build():void {
@@ -1721,15 +1726,10 @@ interface readFile {
             ]);
             return;
         }
-        options.mode = "beautify";
-        if (options.language !== "text") {
-            const all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`);
-            all(options, function node_apps_diff_allLexers() {
-                apps.readMethod(false, function node_apps_beautify_callback() {
-                    
-                });
-            });
-        }
+        options.mode = "diff";
+        apps.readMethod(false);
+        apps.readMethod(true);
+        // to perform diff of subdirectory keep a source and diff object.  The file paths are the object keys, and the file contents are the values.
     };
     // similar to node's fs.readdir, but recursive
     apps.directory = function node_apps_directory(args:readDirectory):void {
@@ -1964,7 +1964,7 @@ interface readFile {
             console.log("");
             apps.humantime(true);
             if (command === "build" || command === "simulation") {
-                console.log("\u0007");
+                console.log("\u0007"); // bell sound
             } else {
                 console.log("");
             }
@@ -2676,9 +2676,7 @@ interface readFile {
     // handler for the minify command
     apps.minify = function node_apps_minify():void {
         options.mode = "minify";
-        apps.readMethod(false, function node_apps_minify_callback() {
-            return;
-        });
+        apps.readMethod(false);
     };
     // CLI documentation for supported Pretty Diff options
     apps.options = function node_apps_options():void {
@@ -2763,7 +2761,7 @@ interface readFile {
             });
         }
     };
-    // outputs Pretty Diff generated code from: beautify, minify, parse commands
+    // uniformly formats output for Pretty Diff generated code from: beautify, minify, parse commands
     apps.output = function node_apps_readMethodOutput(path:string, code:string|Buffer) {
         const tense:string = (function node_apps_output_tense():string {
                 if (options.mode === "beautify") {
@@ -2809,9 +2807,8 @@ interface readFile {
         if (options.parse_format === "clitable") {
             verbose = true;
         }
-        apps.readMethod(false, function node_apps_parse_callback() {
-            return;
-        });
+        options.mode = "parse";
+        apps.readMethod(false);
     };
     // similar to node's fs.readFile, but determines if the file is binary or text so that it can create either a buffer or text dump
     apps.readFile = function node_apps_readFile(args:readFile):void {
@@ -2900,7 +2897,7 @@ interface readFile {
             });
     };
     // processes Pretty Diff mode commands
-    apps.readMethod = function node_apps_readMethod(diff:boolean, modeCallback:Function):void {
+    apps.readMethod = function node_apps_readMethod(diff:boolean):void {
         if (options.source === "") {
             apps.errout([
                 `Pretty Diff requires option ${text.cyan}source${text.none} when using command ${text.green + command + text.none}. Example:`,
@@ -2908,7 +2905,7 @@ interface readFile {
             ]);
             return;
         }
-        if (options.language === "text") {
+        if (options.language === "text" && options.mode !== "diff") {
             apps.errout([`Language value ${text.angry}text${text.none} is not compatible with command ${text.green + command + text.none}.`]);
             return;
         }
@@ -2920,53 +2917,63 @@ interface readFile {
                 : "source",
             resolve = function node_apps_readmethod_resolve() {
                 node.fs.stat(options[item], function node_apps_readmethod_resolve_stat(err:Error, stat:Stats):void {
-                    const resolveItem = function node_apps_readmethod_resolve_stat_resolveItem() {
-                        /*const final = function node_apps_readmethod_application_final():void {
-                                const output:string[] = [];
-                                if (verbose === true) {
-                                    if (auto === true) {
-                                        output.push("");
-                                    }
-                                    if (auto === true) {
-                                        apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}read_method${text.none} set to ${text.angry}auto${text.none} and interpreted as ${text.green + options.read_method + text.none}.`);
-                                    }
+                    const screen = function node_apps_readmethod_resolve_stat_screen():void {
+                            if (options.language !== "text") {
+                                options.source = options[item];
+                                const result:string = prettydiff.mode(options);
+                                if (result.indexOf("Error: ") === 0) {
+                                    apps.errout([result.replace("Error: ", "")]);
+                                    return;
                                 }
-                                apps.log(output);
-                            };*/
-                        if (options.read_method === "directory" || options.read_method === "subdirectory") {
-                            apps.directory({
-                                callback: function node_apps_readmethod_resolve_stat_resolveItem_directoryCallback(list:directoryList):void {
-                                    modeCallback(list);
-                                },
-                                exclusions: exclusions,
-                                path: options.source,
-                                recursive: (options.read_method === "auto" || options.read_method === "subdirectory"),
-                                symbolic: true
-                            });
-                        } else {
-                            apps.readFile({
-                                callback: function node_apps_readmethod_resolve_stat_resolveItem_fileCallback(args:readFile, dump:string|Buffer):void {
-                                    if (typeof dump === "string") {
-                                        // 1 parse code
-                                        // 2 execute mode
-                                        // 3 output result
-                                        options.source = dump;
-                                        const result:string = prettydiff.mode(options);
-                                        if (result.indexOf("Error: ") === 0) {
-                                            apps.errout([result.replace("Error: ", "")]);
-                                            return;
+                                store[item][item] = result;
+                            } else {
+                                store[item][item] = options[item];
+                            }
+                            if (options.mode === "diff") {
+                                if (store.source.source !== undefined && store.diff.diff !== undefined) {
+                                    options.diff = store.diff.diff;
+                                    options.source = store.source.source;
+                                    apps.output("", prettydiff.api.diffview(options)[0]);
+                                }
+                            } else {
+                                apps.output("", store.source.source);
+                            }
+                        },
+                        resolveItem = function node_apps_readmethod_resolve_stat_resolveItem() {
+                            /*if (options.read_method === "directory" || options.read_method === "subdirectory") {
+                                apps.directory({
+                                    callback: function node_apps_readmethod_resolve_stat_resolveItem_directoryCallback(list:directoryList):void {
+                                        modeCallback(list);
+                                    },
+                                    exclusions: exclusions,
+                                    path: options.source,
+                                    recursive: (options.read_method === "auto" || options.read_method === "subdirectory"),
+                                    symbolic: true
+                                });
+                            } else {*/
+                                apps.readFile({
+                                    callback: function node_apps_readmethod_resolve_stat_resolveItem_fileCallback(args:readFile, dump:string|Buffer):void {
+                                        if (typeof dump === "string") {
+                                            // 1 parse code
+                                            // 2 execute mode
+                                            // 3 output result
+                                            options.source = dump;
+                                            const result:string = prettydiff.mode(options);
+                                            if (result.indexOf("Error: ") === 0) {
+                                                apps.errout([result.replace("Error: ", "")]);
+                                                return;
+                                            }
+                                            apps.output(args.path, result);
+                                        } else {
+                                            apps.errout([`The file at ${options[item]} contains a binary buffer.  Pretty Diff does not analyze binary at this time.`]);
                                         }
-                                        apps.output(args.path, result);
-                                    } else {
-                                        apps.errout([`The file at ${options[item]} contains a binary buffer.  Pretty Diff does not analyze binary at this time.`]);
-                                    }
-                                },
-                                index: 0,
-                                path: options.source,
-                                stat: stat
-                            });
-                        }
-                    };
+                                    },
+                                    index: 0,
+                                    path: options.source,
+                                    stat: stat
+                                });
+                            //}
+                        };
                     if (readmethod === "auto") {
                         if (err !== null) {
                             const index:any = {
@@ -2985,12 +2992,7 @@ interface readFile {
                             )) {
                                 // read_method:auto evaluated as "screen"
                                 options.read_method = "screen";
-                                const result:string = prettydiff.mode(options);
-                                if (result.indexOf("Error: ") === 0) {
-                                    apps.errout([result.replace("Error: ", "")]);
-                                    return;
-                                }
-                                apps.output("", result);
+                                screen();
                             } else {
                                 // read_method:auto evaluated as filesystem path pointing to missing resource
                                 apps.errout([err.toString()]);
@@ -3058,235 +3060,18 @@ interface readFile {
                             resolveItem();
                         });
                     } else if (options.read_method === "screen") {
-                        const result:string = prettydiff.mode(options);
-                        if (result.indexOf("Error: ") === 0) {
-                            apps.errout([result.replace("Error: ", "")]);
-                            return;
-                        }
-                        apps.output("", result);
+                        screen();
                     } else {
                         resolveItem();
                     }
                 });
             };
-        options.mode = (command === "diff")
-            ? "beautify"
-            : command;
         if (global.parseFramework === undefined) {
             require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}parse`);
         }
         all(options, function node_apps_readmethod_allLexers() {
             resolve();
         });
-        /*const all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`),
-            application = function node_apps_readmethod_application(path:string):void {
-                let lang:[string, string, string] = ["javascript", "script", "JavaScript"];
-                const langAuto:boolean = (function node_apps_readmethod_application_lang():boolean {
-                        if (options.language === "auto") {
-                            options.language = lang[0];
-                            options.lexer = lang[1];
-                            return true;
-                        }
-                        return false;
-                    }()),
-                    output:string[] = [],
-                    final = function node_apps_readmethod_application_final(inject:string) {
-                        if (verbose === true) {
-                            if (langAuto === true || options.read_method === true) {
-                                output.push("");
-                            }
-                            if (options.read_method === "auto") {
-                                apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}read_method${text.none} set to ${text.angry}auto${text.none}. Option ${text.cyan}source${text.none} was not provided a valid file system path so Pretty Diff processed the source value literally.`);
-                            }
-                            if (langAuto === true) {
-                                apps.wrapit(output, `${text.angry}*${text.none} Option ${text.cyan}lang${text.none} set to ${text.angry}auto${text.none} and evaluated by Pretty Diff as ${text.green + text.bold + lang[2] + text.none} by lexer ${text.green + text.bold + lang[1] + text.none}.`);
-                            }
-                        }
-                        if (inject !== "") {
-                            output.push(inject);
-                        }
-                        apps.log(output);
-                    };
-                if (options.mode === "diff") {
-                    if (options.diff_cli === true) {
-                        verbose = true;
-                        options.read_method = "screen";
-                    }
-                    if (options.language !== "text") {
-                        const source:string = options.source;
-                        options.source = options.diff;
-                        options.parsed = global.parseFramework.parserArrays(options);
-                        options.diff   = prettydiff.beautify[options.lexer](options);
-                        options.source = source;
-                        options.parsed = global.parseFramework.parserArrays(options);
-                        options.source = prettydiff.beautify[options.lexer](options);
-                    }
-                    const diff:[string, number, number] = prettydiff.api.diffview(options),
-                        plural:string = (diff[2] > 0)
-                            ? "s"
-                            : "";
-                    if (options.read_method === "screen" || options.read_method === "filescreen" || options.diff_cli === true) {
-                        output.push(diff[0]);
-                        output.push("");
-                        output.push(`Number of differences: ${text.cyan + (diff[1] + diff[2]) + text.none} from ${text.cyan + (diff[2] + 1) + text.none} line${plural} of code.`);
-                    }
-                } else {
-                }
-                if (options.read_method === "screen" || options.read_method === "filescreen") {
-                    final("");
-                } else if (sourcelist[0][1] === "file") {
-                    if (options.output === "") {
-                        apps.errout([
-                            `Pretty Diff requires use of option ${text.angry}output${text.none} to indicate where to write output.`,
-                            `To print output to the console try using option ${text.cyan}read_method:${text.green}screen${text.none} or ${text.cyan}read_method:${text.green}filescreen${text.none}`,
-                            "Example:",
-                            `${text.cyan}prettydiff ${options.mode} source:"myfile1.txt"${(options.mode === "diff") ? " diff:\"myfile2.txt\"" : ""} read_method:filescreen${text.none}`
-                        ]);
-                        return;
-                    }
-                    node.fs.writeFile(options.output, options.source, "utf8", function node_apps_readmethod_application_writeFile(err:Error) {
-                        if (err !== null) {
-                            apps.errout([err.toString()]);
-                            return;
-                        }
-                        final(`${text.angry}*${text.none} Output written to ${text.cyan + node.path.resolve(options.output) + text.none} at ${text.green + apps.commas(options.source.length) + text.none} characters.`);
-                    });
-                }
-                // priorities
-                // 1 parse output - line 1904 - determine parse options and tabular output from the parse tool
-                // 2 minify output
-                // 3 analysis output
-                // 4 validation
-                // 5 readmethod dir and subdir
-                // 6 prettydiff.js file for embedding
-                // 7 global installation
-                // 8 open defects
-            },
-            file = function node_apps_readmethod_diff_file(item:directoryList):void {
-                const status:[boolean, boolean] = [false, false],
-                    callback = function node_apps_readmethod_diff_file_callback(itemdata:readFile, data:string|Buffer) {
-                        status[itemdata.index] = true;
-                        if (itemdata.index === 0) {
-                            options.source = data;
-                        } else {
-                            options.diff = data;
-                        }
-                        if (item.length < 2 || (status[0] === true && status[1] === true)) {
-                            application(itemdata.path);
-                        }
-                    };
-                apps.readFile({
-                    callback: callback,
-                    index: 0,
-                    path: item[0][0],
-                    stat: item[0][2]
-                });
-                if (item.length > 1) {
-                    apps.readFile({
-                        callback: callback,
-                        index: 1,
-                        path: item[1][0],
-                        stat: item[1][2]
-                    });
-                }
-            },
-            directory = function node_apps_readmethod_diff_directory():void {},
-            // the screenTest function makes a guess if input input is readmethod "screen" opposed to a filesystem object
-            screenTest = function node_apps_readmethod_screenTest(item:"source"|"diff") {
-                node.fs.stat(options[item], function node_apps_readmethod_screenTest_stat(err:Error):void {
-                    if (options.read_method === "auto") {
-                        if (err !== null) {
-                            const index:any = {
-                                "sep": options[item].indexOf(node.path.sep),
-                                "<": options[item].indexOf("<"),
-                                "=": options[item].indexOf("="),
-                                ";": options[item].indexOf(";"),
-                                "{": options[item].indexOf("}")
-                            };
-                            if (err.toString().indexOf("ENOENT") > -1 && (
-                                index["sep"] < 0 ||
-                                index["<"] > -1 ||
-                                index["="] > -1 ||
-                                index[";"] > -1 ||
-                                index["{"] > -1
-                            )) {
-                                // readmethod:auto evaluated as "screen"
-                                application("");
-                            } else {
-                                // readmethod:auto evaluated as filesystem path pointing to missing resource
-                                apps.errout([err.toString()]);
-                            }
-                            return;
-                        }
-                    }
-                    options.output = node.path.resolve(options.output);
-                    node.fs.stat(options.output, function node_apps_readmethod_screenTest_stat_statOutput(ers:Error, stat:Stats):void {
-                        if (ers !== null) {
-                            apps.errout([ers.toString()]);
-                            return;
-                        }
-                        if (item === "source") {
-                            if (stat.isFile() === true) {
-                                if (options.read_method === "directory" || options.read_method === "subdirectory") {
-                                    apps.errout([`Option ${text.cyan}output${text.none} received value ${options.output} which is a file, but when option ${text.cyan}readmethod${text.none} has value ${text.green}directory${text.none} or ${text.green}subdirectory${text.none} the output option must point to a directory or new location.`]);
-                                    return;
-                                }
-                                if (options.read_method === "file") {
-                                    console.log(`Overwriting file ${text.green + options.output + text.none}.`);
-                                }
-                            } else if (stat.isDirectory() === true && options.read_method === "file") {
-                                options.output = options.output.replace(/(\/|\\)$/, "") + sep + options.source.replace(/\/|\\/g, "/").split("/").pop();
-                                if (options.mode === "diff" && options.diff_cli === false) {
-                                    options.output = `${options.output}-diff.txt`;
-                                }
-                            }
-                        }
-                        apps.directory({
-                            callback: function node_apps_readmethod_screenTest_callback(list:directoryList):void {
-                                if (list[0][1] !== "file" && (options.read_method === "file" || options.read_method === "filescreen")) {
-                                    apps.errout([`The value for the source option is ${text.angry}not an address to a file${text.none} but option readmethod is ${text.angry + options.read_method + text.none}.`]);
-                                    return;
-                                }
-                                if (list[0][1] !== "directory" && (options.read_method === "subdirectory" || options.read_method === "directory")) {
-                                    apps.errout([`The value for the source option is ${text.angry}not an address to a directory${text.none} but option readmethod is ${text.angry + options.read_method + text.none}.`]);
-                                    return;
-                                }
-                                if (item === "source") {
-                                    sourcelist = list;
-                                } else {
-                                    difflist = list;
-                                }
-                                if (options.mode !== "diff" || (difflist.length > 0 && sourcelist.length > 0)) {
-                                    if (sourcelist[0][1] === "file") {
-                                        if (options.mode === "diff") {
-                                            file([sourcelist[0], difflist[0]]);
-                                        } else {
-                                            file([sourcelist[0]]);
-                                        }
-                                    } else if (list[0][1] === "directory") {
-                                        directory();
-                                    }
-                                }
-                            },
-                            exclusions: exclusions,
-                            path: options.source,
-                            recursive: (options.read_method === "auto" || options.read_method === "subdirectory"),
-                            symbolic: true
-                        });
-                    });
-                })
-            };
-        all(options, function node_apps_readmethod_allLexers() {
-            if (options.read_method === "screen") {
-                application("");
-            } else {
-                screenTest("source");
-                if (options.mode === "diff") {
-                    screenTest("diff");
-                }
-            }
-        });
-        return;*/
     };
     // similar to posix "rm -rf" command
     apps.remove = function node_apps_remove(filepath:string, callback:Function):void {
@@ -3630,6 +3415,16 @@ interface readFile {
                     test: "PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4NCjwhLS0gR2VuZXJhdG9yOiBBZG9iZSBJbGx1c3RyYXRvciAxNi4wLjAsIFNWRyBFeHBvcnQgUGx1Zy1JbiAuIFNWRyBWZXJzaW9uOiA2LjAwIEJ1aWxkIDApICAtLT4NCjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+DQo8c3ZnIHZlcnNpb249IjEuMSIgaWQ9IkxheWVyXzEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHg9IjBweCIgeT0iMHB4Ig0KCSB3aWR0aD0iMjUwcHgiIGhlaWdodD0iMjAwcHgiIHZpZXdCb3g9IjAgMCAyNTAgMjAwIiBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyNTAgMjAwIiB4bWw6c3BhY2U9InByZXNlcnZlIj4NCjxnPg0KCTxjaXJjbGUgZmlsbD0iI0RFNTgzMyIgY3g9IjEyNy4zMzIiIGN5PSI3OC45NjYiIHI9IjUxLjE1Ii8+DQoJPGc+DQoJCTxnPg0KCQkJPHBhdGggZmlsbD0iIzRDNEM0QyIgZD0iTTIyLjU2NCwxODAuNTc0di0yNC41OThoOC45MTRjOC40ODcsMCwxMi4zNTIsNi4yMzQsMTIuMzUyLDEyLjAzMWMwLDYuMjU2LTMuODE5LDEyLjU2Mi0xMi4zNTIsMTIuNTYyDQoJCQkJTDIyLjU2NCwxODAuNTc0TDIyLjU2NCwxODAuNTc0eiBNMjUuMzk4LDE3Ny43NGg2LjA4YzYuNTc1LDAsOS41MTgtNC45MDQsOS41MTgtOS43NjZjMC00LjQ2Ny0yLjk3OS05LjI3MS05LjUxOC05LjI3MWgtNi4wOA0KCQkJCVYxNzcuNzRMMjUuMzk4LDE3Ny43NHoiLz4NCgkJPC9nPg0KCQk8Zz4NCgkJCTxwYXRoIGZpbGw9IiM0QzRDNEMiIGQ9Ik01NS4wNTUsMTgwLjg1N2MtNC41NTQsMC03LjQ5Ny0zLjEzNy03LjQ5Ny03Ljk5MnYtOS41NTFoMi42NTd2OS41MTZjMCwzLjQ5NiwyLjAzNCw1LjU4NCw1LjQ0Miw1LjU4NA0KCQkJCWMzLjE5NS0wLjAzNSw1LjUxMy0yLjQ4OCw1LjUxMy01LjgzMnYtOS4yNjhoMi42NTd2MTcuMjZoLTIuNDE0bC0wLjE1Mi0zLjAwMmwtMC40MTIsMC41MTgNCgkJCQlDNTkuNDE3LDE3OS44OTEsNTcuNDY4LDE4MC44MjIsNTUuMDU1LDE4MC44NTd6Ii8+DQoJCTwvZz4NCgkJPGc+DQoJCQk8cGF0aCBmaWxsPSIjNEM0QzRDIiBkPSJNNzYuNzg2LDE4MC44OTNjLTQuNDksMC05LjAyLTIuNzcxLTkuMDItOC45NDljMC01LjM1NCwzLjYyNS04Ljk0Nyw5LjAyLTguOTQ3DQoJCQkJYzIuMzYxLDAsNC40MzYsMC44NDIsNi4xNjgsMi41MDJsLTEuNjcsMS43MzJjLTEuMTc1LTEuMDk2LTIuNzgxLTEuNzIxLTQuNDI3LTEuNzIxYy0zLjc2OCwwLTYuMzk5LDIuNjQ2LTYuMzk5LDYuNDM0DQoJCQkJYzAsNC40NDUsMy4xOTYsNi40MzgsNi4zNjQsNi40MzhjMS43ODIsMCwzLjQtMC42MzYsNC41NzMtMS43OTFsMS43MzYsMS43MzZDODEuMzg0LDE4MC4wMjksNzkuMjUsMTgwLjg5Myw3Ni43ODYsMTgwLjg5M3oiLz4NCgkJPC9nPg0KCQk8Zz4NCgkJCTxwb2x5Z29uIGZpbGw9IiM0QzRDNEMiIHBvaW50cz0iOTcuNjgzLDE4MC41NzQgODkuMjQ4LDE3Mi4xMzkgODkuMjQ4LDE4MC41NzQgODYuNjI2LDE4MC41NzQgODYuNjI2LDE1Ni4wMTIgODkuMjQ4LDE1Ni4wMTIgDQoJCQkJODkuMjQ4LDE3MC44NjkgOTYuNjIxLDE2My4zMTQgMTAwLjA1OCwxNjMuMzE0IDkxLjkyNCwxNzEuNDQ4IDEwMS4wNTEsMTgwLjUzOSAxMDEuMDUxLDE4MC41NzQgCQkJIi8+DQoJCTwvZz4NCgkJPGc+DQoJCQk8cGF0aCBmaWxsPSIjNEM0QzRDIiBkPSJNMTA0LjMxNywxODAuNTc0di0yNC41OThoOC45MTNjOC40ODcsMCwxMi4zNTQsNi4yMzQsMTIuMzU0LDEyLjAzMWMwLDYuMjU2LTMuODE1LDEyLjU2Mi0xMi4zNTQsMTIuNTYyDQoJCQkJTDEwNC4zMTcsMTgwLjU3NEwxMDQuMzE3LDE4MC41NzR6IE0xMDcuMTUsMTc3Ljc0aDYuMDhjNi41NzUsMCw5LjUxOS00LjkwNCw5LjUxOS05Ljc2NmMwLTQuNDY3LTIuOTc5LTkuMjcxLTkuNTE5LTkuMjcxaC02LjA4DQoJCQkJVjE3Ny43NHoiLz4NCgkJPC9nPg0KCQk8Zz4NCgkJCTxwYXRoIGZpbGw9IiM0QzRDNEMiIGQ9Ik0xMzYuODA3LDE4MC44NTdjLTQuNTU2LDAtNy40OTYtMy4xMzctNy40OTYtNy45OTJ2LTkuNTUxaDIuNjU2djkuNTE2YzAsMy40OTYsMi4wMzQsNS41ODQsNS40NDEsNS41ODQNCgkJCQljMy4xODktMC4wMzUsNS41MTQtMi40ODgsNS41MTQtNS44MzJ2LTkuMjY4aDIuNjU2djE3LjI2aC0yLjQxNmwtMC4xNS0zLjAwMmwtMC40MTIsMC41MTgNCgkJCQlDMTQxLjE2OCwxNzkuODkxLDEzOS4yMTksMTgwLjgyMiwxMzYuODA3LDE4MC44NTd6Ii8+DQoJCTwvZz4NCgkJPGc+DQoJCQk8cGF0aCBmaWxsPSIjNEM0QzRDIiBkPSJNMTU4LjUzOSwxODAuODkzYy00LjQ5LDAtOS4wMjEtMi43NzEtOS4wMjEtOC45NDljMC01LjM1NCwzLjYyNS04Ljk0Nyw5LjAyMS04Ljk0Nw0KCQkJCWMyLjM1OSwwLDQuNDM4LDAuODQyLDYuMTY4LDIuNTAybC0xLjY3LDEuNzMyYy0xLjE3Ni0xLjA5Ni0yLjc4MS0xLjcyMS00LjQyOC0xLjcyMWMtMy43NywwLTYuMzk4LDIuNjQ2LTYuMzk4LDYuNDM0DQoJCQkJYzAsNC40NDUsMy4xOTcsNi40MzgsNi4zNjMsNi40MzhjMS43ODEsMCwzLjQtMC42MzYsNC41NzItMS43OTFsMS42ODYsMS42ODhsLTAuMDg4LDAuMDkxbDAuMDQ5LDAuMDQ5DQoJCQkJQzE2My4wNjIsMTgwLjA1OSwxNjAuOTYxLDE4MC44OTMsMTU4LjUzOSwxODAuODkzeiIvPg0KCQk8L2c+DQoJCTxnPg0KCQkJPHBvbHlnb24gZmlsbD0iIzRDNEM0QyIgcG9pbnRzPSIxNzkuNDM2LDE4MC41NzQgMTcxLDE3Mi4xMzkgMTcxLDE4MC41NzQgMTY4LjM3OSwxODAuNTc0IDE2OC4zNzksMTU2LjAxMiAxNzEsMTU2LjAxMiANCgkJCQkxNzEsMTcwLjg2OSAxNzguMzczLDE2My4zMTQgMTgxLjgxMSwxNjMuMzE0IDE3My42NzgsMTcxLjQ0OCAxODIuODAzLDE4MC41MzkgMTgyLjgwMywxODAuNTc0IAkJCSIvPg0KCQk8L2c+DQoJCTxnPg0KCQkJPHBhdGggZmlsbD0iIzRDNEM0QyIgZD0iTTE5Ni43MTksMTgxLjAzNWMtOS40NTcsMC0xMi44MTItNi43NS0xMi44MTItMTIuNTI5Yy0wLjAyMS0zLjc2NSwxLjI1Ni03LjEyNSwzLjU4NC05LjQ2Nw0KCQkJCWMyLjI5My0yLjMwNSw1LjQ3My0zLjUyMyw5LjE5Mi0zLjUyM2MzLjM2NiwwLDYuNTM3LDEuMjc5LDguOTM4LDMuNjA0bC0xLjYwNCwxLjg2OWMtMS44OS0xLjc2My00LjY4NS0yLjg1My03LjMzLTIuODUzDQoJCQkJYy02Ljg1NCwwLTkuOTc5LDUuMzc1LTkuOTc5LDEwLjM2N2MwLDQuOTA4LDMuMTA0LDkuODczLDEwLjA1MSw5Ljg3M2MyLjUyNywwLDQuODg2LTAuODY1LDYuODEyLTIuNTE4bDAuMDkxLTAuMDcydi02LjA2Mg0KCQkJCWgtNy43Mjl2LTIuNDc5aDEwLjI3NnY5LjY0NkMyMDMuNTU1LDE3OS42OTEsMjAwLjQ2MywxODEuMDM1LDE5Ni43MTksMTgxLjAzNXoiLz4NCgkJPC9nPg0KCQk8Zz4NCgkJCTxwYXRoIGZpbGw9IiM0QzRDNEMiIGQ9Ik0yMTguNDUzLDE4MC44OTNjLTUuMTg4LDAtOC45NDktMy43NDgtOC45NDktOC45MTRjMC01LjI0NiwzLjc3LTkuMDU1LDguOTQ5LTkuMDU1DQoJCQkJYzUuMjg5LDAsOC45ODIsMy43MjMsOC45ODIsOS4wNTVDMjI3LjQzNiwxNzcuMTQ1LDIyMy42NTgsMTgwLjg5MywyMTguNDUzLDE4MC44OTN6IE0yMTguNDg2LDE2NS4zMzINCgkJCQljLTMuNzI3LDAtNi4zMjYsMi43MzQtNi4zMjYsNi42NDZjMCwzLjcyOSwyLjY0Niw2LjQzNiw2LjI5Myw2LjQzNmMzLjcwOSwwLDYuMzI2LTIuNjQ2LDYuMzYxLTYuNDM0DQoJCQkJQzIyNC44MTQsMTY4LjEyNywyMjIuMTU0LDE2NS4zMzIsMjE4LjQ4NiwxNjUuMzMyeiIvPg0KCQk8L2c+DQoJPC9nPg0KCTxnPg0KCQk8Zz4NCgkJCTxnPg0KCQkJCTxnPg0KCQkJCQk8Zz4NCgkJCQkJCTxnPg0KCQkJCQkJCTxnPg0KCQkJCQkJCQk8Zz4NCgkJCQkJCQkJCTxnPg0KCQkJCQkJCQkJCTxnPg0KCQkJCQkJCQkJCQk8Zz4NCgkJCQkJCQkJCQkJCTxnPg0KCQkJCQkJCQkJCQkJCTxkZWZzPg0KCQkJCQkJCQkJCQkJCQk8cGF0aCBpZD0iU1ZHSURfMV8iIGQ9Ik0xNzguNjg0LDc4LjgyNGMwLDI4LjMxNi0yMy4wMzUsNTEuMzU0LTUxLjM1NCw1MS4zNTRjLTI4LjMxMywwLTUxLjM0OC0yMy4wMzktNTEuMzQ4LTUxLjM1NA0KCQkJCQkJCQkJCQkJCQkJYzAtMjguMzEzLDIzLjAzNi01MS4zNDksNTEuMzQ4LTUxLjM0OUMxNTUuNjQ4LDI3LjQ3NSwxNzguNjg0LDUwLjUxMSwxNzguNjg0LDc4LjgyNHoiLz4NCgkJCQkJCQkJCQkJCQk8L2RlZnM+DQoJCQkJCQkJCQkJCQkJPGNsaXBQYXRoIGlkPSJTVkdJRF8yXyI+DQoJCQkJCQkJCQkJCQkJCTx1c2UgeGxpbms6aHJlZj0iI1NWR0lEXzFfIiAgb3ZlcmZsb3c9InZpc2libGUiLz4NCgkJCQkJCQkJCQkJCQk8L2NsaXBQYXRoPg0KCQkJCQkJCQkJCQkJCTxnIGNsaXAtcGF0aD0idXJsKCNTVkdJRF8yXykiPg0KCQkJCQkJCQkJCQkJCQk8cGF0aCBmaWxsPSIjRDVEN0Q4IiBkPSJNMTQ4LjI5MywxNTUuMTU4Yy0xLjgwMS04LjI4NS0xMi4yNjItMjcuMDM5LTE2LjIzLTM0Ljk2OQ0KCQkJCQkJCQkJCQkJCQkJYy0zLjk2NS03LjkzMi03LjkzOC0xOS4xMS02LjEyOS0yNi4zMjJjMC4zMjgtMS4zMTItMy40MzYtMTEuMzA4LTIuMzU0LTEyLjAxNQ0KCQkJCQkJCQkJCQkJCQkJYzguNDE2LTUuNDg5LDEwLjYzMiwwLjU5OSwxNC4wMDItMS44NjJjMS43MzQtMS4yNzMsNC4wOSwxLjA0Nyw0LjY4OS0xLjA2YzIuMTU4LTcuNTY3LTMuMDA2LTIwLjc2LTguNzcxLTI2LjUyNg0KCQkJCQkJCQkJCQkJCQkJYy0xLjg4NS0xLjg3OS00Ljc3MS0zLjA2LTguMDMtMy42ODdjLTEuMjU0LTEuNzEzLTMuMjc1LTMuMzYtNi4xMzgtNC44NzljLTMuMTg4LTEuNjk3LTEwLjEyMS0zLjkzOC0xMy43MTctNC41MzUNCgkJCQkJCQkJCQkJCQkJCWMtMi40OTItMC40MS0zLjA1NSwwLjI4Ny00LjExOSwwLjQ2MWMwLjk5MiwwLjA4OCw1LjY5OSwyLjQxNCw2LjYxNSwyLjU0OWMtMC45MTYsMC42MTktMy42MDctMC4wMjgtNS4zMjQsMC43NDINCgkJCQkJCQkJCQkJCQkJCWMtMC44NjUsMC4zOTItMS41MTIsMS44NzctMS41MDYsMi41OGM0LjkxLTAuNDk2LDEyLjU3NC0wLjAxNiwxNy4xLDJjLTMuNjAyLDAuNDEtOS4wOCwwLjg2Ny0xMS40MzYsMi4xMDUNCgkJCQkJCQkJCQkJCQkJCWMtNi44NDgsMy42MDgtOS44NzMsMTIuMDM1LTguMDcsMjIuMTMzYzEuODA0LDEwLjA3NSw5LjczOCw0Ni44NSwxMi4yNjIsNTkuMTI5DQoJCQkJCQkJCQkJCQkJCQljMi41MjUsMTIuMjY0LTUuNDA4LDIwLjE4OS0xMC40NTUsMjIuMzU0bDUuNDA4LDAuMzYzbC0xLjgwMSwzLjk2N2M2LjQ4NCwwLjcxOSwxMy42OTUtMS40MzksMTMuNjk1LTEuNDM5DQoJCQkJCQkJCQkJCQkJCQljLTEuNDM4LDMuOTY1LTExLjE3Niw1LjQxMi0xMS4xNzYsNS40MTJzNC42OTEsMS40MzgsMTIuMjU4LTEuNDQ3YzcuNTc4LTIuODgzLDEyLjI2My00LjY4OCwxMi4yNjMtNC42ODgNCgkJCQkJCQkJCQkJCQkJCWwzLjYwNCw5LjM3M2w2Ljg1NC02Ljg0N2wyLjg4NSw3LjIxMUMxNDQuNjg2LDE2NS4yNiwxNTAuMDk2LDE2My40NTMsMTQ4LjI5MywxNTUuMTU4eiIvPg0KCQkJCQkJCQkJCQkJCQk8cGF0aCBmaWxsPSIjRkZGRkZGIiBkPSJNMTUwLjQ3MSwxNTMuNDc3Yy0xLjc5NS04LjI4OS0xMi4yNTYtMjcuMDQzLTE2LjIyOC0zNC45NzkNCgkJCQkJCQkJCQkJCQkJCWMtMy45Ny03LjkzNi03LjkzNS0xOS4xMTItNi4xMy0yNi4zMjFjMC4zMzUtMS4zMDksMC4zNDEtNi42NjgsMS40MjktNy4zNzljOC40MTEtNS40OTQsNy44MTItMC4xODQsMTEuMTg3LTIuNjQ1DQoJCQkJCQkJCQkJCQkJCQljMS43NC0xLjI3MSwzLjEzMy0yLjgwNiwzLjczOC00LjkxMmMyLjE2NC03LjU3Mi0zLjAwNi0yMC43Ni04Ljc3My0yNi41MjljLTEuODc5LTEuODc5LTQuNzY4LTMuMDYyLTguMDIzLTMuNjg2DQoJCQkJCQkJCQkJCQkJCQljLTEuMjUyLTEuNzE4LTMuMjcxLTMuMzYxLTYuMTMtNC44ODJjLTUuMzkxLTIuODYyLTEyLjA3NC00LjAwNi0xOC4yNjYtMi44ODNjMC45OSwwLjA5LDMuMjU2LDIuMTM4LDQuMTY4LDIuMjczDQoJCQkJCQkJCQkJCQkJCQljLTEuMzgxLDAuOTM2LTUuMDUzLDAuODE1LTUuMDI5LDIuODk2YzQuOTE2LTAuNDkyLDEwLjMwMywwLjI4NSwxNC44MzQsMi4yOTdjLTMuNjAyLDAuNDEtNi45NTUsMS4zLTkuMzExLDIuNTQzDQoJCQkJCQkJCQkJCQkJCQljLTYuODU0LDMuNjAzLTguNjU2LDEwLjgxMi02Ljg1NCwyMC45MTRjMS44MDcsMTAuMDk3LDkuNzQyLDQ2Ljg3MywxMi4yNTYsNTkuMTI2DQoJCQkJCQkJCQkJCQkJCQljMi41MjcsMTIuMjYtNS40MDIsMjAuMTg4LTEwLjQ0OSwyMi4zNTRsNS40MDgsMC4zNTlsLTEuODAxLDMuOTczYzYuNDg0LDAuNzIxLDEzLjY5NS0xLjQzOSwxMy42OTUtMS40MzkNCgkJCQkJCQkJCQkJCQkJCWMtMS40MzgsMy45NzQtMTEuMTc2LDUuNDA2LTExLjE3Niw1LjQwNnM0LjY4NiwxLjQzOSwxMi4yNTgtMS40NDVjNy41ODEtMi44ODMsMTIuMjY5LTQuNjg4LDEyLjI2OS00LjY4OA0KCQkJCQkJCQkJCQkJCQkJbDMuNjA0LDkuMzczTDE0NCwxNTYuMzVsMi44OTEsNy4yMTVDMTQ2Ljg3NSwxNjMuNTcyLDE1Mi4yNzksMTYxLjc2OCwxNTAuNDcxLDE1My40Nzd6Ii8+DQoJCQkJCQkJCQkJCQkJCTxwYXRoIGZpbGw9IiMyRDRGOEUiIGQ9Ik0xMDkuMDIxLDcwLjY5MWMwLTIuMDkzLDEuNjkzLTMuNzg3LDMuNzg5LTMuNzg3YzIuMDksMCwzLjc4NSwxLjY5NCwzLjc4NSwzLjc4Nw0KCQkJCQkJCQkJCQkJCQkJYzAsMi4wOTQtMS42OTUsMy43ODYtMy43ODUsMy43ODZDMTEwLjcxNCw3NC40NzgsMTA5LjAyMSw3Mi43ODUsMTA5LjAyMSw3MC42OTF6Ii8+DQoJCQkJCQkJCQkJCQkJCTxwYXRoIGZpbGw9IiNGRkZGRkYiIGQ9Ik0xMTMuNTA3LDY5LjQyOWMwLTAuNTQ1LDAuNDQxLTAuOTgzLDAuOTgtMC45ODNjMC41NDMsMCwwLjk4NCwwLjQzOCwwLjk4NCwwLjk4Mw0KCQkJCQkJCQkJCQkJCQkJYzAsMC41NDMtMC40NDEsMC45ODQtMC45ODQsMC45ODRDMTEzLjk0OSw3MC40MTQsMTEzLjUwNyw2OS45NzIsMTEzLjUwNyw2OS40Mjl6Ii8+DQoJCQkJCQkJCQkJCQkJCTxwYXRoIGZpbGw9IiMyRDRGOEUiIGQ9Ik0xMzQuODY3LDY4LjQ0NWMwLTEuNzkzLDEuNDYxLTMuMjUsMy4yNTItMy4yNWMxLjgwMSwwLDMuMjU2LDEuNDU3LDMuMjU2LDMuMjUNCgkJCQkJCQkJCQkJCQkJCWMwLDEuODAxLTEuNDU1LDMuMjU4LTMuMjU2LDMuMjU4QzEzNi4zMjgsNzEuNzAzLDEzNC44NjcsNzAuMjQ2LDEzNC44NjcsNjguNDQ1eiIvPg0KCQkJCQkJCQkJCQkJCQk8cGF0aCBmaWxsPSIjRkZGRkZGIiBkPSJNMTM4LjcyNSw2Ny4zNjNjMC0wLjQ2MywwLjM3OS0wLjg0MywwLjgzOC0wLjg0M2MwLjQ3OSwwLDAuODQ2LDAuMzgsMC44NDYsMC44NDMNCgkJCQkJCQkJCQkJCQkJCWMwLDAuNDY5LTAuMzY3LDAuODQyLTAuODQ2LDAuODQyQzEzOS4xMDQsNjguMjA1LDEzOC43MjUsNjcuODMyLDEzOC43MjUsNjcuMzYzeiIvPg0KCQkJCQkJCQkJCQkJCQkNCgkJCQkJCQkJCQkJCQkJCTxsaW5lYXJHcmFkaWVudCBpZD0iU1ZHSURfM18iIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMTg5My4zMTg0IiB5MT0iLTIzODEuOTc5NSIgeDI9IjE5MDEuODg2NyIgeTI9Ii0yMzgxLjk3OTUiIGdyYWRpZW50VHJhbnNmb3JtPSJtYXRyaXgoMSAwIDAgLTEgLTE3ODggLTIzMjEpIj4NCgkJCQkJCQkJCQkJCQkJCTxzdG9wICBvZmZzZXQ9IjAuMDA1NiIgc3R5bGU9InN0b3AtY29sb3I6IzYxNzZCOSIvPg0KCQkJCQkJCQkJCQkJCQkJPHN0b3AgIG9mZnNldD0iMC42OTEiIHN0eWxlPSJzdG9wLWNvbG9yOiMzOTRBOUYiLz4NCgkJCQkJCQkJCQkJCQkJPC9saW5lYXJHcmFkaWVudD4NCgkJCQkJCQkJCQkJCQkJPHBhdGggZmlsbD0idXJsKCNTVkdJRF8zXykiIGQ9Ik0xMTMuODg2LDU5LjcxOGMwLDAtMi44NTQtMS4yOTEtNS42MjksMC40NTNjLTIuNzcsMS43NDItMi42NjgsMy41MjMtMi42NjgsMy41MjMNCgkJCQkJCQkJCQkJCQkJCXMtMS40NzMtMy4yODMsMi40NTMtNC44OTJDMTExLjk3Miw1Ny4xOTMsMTEzLjg4Niw1OS43MTgsMTEzLjg4Niw1OS43MTh6Ii8+DQoJCQkJCQkJCQkJCQkJCQ0KCQkJCQkJCQkJCQkJCQkJPGxpbmVhckdyYWRpZW50IGlkPSJTVkdJRF80XyIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiIHgxPSIxOTIwLjI3MzQiIHkxPSItMjM3OS4zNzExIiB4Mj0iMTkyOC4wNzgxIiB5Mj0iLTIzNzkuMzcxMSIgZ3JhZGllbnRUcmFuc2Zvcm09Im1hdHJpeCgxIDAgMCAtMSAtMTc4OCAtMjMyMSkiPg0KCQkJCQkJCQkJCQkJCQkJPHN0b3AgIG9mZnNldD0iMC4wMDU2IiBzdHlsZT0ic3RvcC1jb2xvcjojNjE3NkI5Ii8+DQoJCQkJCQkJCQkJCQkJCQk8c3RvcCAgb2Zmc2V0PSIwLjY5MSIgc3R5bGU9InN0b3AtY29sb3I6IzM5NEE5RiIvPg0KCQkJCQkJCQkJCQkJCQk8L2xpbmVhckdyYWRpZW50Pg0KCQkJCQkJCQkJCQkJCQk8cGF0aCBmaWxsPSJ1cmwoI1NWR0lEXzRfKSIgZD0iTTE0MC4wNzgsNTkuNDU4YzAsMC0yLjA1MS0xLjE3Mi0zLjY0My0xLjE1MmMtMy4yNzEsMC4wNDMtNC4xNjIsMS40ODgtNC4xNjIsMS40ODgNCgkJCQkJCQkJCQkJCQkJCXMwLjU0OS0zLjQ0NSw0LjczMi0yLjc1NEMxMzkuMjczLDU3LjQxNywxNDAuMDc4LDU5LjQ1OCwxNDAuMDc4LDU5LjQ1OHoiLz4NCgkJCQkJCQkJCQkJCQk8L2c+DQoJCQkJCQkJCQkJCQk8L2c+DQoJCQkJCQkJCQkJCTwvZz4NCgkJCQkJCQkJCQk8L2c+DQoJCQkJCQkJCQk8L2c+DQoJCQkJCQkJCTwvZz4NCgkJCQkJCQk8L2c+DQoJCQkJCQk8L2c+DQoJCQkJCTwvZz4NCgkJCQk8L2c+DQoJCQk8L2c+DQoJCQk8cGF0aCBmaWxsPSIjRkREMjBBIiBkPSJNMTI0LjQsODUuMjk1YzAuMzc5LTIuMjkxLDYuMjk5LTYuNjI1LDEwLjQ5MS02Ljg4N2M0LjIwMS0wLjI2NSw1LjUxLTAuMjA1LDkuMDEtMS4wNDMNCgkJCQljMy41MS0wLjgzOCwxMi41MzUtMy4wODgsMTUuMDMzLTQuMjQyYzIuNTA0LTEuMTU2LDEzLjEwNCwwLjU3Miw1LjYzMSw0LjczOGMtMy4yMzIsMS44MDktMTEuOTQzLDUuMTMxLTE4LjE3Miw2Ljk4Nw0KCQkJCWMtNi4yMTksMS44NjEtOS45OS0xLjc3Ni0xMi4wNiwxLjI4MWMtMS42NDYsMi40MzItMC4zMzQsNS43NjIsNy4wOTksNi40NTNjMTAuMDM3LDAuOTMsMTkuNjYtNC41MjEsMjAuNzE5LTEuNjI1DQoJCQkJYzEuMDY0LDIuODk1LTguNjI1LDYuNTA4LTE0LjUyNSw2LjYyM2MtNS44OTMsMC4xMTEtMTcuNzcxLTMuODk2LTE5LjU1NS01LjEzN0MxMjYuMjg1LDkxLjIwNSwxMjMuOTA2LDg4LjMxMywxMjQuNCw4NS4yOTV6Ii8+DQoJCTwvZz4NCgkJPGc+DQoJCQk8cGF0aCBmaWxsPSIjNjVCQzQ2IiBkPSJNMTI4Ljk0MywxMTUuNTkyYzAsMC0xNC4xMDItNy41MjEtMTQuMzMyLTQuNDdjLTAuMjM4LDMuMDU2LDAsMTUuNTA5LDEuNjQzLDE2LjQ1MQ0KCQkJCWMxLjY0NiwwLjkzOCwxMy4zOTYtNi4xMDgsMTMuMzk2LTYuMTA4TDEyOC45NDMsMTE1LjU5MnoiLz4NCgkJCTxwYXRoIGZpbGw9IiM2NUJDNDYiIGQ9Ik0xMzQuMzQ2LDExNS4xMThjMCwwLDkuNjM1LTcuMjg1LDExLjc1NC02LjgxNWMyLjExMSwwLjQ3OSwyLjU4MiwxNS41MSwwLjcwMSwxNi4yMjkNCgkJCQljLTEuODgxLDAuNjktMTIuOTA4LTMuODEzLTEyLjkwOC0zLjgxM0wxMzQuMzQ2LDExNS4xMTh6Ii8+DQoJCQk8cGF0aCBmaWxsPSIjNDNBMjQ0IiBkPSJNMTI1LjUyOSwxMTYuMzg5YzAsNC45MzItMC43MDksNy4wNDksMS40MSw3LjUxOWMyLjEwOSwwLjQ3Myw2LjEwNCwwLDcuNTE4LTAuOTM4DQoJCQkJYzEuNDEtMC45MzgsMC4yMzItNy4yNzktMC4yMzItOC40NjVDMTMzLjc0OCwxMTMuMzMxLDEyNS41MjksMTE0LjI3MywxMjUuNTI5LDExNi4zODl6Ii8+DQoJCQk8cGF0aCBmaWxsPSIjNjVCQzQ2IiBkPSJNMTI2LjQyNiwxMTUuMjkyYzAsNC45MzMtMC43MDcsNy4wNSwxLjQwOSw3LjUxOWMyLjEwNiwwLjQ3OSw2LjEwNCwwLDcuNTE5LTAuOTM4DQoJCQkJYzEuNDEtMC45NDEsMC4yMzEtNy4yNzktMC4yMzYtOC40NjZDMTM0LjY0NSwxMTIuMjM0LDEyNi40MjYsMTEzLjE4LDEyNi40MjYsMTE1LjI5MnoiLz4NCgkJPC9nPg0KCTwvZz4NCgk8Y2lyY2xlIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0RFNTgzMyIgc3Ryb2tlLXdpZHRoPSI1IiBzdHJva2UtbWl0ZXJsaW1pdD0iMTAiIGN4PSIxMjcuMzMxIiBjeT0iNzguOTY1IiByPSI1Ny41Ii8+DQo8L2c+DQo8L3N2Zz4NCg=="
                 },
                 {
+                    command: `beautify source:"${projectPath}tsconfig.json" read_method:filescreen`,
+                    qualifier: "is",
+                    test: `{\n    "compilerOptions": {\n        "target": "ES6",\n        "outDir": "js"\n    },\n    "include": [\n        "*.ts", "**/*.ts"\n    ],\n    "exclude": ["js", "node_modules", "test"]\n}`
+                },
+                {
+                    command: `beautify source:"${projectPath}tsconfig.json" read_method:filescreen language:text`,
+                    qualifier: "contains",
+                    test: `Language value ${text.angry}text${text.none} is not compatible with command ${text.green}beautify${text.none}.`
+                },
+                {
                     command: "commands",
                     qualifier: "contains",
                     test: `Commands are tested using the ${text.green}simulation${text.none} command.`
@@ -3671,6 +3466,16 @@ interface readFile {
                     file: `${projectPath}temp${supersep}minify${supersep}style.js`,
                     qualifier: "file begins",
                     test: "/*global global*/"
+                },
+                {
+                    command: `diff source:"hello" diff:"shelo" readmethod:screen`,
+                    qualifier: "is",
+                    test: `${text.cyan}Line: 1${text.none}\n${text.red}hel${text.diffchar}l${text.clear}o${text.none}\n${text.green + text.diffchar}s${text.clear}helo${text.none}`
+                },
+                {
+                    command: `diff source:"hello" diff:"shelo" readmethod:screen crlf:true language:text`,
+                    qualifier: "is",
+                    test: `${text.cyan}Line: 1${text.none}\r\n${text.red}hel${text.diffchar}l${text.clear}o${text.none}\r\n${text.green + text.diffchar}s${text.clear}helo${text.none}`
                 },
                 {
                     command: "directory",
@@ -3773,6 +3578,16 @@ interface readFile {
                     test: `${text.green}Lint complete for XXXX files!${text.none}`
                 },
                 {
+                    command: `minify source:"${projectPath}tsconfig.json" read_method:filescreen`,
+                    qualifier: "is",
+                    test: `{"compilerOptions":{"target":"ES6","outDir":"js"},"include":["*.ts","**/*.ts"],"exclude":["js","node_modules","test"]}`
+                },
+                {
+                    command: `minify source:"${projectPath}tsconfig.json" read_method:filescreen language:text`,
+                    qualifier: "contains",
+                    test: `Language value ${text.angry}text${text.none} is not compatible with command ${text.green}minify${text.none}.`
+                },
+                {
                     command: "opts",
                     qualifier: "contains",
                     test: `${text.angry}* ${text.none + text.cyan}space_close      ${text.none}: Markup self-closing tags end will end with ' />' instead of '/>'.`
@@ -3858,7 +3673,12 @@ interface readFile {
                     test: `Parsed input from file ${text.cyan + projectPath}tsconfig.json${text.none}`
                 },
                 {
-                    command: `parse ${projectPath}tsconfig.json parse_format:clitable`,
+                    command: `parse source:"${projectPath}tsconfig.json" read_method:filescreen language:text`,
+                    qualifier: "contains",
+                    test: `Language value ${text.angry}text${text.none} is not compatible with command ${text.green}parse${text.none}.`
+                },
+                {
+                    command: `parse ${projectPath}tsconfig.json parse_format:clitable 2`,
                     qualifier: "contains",
                     test: `index | begin | lexer  | lines | presv | stack       | types       | token${node.os.EOL}------|-------|--------|-------|-------|-------------|-------------|------${node.os.EOL + text.green}0     | -1    | script | XXXX     | false | global      | start       | {${text.none}`
                 },
@@ -3918,7 +3738,7 @@ interface readFile {
                     });
                 }
             },
-            errout = function node_apps_simulation_errout(message:string, stdout:string|Buffer) {
+            errout = function node_apps_simulation_errout(message:string, stdout:string) {
                 apps.errout([
                     `Simulation test string ${text.angry + tests[a].command + text.none} ${message}:`,
                     tests[a].test,
@@ -3929,7 +3749,7 @@ interface readFile {
                 ]);
             },
             wrapper = function node_apps_simulation_wrapper():void {
-                node.child(`node js/services ${tests[a].command}`, {cwd: cwd}, function node_apps_simulation_wrapper_child(err:nodeError, stdout:string|Buffer, stderror:string|Buffer) {
+                node.child(`node js/services ${tests[a].command}`, {cwd: cwd}, function node_apps_simulation_wrapper_child(err:nodeError, stdout:string, stderror:string|Buffer) {
                     if (tests[a].artifact === "" || tests[a].artifact === undefined) {
                         writeflag = "";
                     } else {
@@ -4048,7 +3868,7 @@ interface readFile {
         let a:number = 0;
         if (command === "simulation") {
             callback = function node_apps_lint_callback():void {
-                apps.log(["\u0007"]);
+                apps.log(["\u0007"]); // bell sound
             };
             verbose = true;
             console.log("");

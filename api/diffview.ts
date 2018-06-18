@@ -5,18 +5,18 @@
         const tab:string           = (function diffview__tab():string {
                 let a:number      = 0;
                 const output:string[] = [];
-                if (options.inchar === "" || options.insize < 1) {
+                if (options.indent_char === "" || options.indent_size < 1) {
                     return "";
                 }
                 do {
-                    output.push(options.inchar);
+                    output.push(options.indent_char);
                     a = a + 1;
-                } while (a < options.insize);
+                } while (a < options.indent_size);
                 return output.join("");
             }()),
             //translates source code from a string to an array by splitting on line breaks
             stringAsLines = function diffview__stringAsLines(str:string):string[] {
-                const lines = (options.diffcli === true)
+                const lines = (options.diff_cli === true)
                     ? str
                     : str
                         .replace(/&/g, "&amp;")
@@ -250,7 +250,7 @@
                 // * First Pass, account for lines from first file
                 // * build the table from the second file
                 do {
-                    if (options.diffspaceignore === true) {
+                    if (options.diff_space_ignore === true) {
                         two[b] = two[b].replace(/\s+/g, "");
                     }
                     if (table[two[b]] === undefined) {
@@ -266,7 +266,7 @@
                 lena = one.length;
                 a    = 0;
                 do {
-                    if (options.diffspaceignore === true) {
+                    if (options.diff_space_ignore === true) {
                         one[a] = one[a].replace(/\s+/g, "");
                     }
                     if (table[one[a]] === undefined) {
@@ -399,7 +399,7 @@
                         dataMinLength:number = 0,
                         dataA:string[]         = [],
                         dataB:string[]         = [];
-                    const cleanedA:string      = (options.diffcli === true)
+                    const cleanedA:string      = (options.diff_cli === true)
                             ? lineA
                             : lineA
                                 .replace(/&#160;/g, " ")
@@ -409,7 +409,7 @@
                                 .replace(/\$#lt;/g, "<")
                                 .replace(/\$#gt;/g, ">")
                                 .replace(/&amp;/g, "&"),
-                        cleanedB:string      = (options.diffcli === true)
+                        cleanedB:string      = (options.diff_cli === true)
                             ? lineB
                             : lineB
                                 .replace(/&#160;/g, " ")
@@ -534,7 +534,7 @@
                                     x = x - 1;
                                     y = y - 1;
                                 }
-                                if (options.diffspaceignore === true && ((whitetest.test(dataA[y - 1]) === true && y - start > 0) || (whitetest.test(dataB[x - 1]) === true && x - start > 0))) {
+                                if (options.diff_space_ignore === true && ((whitetest.test(dataA[y - 1]) === true && y - start > 0) || (whitetest.test(dataB[x - 1]) === true && x - start > 0))) {
                                     whitespace = true;
                                 }
                                 return [x, y, 0, whitespace];
@@ -544,7 +544,7 @@
                                     x = x - 1;
                                     y = y - 1;
                                 }
-                                if (options.diffspaceignore === true && ((whitetest.test(dataA[x - 1]) === true && x - start > 0) || (whitetest.test(dataB[y - 1]) === true && y - start > 0))) {
+                                if (options.diff_space_ignore === true && ((whitetest.test(dataA[x - 1]) === true && x - start > 0) || (whitetest.test(dataB[y - 1]) === true && y - start > 0))) {
                                     whitespace = true;
                                 }
                                 return [x, y, 1, whitespace];
@@ -557,9 +557,9 @@
                     //prevent extra error counting that occurred before entering this function
                     errorout = errorout - 1;
                     //diff for tabs
-                    if (tab !== "" && cleanedA.length !== cleanedB.length && cleanedA.replace(tabFix, "") === cleanedB.replace(tabFix, "") && options.diffspaceignore === false) {
+                    if (tab !== "" && cleanedA.length !== cleanedB.length && cleanedA.replace(tabFix, "") === cleanedB.replace(tabFix, "") && options.diff_space_ignore === false) {
                         errorout = errorout + 1;
-                        if (options.diffcli === true) {
+                        if (options.diff_cli === true) {
                             tabdiff[0] = tabdiff[0] + tabdiff[2];
                             tabdiff[0] = tabdiff[0]
                                 .replace(regStart, "<pd>")
@@ -721,9 +721,9 @@
                         dataB[dataB.length - 1] = dataB[dataB.length - 1] + strEnd;
                         errorout                = errorout + 1;
                     }
-                    // options.diffcli output doesn't need XML protected characters to be escaped
+                    // options.diff_cli output doesn't need XML protected characters to be escaped
                     // because its output is the command line
-                    if (options.diffcli === true) {
+                    if (options.diff_cli === true) {
                         return [
                             dataA
                                 .join("")
@@ -756,19 +756,19 @@
                             .replace(/<em>\s+<\/em>/g, whiteout)
                     ];
                 };
-            if (options.diffcli === false) {
-                if (options.diffview === "inline") {
+            if (options.diff_cli === false) {
+                if (options.diff_view === "inline") {
                     node.push("<h3 class='texttitle'>");
-                    node.push(options.sourcelabel);
+                    node.push(options.source_label);
                     node.push(" vs. ");
-                    node.push(options.difflabel);
+                    node.push(options.diff_label);
                     node.push("</h3><ol class='count'>");
                 } else {
                     data[0].push("<div class='diff-left'><h3 class='texttitle'>");
-                    data[0].push(options.sourcelabel);
+                    data[0].push(options.source_label);
                     data[0].push("</h3><ol class='count'>");
                     data[2].push("<div class='diff-right'><h3 class='texttitle'>");
-                    data[2].push(options.difflabel);
+                    data[2].push(options.diff_label);
                     data[2].push("</h3><ol class='count' style='cursor:w-resize'>");
                 }
             } else {
@@ -784,10 +784,18 @@
                 rowcnt    = Math.max(baseEnd - baseStart, newEnd - newStart);
                 ctest     = true;
 
-                if (foldstart > -1 && options.diffcli === false) {
+                if (foldstart > -1 && options.diff_cli === false) {
                     data[0][foldstart] = data[0][foldstart].replace("xxx", String(foldcount));
                 }
-                if (options.diffcli === true) {
+                if (options.diff_cli === true) {
+                    const text = {
+                        angry: "\u001b[1m\u001b[4m",
+                        clear: "\u001b[24m\u001b[22m",
+                        cyan: "\u001b[36m",
+                        green: "\u001b[32m",
+                        none: "\u001b[0m",
+                        red: "\u001b[31m"
+                    };
                     if (foldstart > 49 && change === "equal") {
                         break;
                     }
@@ -800,12 +808,12 @@
                             ntest = true;
                         }
                     }
-                    if (options.diffspaceignore === true && change === "replace" && baseTextArray[baseStart] !== undefined && newTextArray[newStart] !== undefined && baseTextArray[baseStart].replace(/\s+/g, "") === newTextArray[newStart].replace(/\s+/g, "")) {
+                    if (options.diff_space_ignore === true && change === "replace" && baseTextArray[baseStart] !== undefined && newTextArray[newStart] !== undefined && baseTextArray[baseStart].replace(/\s+/g, "") === newTextArray[newStart].replace(/\s+/g, "")) {
                         change = "equal";
                     } else if (change !== "equal") {
                         if (a > 0 && opcodes[a - 1][0] === "equal") {
                             foldcount = options.context;
-                            if ((ntest === true || change === "insert") && (options.diffspaceignore === false || (/^(\s+)$/g).test(newTextArray[newStart]) === false)) {
+                            if ((ntest === true || change === "insert") && (options.diff_space_ignore === false || (/^(\s+)$/g).test(newTextArray[newStart]) === false)) {
                                 foldstart = foldstart + 1;
                                 if (options.api === "dom") {
                                     clidata.push("</li><li><h3>Line: ");
@@ -813,7 +821,7 @@
                                     clidata.push("</h3>");
                                 } else {
                                     clidata.push("");
-                                    clidata.push(`\u001b[36mLine: ${opcodes[a - 1][2] + 1}\u001b[39m`);
+                                    clidata.push(`${text.cyan}Line: ${(opcodes[a - 1][2] + 1) + text.none}`);
                                 }
                                 if (foldcount > 0) {
                                     do {
@@ -837,7 +845,7 @@
                                     clidata.push("</h3>");
                                 } else {
                                     clidata.push("");
-                                    clidata.push(`\u001b[36mLine: ${baseStart + 1}\u001b[39m`);
+                                    clidata.push(`${text.cyan}Line: ${(baseStart + 1) + text.none}`);
                                 }
                                 if (foldcount > 0) {
                                     do {
@@ -859,12 +867,12 @@
                                 clidata.push("</li><li><h3>Line: 1</h3>");
                             } else {
                                 clidata.push("");
-                                clidata.push("\u001b[36mLine: 1\u001b[39m");
+                                clidata.push(`${text.cyan}Line: 1${text.none}`);
                             }
                             foldstart = foldstart + 1;
                         }
                         foldcount = 0;
-                        if ((ntest === true || change === "insert") && (options.diffspaceignore === false || (/^(\s+)$/g).test(newTextArray[newStart]) === false)) {
+                        if ((ntest === true || change === "insert") && (options.diff_space_ignore === false || (/^(\s+)$/g).test(newTextArray[newStart]) === false)) {
                             do {
                                 if (options.api === "dom") {
                                     clidata.push("<ins>");
@@ -872,14 +880,14 @@
                                     clidata.push("</ins>");
                                 } else {
                                     if (newTextArray[newStart + foldcount] === "") {
-                                        clidata.push("\u001b[32m(empty line)\u001b[39m");
+                                        clidata.push(`${text.green}(empty line)${text.none}`);
                                     } else {
-                                        clidata.push(`\u001b[32m${newTextArray[newStart + foldcount]}\u001b[39m`);
+                                        clidata.push(text.green + newTextArray[newStart + foldcount] + text.none);
                                     }
                                 }
                                 foldcount = foldcount + 1;
                             } while (foldcount < 7 && foldcount + newStart < newEnd);
-                        } else if (change === "delete" && (options.diffspaceignore === false || (/^(\s+)$/g).test(baseTextArray[baseStart]) === false)) {
+                        } else if (change === "delete" && (options.diff_space_ignore === false || (/^(\s+)$/g).test(baseTextArray[baseStart]) === false)) {
                             do {
                                 if (options.api === "dom") {
                                     clidata.push("<del>");
@@ -887,14 +895,14 @@
                                     clidata.push("</del>");
                                 } else {
                                     if (baseTextArray[baseStart + foldcount] === "") {
-                                        clidata.push("\u001b[31m(empty line)\u001b[39m");
+                                        clidata.push(`${text.red}(empty line)${text.none}`);
                                     } else {
-                                        clidata.push(`\u001b[31m${baseTextArray[baseStart + foldcount]}\u001b[39m`);
+                                        clidata.push(text.red + baseTextArray[baseStart + foldcount] + text.none);
                                     }
                                 }
                                 foldcount = foldcount + 1;
                             } while (foldcount < 7 && foldcount + baseStart < baseEnd);
-                        } else if (change === "replace" && (options.diffspaceignore === false || baseTextArray[baseStart].replace(/\s+/g, "") !== newTextArray[newStart].replace(/\s+/g, ""))) {
+                        } else if (change === "replace" && (options.diff_space_ignore === false || baseTextArray[baseStart].replace(/\s+/g, "") !== newTextArray[newStart].replace(/\s+/g, ""))) {
                             do {
                                 charcompOutput = charcomp(
                                     baseTextArray[baseStart + foldcount],
@@ -908,18 +916,18 @@
                                     clidata.push("</ins>");
                                 } else {
                                     if (charcompOutput[0] === "") {
-                                        clidata.push("\u001b[31m(empty line)\u001b[31m");
+                                        clidata.push(`${text.red}(empty line)${text.none}`);
                                     } else if ((/^\s+$/).test(charcompOutput[0]) === true) {
-                                        clidata.push("\u001b[31m(white space)\u001b[31m");
+                                        clidata.push(`${text.red}(white space)${text.none}`);
                                     } else {
-                                        clidata.push(`\u001b[31m${charcompOutput[0].replace(/<pd>/g, "\u001b[1m").replace(/<\/pd>/g, "\u001b[22m")}\u001b[39m`);
+                                        clidata.push(text.red + charcompOutput[0].replace(/<pd><\/pd>/g, "").replace(/<pd>/g, text.angry).replace(/<\/pd>/g, text.clear).replace(/\s+$/, "") + text.none);
                                     }
                                     if (charcompOutput[1] === "") {
-                                        clidata.push("\u001b[32m(empty line)\u001b[31m");
+                                        clidata.push(`${text.green}(empty line)${text.none}`);
                                     } else if ((/^\s+$/).test(charcompOutput[1]) === true) {
-                                        clidata.push("\u001b[32m(white space)\u001b[31m");
+                                        clidata.push(`${text.green}(white space)${text.none}`);
                                     } else {
-                                        clidata.push(`\u001b[32m${charcompOutput[1].replace(/<pd>/g, "\u001b[1m").replace(/<\/pd>/g, "\u001b[22m")}\u001b[39m`);
+                                        clidata.push(text.green + charcompOutput[1].replace(/<pd><\/pd>/g, "").replace(/<pd>/g, text.angry).replace(/<\/pd>/g, text.clear).replace(/\s+$/, "") + text.none);
                                     }
                                 }
                                 foldcount = foldcount + 1;
@@ -964,7 +972,7 @@
                                 newStart  = newStart + jump;
                                 i         = i + (jump - 1);
                                 data[0].push("<li>...</li>");
-                                if (options.diffview !== "inline") {
+                                if (options.diff_view !== "inline") {
                                     data[1].push("<li class=\"skip\">&#10;</li>");
                                 }
                                 data[2].push("<li>...</li>");
@@ -986,8 +994,8 @@
                             }
                         }
                         foldcount = foldcount + 1;
-                        if (options.diffview === "inline") {
-                            if (options.diffspaceignore === true && change === "replace" && baseTextArray[baseStart].replace(/\s+/g, "") === newTextArray[newStart].replace(/\s+/g, "")) {
+                        if (options.diff_view === "inline") {
+                            if (options.diff_space_ignore === true && change === "replace" && baseTextArray[baseStart].replace(/\s+/g, "") === newTextArray[newStart].replace(/\s+/g, "")) {
                                 change   = "equal";
                                 errorout = errorout - 1;
                             }
@@ -1038,7 +1046,7 @@
                                 data[2].push("<li>");
                                 data[2].push(String(newStart + 1));
                                 data[2].push("&#10;</li>");
-                                if (options.diffspaceignore === true && newTextArray[newStart].replace(/\s+/g, "") === "") {
+                                if (options.diff_space_ignore === true && newTextArray[newStart].replace(/\s+/g, "") === "") {
                                     data[3].push("<li class=\"equal\">");
                                     diffline = diffline - 1;
                                 } else {
@@ -1048,7 +1056,7 @@
                                 data[3].push("&#10;</li>");
                             } else if (btest === true || change === "delete") {
                                 data[2].push("<li class=\"empty\">&#10;</li>");
-                                if (options.diffspaceignore === true && baseTextArray[baseStart].replace(/\s+/g, "") === "") {
+                                if (options.diff_space_ignore === true && baseTextArray[baseStart].replace(/\s+/g, "") === "") {
                                     data[3].push("<li class=\"equal\">");
                                     diffline = diffline - 1;
                                 } else {
@@ -1071,7 +1079,7 @@
                                 if (baseStart < baseEnd) {
                                     data[0].push(`<li>${baseStart + 1}</li>`);
                                     data[2].push("<li class=\"empty\">&#10;</li>");
-                                    if (options.diffspaceignore === true && baseTextArray[baseStart].replace(/\s+/g, "") === "") {
+                                    if (options.diff_space_ignore === true && baseTextArray[baseStart].replace(/\s+/g, "") === "") {
                                         data[3].push("<li class=\"equal\">");
                                         diffline = diffline - 1;
                                     } else {
@@ -1089,7 +1097,7 @@
                                     data[2].push("<li>");
                                     data[2].push(String(newStart + 1));
                                     data[2].push("</li>");
-                                    if (options.diffspaceignore === true && newTextArray[newStart].replace(/\s+/g, "") === "") {
+                                    if (options.diff_space_ignore === true && newTextArray[newStart].replace(/\s+/g, "") === "") {
                                         data[3].push("<li class=\"equal\">");
                                         diffline = diffline - 1;
                                     } else {
@@ -1151,13 +1159,13 @@
                                         }
                                         data[1].push("<li class=\"");
                                         if (newStart >= newEnd) {
-                                            if (options.diffspaceignore === true && baseTextArray[baseStart].replace(/\s+/g, "") === "") {
+                                            if (options.diff_space_ignore === true && baseTextArray[baseStart].replace(/\s+/g, "") === "") {
                                                 data[1].push("equal");
                                                 diffline = diffline - 1;
                                             } else {
                                                 data[1].push("delete");
                                             }
-                                        } else if (baseTextArray[baseStart] === "" && newTextArray[newStart] !== "" && (options.diffspaceignore === false || (baseTextArray[baseStart].replace(/\s+/g, "") !== "" && newTextArray[newStart].replace(/\s+/g, "") !== ""))) {
+                                        } else if (baseTextArray[baseStart] === "" && newTextArray[newStart] !== "" && (options.diff_space_ignore === false || (baseTextArray[baseStart].replace(/\s+/g, "") !== "" && newTextArray[newStart].replace(/\s+/g, "") !== ""))) {
                                             data[1].push("empty");
                                         } else {
                                             data[1].push(change);
@@ -1182,13 +1190,13 @@
                                         data[2].push(`<li>${newStart + 1}</li>`);
                                         data[3].push("<li class=\"");
                                         if (baseStart >= baseEnd) {
-                                            if (options.diffspaceignore === true && newTextArray[newStart].replace(/\s+/g, "") === "") {
+                                            if (options.diff_space_ignore === true && newTextArray[newStart].replace(/\s+/g, "") === "") {
                                                 data[3].push("equal");
                                                 diffline = diffline - 1;
                                             } else {
                                                 data[3].push("insert");
                                             }
-                                        } else if (newTextArray[newStart] === "" && baseTextArray[baseStart] !== "" && (options.diffspaceignore === false || (baseTextArray[baseStart].replace(/\s+/g, "") !== "" && newTextArray[newStart].replace(/\s+/g, "") !== ""))) {
+                                        } else if (newTextArray[newStart] === "" && baseTextArray[baseStart] !== "" && (options.diff_space_ignore === false || (baseTextArray[baseStart].replace(/\s+/g, "") !== "" && newTextArray[newStart].replace(/\s+/g, "") !== ""))) {
                                             data[3].push("empty");
                                         } else {
                                             data[3].push(change);
@@ -1254,7 +1262,7 @@
                     }
                 }
             }
-            if (options.diffcli === true) {
+            if (options.diff_cli === true) {
                 if (a < opcodesLength && foldstart > 49) {
                     diffline = -1;
                 }
@@ -1272,7 +1280,7 @@
             }
             node.push(data[0].join(""));
             node.push("</ol><ol class=");
-            if (options.diffview === "inline") {
+            if (options.diff_view === "inline") {
                 node.push("\"count\">");
             } else {
                 node.push("\"data\" data-prettydiff-ignore=\"true\">");
@@ -1282,7 +1290,7 @@
             node.push(data[2].join(""));
             node.push("</ol><ol class=\"data\" data-prettydiff-ignore=\"true\">");
             node.push(data[3].join(""));
-            if (options.diffview === "inline") {
+            if (options.diff_view === "inline") {
                 node.push("</ol>");
             } else {
                 node.push("</ol></div>");

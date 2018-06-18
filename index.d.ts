@@ -2,9 +2,6 @@ declare var options: any;
 declare var ace: any;
 declare var prettydiff: any;
 declare var window: Window;
-interface nodeError extends Error {
-    code: string;
-}
 declare module NodeJS {
     interface Global {
         parseFramework: any;
@@ -12,62 +9,36 @@ declare module NodeJS {
     }
 }
 type api = "any" | "dom" | "node";
+type codes = [string, number, number, number, number];
+type languageAuto = [string, string, string];
 type lexer = "markup" | "script" | "style";
 type mode = "analysis" | "beautify" | "diff" | "minify" | "parse";
 type qualifier = "begins" | "contains" | "ends" | "file begins" | "file contains" | "file ends" | "file is" | "file not" | "file not contains" | "filesystem contains" | "filesystem not contains" | "is" | "not" | "not contains";
-type languageAuto = [string, string, string];
-interface Window {
-    parseFramework: any;
-}
-interface record {
-    begin: number;
-    lexer: string;
-    lines: number;
-    presv: boolean;
-    stack: string;
-    token: string;
-    types: string;
-}
-interface parsedArray {
-    begin: number[];
-    lexer: string[];
-    lines: number[];
-    presv: boolean[];
-    stack: string[];
-    token: string[];
-    types: string[];
-}
-interface parsedObject {
-    [index: number]: record;
-}
-interface optionFunctions {
-    definitions?: {};
-
-}
-interface optionDef {
-    binaryCheck: RegExp;
-    definitions: any;
-}
-interface parseOptions {
-    lexer: "string";
-    lexerOptions: {
-        [key: string]: {
-            [key: string]: any;
-        }
+interface codeStorage {
+    diff: {
+        [key:string]: string;
     };
-    outputFormat: "objects" | "arrays";
-    source: "string";
+    source: {
+        [key:string]: string;
+    };
 }
-interface library {
-    (): string;
+interface commandList {
+    [key: string]: {
+        description: string;
+        example: {
+            code: string;
+            defined: string;
+        }[];
+    }
+}
+interface compareStore extends Array<[number, number]>{
+    [index:number]: [number, number];
+}
+interface difftable {
+    [key: string]: [number, number];
 }
 interface dom {
     [key: string]: any;
-}
-interface language {
-    auto(sample:string, defaultLang:string): languageAuto;
-    nameproper(input:string): string;
-    setlangmode(input:string):string;
 }
 interface domMethods {
     app: {
@@ -76,6 +47,9 @@ interface domMethods {
     event: {
         [key: string]: any;
     };
+}
+interface diffview {
+    (): [string, number, number]
 }
 interface finalFile {
     css: {
@@ -102,8 +76,50 @@ interface finalFile {
         minimal: string;
     };
 }
-interface diffview {
-    (): [string, number, number]
+interface language {
+    auto(sample:string, defaultLang:string): languageAuto;
+    nameproper(input:string): string;
+    setlangmode(input:string):string;
+}
+interface library {
+    (): string;
+}
+interface meta {
+    error: string;
+    lang: [string, string, string];
+    time: string;
+    insize: number;
+    outsize: number;
+    difftotal: number;
+    difflines: number;
+}
+interface modifyOps {
+    end: string;
+    injectFlag: string;
+    start: string;
+}
+interface nodeCopyParams {
+    callback:Function;
+    destination:string;
+    exclusions:string[];
+    target:string;
+}
+interface nodeError extends Error {
+    code: string;
+}
+interface nodeFileProps {
+    atime: number;
+    mode: number;
+    mtime: number;
+}
+interface nodeLists {
+    emptyline: boolean;
+    heading: string;
+    obj: any;
+    property: "eachkey" | string;
+}
+interface opcodes extends Array<codes> {
+    [index: number]: codes;
 }
 interface option {
     api: api;
@@ -117,58 +133,35 @@ interface option {
         [key: string]: string;
     }
 }
-interface meta {
-    error: string;
-    lang: [string, string, string];
-    time: string;
-    insize: number;
-    outsize: number;
-    difftotal: number;
-    difflines: number;
+interface optionDef {
+    binaryCheck: RegExp;
+    definitions: any;
 }
-type codes = [string, number, number, number, number];
-interface opcodes extends Array<codes> {
-    [index: number]: codes;
+interface optionFunctions {
+    definitions?: {};
+
 }
-interface compareStore extends Array<[number, number]>{
-    [index:number]: [number, number];
+interface parsedArray {
+    begin: number[];
+    lexer: string[];
+    lines: number[];
+    presv: boolean[];
+    stack: string[];
+    token: string[];
+    types: string[];
 }
-interface scriptScopes extends Array<[string, number]>{
-    [index:number]: [string, number];
+interface parsedObject {
+    [index: number]: record;
 }
-interface difftable {
-    [key: string]: [number, number];
-}
-interface modifyOps {
-    end: string;
-    injectFlag: string;
-    start: string;
-}
-interface nodeCopyParams {
-    callback:Function;
-    destination:string;
-    exclusions:string[];
-    target:string;
-}
-interface nodeFileProps {
-    atime: number;
-    mode: number;
-    mtime: number;
-}
-interface nodeLists {
-    emptyline: boolean;
-    heading: string;
-    obj: any;
-    property: "eachkey" | string;
-}
-interface commandList {
-    [key: string]: {
-        description: string;
-        example: {
-            code: string;
-            defined: string;
-        }[];
-    }
+interface parseOptions {
+    lexer: "string";
+    lexerOptions: {
+        [key: string]: {
+            [key: string]: any;
+        }
+    };
+    outputFormat: "objects" | "arrays";
+    source: "string";
 }
 interface readDirectory {
     callback: Function;
@@ -177,10 +170,25 @@ interface readDirectory {
     recursive: boolean;
     symbolic: boolean;
 }
+interface record {
+    begin: number;
+    lexer: string;
+    lines: number;
+    presv: boolean;
+    stack: string;
+    token: string;
+    types: string;
+}
+interface scriptScopes extends Array<[string, number]>{
+    [index:number]: [string, number];
+}
 interface simulationItem {
     artifact?: string;
     command: string;
     file?: string;
     qualifier: qualifier;
     test: string;
+}
+interface Window {
+    parseFramework: any;
 }

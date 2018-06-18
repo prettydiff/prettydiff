@@ -2,6 +2,9 @@
 (function mode_init() {
     "use strict";
     const mode = function mode_(options:any):string {
+        let parseMethod:string = "parserArrays",
+            globalAPI:any = global,
+            modeValue:"beautify"|"minify" = options.mode;
         const pdcomment = function pdcomment_(options:any):void {
                 // parses the prettydiff settings comment
                 //
@@ -179,15 +182,6 @@
                     }
                 }
             },
-            parseMethod:string = (options.mode === "parse" && options.parse_format === "sequential")
-                ? "parserObjects"
-                : "parserArrays",
-            globalAPI:any = (options.api === "dom")
-                ? window
-                : global,
-            modeValue:"beautify"|"minify" = (options.mode === "diff")
-                ? "beautify"
-                : options.mode,
             // prettydiff insertion start
             prettydiff:any = {};
         // prettydiff insertion end
@@ -212,6 +206,15 @@
 
         pdcomment(options);
         
+        if (options.api === "dom") {
+            globalAPI = window;
+        }
+        if (options.mode === "parse" && options.parse_format === "sequential") {
+            parseMethod = "parserObjects";
+        }
+        if (options.mode === "diff") {
+            modeValue = "beautify";
+        }
         if (typeof options.lexerOptions !== "object") {
             options.lexerOptions = {};
         }
