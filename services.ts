@@ -3948,7 +3948,7 @@ interface readFile {
                             options.mode   = "diff";
                             options.source = output;
                             options.source_label = raw[a][1];
-                            apps.diff();
+                            apps.log([prettydiff.api.diffview(options)[0]]);
                             break;
                         }
                     } else {
