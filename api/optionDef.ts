@@ -435,7 +435,7 @@
                 lexer     : "any",
                 label     : "Parsing Lexer",
                 type      : "string",
-                definition: "This option determines which sets of rules to use in the language parser. If option 'language' has a value of 'auto' this option is ignored.",
+                definition: "This option determines which sets of rules to use in the language parser. If option 'language' has a value of 'auto', which is the default value, this option is ignored.",
                 values    : {
                     markup: "parses languages like XML and HTML",
                     script: "parses languages with a C style syntax, such as JavaScript",

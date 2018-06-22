@@ -394,6 +394,7 @@
         if (options.new_line === true && options.end === data.token.length) {
             build.push(lf);
         }
+        output = build.join("");
         return output;
     };
     global.prettydiff.beautify.style = style;

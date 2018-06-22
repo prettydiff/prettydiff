@@ -2954,9 +2954,6 @@ interface readFile {
                                 apps.readFile({
                                     callback: function node_apps_readmethod_resolve_stat_resolveItem_fileCallback(args:readFile, dump:string|Buffer):void {
                                         if (typeof dump === "string") {
-                                            // 1 parse code
-                                            // 2 execute mode
-                                            // 3 output result
                                             options.source = dump;
                                             const result:string = prettydiff.mode(options);
                                             if (result.indexOf("Error: ") === 0) {

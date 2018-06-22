@@ -428,7 +428,6 @@
                                 tabMatchB:string  = "",
                                 splitA:string     = "",
                                 splitB:string     = "",
-                                analysis:string[]   = [],
                                 matchListA:string[]|null = cleanedA.match(tabFix),
                                 matchListB:string[]|null = cleanedB.match(tabFix);
                             if (matchListA === null || matchListB === null || (matchListA[0] === "" && matchListA.length === 1) || (matchListB[0] === "" && matchListB.length === 1)) {
@@ -439,13 +438,9 @@
                             splitA    = cleanedA.split(tabMatchA)[1];
                             splitB    = cleanedB.split(tabMatchB)[1];
                             if (tabMatchA.length > tabMatchB.length) {
-                                analysis  = tabMatchA.split(tabMatchB);
-                                tabMatchA = tabMatchB + strStart + analysis[1] + strEnd;
-                                tabMatchB = tabMatchB + strStart + strEnd;
+                                tabMatchA = tabMatchA.slice(0, tabMatchB.length) + strStart + tabMatchA.slice(tabMatchB.length) + strEnd;
                             } else {
-                                analysis  = tabMatchB.split(tabMatchA);
-                                tabMatchB = tabMatchA + strStart + analysis[1] + strEnd;
-                                tabMatchA = tabMatchA + strStart + strEnd;
+                                tabMatchB = tabMatchB.slice(0, tabMatchA.length) + strStart + tabMatchB.slice(tabMatchA.length) + strEnd;
                             }
                             return [tabMatchA, tabMatchB, splitA, splitB];
                         }()),
@@ -729,12 +724,14 @@
                                 .join("")
                                 .replace(regStart, "<pd>")
                                 .replace(regEnd, "</pd>")
-                                .replace(/<pd>\s+<\/pd>/g, whiteout),
+                                .replace(/<pd>\s+<\/pd>/g, whiteout)
+                                .replace(/\r<\/pd>/g, "(carriage return)</pd>"),
                             dataB
                                 .join("")
                                 .replace(regStart, "<pd>")
                                 .replace(regEnd, "</pd>")
                                 .replace(/<pd>\s+<\/pd>/g, whiteout)
+                                .replace(/\r<\/pd>/g, "(carriage return)</pd>")
                         ];
                     }
                     return [
@@ -745,7 +742,8 @@
                             .replace(/>/g, "&gt;")
                             .replace(regStart, "<em>")
                             .replace(regEnd, "</em>")
-                            .replace(/<em>\s+<\/em>/g, whiteout),
+                            .replace(/<em>\s+<\/em>/g, whiteout)
+                            .replace(/\r<\/em>/g, "(carriage return)</em>"),
                         dataB
                             .join("")
                             .replace(/&/g, "&amp;")
@@ -754,6 +752,7 @@
                             .replace(regStart, "<em>")
                             .replace(regEnd, "</em>")
                             .replace(/<em>\s+<\/em>/g, whiteout)
+                            .replace(/\r<\/em>/g, "(carriage return)</em>"),
                     ];
                 };
             if (options.diff_cli === false) {

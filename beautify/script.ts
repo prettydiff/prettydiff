@@ -653,6 +653,10 @@
                                         }
                                         if (data.begin[x] === y) {
                                             if (data.token[x] === ".") {
+                                                if (level[x - 1] > 0) {
+                                                    level[a - 1] = indent + 1;
+                                                    return;
+                                                }
                                                 z.push(x);
                                             } else if (
                                                 data.token[x] === ";" ||
@@ -674,9 +678,16 @@
                                     x = 0;
                                     y = z.length;
                                     do {
-                                        level[z[x] - 1] = indent + 1;
+                                        level[z[x] - 1] = indent;
                                         x = x + 1;
                                     } while (x < y);
+                                    x = data.begin[a];
+                                    do {
+                                        if (level[x] > -1) {
+                                            level[x] = level[x] + 1;
+                                        }
+                                        x = x + 1;
+                                    } while (x < a);
                                 }
                                 level[a - 1] = indent + 1;
                             };
@@ -2131,6 +2142,66 @@
                 let a:number = options.start,
                     external:string = "",
                     lastLevel:number = 0;
+                if (options.vertical === true) {
+                    const 
+                    vertical = function beautify_script_output_vertical(end:number):void {
+                        let longest:number = 0,
+                            complex:number = 0,
+                            aa:number = end - 1,
+                            bb:number = 0;
+                        const begin:number = data.begin[a],
+                            list:[number, number][] = [];
+                        do {
+                            if ((data.begin[aa] === begin || data.token[aa] === "]" || data.token[aa] === ")") && ((data.token[aa + 1] === ":" && data.stack[aa] === "object") || data.token[aa + 1] === "=")) {
+                                bb = aa;
+                                if (data.types[aa] === "end") {
+                                    complex = 0;
+                                    do {
+                                        if (data.token[bb] === "," || data.token[bb] === ";") {
+                                            break;
+                                        }
+                                        complex = data.token[bb].length + complex;
+                                        bb = bb - 1;
+                                    } while (bb > begin);
+                                } else {
+                                    complex = data.token[aa].length;
+                                }
+                                if (complex > longest) {
+                                    longest = complex;
+                                }
+                                list.push([aa, complex]);
+                                aa = bb;
+                            } else if (data.types[aa] === "end") {
+                                aa = data.begin[aa];
+                            }
+                            aa = aa - 1;
+                        } while (aa > begin);
+                        aa = list.length;
+                        if (aa > 0) {
+                            do {
+                                aa = aa - 1;
+                                bb = list[aa][1];
+                                if (bb < longest) {
+                                    do {
+                                        data.token[list[aa][0]] = data.token[list[aa][0]] + " ";
+                                        bb = bb + 1;
+                                    } while (bb < longest);
+                                }
+                            } while (aa > 0);
+                        }
+                    };
+                    a = len - 1;
+                    do {
+                        a = a - 1;
+                        if (data.lexer[a] === "script") {
+                            if (data.token[a] === "}" && data.token[a - 1] !== "{") {
+                                vertical(a);
+                            }
+                        } else {
+                            a = data.begin[a];
+                        }
+                    } while (a > 0);
+                }
                 if (options.jsscope !== "none" && options.language === "javascript") {
                     let linecount:number          = 1,
                         last:string               = "",
@@ -2308,9 +2379,6 @@
                     code.push("<li>");
                     code.push("1");
                     code.push("</li>");
-                    //if (options.vertical === true) {
-                    //    vertical();
-                    //}
                     if (data.types[a] === "comment" && data.token[a].indexOf("/*") === 0) {
                         build.push("<ol class=\"data\"><li class=\"c0\">");
                     } else {
@@ -2455,7 +2523,7 @@
                         "</em> unnecessary instances of the keyword <strong>new</strong> counted.</p>",
                         code.join(""),
                         last
-                    ].join("").replace(/(\s+)$/, "").replace(options.binaryC_check, "");
+                    ].join("").replace(/(\s+)$/, "").replace(options.binary_check, "");
                 }
                 do {
                     if (data.lexer[a] === lexer || prettydiff.beautify[data.lexer[a]] === undefined) {

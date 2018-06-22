@@ -3,7 +3,9 @@
     "use strict";
     const mode = function mode_(options:any):string {
         let parseMethod:string = "parserArrays",
-            globalAPI:any = global,
+            globalAPI:any = (options.api === "dom")
+                ? window
+                : global,
             modeValue:"beautify"|"minify" = options.mode;
         const pdcomment = function pdcomment_(options:any):void {
                 // parses the prettydiff settings comment
@@ -227,9 +229,6 @@
         if (options.lexer === "script") {
             options.lexerOptions.script.varword = options.variable_list;
         }
-
-        // necessary, because I have not updated the Parse Framework api to use the same property name
-        options.lang = options.language;
 
         options.parsed = globalAPI.parseFramework[parseMethod](options);
         if (options.mode === "parse") {

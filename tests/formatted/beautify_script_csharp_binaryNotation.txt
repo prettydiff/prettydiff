@@ -7,7 +7,7 @@ class Program {
             0b10_0000,
             new object[]{0b100, 0b1000} // binary literals
         }; // digit separators
-        var(sum, count) = Tally(numbers); // deconstruction
+        var(sum, count)  = Tally(numbers); // deconstruction
         WriteLine($ "Sum: {sum}, Count: {count}");
     }
     static (int sum, int count) Tally(object[] values) { // tuple types
