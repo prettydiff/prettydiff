@@ -2778,34 +2778,34 @@
             withinRange:boolean = false,
             offset:number      = 0,
             status:string      = "ew",
-            width:number       = 0,
-            total:number       = 0,
             diffLeft:HTMLElement,
-            par1:HTMLElement,
-            par2:HTMLElement;
-        const node:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
-            touch:boolean       = (event !== null && event.type === "touchstart"),
-            diffRight:HTMLElement   = <HTMLElement>node.parentNode,
+            node:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target;
+        const touch:boolean       = (event !== null && event.type === "touchstart"),
+            diffRight:HTMLElement   = (function dom_event_colSliderGrab_nodeFix():HTMLElement {
+                if (node.nodeName === "li") {
+                    node = <HTMLElement>node.parentNode;
+                }
+                return <HTMLElement>node.parentNode;
+            }()),
             diff:HTMLElement        = <HTMLElement>diffRight.parentNode,
             lists:NodeListOf<HTMLOListElement>       = diff.getElementsByTagName("ol"),
+            par1:HTMLElement   = <HTMLElement>lists[2].parentNode,
+            par2:HTMLElement   = <HTMLElement>lists[2].parentNode.parentNode,
             counter:number     = lists[0].clientWidth,
             data:number        = lists[1].clientWidth,
+            width:number       = par1.clientWidth,
+            total:number       = par2.clientWidth,
             min:number         = ((total - counter - data - 2) - width),
             max:number         = (total - width - counter),
             minAdjust:number   = min + 15,
-            maxAdjust:number   = max - 15;
+            maxAdjust:number   = max - 20;
         diffLeft = <HTMLElement>diffRight.previousSibling;
-        par1 = <HTMLElement>lists[2].parentNode;
-        par2 = <HTMLElement>lists[2].parentNode.parentNode;
         offset = par1.offsetLeft - par2.offsetLeft;
-        width = par1.clientWidth;
-        total = par2.clientWidth;
         event.preventDefault();
         if (report.code.box !== null) {
             offset = offset + report.code.box.offsetLeft;
             offset = offset - report.code.body.scrollLeft;
         } else {
-            par1 = <HTMLElement>document.body.parentNode;
             subOffset = (par1.scrollLeft > document.body.scrollLeft)
                 ? par1.scrollLeft
                 : document.body.scrollLeft;
@@ -3242,13 +3242,9 @@
                                         a = a + 1;
                                     } while (a < len);
                                 }
-                                if (options.diff_view === "sidebyside" && diffList.length > 2) {
-                                    diffList[2].onmousedown  = function dom_event_execute_app_renderOutput_mouseSlider() {
-                                        method.event.colSliderGrab(diffList[2].onmousedown, diffList[2]);
-                                    };
-                                    diffList[2].ontouchstart = function dom_event_execute_app_renderOutput_touchSlider() {
-                                        method.event.colSliderGrab(diffList[2].ontouchstart, diffList[2]);
-                                    };
+                                if (options.diff_view === "sidebyside" && diffList.length > 3) {
+                                    diffList[2].onmousedown  = method.event.colSliderGrab;
+                                    diffList[2].ontouchstart = method.event.colSliderGrab;
                                 }
                             }
                         } else if (options.mode === "minify" || options.mode === "parse") {

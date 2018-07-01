@@ -1317,8 +1317,7 @@
             beautify: "(function doc(){\"use strict\";let inca=0,incb=0,ol,li,lilen=0;const div=documen" +
             "t.getElementsByTagName(\"div\"),len=div.length,body=document.getElementsByTagNam" +
             "e(\"body\")[0],color=document.getElementById(\"colorScheme\"),change=function do" +
-            "c_colorChange(){const options=color.getElementsByTagName(\"options\"),name=optio" +
-            "ns[color.selectedIndex].innerHTML.toLowerCase();body.setAttribute(\"class\",name" +
+            "c_colorChange(){const name=color[color.selectedIndex].innerHTML.toLowerCase();body.setAttribute(\"class\",name" +
             ")},beaufold=function doc_beaufold(event){let a=0,b=\"\";const el=event.srcElemen" +
             "t||event.target,title=el.getAttribute(\"title\").split(\"line \"),parent=[el.par" +
             "entNode,el.parentNode.nextSibling],min=Number(title[1].substr(0,title[1].indexOf" +
@@ -1334,68 +1333,65 @@
             "[0].getAttribute(\"class\")===\"count\"){li=ol[0].getElementsByTagName(\"li\");l" +
             "ilen=li.length;incb=0;do{if(li[incb].getAttribute(\"class\")===\"fold\"){li[incb" +
             "].onclick=beaufold}incb=incb+1}while(incb<lilen)}}inca=inca+1}while(inca<len);colo" +
-            "r.onChange=change}());",
+            "r.onchange=change}());",
             diff    : "(function doc(){\"use strict\";let diffList=[];const body=document.getElementsBy" +
             "TagName(\"body\")[0],color=document.getElementById(\"colorScheme\"),change=funct" +
-            "ion doc_colorChange(){const options=color.getElementsByTagName(\"options\"),name" +
-            "=options[color.selectedIndex].innerHTML.toLowerCase();body.setAttribute(\"class" +
+            "ion doc_colorChange(){const name" +
+            "=color[color.selectedIndex].innerHTML.toLowerCase();body.setAttribute(\"class" +
             "\",name)},colSliderGrab=function doc_colSliderGrab(event){let subOffset=0,within" +
-            "Range=false,offset=0,status=\"ew\",width=0,total=0,diffLeft,par1,par2;const node" +
-            "=event.srcElement||event.target,touch=(event!==null&&event.type===\"touchstart\"" +
-            "),diffRight=node.parentNode,diff=diffRight.parentNode,lists=diff.getElementsByTa" +
-            "gName(\"ol\"),counter=lists[0].clientWidth,data=lists[1].clientWidth,min=((total" +
-            "-counter-data-2)-width),max=(total-width-counter),minAdjust=min+15,maxAdjust=max" +
-            "-15;diffLeft=diffRight.previousSibling;par1=lists[2].parentNode;par2=lists[2].pa" +
-            "rentNode.parentNode;offset=par1.offsetLeft-par2.offsetLeft;width=par1.clientWidt" +
-            "h;total=par2.clientWidth;event.preventDefault();if(report.code.box!==null){offse" +
-            "t=offset+report.code.box.offsetLeft;offset=offset-report.code.body.scrollLeft}el" +
-            "se{par1=document.body.parentNode;subOffset=(par1.scrollLeft>document.body.scroll" +
-            "Left)?par1.scrollLeft:document.body.scrollLeft;offset=offset-subOffset}offset=of" +
-            "fset+node.clientWidth;node.style.cursor=\"ew-resize\";diff.style.width=(total/10" +
-            ")+\"em\";diff.style.display=\"inline-block\";if(diffLeft.nodeType!==1){do{diffLe" +
-            "ft=diffLeft.previousSibling}while(diffLeft.nodeType!==1)}diffLeft.style.display=" +
-            "\"block\";diffRight.style.width=(diffRight.clientWidth/10)+\"em\";diffRight.styl" +
-            "e.position=\"absolute\";if(touch===true){document.ontouchmove=function doc_colSl" +
-            "iderGrab_Touchboxmove(f){f.preventDefault();subOffset=offset-f.touches[0].client" +
+            "Range=false,offset=0,status=\"ew\",diffLeft,node=event.srcElement||event.target;" +
+            "const touch=(event!==null&&event.type===\"touchstart\"),diffRight=(function doc_" +
+            "colSliderGrab_nodeFix(){if(node.nodeName===\"li\"){node=node.parentNode}return n" +
+            "ode.parentNode}()),diff=diffRight.parentNode,lists=diff.getElementsByTagName(\"o" +
+            "l\"),par1=lists[2].parentNode,par2=lists[2].parentNode.parentNode,counter=lists[" +
+            "0].clientWidth,data=lists[1].clientWidth,width=par1.clientWidth,total=par2.clien" +
+            "tWidth,min=((total-counter-data-2)-width),max=(total-width-counter),minAdjust=mi" +
+            "n+15,maxAdjust=max-20;diffLeft=diffRight.previousSibling;offset=par1.offsetLeft-" +
+            "par2.offsetLeft;event.preventDefault();subOffset=(par1.scrollLeft>document.body." +
+            "scrollLeft)?par1.scrollLeft:document.body.scrollLeft;offset=offset-subOffset;off" +
+            "set=offset+node.clientWidth;node.style.cursor=\"ew-resize\";diff.style.width=(to" +
+            "tal/10)+\"em\";diff.style.display=\"inline-block\";if(diffLeft.nodeType!==1){do{" +
+            "diffLeft=diffLeft.previousSibling}while(diffLeft.nodeType!==1)}diffLeft.style.di" +
+            "splay=\"block\";diffRight.style.width=(diffRight.clientWidth/10)+\"em\";diffRigh" +
+            "t.style.position=\"absolute\";if(touch===true){document.ontouchmove=function doc" +
+            "_colSliderGrab_Touchboxmove(f){f.preventDefault();subOffset=offset-f.touches[0]." +
+            "clientX;if(subOffset>minAdjust&&subOffset<maxAdjust){withinRange=true}if(withinR" +
+            "ange===true&&subOffset>maxAdjust){diffRight.style.width=((total-counter-2)/10)+" +
+            "\"em\";status=\"e\"}else if(withinRange===true&&subOffset<minAdjust){diffRight.s" +
+            "tyle.width=((total-counter-data-2)/10)+\"em\";status=\"w\"}else if(subOffset<max" +
+            "&&subOffset>min){diffRight.style.width=((width+subOffset)/10)+\"em\";status=\"ew" +
+            "\"}document.ontouchend=function doc_colSliderGrab_Touchboxmove_drop(f){f.prevent" +
+            "Default();node.style.cursor=status+\"-resize\";document.ontouchmove=null;documen" +
+            "t.ontouchend=null}};document.ontouchstart=null}else{document.onmousemove=functio" +
+            "n doc_colSliderGrab_Mouseboxmove(f){f.preventDefault();subOffset=offset-f.client" +
             "X;if(subOffset>minAdjust&&subOffset<maxAdjust){withinRange=true}if(withinRange==" +
             "=true&&subOffset>maxAdjust){diffRight.style.width=((total-counter-2)/10)+\"em\";" +
             "status=\"e\"}else if(withinRange===true&&subOffset<minAdjust){diffRight.style.wi" +
             "dth=((total-counter-data-2)/10)+\"em\";status=\"w\"}else if(subOffset<max&&subOf" +
             "fset>min){diffRight.style.width=((width+subOffset)/10)+\"em\";status=\"ew\"}docu" +
-            "ment.ontouchend=function doc_colSliderGrab_Touchboxmove_drop(f){f.preventDefault" +
-            "();node.style.cursor=status+\"-resize\";document.ontouchmove=null;document.ontou" +
-            "chend=null}};document.ontouchstart=null}else{document.onmousemove=function doc_c" +
-            "olSliderGrab_Mouseboxmove(f){f.preventDefault();subOffset=offset-f.clientX;if(su" +
-            "bOffset>minAdjust&&subOffset<maxAdjust){withinRange=true}if(withinRange===true&&" +
-            "subOffset>maxAdjust){diffRight.style.width=((total-counter-2)/10)+\"em\";status=" +
-            "\"e\"}else if(withinRange===true&&subOffset<minAdjust){diffRight.style.width=((t" +
-            "otal-counter-data-2)/10)+\"em\";status=\"w\"}else if(subOffset<max&&subOffset>mi" +
-            "n){diffRight.style.width=((width+subOffset)/10)+\"em\";status=\"ew\"}document.on" +
-            "mouseup=function doc_colSliderGrab_Mouseboxmove_drop(f){f.preventDefault();node." +
-            "style.cursor=status+\"-resize\";document.onmousemove=null;document.onmouseup=nul" +
-            "l}};document.onmousedown=null}return false},difffold=function doc_difffold(event" +
-            "){let a=0,b=0,max,lists=[];const node=event.srcElement||event.target,title=node." +
-            "getAttribute(\"title\").split(\"line \"),min=Number(title[1].substr(0,title[1].i" +
-            "ndexOf(\" \"))),inner=node.innerHTML,parent=node.parentNode.parentNode,par1=pare" +
-            "nt.parentNode,listnodes=(parent.getAttribute(\"class\")===\"diff\")?parent.getEl" +
-            "ementsByTagName(\"ol\"):par1.getElementsByTagName(\"ol\"),listLen=listnodes.leng" +
-            "th;do{lists.push(listnodes[a].getElementsByTagName(\"li\"));a=a+1}while(a<listLe" +
-            "n);max=(max>=lists[0].length)?lists[0].length:Number(title[2]);if(inner.charAt(0" +
-            ")===\"-\"){node.innerHTML=\"+\"+inner.substr(1);a=min;if(min<max){do{b=0;do{list" +
-            "s[b][a].style.display=\"none\";b=b+1}while(b<listLen);a=a+1}while(a<max)}}else{n" +
-            "ode.innerHTML=\"-\"+inner.substr(1);a=min;if(min<max){do{b=0;do{lists[b][a].styl" +
-            "e.display=\"block\";b=b+1}while(b<listLen);a=a+1}while(a<max)}}};diffList=report" +
-            ".code.body.getElementsByTagName(\"ol\");if(diffList.length>0){const cells=diffLi" +
-            "st[0].getElementsByTagName(\"li\"),len=cells.length;let a=0;do{if(cells[a].getAt" +
-            "tribute(\"class\")===\"fold\"){cells[a].onclick=difffold}a=a+1}while(a<len)}if(o" +
-            "ptions.diff_view===\"sidebyside\"&&diffList.length>2){diffList[2].onmousedown=fu" +
-            "nction doc_mouseSlider(){colSliderGrab(diffList[2].onmousedown,diffList[2])};dif" +
-            "fList[2].ontouchstart=function doc_touchSlider(){colSliderGrab(diffList[2].ontou" +
-            "chstart,diffList[2])}}color.onChange=change}());",
+            "ment.onmouseup=function doc_colSliderGrab_Mouseboxmove_drop(f){f.preventDefault(" +
+            ");node.style.cursor=status+\"-resize\";document.onmousemove=null;document.onmous" +
+            "eup=null}};document.onmousedown=null}return false},difffold=function doc_difffol" +
+            "d(event){let a=0,b=0,max,lists=[];const node=event.srcElement||event.target,titl" +
+            "e=node.getAttribute(\"title\").split(\"line \"),min=Number(title[1].substr(0,tit" +
+            "le[1].indexOf(\" \"))),inner=node.innerHTML,parent=node.parentNode.parentNode,pa" +
+            "r1=parent.parentNode,listnodes=(parent.getAttribute(\"class\")===\"diff\")?paren" +
+            "t.getElementsByTagName(\"ol\"):par1.getElementsByTagName(\"ol\"),listLen=listnod" +
+            "es.length;do{lists.push(listnodes[a].getElementsByTagName(\"li\"));a=a+1}while(a" +
+            "<listLen);max=(max>=lists[0].length)?lists[0].length:Number(title[2]);if(inner.c" +
+            "harAt(0)===\"-\"){node.innerHTML=\"+\"+inner.substr(1);a=min;if(minmax){do{b=0;d" +
+            "o{lists[b][a].style.display=\"none\";b=b+1}while(b<listLen);a=a+1}while(a<max)}}" +
+            "else{node.innerHTML=\"-\"+inner.substr(1);a=min;if(minmax){do{b=0;do{lists[b][a]" +
+            ".style.display=\"block\";b=b+1}while(b<listLen);a=a+1}while(a<max)}}};diffList=d" +
+            "ocument.getElementsByTagName(\"ol\");if(diffList.length>0){const cells=diffList[" +
+            "0].getElementsByTagName(\"li\"),len=cells.length;let a=0;do{if(cells[a].getAttri" +
+            "bute(\"class\")===\"fold\"){cells[a].onclick=difffold}a=a+1}while(a<len)}if(diff" +
+            "List.length>3){diffList[2].onmousedown=colSliderGrab;diffList[2].ontouchstart=co" +
+            "lSliderGrab}color.onchange=change}());",
             minimal : "(function doc(){\"use strict\";const body=document.getElementsByTagName(\"body\")[0],color" +
                 "=document.getElementById(\"colorScheme\"),change=function doc_colorChange()" +
-                "{const options=color.getElementsByTagName(\"options\"),name=options[color.select" +
-                "edIndex].innerHTML.toLowerCase();body.setAttribute(\"class\",name)};color.onChan" +
+                "{const name=color[color.select" +
+                "edIndex].innerHTML.toLowerCase();body.setAttribute(\"class\",name)};color.onchan" +
                 "ge=change}());"
         }
     };
