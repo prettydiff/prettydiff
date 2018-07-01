@@ -1,13 +1,14 @@
 /*global global, window*/
 (function mode_init() {
     "use strict";
-    const mode = function mode_(options:any):string {
+    const mode = function mode_(options:any, diffmeta?:diffmeta):string {
         let parseMethod:string = "parserArrays",
             globalAPI:any = (options.api === "dom")
                 ? window
                 : global,
-            modeValue:"beautify"|"minify" = options.mode;
-        const pdcomment = function pdcomment_(options:any):void {
+            modeValue:"beautify"|"minify" = options.mode,
+            result:string = "";
+        const pdcomment = function mode_pdcomment(options:any):void {
                 // parses the prettydiff settings comment
                 //
                 // - Source Priorities:
@@ -49,7 +50,7 @@
                             : (source.charAt(a + 1) === "/")
                                 ? "//"
                                 : "/\u002a",
-                        esc = function pdcomment_esc():boolean {
+                        esc = function mode_pdcomment_esc():boolean {
                             if (source.charAt(a - 1) !== "\\") {
                                 return false;
                             }
@@ -187,11 +188,12 @@
             // prettydiff insertion start
             prettydiff:any = {};
         // prettydiff insertion end
+
         if (options.api !== "node") {
             options.diff_cli = false;
         } else if (options.api === "node" && (options.read_method === "directory" || options.read_method === "subdirectory")) {
-            if (options.mode === "parse" && options.parse_format === "clitable") {
-                return "Error: option clitable is not available with read_method directory or subdirectory.";
+            if (options.mode === "parse" && options.parse_format === "table") {
+                return "Error: option parse_format with value 'table' is not available with read_method directory or subdirectory.";
             }
         }
         if (options.language === "auto") {
@@ -206,6 +208,11 @@
             options.language_name = lang[2];
         }
 
+        // test complete_document in dom (try to generate xml errors)
+        // test updated script strings in finalFile
+        // write simulation tests for complete_document
+        // write validation tests for complete_document
+
         pdcomment(options);
         
         if (options.api === "dom") {
@@ -216,6 +223,9 @@
         }
         if (options.mode === "diff") {
             modeValue = "beautify";
+        }
+        if (options.mode === "minify" && options.minify_wrap === false) {
+            options.wrap = -1;
         }
         if (typeof options.lexerOptions !== "object") {
             options.lexerOptions = {};
@@ -229,11 +239,17 @@
         if (options.lexer === "script") {
             options.lexerOptions.script.varword = options.variable_list;
         }
-
-        options.parsed = globalAPI.parseFramework[parseMethod](options);
         if (options.mode === "parse") {
-            if (options.parse_format === "clitable") {
-                if (options.api === "dom") {
+            const parse_format = (options.parse_format === "htmltable")
+                    ? "table"
+                    : options.parse_format,
+                api = (options.parse_format === "htmltable")
+                    ? "dom"
+                    : options.api;
+
+            options.parsed = globalAPI.parseFramework[parseMethod](options);
+            if (parse_format === "table") {
+                if (api === "dom") {
                     const parsLen:number = options.parsed.token.length,
                         keys = Object.keys(options.parsed),
                         keylen:number = keys.length,
@@ -276,80 +292,126 @@
                         a = a + 1;
                     } while (a < parsLen);
                     parsOut.push("</tbody></table>");
-                    return parsOut.join("");
-                }
-                let a:number   = 0,
-                    str:string[] = [];
-                const os = require("os"),
-                    outputArrays:parsedArray = options.parsed,
-                    nodeText:any     = {
-                        angry    : "\u001b[1m\u001b[31m",
-                        blue     : "\u001b[34m",
-                        bold     : "\u001b[1m",
-                        cyan     : "\u001b[36m",
-                        green    : "\u001b[32m",
-                        nocolor  : "\u001b[39m",
-                        none     : "\u001b[0m",
-                        purple   : "\u001b[35m",
-                        red      : "\u001b[31m",
-                        underline: "\u001b[4m",
-                        yellow   : "\u001b[33m"
-                    },
-                    output:string[] = [],
-                    b:number = outputArrays.token.length,
-                    pad = function mode_parsePad(x:string, y:number):void {
-                        const cc:string = x
-                                .toString()
-                                .replace(/\s/g, " ");
-                        let dd:number = y - cc.length;
-                        str.push(cc);
-                        if (dd > 0) {
-                            do {
-                                str.push(" ");
-                                dd = dd - 1;
-                            } while (dd > 0);
+                    result = parsOut.join("");
+                } else {
+                    let a:number   = 0,
+                        str:string[] = [];
+                    const os = require("os"),
+                        outputArrays:parsedArray = options.parsed,
+                        nodeText:any     = {
+                            angry    : "\u001b[1m\u001b[31m",
+                            blue     : "\u001b[34m",
+                            bold     : "\u001b[1m",
+                            cyan     : "\u001b[36m",
+                            green    : "\u001b[32m",
+                            nocolor  : "\u001b[39m",
+                            none     : "\u001b[0m",
+                            purple   : "\u001b[35m",
+                            red      : "\u001b[31m",
+                            underline: "\u001b[4m",
+                            yellow   : "\u001b[33m"
+                        },
+                        output:string[] = [],
+                        b:number = outputArrays.token.length,
+                        pad = function mode_parsePad(x:string, y:number):void {
+                            const cc:string = x
+                                    .toString()
+                                    .replace(/\s/g, " ");
+                            let dd:number = y - cc.length;
+                            str.push(cc);
+                            if (dd > 0) {
+                                do {
+                                    str.push(" ");
+                                    dd = dd - 1;
+                                } while (dd > 0);
+                            }
+                            str.push(" | ");
+                        },
+                        heading:string = "index | begin | lexer  | lines | presv | stack       | types       | token",
+                        bar:string     = "------|-------|--------|-------|-------|-------------|-------------|------";
+                    output.push("");
+                    output.push(heading);
+                    output.push(bar);
+                    do {
+                        if (a % 100 === 0 && a > 0) {
+                            output.push("");
+                            output.push(heading);
+                            output.push(bar);
                         }
-                        str.push(" | ");
-                    },
-                    heading:string = "index | begin | lexer  | lines | presv | stack       | types       | token",
-                    bar:string     = "------|-------|--------|-------|-------|-------------|-------------|------";
-                output.push("");
-                output.push(heading);
-                output.push(bar);
-                do {
-                    if (a % 100 === 0 && a > 0) {
-                        output.push("");
-                        output.push(heading);
-                        output.push(bar);
-                    }
-                    str = [];
-                    if (outputArrays.lexer[a] === "markup") {
-                        str.push(nodeText.red);
-                    } else if (outputArrays.lexer[a] === "script") {
-                        str.push(nodeText.green);
-                    } else if (outputArrays.lexer[a] === "style") {
-                        str.push(nodeText.yellow);
-                    }
-                    pad(a.toString(), 5);
-                    pad(outputArrays.begin[a].toString(), 5);
-                    pad(outputArrays.lexer[a].toString(), 5);
-                    pad(outputArrays.lines[a].toString(), 5);
-                    pad(outputArrays.presv[a].toString(), 5);
-                    pad(outputArrays.stack[a].toString(), 11);
-                    pad(outputArrays.types[a].toString(), 11);
-                    str.push(outputArrays.token[a].replace(/\s/g, " "));
-                    str.push(nodeText.none);
-                    output.push(str.join(""));
-                    a = a + 1;
-                } while (a < b);
-                return output.join(os.EOL);
+                        str = [];
+                        if (outputArrays.lexer[a] === "markup") {
+                            str.push(nodeText.red);
+                        } else if (outputArrays.lexer[a] === "script") {
+                            str.push(nodeText.green);
+                        } else if (outputArrays.lexer[a] === "style") {
+                            str.push(nodeText.yellow);
+                        }
+                        pad(a.toString(), 5);
+                        pad(outputArrays.begin[a].toString(), 5);
+                        pad(outputArrays.lexer[a].toString(), 5);
+                        pad(outputArrays.lines[a].toString(), 5);
+                        pad(outputArrays.presv[a].toString(), 5);
+                        pad(outputArrays.stack[a].toString(), 11);
+                        pad(outputArrays.types[a].toString(), 11);
+                        str.push(outputArrays.token[a].replace(/\s/g, " "));
+                        str.push(nodeText.none);
+                        output.push(str.join(""));
+                        a = a + 1;
+                    } while (a < b);
+                    result = output.join(os.EOL);
+                }
+            } else {
+                result = JSON.stringify(options.parsed);
             }
-            return JSON.stringify(options.parsed);
+        } else {
+            if (global.prettydiff[modeValue][options.lexer] === undefined && (options.mode !== "diff" || (options.mode === "diff" && options.language !== "text"))) {
+                result = `Error: Library prettydiff.${modeValue}.${options.lexer} does not exist.`;
+            } else if (options.mode === "diff") {
+                let diffoutput:[string, number, number];
+                const source:string = options.source,
+
+                // diffview insertion start
+                diffview:any = {};
+                // diffview insertion end
+
+                if (options.language !== "text") {
+                    // this silliness is required because the other libraries only recognize the 'source' option and not the 'diff' option but need to be equally modified
+                    options.source = options.diff;
+                    options.parsed = globalAPI.parseFramework[parseMethod](options);
+                    options.diff = global.prettydiff.beautify[options.lexer](options);
+                    options.source = source;
+                    options.parsed = globalAPI.parseFramework[parseMethod](options);
+                    options.source = global.prettydiff.beautify[options.lexer](options);
+                }
+                diffoutput = diffview(options);
+                result = diffoutput[0];
+                if (diffmeta !== undefined) {
+                    diffmeta.differences = diffoutput[1];
+                    diffmeta.lines = diffoutput[2];
+                }
+            } else {
+                options.parsed = globalAPI.parseFramework[parseMethod](options);
+                result = global.prettydiff[modeValue][options.lexer](options);
+            }
         }
-        if (global.prettydiff[modeValue][options.lexer] === undefined) {
-            return `Error: Library prettydiff.${modeValue}.${options.lexer} does not exist.`;
+        if (options.complete_document === true && options.jsscope !== "report") {
+            // finalFile insertion start
+            let finalFile:finalFile;
+            // finalFile insertion end
+
+            finalFile.order[7] = options.color;
+            finalFile.order[10] = result;
+            if (options.mode === "diff") {
+                finalFile.order[12] = finalFile.script.diff;
+            } else if (options.mode === "beautify" && options.language === "javascript" && options.jsscope !== "none") {
+                finalFile.order[12] = finalFile.script.beautify;
+            } else {
+                finalFile.order[12] = finalFile.script.minimal;
+            }
+            // escape changes characters that result in xml wellformedness errors
+            return finalFile.order.join("");
         }
-        return global.prettydiff[modeValue][options.lexer](options);
+        return result;
     };
     global.prettydiff.mode = mode;
 }());

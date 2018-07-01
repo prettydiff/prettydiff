@@ -223,222 +223,6 @@
                             c = c - 1;
                         } while (c > -1);
                     },
-                    strwrap       = function beautify_script_strwrap(offset:number):void {
-                        let aa:number        = 0,
-                            bb:number        = 0,
-                            cc:number        = 0,
-                            dd:number        = 0,
-                            ee:number        = 0,
-                            ff:number        = 0,
-                            x:number         = 0,
-                            str:string       = "",
-                            bgn:number       = data.begin[a],
-                            dep:string       = data.stack[a],
-                            item:string      = data.token[a],
-                            ind:number       = 0,
-                            off:boolean       = false;
-                        const ei:number[]        = (extraindent[extraindent.length - 1] === undefined)
-                                ? []
-                                : extraindent[extraindent.length - 1],
-                            lin:number       = data.lines[a],
-                            wrap:number      = options.wrap - 2,
-                            paren:boolean     = data.token[a + 1] === ".",
-                            uchar:RegExp     = (/u[0-9a-fA-F]{4}/),
-                            xchar:RegExp     = (/x[0-9a-fA-F]{2}/),
-                            qchar:string     = item.charAt(0),
-                            slash     = function beautify_script_strwrap_slash(trim:number, entity:boolean):void {
-                                let dist = 0;
-                                if (entity === true) {
-                                    ff = trim;
-                                }
-                                do {
-                                    dist = dist + 1;
-                                } while (item.charAt(cc - (trim + dist)) === "\\" && dist < cc);
-                                if (entity === false) {
-                                    cc = cc - dist;
-                                    ff = ff + dist;
-                                } else if (dist % 2 === 1) {
-                                    cc = cc - ff;
-                                } else {
-                                    ff = 0;
-                                }
-                            },
-                            parenpush = function beautify_script_strwrap_parenpush():void {
-                                data.token.splice(a, 0, "(");
-                                data.types.splice(a, 0, "start");
-                                data.lines.splice(a, 0, lin);
-                                data.stack.splice(a, 0, "paren");
-                                data.begin.splice(a, 0, a);
-                                level.push(indent + 1);
-                                bgn = a;
-                                dep = "paren";
-                                a   = a + 1;
-                                b   = b + 1;
-                                x   = x + 1;
-                            },
-                            tokenpush = function beautify_script_strwrap_tokenpush(toke:string, type:string):void {
-                                data.token.splice(a, 0, toke);
-                                data.types.splice(a, 0, type);
-                                data.lines.splice(a, 0, lin);
-                                data.stack.splice(a, 0, dep);
-                                data.begin.splice(a, 0, bgn);
-                                if (toke === "+") {
-                                    level.push(ind);
-                                } else if (toke === ")") {
-                                    level.push(indent);
-                                    level[a - 1] = indent;
-                                } else {
-                                    level.push(-10);
-                                }
-                                a = a + 1;
-                                b = b + 1;
-                                x = x + 1;
-                            };
-                        ind = (data.token[data.begin[a]] === "(" && (list[list.length - 1] === true || ei.length > 0))
-                            ? indent + 3
-                            : indent + 2;
-                        aa = a;
-                        do {
-                            aa = aa - 1;
-                            if (aa === data.begin[a] && data.token[aa] === "(") {
-                                break;
-                            }
-                        } while (aa > 0 && level[aa - 1] < -9);
-                        if (ltoke === "(") {
-                            level[a - 1] = indent + 1;
-                        }
-                        if (data.token[aa] === "." && data.token[data.begin[a]] !== "(") {
-                            ind = ind + 1;
-                        }
-                        if (data.token[data.begin[a]] === "(" && list[list.length - 1] === false && data.token[aa] !== "?" && data.token[aa] !== ":") {
-                            ind = indent + 1;
-                        }
-                        if (paren === true && data.token[aa] !== "?" && data.token[aa] !== ":") {
-                            ind = indent + 1;
-                        }
-                        if (offset > 1 && item.length > offset) {
-                            off = true;
-                            if (item.charAt(offset - 5) === "\\" && uchar.test(item.slice(offset - 4, offset + 1)) === true) {
-                                str  = item.slice(0, offset - 5) + item.charAt(0);
-                                item = item.charAt(0) + item.slice(offset - 5);
-                            } else if (item.charAt(offset - 4) === "\\" && uchar.test(item.slice(offset - 3, offset + 2)) === true) {
-                                str  = item.slice(0, offset - 4) + item.charAt(0);
-                                item = item.charAt(0) + item.slice(offset - 4);
-                            } else if (item.charAt(offset - 3) === "\\" && (uchar.test(item.slice(offset - 2, offset + 3)) === true || xchar.test(item.slice(offset - 2, offset + 1)) === true)) {
-                                str  = item.slice(0, offset - 3) + item.charAt(0);
-                                item = item.charAt(0) + item.slice(offset - 3);
-                            } else if (item.charAt(offset - 2) === "\\" && (uchar.test(item.slice(offset - 1, offset + 4)) === true || xchar.test(item.slice(offset - 1, offset + 2)) === true)) {
-                                str  = item.slice(0, offset - 2) + item.charAt(0);
-                                item = item.charAt(0) + item.slice(offset - 2);
-                            } else if (item.charAt(offset - 1) === "\\") {
-                                str  = item.slice(0, offset - 1) + item.charAt(0);
-                                item = item.charAt(0) + item.slice(offset - 1);
-                            } else {
-                                str  = item.slice(0, offset) + item.charAt(0);
-                                item = item.charAt(0) + item.slice(offset);
-                            }
-                            if (str.charAt(str.length - 2) === "\\") {
-                                str = str + str.charAt(0);
-                            }
-                            tokenpush(str, "literal");
-                            tokenpush("+", "operator");
-                        }
-                        if (item.length > wrap) {
-                            if (data.stack[a] === "object" || data.stack[a] === "array") {
-                                destructfix(true, false);
-                            }
-                            if (off === false && paren === true) {
-                                parenpush();
-                            }
-                            data.begin.splice(a, 1);
-                            data.lexer.splice(a, 1);
-                            data.lines.splice(a, 1);
-                            data.presv.splice(a, 1);
-                            data.stack.splice(a, 1);
-                            data.token.splice(a, 1);
-                            data.types.splice(a, 1);
-                            b    = b - 1;
-                            item = item.slice(1, item.length - 1);
-                            bb   = Math.floor(item.length / wrap) * wrap;
-                            aa = 0;
-                            do {
-                                cc = aa + wrap + dd;
-                                if (item.charAt(cc - 5) === "\\" && uchar.test(item.slice(cc - 4, cc + 1)) === true) {
-                                    slash(5, true);
-                                } else if (item.charAt(cc - 4) === "\\" && uchar.test(item.slice(cc - 3, cc + 2)) === true) {
-                                    slash(4, true);
-                                } else if (item.charAt(cc - 3) === "\\" && (uchar.test(item.slice(cc - 2, cc + 3)) === true || xchar.test(item.slice(cc - 2, cc + 1)) === true)) {
-                                    slash(3, true);
-                                } else if (item.charAt(cc - 2) === "\\" && (uchar.test(item.slice(cc - 1, cc + 4)) === true || xchar.test(item.slice(cc - 1, cc + 2)) === true)) {
-                                    slash(2, true);
-                                } else if (item.charAt(cc - 1) === "\\") {
-                                    slash(1, true);
-                                } else {
-                                    ff = 0;
-                                }
-                                if (item.charAt(cc - 1) === "\\") {
-                                    slash(1, false);
-                                }
-                                if (aa > 0 && dd < 0) {
-                                    aa = aa - 1;
-                                    dd = 0;
-                                }
-                                if (item.charAt(cc - 1) === "\\") {
-                                    str = qchar + item.slice(ee, cc - 1) + qchar;
-                                    ee  = cc - 1;
-                                    aa  = aa - 1;
-                                } else {
-                                    str = qchar + item.slice(ee, cc) + qchar;
-                                    ee  = cc;
-                                }
-                                if (item.charAt(cc) === "\\") {
-                                    aa = aa - ff;
-                                }
-                                tokenpush(str, "literal");
-                                if (aa < item.length - wrap) {
-                                    tokenpush("+", "operator");
-                                }
-                                aa = aa + wrap;
-                            } while (aa < bb);
-                            if (aa < item.length) {
-                                tokenpush(qchar + item.slice(aa, aa + wrap) + qchar, "literal");
-                            }
-                            if (paren === true) {
-                                tokenpush(")", "end");
-                            }
-                            a  = a - 1;
-                            x  = x - 1;
-                            aa = a + 1;
-                            do {
-                                aa = aa + 1;
-                                if (data.types[aa - 1] === "start") {
-                                    data.begin[aa - 1] = (aa - 1);
-                                } else if (data.begin[aa - 1] > bgn) {
-                                    data.begin[aa - 1] = data.begin[aa - 1] + x;
-                                }
-                            } while (aa < b);
-                            ctoke = data.token[a];
-                            ctype = data.types[a];
-                            ltoke = data.token[a - 1];
-                            ltype = data.types[a - 1];
-                        } else {
-                            if (off === true) {
-                                aa = a;
-                                do {
-                                    aa = aa + 1;
-                                    if (data.types[aa - 1] === "start") {
-                                        data.begin[aa - 1] = (aa - 1);
-                                    } else if (data.begin[aa - 1] > bgn) {
-                                        data.begin[aa - 1] = data.begin[aa - 1] + x;
-                                    }
-                                } while (aa < b);
-                            }
-                            data.token[a] = item;
-                            level.push(-10);
-                        }
-                        ctoke = data.token[a];
-                        ctype = "string";
-                    },
                     literal       = function beautify_script_literal():void {
                         if (ctoke.indexOf("#!/") === 0) {
                             level.push(indent);
@@ -449,11 +233,7 @@
                             if (options.brace_padding === true && ctoke.charAt(0) === "}" && ctoke.charAt(ctoke.length - 1) === "`") {
                                 level[a - 1] = -10;
                             }
-                            if (options.wrap > 0 && ctoke.length > options.wrap && (ctoke.charAt(0) === "\"" || ctoke.charAt(0) === "'")) {
-                                strwrap(0);
-                            } else {
-                                level.push(-10);
-                            }
+                            level.push(-10);
                         }
                         if ((ltoke === "," || ltype === "start") && (data.stack[a] === "object" || data.stack[a] === "array") && destruct[destruct.length - 1] === false && a > 0) {
                             level[a - 1] = indent;
@@ -681,7 +461,7 @@
                                         level[z[x] - 1] = indent;
                                         x = x + 1;
                                     } while (x < y);
-                                    x = data.begin[a];
+                                    x = z[z.length - 1] - 1;
                                     do {
                                         if (level[x] > -1) {
                                             level[x] = level[x] + 1;
@@ -1708,10 +1488,6 @@
                                 level.push(ind);
                                 if (data.token[a].charAt(0) === "\"" || data.token[a].charAt(0) === "'") {
                                     a = a + 1;
-                                    if (data.token[a].length > options.wrap) {
-                                        strwrap(0);
-                                        return;
-                                    }
                                     level.push(-10);
                                     return;
                                 }
@@ -2303,27 +2079,31 @@
                             build.push(data.token[a]);
                         },
                         // splits block comments, which are single tokens, into multiple lines of output
-                        blockline          = function beautify_script_output_scope_blockline(x:string):string {
+                        blockline          = function beautify_script_output_scope_blockline(x:string):void {
                             const commentLines:string[] = x.split(lf),
                                 ii:number           = commentLines.length - 1;
                             let hh:number           = 0;
-                            if (data.lines[a] > 0) {
-                                code.push("<li>");
-                                code.push(String(linecount));
-                                code.push("</li>");
-                                linecount = linecount + 1;
-                            }
-                            if (data.types[a + 1] === "comment") {
+                            if (levels[a] > 0) {
                                 do {
+                                    commentLines[0] = tab + commentLines[0];
+                                    hh = hh + 1;
+                                } while (hh < levels[a]);
+                                hh = 0;
+                            }
+                            if (a === 0) {
+                                build.push(`${commentLines[hh]}`);
+                                hh = 1;
+                            }
+                            if (hh < ii) {
+                                do {
+                                    linecount = linecount + 1;
                                     code.push("<li>");
                                     code.push(String(linecount));
                                     code.push("</li>");
-                                    linecount        = linecount + 1;
-                                    commentLines[hh] = commentLines[hh] + "<em class=\"line\">&#xA;</em></li><li class=\"c0\">";
+                                    build.push(`<em class="line">&#xA;</em></li><li class="c0">${commentLines[hh]}`);
                                     hh = hh + 1;
                                 } while (hh < ii);
                             }
-                            return commentLines.join("");
                         },
                         //a function for calculating indentation after each new line
                         nlscope            = function beautify_script_output_scope_nlscope(x:number):void {
@@ -2347,7 +2127,7 @@
                                 code.push(String(linecount));
                                 code.push("</li>");
                                 if (a < len - 1 && data.types[a + 1] === "comment") {
-                                    build.push("<em class=\"line\">&#xA;</em></li><li class=\"c0\">");
+                                    build.push(`<em class="line">&#xA;</em></li><li class="c0">`);
                                     do {
                                         build.push(tab);
                                         dd = dd + 1;
@@ -2403,7 +2183,7 @@
                             }
                         }
                         if (data.types[a] === "comment" && data.token[a].indexOf("/*") === 0) {
-                            build.push(blockline(data.token[a]));
+                            blockline(data.token[a]);
                         } else if (invisibles.indexOf(data.token[a]) < 0) {
                             if (data.types[a] === "start" && (levels[a] > -1 || data.types[a + 1] === "comment")) {
                                 foldstart();
@@ -2459,7 +2239,7 @@
                         }
                         if (levels[a] === -10) {
                             build.push(" ");
-                        } else if (levels[a] > -1 && a < len - 1) {
+                        } else if (levels[a] > -1 && a < len - 1 && data.token[a + 1].slice(0, 2) !== "/*") {
                             if (levels[a] > scoped.length) {
                                 do {
                                     scoped.push(false);

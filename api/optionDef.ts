@@ -562,8 +562,8 @@
                 type      : "string",
                 definition: "Determines the output format for 'parse' mode.",
                 values    : {
-                    clitable  : "generates a colorful grid of output for a command line interface",
-                    htmltable : "generates a human readable report in the format of an HTML table",
+                    table     : "generates a colorful grid of output for either the dom or command line interface",
+                    htmltable : "generates the 'table' type output for the DOM but escapes the HTML tags for rendering as HTML code in a HTML tool",
                     parallel  : "returns an object containing series of parallel arrays",
                     sequential: "returns an array where each index is a child object containing the parsed token" +
                             " and all descriptive data"

@@ -42,7 +42,7 @@ interface readFile {
         }()),
         js:string = `${projectPath}js${sep}`,
         api:string = `${js}api${sep}`,
-        libFiles:string[] = [api, `${js}beautify`, `${js}minify`, `${js}prettydiff.js`],
+        libFiles:string[] = [api, `${js}beautify${sep}`, `${js}minify${sep}`, `${js}prettydiff.js`],
         // node option default start
         options:any = {},
         version:any = {},
@@ -576,14 +576,14 @@ interface readFile {
                                         return;
                                     }
                                     files.forEach(function node_args_requireDir_dirwrapper_stat_readdir_each(value:string) {
-                                        const valpath:string = start + sep + value;
+                                        const valpath:string = start + value;
                                         node.fs.stat(valpath, function node_args_requireDir_dirwrapper_stat_readdir_each_stat(errs:Error, stats:Stats):void {
                                             if (errs !== null) {
                                                 console.log(errs.toString());
                                                 process.exit(1);
                                                 return;
                                             }
-                                            if (stats.isFile() === true) {
+                                            if (stats.isFile() === true && valpath.indexOf("finalFile.js") < 0) {
                                                 require(valpath);
                                                 counts.items = counts.items + 1;
                                             } else if (stats.isDirectory() === true) {
@@ -909,7 +909,9 @@ interface readFile {
                     });
                 },
                 libraries: function node_apps_build_libraries():void {
-                    let libraries:string = "",
+                    let diffview:string = "",
+                        finalFile:string = "",
+                        libraries:string = "",
                         mode:string = "",
                         saveas:string = "";
                     const flag = {
@@ -1109,6 +1111,16 @@ interface readFile {
                                             .replace(/global\.prettydiff/g, "prettydiff"),
                                         start: "// prettydiff insertion start"
                                     });
+                                    modify({
+                                        end: "// finalFile insertion end",
+                                        injectFlag: `const finalFile=${finalFile}`,
+                                        start: "// finalFile insertion start"
+                                    });
+                                    modify({
+                                        end: "// diffview insertion end",
+                                        injectFlag: `diffview=${diffview}`,
+                                        start: "// diffview insertion start"
+                                    });
                                 } else if (fileFlag === "node") {
                                     modify({
                                         end: "// node option default end",
@@ -1120,6 +1132,16 @@ interface readFile {
                                         end: "// prettydiff insertion end",
                                         injectFlag: `prettydiff={};${libraries}`,
                                         start: "// prettydiff insertion start"
+                                    });
+                                    modify({
+                                        end: "// finalFile insertion end",
+                                        injectFlag: `const finalFile=${finalFile}`,
+                                        start: "// finalFile insertion start"
+                                    });
+                                    modify({
+                                        end: "// diffview insertion end",
+                                        injectFlag: `diffview=${diffview}`,
+                                        start: "// diffview insertion start"
                                     });
                                 }
                                 node.fs.writeFile(file, data, function node_apps_build_libraries_documentation_write(errw:Error) {
@@ -1185,13 +1207,24 @@ interface readFile {
                                             saveas = filedata;
                                         } else if (filePath.indexOf("prettydiff.js") > 0) {
                                             filedata = filedata
-                                                .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\//, "")
+                                                .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*/, "")
                                                 .replace(/global\.prettydiff\./g, "prettydiff.")
                                                 .replace(/("|')use strict("|');/, "");
                                             mode = filedata;
+                                        } else if (filePath.indexOf("finalFile.js") > 0) {
+                                            filedata = filedata
+                                                .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*/, "")
+                                                .replace(/("|')use strict("|');/, "");
+                                            finalFile = filedata;
+                                        } else if (filePath.indexOf("diffview.js") > 0) {
+                                            filedata = filedata
+                                                .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*/, "")
+                                                .replace(/global\s*\.prettydiff\s*\.api\s*\.diffview\s*=\s*/g, "return ")
+                                                .replace(/("|')use strict("|');/, "");
+                                            diffview = filedata;
                                         } else {
                                             filedata = filedata
-                                                .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\//, "")
+                                                .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*/, "")
                                                 .replace(/global\.prettydiff\./g, "prettydiff.")
                                                 .replace(/("|')use strict("|');/, "");
                                             libraries = libraries + filedata;
@@ -2804,7 +2837,7 @@ interface readFile {
     };
     // handler for the parse command
     apps.parse = function node_apps_parse():void {
-        if (options.parse_format === "clitable") {
+        if (options.parse_format === "table") {
             verbose = true;
         }
         options.mode = "parse";
@@ -2918,25 +2951,20 @@ interface readFile {
             resolve = function node_apps_readmethod_resolve() {
                 node.fs.stat(options[item], function node_apps_readmethod_resolve_stat(err:Error, stat:Stats):void {
                     const screen = function node_apps_readmethod_resolve_stat_screen():void {
-                            if (options.language !== "text") {
-                                options.source = options[item];
-                                const result:string = prettydiff.mode(options);
-                                if (result.indexOf("Error: ") === 0) {
-                                    apps.errout([result.replace("Error: ", "")]);
-                                    return;
-                                }
-                                store[item][item] = result;
-                            } else {
-                                store[item][item] = options[item];
-                            }
+                            store[item][item] = options[item];
                             if (options.mode === "diff") {
                                 if (store.source.source !== undefined && store.diff.diff !== undefined) {
+                                    let meta:any = {
+                                        differences: 0,
+                                        lines: 0
+                                    };
                                     options.diff = store.diff.diff;
                                     options.source = store.source.source;
-                                    apps.output("", prettydiff.api.diffview(options)[0]);
+                                    apps.output("", prettydiff.mode(options, meta));
                                 }
                             } else {
-                                apps.output("", store.source.source);
+                                options.source = store.source.source;
+                                apps.output("", prettydiff.mode(options));
                             }
                         },
                         resolveItem = function node_apps_readmethod_resolve_stat_resolveItem() {
@@ -3002,7 +3030,7 @@ interface readFile {
                             if (options.output === "") {
                                 const wrapped:string[] = [];
                                 options.read_method = "filescreen";
-                                if (command !== "parse" || options.parse_format !== "clitable") {
+                                if (command !== "parse" || options.parse_format !== "table") {
                                     apps.wrapit(wrapped, `Option ${text.angry}output${text.none} was not specified and the value provided for option ${text.cyan}source${text.none} appears to be a file. Output will be printed to the terminal. Please specify a value to option ${text.cyan}output${text.none} for file output to be written to a file.`);
                                     console.log(wrapped.join(node.os.EOL));
                                     console.log("");
@@ -3193,7 +3221,7 @@ interface readFile {
                     uri:string = (quest > 0)
                         ? request.url.slice(0, quest)
                         : request.url,
-                    file:string = projectPath + uri.slice(1);
+                    file:string = projectPath + uri.slice(1).replace(/\//g, node.path.sep);
                 if (uri === "/") {
                     file = `${projectPath + node.path.sep}index.xhtml`;
                 }
@@ -3665,17 +3693,12 @@ interface readFile {
                     test: `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,0],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,2,2],"presv":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","end","end"]}`
                 },
                 {
-                    command: `parse ${projectPath}tsconfig.json parse_format:clitable`,
+                    command: `parse ${projectPath}tsconfig.json parse_format:table`,
                     qualifier: "begins",
                     test: `Parsed input from file ${text.cyan + projectPath}tsconfig.json${text.none}`
                 },
                 {
-                    command: `parse source:"${projectPath}tsconfig.json" read_method:filescreen language:text`,
-                    qualifier: "contains",
-                    test: `Language value ${text.angry}text${text.none} is not compatible with command ${text.green}parse${text.none}.`
-                },
-                {
-                    command: `parse ${projectPath}tsconfig.json parse_format:clitable 2`,
+                    command: `parse ${projectPath}tsconfig.json parse_format:table 2`,
                     qualifier: "contains",
                     test: `index | begin | lexer  | lines | presv | stack       | types       | token${node.os.EOL}------|-------|--------|-------|-------|-------------|-------------|------${node.os.EOL + text.green}0     | -1    | script | XXXX     | false | global      | start       | {${text.none}`
                 },
@@ -3696,6 +3719,11 @@ interface readFile {
                     file: `${projectPath}parsetest.txt`,
                     qualifier: "file is",
                     test:  `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,0],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,2,2],"presv":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","end","end"]}`
+                },
+                {
+                    command: `parse source:"${projectPath}tsconfig.json" read_method:filescreen language:text`,
+                    qualifier: "contains",
+                    test: `Language value ${text.angry}text${text.none} is not compatible with command ${text.green}parse${text.none}.`
                 },
                 {
                     command: "version",

@@ -133,8 +133,7 @@
                     name:string            = "",
                     type:string            = "",
                     parent:HTMLElement;
-                const parseFormat:HTMLSelectElement = id("option-parse_format"),
-                    aceApply = function dom_load_aceApply(nodeName:string, maxWidth:boolean):any {
+                const aceApply = function dom_load_aceApply(nodeName:string, maxWidth:boolean):any {
                         const div:HTMLDivElement        = document.createElement("div"),
                             node:HTMLDivElement       = textarea[nodeName],
                             parent:HTMLElement     = <HTMLElement>node.parentNode.parentNode,
@@ -749,21 +748,6 @@
                             headline.innerHTML = "<h2>BETA TEST SITE.</h2> <p>Official Pretty Diff is at <a href=\"http://prettydiff.com/\">http://prettydiff.com/</a></p> <span class=\"clear\"></span>";
                         }
                     }
-                }
-
-                // quick option adjustment just for the browser environment
-                if (parseFormat !== null && parseFormat.innerHTML.indexOf("clitable") > 0) {
-                    const ops:NodeListOf<HTMLOptionElement> = parseFormat.getElementsByTagName("option"),
-                        opslen:number = ops.length;
-                    let a:number = 0;
-                    do {
-                        if (ops[a].innerHTML.indexOf("clitable") > -1) {
-                            ops[a].innerHTML = "renderhtml";
-                            ops[a].setAttribute("data-description", "Generates an HTML table of the parsed data and renders it for immediate display.");
-                            break;
-                        }
-                        a = a + 1;
-                    } while (a < opslen);
                 }
 
                 // build the Ace editors
@@ -2463,6 +2447,8 @@
                 value[0] = "html";
             } else if (value[0] === "markup") {
                 value[0] = "xml";
+            } else if (value[1] === "style") {
+                value[0] = "css";
             }
             if (textarea.codeIn !== null) {
                 aceStore
@@ -2497,7 +2483,9 @@
     // stretches input to 100% width if output is a html report
     method.app.hideOutput = function dom_app_hideOutput():void {
         let hide:boolean;
-        if (options.parse_format === "renderhtml" && options.mode === "parse") {
+        if (options.complete_document === true) {
+            hide = false;
+        } else if (options.parse_format === "renderhtml" && options.mode === "parse") {
             hide = true;
         } else if (options.jsscope === "report" && options.mode === "beautify") {
             hide = true;
@@ -2942,7 +2930,6 @@
         }
     };
     // execute bundles arguments in preparation for executing prettydiff references
-    // * events: beaufold, colSliderGrab, difffold, minimize, save
     method.event.execute = function dom_event_execute(event:KeyboardEvent):boolean {
         let lang:[string, string, string],
             errortext:string   = "",
@@ -2951,7 +2938,6 @@
             completed:boolean   = false,
             completes:boolean   = false,
             autotest:boolean    = false,
-            diffout:[string, number, number],
             node:HTMLSelectElement        = id("option-jsscope");
         const startTime:number = Date.now(),
             langvalue:string = (id("option-language") === null || id("option-language").value === "")
@@ -3054,7 +3040,7 @@
                         } else {
                             test.filled.code = false;
                         }
-                        if (options.mode === "parse" || (options.language === "csv" && options.mode !== "diff")) {
+                        if ((options.mode === "parse" && options.parse_format === "table" && options.complete_document === false) || (options.language === "csv" && options.mode !== "diff")) {
                             if (report.code.box !== null) {
                                 if (options.language === "csv") {
                                     let a:number       = 0,
@@ -3158,21 +3144,6 @@
                                         .body
                                         .appendChild(div);
                                 } else if (options.mode === "parse") {
-                                    if (options.parse_format === false) {
-                                        if (options.language !== "csv") {
-                                            if (test.ace === true) {
-                                                aceStore
-                                                    .codeOut
-                                                    .setValue(output);
-                                                aceStore
-                                                    .codeOut
-                                                    .clearSelection();
-                                            } else {
-                                                textarea.codeOut.value = output;
-                                            }
-                                        }
-                                        return;
-                                    }
                                     if (report.code.box !== null) {
                                         const table:string[] = [];
                                         table.push("<div class='report'><h4>Parsed Output</h4>");
@@ -3203,7 +3174,7 @@
                                 }
                             }
                         } else if (options.mode === "beautify") {
-                            if (options.jsscope === "report" && report.code.box !== null && data.langvalue[0] === "javascript" && output.indexOf("Error:") !== 0) {
+                            if (options.jsscope === "report" && options.complete_document === false && report.code.box !== null && data.langvalue[0] === "javascript" && output.indexOf("Error:") !== 0) {
                                 report.code.body.innerHTML = output;
                                 if (report.code.body.style.display === "none") {
                                     report.code.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0].focus();
@@ -3243,7 +3214,9 @@
                                 .box
                                 .getElementsByTagName("p")[0]
                                 .getElementsByTagName("button");
-                            prettydiff.api.finalFile.order[12] = prettydiff.api.finalFile.script.diff;
+                            if (options.complete_document === true) {
+                                output = `<textarea>${sanitize(output)}</textarea>`;
+                            }
                             report.code.body.innerHTML = `<p>Code type is set to <strong>auto</strong>. Presumed language is <em>${data.langvalue[2]}</em>.</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
                             if (autotest === true && report.code.body.firstChild !== null) {
                                 if (report.code.body.firstChild.nodeType > 1) {
@@ -3278,7 +3251,7 @@
                                     };
                                 }
                             }
-                        } else if (options.mode === "minify") {
+                        } else if (options.mode === "minify" || options.mode === "parse") {
                             if (test.ace === true) {
                                 aceStore
                                     .codeOut
@@ -3309,7 +3282,7 @@
                                     .codeOut
                                     .clearSelection();
                             } else {
-                                textarea.codeOut.value = output.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                                textarea.codeOut.value = sanitize(output);
                             }
                         }
                         if (ann !== null) {
@@ -3335,9 +3308,9 @@
                                     pdlang = "characters";
                                 }
                                 if (meta.error === "" || meta.error === undefined) {
-                                    ann.innerHTML = `${ann.innerHTML}<span><em>Execution time:</em> <strong>${meta.time.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</strong>. <em>Output size:</em> <strong>${commanumb(meta.outsize)} ${pdlang}</strong></span>`;
+                                    ann.innerHTML = `${ann.innerHTML}<span><em>Execution time:</em> <strong>${sanitize(meta.time)}</strong>. <em>Output size:</em> <strong>${commanumb(meta.outsize)} ${pdlang}</strong></span>`;
                                 } else {
-                                    ann.innerHTML = `${ann.innerHTML}<span><strong>${meta.error.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</strong></span>`;
+                                    ann.innerHTML = `${ann.innerHTML}<span><strong>${sanitize(meta.error)}</strong></span>`;
                                 }
                             }
                         }
@@ -3364,23 +3337,14 @@
                         }
                         output = "";
                     } else {
+                        let diffmeta = {
+                            differences: 0,
+                            lines: 0
+                        };
                         meta.insize = options.source.length + options.diff.length;
-                        if (options.lexer !== "text") {
-                            let source:string = prettydiff.mode(options);
-                            if (window.parseFramework.parseerror !== "" && ann !== null) {
-                                ann.innerHTML = `<strong>Parse Error:</strong> ${sanitize(window.parseFramework.parseerror)}`;
-                            }
-                            options.source = options.diff;
-                            options.diff   = prettydiff.mode(options);
-                            if (window.parseFramework.parseerror !== "" && ann !== null) {
-                                ann.innerHTML = `<strong>Parse Error:</strong> ${sanitize(window.parseFramework.parseerror)}`;
-                            }
-                            options.source = source;
-                        }
-                        diffout = prettydiff.api.diffview(options);
-                        meta.difftotal = diffout[1] + diffout[2];
-                        meta.difflines = diffout[2];
-                        output = diffout[0];
+                        output = prettydiff.mode(options, diffmeta);
+                        meta.difftotal = diffmeta.differences;
+                        meta.difflines = diffmeta.lines;
                     }
                 } else {
                     meta.insize = options.source.length;
@@ -3392,19 +3356,6 @@
                         ann.innerHTML = output.replace("Error: ", "");
                         output = options.source;
                     }
-                }
-                if (options.complete_document === true) {
-                    const jsscope:HTMLSelectElement = id("option-jsscope");
-                    prettydiff.api.finalFile.order[7] = id("option-color")[id("option-color").selectedIndex].value;
-                    prettydiff.api.finalFile.order[10] = output;
-                    if (options.mode === "diff") {
-                        prettydiff.api.finalFile.order[12] = prettydiff.api.finalFile.script.diff;
-                    } else if (options.mode === "beautify" && data.langvalue[0] === "javascript" && (jsscope !== null && jsscope[jsscope.selectedIndex].value !== "none")) {
-                        prettydiff.api.finalFile.order[12] = prettydiff.api.finalFile.script.beautify;
-                    } else {
-                        prettydiff.api.finalFile.order[12] = prettydiff.api.finalFile.script.minimal;
-                    }
-                    output = prettydiff.api.finalFile.order.join("");
                 }
                 renderOutput();
             };
@@ -3514,6 +3465,11 @@
         if (options.language === "auto") {
             autotest = true;
         }
+        if (test.ace === true) {
+            options.source = aceStore.codeIn.getValue();
+        } else {
+            options.source = textarea.codeIn.value;
+        }
         if (domain.test(options.source) === true) {
             const filetest:boolean       = (options.source.indexOf("file:///") === 0),
                 protocolRemove:string = (filetest === true)
@@ -3568,43 +3524,50 @@
                 xhr.send();
             }
         }
-        if (domain.test(options.diff) === true && options.mode === "diff") {
-            const filetest:boolean       = (options.diff.indexOf("file:///") === 0),
-                protocolRemove:string = (filetest === true)
-                    ? options
-                        .diff
-                        .split(":///")[1]
-                    : options
-                        .diff
-                        .split("://")[1],
-                slashIndex:number     = (protocolRemove !== undefined)
-                    ? protocolRemove.indexOf("/")
-                    : 0,
-                xhr:XMLHttpRequest            = new XMLHttpRequest();
-            if ((slashIndex > 0 || options.diff.indexOf("http") === 0) && typeof protocolRemove === "string" && protocolRemove.length > 0) {
-                requestd = true;
-                xhr.onreadystatechange = function dom_event_execute_xhrSource_statechange() {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status === 200 || xhr.status === 0) {
-                            options.diff = xhr
-                                .responseText
-                                .replace(/\r\n/g, "\n");
-                            if (requests === false || (requests === true && completes === true)) {
-                                app();
-                                return;
+        if (options.mode === "diff") {
+            if (test.ace === true) {
+                options.diff = aceStore.codeOut.getValue();
+            } else {
+                options.diff = textarea.codeOut.value;
+            }
+            if (domain.test(options.diff) === true) {
+                const filetest:boolean       = (options.diff.indexOf("file:///") === 0),
+                    protocolRemove:string = (filetest === true)
+                        ? options
+                            .diff
+                            .split(":///")[1]
+                        : options
+                            .diff
+                            .split("://")[1],
+                    slashIndex:number     = (protocolRemove !== undefined)
+                        ? protocolRemove.indexOf("/")
+                        : 0,
+                    xhr:XMLHttpRequest            = new XMLHttpRequest();
+                if ((slashIndex > 0 || options.diff.indexOf("http") === 0) && typeof protocolRemove === "string" && protocolRemove.length > 0) {
+                    requestd = true;
+                    xhr.onreadystatechange = function dom_event_execute_xhrSource_statechange() {
+                        if (xhr.readyState === 4) {
+                            if (xhr.status === 200 || xhr.status === 0) {
+                                options.diff = xhr
+                                    .responseText
+                                    .replace(/\r\n/g, "\n");
+                                if (requests === false || (requests === true && completes === true)) {
+                                    app();
+                                    return;
+                                }
+                                completed = true;
+                            } else {
+                                options.diff = "Error: transmission failure receiving diff code from address.";
                             }
-                            completed = true;
-                        } else {
-                            options.diff = "Error: transmission failure receiving diff code from address.";
                         }
+                    };
+                    if (filetest === true) {
+                        xhr.open("GET", options.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                    } else {
+                        xhr.open("GET", "proxy.php?x=" + options.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
                     }
-                };
-                if (filetest === true) {
-                    xhr.open("GET", options.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
-                } else {
-                    xhr.open("GET", "proxy.php?x=" + options.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                    xhr.send();
                 }
-                xhr.send();
             }
         }
         if (requests === false && requestd === false) {
@@ -4341,7 +4304,7 @@
         document.onmousemove = boxsize;
         document.onmousedown = null;
     };
-    //toggle between parsed html diff report and raw text representation
+    //tell the browser to "save as"
     method.event.save = function dom_event_save():void {
         prettydiff.saveAs(new File([report.code.body.innerHTML], "prettydiff.xhtml", {type: "application/xhtml+xml;charset=utf-8"}));
     };

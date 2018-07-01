@@ -34,6 +34,10 @@ interface commandList {
 interface compareStore extends Array<[number, number]>{
     [index:number]: [number, number];
 }
+interface diffmeta {
+    differences: number;
+    lines: number;
+}
 interface difftable {
     [key: string]: [number, number];
 }
