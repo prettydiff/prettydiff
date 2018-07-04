@@ -3610,16 +3610,6 @@ interface readFile {
                     test: "XXXX seconds total time"
                 },
                 {
-                    command: `lint ${projectPath}js${supersep}beautify`,
-                    qualifier: "ends",
-                    test: `${text.green}Lint complete for XXXX files!${text.none}`
-                },
-                {
-                    command: `lint ${projectPath}js${supersep}beautify --verbose`,
-                    qualifier: "ends",
-                    test: "XXXX seconds total time"
-                },
-                {
                     command: `minify source:"${projectPath}tsconfig.json" read_method:filescreen`,
                     qualifier: "is",
                     test: `{"compilerOptions":{"target":"ES6","outDir":"js"},"include":["*.ts","*\u002a/*.ts"],"exclude":["js","node_modules","test"]}`
