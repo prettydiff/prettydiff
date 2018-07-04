@@ -3517,7 +3517,7 @@ interface readFile {
                 {
                     command: `directory ${projectPath}js listonly`,
                     qualifier: "not contains",
-                    test: `"ctimeMs":`
+                    test: `,"ctime":`
                 },
                 {
                     command: `directory ${projectPath}js`,
@@ -3527,7 +3527,7 @@ interface readFile {
                 {
                     command: `directory ${projectPath}js 2`,
                     qualifier: "contains",
-                    test: `"ctimeMs":`
+                    test: `,"ctime":`
                 },
                 {
                     command: `directory ${projectPath}js ignore ["minify"]`,
