@@ -3796,7 +3796,7 @@ interface readFile {
                 ]);
             },
             wrapper = function node_apps_simulation_wrapper():void {
-                node.child(`node js/services ${tests[a].command}`, {cwd: cwd, maxBuffer: 8192 * 500}, function node_apps_simulation_wrapper_child(err:nodeError, stdout:string, stderror:string|Buffer) {
+                node.child(`node js/services ${tests[a].command}`, {cwd: cwd, maxBuffer: 2048 * 500}, function node_apps_simulation_wrapper_child(err:nodeError, stdout:string, stderror:string|Buffer) {
                     if (tests[a].artifact === "" || tests[a].artifact === undefined) {
                         writeflag = "";
                     } else {
