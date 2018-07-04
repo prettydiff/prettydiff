@@ -237,6 +237,10 @@ interface readFile {
                     {
                         code: "prettydiff hash path/to/directory",
                         defined: "Directory hash recursively gathers all descendant artifacts and hashes the contents of each of those items that are files, hashes the paths of directories, sorts this list, and then hashes the list of hashes."
+                    },
+                    {
+                        code: "prettydiff hash path/to/directory list",
+                        defined: "Returns a JSON string listing all scanned file system objects and each respective hash."
                     }
                 ]
             },
@@ -461,70 +465,47 @@ interface readFile {
             const args = process.argv.join(" "),
                 match = args.match(/\signore\s*\[/);
             if (match !== null) {
-                const start:number = args.indexOf(match[0]);
-                let a:number = start,
-                    len:number = args.length;
-                do {
-                    if (args.charAt(a) === "]" && (a === len - 1 || (/\s/).test(args.charAt(a + 1)) === true)) {
-                        break;
-                    }
-                    a = a + 1;
-                } while (a < len);
-                if (a < len) {
-                    const exs:string = args.slice(start, a + 1),
-                        arglist:string[] = [],
-                        list:string[] = exs.replace(/\signore\s*\[/, "").replace(/\]$/, "").replace(/\s*,\s*/g, ",").split(","),
-                        esctest = function node_exclusions_esctest():boolean {
-                            let b:number = a - 1;
-                            if (args.charAt(b) !== "\\") {
-                                return false;
-                            }
-                            do {
-                                b = b - 1;
-                            } while (b > 0 && args.charAt(b) === "\\");
-                            if (a - b % 2 === 0) {
-                                return true;
-                            }
-                            return false;
-                        };
-                    let quote:string = "",
-                        startIndex:number = -1;
-                    a = 0;
-                    len = args.length;
-                    do {
-                        if (a === 0 || ((/\s/).test(args.charAt(a)) === false && quote === "" && startIndex < 0)) {
-                            startIndex = a;
-                            if (args.charAt(a) === "\"" || args.charAt(a) === "'") {
-                                quote = args.charAt(a);
-                            } else if (args.slice(a, a + 6) === "ignore" && (args.charAt(a + 7) === "[" || (/\s/).test(args.charAt(a + 7)) === true)) {
-                                quote = "]";
-                            }
-                        } else if (esctest() === false) {
-                            if (args.charAt(a) === quote) {
-                                if (quote !== "]") {
-                                    arglist.push(args.slice(startIndex, a + 1));
+                const list:string[] = [],
+                    listBuilder = function node_exclusions_listBuilder():void {
+                        do {
+                            if (process.argv[a] === "]" || process.argv[a].charAt(process.argv[a].length - 1) === "]") {
+                                if (process.argv[a] !== "]") {
+                                    list.push(process.argv[a].replace(/,$/, "").slice(0, process.argv[a].length - 1));
                                 }
-                                quote = "";
-                                startIndex = -1;
-                            } else if (startIndex > -1 && quote === "" && (/\s/).test(args.charAt(a)) === true) {
-                                arglist.push(args.slice(startIndex, a));
-                                startIndex = -1;
+                                process.argv.splice(igindex, (a + 1) - igindex);
+                                break;
                             }
+                            list.push(process.argv[a].replace(/,$/, ""));
+                            a = a + 1;
+                        } while (a < len);
+                    };
+                let a:number = 0,
+                    len:number = process.argv.length,
+                    igindex:number = process.argv.indexOf("ignore");
+                if (igindex > -1 && igindex < len - 1 && process.argv[igindex + 1].charAt(0) === "[") {
+                    a = igindex + 1;
+                    if (process.argv[a] !== "[") {
+                        process.argv[a] = process.argv[a].slice(1).replace(/,$/, "");
+                    }
+                    listBuilder();
+                } else {
+                    do {
+                        if (process.argv[a].indexOf("ignore[") === 0) {
+                            igindex = a;
+                            break;
                         }
                         a = a + 1;
                     } while (a < len);
-                    if (startIndex > -1) {
-                        arglist.push(args.slice(startIndex));
+                    if (process.argv[a] !== "ignore[") {
+                        process.argv[a] = process.argv[a].slice(7);
+                        if (process.argv[a].charAt(process.argv[a].length - 1) === "]") {
+                            list.push(process.argv[a].replace(/,$/, "").slice(0, process.argv[a].length - 1));
+                        } else {
+                            listBuilder();
+                        }
                     }
-                    process.argv = arglist;
-                    a = 0;
-                    len = list.length;
-                    do {
-                        list[a] = list[a].replace(/\/|\\/g, sep);
-                        a = a + 1;
-                    } while (a < len);
-                    return list;
                 }
+                return list;
             }
             return [];
         }()),
@@ -2110,12 +2091,14 @@ interface readFile {
     // hash utility for strings or files
     apps.hash = function node_apps_hash(filepath:string):void {
         let limit:number = 0,
-            shortlimit:number = 0;
+            shortlimit:number = 0,
+            hashlist:boolean = false;
         const http:RegExp = (/^https?:\/\//),
             dirComplete = function node_apps_hash_dirComplete(list:directoryList):void {
                 let a:number = 0,
                     c:number = 0;
                 const listlen:number = list.length,
+                    listObject:any = {},
                     hashes:string[] = [],
                     hashComplete = function node_apps_hash_dirComplete_hashComplete():void {
                         const hash:Hash = node.crypto.createHash("sha512");
@@ -2124,7 +2107,9 @@ interface readFile {
                             console.log(`${apps.humantime(false)}File hashing complete. Working on a final hash to represent the directory structure.`);
                         }
                         hash.update(hashes.join(""));
-                        hashstring = hash.digest("hex").replace(/\s+$/, "");
+                        hashstring = (hashlist === true)
+                            ? JSON.stringify(listObject)
+                            : hash.digest("hex").replace(/\s+$/, "");
                         if (verbose === true) {
                             apps.log([
                                 `Pretty Diff hashed ${text.cyan + filepath + text.none}`,
@@ -2170,7 +2155,11 @@ interface readFile {
                         if (list[index][1] === "directory" || list[index][1] === "link") {
                             const hash:Hash = node.crypto.createHash("sha512");
                             hash.update(list[index][0]);
-                            hashes[index] = hash.digest("hex");
+                            if (hashlist === true) {
+                                listObject[list[index][0]] = hash.digest("hex");
+                            } else {
+                                hashes[index] = hash.digest("hex");
+                            }
                             terminate();
                         } else {
                             apps.readFile({
@@ -2180,6 +2169,11 @@ interface readFile {
                                 callback: function node_apps_hash_dirComplete_typehash_callback(data:readFile, item:string|Buffer):void {
                                     hashback(data, item, function node_apps_hash_dirComplete_typeHash_callback(hashstring:string, item:number) {
                                         hashes[item[0]] = hashstring;
+                                        if (hashlist === true) {
+                                            listObject[data.path] = hashstring;
+                                        } else {
+                                            hashes[item[0]] = hashstring;
+                                        }
                                         terminate();
                                     });
                                 }
@@ -2212,7 +2206,11 @@ interface readFile {
                         if (list[a][1] === "directory" || list[a][1] === "link") {
                             const hash:Hash = node.crypto.createHash("sha512");
                             hash.update(list[a][0]);
-                            hashes[a] = hash.digest("hex");
+                            if (hashlist === true) {
+                                listObject[list[a][0]] = hash.digest("hex");
+                            } else {
+                                hashes[a] = hash.digest("hex");
+                            }
                             c = c + 1;
                             if (c === listlen) {
                                 hashComplete();
@@ -2224,7 +2222,11 @@ interface readFile {
                                 index: a,
                                 callback: function node_apps_hash_dirComplete_file(data:readFile, item:string|Buffer):void {
                                     hashback(data, item, function node_apps_hash_dirComplete_file_hashback(hashstring:string, item:number):void {
-                                        hashes[item[0]] = hashstring;
+                                        if (hashlist === true) {
+                                            listObject[data.path] = hashstring;
+                                        } else {
+                                            hashes[item[0]] = hashstring;
+                                        }
                                         c = c + 1;
                                         if (c === listlen) {
                                             hashComplete();
@@ -2244,13 +2246,10 @@ interface readFile {
                 }
             };
         if (command === "hash") {
+            const listIndex:number = process.argv.indexOf("list");
             if (process.argv[0] === undefined) {
                 apps.errout([`Command ${text.cyan}hash${text.none} requires some form of address of something to analyze, ${text.angry}but no address is provided${text.none}.`]);
                 return;
-            }
-            filepath = process.argv[0];
-            if (http.test(filepath) === false) {
-                filepath = node.path.resolve(process.argv[0]);
             }
             if (process.argv.indexOf("string") > -1) {
                 const hash:Hash = node.crypto.createHash("sha512");
@@ -2258,6 +2257,14 @@ interface readFile {
                 hash.update(process.argv[0]);
                 apps.log([hash.digest("hex")]);
                 return;
+            }
+            if (listIndex > -1 && process.argv.length > 1) {
+                hashlist = true;
+                process.argv.splice(listIndex, 1);
+            }
+            filepath = process.argv[0];
+            if (http.test(filepath) === false) {
+                filepath = node.path.resolve(process.argv[0]);
             }
         }
         if (http.test(filepath) === true) {
@@ -2282,7 +2289,7 @@ interface readFile {
                     callback: function node_apps_hash_localCallback(list:directoryList) {
                         dirComplete(list);
                     },
-                    exclusions: [],
+                    exclusions: exclusions,
                     path: filepath,
                     recursive: true,
                     symbolic: true
@@ -3442,7 +3449,7 @@ interface readFile {
                 {
                     command: `beautify source:"${projectPath}tsconfig.json" read_method:filescreen`,
                     qualifier: "is",
-                    test: `{\n    "compilerOptions": {\n        "target": "ES6",\n        "outDir": "js"\n    },\n    "include": [\n        "*.ts", "**/*.ts"\n    ],\n    "exclude": ["js", "node_modules", "test"]\n}`
+                    test: `{\n    "compilerOptions": {\n        "target": "ES6",\n        "outDir": "js"\n    },\n    "include": [\n        "*.ts", "*\u002a/*.ts"\n    ],\n    "exclude": ["js", "node_modules", "test"]\n}`
                 },
                 {
                     command: `beautify source:"${projectPath}tsconfig.json" read_method:filescreen language:text`,
@@ -3490,7 +3497,7 @@ interface readFile {
                     command: `copy ${projectPath}js ${projectPath}temp 2`,
                     file: `${projectPath}temp${supersep}minify${supersep}style.js`,
                     qualifier: "file begins",
-                    test: "/*global global*/"
+                    test: "/*global global\u002a/"
                 },
                 {
                     command: `diff source:"hello" diff:"shelo" readmethod:screen`,
@@ -3573,9 +3580,24 @@ interface readFile {
                     test: "parse-framework version "
                 },
                 {
+                    command: `hash ${projectPath} list`,
+                    qualifier: "contains",
+                    test: ""
+                },
+                {
                     command: "hash https://duckduckgo.com/assets/logo_homepage.normal.v107.svg",
                     qualifier: "is",
                     test: "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+                },
+                {
+                    command: `hash ${projectPath} list ignore [.git, "node_modules", "tests", "js", "api", "beautify", "minify", "css", 'space test']`,
+                    qualifier: "contains",
+                    test: `tsconfig.json":"2b036193a0fe0ea10bc13f539aafd1a117fa22579763fcfa6496385596fea9fb9d78757eb5120c41a60c989cb9fd561b571c198dd29d042876529ebd2864c2c6"`
+                },
+                {
+                    command: `hash ${projectPath} list ignore [.git, "node_modules", "tests", "js", "api", "beautify", "minify", "css", "space test", "test"]`,
+                    qualifier: "not contains",
+                    test: "api"
                 },
                 {
                     command: "help",
@@ -3605,7 +3627,7 @@ interface readFile {
                 {
                     command: `minify source:"${projectPath}tsconfig.json" read_method:filescreen`,
                     qualifier: "is",
-                    test: `{"compilerOptions":{"target":"ES6","outDir":"js"},"include":["*.ts","**/*.ts"],"exclude":["js","node_modules","test"]}`
+                    test: `{"compilerOptions":{"target":"ES6","outDir":"js"},"include":["*.ts","*\u002a/*.ts"],"exclude":["js","node_modules","test"]}`
                 },
                 {
                     command: `minify source:"${projectPath}tsconfig.json" read_method:filescreen language:text`,
@@ -3680,7 +3702,7 @@ interface readFile {
                 {
                     command: `parse ${projectPath}tsconfig.json 2`,
                     qualifier: "contains",
-                    test: `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,0],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,2,2],"presv":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","end","end"]}`
+                    test: `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,0],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,2,2],"presv":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"*\u002a/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","end","end"]}`
                 },
                 {
                     command: "parse tsconfig read_method:filescreen",
@@ -3690,7 +3712,7 @@ interface readFile {
                 {
                     command: `parse ${projectPath}tsconfig.json read_method:filescreen`,
                     qualifier: "is",
-                    test: `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,0],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,2,2],"presv":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","end","end"]}`
+                    test: `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,0],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,2,2],"presv":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"*\u002a/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","end","end"]}`
                 },
                 {
                     command: `parse ${projectPath}tsconfig.json parse_format:table`,
@@ -3718,7 +3740,7 @@ interface readFile {
                     command: `parse ${projectPath}tsconfig.json read_method:file output:"parsetest.txt"`,
                     file: `${projectPath}parsetest.txt`,
                     qualifier: "file is",
-                    test:  `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,0],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,2,2],"presv":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","end","end"]}`
+                    test:  `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,0],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,2,2],"presv":[false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"*\u002a/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","end","end"]}`
                 },
                 {
                     command: `parse source:"${projectPath}tsconfig.json" read_method:filescreen language:text`,
@@ -3774,7 +3796,7 @@ interface readFile {
                 ]);
             },
             wrapper = function node_apps_simulation_wrapper():void {
-                node.child(`node js/services ${tests[a].command}`, {cwd: cwd}, function node_apps_simulation_wrapper_child(err:nodeError, stdout:string, stderror:string|Buffer) {
+                node.child(`node js/services ${tests[a].command}`, {cwd: cwd, maxBuffer: 8192 * 500}, function node_apps_simulation_wrapper_child(err:nodeError, stdout:string, stderror:string|Buffer) {
                     if (tests[a].artifact === "" || tests[a].artifact === undefined) {
                         writeflag = "";
                     } else {
