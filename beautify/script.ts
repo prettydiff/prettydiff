@@ -286,11 +286,11 @@
                                 aa = aa - 1;
                                 globallist[aa] = globallist[aa].replace(/\s+/g, "");
                                 if (globallist[aa] !== "") {
-                                    scopes.push([globallist[aa], -1]);
+                                    scopes.push([globallist[aa], -1, -10]);
                                 }
                             } while (aa > 0);
                         }
-                        if (data.types[a - 1] === "comment") {
+                        if (data.types[a - 1] === "comment" || data.types[a + 1] === "comment") {
                             level[a - 1] = ind;
                         } else if (data.lines[a] < 2) {
                             let aa:number = a + 1;
@@ -1586,14 +1586,14 @@
                         const hoist = function beautify_script_reference_hoist():void {
                                 let func:number = data.begin[a];
                                 if (func < 0) {
-                                    scopes.push([data.token[a], -1]);
+                                    scopes.push([data.token[a], -1, -10]);
                                 } else {
                                     if (data.stack[func + 1] !== "function") {
                                         do {
                                             func = data.begin[func];
                                         } while (func > -1 && data.stack[func + 1] !== "function");
                                     }
-                                    scopes.push([data.token[a], func]);
+                                    scopes.push([data.token[a], func, -10]);
                                 }
                             };
                         if (ltype !== "separator" && ltype !== "start" && ltype !== "end") {
@@ -1607,12 +1607,12 @@
                             // hoisted references following declaration keyword
                             hoist();
                         } else if (ltoke === "function") {// && (data.token[a - 2] === "=" || data.types[a - 2] !== "operator") && data.types[a - 2] !== "start" && data.types[a - 2] !== "end") {
-                            scopes.push([data.token[a], a]);
+                            scopes.push([data.token[a], a, -10]);
                         } else if (ltoke === "let" || ltoke === "const") {
                             // not hoisted references following declaration keyword
-                            scopes.push([data.token[a], a]);
+                            scopes.push([data.token[a], a, -10]);
                         } else if (data.stack[a] === "arguments") {
-                            scopes.push([data.token[a], a]);
+                            scopes.push([data.token[a], a, -10]);
                         } else if (ltoke === ",") {
                             // references following a comma, must be tested to see if a declaration list
                             let index:number = a;
@@ -1622,7 +1622,7 @@
                             if (data.token[index] === "var") {
                                 hoist();
                             } else if (data.token[index] === "let" || data.token[index] === "const") {
-                                scopes.push([data.token[a], a]);
+                                scopes.push([data.token[a], a, -10]);
                             }
                         }
                         level.push(-10);
@@ -1881,9 +1881,9 @@
                 const build:string[] = [],
                     len:number = levels.length,
                     tab:string = (function beautify_script_output_tab():string {
-                        const ch = options.indent_char,
+                        const ch:string = options.indent_char,
                             tabby:string[] = [];
-                        let index = options.indent_size;
+                        let index:number = options.indent_size;
                         do {
                             tabby.push(ch);
                             index = index - 1;
@@ -1893,10 +1893,21 @@
                     lf:"\r\n"|"\n" = (options.crlf === true)
                         ? "\r\n"
                         : "\n",
-                    pres:number = options.preserve,
+                    pres:number = options.preserve + 1,
                     nl = function beautify_script_output_outnl(tabs:number):string {
                         const linesout:string[] = [],
-                            total:number = Math.min(data.lines[a + 1] - 1, pres);
+                            total:number = (function beautify_script_output_outnl_total():number {
+                                if (a === len - 1) {
+                                    return 1;
+                                }
+                                if (data.lines[a + 1] - 1 > pres) {
+                                    return pres;
+                                }
+                                if (data.lines[a + 1] > 1) {
+                                    return data.lines[a + 1] - 1;
+                                }
+                                return 1;
+                            }());
                         let index = 0;
                         if (tabs < 0) {
                             tabs = 0;
@@ -2013,6 +2024,16 @@
                         reference = function beautify_script_output_scope_reference():void {
                             let i:number = 0,
                                 s:number = scopes.length - 1;
+                            const applyScope = function beautify_script_output_scope_reference_applyScope(scopeValue:number, token:string):void {
+                                // applyScope function exists to prevent presenting spaces as part of reference names if option 'vertical' is set to true
+                                const spaceIndex:number = token.indexOf(" ");
+                                let space:string = "";
+                                if (spaceIndex > 0) {
+                                    space = token.slice(spaceIndex);
+                                    token = token.slice(0, spaceIndex);
+                                }
+                                build.push(`<em class="s${scopeValue}">${token}</em>${space}`);
+                            };
                             if (data.stack[a] === "arguments") {
                                 if (scopes[s - 1][1] > a) {
                                     do {
@@ -2021,7 +2042,7 @@
                                 }
                                 do {
                                     if (scopes[s][1] === a) {
-                                        scopes[s].push(scope + 1);
+                                        scopes[s][2] = scope + 1;
                                         break;
                                     }
                                     s = s - 1;
@@ -2037,12 +2058,12 @@
                                 }
                                 do {
                                     if (scopes[s][1] === a) {
-                                        scopes[s].push(scope);
+                                        scopes[s][2] = scope;
                                         break;
                                     }
                                     s = s - 1;
                                 } while (s > -1);
-                                build.push(`<em class="s${scope}">${data.token[a]}</em>`);
+                                applyScope(scope, data.token[a]);
                                 return;
                             }
                             if (s > 0 && scopes[s - 1][1] > a) {
@@ -2051,11 +2072,11 @@
                                 } while (s > 0 && scopes[s][1] > a);
                             }
                             if (scopes[s][0] === data.token[a]) {
-                                if (scopes[s].length === 2) {
-                                    build.push(`<em class="s${scope}">${data.token[a]}</em>`);
-                                    scopes[s].push(scope);
+                                if (scopes[s][2] === -10) {
+                                    applyScope(scope, data.token[a]);
+                                    scopes[s][2] = scope;
                                 } else {
-                                    build.push(`<em class="s${scopes[s][2]}">${data.token[a]}</em>`);
+                                    applyScope(scopes[s][2], data.token[a]);
                                 }
                                 return;
                             }
@@ -2064,14 +2085,14 @@
                                 if (scopes[s][0] === data.token[a]) {
                                     i = scopes[s][1];
                                     if (i === -1) {
-                                        build.push(`<em class="s0">${data.token[a]}</em>`);
+                                        applyScope(0, data.token[a]);
                                     } else if (i === data.begin[a]) {
-                                        build.push(`<em class="s${scope}">${data.token[a]}</em>`);
+                                        applyScope(scope, data.token[a]);
                                     } else if (scopes[s].length < 3) {
-                                        build.push(`<em class="s${scope}">${data.token[a]}</em>`);
+                                        applyScope(scope, data.token[a]);
                                         scopes[s].push(scope);
                                     } else {
-                                        build.push(`<em class="s${scopes[s][2]}">${data.token[a]}</em>`);
+                                        applyScope(scopes[s][2], data.token[a]);
                                     }
                                     return;
                                 }
@@ -2187,7 +2208,7 @@
                         } else if (invisibles.indexOf(data.token[a]) < 0) {
                             if (data.types[a] === "start" && (levels[a] > -1 || data.types[a + 1] === "comment")) {
                                 foldstart();
-                            } else if (data.token[a].indexOf("//") === 0 && data.token[a + 1].indexOf("//") === 0 && levels[a - 1] > -1) {
+                            } else if (data.token[a].indexOf("//") === 0 && a < len - 1 && data.token[a + 1].indexOf("//") === 0 && data.token[a - 1].indexOf("//") !== 0 && levels[a - 1] > -1) {
                                 foldstart();
                             } else if (data.types[a] === "end") {
                                 foldend();

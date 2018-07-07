@@ -3921,6 +3921,22 @@ interface readFile {
             },
             raw:[string, string][] = [],
             formatted:[string, string][] = [],
+            reset = function node_apps_validation_reset():void {
+                const key:string[] = Object.keys(prettydiff.api.optionDef),
+                    len:number = key.length;
+                let a:number = 0;
+                do {
+                    options[key[a]] = prettydiff.api.optionDef[key[a]].default;
+                    a = a + 1;
+                } while (a < len);
+                options.context     = 4;
+                options.mode        = "diff";
+                options.object_sort = true;
+                options.preserve    = 2;
+                options.read_method = "screen";
+                options.vertical    = true;
+                options.wrap        = 80;
+            },
             compare = function node_apps_validation_compare():void {
                 const len:number = (raw.length > formatted.length)
                         ? raw.length
@@ -3932,17 +3948,13 @@ interface readFile {
                         return -1;
                     };
                 let a:number = 0,
+                    b:number = 0,
                     filecount:number = 0,
+                    noteslen:number = 0,
+                    notes:string[] = [],
                     output:string = "";
                 raw.sort(sort);
                 formatted.sort(sort);
-                options.context    = 4;
-                options.mode       = "diff";
-                options.object_sort    = true;
-                options.preserve   = 2;
-                options.read_method = "screen";
-                options.vertical   = true;
-                options.wrap       = 80;
                 console.log("");
                 do {
                     if (raw[a] === undefined || formatted[a] === undefined) {
@@ -3959,11 +3971,24 @@ interface readFile {
                             return;
                         }
                     } else if (raw[a][0] === formatted[a][0]) {
-                        const notes:string[] = raw[a][0].split("_");
+                        reset();
+                        notes = raw[a][0].split("_");
+                        noteslen = notes.length;
                         options.language   = notes[2];
                         options.lexer      = notes[1];
                         options.mode       = notes[0];
                         options.source     = raw[a][1];
+                        if (noteslen > 3) {
+                            b = 3;
+                            do {
+                                if (notes[b].indexOf("-") > 0) {
+                                    options[notes[b].slice(0, notes[b].indexOf("-"))] = notes[b].slice(notes[b].indexOf("-") + 1);
+                                } else {
+                                    options[notes[b]] = true;
+                                }
+                                b = b + 1;
+                            } while (b < noteslen);
+                        }
                         options.lexerOptions = {};
                         options.lexerOptions[options.lexer] = {};
                         options.lexerOptions[options.lexer].objectSort = true;
@@ -3974,11 +3999,12 @@ interface readFile {
                         } else {
                             console.log(`${apps.humantime(false) + text.angry}Fail: ${text.cyan + raw[a][0] + text.none}`);
                             console.log("");
-                            console.log(`Diff output colors: ${text.angry + text.underline}red = beautified${text.none} and ${text.green + text.underline}green = control${text.none}`);
-                            options.diff   = formatted[a][1];
-                            options.language   = "text";
-                            options.mode   = "diff";
-                            options.source = output;
+                            console.log(`Diff output colors: ${text.angry + text.underline}red = generated${text.none} and ${text.green + text.underline}green = saved file${text.none}`);
+                            reset();
+                            options.diff         = formatted[a][1];
+                            options.language     = "text";
+                            options.mode         = "diff";
+                            options.source       = output;
                             options.source_label = raw[a][1];
                             apps.log([prettydiff.api.diffview(options)[0]]);
                             break;

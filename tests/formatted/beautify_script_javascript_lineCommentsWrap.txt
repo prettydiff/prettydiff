@@ -40,7 +40,8 @@
 // - dash line, but we also need to see
 // if this wraps into the next line
 // 46000. number line and again we need
-// to see if this wraps into the next line
+// to see if this wraps into the next
+// line
 // * arrrrgghhh
 
 
@@ -63,6 +64,7 @@
 // if this wraps into the next line
 //
 // 46000. number line and again we need
-// to see if this wraps into the next line
+// to see if this wraps into the next
+// line
 //
 // * arrrrgghhh
