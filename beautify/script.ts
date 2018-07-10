@@ -1935,23 +1935,48 @@
                         let longest:number = 0,
                             complex:number = 0,
                             aa:number = end - 1,
-                            bb:number = 0;
+                            bb:number = 0,
+                            cc:number = 0;
                         const begin:number = data.begin[a],
                             list:[number, number][] = [];
                         do {
                             if ((data.begin[aa] === begin || data.token[aa] === "]" || data.token[aa] === ")") && ((data.token[aa + 1] === ":" && data.stack[aa] === "object") || data.token[aa + 1] === "=")) {
                                 bb = aa;
-                                if (data.types[aa] === "end") {
-                                    complex = 0;
-                                    do {
-                                        if (data.token[bb] === "," || data.token[bb] === ";") {
+                                complex = 0;
+                                do {
+                                    if (data.begin[bb] === begin) {
+                                        if (data.token[bb] === "," || data.token[bb] === ";" || levels[bb] > -1) {
+                                            if (data.token[bb + 1] === ".") {
+                                                complex = complex + (options.indent_size * options.indent_char.length);
+                                            }
                                             break;
                                         }
+                                    }
+                                    if (data.types[bb] !== "comment") {
+                                        if (levels[bb - 1] === -10) {
+                                            complex = complex + 1;
+                                        }
                                         complex = data.token[bb].length + complex;
-                                        bb = bb - 1;
-                                    } while (bb > begin);
-                                } else {
-                                    complex = data.token[aa].length;
+                                    }
+                                    bb = bb - 1;
+                                } while (bb > begin);
+                                cc = bb;
+                                if (data.token[cc] === "," && data.token[aa + 1] === "=") {
+                                    do {
+                                        if (data.types[cc] === "end") {
+                                            cc = data.begin[cc];
+                                        }
+                                        if (data.begin[cc] === begin) {
+                                            if (data.token[cc] === ";" || data.token[cc] === "x;") {
+                                                break;
+                                            }
+                                            if (data.token[cc] === "var" || data.token[cc] === "const" || data.token[cc] === "let") {
+                                                complex = complex + (options.indent_size * options.indent_char.length);
+                                                break;
+                                            }
+                                        }
+                                        cc = cc - 1;
+                                    } while (cc > begin);
                                 }
                                 if (complex > longest) {
                                     longest = complex;
@@ -2009,15 +2034,15 @@
                             }
                         },
                         foldend = function beautify_script_output_scope_foldend():void {
-                            if (foldindex.length < 1) {
-                                return;
-                            }
                             const lastfold:[number, number] = foldindex[foldindex.length - 1];
                             if (data.types[a] === "end" && lastfold[1] === data.begin[a]) {
                                 code[lastfold[0]] = code[lastfold[0]].replace("xxx", String(linecount));
                                 foldindex.pop();
                             } else if (data.types[a - 1] === "comment") {
-                                code[lastfold[0]] = code[lastfold[0]].replace("xxx", String(linecount - 1));
+                                let endfold:number = (a === len - 1)
+                                    ? linecount
+                                    : linecount - 1;
+                                code[lastfold[0]] = code[lastfold[0]].replace("xxx", String(endfold));
                                 foldindex.pop();
                             }
                         },
@@ -2034,6 +2059,9 @@
                                 }
                                 build.push(`<em class="s${scopeValue}">${token}</em>${space}`);
                             };
+                            if (scopes.length < 1) {
+                                return;
+                            }
                             if (data.stack[a] === "arguments") {
                                 if (scopes[s - 1][1] > a) {
                                     do {
@@ -2129,20 +2157,43 @@
                         //a function for calculating indentation after each new line
                         nlscope            = function beautify_script_output_scope_nlscope(x:number):void {
                             let dd = 0;
-                            const scopepush = function beautify_script_output_scope_nlscope_scopepush():void {
-                                let aa:number = 0,
-                                    bb:number = 0;
-                                if (x > 0) {
-                                    do {
-                                        build.push(`<span class="l${bb}">${tab}</span>`);
-                                        if (scoped[aa] === true) {
-                                            bb = bb + 1;
-                                        }
-                                        aa = aa + 1;
-                                    } while (aa < x);
-                                }
-                            };
+                            const total:number = (function beautify_script_output_outnl_total():number {
+                                    if (a === len - 1) {
+                                        return 0;
+                                    }
+                                    if (data.lines[a + 1] - 1 > pres) {
+                                        return pres - 1;
+                                    }
+                                    if (data.lines[a + 1] > 1) {
+                                        return data.lines[a + 1] - 2;
+                                    }
+                                    return 0;
+                                }()),
+                                scopepush = function beautify_script_output_scope_nlscope_scopepush():void {
+                                    let aa:number = 0,
+                                        bb:number = 0;
+                                    if (x > 0) {
+                                        do {
+                                            build.push(`<span class="l${bb}">${tab}</span>`);
+                                            if (scoped[aa] === true) {
+                                                bb = bb + 1;
+                                            }
+                                            aa = aa + 1;
+                                        } while (aa < x);
+                                    }
+                                };
                             if (data.token[a] !== "x}" || (data.token[a] === "x}" && data.token[a + 1] !== "}")) {
+                                let index:number = 0;
+                                if (total > 0) {
+                                    do {
+                                        linecount = linecount + 1;
+                                        code.push("<li>");
+                                        code.push(String(linecount));
+                                        code.push("</li>");
+                                        build.push(`<em class="line">&#xA;</em></li><li class="s0">`);
+                                        index = index + 1;
+                                    } while (index < total);
+                                }
                                 linecount = linecount + 1;
                                 code.push("<li>");
                                 code.push(String(linecount));
@@ -2210,10 +2261,12 @@
                                 foldstart();
                             } else if (data.token[a].indexOf("//") === 0 && a < len - 1 && data.token[a + 1].indexOf("//") === 0 && data.token[a - 1].indexOf("//") !== 0 && levels[a - 1] > -1) {
                                 foldstart();
-                            } else if (data.types[a] === "end") {
-                                foldend();
-                            } else if (foldindex.length > 0 && data.token[a].indexOf("//") !== 0 && data.token[foldindex[foldindex.length - 1][1]].indexOf("//") === 0) {
-                                foldend();
+                            } else if (foldindex.length > 0) {
+                                if (data.types[a] === "end") {
+                                    foldend();
+                                } else if ((data.token[a].indexOf("//") !== 0 || a === len - 1) && data.token[foldindex[foldindex.length - 1][1]].indexOf("//") === 0) {
+                                    foldend();
+                                }
                             }
                             if (data.types[a] === "reference") {
                                 reference();

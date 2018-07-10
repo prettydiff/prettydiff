@@ -608,14 +608,10 @@ interface readFile {
                             }
                             return;
                         }
-                        if (bindArgument === true) {
-                            if (list[a + 1] !== undefined && list[a + 1].length > 0) {
-                                list[a] = `${list[a]}:${list[a + 1]}`;
-                                list.splice(a + 1, 1);
-                                len = len - 1;
-                            } else {
-                                list[a] = list[a];
-                            }
+                        if (bindArgument === true && list[a + 1] !== undefined && list[a + 1].length > 0) {
+                            list[a] = `${list[a]}:${list[a + 1]}`;
+                            list.splice(a + 1, 1);
+                            len = len - 1;
                         }
                         list.splice(0, 0, list[a]);
                         list.splice(a + 1, 1);
@@ -844,7 +840,8 @@ interface readFile {
                 "libraries",
                 "lint",
                 "parseFramework",
-                "simulation"
+                "simulation",
+                "validation"
             ],
             orderlen:number = order.length,
             heading = function node_apps_build_heading(message:string):void {
@@ -1332,7 +1329,7 @@ interface readFile {
                     });
                 },
                 simulation: function node_apps_build_simulation():void {
-                    heading("Node.js task simulations");
+                    heading("Simulations of Node.js commands from js/services.js");
                     apps.simulation(next);
                 },
                 typescript: function node_apps_build_typescript():void {
@@ -1405,11 +1402,16 @@ interface readFile {
                             }
                         }
                     });
+                },
+                validation: function node_apps_build_validation():void {
+                    heading("Pretty Diff validation tests");
+                    apps.validation(next);
                 }
             };
         if (process.argv.indexOf("nocheck") > -1) {
             order.splice(order.indexOf("lint"), 1);
             order.splice(order.indexOf("simulation"), 1);
+            order.splice(order.indexOf("validation"), 1);
         }
         next();
     };
@@ -3910,7 +3912,7 @@ interface readFile {
         wrapper();
     };
     // unit test validation runner for Pretty Diff mode commands
-    apps.validation = function node_apps_validation():void {
+    apps.validation = function node_apps_validation(callback:Function):void {
         require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}parse`);
         let count_raw = 0,
             count_formatted = 0;
@@ -4021,9 +4023,13 @@ interface readFile {
                     a = a + 1;
                 } while (a < len);
                 if (a === len) {
-                    console.log(`${text.green}All ${len} files passed.${text.none}`);
                     if (command === "validation") {
-                        apps.version();
+                        verbose = true;
+                        apps.log([`${text.green}All ${len} files passed.${text.none}`]);
+                    } else {
+                        console.log("");
+                        console.log(`${text.green}All ${len} files passed.${text.none}`);
+                        callback();
                     }
                 }
             },

@@ -46,5 +46,5 @@
                 return false;
             };
     };
-    global.prettydiff.api.pdcomment = pdcomment;
+    global.prettydiff.api.pdcommenttttt = pdcomment;
 }());
