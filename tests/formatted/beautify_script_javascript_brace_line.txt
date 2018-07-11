@@ -1,0 +1,48 @@
+/*prettydiff.com wrap:80 object_sort:true vertical:true*/
+/*global global*/
+(function options_init(): void {
+
+    "use strict";
+    const optionDef = {
+
+        // accessibility : {
+        //    api       : "any",
+        //    mode      : "analysis",
+        //    lexer     : "markup",
+        //    label     : "Accessibility Analysis",
+        //    type      : "boolean",
+        //    definition: "Whether analysis of HTML should include an accessibility report.",
+        //    default   : false
+        // },
+        brace_line: {
+
+            api       : "any",
+            default   : false,
+            definition: "If true a new line character will be inserted after opening curly braces and bef" +
+                    "ore closing curly braces.",
+            label     : "Brace Lines",
+            lexer     : "script",
+            mode      : "beautify",
+            type      : "boolean"
+
+        },
+        wrap      : {
+
+            api       : "any",
+            default   : 0,
+            definition: "Character width limit before applying word wrap. A 0 value disables this option." +
+                    " A negative value concatenates script strings.",
+            label     : "Wrap",
+            lexer     : "any",
+            mode      : "any",
+            type      : "number"
+
+        }
+
+    };
+    global
+        .prettydiff
+        .api
+        .optionDef  = optionDef;
+
+}());

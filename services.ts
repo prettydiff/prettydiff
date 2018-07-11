@@ -1086,7 +1086,7 @@ interface readFile {
                                         end: "// prettydiff insertion end",
                                         injectFlag: saveas + libraries + mode
                                             .replace(/,\s*\/\/ prettydiff insertion start\s+prettydiff\s*=\s*\{\};/, `;// prettydiff insertion start${node.os.EOL}//filler${node.os.EOL}`)
-                                            .replace(/global\.prettydiff/g, "prettydiff"),
+                                            .replace(/global\s*\.prettydiff/g, "prettydiff"),
                                         start: "// prettydiff insertion start"
                                     });
                                     modify({
@@ -1186,7 +1186,7 @@ interface readFile {
                                         } else if (filePath.indexOf("prettydiff.js") > 0) {
                                             filedata = filedata
                                                 .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*/, "")
-                                                .replace(/global\.prettydiff\./g, "prettydiff.")
+                                                .replace(/global\s*\.prettydiff\s*\./g, "prettydiff.")
                                                 .replace(/("|')use strict("|');/, "");
                                             mode = filedata;
                                         } else if (filePath.indexOf("finalFile.js") > 0) {
@@ -1203,7 +1203,7 @@ interface readFile {
                                         } else {
                                             filedata = filedata
                                                 .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*/, "")
-                                                .replace(/global\.prettydiff\./g, "prettydiff.")
+                                                .replace(/global\s*\.prettydiff\s*\./g, "prettydiff.")
                                                 .replace(/("|')use strict("|');/, "");
                                             libraries = libraries + filedata;
                                         }
@@ -3983,6 +3983,11 @@ interface readFile {
                         if (noteslen > 3) {
                             b = 3;
                             do {
+                                if (b < noteslen - 1 && options[notes[b] + "_" + notes[b + 1].replace(".txt", "")] !== undefined) {
+                                    notes[b + 1] = notes[b] + "_" + notes[b + 1];
+                                    b = b + 1;
+                                }
+                                notes[b] = notes[b].replace(".txt", "");
                                 if (notes[b].indexOf("-") > 0) {
                                     options[notes[b].slice(0, notes[b].indexOf("-"))] = notes[b].slice(notes[b].indexOf("-") + 1);
                                 } else {

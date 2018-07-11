@@ -1,842 +1,858 @@
+/*prettydiff.com wrap:80 object_sort:true vertical:true*/
 /*global global*/
 (function options_init():void {
     "use strict";
     const optionDef = {
-            //accessibility    : {
-            //    api       : "any",
-            //    mode      : "analysis",
-            //    lexer     : "markup",
-            //    label     : "Accessibility Analysis",
-            //    type      : "boolean",
-            //    definition: "Whether analysis of HTML should include an accessibility report.",
-            //    default   : false
-            //},
-            brace_style    : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "script",
-                label     : "Brace Style",
-                type      : "string",
-                definition: "Emulates JSBeautify's brace_style option using existing Pretty Diff options.",
-                values    : {
-                    "collapse": "Sets options.formatObject to 'indent' and options.neverflatten to true.",
-                    "collapse-preserve-inline": "Sets options.bracepadding to true and options.formatObject to 'inline'.",
-                    "expand": "Sets options.braces to true, options.formatObject to 'indent', and options.neverflatten to true.",
-                    "none": "Ignores this option"
-                },
-                default   : "none"
-            },
-            brace_line      : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "script",
-                label     : "Brace Lines",
-                type      : "boolean",
-                definition: "If true a new line character will be inserted after opening curly braces and b" +
-                        "efore closing curly braces.",
-                default   : false
-            },
-            brace_padding   : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "script",
-                type      : "boolean",
-                label     : "Brace Padding",
-                definition: "Inserts a space after the start of a container and before the end of the contain" +
-                        "er if the contents of that container are not indented; such as: " +
-                        "conditions, function arguments, and escaped sequences of template strings.",
-                default   : false
-            },
-            braces         : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "script",
-                label     : "Style of Indent",
-                type      : "boolean",
-                definition: "Determines if opening curl" +
-                        "y braces will exist on the same line as their condition or be forced onto a ne" +
-                        "w line.",
-                default   : false
-            },
-            color          : {
-                api       : "any",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Color",
-                type      : "string",
-                definition: "The color scheme of the reports.",
-                default   : "white",
-                values    : {
-                    "canvas": "A light brown color scheme",
-                    "shadow": "A black and ashen color scheme",
-                    "white": "A white and pale grey color scheme"
-                }
-            },
-            comments       : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "any",
-                label     : "Indent Comments",
-                type      : "boolean",
-                definition: "This will determine whether comments should always start" +
-                        " at position 0 of each line or if comments should be indented according to the" +
-                        " code.",
-                default   : false
-            },
-            comm_line       : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "markup",
-                label     : "Force an Empty Line Above Comments",
-                type      : "boolean",
-                definition: "If a blank new line should be forced above comments.",
-                default   : false
-            },
-            complete_document: {
-                api: "any",
-                mode: "any",
-                lexer: "markup",
-                label: "Generate A Complete HTML File",
-                type: "boolean",
-                definition: "Allows a preference for generating a complete HTML document instead of only generating content.",
-                default: false
-            },
-            compressed_css  : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "css",
-                label     : "Compressed CSS",
-                type      : "boolean",
-                definition: "If CSS should be beautified in a style where the properties and values are min" +
-                        "ifed for faster reading of selectors.",
-                default   : false
-            },
-            conditional    : {
-                api       : "any",
-                mode      : "minify",
-                lexer     : "markup",
-                label     : "IE Comments (HTML Only)",
-                type      : "boolean",
-                definition: "If true then conditional comments used by Internet Explorer are preserved at m" +
-                        "inification of markup.",
-                default   : false
-            },
-            content        : {
-                api       : "any",
-                mode      : "diff",
-                lexer     : "any",
-                label     : "Ignore Content",
-                type      : "boolean",
-                definition: "This will normalize all string content to 'text' so as to eliminate some diffe" +
-                        "rences from the output.",
-                default   : false
-            },
-            context        : {
-                api       : "any",
-                mode      : "diff",
-                lexer     : "any",
-                label     : "Context Size",
-                type      : "number",
-                definition: "This shortens the diff output by allowing a specified number of equivalent lin" +
-                        "es between each line of difference.",
-                default   : -1
-            },
-            correct        : {
-                api       : "any",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Fix Sloppy Code",
-                type      : "boolean",
-                definition: "Automatically correct some sloppiness in code.",
-                default   : false
-            },
-            crlf           : {
-                api       : "any",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Line Termination",
-                type      : "boolean",
-                definition: "If line termination should be Windows (CRLF) format.  Unix (LF) format is the " +
-                        "default.",
-                default   : false
-            },
-            css_insert_lines : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "css",
-                label     : "Insert Empty Lines",
-                type      : "boolean",
-                definition: "Inserts new line characters between every CSS code block.",
-                default   : false
-            },
-            csv_char        : {
-                api       : "any",
-                mode      : "any",
-                lexer     : "csv",
-                label     : "Character Separator",
-                type      : "string",
-                definition: "The character to be used as a separator if lang is 'csv'.  Any string combinat" +
-                        "ion is accepted.",
-                default   : ","
-            },
-            diff           : {
-                api       : "any",
-                mode      : "diff",
-                lexer     : "any",
-                label     : "Code to Compare",
-                type      : "string",
-                definition: "The code sample to be compared to 'source' option. This is required if mode is" +
-                        " 'diff'.",
-                default   : ""
-            },
-            diff_cli        : {
-                api       : "node",
-                mode      : "diff",
-                lexer     : "any",
-                label     : "Diff Format",
-                type      : "boolean",
-                definition: "If true only text lines of the code differences are returned instead of an HTM" +
-                        "L diff report.",
-                default   : true
-            },
-            diff_comments   : {
-                api       : "any",
-                mode      : "diff",
-                lexer     : "any",
-                label     : "Code Comments",
-                type      : "boolean",
-                definition: "If true then comments will be preserved so that both code and comments are com" +
-                        "pared by the diff engine.",
-                default   : false
-            },
-            diff_label      : {
-                api       : "any",
-                mode      : "diff",
-                lexer     : "any",
-                label     : "Label for Diff Sample",
-                type      : "string",
-                definition: "This allows for a descriptive label for the diff file code of the diff HTML ou" +
-                        "tput.",
-                default   : "New Sample"
-            },
-            diff_space_ignore: {
-                api       : "any",
-                mode      : "diff",
-                lexer     : "any",
-                label     : "Remove White Space",
-                type      : "boolean",
-                definition: "If white space only differences should be ignored by the diff tool.",
-                default   : false
-            },
-            diff_view       : {
-                api       : "any",
-                mode      : "diff",
-                lexer     : "any",
-                label     : "Diff View Type",
-                type      : "string",
-                definition: "This determines whether the diff HTML output should display as a side-by-side " +
-                        "comparison or if the differences should display in a single table column.",
-                values    : {
-                    "inline": "A single column where insertions and deletions are vertically adjacent.",
-                    "sidebyside": "Two column comparison of changes."
-                },
-                default   : "sidebyside"
-            },
-            else_line       : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "script",
-                label     : "Else On New Line",
-                type      : "boolean",
-                definition: "If elseline is true then the keyword 'else' is forced onto a new line.",
-                default   : false
-            },
-            end            : {
-                api: "any",
-                mode: "any",
-                lexer: "any",
-                label: "End Index",
-                type: "number",
-                definition: "Which index of the parse table should the application stop. This option is useful internally when recursively sliding between various libraries. The default value of 0 means to ignore this option.",
-                default: 0
-            },
-            end_comma       : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "script",
-                label     : "Indent Comments",
-                type      : "string",
-                definition: "If there should be a trailing comma in arrays and objects. Value \"" +
-                        "multiline\" only applies to modes beautify and diff.",
-                values    : {
-                    "always": "Always ensure there is a tailing comma",
-                    "multiline": "Ignore this option",
-                    "never": "Remove trailing commas"
-                },
-                default   : "never"
-            },
-            end_quietly     : {
-                api       : "node",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Log Summary to Console",
-                type      : "string",
-                definition: "A node only option to determine if terminal summary data should be logged to the console.",
-                values    : {
-                    "default": "Default minimal summary",
-                    "log": "Verbose logging",
-                    "quiet": "No extraneous logging"
-                },
-                default   : "default"
-            },
-            force_attribute: {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "markup",
-                label     : "Force Indentation of All Attributes",
-                type      : "boolean",
-                definition: "If all markup attributes should be indented each onto their own line.",
-                default   : false
-            },
-            force_indent   : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "markup",
-                label     : "Force Indentation of All Content",
-                type      : "boolean",
-                definition: "Will force indentation upon all content and tags with" +
-                        "out regard for the creation of new text nodes.",
-                default   : false
-            },
-            format_array    : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "script",
-                label     : "Formatting Arrays",
-                type      : "string",
-                definition: "Determines if all array indexes should be indented, never indented," +
-                        " or left to the default.",
-                values    : {
-                    "default": "Default formatting",
-                    "indent": "Always indent each index of an array",
-                    "inline": "Ensure all array indexes appear on a single line"
-                },
-                default   : "default"
-            },
-            format_object   : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "script",
-                label     : "Formatting Objects",
-                type      : "string",
-                definition: "Determines if all object keys should be indented, never indented," +
-                        " or left to the default.",
-                values    : {
-                    "default": "Default formatting",
-                    "indent": "Always indent each key/value pair",
-                    "inline": "Ensure all key/value pairs appear on the same single line"
-                },
-                default   : "default"
-            },
-            function_name   : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "script",
-                label     : "Space After Function Name",
-                type      : "boolean",
-                definition: "If a space should follow a JavaScript function name.",
-                default   : false
-            },
-            help           : {
-                api       : "node",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Help Wrapping Limit",
-                type      : "number",
-                definition: "A node only option to print documentation to the console. The value determines" +
-                        " where to wrap text.",
-                default   : 80
-            },
-            indent_char         : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "any",
-                label     : "Indentation Characters",
-                type      : "string",
-                definition: "The string characters to comprise a single indentation. Any string combination" +
-                        " is accepted.",
-                default   : " "
-            },
-            indent_level        : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "any",
-                label     : "Indentation Padding",
-                type      : "number",
-                definition: "How much indentation padding should be applied to beautification? This option is internally used for code requires switching between libraries.",
-                default   : 0
-            },
-            indent_size         : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "any",
-                label     : "Indent Size",
-                type      : "number",
-                definition: "The number of 'inchar' values to comprise a single indentation.",
-                default   : 4
-            },
-            jsscope        : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "script",
-                label     : "JavaScript Scope Identification",
-                type      : "string",
-                definition: "An educational tool to generate HTML output of JavaScript code to identify sco" +
-                        "pe regions and declared references by color.",
-                values    : {
-                    none  : "prevents use of this option",
-                    report: "generates HTML output that renders in web browsers",
-                    html  : "generates HTML output with escaped angle braces and ampersands for embedding a" +
-                            "s code, which is handy in code producing tools"
-                },
-                default   : "none"
-            },
-            language       : {
-                api       : "any",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Language",
-                type      : "string",
-                definition: "The lowercase single word common name of the source code's programming language.",
-                default   : "auto"
-            },
-            language_default: {
-                api       : "any",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Language Auto-Detection Default",
-                type      : "string",
-                definition: "The fallback option if option 'lang' is set to 'auto' and a language cannot be" +
-                        " detected.",
-                default   : "text"
-            },
-            langauge_name: {
-                api       : "any",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Formatted Name of the Code's Language",
-                type      : "string",
-                definition: "The formatted proper name of the code sample's language for use in reports read by people.",
-                default   : "JavaScript"
-            },
-            lexer          : {
-                api       : "any",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Parsing Lexer",
-                type      : "string",
-                definition: "This option determines which sets of rules to use in the language parser. If option 'language' has a value of 'auto', which is the default value, this option is ignored.",
-                values    : {
-                    markup: "parses languages like XML and HTML",
-                    script: "parses languages with a C style syntax, such as JavaScript",
-                    style : "parses CSS like languages"
-                },
-                default   : "script"
-            },
-            list_options    : {
-                api       : "node",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Options List",
-                type      : "boolean",
-                definition: "A Node.js only option that writes current option settings to the console.",
-                default   : false
-            },
-            method_chain    : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "script",
-                label     : "Method Chains",
-                type      : "number",
-                definition: "When to break consecutively chained methods and properties onto separate lines. A negative value disables this option. A value of 0 ensures method chains are never broken.",
-                default   : "3"
-            },
-            minify_wrap       : {
-                api       : "any",
-                mode      : "minify",
-                lexer     : "script",
-                label     : "Minification Wrapping",
-                type      : "boolean",
-                definition: "Whether minified script should wrap after a specified character width.  Th" +
-                        "is option requires a value from option 'wrap'.",
-                default   : false
-            },
-            mode           : {
-                api       : "any",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Mode",
-                type      : "string",
-                definition: "The operation to be performed.",
-                values    : {
-                    //analysis: "returns a code examination report",
-                    beautify: "beautifies code and returns a string",
-                    diff    : "returns either command line list of differences or an HTML report",
-                    minify  : "minifies code and returns a string",
-                    parse   : "using option 'parseFormat' returns an object with shallow arrays, a multidimen" +
-                            "sional array, or an HTML report"
-                },
-                default   : "diff"
-            },
-            new_line        : {
-                api       : "any",
-                mode      : "any",
-                lexer     : "any",
-                label     : "New Line at End of Code",
-                type      : "boolean",
-                definition: "Insert an empty line at the end of output.",
-                default   : false
-            },
-            never_flatten   : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "script",
-                label     : "Never Flatten Destructured Lists",
-                type      : "boolean",
-                definition: "If destructured lists in script should never be flattend.",
-                default   : false
-            },
-            node_error      : {
-                api       : "node",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Write Parse Errors in Node",
-                type      : "boolean",
-                definition: "A Node.js only option if parse errors should be written to the console.",
-                default   : false
-            },
-            no_case_indent   : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "script",
-                label     : "Case Indentation",
-                type      : "boolean",
-                definition: "If a case statement should receive the same indentation as the containing swit" +
-                        "ch block.",
-                default   : false
-            },
-            no_lead_zero     : {
-                api       : "any",
-                mode      : "any",
-                lexer     : "style",
-                label     : "Leading 0s",
-                type      : "boolean",
-                definition: "Whether leading 0s in CSS values immediately preceeding a decimal should be re" +
-                        "moved or prevented.",
-                default   : false
-            },
-            object_sort        : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "any",
-                label     : "Object/Attribute Sort",
-                type      : "boolean",
-                definition: "Sorts markup attributes and properties by key name in script and style.",
-                default   : false
-            },
-            output         : {
-                api       : "node",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Output Location",
-                type      : "string",
-                definition: "The path of the directory, if readmethod is value 'directory', or path and nam" +
-                        "e of the file to write the output.  The path will be created or overwritten.",
-                default   : ""
-            },
-            parse_format    : {
-                api       : "any",
-                mode      : "parse",
-                lexer     : "any",
-                label     : "Parse Format",
-                type      : "string",
-                definition: "Determines the output format for 'parse' mode.",
-                values    : {
-                    table     : "generates a colorful grid of output for either the dom or command line interface",
-                    htmltable : "generates the 'table' type output for the DOM but escapes the HTML tags for rendering as HTML code in a HTML tool",
-                    parallel  : "returns an object containing series of parallel arrays",
-                    sequential: "returns an array where each index is a child object containing the parsed token" +
-                            " and all descriptive data"
-                },
-                default   : "parallel"
-            },
-            parse_space     : {
-                api       : "any",
-                mode      : "parse",
-                lexer     : "markup",
-                label     : "Retain White Space Tokens in Parse Output",
-                type      : "boolean",
-                definition: "Whether whitespace tokens should be included in markup parse output.",
-                default   : false
-            },
-            preserve       : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "any",
-                label     : "Preserve Consecutive New Lines",
-                type      : "number",
-                definition: "The maximum number of consecutive empty lines to retain.",
-                default   : 0
-            },
-            preserve_comment: {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "any",
-                label     : "Eliminate Word Wrap Upon Comments",
-                type      : "boolean",
-                definition: "Prevent comment reformatting due to option wrap.",
-                default   : false
-            },
-            quote          : {
-                api       : "any",
-                mode      : "diff",
-                lexer     : "any",
-                label     : "Normalize Quotes",
-                type      : "boolean",
-                definition: "If true and mode is 'diff' then all single quote characters will be replaced b" +
-                        "y double quote characters in both the source and diff file input so as to elim" +
-                        "inate some differences from the diff report HTML output.",
-                default   : false
-            },
-            quote_convert   : {
-                api       : "any",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Indent Size",
-                type      : "string",
-                definition: "If the quotes of script strings or markup attributes should be converted t" +
-                        "o single quotes or double quotes.",
-                values    : {
-                    "double": "Converts single quotes to double quotes",
-                    "single": "Converts double quotes to single quotes",
-                    "none": "Ignores this option"
-                },
-                default   : "none"
-            },
-            read_method     : {
-                api       : "node",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Read Method",
-                type      : "string",
-                definition: "The readmethod determines how Node.js should receive input and output.",
-                values    : {
-                    auto        : "changes to value subdirectory, file, or screen depending on source resolution",
-                    screen      : "reads from screen and outputs to screen",
-                    file        : "reads a file and outputs to a file.  file requires option 'output'",
-                    filescreen  : "reads a file and writes to screen",
-                    directory   : "process all files in the specified directory only",
-                    subdirectory: "process all files in a directory and its subdirectories"
-                },
-                default   : "auto"
-            },
-            selector_list   : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "style",
-                label     : "Indent Size",
-                type      : "boolean",
-                definition: "If comma separated CSS selectors should present on a single line of code.",
-                default   : false
-            },
-            semicolon      : {
-                api       : "any",
-                mode      : "diff",
-                lexer     : "script",
-                label     : "Indent Size",
-                type      : "boolean",
-                definition: "If true and mode is 'diff' and lang is 'javascript' all semicolon characters t" +
-                        "hat immediately preceed any white space containing a new line character will b" +
-                        "e removed so as to elimate some differences from the code comparison.",
-                default   : false
-            },
-            source         : {
-                api       : "any",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Source Sample",
-                type      : "string",
-                definition: "The source code or location for interpretation. This option is required for al" +
-                        "l modes.",
-                default   : ""
-            },
-            source_label    : {
-                api       : "any",
-                mode      : "diff",
-                lexer     : "any",
-                label     : "Label for Source Sample",
-                type      : "string",
-                definition: "This allows for a descriptive label of the source file code for the diff HTML o" +
-                        "utput.",
-                default   : "Source Sample"
-            },
-            space          : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "script",
-                label     : "Function Space",
-                type      : "boolean",
-                definition: "Inserts a space following the function keyword for anonymous functions.",
-                default   : true
-            },
-            space_close     : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "markup",
-                label     : "Close Markup Self-Closing Tags with a Space",
-                type      : "boolean",
-                definition: "Markup self-closing tags end will end with ' />' instead of '/>'.",
-                default   : false
-            },
-            start          : {
-                api: "any",
-                mode: "any",
-                lexer: "any",
-                label: "Start Index",
-                type: "number",
-                definition: "The parse table index to start working from. This is internally used for code samples that require switching between different libraries.",
-                default: 0
-            },
-            styleguide     : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "script",
-                label     : "Script Styleguide",
-                type      : "string",
-                definition: "Provides a collection of option presets to easily conform to popular JavaScrip" +
-                        "t style guides.",
-                values    : {
-                    "airbnb": "https://github.com/airbnb/javascript",
-                    "crockford": "http://jslint.com/",
-                    "google": "https://google.github.io/styleguide/jsguide.html",
-                    "jquery": "https://contribute.jquery.org/style-guide/js/",
-                    "jslint": "http://jslint.com/",
-                    "mediawiki": "https://www.mediawiki.org/wiki/Manual:Coding_conventions/JavaScript",
-                    "mrdoob": "https://github.com/mrdoob/three.js/wiki/Mr.doob's-Code-Style%E2%84%A2",
-                    "standard": "https://standardjs.com/",
-                    "yandex": "https://github.com/ymaps/codestyle/blob/master/javascript.md",
-                    "none": "Ignores this option"
-                },
-                default   : "none"
-            },
-            summary_only    : {
-                api       : "node",
-                mode      : "diff",
-                lexer     : "any",
-                label     : "Output Diff Only Without A Summary",
-                type      : "boolean",
-                definition: "Node only option to output only number of differences.",
-                default   : false
-            },
-            tag_merge       : {
-                api       : "any",
-                mode      : "any",
-                lexer     : "markup",
-                label     : "Merge Adjacent Start and End tags",
-                type      : "boolean",
-                definition: "Allows immediately adjacement start and end markup tags of the same name to be" +
-                        " combined into a single self-closing tag.",
-                default   : false
-            },
-            tag_sort        : {
-                api       : "any",
-                mode      : "any",
-                lexer     : "markup",
-                label     : "Sort Markup Child Items",
-                type      : "boolean",
-                definition: "Sort child items of each respective markup parent element.",
-                default   : false
-            },
-            text_preserve   : {
-                api       : "any",
-                mode      : "any",
-                lexer     : "markup",
-                label     : "Preserve Markup Text White Space",
-                type      : "boolean",
-                definition: "If text in the provided markup code should be preserved exactly as provided. T" +
-                        "his option eliminates beautification and wrapping of text content.",
-                default   : false
-            },
-            ternary_line    : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "script",
-                label     : "Keep Ternary Statements On One Line",
-                type      : "boolean",
-                definition: "If ternary operators in JavaScript (? and :) should remain on the same line.",
-                default   : false
-            },
-            top_comments    : {
-                api       : "any",
-                mode      : "minify",
-                lexer     : "any",
-                label     : "Retain Comment At Code Start",
-                type      : "boolean",
-                definition: "If mode is 'minify' this determines whether comments above the first line of c" +
-                        "ode should be kept.",
-                default   : false
-            },
-            unformatted    : {
-                api       : "any",
-                mode      : "any",
-                lexer     : "markup",
-                label     : "Markup Tag Preservation",
-                type      : "boolean",
-                definition: "If markup tags should have their insides preserved.",
-                default   : false
-            },
-            variable_list       : {
-                api       : "any",
-                mode      : "any",
-                lexer     : "script",
-                label     : "Variable Declaration Lists",
-                type      : "string",
-                definition: "If consecutive JavaScript variables should be merged into a comma separated li" +
-                        "st or if variables in a list should be separated.",
-                values    : {
-                    "each" : "Ensurce each reference is a single declaration statement.",
-                    "list": "Ensure consecutive declarations are a comma separated list.",
-                    "none": "Ignores this option."
-                },
-                default   : "none"
-            },
-            version        : {
-                api       : "node",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Version",
-                type      : "boolean",
-                definition: "A Node.js only option to write the version information to the console.",
-                default   : false
-            },
-            vertical       : {
-                api       : "any",
-                mode      : "beautify",
-                lexer     : "any",
-                label     : "Vertical Alignment",
-                type      : "boolean",
-                definition: "If lists of assignments and properties should be vertically aligned. This option is not used with the markup lexer.",
-                default   : false
-            },
-            wrap           : {
-                api       : "any",
-                mode      : "any",
-                lexer     : "any",
-                label     : "Wrap",
-                type      : "number",
-                definition: "Character width limit before applying word wrap. A 0 value disables this option. A negative value concatenates script strings.",
-                default   : 0
+        // accessibility : {
+        //    api       : "any",
+        //    mode      : "analysis",
+        //    lexer     : "markup",
+        //    label     : "Accessibility Analysis",
+        //    type      : "boolean",
+        //    definition: "Whether analysis of HTML should include an accessibility report.",
+        //    default   : false
+        // },
+        brace_line       : {
+            api       : "any",
+            default   : false,
+            definition: "If true an empty line will be inserted after opening curly braces and bef" +
+                    "ore closing curly braces.",
+            label     : "Brace Lines",
+            lexer     : "script",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        brace_padding    : {
+            api       : "any",
+            default   : false,
+            definition: "Inserts a space after the start of a container and before the end of the contain" +
+                    "er if the contents of that container are not indented; such as: conditions, func" +
+                    "tion arguments, and escaped sequences of template strings.",
+            label     : "Brace Padding",
+            lexer     : "script",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        brace_style      : {
+            api       : "any",
+            default   : "none",
+            definition: "Emulates JSBeautify's brace_style option using existing Pretty Diff options.",
+            label     : "Brace Style",
+            lexer     : "script",
+            mode      : "beautify",
+            type      : "string",
+            values    : {
+                "collapse"                : "Sets options.formatObject to 'indent' and options.neverflatten to true.",
+                "collapse-preserve-inline": "Sets options.bracepadding to true and options.formatObject to 'inline'.",
+                "expand"                  : "Sets options.braces to true, options.formatObject to 'indent', and options.never" +
+                        "flatten to true.",
+                "none"                    : "Ignores this option"
             }
-        };
-    global.prettydiff.api.optionDef = optionDef;
+        },
+        braces           : {
+            api       : "any",
+            default   : false,
+            definition: "Determines if opening curly braces will exist on the same line as their conditio" +
+                    "n or be forced onto a new line.",
+            label     : "Style of Indent",
+            lexer     : "script",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        color            : {
+            api       : "any",
+            default   : "white",
+            definition: "The color scheme of the reports.",
+            label     : "Color",
+            lexer     : "any",
+            mode      : "any",
+            type      : "string",
+            values    : {
+                "canvas": "A light brown color scheme",
+                "shadow": "A black and ashen color scheme",
+                "white" : "A white and pale grey color scheme"
+            }
+        },
+        comm_line        : {
+            api       : "any",
+            default   : false,
+            definition: "If a blank new line should be forced above comments.",
+            label     : "Force an Empty Line Above Comments",
+            lexer     : "markup",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        comments         : {
+            api       : "any",
+            default   : false,
+            definition: "This will determine whether comments should always start at position 0 of each l" +
+                    "ine or if comments should be indented according to the code.",
+            label     : "Indent Comments",
+            lexer     : "any",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        complete_document: {
+            api       : "any",
+            default   : false,
+            definition: "Allows a preference for generating a complete HTML document instead of only gene" +
+                    "rating content.",
+            label     : "Generate A Complete HTML File",
+            lexer     : "markup",
+            mode      : "any",
+            type      : "boolean"
+        },
+        compressed_css   : {
+            api       : "any",
+            default   : false,
+            definition: "If CSS should be beautified in a style where the properties and values are minif" +
+                    "ed for faster reading of selectors.",
+            label     : "Compressed CSS",
+            lexer     : "css",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        conditional      : {
+            api       : "any",
+            default   : false,
+            definition: "If true then conditional comments used by Internet Explorer are preserved at min" +
+                    "ification of markup.",
+            label     : "IE Comments (HTML Only)",
+            lexer     : "markup",
+            mode      : "minify",
+            type      : "boolean"
+        },
+        content          : {
+            api       : "any",
+            default   : false,
+            definition: "This will normalize all string content to 'text' so as to eliminate some differe" +
+                    "nces from the output.",
+            label     : "Ignore Content",
+            lexer     : "any",
+            mode      : "diff",
+            type      : "boolean"
+        },
+        context          : {
+            api       : "any",
+            default   : -1,
+            definition: "This shortens the diff output by allowing a specified number of equivalent lines" +
+                    " between each line of difference.",
+            label     : "Context Size",
+            lexer     : "any",
+            mode      : "diff",
+            type      : "number"
+        },
+        correct          : {
+            api       : "any",
+            default   : false,
+            definition: "Automatically correct some sloppiness in code.",
+            label     : "Fix Sloppy Code",
+            lexer     : "any",
+            mode      : "any",
+            type      : "boolean"
+        },
+        crlf             : {
+            api       : "any",
+            default   : false,
+            definition: "If line termination should be Windows (CRLF) format.  Unix (LF) format is the de" +
+                    "fault.",
+            label     : "Line Termination",
+            lexer     : "any",
+            mode      : "any",
+            type      : "boolean"
+        },
+        css_insert_lines : {
+            api       : "any",
+            default   : false,
+            definition: "Inserts new line characters between every CSS code block.",
+            label     : "Insert Empty Lines",
+            lexer     : "css",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        csv_char         : {
+            api       : "any",
+            default   : ",",
+            definition: "The character to be used as a separator if lang is 'csv'.  Any string combinatio" +
+                    "n is accepted.",
+            label     : "Character Separator",
+            lexer     : "csv",
+            mode      : "any",
+            type      : "string"
+        },
+        diff             : {
+            api       : "any",
+            default   : "",
+            definition: "The code sample to be compared to 'source' option. This is required if mode is '" +
+                    "diff'.",
+            label     : "Code to Compare",
+            lexer     : "any",
+            mode      : "diff",
+            type      : "string"
+        },
+        diff_cli         : {
+            api       : "node",
+            default   : true,
+            definition: "If true only text lines of the code differences are returned instead of an HTML " +
+                    "diff report.",
+            label     : "Diff Format",
+            lexer     : "any",
+            mode      : "diff",
+            type      : "boolean"
+        },
+        diff_comments    : {
+            api       : "any",
+            default   : false,
+            definition: "If true then comments will be preserved so that both code and comments are compa" +
+                    "red by the diff engine.",
+            label     : "Code Comments",
+            lexer     : "any",
+            mode      : "diff",
+            type      : "boolean"
+        },
+        diff_label       : {
+            api       : "any",
+            default   : "New Sample",
+            definition: "This allows for a descriptive label for the diff file code of the diff HTML outp" +
+                    "ut.",
+            label     : "Label for Diff Sample",
+            lexer     : "any",
+            mode      : "diff",
+            type      : "string"
+        },
+        diff_space_ignore: {
+            api       : "any",
+            default   : false,
+            definition: "If white space only differences should be ignored by the diff tool.",
+            label     : "Remove White Space",
+            lexer     : "any",
+            mode      : "diff",
+            type      : "boolean"
+        },
+        diff_view        : {
+            api       : "any",
+            default   : "sidebyside",
+            definition: "This determines whether the diff HTML output should display as a side-by-side co" +
+                    "mparison or if the differences should display in a single table column.",
+            label     : "Diff View Type",
+            lexer     : "any",
+            mode      : "diff",
+            type      : "string",
+            values    : {
+                "inline"    : "A single column where insertions and deletions are vertically adjacent.",
+                "sidebyside": "Two column comparison of changes."
+            }
+        },
+        else_line        : {
+            api       : "any",
+            default   : false,
+            definition: "If elseline is true then the keyword 'else' is forced onto a new line.",
+            label     : "Else On New Line",
+            lexer     : "script",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        end              : {
+            api       : "any",
+            default   : 0,
+            definition: "Which index of the parse table should the application stop. This option is usefu" +
+                    "l internally when recursively sliding between various libraries. The default val" +
+                    "ue of 0 means to ignore this option.",
+            label     : "End Index",
+            lexer     : "any",
+            mode      : "any",
+            type      : "number"
+        },
+        end_comma        : {
+            api       : "any",
+            default   : "never",
+            definition: "If there should be a trailing comma in arrays and objects. Value \"multiline\" o" +
+                    "nly applies to modes beautify and diff.",
+            label     : "Indent Comments",
+            lexer     : "script",
+            mode      : "beautify",
+            type      : "string",
+            values    : {
+                "always"   : "Always ensure there is a tailing comma",
+                "multiline": "Ignore this option",
+                "never"    : "Remove trailing commas"
+            }
+        },
+        end_quietly      : {
+            api       : "node",
+            default   : "default",
+            definition: "A node only option to determine if terminal summary data should be logged to the" +
+                    " console.",
+            label     : "Log Summary to Console",
+            lexer     : "any",
+            mode      : "any",
+            type      : "string",
+            values    : {
+                "default": "Default minimal summary",
+                "log"    : "Verbose logging",
+                "quiet"  : "No extraneous logging"
+            }
+        },
+        force_attribute  : {
+            api       : "any",
+            default   : false,
+            definition: "If all markup attributes should be indented each onto their own line.",
+            label     : "Force Indentation of All Attributes",
+            lexer     : "markup",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        force_indent     : {
+            api       : "any",
+            default   : false,
+            definition: "Will force indentation upon all content and tags without regard for the creation" +
+                    " of new text nodes.",
+            label     : "Force Indentation of All Content",
+            lexer     : "markup",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        format_array     : {
+            api       : "any",
+            default   : "default",
+            definition: "Determines if all array indexes should be indented, never indented, or left to t" +
+                    "he default.",
+            label     : "Formatting Arrays",
+            lexer     : "script",
+            mode      : "beautify",
+            type      : "string",
+            values    : {
+                "default": "Default formatting",
+                "indent" : "Always indent each index of an array",
+                "inline" : "Ensure all array indexes appear on a single line"
+            }
+        },
+        format_object    : {
+            api       : "any",
+            default   : "default",
+            definition: "Determines if all object keys should be indented, never indented, or left to the" +
+                    " default.",
+            label     : "Formatting Objects",
+            lexer     : "script",
+            mode      : "beautify",
+            type      : "string",
+            values    : {
+                "default": "Default formatting",
+                "indent" : "Always indent each key/value pair",
+                "inline" : "Ensure all key/value pairs appear on the same single line"
+            }
+        },
+        function_name    : {
+            api       : "any",
+            default   : false,
+            definition: "If a space should follow a JavaScript function name.",
+            label     : "Space After Function Name",
+            lexer     : "script",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        help             : {
+            api       : "node",
+            default   : 80,
+            definition: "A node only option to print documentation to the console. The value determines w" +
+                    "here to wrap text.",
+            label     : "Help Wrapping Limit",
+            lexer     : "any",
+            mode      : "any",
+            type      : "number"
+        },
+        indent_char      : {
+            api       : "any",
+            default   : " ",
+            definition: "The string characters to comprise a single indentation. Any string combination i" +
+                    "s accepted.",
+            label     : "Indentation Characters",
+            lexer     : "any",
+            mode      : "beautify",
+            type      : "string"
+        },
+        indent_level     : {
+            api       : "any",
+            default   : 0,
+            definition: "How much indentation padding should be applied to beautification? This option is" +
+                    " internally used for code requires switching between libraries.",
+            label     : "Indentation Padding",
+            lexer     : "any",
+            mode      : "beautify",
+            type      : "number"
+        },
+        indent_size      : {
+            api       : "any",
+            default   : 4,
+            definition: "The number of 'inchar' values to comprise a single indentation.",
+            label     : "Indent Size",
+            lexer     : "any",
+            mode      : "beautify",
+            type      : "number"
+        },
+        jsscope          : {
+            api       : "any",
+            default   : "none",
+            definition: "An educational tool to generate HTML output of JavaScript code to identify scope" +
+                    " regions and declared references by color.",
+            label     : "JavaScript Scope Identification",
+            lexer     : "script",
+            mode      : "beautify",
+            type      : "string",
+            values    : {
+                html  : "generates HTML output with escaped angle braces and ampersands for embedding as " +
+                        "code, which is handy in code producing tools",
+                none  : "prevents use of this option",
+                report: "generates HTML output that renders in web browsers"
+            }
+        },
+        langauge_name    : {
+            api       : "any",
+            default   : "JavaScript",
+            definition: "The formatted proper name of the code sample's language for use in reports read " +
+                    "by people.",
+            label     : "Formatted Name of the Code's Language",
+            lexer     : "any",
+            mode      : "any",
+            type      : "string"
+        },
+        language         : {
+            api       : "any",
+            default   : "auto",
+            definition: "The lowercase single word common name of the source code's programming language.",
+            label     : "Language",
+            lexer     : "any",
+            mode      : "any",
+            type      : "string"
+        },
+        language_default : {
+            api       : "any",
+            default   : "text",
+            definition: "The fallback option if option 'lang' is set to 'auto' and a language cannot be d" +
+                    "etected.",
+            label     : "Language Auto-Detection Default",
+            lexer     : "any",
+            mode      : "any",
+            type      : "string"
+        },
+        lexer            : {
+            api       : "any",
+            default   : "script",
+            definition: "This option determines which sets of rules to use in the language parser. If opt" +
+                    "ion 'language' has a value of 'auto', which is the default value, this option is" +
+                    " ignored.",
+            label     : "Parsing Lexer",
+            lexer     : "any",
+            mode      : "any",
+            type      : "string",
+            values    : {
+                markup: "parses languages like XML and HTML",
+                script: "parses languages with a C style syntax, such as JavaScript",
+                style : "parses CSS like languages"
+            }
+        },
+        list_options     : {
+            api       : "node",
+            default   : false,
+            definition: "A Node.js only option that writes current option settings to the console.",
+            label     : "Options List",
+            lexer     : "any",
+            mode      : "any",
+            type      : "boolean"
+        },
+        method_chain     : {
+            api       : "any",
+            default   : "3",
+            definition: "When to break consecutively chained methods and properties onto separate lines. " +
+                    "A negative value disables this option. A value of 0 ensures method chains are ne" +
+                    "ver broken.",
+            label     : "Method Chains",
+            lexer     : "script",
+            mode      : "beautify",
+            type      : "number"
+        },
+        minify_wrap      : {
+            api       : "any",
+            default   : false,
+            definition: "Whether minified script should wrap after a specified character width.  This opt" +
+                    "ion requires a value from option 'wrap'.",
+            label     : "Minification Wrapping",
+            lexer     : "script",
+            mode      : "minify",
+            type      : "boolean"
+        },
+        mode             : {
+            api       : "any",
+            default   : "diff",
+            definition: "The operation to be performed.",
+            label     : "Mode",
+            lexer     : "any",
+            mode      : "any",
+            type      : "string",
+            values    : { // analysis: "returns a code examination report",
+                beautify: "beautifies code and returns a string",
+                diff    : "returns either command line list of differences or an HTML report",
+                minify  : "minifies code and returns a string",
+                parse   : "using option 'parseFormat' returns an object with shallow arrays, a multidimensi" +
+                        "onal array, or an HTML report"
+            }
+        },
+        never_flatten    : {
+            api       : "any",
+            default   : false,
+            definition: "If destructured lists in script should never be flattend.",
+            label     : "Never Flatten Destructured Lists",
+            lexer     : "script",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        new_line         : {
+            api       : "any",
+            default   : false,
+            definition: "Insert an empty line at the end of output.",
+            label     : "New Line at End of Code",
+            lexer     : "any",
+            mode      : "any",
+            type      : "boolean"
+        },
+        no_case_indent   : {
+            api       : "any",
+            default   : false,
+            definition: "If a case statement should receive the same indentation as the containing switch" +
+                    " block.",
+            label     : "Case Indentation",
+            lexer     : "script",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        no_lead_zero     : {
+            api       : "any",
+            default   : false,
+            definition: "Whether leading 0s in CSS values immediately preceeding a decimal should be remo" +
+                    "ved or prevented.",
+            label     : "Leading 0s",
+            lexer     : "style",
+            mode      : "any",
+            type      : "boolean"
+        },
+        node_error       : {
+            api       : "node",
+            default   : false,
+            definition: "A Node.js only option if parse errors should be written to the console.",
+            label     : "Write Parse Errors in Node",
+            lexer     : "any",
+            mode      : "any",
+            type      : "boolean"
+        },
+        object_sort      : {
+            api       : "any",
+            default   : false,
+            definition: "Sorts markup attributes and properties by key name in script and style.",
+            label     : "Object/Attribute Sort",
+            lexer     : "any",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        output           : {
+            api       : "node",
+            default   : "",
+            definition: "The path of the directory, if readmethod is value 'directory', or path and name " +
+                    "of the file to write the output.  The path will be created or overwritten.",
+            label     : "Output Location",
+            lexer     : "any",
+            mode      : "any",
+            type      : "string"
+        },
+        parse_format     : {
+            api       : "any",
+            default   : "parallel",
+            definition: "Determines the output format for 'parse' mode.",
+            label     : "Parse Format",
+            lexer     : "any",
+            mode      : "parse",
+            type      : "string",
+            values    : {
+                htmltable : "generates the 'table' type output for the DOM but escapes the HTML tags for rend" +
+                        "ering as HTML code in a HTML tool",
+                parallel  : "returns an object containing series of parallel arrays",
+                sequential: "returns an array where each index is a child object containing the parsed token" +
+                        " and all descriptive data",
+                table     : "generates a colorful grid of output for either the dom or command line interface"
+            }
+        },
+        parse_space      : {
+            api       : "any",
+            default   : false,
+            definition: "Whether whitespace tokens should be included in markup parse output.",
+            label     : "Retain White Space Tokens in Parse Output",
+            lexer     : "markup",
+            mode      : "parse",
+            type      : "boolean"
+        },
+        preserve         : {
+            api       : "any",
+            default   : 0,
+            definition: "The maximum number of consecutive empty lines to retain.",
+            label     : "Preserve Consecutive New Lines",
+            lexer     : "any",
+            mode      : "beautify",
+            type      : "number"
+        },
+        preserve_comment : {
+            api       : "any",
+            default   : false,
+            definition: "Prevent comment reformatting due to option wrap.",
+            label     : "Eliminate Word Wrap Upon Comments",
+            lexer     : "any",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        quote            : {
+            api       : "any",
+            default   : false,
+            definition: "If true and mode is 'diff' then all single quote characters will be replaced by " +
+                    "double quote characters in both the source and diff file input so as to eliminat" +
+                    "e some differences from the diff report HTML output.",
+            label     : "Normalize Quotes",
+            lexer     : "any",
+            mode      : "diff",
+            type      : "boolean"
+        },
+        quote_convert    : {
+            api       : "any",
+            default   : "none",
+            definition: "If the quotes of script strings or markup attributes should be converted to sing" +
+                    "le quotes or double quotes.",
+            label     : "Indent Size",
+            lexer     : "any",
+            mode      : "any",
+            type      : "string",
+            values    : {
+                "double": "Converts single quotes to double quotes",
+                "none"  : "Ignores this option",
+                "single": "Converts double quotes to single quotes"
+            }
+        },
+        read_method      : {
+            api       : "node",
+            default   : "auto",
+            definition: "The readmethod determines how Node.js should receive input and output.",
+            label     : "Read Method",
+            lexer     : "any",
+            mode      : "any",
+            type      : "string",
+            values    : {
+                auto        : "changes to value subdirectory, file, or screen depending on source resolution",
+                directory   : "process all files in the specified directory only",
+                file        : "reads a file and outputs to a file.  file requires option 'output'",
+                filescreen  : "reads a file and writes to screen",
+                screen      : "reads from screen and outputs to screen",
+                subdirectory: "process all files in a directory and its subdirectories"
+            }
+        },
+        selector_list    : {
+            api       : "any",
+            default   : false,
+            definition: "If comma separated CSS selectors should present on a single line of code.",
+            label     : "Indent Size",
+            lexer     : "style",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        semicolon        : {
+            api       : "any",
+            default   : false,
+            definition: "If true and mode is 'diff' and lang is 'javascript' all semicolon characters tha" +
+                    "t immediately preceed any white space containing a new line character will be re" +
+                    "moved so as to elimate some differences from the code comparison.",
+            label     : "Indent Size",
+            lexer     : "script",
+            mode      : "diff",
+            type      : "boolean"
+        },
+        source           : {
+            api       : "any",
+            default   : "",
+            definition: "The source code or location for interpretation. This option is required for all " +
+                    "modes.",
+            label     : "Source Sample",
+            lexer     : "any",
+            mode      : "any",
+            type      : "string"
+        },
+        source_label     : {
+            api       : "any",
+            default   : "Source Sample",
+            definition: "This allows for a descriptive label of the source file code for the diff HTML o" +
+                    "utput.",
+            label     : "Label for Source Sample",
+            lexer     : "any",
+            mode      : "diff",
+            type      : "string"
+        },
+        space            : {
+            api       : "any",
+            default   : true,
+            definition: "Inserts a space following the function keyword for anonymous functions.",
+            label     : "Function Space",
+            lexer     : "script",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        space_close      : {
+            api       : "any",
+            default   : false,
+            definition: "Markup self-closing tags end will end with ' />' instead of '/>'.",
+            label     : "Close Markup Self-Closing Tags with a Space",
+            lexer     : "markup",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        start            : {
+            api       : "any",
+            default   : 0,
+            definition: "The parse table index to start working from. This is internally used for code sa" +
+                    "mples that require switching between different libraries.",
+            label     : "Start Index",
+            lexer     : "any",
+            mode      : "any",
+            type      : "number"
+        },
+        styleguide       : {
+            api       : "any",
+            default   : "none",
+            definition: "Provides a collection of option presets to easily conform to popular JavaScript " +
+                    "style guides.",
+            label     : "Script Styleguide",
+            lexer     : "script",
+            mode      : "beautify",
+            type      : "string",
+            values    : {
+                "airbnb"   : "https://github.com/airbnb/javascript",
+                "crockford": "http://jslint.com/",
+                "google"   : "https://google.github.io/styleguide/jsguide.html",
+                "jquery"   : "https://contribute.jquery.org/style-guide/js/",
+                "jslint"   : "http://jslint.com/",
+                "mediawiki": "https://www.mediawiki.org/wiki/Manual:Coding_conventions/JavaScript",
+                "mrdoob"   : "https://github.com/mrdoob/three.js/wiki/Mr.doob's-Code-Style%E2%84%A2",
+                "none"     : "Ignores this option",
+                "standard" : "https://standardjs.com/",
+                "yandex"   : "https://github.com/ymaps/codestyle/blob/master/javascript.md"
+            }
+        },
+        summary_only     : {
+            api       : "node",
+            default   : false,
+            definition: "Node only option to output only number of differences.",
+            label     : "Output Diff Only Without A Summary",
+            lexer     : "any",
+            mode      : "diff",
+            type      : "boolean"
+        },
+        tag_merge        : {
+            api       : "any",
+            default   : false,
+            definition: "Allows immediately adjacement start and end markup tags of the same name to be c" +
+                    "ombined into a single self-closing tag.",
+            label     : "Merge Adjacent Start and End tags",
+            lexer     : "markup",
+            mode      : "any",
+            type      : "boolean"
+        },
+        tag_sort         : {
+            api       : "any",
+            default   : false,
+            definition: "Sort child items of each respective markup parent element.",
+            label     : "Sort Markup Child Items",
+            lexer     : "markup",
+            mode      : "any",
+            type      : "boolean"
+        },
+        ternary_line     : {
+            api       : "any",
+            default   : false,
+            definition: "If ternary operators in JavaScript (? and :) should remain on the same line.",
+            label     : "Keep Ternary Statements On One Line",
+            lexer     : "script",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        text_preserve    : {
+            api       : "any",
+            default   : false,
+            definition: "If text in the provided markup code should be preserved exactly as provided. Thi" +
+                    "s option eliminates beautification and wrapping of text content.",
+            label     : "Preserve Markup Text White Space",
+            lexer     : "markup",
+            mode      : "any",
+            type      : "boolean"
+        },
+        top_comments     : {
+            api       : "any",
+            default   : false,
+            definition: "If mode is 'minify' this determines whether comments above the first line of cod" +
+                    "e should be kept.",
+            label     : "Retain Comment At Code Start",
+            lexer     : "any",
+            mode      : "minify",
+            type      : "boolean"
+        },
+        unformatted      : {
+            api       : "any",
+            default   : false,
+            definition: "If markup tags should have their insides preserved.",
+            label     : "Markup Tag Preservation",
+            lexer     : "markup",
+            mode      : "any",
+            type      : "boolean"
+        },
+        variable_list    : {
+            api       : "any",
+            default   : "none",
+            definition: "If consecutive JavaScript variables should be merged into a comma separated list" +
+                    " or if variables in a list should be separated.",
+            label     : "Variable Declaration Lists",
+            lexer     : "script",
+            mode      : "any",
+            type      : "string",
+            values    : {
+                "each": "Ensurce each reference is a single declaration statement.",
+                "list": "Ensure consecutive declarations are a comma separated list.",
+                "none": "Ignores this option."
+            }
+        },
+        version          : {
+            api       : "node",
+            default   : false,
+            definition: "A Node.js only option to write the version information to the console.",
+            label     : "Version",
+            lexer     : "any",
+            mode      : "any",
+            type      : "boolean"
+        },
+        vertical         : {
+            api       : "any",
+            default   : false,
+            definition: "If lists of assignments and properties should be vertically aligned. This option" +
+                    " is not used with the markup lexer.",
+            label     : "Vertical Alignment",
+            lexer     : "any",
+            mode      : "beautify",
+            type      : "boolean"
+        },
+        wrap             : {
+            api       : "any",
+            default   : 0,
+            definition: "Character width limit before applying word wrap. A 0 value disables this option." +
+                    " A negative value concatenates script strings.",
+            label     : "Wrap",
+            lexer     : "any",
+            mode      : "any",
+            type      : "number"
+        }
+    };
+    global
+        .prettydiff
+        .api
+        .optionDef  = optionDef;
 }());

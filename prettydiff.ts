@@ -233,9 +233,7 @@
         if (typeof options.lexerOptions[options.lexer] !== "object") {
             options.lexerOptions[options.lexer] = {};
         }
-        if (options.object_sort === true) {
-            options.lexerOptions[options.lexer].objectSort = true;
-        }
+        options.lexerOptions[options.lexer].objectSort = options.object_sort;
         if (options.lexer === "script") {
             options.lexerOptions.script.varword = options.variable_list;
         }

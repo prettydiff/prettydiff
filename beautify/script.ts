@@ -2319,6 +2319,9 @@
                                     scoped.push(false);
                                 } while (levels[a] > scoped.length);
                             }
+                            if ((data.token[a] === "{" || data.token[a + 1] === "}") && data.lines[a] < 3 && options.brace_line === true) {
+                                nlscope(levels[a]);
+                            }
                             nlscope(levels[a]);
                         }
                         a = a + 1;
@@ -2385,6 +2388,9 @@
                             build.push(data.token[a]);
                         }
                         if (levels[a] > -1) {
+                            if ((data.token[a] === "{" || data.token[a + 1] === "}") && data.lines[a] < 3 && options.brace_line === true) {
+                                build.push(nl(0));
+                            }
                             lastLevel = levels[a];
                             build.push(nl(levels[a]));
                         } else if (levels[a] === -10) {
