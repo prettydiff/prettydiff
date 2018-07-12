@@ -160,7 +160,7 @@
                 : data.token.length,
             build:string[]    = [],
             //a single unit of indentation
-            tab:string      = (function beautify_style_beautify_tab():string {
+            tab:string      = (function beautify_style_tab():string {
                 let aa:number = 0,
                     bb:string[] = [];
                 do {
@@ -169,24 +169,41 @@
                 } while (aa < options.indent_size);
                 return bb.join("");
             }()),
+            pres:number = options.preserve + 1,
             //new lines plus indentation
-            nl       = function beautify_style_beautify_nl(tabs:number):void {
-                let aa = 0;
-                if (build[build.length - 1] === tab) {
-                    do {
-                        build.pop();
-                    } while (build[build.length - 1] === tab);
+            nl       = function beautify_style_nl(tabs:number):void {
+                const linesout:string[] = [],
+                    total:number = (function beautify_style_nl_total():number {
+                        if (a === len - 1) {
+                            return 1;
+                        }
+                        if (data.lines[a + 1] - 1 > pres) {
+                            return pres;
+                        }
+                        if (data.lines[a + 1] > 1) {
+                            return data.lines[a + 1] - 1;
+                        }
+                        return 1;
+                    }());
+                let index = 0;
+                if (tabs < 0) {
+                    tabs = 0;
                 }
-                build.push(lf);
+                do {
+                    linesout.push(lf);
+                    index = index + 1;
+                } while (index < total);
                 if (tabs > 0) {
+                    index = 0;
                     do {
-                        build.push(tab);
-                        aa = aa + 1;
-                    } while (aa < tabs);
+                        linesout.push(tab);
+                        index = index + 1;
+                    } while (index < tabs);
                 }
+                build.push(linesout.join(""));
             },
             //breaks selector lists onto newlines
-            selector = function beautify_style_beautify_selector(item:string):void {
+            selector = function beautify_style_selector(item:string):void {
                 let aa:number    = 0,
                     bb:number    = 0,
                     cc:number    = 0,
@@ -196,7 +213,7 @@
                 if (options.compressed_css === true && (/\)\s*when\s*\(/).test(item) === true) {
                     item = item.replace(
                         /\)\s*when\s*\(/,
-                        ")" + lf + (function beautify_style_beautify_selector_whenTab():string {
+                        ")" + lf + (function beautify_style_selector_whenTab():string {
                             let wtab = "",
                                 aaa  = indent + 1;
                             do {
@@ -245,12 +262,14 @@
                 }
                 if (options.selector_list === true) {
                     build.push(items.join(" "));
-                } else {
+                } else if (leng > 1) {
+                    aa = 1;
                     build.push(items[0].replace(/,(\s*)/g, ", ").replace(/(,\u0020)$/, ","));
-                    for (aa = 1; aa < leng; aa = aa + 1) {
+                    do {
                         nl(indent);
                         build.push(items[aa].replace(/,(\s*)/g, ", ").replace(/(,\u0020)$/, ","));
-                    }
+                        aa = aa + 1;
+                    } while (aa < leng);
                 }
                 if (options.compressed_css === false) {
                     build.push(" ");

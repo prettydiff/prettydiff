@@ -804,27 +804,27 @@ interface readFile {
                     }
                 });
             };
-            if (path === undefined) {
-                apps.errout([`No path to encode.  Please see ${text.cyan}prettydiff commands base64${text.none} for examples.`]);
-                return;
+        if (path === undefined) {
+            apps.errout([`No path to encode.  Please see ${text.cyan}prettydiff commands base64${text.none} for examples.`]);
+            return;
+        }
+        if (path.indexOf("string:") === 0) {
+            path = path.replace("string:", "");
+            if (path.charAt(0) === "\"" && path.charAt(path.length - 1) === "\"") {
+                path.slice(1, path.length - 1);
+            } else if (path.charAt(0) === "'" && path.charAt(path.length - 1) === "'") {
+                path.slice(1, path.length - 1);
             }
-            if (path.indexOf("string:") === 0) {
-                path = path.replace("string:", "");
-                if (path.charAt(0) === "\"" && path.charAt(path.length - 1) === "\"") {
-                    path.slice(1, path.length - 1);
-                } else if (path.charAt(0) === "'" && path.charAt(path.length - 1) === "'") {
-                    path.slice(1, path.length - 1);
-                }
-                screen(path);
-                return;
-            }
-            if ((/https?:\/\//).test(path) === true) {
-                http = true;
-                apps.get(path, "source", screen);
-            } else {
-                fileWrapper(path);
-            }
-        };
+            screen(path);
+            return;
+        }
+        if ((/https?:\/\//).test(path) === true) {
+            http = true;
+            apps.get(path, "source", screen);
+        } else {
+            fileWrapper(path);
+        }
+    };
     // handler for the beautify command
     apps.beautify = function node_apps_beautify():void {
         options.mode = "beautify";
@@ -3973,6 +3973,8 @@ interface readFile {
                             return;
                         }
                     } else if (raw[a][0] === formatted[a][0]) {
+                        let value:string = "",
+                            numb:number = 0;
                         reset();
                         notes = raw[a][0].split("_");
                         noteslen = notes.length;
@@ -3988,9 +3990,15 @@ interface readFile {
                                     b = b + 1;
                                 }
                                 notes[b] = notes[b].replace(".txt", "");
-                                if (notes[b].indexOf("-") > 0) {
-                                    options[notes[b].slice(0, notes[b].indexOf("-"))] = notes[b].slice(notes[b].indexOf("-") + 1);
-                                } else {
+                                if (notes[b].indexOf("-") > 0 && options[notes[b].slice(0, notes[b].indexOf("-"))] !== undefined) {
+                                    value = notes[b].slice(notes[b].indexOf("-") + 1);
+                                    numb = Number(value);
+                                    if (isNaN(numb) === true) {
+                                        options[notes[b].slice(0, notes[b].indexOf("-"))] = value;
+                                    } else {
+                                        options[notes[b].slice(0, notes[b].indexOf("-"))] = numb;
+                                    }
+                                } else if (options[notes[b]] !== undefined && prettydiff.api.optionDef[notes[b]].type === "boolean") {
                                     options[notes[b]] = true;
                                 }
                                 b = b + 1;
@@ -4075,7 +4083,9 @@ interface readFile {
                     list.forEach(pusher);
                 });
             };
-        
+        if (command === "validation") {
+            verbose = true;
+        }
         all(options, function node_apps_validation_allLexers() {
             readDir("raw");
             readDir("formatted");

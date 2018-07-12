@@ -773,7 +773,7 @@
             } else {
                 foldstart = 0;
             }
-            for (a = 0; a < opcodesLength; a = a + 1) {
+            do {
                 code      = opcodes[a];
                 change    = code[0];
                 baseStart = code[1];
@@ -959,7 +959,8 @@
                         }
                     }
                 } else {
-                    for (i = 0; i < rowcnt; i = i + 1) {
+                    i = 0;
+                    do {
                         //apply options.context collapsing for the output, if needed
                         if (options.context > -1 && opcodes.length > 1 && ((a > 0 && i === options.context) || (a === 0 && i === 0)) && change === "equal") {
                             ctest = false;
@@ -1258,9 +1259,11 @@
                                 newStart = newStart + 1;
                             }
                         }
-                    }
+                        i = i + 1;
+                    } while (i < rowcnt);
                 }
-            }
+                a = a + 1;
+            } while (a < opcodesLength);
             if (options.diff_cli === true) {
                 if (a < opcodesLength && foldstart > 49) {
                     diffline = -1;

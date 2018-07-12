@@ -3,15 +3,6 @@
 (function options_init():void {
     "use strict";
     const optionDef = {
-        // accessibility : {
-        //    api       : "any",
-        //    mode      : "analysis",
-        //    lexer     : "markup",
-        //    label     : "Accessibility Analysis",
-        //    type      : "boolean",
-        //    definition: "Whether analysis of HTML should include an accessibility report.",
-        //    default   : false
-        // },
         brace_line       : {
             api       : "any",
             default   : false,
@@ -406,7 +397,7 @@
                 report: "generates HTML output that renders in web browsers"
             }
         },
-        langauge_name    : {
+        language_name    : {
             api       : "any",
             default   : "JavaScript",
             definition: "The formatted proper name of the code sample's language for use in reports read " +
