@@ -74,17 +74,17 @@
                             if (quote === "") {
                                 if (source.charAt(a) === "\"") {
                                     quote = "\"";
-                                    if (ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === ":" || ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === "=") {
+                                    if (ops.length > 0 && (ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === ":" || ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === "=")) {
                                         b = a;
                                     }
                                 } else if (source.charAt(a) === "'") {
                                     quote = "'";
-                                    if (ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === ":" || ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === "=") {
+                                    if (ops.length > 0 && (ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === ":" || ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === "=")) {
                                         b = a;
                                     }
                                 } else if (source.charAt(a) === "`") {
                                     quote = "`";
-                                    if (ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === ":" || ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === "=") {
+                                    if (ops.length > 0 && (ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === ":" || ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === "=")) {
                                         b = a;
                                     }
                                 } else if ((/\s/).test(source.charAt(a)) === false && b === 0) {
@@ -96,7 +96,7 @@
                                             // for cases where white space is between option name and assignment operator
                                             ops[ops.length - 1] = ops[ops.length - 1] + item;
                                             b = a;
-                                        } else if (ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === ":" || ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === "=") {
+                                        } else if (ops.length > 0 && (ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === ":" || ops[ops.length - 1].charAt(ops[ops.length - 1].length - 1) === "=")) {
                                             // for cases where white space is between assignment operator and value
                                             ops[ops.length - 1] = ops[ops.length - 1] + item;
                                             b = 0;
