@@ -4,7 +4,6 @@ import { Stats } from "fs";
 import * as http from "http";
 import { Stream, Writable } from "stream";
 import { Hash } from "crypto";
-import { Http2Stream, Http2Session } from "http2";
 type directoryItem = [string, "file" | "directory" | "link" | "screen", number, number, Stats];
 interface directoryList extends Array<directoryItem> {
     [key:number]: directoryItem;
@@ -62,9 +61,9 @@ interface readFile {
             underline: "\u001b[4m",
             yellow   : "\u001b[33m"
         },
-        store:codeStorage = {
-            diff: {},
-            source: {}
+        diffStatus:diffStatus = {
+            diff: false,
+            source: false
         },
         prettydiff:any = {},
         commands:commandList = {
@@ -2818,17 +2817,34 @@ interface readFile {
             }()),
             output:string[] = [];
         if (options.read_method === "filescreen" || options.read_method === "screen") {
-            if (verbose === true) {
+            if (options.mode === "diff") {
+                const count:string[] = path.split(","),
+                    plural:[string, string] = ["", ""];
+                if (count[0] !== "1") {
+                    plural[0] = "s";
+                }
+                if (count[1] !== "1") {
+                    plural[1] = "s";
+                }
+                if (options.diff_cli === true && code === "") {
+                    output.push(`${text.green}Pretty Diff found no differences.${text.none}`);
+                } else {
+                    output.push("");
+                    output.push(`Pretty Diff found ${text.cyan + count[0] + text.none} difference${plural[0]} on ${text.cyan + count[1] + text.none} line${plural[1]}.`);
+                }
+            } else if (verbose === true) {
                 if (options.read_method === "filescreen") {
                     output.push(`${tense} input from file ${text.cyan + path + text.none}`);
                 } else {
                     output.push(`${tense} input from terminal.`);
                 }
             }
-            if (typeof code === "string") {
-                output.push(code);
-            } else {
-                output.push(code.toString("utf8"));
+            if (code !== "") {
+                if (typeof code === "string") {
+                    output.push(code);
+                } else {
+                    output.push(code.toString("utf8"));
+                }
             }
             apps.log(output);
         } else if (options.read_method === "file") {
@@ -2960,19 +2976,17 @@ interface readFile {
             resolve = function node_apps_readmethod_resolve() {
                 node.fs.stat(options[item], function node_apps_readmethod_resolve_stat(err:Error, stat:Stats):void {
                     const screen = function node_apps_readmethod_resolve_stat_screen():void {
-                            store[item][item] = options[item];
+                            diffStatus[item] = true;
                             if (options.mode === "diff") {
-                                if (store.source.source !== undefined && store.diff.diff !== undefined) {
+                                if (diffStatus.source === true && diffStatus.diff === true) {
                                     let meta:any = {
                                         differences: 0,
                                         lines: 0
                                     };
-                                    options.diff = store.diff.diff;
-                                    options.source = store.source.source;
-                                    apps.output("", prettydiff.mode(options, meta));
+                                    const result:string = prettydiff.mode(options, meta);
+                                    apps.output(`${meta.differences},${meta.lines}`, result);
                                 }
                             } else {
-                                options.source = store.source.source;
                                 apps.output("", prettydiff.mode(options));
                             }
                         },
@@ -3073,20 +3087,40 @@ interface readFile {
                             } else {
                                 apps.readFile({
                                     callback: function node_apps_readmethod_resolve_stat_resolveItem_fileCallback(args:readFile, dump:string|Buffer):void {
-                                        if (typeof dump === "string") {
-                                            options.source = dump;
-                                            const result:string = prettydiff.mode(options);
-                                            if (result.indexOf("Error: ") === 0) {
-                                                apps.errout([result.replace("Error: ", "")]);
-                                                return;
+                                        if (options.mode === "diff") {
+                                            if (typeof dump === "string") {
+                                                options[item] = dump;
+                                            } else {
+                                                options[item] = dump.toString("utf8");
                                             }
-                                            apps.output(args.path, result);
+                                            diffStatus[item] = true;
+                                            if (diffStatus.diff === true && diffStatus.source === true) {
+                                                if (options.diff_cli === true) {
+                                                    options.read_method = "filescreen";
+                                                }
+                                                let meta:any = {
+                                                    differences: 0,
+                                                    lines: 0
+                                                };
+                                                const result:string = prettydiff.mode(options, meta);
+                                                apps.output(`${meta.differences},${meta.lines}`, result);
+                                            }
                                         } else {
-                                            apps.errout([`The file at ${options[item]} contains a binary buffer.  Pretty Diff does not analyze binary at this time.`]);
+                                            if (typeof dump === "string") {
+                                                options.source = dump;
+                                                const result:string = prettydiff.mode(options);
+                                                if (result.indexOf("Error: ") === 0) {
+                                                    apps.errout([result.replace("Error: ", "")]);
+                                                    return;
+                                                }
+                                                apps.output(args.path, result);
+                                            } else {
+                                                apps.errout([`The file at ${options[item]} contains a binary buffer.  Pretty Diff does not analyze binary at this time.`]);
+                                            }
                                         }
                                     },
                                     index: 0,
-                                    path: options.source,
+                                    path: options[item],
                                     stat: stat
                                 });
                             }
@@ -3559,6 +3593,12 @@ interface readFile {
                     test: `If option read_method evaluates to value ${text.cyan}subdirectory${text.none} option ${text.angry}output${text.none} is required.`
                 },
                 {
+                    artifact: `${projectPath}test`,
+                    command: `beautify source:"${projectPath}api" read_method:subdirectory output:"test"`,
+                    qualifier: "contains",
+                    test: ` files written to ${text.cyan + projectPath}test${text.none}.`
+                },
+                {
                     command: `beautify source:"${projectPath}tsconfig.json" read_method:directory`,
                     qualifier: "contains",
                     test: `Option ${text.cyan}read_method${text.none} has value ${text.green}directory${text.none} but ${text.angry}option source does not point to a directory${text.none}.`
@@ -3577,12 +3617,6 @@ interface readFile {
                     command: `beautify source:"${projectPath}tsconfig.json" read_method:subdirectory`,
                     qualifier: "contains",
                     test: `Option ${text.cyan}read_method${text.none} has value ${text.green}subdirectory${text.none} but ${text.angry}option source does not point to a directory${text.none}.`
-                },
-                {
-                    artifact: `${projectPath}test`,
-                    command: `beautify source:"${projectPath}api" read_method:subdirectory output:"test"`,
-                    qualifier: "contains",
-                    test: ` files written to ${text.cyan + projectPath}test${text.none}.`
                 },
                 {
                     command: "comm version",
@@ -3618,23 +3652,58 @@ interface readFile {
                     artifact: `${projectPath}temp`,
                     command: `copy ${projectPath}js ${projectPath}temp`,
                     qualifier: "filesystem contains",
-                    test: `temp${supersep}minify${supersep}style.js`
+                    test: `temp${sep}minify${sep}style.js`
                 },
                 {
                     artifact: `${projectPath}temp`,
                     command: `copy ${projectPath}js ${projectPath}temp 2`,
-                    file: `${projectPath}temp${supersep}minify${supersep}style.js`,
+                    file: `${projectPath}temp${sep}minify${sep}style.js`,
                     qualifier: "file begins",
                     test: "/*global global\u002a/"
                 },
                 {
-                    command: `diff source:"hello" diff:"shelo" readmethod:screen`,
+                    command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" read_method:filescreen`,
                     qualifier: "is",
+                    test: `${text.green}Pretty Diff found no differences.${text.none}`
+                },
+                {
+                    command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" read_method:filescreen diff_cli:false`,
+                    qualifier: "contains",
+                    test: `Pretty Diff found ${text.cyan}0${text.none} differences on ${text.cyan}0${text.none} lines.`
+                },
+                {
+                    command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" read_method:filescreen diff_cli:false 2`,
+                    qualifier: "contains",
+                    test: "folds from line XXXX to line 14"
+                },
+                {
+                    command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffnew${sep}beautify_script_javascript_vertical.txt" read_method:filescreen`,
+                    qualifier: "contains",
+                    test: `Pretty Diff found ${text.cyan}2${text.none} differences on ${text.cyan}2${text.none} lines.`
+                },
+                {
+                    command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffnew${sep}beautify_script_javascript_vertical.txt" read_method:filescreen diff_cli:false`,
+                    qualifier: "contains",
+                    test: `Pretty Diff found ${text.cyan}2${text.none} differences on ${text.cyan}2${text.none} lines.`
+                },
+                {
+                    command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffnew${sep}beautify_script_javascript_vertical.txt" read_method:filescreen diff_cli:false 2`,
+                    qualifier: "contains",
+                    test: "folds from line XXXX to line 2"
+                },
+                {
+                    command: `diff source:"hello" diff:"shelo" readmethod:screen`,
+                    qualifier: "contains",
                     test: `${text.cyan}Line: 1${text.none}\n${text.red}hel${text.diffchar}l${text.clear}o${text.none}\n${text.green + text.diffchar}s${text.clear}helo${text.none}`
                 },
                 {
+                    command: `diff source:"hello" diff:"shelo" readmethod:screen 2`,
+                    qualifier: "contains",
+                    test: `Pretty Diff found ${text.cyan}1${text.none} difference on ${text.cyan}1${text.none} line.`
+                },
+                {
                     command: `diff source:"hello" diff:"shelo" readmethod:screen crlf:true language:text`,
-                    qualifier: "is",
+                    qualifier: "contains",
                     test: `${text.cyan}Line: 1${text.none}\r\n${text.red}hel${text.diffchar}l${text.clear}o${text.none}\r\n${text.green + text.diffchar}s${text.clear}helo${text.none}`
                 },
                 {
@@ -3678,7 +3747,7 @@ interface readFile {
                     test: "directory"
                 },
                 {
-                    command: `directory typeof ${projectPath}js${supersep}beautify${supersep}style.js`,
+                    command: `directory typeof ${projectPath}js${sep}beautify${sep}style.js`,
                     qualifier: "is",
                     test: "file"
                 },

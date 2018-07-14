@@ -14,14 +14,6 @@ type languageAuto = [string, string, string];
 type lexer = "markup" | "script" | "style";
 type mode = "analysis" | "beautify" | "diff" | "minify" | "parse";
 type qualifier = "begins" | "contains" | "ends" | "file begins" | "file contains" | "file ends" | "file is" | "file not" | "file not contains" | "filesystem contains" | "filesystem not contains" | "is" | "not" | "not contains";
-interface codeStorage {
-    diff: {
-        [key:string]: string;
-    };
-    source: {
-        [key:string]: string;
-    };
-}
 interface commandList {
     [key: string]: {
         description: string;
@@ -37,6 +29,10 @@ interface compareStore extends Array<[number, number]>{
 interface diffmeta {
     differences: number;
     lines: number;
+}
+interface diffStatus {
+    diff: boolean;
+    source: boolean;
 }
 interface difftable {
     [key: string]: [number, number];

@@ -810,6 +810,7 @@
                     if (options.diff_space_ignore === true && change === "replace" && baseTextArray[baseStart] !== undefined && newTextArray[newStart] !== undefined && baseTextArray[baseStart].replace(/\s+/g, "") === newTextArray[newStart].replace(/\s+/g, "")) {
                         change = "equal";
                     } else if (change !== "equal") {
+                        diffline = diffline + 1;
                         if (a > 0 && opcodes[a - 1][0] === "equal") {
                             foldcount = options.context;
                             if ((ntest === true || change === "insert") && (options.diff_space_ignore === false || (/^(\s+)$/g).test(newTextArray[newStart]) === false)) {
@@ -1265,9 +1266,6 @@
                 a = a + 1;
             } while (a < opcodesLength);
             if (options.diff_cli === true) {
-                if (a < opcodesLength && foldstart > 49) {
-                    diffline = -1;
-                }
                 if (options.api === "dom") {
                     clidata.push("</li></ol>");
                     return [data.join("").replace("</li>", "<ol class=\"diffcli\">"), foldstart, diffline];
