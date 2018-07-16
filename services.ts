@@ -8,6 +8,10 @@ type directoryItem = [string, "file" | "directory" | "link" | "screen", number, 
 interface directoryList extends Array<directoryItem> {
     [key:number]: directoryItem;
 }
+interface diffStore {
+    diff: directoryList;
+    source: directoryList;
+}
 interface readFile {
     callback: Function;
     index: number;
@@ -64,6 +68,10 @@ interface readFile {
         diffStatus:diffStatus = {
             diff: false,
             source: false
+        },
+        diffStore:diffStore = {
+            diff: [],
+            source: []
         },
         prettydiff:any = {},
         commands:commandList = {
@@ -1744,7 +1752,6 @@ interface readFile {
         options.mode = "diff";
         apps.readMethod(false);
         apps.readMethod(true);
-        // to perform diff of subdirectory keep a source and diff object.  The file paths are the object keys, and the file contents are the values.
     };
     // similar to node's fs.readdir, but recursive
     apps.directory = function node_apps_directory(args:readDirectory):void {
@@ -2803,7 +2810,7 @@ interface readFile {
         }
     };
     // uniformly formats output for Pretty Diff generated code from: beautify, minify, parse commands
-    apps.output = function node_apps_readMethodOutput(path:string, code:string|Buffer) {
+    apps.output = function node_apps_output(path:string, code:string|Buffer) {
         const tense:string = (function node_apps_output_tense():string {
                 if (options.mode === "beautify") {
                     return "Beautified";
@@ -2815,9 +2822,7 @@ interface readFile {
                     return "Parsed";
                 }
             }()),
-            output:string[] = [];
-        if (options.read_method === "filescreen" || options.read_method === "screen") {
-            if (options.mode === "diff") {
+            diffOutput = function node_apps_output_diff() {
                 const count:string[] = path.split(","),
                     plural:[string, string] = ["", ""];
                 if (count[0] !== "1") {
@@ -2826,12 +2831,17 @@ interface readFile {
                 if (count[1] !== "1") {
                     plural[1] = "s";
                 }
-                if (options.diff_cli === true && code === "") {
+                if (options.diff_format === "text" && code === "") {
                     output.push(`${text.green}Pretty Diff found no differences.${text.none}`);
                 } else {
                     output.push("");
                     output.push(`Pretty Diff found ${text.cyan + count[0] + text.none} difference${plural[0]} on ${text.cyan + count[1] + text.none} line${plural[1]}.`);
                 }
+            },
+            output:string[] = [];
+        if (options.read_method === "filescreen" || options.read_method === "screen") {
+            if (options.mode === "diff") {
+                diffOutput();
             } else if (verbose === true) {
                 if (options.read_method === "filescreen") {
                     output.push(`${tense} input from file ${text.cyan + path + text.none}`);
@@ -2854,7 +2864,11 @@ interface readFile {
                     apps.errout([err.toString()]);
                     return;
                 }
-                output.push(`${tense} input from file ${text.cyan + path + text.none}.`);
+                if (options.mode === "diff") {
+                    diffOutput();
+                } else {
+                    output.push(`${tense} input from file ${text.cyan + path + text.none}.`);
+                }
                 output.push(`Wrote output to ${text.green + outPath + text.none} at ${text.green + apps.commas(code.length) + text.none} characters.`);
                 apps.log(output);
             });
@@ -2992,98 +3006,169 @@ interface readFile {
                         },
                         resolveItem = function node_apps_readmethod_resolve_stat_resolveItem() {
                             if (options.read_method === "directory" || options.read_method === "subdirectory") {
-                                if (options.mode === "diff") {
-
-                                } else {
-                                    apps.directory({
-                                        callback: function node_apps_readmethod_resolve_stat_resolveItem_directoryCallback(list:directoryList):void {
-                                            const source:string = options.source.slice(0, options.source.lastIndexOf(sep) + 1),
-                                                listlen:number = list.length,
-                                                out:string = node.path.resolve(options.output),plural:string = (listlen === 1)
-                                                    ? ""
-                                                    : "s",
-                                                parse:string = (options.mode === "parse")
-                                                    ? ".parse"
-                                                    : "",
-                                                address = function node_apps_readmethod_resolve_stat_resolveItem_directoryCallback_address(item:string, directory:boolean):string {
-                                                    if (directory === true) {
-                                                        return out + sep + item.replace(source, "");
+                                const callback_diff = function node_apps_readmethod_resolve_stat_resolveItem_callbackDiff(list:directoryList):void {
+                                        diffStatus[item] = true;
+                                        diffStore[item] = list;
+                                        if (diffStatus.diff === true && diffStatus.source === true) {
+                                            const dirs:any = {
+                                                    diff: [],
+                                                    source: []
+                                            },/*
+                                                files:any = {
+                                                    diff: [],
+                                                    source: []
+                                                },
+                                                links:any = {
+                                                    diff: [],
+                                                    source: []
+                                                },*/
+                                                sort = function node_apps_readmethod_resolve_stat_resolveItem_callbackDiff_sort(a, b):number {
+                                                    if (a[1] > b[1]) {
+                                                        return 1;
                                                     }
-                                                    return out + sep + item.replace(source, "") + parse;
+                                                    if (a[1] === b[1] && a[0] > b[0]) {
+                                                        return 1;
+                                                    }
+                                                    return -1;
                                                 },
-                                                writeFile = function node_apps_readmethod_resolve_stat_resolveItem_directoryCallback_writeWrapper(itempath:string, dump:string|Buffer):void {
-                                                    node.fs.writeFile(itempath, dump, function ode_apps_readmethod_resolve_stat_resolveItem_directoryCallback_writeWrapper_writeFile():void {
-                                                        b = b + 1;
-                                                        if (b === listlen) {
-                                                            apps.log([`${text.green + c + text.none} file${plural} written to ${text.cyan + options.output + text.none}.`]);
-                                                        }
-                                                    });
-                                                },
-                                                readFiles = function node_apps_readmethod_resolve_stat_resolveItem_directoryCallback_readFiles():void {
-                                                    a = 0;
+                                                populate = function node_apps(item:"source"|"diff"):void {
+                                                    let len:number = diffStore[item].length,
+                                                        aa:number = 0;
                                                     do {
-                                                        if (list[a][1] === "file") {
-                                                            c = c + 1;
-                                                            apps.readFile({
-                                                                callback: function node_apps_readmethod_resolve_stat_resolveItem_directoryCallback_readFiles_callback(args:readFile, dump:string|Buffer):void {
-                                                                    if (typeof dump === "string") {
-                                                                        options.source = dump;
-                                                                        const result:string = prettydiff.mode(options);
-                                                                        if (result.indexOf("Error: ") === 0) {
-                                                                            apps.errout([result.replace("Error: ", "")]);
-                                                                            fail = true;
-                                                                            return;
-                                                                        }
-                                                                        writeFile(address(args.path, false), result);
-                                                                    } else {
-                                                                        writeFile(address(args.path, false), dump);
-                                                                    }
-                                                                },
-                                                                index: a,
-                                                                path: list[a][0],
-                                                                stat: stat
-                                                            });
-                                                        } else {
-                                                            b = b + 1;
-                                                            if (b === listlen && c > 0) {
-                                                                apps.log([`${text.green + c + text.none} file${plural} written to ${text.cyan + source + text.none}.`]);
+                                                        if (diffStore[item][aa][1] !== "directory") {
+                                                            break;
+                                                        }
+                                                        dirs[item].push(diffStore[item][0]);
+                                                        aa = aa + 1;
+                                                    } while (aa < len);
+                                                    if (diffStore[item][aa][1] === "file") {
+                                                        do {
+                                                            if (diffStore[item][aa][1] !== "file") {
+                                                                break;
                                                             }
-                                                        }
-                                                        a = a + 1;
-                                                    } while (a < listlen && fail === false);
-                                                    if (c < 1) {
-                                                        apps.log([`${text.green}0${text.none} files written to ${text.cyan + source + text.none}.`]);
+                                                            dirs[item].push(diffStore[item][0]);
+                                                            aa = aa + 1;
+                                                        } while (aa < len);
                                                     }
-                                                },
-                                                makedir = function node_apps_readmethod_resolve_stat_resolveItem_directoryCallback_makedir():void {
-                                                    do {
-                                                        if (list[a][1] === "directory") {
-                                                            apps.makedir(address(list[a][0], true), function node_apps_readmethod_resolve_stat_resolveItem_directoryCallback_makedir_callback():void {
-                                                                if (a < listlen) {
-                                                                    node_apps_readmethod_resolve_stat_resolveItem_directoryCallback_makedir();
-                                                                } else {
-                                                                    readFiles();
-                                                                }
-                                                            });
-                                                            a = a + 1;
-                                                            return;
-                                                        }
-                                                        a = a + 1;
-                                                    } while (a < listlen);
-                                                    readFiles();
+                                                    if (diffStore[item][aa][1] === "link") {
+                                                        do {
+                                                            if (diffStore[item][aa][1] !== "link") {
+                                                                break;
+                                                            }
+                                                            dirs[item].push(diffStore[item][0]);
+                                                            aa = aa + 1;
+                                                        } while (aa < len);
+                                                    }
                                                 };
-                                            let a:number = 0,
-                                                b:number = 0,
-                                                c:number = 0,
-                                                fail:boolean = false;
-                                            makedir();
-                                        },
-                                        exclusions: exclusions,
-                                        path: options.source,
-                                        recursive: (options.read_method === "auto" || options.read_method === "subdirectory"),
-                                        symbolic: false
-                                    });
-                                }
+                                            //let a:number = 0;
+                                            diffStore.diff.sort(sort);
+                                            diffStore.source.sort(sort);
+                                            populate("diff");
+                                            populate("source");
+
+// create diff_raw option to return JSON of deleted, inserted, modified, equal
+
+
+                                            // 1. inserted directories
+                                            // 2. deleted directories
+                                            // 3. inserted symlinks
+                                            // 4. deleted symlinks
+                                            // 5. inserted files
+                                            // 6. deleted files
+                                            // 7. diff of modified files
+                                        }
+                                    },
+                                    callback_other = function node_apps_readmethod_resolve_stat_resolveItem_callbackOther(list:directoryList):void {
+                                        const source:string = options.source.slice(0, options.source.lastIndexOf(sep) + 1),
+                                            listlen:number = list.length,
+                                            out:string = node.path.resolve(options.output),plural:string = (listlen === 1)
+                                                ? ""
+                                                : "s",
+                                            parse:string = (options.mode === "parse")
+                                                ? ".parse"
+                                                : "",
+                                            address = function node_apps_readmethod_resolve_stat_resolveItem_callbackOther_address(item:string, directory:boolean):string {
+                                                if (directory === true) {
+                                                    return out + sep + item.replace(source, "");
+                                                }
+                                                return out + sep + item.replace(source, "") + parse;
+                                            },
+                                            writeFile = function node_apps_readmethod_resolve_stat_resolveItem_callbackOther_writeWrapper(itempath:string, dump:string|Buffer):void {
+                                                node.fs.writeFile(itempath, dump, function ode_apps_readmethod_resolve_stat_resolveItem_callbackOther_writeWrapper_writeFile():void {
+                                                    b = b + 1;
+                                                    if (b === listlen) {
+                                                        apps.log([`${text.green + c + text.none} file${plural} written to ${text.cyan + options.output + text.none}.`]);
+                                                    }
+                                                });
+                                            },
+                                            readFiles = function node_apps_readmethod_resolve_stat_resolveItem_callbackOther_readFiles():void {
+                                                a = 0;
+                                                do {
+                                                    if (list[a][1] === "file") {
+                                                        c = c + 1;
+                                                        apps.readFile({
+                                                            callback: function node_apps_readmethod_resolve_stat_resolveItem_callbackOther_readFiles_callback(args:readFile, dump:string|Buffer):void {
+                                                                if (typeof dump === "string") {
+                                                                    options.source = dump;
+                                                                    const result:string = prettydiff.mode(options);
+                                                                    if (result.indexOf("Error: ") === 0) {
+                                                                        apps.errout([result.replace("Error: ", "")]);
+                                                                        fail = true;
+                                                                        return;
+                                                                    }
+                                                                    writeFile(address(args.path, false), result);
+                                                                } else {
+                                                                    writeFile(address(args.path, false), dump);
+                                                                }
+                                                            },
+                                                            index: a,
+                                                            path: list[a][0],
+                                                            stat: stat
+                                                        });
+                                                    } else {
+                                                        b = b + 1;
+                                                        if (b === listlen && c > 0) {
+                                                            apps.log([`${text.green + c + text.none} file${plural} written to ${text.cyan + source + text.none}.`]);
+                                                        }
+                                                    }
+                                                    a = a + 1;
+                                                } while (a < listlen && fail === false);
+                                                if (c < 1) {
+                                                    apps.log([`${text.green}0${text.none} files written to ${text.cyan + source + text.none}.`]);
+                                                }
+                                            },
+                                            makedir = function node_apps_readmethod_resolve_stat_resolveItem_callbackOther_makedir():void {
+                                                do {
+                                                    if (list[a][1] === "directory") {
+                                                        apps.makedir(address(list[a][0], true), function node_apps_readmethod_resolve_stat_resolveItem_callbackOther_makedir_callback():void {
+                                                            if (a < listlen) {
+                                                                node_apps_readmethod_resolve_stat_resolveItem_callbackOther_makedir();
+                                                            } else {
+                                                                readFiles();
+                                                            }
+                                                        });
+                                                        a = a + 1;
+                                                        return;
+                                                    }
+                                                    a = a + 1;
+                                                } while (a < listlen);
+                                                readFiles();
+                                            };
+                                        let a:number = 0,
+                                            b:number = 0,
+                                            c:number = 0,
+                                            fail:boolean = false;
+                                        makedir();
+                                    };
+                                apps.directory({
+                                    callback:(options.mode === "diff")
+                                        ? callback_diff
+                                        : callback_other,
+                                    exclusions: exclusions,
+                                    path: options.source,
+                                    recursive: (options.read_method === "auto" || options.read_method === "subdirectory"),
+                                    symbolic: false
+                                });
                             } else {
                                 apps.readFile({
                                     callback: function node_apps_readmethod_resolve_stat_resolveItem_fileCallback(args:readFile, dump:string|Buffer):void {
@@ -3095,13 +3180,29 @@ interface readFile {
                                             }
                                             diffStatus[item] = true;
                                             if (diffStatus.diff === true && diffStatus.source === true) {
-                                                if (options.diff_cli === true) {
+
+                                                let meta:any = {
+                                                        differences: 0,
+                                                        lines: 0
+                                                    },
+
+                                                    // in the case a read_method is specified but diff_format is not then read_method takes precidence
+                                                    read_method:number = -1,
+                                                    diff_format:number = -1,
+                                                    a:number = 0,
+                                                    argLen:number = process.argv.length;
+                                                do {
+                                                    if (process.argv[a].indexOf("read_method") === 0) {
+                                                        read_method = a;
+                                                    } else if (process.argv[a].indexOf("diff_format") === 0) {
+                                                        diff_format = a;
+                                                    }
+                                                    a = a + 1;
+                                                } while (a < argLen);
+                                                if (diff_format > -1 && read_method < 0 && options.read_method !== "screen" && options.read_method !== "filescreen") {
                                                     options.read_method = "filescreen";
                                                 }
-                                                let meta:any = {
-                                                    differences: 0,
-                                                    lines: 0
-                                                };
+
                                                 const result:string = prettydiff.mode(options, meta);
                                                 apps.output(`${meta.differences},${meta.lines}`, result);
                                             }
@@ -3202,7 +3303,7 @@ interface readFile {
                                     }
                                 } else if (ostat.isDirectory() === true && options.read_method === "file") {
                                     options.output = options.output.replace(/(\/|\\)$/, "") + sep + options.source.replace(/\/|\\/g, "/").split("/").pop();
-                                    if (options.mode === "diff" && options.diff_cli === false) {
+                                    if (options.mode === "diff" && options.diff_format === "html") {
                                         options.output = `${options.output}-diff.txt`;
                                     }
                                 }
@@ -3667,14 +3768,31 @@ interface readFile {
                     test: `${text.green}Pretty Diff found no differences.${text.none}`
                 },
                 {
-                    command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" read_method:filescreen diff_cli:false`,
+                    command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" read_method:filescreen diff_format:html`,
                     qualifier: "contains",
                     test: `Pretty Diff found ${text.cyan}0${text.none} differences on ${text.cyan}0${text.none} lines.`
                 },
                 {
-                    command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" read_method:filescreen diff_cli:false 2`,
+                    command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" read_method:filescreen diff_format:html 2`,
                     qualifier: "contains",
                     test: "folds from line XXXX to line 14"
+                },
+                {
+                    artifact: `${projectPath}test.diff`,
+                    command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffnew${sep}beautify_script_javascript_vertical.txt" diff_format:html read_method:file output:test.diff`,
+                    qualifier: "contains",
+                    test: `Wrote output to ${text.green + projectPath}test.diff${text.none}`
+                },
+                {
+                    command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffnew${sep}beautify_script_javascript_vertical.txt" diff_format:html output:test.diff`,
+                    qualifier: "contains",
+                    test: `Pretty Diff found ${text.cyan}2${text.none} differences on ${text.cyan}2${text.none} lines.`
+                },
+                {
+                    artifact: `${projectPath}test.diff`,
+                    command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffnew${sep}beautify_script_javascript_vertical.txt" read_method:file output:test.diff`,
+                    qualifier: "contains",
+                    test: `Wrote output to ${text.green + projectPath}test.diff${text.none}`
                 },
                 {
                     command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffnew${sep}beautify_script_javascript_vertical.txt" read_method:filescreen`,
@@ -3682,12 +3800,12 @@ interface readFile {
                     test: `Pretty Diff found ${text.cyan}2${text.none} differences on ${text.cyan}2${text.none} lines.`
                 },
                 {
-                    command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffnew${sep}beautify_script_javascript_vertical.txt" read_method:filescreen diff_cli:false`,
+                    command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffnew${sep}beautify_script_javascript_vertical.txt" read_method:filescreen diff_format:html`,
                     qualifier: "contains",
                     test: `Pretty Diff found ${text.cyan}2${text.none} differences on ${text.cyan}2${text.none} lines.`
                 },
                 {
-                    command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffnew${sep}beautify_script_javascript_vertical.txt" read_method:filescreen diff_cli:false 2`,
+                    command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffnew${sep}beautify_script_javascript_vertical.txt" read_method:filescreen diff_format:html 2`,
                     qualifier: "contains",
                     test: "folds from line XXXX to line 2"
                 },

@@ -189,9 +189,7 @@
             prettydiff:any = {};
         // prettydiff insertion end
 
-        if (options.api !== "node") {
-            options.diff_cli = false;
-        } else if (options.api === "node" && (options.read_method === "directory" || options.read_method === "subdirectory")) {
+        if (options.api === "node" && (options.read_method === "directory" || options.read_method === "subdirectory")) {
             if (options.mode === "parse" && options.parse_format === "table") {
                 return "Error: option parse_format with value 'table' is not available with read_method directory or subdirectory.";
             }

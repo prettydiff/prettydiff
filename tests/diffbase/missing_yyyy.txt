@@ -1,0 +1,1 @@
+File in the 'diffbase' directory, but intentionally missing from the 'diffnew' directory.

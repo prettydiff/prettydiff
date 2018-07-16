@@ -16,7 +16,7 @@
             }()),
             //translates source code from a string to an array by splitting on line breaks
             stringAsLines = function diffview__stringAsLines(str:string):string[] {
-                const lines = (options.diff_cli === true)
+                const lines = (options.diff_format === "text")
                     ? str
                     : str
                         .replace(/&/g, "&amp;")
@@ -399,7 +399,7 @@
                         dataMinLength:number = 0,
                         dataA:string[]         = [],
                         dataB:string[]         = [];
-                    const cleanedA:string      = (options.diff_cli === true)
+                    const cleanedA:string      = (options.diff_format === "text")
                             ? lineA
                             : lineA
                                 .replace(/&#160;/g, " ")
@@ -409,7 +409,7 @@
                                 .replace(/\$#lt;/g, "<")
                                 .replace(/\$#gt;/g, ">")
                                 .replace(/&amp;/g, "&"),
-                        cleanedB:string      = (options.diff_cli === true)
+                        cleanedB:string      = (options.diff_format === "text")
                             ? lineB
                             : lineB
                                 .replace(/&#160;/g, " ")
@@ -554,7 +554,7 @@
                     //diff for tabs
                     if (tab !== "" && cleanedA.length !== cleanedB.length && cleanedA.replace(tabFix, "") === cleanedB.replace(tabFix, "") && options.diff_space_ignore === false) {
                         errorout = errorout + 1;
-                        if (options.diff_cli === true) {
+                        if (options.diff_format === "text") {
                             tabdiff[0] = tabdiff[0] + tabdiff[2];
                             tabdiff[0] = tabdiff[0]
                                 .replace(regStart, "<pd>")
@@ -716,9 +716,9 @@
                         dataB[dataB.length - 1] = dataB[dataB.length - 1] + strEnd;
                         errorout                = errorout + 1;
                     }
-                    // options.diff_cli output doesn't need XML protected characters to be escaped
-                    // because its output is the command line
-                    if (options.diff_cli === true) {
+                    // options.diff_format output doesn't need XML protected characters to be escaped
+                    // when its value is 'text'
+                    if (options.diff_format === "text") {
                         return [
                             dataA
                                 .join("")
@@ -755,7 +755,7 @@
                             .replace(/\r<\/em>/g, "(carriage return)</em>"),
                     ];
                 };
-            if (options.diff_cli === false) {
+            if (options.diff_format === "html") {
                 if (options.diff_view === "inline") {
                     node.push("<h3 class='texttitle'>");
                     node.push(options.source_label);
@@ -783,10 +783,10 @@
                 rowcnt    = Math.max(baseEnd - baseStart, newEnd - newStart);
                 ctest     = true;
 
-                if (foldstart > -1 && options.diff_cli === false) {
+                if (foldstart > -1 && options.diff_format === "html") {
                     data[0][foldstart] = data[0][foldstart].replace("xxx", String(foldcount));
                 }
-                if (options.diff_cli === true) {
+                if (options.diff_format === "text") {
                     const text = {
                         angry: "\u001b[1m\u001b[4m",
                         clear: "\u001b[24m\u001b[22m",
@@ -1265,10 +1265,10 @@
                 }
                 a = a + 1;
             } while (a < opcodesLength);
-            if (options.diff_cli === true) {
+            if (options.diff_format === "text") {
                 if (options.api === "dom") {
                     clidata.push("</li></ol>");
-                    return [data.join("").replace("</li>", "<ol class=\"diffcli\">"), foldstart, diffline];
+                    return [clidata.join("").replace("</li>", "<ol class=\"diffcli\">"), foldstart, diffline];
                 }
                 if (options.crlf === true) {
                     return [clidata.join("\r\n"), foldstart, diffline];

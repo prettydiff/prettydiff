@@ -750,6 +750,24 @@
                     }
                 }
 
+                // changing the default value of diff_format for the browser tool
+                {
+                    let el:HTMLElement = document.getElementById("option-diff_format"),
+                        ops:NodeListOf<HTMLOptionElement> = el.getElementsByTagName("option"),
+                        sel:HTMLSelectElement,
+                        a:number = 0;
+                    options.diff_format = "html";
+                    sel = <HTMLSelectElement>el;
+                    if (ops[0].innerHTML !== "html") {
+                        do {
+                            a = a + 1;
+                        } while (a < ops.length && ops[a].innerHTML !== "html");
+                    }
+                    if (a < ops.length) {
+                        sel.selectedIndex = a;
+                    }
+                }
+
                 // build the Ace editors
                 if (test.ace === true) {
                     const val:number = (data.settings["option-indent_size"] === undefined || isNaN(Number(data.settings["option-indent_size"])) === true)
@@ -3325,23 +3343,21 @@
                     };
                 data.langvalue = lang;
 
-
                 if (options.mode === "diff") {
                     if (prettydiff.beautify[options.lexer] === undefined) {
                         if (ann !== null) {
                             ann.innerHTML = `Library <em>prettydiff.beautify.${options.lexer}</em> is <strong>undefined</strong>.`;
                         }
-                        output = "";
-                    } else {
-                        let diffmeta = {
-                            differences: 0,
-                            lines: 0
-                        };
-                        meta.insize = options.source.length + options.diff.length;
-                        output = prettydiff.mode(options, diffmeta);
-                        meta.difftotal = diffmeta.differences;
-                        meta.difflines = diffmeta.lines;
+                        options.language = "text";
                     }
+                    let diffmeta = {
+                        differences: 0,
+                        lines: 0
+                    };
+                    meta.insize = options.source.length + options.diff.length;
+                    output = prettydiff.mode(options, diffmeta);
+                    meta.difftotal = diffmeta.differences;
+                    meta.difflines = diffmeta.lines;
                 } else {
                     meta.insize = options.source.length;
                     if (window.parseFramework.parseerror !== "" && ann !== null) {

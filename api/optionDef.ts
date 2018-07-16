@@ -174,22 +174,12 @@
         diff             : {
             api       : "any",
             default   : "",
-            definition: "The code sample to be compared to 'source' option. This is required if mode is '" +
+            definition: "The code sample to be compared to 'source' option.  This is required if mode is '" +
                     "diff'.",
             label     : "Code to Compare",
             lexer     : "any",
             mode      : "diff",
             type      : "string"
-        },
-        diff_cli         : {
-            api       : "node",
-            default   : true,
-            definition: "If true only text lines of the code differences are returned instead of an HTML " +
-                    "diff report.",
-            label     : "Diff Format",
-            lexer     : "any",
-            mode      : "diff",
-            type      : "boolean"
         },
         diff_comments    : {
             api       : "any",
@@ -200,6 +190,20 @@
             lexer     : "any",
             mode      : "diff",
             type      : "boolean"
+        },
+        diff_format      : {
+            api       : "any",
+            default   : "text",
+            definition: "The format of the output.  The command line output format is text, similar to Unix 'diff'.",
+            label     : "Diff Format",
+            lexer     : "any",
+            mode      : "diff",
+            type      : "string",
+            values    : {
+                "html": "An HTML format for embedding in web pages, or as a complete web page if document_complete is true.",
+                "json": "A JSON format.",
+                "text": "Formatted similar to the Unix 'diff' command line utility."
+            }
         },
         diff_label       : {
             api       : "any",
