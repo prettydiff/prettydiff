@@ -3232,6 +3232,47 @@
                                 .box
                                 .getElementsByTagName("p")[0]
                                 .getElementsByTagName("button");
+                            if (options.diff_format === "json") {
+                                const json:diffJSON = JSON.parse(output).diff,
+                                    len:number = json.length,
+                                    tab:string = (function dom_event_execute_app_renderOutput_diffTab():string {
+                                        const tabout:string[] = [];
+                                        let aa:number = options.indent_size;
+                                        do {
+                                            tabout.push(options.indent_char);
+                                            aa = aa - 1;
+                                        } while (aa > 0);
+                                        return tabout.join("");
+                                    }()),
+                                    json_output:string[] = [`{"diff": [`];
+                                    let a:number = 0,
+                                        b:number = 0,
+                                        space:string[],
+                                        longest:number = 0;
+                                do {
+                                    json[a][1] = `"${json[a][1].replace(/\\/g, "\\\\").replace(/"/g, "\\\"")}"`;
+                                    if (json[a][1].length > longest) {
+                                        longest = json[a][1].length;
+                                    }
+                                    a = a + 1;
+                                } while (a < len);
+                                a = 0;
+                                do {
+                                    b = json[a][1].length;
+                                    space = [" "];
+                                    if (b < longest) {
+                                        do {
+                                            space.push(" ");
+                                            b = b + 1;
+                                        } while (b < longest);
+                                    }
+                                    json_output.push(`${tab}["${json[a][0]}", ${json[a][1]},${space.join("")}"${json[a][2].replace(/\\/g, "\\\\").replace(/"/g, "\\\"")}"],`);
+                                    a = a + 1;
+                                } while (a < len);
+                                json_output[json_output.length - 1] = json_output[json_output.length - 1].replace(/\],$/, "]");
+                                json_output.push("]}");
+                                output = `<textarea>${json_output.join("\n")}</textarea>`;
+                            }
                             if (options.complete_document === true) {
                                 output = `<textarea>${sanitize(output)}</textarea>`;
                             }
@@ -3244,7 +3285,9 @@
                                         .removeChild(report.code.body.firstChild);
                                 }
                             }
-                            if (report.code.body.innerHTML.toLowerCase().indexOf("<textarea") === -1) {
+                            let textarea:HTMLTextAreaElement = report.code.body.getElementsByTagName("textarea")[0];
+                            if (textarea !== null) {
+                                textarea.style.height = `${(report.code.body.clientHeight - 250) / 10}em`;
                                 diffList = report
                                     .code
                                     .body
@@ -3537,6 +3580,9 @@
             }
         }
         if (options.mode === "diff") {
+            if (options.diff_format === "json") {
+                options.complete_document = false;
+            }
             if (test.ace === true) {
                 options.diff = aceStore.codeOut.getValue();
             } else {

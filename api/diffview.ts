@@ -367,8 +367,9 @@
                 charcompOutput:[string, string],
                 finaldoc:string       = "";
             const data:[string[], string[], string[], string[]]           = [
-                        [], [], [], []
-                    ],
+                    [], [], [], []
+                ],
+                json:diffJSON = [],
                 clidata:string[] = [],
                 tabFix:RegExp         = new RegExp(`^((${tab.replace(/\\/g, "\\")})+)`),
                 noTab          = function diffview__report_noTab(str:string[]):string[] {
@@ -782,11 +783,24 @@
                 newEnd    = code[4];
                 rowcnt    = Math.max(baseEnd - baseStart, newEnd - newStart);
                 ctest     = true;
-
-                if (foldstart > -1 && options.diff_format === "html") {
-                    data[0][foldstart] = data[0][foldstart].replace("xxx", String(foldcount));
-                }
-                if (options.diff_format === "text") {
+                if (options.diff_format === "json") {
+                    i = 0;
+                    do {
+                        if (change !== "equal") {
+                            errorout = errorout + 1;
+                        }
+                        if (change === "equal") {
+                            json.push(["=", baseTextArray[baseStart + i], ""]);
+                        } else if (change === "replace") {
+                            json.push(["r", baseTextArray[baseStart + i], newTextArray[newStart + i]]);
+                        } else if (change === "insert") {
+                            json.push(["+", "", newTextArray[newStart + i]]);
+                        } else {
+                            json.push(["-", baseTextArray[baseStart + i], ""]);
+                        }
+                        i = i + 1;
+                    } while (i < rowcnt);
+                } else if (options.diff_format === "text") {
                     const text = {
                         angry: "\u001b[1m\u001b[4m",
                         clear: "\u001b[24m\u001b[22m",
@@ -812,7 +826,7 @@
                     } else if (change !== "equal") {
                         diffline = diffline + 1;
                         if (a > 0 && opcodes[a - 1][0] === "equal") {
-                            foldcount = options.context;
+                            foldcount = options.diff_context;
                             if ((ntest === true || change === "insert") && (options.diff_space_ignore === false || (/^(\s+)$/g).test(newTextArray[newStart]) === false)) {
                                 foldstart = foldstart + 1;
                                 if (options.api === "dom") {
@@ -933,7 +947,7 @@
                                 foldcount = foldcount + 1;
                             } while (foldcount < 7 && foldcount + baseStart < baseEnd);
                         }
-                        if (((change === "insert" && foldcount + newStart === newEnd) || (change !== "insert" && foldcount + baseStart === baseEnd)) && baseTextArray[baseStart + foldcount] !== undefined && options.context > 0 && a < opcodesLength - 1 && opcodes[a + 1][0] === "equal") {
+                        if (((change === "insert" && foldcount + newStart === newEnd) || (change !== "insert" && foldcount + baseStart === baseEnd)) && baseTextArray[baseStart + foldcount] !== undefined && options.diff_context > 0 && a < opcodesLength - 1 && opcodes[a + 1][0] === "equal") {
                             foldcount = 0;
                             baseStart = opcodes[a + 1][1];
                             baseEnd   = opcodes[a + 1][2] - baseStart;
@@ -946,7 +960,7 @@
                                     clidata.push(baseTextArray[baseStart + foldcount]);
                                 }
                                 foldcount = foldcount + 1;
-                            } while (foldcount < options.context && foldcount < baseEnd);
+                            } while (foldcount < options.diff_context && foldcount < baseEnd);
                         }
                         if (btest === true) {
                             baseStart = baseStart + 1;
@@ -960,14 +974,17 @@
                         }
                     }
                 } else {
+                    if (foldstart > -1) {
+                        data[0][foldstart] = data[0][foldstart].replace("xxx", String(foldcount));
+                    }
                     i = 0;
                     do {
-                        //apply options.context collapsing for the output, if needed
-                        if (options.context > -1 && opcodes.length > 1 && ((a > 0 && i === options.context) || (a === 0 && i === 0)) && change === "equal") {
+                        //apply options.diff_context collapsing for the output, if needed
+                        if (options.diff_context > -1 && opcodes.length > 1 && ((a > 0 && i === options.diff_context) || (a === 0 && i === 0)) && change === "equal") {
                             ctest = false;
                             jump  = rowcnt - ((a === 0
                                 ? 1
-                                : 2) * options.context);
+                                : 2) * options.diff_context);
                             if (jump > 1) {
                                 baseStart = baseStart + jump;
                                 newStart  = newStart + jump;
@@ -1000,7 +1017,7 @@
                                 change   = "equal";
                                 errorout = errorout - 1;
                             }
-                            if (options.context < 0 && rowItem < a) {
+                            if (options.diff_context < 0 && rowItem < a) {
                                 rowItem = a;
                                 if (foldstart > -1) {
                                     if (data[0][foldstart + 1] === String(foldcount - 1)) {
@@ -1140,18 +1157,18 @@
                                         baseTextArray[baseStart], newTextArray[newStart]
                                     ];
                                 }
-                                if (baseStart === Number(data[0][data[0].length - 1].substring(
+                                if ((data[0].length > 0 && baseStart === Number(data[0][data[0].length - 1].slice(
                                     data[0][data[0].length - 1].indexOf(">") + 1,
                                     data[0][data[0].length - 1].lastIndexOf("<")
-                                )) - 1 || newStart === Number(data[2][data[2].length - 1].substring(
+                                )) - 1) || (data[2].length > 0 && newStart === Number(data[2][data[2].length - 1].slice(
                                     data[2][data[2].length - 1].indexOf(">") + 1,
                                     data[2][data[2].length - 1].lastIndexOf("<")
-                                )) - 1) {
+                                )) - 1)) {
                                     repeat = true;
                                 }
                                 if (repeat === false) {
                                     if (baseStart < baseEnd) {
-                                        if (options.context < 0 && rowItem < a && (opcodes[a][2] - opcodes[a][1] > 1 || opcodes[a][4] - opcodes[a][3] > 1)) {
+                                        if (options.diff_context < 0 && rowItem < a && (opcodes[a][2] - opcodes[a][1] > 1 || opcodes[a][4] - opcodes[a][3] > 1)) {
                                             rowItem = a;
                                             data[0].push(`<li class="fold" title="folds from line ${foldcount} to line xxx">- ${baseStart + 1}</li>`);
                                             foldstart = data[0].length - 1;
@@ -1175,7 +1192,7 @@
                                         data[1].push(charcompOutput[0]);
                                         data[1].push("&#10;</li>");
                                     } else if (ctest === true) {
-                                        if (options.context < 0 && rowItem < a && (opcodes[a][2] - opcodes[a][1] > 1 || opcodes[a][4] - opcodes[a][3])) {
+                                        if (options.diff_context < 0 && rowItem < a && (opcodes[a][2] - opcodes[a][1] > 1 || opcodes[a][4] - opcodes[a][3])) {
                                             rowItem = a;
                                             if (foldstart > -1) {
                                                 data[0][foldstart] = data[0][foldstart].replace("xxx", String(foldcount - 1));
@@ -1219,11 +1236,11 @@
                                     newStart = newStart + 1;
                                 }
                             } else if (btest === true || (typeof baseTextArray[baseStart] === "string" && typeof newTextArray[newStart] !== "string")) {
-                                if (baseStart !== -1 && baseStart !== Number(data[0][data[0].length - 1].substring(
+                                if (baseStart !== -1 && data[0].length > 0 && baseStart !== Number(data[0][data[0].length - 1].slice(
                                     data[0][data[0].length - 1].indexOf(">") + 1,
                                     data[0][data[0].length - 1].lastIndexOf("<")
                                 )) - 1) {
-                                    if (options.context < 0 && rowItem < a && opcodes[a][2] - opcodes[a][1] > 1) {
+                                    if (options.diff_context < 0 && rowItem < a && opcodes[a][2] - opcodes[a][1] > 1) {
                                         rowItem = a;
                                         data[0].push(`<li class="fold" title="folds from line ${foldcount} to line xxx">- ${baseStart + 1}</li>`);
                                         foldstart = data[0].length - 1;
@@ -1239,11 +1256,11 @@
                                 btest     = false;
                                 baseStart = baseStart + 1;
                             } else if (ntest === true || (typeof baseTextArray[baseStart] !== "string" && typeof newTextArray[newStart] === "string")) {
-                                if (newStart !== -1 && newStart !== Number(data[2][data[2].length - 1].substring(
+                                if (newStart !== -1 && data[2].length > 0 && newStart !== Number(data[2][data[2].length - 1].slice(
                                     data[2][data[2].length - 1].indexOf(">") + 1,
                                     data[2][data[2].length - 1].lastIndexOf("<")
                                 )) - 1) {
-                                    if (options.context < 0 && rowItem < a && opcodes[a][4] - opcodes[a][3] > 1) {
+                                    if (options.diff_context < 0 && rowItem < a && opcodes[a][4] - opcodes[a][3] > 1) {
                                         rowItem = a;
                                         data[0].push(`<li class="fold" title="folds from line ${foldcount} to line xxx">-</li>`);
                                         foldstart = data[0].length - 1;
@@ -1265,6 +1282,9 @@
                 }
                 a = a + 1;
             } while (a < opcodesLength);
+            if (options.diff_format === "json") {
+                return [JSON.stringify({diff:json}), errorout, 0];
+            }
             if (options.diff_format === "text") {
                 if (options.api === "dom") {
                     clidata.push("</li></ol>");

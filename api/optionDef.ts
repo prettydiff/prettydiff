@@ -123,16 +123,6 @@
             mode      : "diff",
             type      : "boolean"
         },
-        context          : {
-            api       : "any",
-            default   : -1,
-            definition: "This shortens the diff output by allowing a specified number of equivalent lines" +
-                    " between each line of difference.",
-            label     : "Context Size",
-            lexer     : "any",
-            mode      : "diff",
-            type      : "number"
-        },
         correct          : {
             api       : "any",
             default   : false,
@@ -190,6 +180,16 @@
             lexer     : "any",
             mode      : "diff",
             type      : "boolean"
+        },
+        diff_context          : {
+            api       : "any",
+            default   : -1,
+            definition: "This shortens the diff output by allowing a specified number of equivalent lines" +
+                    " between each line of difference.  This option is only used with diff_format:html.",
+            label     : "Context Size",
+            lexer     : "any",
+            mode      : "diff",
+            type      : "number"
         },
         diff_format      : {
             api       : "any",

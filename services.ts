@@ -4284,13 +4284,13 @@ interface readFile {
                     options[key[a]] = prettydiff.api.optionDef[key[a]].default;
                     a = a + 1;
                 } while (a < len);
-                options.context     = 4;
-                options.mode        = "diff";
-                options.object_sort = true;
-                options.preserve    = 2;
-                options.read_method = "screen";
-                options.vertical    = true;
-                options.wrap        = 80;
+                options.diff_context = 4;
+                options.mode         = "diff";
+                options.object_sort  = true;
+                options.preserve     = 2;
+                options.read_method  = "screen";
+                options.vertical     = true;
+                options.wrap         = 80;
             },
             compare = function node_apps_validation_compare():void {
                 const len:number = (raw.length > formatted.length)

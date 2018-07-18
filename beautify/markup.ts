@@ -97,6 +97,9 @@
                         } else if (data.types[a] === "jsx_attribute_start") {
                             level.push(-20);
                         } else if (data.types[a] === "jsx_attribute_end") {
+                            if (level[data.begin[a - 1] - 1] === -20) {
+                                level[a - 1] = -20;
+                            }
                             level.push(-10);
                         } else if (data.types[a] === "comment") {
                             if (comstart < 0) {
@@ -216,6 +219,9 @@
                     let y:number = a + 1,
                         lev:number = levels[a],
                         ending:string = end[0];
+                    if (data.token[a].indexOf("</") === 0) {
+                        return;
+                    }
                     data.token[a] = data.token[a].replace(ending, "");
                     levels[a] = -10;
                     findEnd();

@@ -2400,7 +2400,10 @@
                         options.end = levels[a];
                         options.indent_level = lastLevel + 1;
                         options.start = a;
-                        external = nl(lastLevel + 1) + prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "") + nl(lastLevel);
+                        if (data.types[a - 1] !== "operator") {
+                            build.push(nl(lastLevel + 1));
+                        }
+                        external = prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "") + nl(lastLevel);
                         build.push(external);
                         a = levels[a] - 1;
                     }

@@ -26,6 +26,9 @@ interface commandList {
 interface compareStore extends Array<[number, number]>{
     [index:number]: [number, number];
 }
+interface diffJSON extends Array<["+"|"-"|"="|"r", string, string]> {
+    [index:number]: ["+"|"-"|"="|"r", string, string];
+}
 interface diffmeta {
     differences: number;
     lines: number;
