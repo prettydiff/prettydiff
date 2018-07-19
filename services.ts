@@ -165,13 +165,6 @@ interface readFile {
                     }
                 ]
             },
-            debug: {
-                description: "Generates a debug statement in markdown format.",
-                example: [{
-                    code: "prettydiff debug",
-                    defined: "Produces a report directly to the shell that can be copied to anywhere else. This report contains environmental details."
-                }]
-            },
             diff: {
                 description: "Compare code samples the Pretty Diff way.",
                 example: [
@@ -326,6 +319,13 @@ interface readFile {
                         defined: "Performs a HTTP get operation for URI values and then returns the parse table for the specified resource."
                     }
                 ]
+            },
+            prettydiff_debug: {
+                description: "Generates a debug statement in markdown format.",
+                example: [{
+                    code: "prettydiff prettydiff_debug",
+                    defined: "Produces a report directly to the shell that can be copied to anywhere else. This report contains environmental details."
+                }]
             },
             remove: {
                 description: "Remove a file or directory tree from the local file system.",
@@ -1745,11 +1745,6 @@ interface readFile {
         start         = node.path.resolve(target);
         util.stat(start, start);
     };
-    // debug report
-    apps.debug = function node_apps_copy():void {
-        process.argv.push("debug");
-        apps.errout(["Debug Command"]);
-    };
     // mode diff
     apps.diff = function node_apps_diff():void {
         if (options.diff === "" || options.source === "") {
@@ -2015,6 +2010,7 @@ interface readFile {
                     console.log(`${text.yellow}No error message supplied${text.none}`);
                 } else {
                     errtext.forEach(function node_apps_errout_each(value:string):void {
+                        // eslint-disable-next-line
                         console.log(value.replace(/\u001b/g, "\\u001b"));
                     });
                 }
@@ -2036,13 +2032,15 @@ interface readFile {
                 console.log("");
                 console.log("---");
                 console.log("");
-                process.exit(1);
+                if (command !== "prettydiff_debug") {
+                    process.exit(1);
+                }
             };
         errorflag = true;
         if (writeflag !== "") {
             apps.remove(writeflag, error);
             writeflag = "";
-        } else if (process.argv.indexOf("debug") > -1) {
+        } else if (process.argv.indexOf("prettydiff_debug") > -1) {
             debug();
         } else {
             error();
@@ -2929,6 +2927,11 @@ interface readFile {
         }
         options.mode = "parse";
         apps.readMethod(false);
+    };
+    // debug report
+    apps.prettydiff_debug = function node_apps_debug():void {
+        process.argv.push("prettydiff_debug");
+        apps.errout(["Debug Command"]);
     };
     // similar to node's fs.readFile, but determines if the file is binary or text so that it can create either a buffer or text dump
     apps.readFile = function node_apps_readFile(args:readFile):void {
