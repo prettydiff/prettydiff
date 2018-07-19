@@ -4139,6 +4139,11 @@ interface readFile {
                     test: "Parsed input from terminal."
                 },
                 {
+                    command: "prettydiff_debug",
+                    qualifier: "contains",
+                    test: `${text.green}## Command Line Instruction${text.none}`
+                },
+                {
                     command: "version",
                     qualifier: "ends",
                     test: " seconds total time"
