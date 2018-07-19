@@ -3286,7 +3286,7 @@
                                 }
                             }
                             let textarea:HTMLTextAreaElement = report.code.body.getElementsByTagName("textarea")[0];
-                            if (textarea !== null) {
+                            if (textarea !== undefined) {
                                 textarea.style.height = `${(report.code.body.clientHeight - 250) / 10}em`;
                                 diffList = report
                                     .code

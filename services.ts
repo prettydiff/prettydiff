@@ -449,7 +449,7 @@ interface readFile {
                 a = a + 1;
             } while (filtered.length > 1 && a < len);
 
-            if (filtered.length < 1) {
+            if (filtered.length < 1 || (filtered[0] === "prettydiff_debug" && filtered.length < 2)) {
                 if (modeval() === true) {
                     return mode;
                 }
@@ -1974,7 +1974,18 @@ interface readFile {
     };
     // uniform error formatting
     apps.errout = function node_apps_errout(errtext:string[]):void {
-        const error = function node_apps_errout_error():void {
+        const bell = function node_apps_errout_bell():void {
+                apps.humantime(true);
+                if (command === "build" || command === "simulation" || command === "validation") {
+                    console.log("\u0007"); // bell sound
+                } else {
+                    console.log("");
+                }
+                if (command !== "prettydiff_debug") {
+                    process.exit(1);
+                }
+            },
+            error = function node_apps_errout_error():void {
                 const stack:string = new Error().stack.replace("Error", `${text.cyan}Stack trace${text.none + node.os.EOL}-----------`);
                 console.log("");
                 console.log(stack);
@@ -1989,13 +2000,7 @@ interface readFile {
                     });
                 }
                 console.log("");
-                apps.humantime(true);
-                if (command === "build" || command === "simulation") {
-                    console.log("\u0007"); // bell sound
-                } else {
-                    console.log("");
-                }
-                process.exit(1);
+                bell();
             },
             debug = function node_apps_errout_debug():void {
                 const stack:string = new Error().stack
@@ -2009,14 +2014,18 @@ interface readFile {
                 if (errtext[0] === "" && errtext.length < 2) {
                     console.log(`${text.yellow}No error message supplied${text.none}`);
                 } else {
+                    console.log("```");
                     errtext.forEach(function node_apps_errout_each(value:string):void {
                         // eslint-disable-next-line
                         console.log(value.replace(/\u001b/g, "\\u001b"));
                     });
+                    console.log("```");
                 }
                 console.log("");
                 console.log(`${text.green}## Stack Trace${text.none}`);
+                console.log("```");
                 console.log(stack);
+                console.log("```");
                 console.log("");
                 console.log(`${text.green}## Environment${text.none}`);
                 console.log(`* OS - **${node.os.platform()} ${node.os.release()}**`);
@@ -2024,17 +2033,20 @@ interface readFile {
                 console.log(`* CPU - ${node.os.arch()} ${node.os.cpus().length} cores`);
                 console.log("");
                 console.log(`${text.green}## Command Line Instruction${text.none}`);
+                console.log("```");
                 console.log(cli);
+                console.log("```");
                 console.log("");
                 console.log(`${text.green}## Options${text.none}`);
+                console.log("```");
                 console.log(options);
+                console.log("```");
                 console.log("");
+                console.log(`${text.green}## Time${text.none}`);
+                bell();
                 console.log("");
                 console.log("---");
                 console.log("");
-                if (command !== "prettydiff_debug") {
-                    process.exit(1);
-                }
             };
         errorflag = true;
         if (writeflag !== "") {
