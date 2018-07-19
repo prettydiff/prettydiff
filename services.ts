@@ -4,6 +4,7 @@ import { Stats } from "fs";
 import * as http from "http";
 import { Stream, Writable } from "stream";
 import { Hash } from "crypto";
+import { debug } from "util";
 type directoryItem = [string, "file" | "directory" | "link" | "screen", number, number, Stats];
 interface directoryList extends Array<directoryItem> {
     [key:number]: directoryItem;
@@ -34,10 +35,7 @@ interface readFile {
             os    : require("os"),
             path  : require("path")
         },
-        //stats = {
-         //   source: "",
-         //   diff: ""
-        //},
+        cli:string = process.argv.join(" "),
         sep:string = node.path.sep,
         projectPath:string = (function node_project() {
             const dirs:string[] = __dirname.split(sep);
@@ -166,6 +164,13 @@ interface readFile {
                         defined: "Exclusions are relative to the source directory."
                     }
                 ]
+            },
+            debug: {
+                description: "Generates a debug statement in markdown format.",
+                example: [{
+                    code: "prettydiff debug",
+                    defined: "Produces a report directly to the shell that can be copied to anywhere else. This report contains environmental details."
+                }]
             },
             diff: {
                 description: "Compare code samples the Pretty Diff way.",
@@ -1740,6 +1745,11 @@ interface readFile {
         start         = node.path.resolve(target);
         util.stat(start, start);
     };
+    // debug report
+    apps.debug = function node_apps_copy():void {
+        process.argv.push("debug");
+        apps.errout(["Debug Command"]);
+    };
     // mode diff
     apps.diff = function node_apps_diff():void {
         if (options.diff === "" || options.source === "") {
@@ -1970,32 +1980,70 @@ interface readFile {
     // uniform error formatting
     apps.errout = function node_apps_errout(errtext:string[]):void {
         const error = function node_apps_errout_error():void {
-            const stack:string = new Error().stack.replace("Error", `${text.cyan}Stack trace${text.none + node.os.EOL}-----------`);
-            console.log("");
-            console.log(stack);
-            console.log("");
-            console.log(`${text.angry}Error Message${text.none}`);
-            console.log("------------");
-            if (errtext[0] === "" && errtext.length < 2) {
-                console.log(`${text.yellow}No error message supplied${text.none}`);
-            } else {
-                errtext.forEach(function node_apps_errout_each(value:string):void {
-                    console.log(value);
-                });
-            }
-            console.log("");
-            apps.humantime(true);
-            if (command === "build" || command === "simulation") {
-                console.log("\u0007"); // bell sound
-            } else {
+                const stack:string = new Error().stack.replace("Error", `${text.cyan}Stack trace${text.none + node.os.EOL}-----------`);
                 console.log("");
-            }
-            process.exit(1);
-        };
+                console.log(stack);
+                console.log("");
+                console.log(`${text.angry}Error Message${text.none}`);
+                console.log("------------");
+                if (errtext[0] === "" && errtext.length < 2) {
+                    console.log(`${text.yellow}No error message supplied${text.none}`);
+                } else {
+                    errtext.forEach(function node_apps_errout_each(value:string):void {
+                        console.log(value);
+                    });
+                }
+                console.log("");
+                apps.humantime(true);
+                if (command === "build" || command === "simulation") {
+                    console.log("\u0007"); // bell sound
+                } else {
+                    console.log("");
+                }
+                process.exit(1);
+            },
+            debug = function node_apps_errout_debug():void {
+                const stack:string = new Error().stack
+                console.log("");
+                console.log("---");
+                console.log("");
+                console.log("");
+                console.log("# Pretty Diff - Debug Report");
+                console.log("");
+                console.log(`${text.green}## Error Message${text.none}`);
+                if (errtext[0] === "" && errtext.length < 2) {
+                    console.log(`${text.yellow}No error message supplied${text.none}`);
+                } else {
+                    errtext.forEach(function node_apps_errout_each(value:string):void {
+                        console.log(value.replace(/\u001b/g, "\\u001b"));
+                    });
+                }
+                console.log("");
+                console.log(`${text.green}## Stack Trace${text.none}`);
+                console.log(stack);
+                console.log("");
+                console.log(`${text.green}## Environment${text.none}`);
+                console.log(`* OS - **${node.os.platform()} ${node.os.release()}**`);
+                console.log(`* Mem - ${node.os.totalmem()} - ${node.os.freemem()} = **${apps.commas(node.os.totalmem() - node.os.freemem())}**`);
+                console.log(`* CPU - ${node.os.arch()} ${node.os.cpus().length} cores`);
+                console.log("");
+                console.log(`${text.green}## Command Line Instruction${text.none}`);
+                console.log(cli);
+                console.log("");
+                console.log(`${text.green}## Options${text.none}`);
+                console.log(options);
+                console.log("");
+                console.log("");
+                console.log("---");
+                console.log("");
+                process.exit(1);
+            };
         errorflag = true;
         if (writeflag !== "") {
             apps.remove(writeflag, error);
             writeflag = "";
+        } else if (process.argv.indexOf("debug") > -1) {
+            debug();
         } else {
             error();
         }
