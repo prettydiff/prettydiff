@@ -750,7 +750,7 @@
                     }
                 }
 
-                // changing the default value of diff_format for the browser tool
+                // changing the default value of diff_format and complete_document for the browser tool
                 {
                     let el:HTMLElement = document.getElementById("option-diff_format"),
                         ops:NodeListOf<HTMLOptionElement> = el.getElementsByTagName("option"),
@@ -3245,28 +3245,13 @@
                                         return tabout.join("");
                                     }()),
                                     json_output:string[] = [`{"diff": [`];
-                                    let a:number = 0,
-                                        b:number = 0,
-                                        space:string[],
-                                        longest:number = 0;
+                                    let a:number = 0;
                                 do {
-                                    json[a][1] = `"${json[a][1].replace(/\\/g, "\\\\").replace(/"/g, "\\\"")}"`;
-                                    if (json[a][1].length > longest) {
-                                        longest = json[a][1].length;
+                                    if (json[a][0] === "r") {
+                                        json_output.push(`${tab}["${json[a][0]}", "${json[a][1].replace(/\\/g, "\\\\").replace(/"/g, "\\\"")}", "${json[a][2].replace(/\\/g, "\\\\").replace(/"/g, "\\\"")}"],`);
+                                    } else {
+                                        json_output.push(`${tab}["${json[a][0]}", "${json[a][1].replace(/\\/g, "\\\\").replace(/"/g, "\\\"")}"],`);
                                     }
-                                    a = a + 1;
-                                } while (a < len);
-                                a = 0;
-                                do {
-                                    b = json[a][1].length;
-                                    space = [" "];
-                                    if (b < longest) {
-                                        do {
-                                            space.push(" ");
-                                            b = b + 1;
-                                        } while (b < longest);
-                                    }
-                                    json_output.push(`${tab}["${json[a][0]}", ${json[a][1]},${space.join("")}"${json[a][2].replace(/\\/g, "\\\\").replace(/"/g, "\\\"")}"],`);
                                     a = a + 1;
                                 } while (a < len);
                                 json_output[json_output.length - 1] = json_output[json_output.length - 1].replace(/\],$/, "]");
@@ -3287,7 +3272,7 @@
                             }
                             let textarea:HTMLTextAreaElement = report.code.body.getElementsByTagName("textarea")[0];
                             if (textarea !== undefined) {
-                                textarea.style.height = `${(report.code.body.clientHeight - 250) / 10}em`;
+                                textarea.style.height = `${(report.code.body.clientHeight - 140) / 12}em`;
                                 diffList = report
                                     .code
                                     .body

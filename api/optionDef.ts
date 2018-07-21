@@ -1,13 +1,12 @@
-/*prettydiff.com wrap:80 object_sort:true vertical:true*/
 /*global global*/
-(function options_init():void {
+(function options_init(): void {
     "use strict";
     const optionDef = {
         brace_line       : {
             api       : "any",
             default   : false,
-            definition: "If true an empty line will be inserted after opening curly braces and bef" +
-                    "ore closing curly braces.",
+            definition: "If true an empty line will be inserted after opening curly braces and before clo" +
+                    "sing curly braces.",
             label     : "Brace Lines",
             lexer     : "script",
             mode      : "beautify",
@@ -164,8 +163,8 @@
         diff             : {
             api       : "any",
             default   : "",
-            definition: "The code sample to be compared to 'source' option.  This is required if mode is '" +
-                    "diff'.",
+            definition: "The code sample to be compared to 'source' option.  This is required if mode is " +
+                    "'" + "diff'.",
             label     : "Code to Compare",
             lexer     : "any",
             mode      : "diff",
@@ -181,11 +180,12 @@
             mode      : "diff",
             type      : "boolean"
         },
-        diff_context          : {
+        diff_context     : {
             api       : "any",
             default   : -1,
             definition: "This shortens the diff output by allowing a specified number of equivalent lines" +
-                    " between each line of difference.  This option is only used with diff_format:html.",
+                    " between each line of difference.  This option is only used with diff_format:htm" +
+                    "l.",
             label     : "Context Size",
             lexer     : "any",
             mode      : "diff",
@@ -194,13 +194,15 @@
         diff_format      : {
             api       : "any",
             default   : "text",
-            definition: "The format of the output.  The command line output format is text, similar to Unix 'diff'.",
+            definition: "The format of the output.  The command line output format is text, similar to Un" +
+                    "ix 'diff'.",
             label     : "Diff Format",
             lexer     : "any",
             mode      : "diff",
             type      : "string",
             values    : {
-                "html": "An HTML format for embedding in web pages, or as a complete web page if document_complete is true.",
+                "html": "An HTML format for embedding in web pages, or as a complete web page if document" +
+                        "_complete is true.",
                 "json": "A JSON format.",
                 "text": "Formatted similar to the Unix 'diff' command line utility."
             }
@@ -401,16 +403,6 @@
                 report: "generates HTML output that renders in web browsers"
             }
         },
-        language_name    : {
-            api       : "any",
-            default   : "JavaScript",
-            definition: "The formatted proper name of the code sample's language for use in reports read " +
-                    "by people.",
-            label     : "Formatted Name of the Code's Language",
-            lexer     : "any",
-            mode      : "any",
-            type      : "string"
-        },
         language         : {
             api       : "any",
             default   : "auto",
@@ -426,6 +418,16 @@
             definition: "The fallback option if option 'lang' is set to 'auto' and a language cannot be d" +
                     "etected.",
             label     : "Language Auto-Detection Default",
+            lexer     : "any",
+            mode      : "any",
+            type      : "string"
+        },
+        language_name    : {
+            api       : "any",
+            default   : "JavaScript",
+            definition: "The formatted proper name of the code sample's language for use in reports read " +
+                    "by people.",
+            label     : "Formatted Name of the Code's Language",
             lexer     : "any",
             mode      : "any",
             type      : "string"
@@ -551,8 +553,8 @@
         output           : {
             api       : "node",
             default   : "",
-            definition: "The path of the directory, if readmethod is value 'directory', or path and name " +
-                    "of the file to write the output.  The path will be created or overwritten.",
+            definition: "The path to write output for one of the mode operations: beautify, diff, minify," +
+                    " parse.  If this option is omitted output will be printed to the shell.",
             label     : "Output Location",
             lexer     : "any",
             mode      : "any",
@@ -631,7 +633,9 @@
         read_method      : {
             api       : "node",
             default   : "auto",
-            definition: "The readmethod determines how Node.js should receive input and output.",
+            definition: "The option determines how Node.js should receive input.  All output will be prin" +
+                    "ted to the shell unless the option 'output' is specified, which will write outpu" +
+                    "t to a file.",
             label     : "Read Method",
             lexer     : "any",
             mode      : "any",
@@ -640,7 +644,6 @@
                 auto        : "changes to value subdirectory, file, or screen depending on source resolution",
                 directory   : "process all files in the specified directory only",
                 file        : "reads a file and outputs to a file.  file requires option 'output'",
-                filescreen  : "reads a file and writes to screen",
                 screen      : "reads from screen and outputs to screen",
                 subdirectory: "process all files in a directory and its subdirectories"
             }
