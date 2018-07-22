@@ -376,6 +376,9 @@
                     let b: number = 0;
                     const strLen: number = str.length,
                         output: string[] = [];
+                    if (strLen < 1) {
+                        return output;
+                    }
                     do {
                         output.push(str[b].replace(tabFix, ""));
                         b = b + 1;
