@@ -405,7 +405,9 @@ interface readFile {
                     return false;
                 },
                 modeval = function node_command_modeval():boolean {
-                    let a:number = 0;
+                    let a:number = 0,
+                        diff:boolean = false,
+                        source:boolean = false;
                     const len:number = process.argv.length;
                     if (len > 0) {
                         do {
@@ -426,8 +428,30 @@ interface readFile {
                                 console.log("");
                                 return true;
                             }
+                            if (process.argv[a].replace(/\s+/g, "").indexOf("source:") === 0 || process.argv[a].replace(/\s+/g, "").indexOf("source=") === 0 || process.argv[a].replace(/\s+/g, "").indexOf("source\"") === 0 || process.argv[a].replace(/\s+/g, "").indexOf("source'") === 0) {
+                                source = true;
+                            } else if (process.argv[a].replace(/\s+/g, "").indexOf("diff:") === 0 || process.argv[a].replace(/\s+/g, "").indexOf("diff=") === 0 || process.argv[a].replace(/\s+/g, "").indexOf("diff\"") === 0 || process.argv[a].replace(/\s+/g, "").indexOf("diff'") === 0) {
+                                diff = true;
+                            }
                             a = a + 1;
                         } while (a < len);
+                        if (source === true || arg.replace(/\s+/g, "").indexOf("source:") === 0 || arg.replace(/\s+/g, "").indexOf("source=") === 0 || arg.replace(/\s+/g, "").indexOf("source\"") === 0 || arg.replace(/\s+/g, "").indexOf("source'") === 0) {
+                            if (source === false) {
+                                process.argv.push(arg);
+                            }
+                            if (diff === true || arg.replace(/\s+/g, "").indexOf("diff:") === 0 || arg.replace(/\s+/g, "").indexOf("diff=") === 0 || arg.replace(/\s+/g, "").indexOf("diff\"") === 0 || arg.replace(/\s+/g, "").indexOf("diff'") === 0) {
+                                if (diff === false) {
+                                    process.argv.push(arg);
+                                }
+                                mode = "diff";
+                            } else {
+                                mode = "beautify";
+                            }
+                            console.log("");
+                            console.log(`No supported command found.  Pretty Diff is assuming command ${text.bold + text.cyan + mode + text.none}.`);
+                            console.log("");
+                            return true;
+                        }
                     }
                     return false;
                 };
@@ -748,11 +772,7 @@ interface readFile {
                 const output = (direction === "decode")
                     ? Buffer.from(string, "base64").toString("utf8")
                     : Buffer.from(string).toString("base64");
-                if (verbose === true) {
-                    apps.log([output]);
-                } else {
-                    console.log(output);
-                }
+                apps.log([""], output, path);
             },
             fileWrapper = function node_apps_base64_fileWrapper(filepath):void {
                 node
@@ -790,11 +810,7 @@ interface readFile {
                                             const output = (direction === "decode")
                                                 ? Buffer.from(buffera.toString("utf8"), "base64").toString("utf8")
                                                 : buffera.toString("base64");
-                                            if (verbose === true) {
-                                                apps.log([output]);
-                                            } else {
-                                                console.log(output);
-                                            }
+                                            apps.log([""], output, path);
                                         }
                                     );
                             });
@@ -878,7 +894,7 @@ interface readFile {
                 if (order.length < 1) {
                     verbose = true;
                     heading("All tasks complete... Exiting clean!\u0007");
-                    apps.log([""]);
+                    apps.log([""], "", "");
                     process.exit(0);
                     return;
                 }
@@ -1464,7 +1480,7 @@ interface readFile {
                 output.push("");
                 a = a + 1;
             } while (a < len);
-            apps.log(output);
+            apps.log(output, "", "");
         }
     };
     // converts numbers into a string of comma separated triplets
@@ -1736,7 +1752,7 @@ interface readFile {
                     out.push(text.none);
                     out.push(" bytes.");
                     verbose = true;
-                    apps.log([out.join(""), `Copied ${text.cyan + target + text.none} to ${text.green + destination + text.none}`]);
+                    apps.log([out.join(""), `Copied ${text.cyan + target + text.none} to ${text.green + destination + text.none}`], "", "");
                 },
                 exclusions: exclusions,
                 destination: process.argv[1].replace(/(\\|\/)/g, sep),
@@ -1792,13 +1808,11 @@ interface readFile {
                     let a:number = 0;
                     args = {
                         callback: function node_apps_directory_startPath_callback(result:string[]|directoryList) {
-                            console.log(JSON.stringify(result));
+                            const output:string[] = [];
                             if (verbose === true) {
-                                let output:string[] = [];
-                                console.log("");
                                 apps.wrapit(output, `Pretty Diff found ${text.green + apps.commas(result.length) + text.none} matching items from address ${text.cyan + startPath + text.none} with a total file size of ${text.green + apps.commas(size) + text.none} bytes.`);
-                                apps.log(output);
                             }
+                            apps.log(output, JSON.stringify(result), node.path.resolve(process.argv[0]));
                         },
                         exclusions: exclusions,
                         path: "",
@@ -1914,7 +1928,7 @@ interface readFile {
                                 return;
                             }
                             if (type === true) {
-                                apps.log([`Requested artifact, ${text.cyan + startPath + text.none}, ${text.angry}is missing${text.none}.`]);
+                                apps.log([`Requested artifact, ${text.cyan + startPath + text.none}, ${text.angry}is missing${text.none}.`], "",  "");
                                 return;
                             }
                             apps.errout([angrypath]);
@@ -1925,7 +1939,7 @@ interface readFile {
                     }
                     if (stat === undefined) {
                         if (type === true) {
-                            apps.log([`Requested artifact, ${text.cyan + startPath + text.none}, ${text.angry}is missing${text.none}.`]);
+                            apps.log([`Requested artifact, ${text.cyan + startPath + text.none}, ${text.angry}is missing${text.none}.`], "", "");
                             return;
                         }
                         apps.errout([angrypath]);
@@ -1933,7 +1947,7 @@ interface readFile {
                     }
                     if (stat.isDirectory() === true) {
                         if (type === true) {
-                            apps.log(["directory"]);
+                            apps.log(["directory"], "", "");
                             return;
                         }
                         if ((args.recursive === true || dirtest === false) && exclusions.indexOf(filepath.replace(startPath + sep, "")) < 0) {
@@ -1944,18 +1958,18 @@ interface readFile {
                         }
                     } else if (stat.isSymbolicLink() === true) {
                         if (type === true) {
-                            apps.log(["symbolicLink"]);
+                            apps.log(["symbolicLink"], "", "");
                             return;
                         }
                         populate("link");
                     } else if (stat.isFile() === true || stat.isBlockDevice() === true || stat.isCharacterDevice() === true) {
                         if (type === true) {
                             if (stat.isBlockDevice() === true) {
-                                apps.log(["blockDevice"]);
+                                apps.log(["blockDevice"], "", "");
                             } else if (stat.isCharacterDevice() === true) {
-                                apps.log(["characterDevice"]);
+                                apps.log(["characterDevice"], "", "");
                             } else {
-                                apps.log(["file"]);
+                                apps.log(["file"], "", "");
                             }
                             return;
                         }
@@ -1964,11 +1978,11 @@ interface readFile {
                     } else {
                         if (type === true) {
                             if (stat.isFIFO() === true) {
-                                apps.log(["FIFO"]);
+                                apps.log(["FIFO"], "", "");
                             } else if (stat.isSocket() === true) {
-                                apps.log(["socket"]);
+                                apps.log(["socket"], "", "");
                             } else {
-                                apps.log(["unknown"]);
+                                apps.log(["unknown"], "", "");
                             }
                             return;
                         }
@@ -2079,53 +2093,7 @@ interface readFile {
         let file:string = "";
         const scheme:string = (address.indexOf("https") === 0)
                 ? "https"
-                : "http",
-            getcall = function node_apps_getFile_callback(file:string|Blob) {
-                const addy:string = (command === "hash")
-                    ? process.argv[0]
-                    : process.argv[1];
-                if (addy !== undefined) {
-                    const dirs:string[] = addy.split("/"),
-                        statWrapper = function node_apps_getFile_callback_fileName_statWrapper() {
-                            node.fs.stat(process.cwd() + name, function node_apps_getFile_callback_fileName_statWrapper_stat(ers:Error) {
-                                if (ers !== null) {
-                                    if (ers.toString().indexOf("no such file or directory")) {
-                                        node.fs.writeFile(name, file, "utf8", function node_apps_getFile_callback_write(err:Error) {
-                                            writeflag = name;
-                                            if (err !== null) {
-                                                apps.errout([err.toString()]);
-                                                return;
-                                            }
-                                            if (command === "hash" || command === "base64") {
-                                                callback(process.cwd() + sep + name);
-                                            } else {
-                                                apps.log([`File ${text.cyan + name + text.none} written with ${apps.commas(file.toString().length)} characters.`]);
-                                            }
-                                        });
-                                    } else {
-                                        apps.errout([ers.toString()]);
-                                    }
-                                } else {
-                                    if (name.indexOf(".") < 0) {
-                                        name = `${name}0.txt`;
-                                    } else {
-                                        const names:string[] = name.split(".");
-                                        names[names.length - 2] = names[names.length - 2].replace(/\d+$/, inc.toString());
-                                        inc = inc + 1;
-                                        node_apps_getFile_callback_fileName_statWrapper();
-                                    }
-                                }
-                            });
-                        };
-                    let name:string = (dirs.length < 4 || dirs[dirs.length - 1] === "")
-                            ? "get.txt"
-                            : dirs[dirs.length - 1],
-                        inc:number = 0;
-                    statWrapper();
-                } else {
-                    apps.log([file.toString()]);
-                }
-            };
+                : "http";
         if ((/^(https?:\/\/)/).test(address) === false) {
             apps.errout([
                 `Address: ${text.angry + address + text.none}`,
@@ -2152,8 +2120,8 @@ interface readFile {
                     apps.errout([`${scheme}.get failed with status code ${res.statusCode}`]);
                     return;
                 }
-                if (command === "get" || command === "hash") {
-                    getcall(file);
+                if (command === "get") {
+                    apps.log([""], file.toString(), "");
                 } else if (callback !== null) {
                     callback(file);
                 }
@@ -2183,12 +2151,9 @@ interface readFile {
                             ? JSON.stringify(listObject)
                             : hash.digest("hex").replace(/\s+$/, "");
                         if (verbose === true) {
-                            apps.log([
-                                `Pretty Diff hashed ${text.cyan + filepath + text.none}`,
-                                hashstring
-                            ]);
-                        } else {
-                            apps.log([hashstring]);
+                            apps.log([`Pretty Diff hashed ${text.cyan + filepath + text.none}`], hashstring, filepath);
+                        }else{
+                            apps.log([""], hashstring, filepath);
                         }
                     },
                     hashback = function node_apps_hash_dirComplete_hashback(data:readFile, item:string|Buffer, callback:Function):void {
@@ -2327,7 +2292,7 @@ interface readFile {
                 const hash:Hash = node.crypto.createHash("sha512");
                 process.argv.splice(process.argv.indexOf("string"), 1);
                 hash.update(process.argv[0]);
-                apps.log([hash.digest("hex")]);
+                apps.log([""], hash.digest("hex"), "");
                 return;
             }
             if (listIndex > -1 && process.argv.length > 1) {
@@ -2340,16 +2305,10 @@ interface readFile {
             }
         }
         if (http.test(filepath) === true) {
-            apps.get(filepath, "source", function node_apps_hash_get(path:string) {
-                apps.directory({
-                    callback: function node_apps_hash_get_localCallback(list:directoryList) {
-                        dirComplete(list);
-                    },
-                    exclusions: [],
-                    path: path,
-                    recursive: true,
-                    symbolic: true
-                });
+            apps.get(filepath, "source", function node_apps_hash_get(filedata:string) {
+                const hash:Hash = node.crypto.createHash("sha512");
+                hash.update(filedata);
+                apps.log([""], hash.digest("hex"), filepath);
             });
         } else {
             node.child("ulimit -n", function node_apps_hash_ulimit(uerr:Error, uout:string) {
@@ -2382,7 +2341,7 @@ interface readFile {
         output.push("or if not globally installed");
         output.push(`${text.cyan}node js/services commands${text.none}`);
         verbose = true;
-        apps.log(output);
+        apps.log(output, "", "");
     };
     // converting time durations into something people read
     apps.humantime = function node_apps_humantime(finished:boolean):string {
@@ -2536,6 +2495,9 @@ interface readFile {
     // wrapper for ESLint usage
     apps.lint = function node_apps_lint(callback:Function):void {
         node.child("eslint", function node_apps_build_lint_eslintCheck(eserr:Error) {
+            const lintpath:string = (command === "lint" && process.argv[0] !== undefined)
+                ? node.path.resolve(process.argv[0])
+                : js;
             if (eserr !== null) {
                 console.log("ESLint is not globally installed or is corrupt.");
                 console.log(`Install ESLint using the command: ${text.green}npm install eslint -g${text.none}`);
@@ -2549,7 +2511,7 @@ interface readFile {
             if (command === "lint") {
                 callback = function node_apps_lint_callback():void {
                     if (verbose === true) {
-                        apps.log([""]);
+                        apps.log([`Lint complete for ${lintpath}`], "", lintpath);
                     }
                 };
             }
@@ -2601,9 +2563,7 @@ interface readFile {
                     exclusions: (command === "lint" && process.argv[0] !== undefined)
                         ? exclusions
                         : [],
-                    path      : (command === "lint" && process.argv[0] !== undefined)
-                        ? process.argv[0]
-                        : js,
+                    path      : lintpath,
                     recursive: true,
                     symbolic: false
                 });
@@ -2687,24 +2647,81 @@ interface readFile {
         } else if (command === "options") {
             output.push(`${text.green + lenn + text.none} matching option${plural}.`);
         }
-        apps.log(output);
+        apps.log(output, "", "");
     };
     // verbose metadata printed to the shell about Pretty Diff
-    apps.log = function node_apps_output(output:string[]):void {
-        if (verbose === true && (output.length > 1 || output[0] !== "")) {
-            console.log("");
+    apps.log = function node_apps_log(output:string[], code:string, path:string):void {
+        const tense:string = (function node_apps_log_tense():string {
+                if (command === "beautify") {
+                    return "Beautified";
+                }
+                if (command === "minify") {
+                    return "Minified";
+                }
+                if (command === "parse") {
+                    return "Parsed";
+                }
+                return "";
+            }()),
+            diffOutput = function node_apps_log_diff() {
+                const count:string[] = path.split(","),
+                    plural:[string, string] = ["", ""];
+                if (count[0] !== "1") {
+                    plural[0] = "s";
+                }
+                if (count[1] !== "1") {
+                    plural[1] = "s";
+                }
+                if (options.diff_format === "text" && code === "") {
+                    output.push(`${text.green}Pretty Diff found no differences.${text.none}`);
+                } else {
+                    output.push("");
+                    output.push(`Pretty Diff found ${text.cyan + count[0] + text.none} difference${plural[0]} on ${text.cyan + count[1] + text.none} line${plural[1]}.`);
+                }
+            },
+            conclusion = function node_apps_log_conclusion():void {
+                if (verbose === true && (output.length > 1 || output[0] !== "")) {
+                    console.log("");
+                }
+                if (output[output.length - 1] === "") {
+                    output.pop();
+                }
+                output.forEach(function node_apps_log_each(value:string) {
+                    console.log(value);
+                });
+                if (verbose === true) {
+                    console.log("");
+                    console.log(`parse-framework version ${text.angry + version.parse + text.none}`);
+                    console.log(`Pretty Diff version ${text.angry + version.number + text.none} dated ${text.cyan + version.date + text.none}`);
+                    apps.humantime(true);
+                }
+            };
+        if (command === "diff") {
+            diffOutput();
+        } else if (verbose === true && tense !== "") {
+            if (options.read_method === "screen") {
+                output.push(`${tense} input from terminal.`);
+            } else if (verbose === true && options.read_method === "file") {
+                output.push(`${tense} input from file ${text.cyan + path + text.none}`);
+            }
         }
-        if (output[output.length - 1] === "") {
-            output.pop();
+        if (code !== "") {
+            if (options.output === "") {
+                console.log(code);
+            } else {
+                const out:string = node.path.resolve(options.output);
+                node.fs.writeFile(out, code, function node_apps_output_writeFile(err:Error):void {
+                    if (err !== null) {
+                        apps.errout([err.toString()]);
+                        return;
+                    }
+                    output.push(`Wrote output to ${text.green + out + text.none} at ${text.green + apps.commas(code.length) + text.none} characters.`);
+                    conclusion();
+                });
+            }
         }
-        output.forEach(function node_apps_output_each(value:string) {
-            console.log(value);
-        });
-        if (verbose === true) {
-            console.log("");
-            console.log(`parse-framework version ${text.angry + version.parse + text.none}`);
-            console.log(`Pretty Diff version ${text.angry + version.number + text.none} dated ${text.cyan + version.date + text.none}`);
-            apps.humantime(true);
+        if (code === "" || options.output === "") {
+            conclusion();
         }
     };
     // makes specified directory structures in the local file system
@@ -2853,7 +2870,7 @@ interface readFile {
                     a = a + 1;
                 } while (a < keylen);
                 if (keylen < 1) {
-                    apps.log([`${text.angry}Pretty Diff has no options matching the query criteria.${text.none}`]);
+                    apps.log([`${text.angry}Pretty Diff has no options matching the query criteria.${text.none}`], "", "");
                 } else {
                     apps.lists({
                         emptyline: true,
@@ -2871,63 +2888,6 @@ interface readFile {
                 obj: def[process.argv[0]],
                 property: "eachkey"
             });
-        }
-    };
-    // uniformly formats output for Pretty Diff generated code from: beautify, minify, parse commands
-    apps.output = function node_apps_output(path:string, code:string|Buffer) {
-        const tense:string = (function node_apps_output_tense():string {
-                if (options.mode === "beautify") {
-                    return "Beautified";
-                }
-                if (options.mode === "minify") {
-                    return "Minified";
-                }
-                if (options.mode === "parse") {
-                    return "Parsed";
-                }
-            }()),
-            diffOutput = function node_apps_output_diff() {
-                const count:string[] = path.split(","),
-                    plural:[string, string] = ["", ""];
-                if (count[0] !== "1") {
-                    plural[0] = "s";
-                }
-                if (count[1] !== "1") {
-                    plural[1] = "s";
-                }
-                if (options.diff_format === "text" && code === "") {
-                    output.push(`${text.green}Pretty Diff found no differences.${text.none}`);
-                } else {
-                    output.push("");
-                    output.push(`Pretty Diff found ${text.cyan + count[0] + text.none} difference${plural[0]} on ${text.cyan + count[1] + text.none} line${plural[1]}.`);
-                }
-            },
-            output:string[] = [];
-        if (options.mode === "diff") {
-            diffOutput();
-        } else if (verbose === true && options.read_method === "screen") {
-            output.push(`${tense} input from terminal.`);
-        } else if (verbose === true && options.read_method === "file") {
-            output.push(`${tense} input from file ${text.cyan + path + text.none}`);
-        }
-        if (options.output !== "") {
-            node.fs.writeFile(options.output, code, function node_apps_output_writeFile(err:Error):void {
-                if (err !== null) {
-                    apps.errout([err.toString()]);
-                    return;
-                }
-                output.push(`Wrote output to ${text.green + options.output + text.none} at ${text.green + apps.commas(code.length) + text.none} characters.`);
-                apps.log(output);
-            });
-        } else {
-            if (code !== "") {
-                if (typeof code === "string") {
-                    output.push(code);
-                } else {
-                    output.push(code.toString("utf8"));
-                }
-            }
-            apps.log(output);
         }
     };
     // handler for the parse command
@@ -3059,10 +3019,10 @@ interface readFile {
                                         lines: 0
                                     };
                                     const result:string = prettydiff.mode(options, meta);
-                                    apps.output(`${meta.differences},${meta.lines}`, result);
+                                    apps.log([""], result, `${meta.differences},${meta.lines}`);
                                 }
                             } else {
-                                apps.output("", prettydiff.mode(options));
+                                apps.log([""], prettydiff.mode(options), "");
                             }
                         },
                         resolveItem = function node_apps_readmethod_resolve_stat_resolveItem() {
@@ -3124,8 +3084,23 @@ interface readFile {
                                                             aa = aa + 1;
                                                         } while (aa < len && diffStore[item][aa][1] === "link");
                                                     }
-                                                },
-                                                sanitize = function node_apps_readmethod_resolve_stat_resolveItem_callbackDiff_sanitize(item_type:"source"|"diff", string_purge:string):void {
+                                                };
+                                            let json:diffJSON,
+                                                a:number = 0,
+                                                b:number = 0,
+                                                len:number  = 0;
+                                            diffStore.diff.sort(sort);
+                                            diffStore.source.sort(sort);
+                                            populate("diff");
+                                            populate("source");
+                                            options.diff_format = "json";
+                                            options.source = dirs.source;
+                                            options.diff = dirs.diff;
+                                            json = JSON.parse(prettydiff.api.diffview(options)[0]).diff;
+                                            len = json.length;
+                                            
+                                            if (options.read_method === "subdirectory") {
+                                                const sanitize = function node_apps_readmethod_resolve_stat_resolveItem_callbackDiff_sanitize(item_type:"source"|"diff", string_purge:string):void {
                                                     const arrays = function node_apps_readmethod_resolve_stat_resolveItem_callbackDiff_sanitize_arrays(arr:string[]):void {
                                                         let c:number = 0,
                                                             d:number = -1,
@@ -3149,21 +3124,6 @@ interface readFile {
                                                     arrays(files[item_type]);
                                                     arrays(links[item_type]);
                                                 };
-                                            let json:diffJSON,
-                                                a:number = 0,
-                                                b:number = 0,
-                                                len:number  = 0;
-                                            diffStore.diff.sort(sort);
-                                            diffStore.source.sort(sort);
-                                            populate("diff");
-                                            populate("source");
-                                            options.diff_format = "json";
-                                            options.source = dirs.source;
-                                            options.diff = dirs.diff;
-                                            json = JSON.parse(prettydiff.api.diffview(options)[0]).diff;
-                                            len = json.length;
-                                            
-                                            if (options.read_method === "subdirectory") {
                                                 // File systems are tree structures, so this loop normalizes artificats against changes to directory structures.
                                                 // If a directory is removed then indicate such without listing its thousands of descendant artifacts.
                                                 do {
@@ -3193,7 +3153,6 @@ interface readFile {
                                                 } while (a < len);
                                             }
 
-
                                             // 1. inserted directories
                                             // 2. deleted directories
                                             // 3. inserted symlinks
@@ -3206,7 +3165,8 @@ interface readFile {
                                     callback_other = function node_apps_readmethod_resolve_stat_resolveItem_callbackOther(list:directoryList):void {
                                         const source:string = options.source.slice(0, options.source.lastIndexOf(sep) + 1),
                                             listlen:number = list.length,
-                                            out:string = node.path.resolve(options.output),plural:string = (listlen === 1)
+                                            out:string = node.path.resolve(options.output),
+                                            plural:string = (listlen === 1)
                                                 ? ""
                                                 : "s",
                                             parse:string = (options.mode === "parse")
@@ -3222,7 +3182,7 @@ interface readFile {
                                                 node.fs.writeFile(itempath, dump, function ode_apps_readmethod_resolve_stat_resolveItem_callbackOther_writeWrapper_writeFile():void {
                                                     b = b + 1;
                                                     if (b === listlen) {
-                                                        apps.log([`${text.green + c + text.none} file${plural} written to ${text.cyan + options.output + text.none}.`]);
+                                                        apps.log([`${text.green + c + text.none} file${plural} written to ${text.cyan + out + text.none}.`], "", "");
                                                     }
                                                 });
                                             },
@@ -3253,13 +3213,13 @@ interface readFile {
                                                     } else {
                                                         b = b + 1;
                                                         if (b === listlen && c > 0) {
-                                                            apps.log([`${text.green + c + text.none} file${plural} written to ${text.cyan + source + text.none}.`]);
+                                                            apps.log([`${text.green + c + text.none} file${plural} written to ${text.cyan + source + text.none}.`], "", "");
                                                         }
                                                     }
                                                     a = a + 1;
                                                 } while (a < listlen && fail === false);
                                                 if (c < 1) {
-                                                    apps.log([`${text.green}0${text.none} files written to ${text.cyan + source + text.none}.`]);
+                                                    apps.log([`${text.green}0${text.none} files written to ${text.cyan + source + text.none}.`], "", "");
                                                 }
                                             },
                                             makedir = function node_apps_readmethod_resolve_stat_resolveItem_callbackOther_makedir():void {
@@ -3283,6 +3243,7 @@ interface readFile {
                                             b:number = 0,
                                             c:number = 0,
                                             fail:boolean = false;
+                                        options.output = "";
                                         makedir();
                                     };
                                 apps.directory({
@@ -3309,10 +3270,10 @@ interface readFile {
                                                     path = (options.mode === "diff")
                                                         ? `${meta.differences},${meta.lines}`
                                                         : args.path;
-                                                apps.output(path, result);
+                                                apps.log([""], result, path);
                                             }
                                         } else {
-                                            apps.log([`The file at ${args.path} contains a binary buffer.  Pretty Diff does not analyze binary at this time.`]);
+                                            apps.log([`The file at ${args.path} contains a binary buffer.  Pretty Diff does not analyze binary at this time.`], "", args.path);
                                         }
                                     },
                                     index: 0,
@@ -3365,31 +3326,7 @@ interface readFile {
                         apps.errout([`Option ${text.cyan}read_method${text.none} has value ${text.green + options.read_method + text.none} but ${text.angry}option ${item} does not point to a file${text.none}.`]);
                         return;
                     }
-                    // resolving options.output path...
-                    if (diff === false) {
-                        if (options.output !== "") {
-                            options.output = node.path.resolve(options.output);
-                        }
-                        node.fs.stat(options.output, function node_apps_readmethod_resolve_stat_statOutput(ers:Error, ostat:Stats):void {
-                            if (ers !== null && ers.toString().indexOf("ENOENT") < 0) {
-                                apps.errout([ers.toString()]);
-                                return;
-                            }
-                            if (ers === null) {
-                                if (ostat.isDirectory() === false && ostat.isSymbolicLink() === false && ostat.isFIFO() === false) {
-                                    console.log(`Overwriting file ${text.green + options.output + text.none}.`);
-                                } else if (ostat.isDirectory() === true) {
-                                    options.output = `${options.output + sep}prettydiff.txt`;
-                                }
-                            }
-                            writeflag = options.output;
-                            if (options.read_method === "screen") {
-                                screen();
-                            } else {
-                                resolveItem();
-                            }
-                        });
-                    } else if (options.read_method === "screen") {
+                    if (options.read_method === "screen") {
                         screen();
                     } else {
                         resolveItem();
@@ -3500,7 +3437,7 @@ interface readFile {
                 out.push(apps.commas(numb.size));
                 out.push(text.none);
                 out.push(" bytes.");
-                apps.log([out.join(""), `Removed ${text.cyan + filepath + text.none}`]);
+                apps.log([out.join(""), `Removed ${text.cyan + filepath + text.none}`], "", "");
             };
         }
         apps.directory({
@@ -3980,7 +3917,7 @@ interface readFile {
                 {
                     command: "hash https://duckduckgo.com/assets/logo_homepage.normal.v107.svg",
                     qualifier: "is",
-                    test: "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
+                    test: "ca5259a8e10a06cae407fa016f94a7a7f44ff55047a03857ab5f3ceae4ed443f59e684dc3dba99c8fc1a847e992e008b234766327bd28265e16c8a549b40633e"
                 },
                 {
                     command: "help",
@@ -4084,7 +4021,7 @@ interface readFile {
                 },
                 {
                     command: `parse ${projectPath}tsconfig.json parse_format:table`,
-                    qualifier: "begins",
+                    qualifier: "contains",
                     test: `Parsed input from file ${text.cyan + projectPath}tsconfig.json${text.none}`
                 },
                 {
@@ -4142,7 +4079,7 @@ interface readFile {
                 },
                 {
                     command: "parse tsconfig verbose",
-                    qualifier: "begins",
+                    qualifier: "contains",
                     test: "Parsed input from terminal."
                 },
                 {
@@ -4318,7 +4255,7 @@ interface readFile {
         let a:number = 0;
         if (command === "simulation") {
             callback = function node_apps_lint_callback():void {
-                apps.log(["\u0007"]); // bell sound
+                apps.log(["\u0007"], "", ""); // bell sound
             };
             verbose = true;
             console.log("");
@@ -4437,7 +4374,7 @@ interface readFile {
                             options.mode         = "diff";
                             options.source       = output;
                             options.source_label = raw[a][1];
-                            apps.log([prettydiff.api.diffview(options)[0]]);
+                            apps.log([prettydiff.api.diffview(options)[0]], "", "");
                             break;
                         }
                     } else {
@@ -4454,7 +4391,7 @@ interface readFile {
                 if (a === len) {
                     if (command === "validation") {
                         verbose = true;
-                        apps.log([`${text.green}All ${len} files passed.${text.none}`]);
+                        apps.log([`${text.green}All ${len} files passed.${text.none}`], "", "");
                     } else {
                         console.log("");
                         console.log(`${text.green}All ${len} files passed.${text.none}`);
@@ -4510,7 +4447,7 @@ interface readFile {
     // runs apps.log
     apps.version = function ():void {
         verbose = true;
-        apps.log([""]);
+        apps.log([""], "", "");
     };
     // performs word wrap when printing text to the shell
     apps.wrapit = function node_apps_lists_wrapit(outputArray:string[], string:string):void {

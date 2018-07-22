@@ -553,8 +553,7 @@
         output           : {
             api       : "node",
             default   : "",
-            definition: "The path to write output for one of the mode operations: beautify, diff, minify," +
-                    " parse.  If this option is omitted output will be printed to the shell.",
+            definition: "A file path for which to write output.  If this option is not specified output will be printed to the shell.",
             label     : "Output Location",
             lexer     : "any",
             mode      : "any",
