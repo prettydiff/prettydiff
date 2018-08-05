@@ -16,7 +16,7 @@
     "directories": {
         "test": "test"
     },
-    "homepage": "http://prettydiff.com/",
+    "homepage": "https://prettydiff.com/",
     "keywords": [
         "parser",
         "lexer",

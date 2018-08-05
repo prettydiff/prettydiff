@@ -1282,7 +1282,7 @@
                     "tp://www.w3.org/1999/xhtml\" xml:lang=\"en\"><head><title>Pretty Diff - The diff" +
                     "erence tool</title><meta name=\"robots\" content=\"index, follow\"/> <meta name=" +
                     "\"DC.title\" content=\"Pretty Diff - The difference tool\"/> <link rel=\"canonic" +
-                    "al\" href=\"http://prettydiff.com/\" type=\"application/xhtml+xml\"/><meta http-" +
+                    "al\" href=\"https://prettydiff.com/\" type=\"application/xhtml+xml\"/><meta http-" +
                     "equiv=\"Content-Type\" content=\"application/xhtml+xml;charset=UTF-8\"/><meta ht" +
                     "tp-equiv=\"Content-Style-Type\" content=\"text/css\"/><style type=\"text/css\">/" +
                     "\u002a<![CDATA[\u002a/",

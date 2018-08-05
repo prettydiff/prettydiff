@@ -237,7 +237,7 @@ interface readFile {
                         defined: "Hash an arbitrary string directly from shell input."
                     },
                     {
-                        code: "prettydiff hash http://prettydiff.com/",
+                        code: "prettydiff hash https://prettydiff.com/",
                         defined: "Hash a resource from the web."
                     },
                     {
@@ -1093,6 +1093,7 @@ interface readFile {
                                     apps.errout([err.toString()]);
                                     return;
                                 }
+                                // always ensure the start and end points are uniquely named to prevent unintentional collisions
                                 if (fileFlag === "documentation") {
                                     modify({
                                         end: "<!-- option list end -->",
@@ -1117,11 +1118,11 @@ interface readFile {
                                         start:"// start option defaults"
                                     });
                                     modify({
-                                        end: "// prettydiff insertion end",
+                                        end: "// prettydiff dom insertion end",
                                         injectFlag: saveas + libraries + mode
-                                            .replace(/,\s*\/\/ prettydiff insertion start\s+prettydiff\s*=\s*\{\};/, `;// prettydiff insertion start${node.os.EOL}//filler${node.os.EOL}`)
+                                            .replace(/,\s*\/\/\s*prettydiff\s+file\s+insertion\s+start\s+prettydiff\s*=\s*\{\};/, `;// prettydiff file insertion start${node.os.EOL}//filler${node.os.EOL}`)
                                             .replace(/global\s*\.prettydiff/g, "prettydiff"),
-                                        start: "// prettydiff insertion start"
+                                        start: "// prettydiff dom insertion start"
                                     });
                                     modify({
                                         end: "// finalFile insertion end",
@@ -1141,9 +1142,9 @@ interface readFile {
                                     });
                                 } else if (fileFlag === "prettydiff") {
                                     modify({
-                                        end: "// prettydiff insertion end",
+                                        end: "// prettydiff file insertion end",
                                         injectFlag: `prettydiff={};${libraries}`,
-                                        start: "// prettydiff insertion start"
+                                        start: "// prettydiff file insertion start"
                                     });
                                     modify({
                                         end: "// finalFile insertion end",
@@ -2898,7 +2899,9 @@ interface readFile {
         options.mode = "parse";
         apps.readMethod(false);
     };
-    // debug report
+    // for testing the debug report generation
+    // * the debug report is a markdown report for posting online
+    // to aid with troubleshoot a defect
     apps.prettydiff_debug = function node_apps_debug():void {
         process.argv.push("prettydiff_debug");
         apps.errout(["Debug Command"]);

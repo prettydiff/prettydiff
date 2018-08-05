@@ -807,7 +807,7 @@
                                 "=",
                                 baseTextArray[baseStart + i]
                             ]);
-                        } else if (change === "replace") {
+                        } else if (change === "replace") {console.log(baseTextArray[baseStart + i]+baseTextArray[baseStart + i+1]);
                             json.push([
                                 "r",
                                 baseTextArray[baseStart + i],
@@ -1349,7 +1349,7 @@
             } else {
                 node.push("</ol></div>");
             }
-            node.push("<p class=\"author\">Diff view written by <a href=\"http://prettydiff.com/\">Pr" + "etty Diff</a>.</p></div>");
+            node.push("<p class=\"author\">Diff view written by <a href=\"https://prettydiff.com/\">Pr" + "etty Diff</a>.</p></div>");
             if (errorout === 1) {
                 diffplural = "";
             }

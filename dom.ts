@@ -8,6 +8,9 @@
  Please see the license.txt file associated with the Pretty Diff
  application for license information.
  ****************************************************************************/
+if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
+    location.replace(location.href.replace("http", "https"));
+}
 (function dom_init():void {
     "use strict";
     const meta:meta = {
@@ -365,7 +368,7 @@
                             sendit    = function dom_load_feedsubmit_sendit():void {
                                 const node:HTMLElement = id("feedintro");
                                 xhr.withCredentials = true;
-                                xhr.open("POST", "http://prettydiff.com:8000/feedback/", true);
+                                xhr.open("POST", "https://prettydiff.com:8000/feedback/", true);
                                 xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
                                 xhr.send(JSON.stringify(datapack));
                                 report
@@ -745,7 +748,7 @@
                     if (headline !== null) {
                         headtext.innerHTML = circulation[Math.floor(x * circulation.length)];
                         if (location.href.indexOf("ignore") > 0) {
-                            headline.innerHTML = "<h2>BETA TEST SITE.</h2> <p>Official Pretty Diff is at <a href=\"http://prettydiff.com/\">http://prettydiff.com/</a></p> <span class=\"clear\"></span>";
+                            headline.innerHTML = "<h2>BETA TEST SITE.</h2> <p>Official Pretty Diff is at <a href=\"https://prettydiff.com/\">https://prettydiff.com/</a></p> <span class=\"clear\"></span>";
                         }
                     }
                 }
@@ -3232,7 +3235,7 @@
                                 .box
                                 .getElementsByTagName("p")[0]
                                 .getElementsByTagName("button");
-                            if (options.diff_format === "json") {
+                            if (options.diff_format === "json" && options.diff_rendered_html === false) {
                                 const json:diffJSON = JSON.parse(output).diff,
                                     len:number = json.length,
                                     tab:string = (function dom_event_execute_app_renderOutput_diffTab():string {
@@ -3258,7 +3261,7 @@
                                 json_output.push("]}");
                                 output = `<textarea>${json_output.join("\n")}</textarea>`;
                             }
-                            if (options.complete_document === true) {
+                            if (options.complete_document === true || options.diff_rendered_html === true) {
                                 output = `<textarea>${sanitize(output)}</textarea>`;
                             }
                             report.code.body.innerHTML = `<p>Code type is set to <strong>auto</strong>. Presumed language is <em>${data.langvalue[2]}</em>.</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
@@ -4451,7 +4454,7 @@
             x.style.zIndex = String(indexMax);
         }
     };
-    // prettydiff insertion start
-    // prettydiff insertion end
+    // prettydiff dom insertion start
+    // prettydiff dom insertion end
     load();
 }());

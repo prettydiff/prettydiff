@@ -217,6 +217,15 @@
             mode      : "diff",
             type      : "string"
         },
+        diff_rendered_html: {
+            api: "any",
+            default: false,
+            definition: "Compares complete HTML documents and injects custom CSS so that the differences display not in the code, but in the rendered page in a browser.  This option is currently confined only to markup languages, read_method file, and mode diff.  Option diff_format is ignored.",
+            label: "Compare Rendered HTML",
+            lexer: "markup",
+            mode: "diff",
+            type: "boolean"
+        },
         diff_space_ignore: {
             api       : "any",
             default   : false,

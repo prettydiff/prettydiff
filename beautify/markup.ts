@@ -222,7 +222,7 @@
                     if (data.token[a].indexOf("</") === 0) {
                         return;
                     }
-                    data.token[a] = data.token[a].replace(ending, "");
+                    data.token[a] = data.token[a].slice(0, data.token[a].lastIndexOf(ending));
                     levels[a] = -10;
                     findEnd();
                 };
