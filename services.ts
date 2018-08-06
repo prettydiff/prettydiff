@@ -1207,29 +1207,31 @@ interface readFile {
                             libFiles.push(`${projectPath}node_modules${sep}file-saver${sep}FileSaver.min.js`);
                             const appendFile = function node_apps_build_libraries_libraryFiles_appendFile(filePath:string):void {
                                     node.fs.readFile(filePath, "utf8", function node_apps_build_libraries_libraryFiles_appendFile_read(errr:Error, filedata:string):void {
+                                        const filenames:string[] = filePath.split(sep),
+                                            filename:string = filenames[filenames.length - 1];
                                         if (errr !== null) {
                                             apps.errout([errr.toString()]);
                                             return;
                                         }
-                                        if (filePath.indexOf("FileSaver") > 0) {
+                                        if (filename === "FileSaver.min.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
                                             filedata = filedata
                                                 .replace(/var\s+saveAs\s*=\s*saveAs\s*\|\|\s*function\(/, `// eslint-disable-next-line${node.os.EOL}prettydiff.saveAs=function prettydiff_saveAs(`)
                                                 .replace(/[{|}|;|(*/)]\s*var\s/g, function node_apps_build_libraries_libraryFiles_appendFile_read_saveAsFix(str:string):string {
                                                 return str.replace("var", "let");
                                             });
                                             saveas = filedata;
-                                        } else if (filePath.indexOf("prettydiff.js") > 0) {
+                                        } else if (filename === "prettydiff.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
                                             filedata = filedata
                                                 .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*/, "")
                                                 .replace(/global\s*\.prettydiff\s*\./g, "prettydiff.")
                                                 .replace(/("|')use strict("|');/, "");
                                             mode = filedata;
-                                        } else if (filePath.indexOf("finalFile.js") > 0) {
+                                        } else if (filename === "finalFile.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
                                             filedata = filedata
                                                 .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*/, "")
                                                 .replace(/("|')use strict("|');/, "");
                                             finalFile = filedata;
-                                        } else if (filePath.indexOf("diffview.js") > 0) {
+                                        } else if (filename === "diffview.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
                                             filedata = filedata
                                                 .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*/, "")
                                                 .replace(/global\s*\.prettydiff\s*\.api\s*\.diffview\s*=\s*/g, "return ")
@@ -2707,7 +2709,7 @@ interface readFile {
             }
         }
         if (code !== "") {
-            if (options.output === "") {
+            if (options.output === "" || options.output === undefined) {
                 console.log(code);
             } else {
                 const out:string = node.path.resolve(options.output);

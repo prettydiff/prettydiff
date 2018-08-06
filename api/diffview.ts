@@ -807,7 +807,7 @@
                                 "=",
                                 baseTextArray[baseStart + i]
                             ]);
-                        } else if (change === "replace") {console.log(baseTextArray[baseStart + i]+baseTextArray[baseStart + i+1]);
+                        } else if (change === "replace") {
                             json.push([
                                 "r",
                                 baseTextArray[baseStart + i],

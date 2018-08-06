@@ -375,7 +375,10 @@
                 diffview:any = {};
                 // diffview insertion end
 
-                if (options.language !== "text") {
+                if (options.language === "text") {
+                    diffoutput = diffview(options);
+                    result = diffoutput[0];
+                } else {
                     if (options.diff_rendered_html === true) {
                         const lexers:any = {},
                             tab = function mode_diffhtml_tab(indentation:number):string {
