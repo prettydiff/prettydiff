@@ -87,12 +87,6 @@ interface language {
 interface library {
     (): string;
 }
-interface localStorage extends Storage {
-    commentString: string;
-    diff: string;
-    settings: string;
-    source: string;
-}
 interface meta {
     error: string;
     lang: [string, string, string];
@@ -197,6 +191,12 @@ interface simulationItem {
     file?: string;
     qualifier: qualifier;
     test: string;
+}
+interface Storage extends Storage {
+    commentString: string;
+    diff: string;
+    settings: string;
+    source: string;
 }
 interface Window {
     parseFramework: any;
