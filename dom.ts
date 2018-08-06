@@ -306,7 +306,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                     },
                     clearComment = function dom_load_clearComment():void {
                         const comment = id("commentString");
-                        localStorage.commentString = "[]";
+                        localStorage.setItem("commentString", "[]");
                         data.commentString      = [];
                         if (comment !== null) {
                             comment.innerHTML = "/*prettydiff.com \u002a/";
@@ -349,8 +349,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                     feedsubmit = function dom_load_feedsubmit():void {
                         let a:number = 0;
                         const datapack:any  = {},
-                            namecheck:any = (localStorage.settings !== undefined)
-                                ? JSON.parse(localStorage.settings)
+                            namecheck:any = (localStorage.getItem("settings") !== undefined)
+                                ? JSON.parse(localStorage.getItem("settings"))
                                 : {},
                             radios:NodeListOf<HTMLInputElement> = id("feedradio1")
                                 .parentNode
@@ -693,7 +693,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                     selectDescription = function dom_load_selectDescription(el:HTMLSelectElement):void {
                         const options:NodeListOf<HTMLOptionElement> = el.getElementsByTagName("option"),
                             desc:string = options[el.selectedIndex].getAttribute("data-description"),
-                            value:string = el[el.selectedIndex].value,
+                            opt:HTMLOptionElement = <HTMLOptionElement>el[el.selectedIndex],
+                            value:string = opt.value,
                             parent:HTMLElement = <HTMLElement>el.parentNode,
                             span:HTMLSpanElement = parent.getElementsByTagName("span")[0];
                         span.innerHTML = ` <strong>${value}</strong> \u2014 ${desc}`;
@@ -798,19 +799,18 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
 
                 // preps stored settings
                 // should come after events are assigned
-                if (localStorage.settings !== undefined && localStorage.settings !== null) {
-                    if (localStorage.settings.indexOf(":undefined") > 0) {
-                        localStorage.settings = localStorage
-                            .settings
-                            .replace(/:undefined/g, ":false");
+                if (localStorage.getItem("settings") !== undefined && localStorage.getItem("settings") !== null) {
+                    if (localStorage.getItem("settings").indexOf(":undefined") > 0) {
+                        localStorage.setItem("settings", localStorage.getItem("settings").replace(/:undefined/g, ":false"));
                     }
-                    data.settings = JSON.parse(localStorage.settings);
+                    data.settings = JSON.parse(localStorage.getItem("settings"));
                     const keys:string[] = Object.keys(data.settings),
                         keylen:number = keys.length;
                     let a:number = 0,
                         el:HTMLElement,
                         sel:HTMLSelectElement,
-                        name:string;
+                        name:string,
+                        opt:HTMLOptionElement;
                     do {
                         if (keys[a] !== "report" && keys[a] !== "knownname" && keys[a] !== "feedback") {
                             el = id(keys[a]) || id(data.settings[keys[a]]);
@@ -819,7 +819,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                                 if (name === "select") {
                                     sel = <HTMLSelectElement>el;
                                     sel.selectedIndex = data.settings[keys[a]];
-                                    options[keys[a].replace("option-", "")] = sel[sel.selectedIndex].value;
+                                    opt = <HTMLOptionElement>sel[sel.selectedIndex];
+                                    options[keys[a].replace("option-", "")] = opt.value;
                                     if (keys[a] === "option-color") {
                                         method.event.colorScheme(null);
                                     }
@@ -871,7 +872,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                             .random()
                             .toString()
                             .slice(2)}`;
-                        localStorage.settings      = JSON.stringify(data.settings);
+                        localStorage.setItem("settings", JSON.stringify(data.settings));
                     }
                 } else {
                     data.settings.knownname = `${Math
@@ -885,16 +886,16 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                 if (options.diff === undefined) {
                     options.diff = "";
                 }
-                if (localStorage.source !== undefined) {
-                    options.source = localStorage.source;
+                if (localStorage.getItem("source") !== undefined) {
+                    options.source = localStorage.getItem("source");
                     if (test.ace === true) {
                         aceStore.codeIn.setValue(options.source);
                     } else {
                         textarea.codeIn.value = options.source;
                     }
                 }
-                if (localStorage.diff !== undefined) {
-                    options.diff = localStorage.diff;
+                if (localStorage.getItem("diff") !== undefined) {
+                    options.diff = localStorage.getItem("diff");
                     if (options.mode === "diff") {
                         if (test.ace === true) {
                             aceStore.codeOut.setValue(options.diff);
@@ -1052,8 +1053,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                 // sets up the option comment string
                 x = id("commentString");
                 if (x !== null) {
-                    if (localStorage.commentString !== undefined && localStorage.commentString !== null && localStorage.commentString !== "") {
-                        data.commentString = JSON.parse(localStorage.commentString);
+                    if (localStorage.getItem("commentString") !== undefined && localStorage.getItem("commentString") !== null && localStorage.getItem("commentString") !== "") {
+                        data.commentString = JSON.parse(localStorage.getItem("commentString"));
                     }
                     if (x.value.length === 0) {
                         x.innerHTML = "/*prettydiff.com \u002a/";
@@ -2307,13 +2308,11 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                     colorChange = function dom_load_documentation_colorChange():void {
                         const options:NodeListOf<HTMLOptionElement> = colorScheme.getElementsByTagName("option"),
                             olen:number = options.length;
-                        if (localStorage !== null && localStorage.settings !== undefined && localStorage.settings !== null && localStorage.settings.indexOf(":undefined") > 0) {
-                            localStorage.settings = localStorage
-                                .settings
-                                .replace(/:undefined/g, ":false");
+                        if (localStorage !== null && localStorage.getItem("settings") !== undefined && localStorage.getItem("settings") !== null && localStorage.getItem("settings").indexOf(":undefined") > 0) {
+                            localStorage.setItem("settings", localStorage.getItem("settings").replace(/:undefined/g, ":false"));
                         }
-                        data.settings = (localStorage.settings !== undefined)
-                            ? JSON.parse(localStorage.settings)
+                        data.settings = (localStorage.getItem("settings") !== undefined)
+                            ? JSON.parse(localStorage.getItem("settings"))
                             : {};
                         if (colorParam.indexOf("c=") === 0 || colorParam.indexOf("&c=") > -1) {
                             if (colorParam.indexOf("&c=") > -1) {
@@ -2366,13 +2365,11 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                 colorOptions = node.getElementsByTagName("option");
                 olen    = colorOptions.length;
                 if (node !== null) {
-                    if (localStorage !== null && localStorage.settings !== undefined && localStorage.settings !== null && localStorage.settings.indexOf(":undefined") > 0) {
-                        localStorage.settings = localStorage
-                            .settings
-                            .replace(/:undefined/g, ":false");
+                    if (localStorage !== null && localStorage.getItem("settings") !== undefined && localStorage.getItem("settings") !== null && localStorage.getItem("settings").indexOf(":undefined") > 0) {
+                        localStorage.setItem("settings", localStorage.getItem("settings").replace(/:undefined/g, ":false"));
                     }
-                    data.settings = (localStorage.settings !== undefined)
-                        ? JSON.parse(localStorage.settings)
+                    data.settings = (localStorage.getItem("settings") !== undefined)
+                        ? JSON.parse(localStorage.getItem("settings"))
                         : {};
                     if (colorParam.indexOf("c=") === 0 || colorParam.indexOf("&c=") > -1) {
                         if (colorParam.indexOf("&c=") > -1) {
@@ -2544,7 +2541,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             idval:string     = "",
             classy:string = "",
             h3:HTMLElement,
-            body:HTMLElement;
+            body:HTMLElement,
+            opt:HTMLOptionElement;
         const comment:HTMLElement = id("commentString");
         xname = x.nodeName.toLowerCase();
         if (xname === "div") {
@@ -2619,12 +2617,13 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                 .innerHTML
                 .replace(/\s+/g, " ");
         }
-        localStorage.settings = JSON.stringify(data.settings);
+        localStorage.setItem("settings", JSON.stringify(data.settings));
         if (classy === "box") {
             return;
         }
         if (item.nodeName.toLowerCase() === "select") {
-            value = select[select.selectedIndex].value;
+            opt  = <HTMLOptionElement>select[select.selectedIndex];
+            value = opt.value;
         } else {
             value = input.value;
         }
@@ -2689,7 +2688,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                 }
             }
             method.app.hideOutput();
-            localStorage.commentString = JSON.stringify(data.commentString);
+            localStorage.setItem("commentString", JSON.stringify(data.commentString));
         }
     };
 
@@ -2967,7 +2966,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             ann:HTMLParagraphElement = id("announcement"),
             domain:RegExp       = (/^((https?:\/\/)|(file:\/\/\/))/),
             lf:HTMLInputElement = id("option-crlf"),
-            textout:boolean     = (options.jsscope !== "report" && (node === null || node[node.selectedIndex].value !== "report")),
+            opt:HTMLOptionElement = <HTMLOptionElement>node[node.selectedIndex],
+            textout:boolean     = (options.jsscope !== "report" && (node === null || opt.value !== "report")),
             app = function dom_event_execute_app() {
                 let output:string = "";
                 const sanitize = function dom_event_execute_app_sanitize(input:string):string {
@@ -3444,7 +3444,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             }
             return false;
         }
-        localStorage.source = options.source;
+        localStorage.setItem("source", options.source);
         if (options.mode === "diff") {
             if (id("inputlabel") !== null) {
                 options.source_label = id("inputlabel").value;
@@ -3460,7 +3460,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             if (options.diff === undefined || options.diff === "") {
                 return false;
             }
-            localStorage.diff = options.diff;
+            localStorage.setItem("diff", options.diff);
         }
         if (options.lexer === "text" && options.mode !== "diff" && ann !== null) {
             ann.innerHTML = "The value of <em>options.lexer</em> is <strong>text</strong> but <em>options.mode</em> is not <strong>diff</strong>.";
@@ -3472,7 +3472,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                 reg:RegExp = (/option-((true-)|(false-))?/);
             let a:number = li.length,
                 select:HTMLSelectElement,
-                input:HTMLInputElement;
+                input:HTMLInputElement,
+                opt:HTMLOptionElement;
             do {
                 a = a - 1;
                 if (li[a].getElementsByTagName("div")[0].style.display === "none") {
@@ -3497,7 +3498,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                             }
                         }
                     } else {
-                        options[select.getAttribute("id").replace(reg, "")] = select[select.selectedIndex].value;
+                        opt = <HTMLOptionElement>select[select.selectedIndex];
+                        options[select.getAttribute("id").replace(reg, "")] = opt.value;
                     }
                 }
             } while (a > 0);
@@ -3847,7 +3849,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             node.setAttribute("title", "Return this dialogue to its prior size and location.");
             data.settings.report[idval].max = true;
             data.settings.report[idval].min = false;
-            localStorage.settings = JSON.stringify(data.settings);
+            localStorage.setItem("settings", JSON.stringify(data.settings));
             data.settings.report[idval].top    = box.offsetTop;
             data.settings.report[idval].left   = box.offsetLeft;
             data.settings.report[idval].height = body.clientHeight - 36;
@@ -4264,9 +4266,9 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
         const comment:HTMLElement = id("commentString");
         let nametry:string  = "",
             name:string     = "";
-        localStorage.source = "";
-        localStorage.diff   = "";
-        localStorage.commentString = "[]";
+        localStorage.setItem("source", "");
+        localStorage.setItem("diff", "");
+        localStorage.setItem("commentString", "[]");
         if (data.settings === undefined || data.settings.knownname === undefined) {
             if (data.settings === undefined) {
                 data.settings = {
@@ -4276,10 +4278,10 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                     }
                 };
             }
-            if (localStorage.settings !== undefined) {
-                nametry = JSON.stringify(localStorage.settings);
+            if (localStorage.getItem("settings") !== undefined) {
+                nametry = JSON.stringify(localStorage.getItem("settings"));
             }
-            if (localStorage.settings === undefined || nametry === "" || nametry.indexOf("knownname") < 0) {
+            if (localStorage.getItem("settings") === undefined || nametry === "" || nametry.indexOf("knownname") < 0) {
                 name = "\"" + Math
                     .random()
                     .toString()
@@ -4296,7 +4298,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                 veteran: false
             };
         }
-        localStorage.settings = `{"feedback":{"newb":${data.settings.feedback.newb},"veteran":${data.settings.feedback.veteran}},"report":{"code":{},"feed":{},"stat":{}},"knownname":${data.settings.knownname}}`;
+        localStorage.setItem("settings", `{"feedback":{"newb":${data.settings.feedback.newb},"veteran":${data.settings.feedback.veteran}},"report":{"code":{},"feed":{},"stat":{}},"knownname":${data.settings.knownname}}`);
         data.commentString = [];
         if (comment !== null) {
             comment.innerHTML = "/*prettydiff.com \u002a/";

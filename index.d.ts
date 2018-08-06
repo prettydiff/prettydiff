@@ -192,12 +192,6 @@ interface simulationItem {
     qualifier: qualifier;
     test: string;
 }
-interface Storage extends Storage {
-    commentString: string;
-    diff: string;
-    settings: string;
-    source: string;
-}
 interface Window {
     parseFramework: any;
 }
