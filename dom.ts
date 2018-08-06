@@ -4262,10 +4262,10 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
     //reset tool to default configuration
     method.event.reset = function dom_event_reset():void {
         const comment:HTMLElement = id("commentString");
-        let nametry:string = "",
-            name:string    = "";
-        localStorage.codeIn  = "";
-        localStorage.codeOut  = "";
+        let nametry:string  = "",
+            name:string     = "";
+        localStorage.source = "";
+        localStorage.diff   = "";
         localStorage.commentString = "[]";
         if (data.settings === undefined || data.settings.knownname === undefined) {
             if (data.settings === undefined) {

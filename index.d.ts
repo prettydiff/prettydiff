@@ -87,6 +87,12 @@ interface language {
 interface library {
     (): string;
 }
+interface localStorage extends Storage {
+    commentString: string;
+    diff: string;
+    settings: string;
+    source: string;
+}
 interface meta {
     error: string;
     lang: [string, string, string];
