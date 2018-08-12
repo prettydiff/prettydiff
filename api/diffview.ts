@@ -48,7 +48,7 @@
                     c: number = 0,
                     d: number = 0,
                     codes: opcodes = [],
-                    fix = function diffview__opcodes_fix(code : codes): void {
+                    fix = function diffview__opcodes_fix(code:codes): void {
                         let prior = codes[codes.length - 1];
                         if (prior !== undefined) {
                             if (prior[0] === code[0]) {
@@ -385,7 +385,7 @@
                     } while (b < strLen);
                     return output;
                 },
-                htmlfix = function diffview__report_htmlfix(item : string): string {
+                htmlfix = function diffview__report_htmlfix(item:string): string {
                     return item
                         .replace(/&/g, "&amp;")
                         .replace(/</g, "&lt;")
@@ -400,7 +400,7 @@
                 opcodesLength: number = opcodes.length,
                 // this is the character comparison logic that performs the 'largest common
                 // subsequence' between two lines of code
-                charcomp = function diffview__report_charcomp(lineA : string, lineB : string): [string, string]{
+                charcomp = function diffview__report_charcomp(lineA:string, lineB:string): [string, string]{
                     let b: number = 0,
                         currentdiff = [],
                         dataMinLength: number = 0,
@@ -1015,6 +1015,12 @@
                         }
                     }
                 } else {
+                    let baseItem:string = (options.api === "dom" && baseTextArray[baseStart] !==  undefined)
+                            ? baseTextArray[baseStart].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                            : baseTextArray[baseStart],
+                        newItem:string = (options.api === "dom" && newTextArray[newStart] !== undefined)
+                            ? newTextArray[newStart].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                            : newTextArray[newStart];
                     if (foldstart > -1) {
                         data[0][foldstart] = data[0][foldstart].replace("xxx", String(foldcount));
                     }
@@ -1046,17 +1052,17 @@
                         // this is a check against false positives incurred by increasing or reducing of
                         // nesting.  At this time it only checks one level deep.
                         if (tab !== "") {
-                            if (btest === false && baseTextArray[baseEnd] !== newTextArray[newEnd] && typeof baseTextArray[baseStart + 1] === "string" && typeof newTextArray[newStart] === "string" && baseTab[baseStart + 1] === newTab[newStart] && baseTab[baseStart] !== newTab[newStart] && (typeof newTextArray[newStart - 1] !== "string" || baseTab[baseStart] !== newTab[newStart - 1])) {
+                            if (btest === false && baseTextArray[baseEnd] !== newTextArray[newEnd] && typeof baseTextArray[baseStart + 1] === "string" && typeof newItem === "string" && baseTab[baseStart + 1] === newTab[newStart] && baseTab[baseStart] !== newTab[newStart] && (typeof newTextArray[newStart - 1] !== "string" || baseTab[baseStart] !== newTab[newStart - 1])) {
                                 btest = true;
-                            } else if (ntest === false && baseTextArray[baseEnd] !== newTextArray[newEnd] && typeof newTextArray[newStart + 1] === "string" && typeof baseTextArray[baseStart] === "string" && newTab[newStart + 1] === baseTab[baseStart] && newTab[newStart] !== baseTab[baseStart] && (typeof baseTextArray[baseStart - 1] !== "string" || newTab[newStart] !== baseTab[baseStart - 1])) {
+                            } else if (ntest === false && baseTextArray[baseEnd] !== newTextArray[newEnd] && typeof newTextArray[newStart + 1] === "string" && typeof baseItem === "string" && newTab[newStart + 1] === baseTab[baseStart] && newTab[newStart] !== baseTab[baseStart] && (typeof baseTextArray[baseStart - 1] !== "string" || newTab[newStart] !== baseTab[baseStart - 1])) {
                                 ntest = true;
                             }
                         }
                         foldcount = foldcount + 1;
                         if (options.diff_view === "inline") {
                             if (options
-                                .diff_space_ignore === true && change === "replace" && baseTextArray[baseStart]
-                                .replace(/\s+/g, "") === newTextArray[newStart]
+                                .diff_space_ignore === true && change === "replace" && baseItem
+                                .replace(/\s+/g, "") === newItem
                                 .replace(/\s+/g, "")) {
                                 change = "equal";
                                 errorout = errorout - 1;
@@ -1101,32 +1107,32 @@
                                 data[2].push("<li>");
                                 data[2].push(String(newStart + 1));
                                 data[2].push("&#10;</li>");
-                                if (options.diff_space_ignore === true && newTextArray[newStart].replace(/\s+/g, "") === "") {
+                                if (options.diff_space_ignore === true && newItem.replace(/\s+/g, "") === "") {
                                     data[3].push("<li class=\"equal\">");
                                     diffline = diffline - 1;
                                 } else {
                                     data[3].push("<li class=\"insert\">");
                                 }
-                                data[3].push(newTextArray[newStart]);
+                                data[3].push(newItem);
                                 data[3].push("&#10;</li>");
                             } else if (btest === true || change === "delete") {
                                 data[2].push("<li class=\"empty\">&#10;</li>");
-                                if (options.diff_space_ignore === true && baseTextArray[baseStart].replace(/\s+/g, "") === "") {
+                                if (options.diff_space_ignore === true && baseItem.replace(/\s+/g, "") === "") {
                                     data[3].push("<li class=\"equal\">");
                                     diffline = diffline - 1;
                                 } else {
                                     data[3].push("<li class=\"delete\">");
                                 }
-                                data[3].push(baseTextArray[baseStart]);
+                                data[3].push(baseItem);
                                 data[3].push("&#10;</li>");
                             } else if (change === "replace") {
-                                if (baseTextArray[baseStart] !== newTextArray[newStart]) {
-                                    if (baseTextArray[baseStart] === "") {
+                                if (baseItem !== newItem) {
+                                    if (baseItem === "") {
                                         charcompOutput = [
-                                            "", newTextArray[newStart]
+                                            "", newItem
                                         ];
-                                    } else if (newTextArray[newStart] === "") {
-                                        charcompOutput = [baseTextArray[baseStart], ""];
+                                    } else if (newItem === "") {
+                                        charcompOutput = [baseItem, ""];
                                     } else if (baseStart < baseEnd && newStart < newEnd) {
                                         charcompOutput = charcomp(baseTextArray[baseStart], newTextArray[newStart]);
                                     }
@@ -1134,7 +1140,7 @@
                                 if (baseStart < baseEnd) {
                                     data[0].push(`<li>${baseStart + 1 }</li>`);
                                     data[2].push("<li class=\"empty\">&#10;</li>");
-                                    if (options.diff_space_ignore === true && baseTextArray[baseStart].replace(/\s+/g, "") === "") {
+                                    if (options.diff_space_ignore === true && baseItem.replace(/\s+/g, "") === "") {
                                         data[3].push("<li class=\"equal\">");
                                         diffline = diffline - 1;
                                     } else {
@@ -1143,7 +1149,7 @@
                                     if (newStart < newEnd) {
                                         data[3].push(charcompOutput[0]);
                                     } else {
-                                        data[3].push(baseTextArray[baseStart]);
+                                        data[3].push(baseItem);
                                     }
                                     data[3].push("&#10;</li>");
                                 }
@@ -1152,7 +1158,7 @@
                                     data[2].push("<li>");
                                     data[2].push(String(newStart + 1));
                                     data[2].push("</li>");
-                                    if (options.diff_space_ignore === true && newTextArray[newStart].replace(/\s+/g, "") === "") {
+                                    if (options.diff_space_ignore === true && newItem.replace(/\s+/g, "") === "") {
                                         data[3].push("<li class=\"equal\">");
                                         diffline = diffline - 1;
                                     } else {
@@ -1161,7 +1167,7 @@
                                     if (baseStart < baseEnd) {
                                         data[3].push(charcompOutput[1]);
                                     } else {
-                                        data[3].push(newTextArray[newStart]);
+                                        data[3].push(newItem);
                                     }
                                     data[3].push("&#10;</li>");
                                 }
@@ -1172,7 +1178,7 @@
                                 data[3].push("<li class=\"");
                                 data[3].push(change);
                                 data[3].push("\">");
-                                data[3].push(baseTextArray[baseStart]);
+                                data[3].push(baseItem);
                                 data[3].push("&#10;</li>");
                             }
                             if (btest === true) {
@@ -1186,9 +1192,14 @@
                                 newStart = newStart + 1;
                             }
                         } else {
-                            if (btest === false && ntest === false && typeof baseTextArray[baseStart] === "string" && typeof newTextArray[newStart] === "string") {
-                                if (change === "replace" && baseStart < baseEnd && newStart < newEnd && baseTextArray[baseStart] !== newTextArray[newStart]) {
+                            if (btest === false && ntest === false && typeof baseItem === "string" && typeof newItem === "string") {
+                                if (change === "replace" && baseStart < baseEnd && newStart < newEnd && baseItem !== newItem) {
                                     charcompOutput = charcomp(baseTextArray[baseStart], newTextArray[newStart]);
+                                } else if (options.api === "dom") {
+                                    charcompOutput = [
+                                        baseTextArray[baseStart].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"),
+                                        newTextArray[newStart].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+                                    ];
                                 } else {
                                     charcompOutput = [
                                         baseTextArray[baseStart], newTextArray[newStart]
@@ -1208,13 +1219,13 @@
                                         }
                                         data[1].push("<li class=\"");
                                         if (newStart >= newEnd) {
-                                            if (options.diff_space_ignore === true && baseTextArray[baseStart].replace(/\s+/g, "") === "") {
+                                            if (options.diff_space_ignore === true && baseItem.replace(/\s+/g, "") === "") {
                                                 data[1].push("equal");
                                                 diffline = diffline - 1;
                                             } else {
                                                 data[1].push("delete");
                                             }
-                                        } else if (baseTextArray[baseStart] === "" && newTextArray[newStart] !== "" && (options.diff_space_ignore === false || (baseTextArray[baseStart].replace(/\s+/g, "") !== "" && newTextArray[newStart].replace(/\s+/g, "") !== ""))) {
+                                        } else if (baseItem === "" && newItem !== "" && (options.diff_space_ignore === false || (baseItem.replace(/\s+/g, "") !== "" && newItem.replace(/\s+/g, "") !== ""))) {
                                             data[1].push("empty");
                                         } else {
                                             data[1].push(change);
@@ -1239,13 +1250,13 @@
                                         data[2].push(`<li>${newStart + 1 }</li>`);
                                         data[3].push("<li class=\"");
                                         if (baseStart >= baseEnd) {
-                                            if (options.diff_space_ignore === true && newTextArray[newStart].replace(/\s+/g, "") === "") {
+                                            if (options.diff_space_ignore === true && newItem.replace(/\s+/g, "") === "") {
                                                 data[3].push("equal");
                                                 diffline = diffline - 1;
                                             } else {
                                                 data[3].push("insert");
                                             }
-                                        } else if (newTextArray[newStart] === "" && baseTextArray[baseStart] !== "" && (options.diff_space_ignore === false || (baseTextArray[baseStart].replace(/\s+/g, "") !== "" && newTextArray[newStart].replace(/\s+/g, "") !== ""))) {
+                                        } else if (newItem === "" && baseItem !== "" && (options.diff_space_ignore === false || (baseItem.replace(/\s+/g, "") !== "" && newItem.replace(/\s+/g, "") !== ""))) {
                                             data[3].push("empty");
                                         } else {
                                             data[3].push(change);
@@ -1266,7 +1277,7 @@
                                 if (newStart < newEnd) {
                                     newStart = newStart + 1;
                                 }
-                            } else if (btest === true || (typeof baseTextArray[baseStart] === "string" && typeof newTextArray[newStart] !== "string")) {
+                            } else if (btest === true || (typeof baseItem === "string" && typeof newItem !== "string")) {
                                 if (baseStart !== -1 && data[0].length > 0 && baseStart !== Number(data[0][data[0].length - 1].slice(data[0][data[0].length - 1].indexOf(">") + 1, data[0][data[0].length - 1].lastIndexOf("<"))) - 1) {
                                     if (options.diff_context < 0 && rowItem < a && opcodes[a][2] - opcodes[a][1] > 1) {
                                         rowItem = a;
@@ -1276,14 +1287,14 @@
                                         data[0].push(`<li>${baseStart + 1 }</li>`);
                                     }
                                     data[1].push("<li class=\"delete\">");
-                                    data[1].push(baseTextArray[baseStart]);
+                                    data[1].push(baseItem);
                                     data[1].push("&#10;</li>");
                                     data[2].push("<li class=\"empty\">&#10;</li>");
                                     data[3].push("<li class=\"empty\"></li>");
                                 }
                                 btest = false;
                                 baseStart = baseStart + 1;
-                            } else if (ntest === true || (typeof baseTextArray[baseStart] !== "string" && typeof newTextArray[newStart] === "string")) {
+                            } else if (ntest === true || (typeof baseItem !== "string" && typeof newItem === "string")) {
                                 if (newStart !== -1 && data[2].length > 0 && newStart !== Number(data[2][data[2].length - 1].slice(data[2][data[2].length - 1].indexOf(">") + 1, data[2][data[2].length - 1].lastIndexOf("<"))) - 1) {
                                     if (options.diff_context < 0 && rowItem < a && opcodes[a][4] - opcodes[a][3] > 1) {
                                         rowItem = a;
@@ -1295,7 +1306,7 @@
                                     data[1].push("<li class=\"empty\"></li>");
                                     data[2].push(`<li>${newStart + 1 }</li>`);
                                     data[3].push("<li class=\"insert\">");
-                                    data[3].push(newTextArray[newStart]);
+                                    data[3].push(newItem);
                                     data[3].push("&#10;</li>");
                                 }
                                 ntest = false;
@@ -1309,8 +1320,11 @@
             } while (a < opcodesLength);
             if (options.diff_format === "json") {
                 return [
-                    JSON.stringify(
-                    {diff: json}),
+                    JSON.stringify({diff: json})
+                        .replace(/\$#gt;/g, "&gt;")
+                        .replace(/\$#lt;/g, "&lt;")
+                        .replace(/%#lt;/g, "$#lt;")
+                        .replace(/%#gt;/g, "$#gt;"),
                     errorout,
                     0
                 ];

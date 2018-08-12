@@ -3274,8 +3274,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                                 }
                             }
                             let textarea:HTMLTextAreaElement = report.code.body.getElementsByTagName("textarea")[0];
-                            if (textarea !== undefined) {
-                                textarea.style.height = `${(report.code.body.clientHeight - 140) / 12}em`;
+                            if (textarea === undefined) {
                                 diffList = report
                                     .code
                                     .body
@@ -3295,6 +3294,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                                     diffList[2].onmousedown  = method.event.colSliderGrab;
                                     diffList[2].ontouchstart = method.event.colSliderGrab;
                                 }
+                            } else {
+                                textarea.style.height = `${(report.code.body.clientHeight - 140) / 12}em`;
                             }
                         } else if (options.mode === "minify" || options.mode === "parse") {
                             if (test.ace === true) {

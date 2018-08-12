@@ -369,14 +369,10 @@
                 result = `Error: Library prettydiff.${modeValue}.${options.lexer} does not exist.`;
             } else if (options.mode === "diff") {
                 let diffoutput:[string, number, number];
-                const source:string = options.source,
-
-                // diffview insertion start
-                diffview:any = {};
-                // diffview insertion end
+                const source:string = options.source;
 
                 if (options.language === "text") {
-                    diffoutput = diffview(options);
+                    diffoutput = global.prettydiff.api.diffview(options);
                     result = diffoutput[0];
                 } else {
                     if (options.diff_rendered_html === true) {
@@ -405,7 +401,12 @@
                                 ".prettydiff_insert{background:#d8ffd8;border-color:#090}",
                                 ".prettydiff_replace{background:#fec;border-color:#a86}"
                             ],
-                            diffhtml = function mode_diffhtml():void {
+                            insert = function mode_insert():void {
+                                //console.log(options.parsed.token[count[0] + 1]);
+                                //console.log(json[a][1])
+                                count[1] = count[1] + 1;
+                            },
+                            change = function mode_change():void {
                                 const ci:number = (json[a][0] === "+")
                                         ? 1
                                         : 0,
@@ -418,8 +419,6 @@
                                     x:number = count[0];
                                 if (json[a][0] === "-") {
                                     change = "delete";
-                                } else if (json[a][0] === "+") {
-                                    change = "insert";
                                 } else {
                                     change = "replace";
                                 }
@@ -459,8 +458,8 @@
                                     }
                                     lexers[table.lexer[count[ci]]] = lexers[table.lexer[count[ci]]] + 1;
                                 }
-                                if (json[a][0] === "+" || json[a][0] === "-") {
-                                    count[ci] = count[ci] + 1;
+                                if (json[a][0] === "-") {
+                                    count[0] = count[0] + 1;
                                 } else {
                                     count[0] = count[0] + 1;
                                     count[1] = count[1] + 1;
@@ -480,7 +479,7 @@
                         options.source = source;
                         options.parsed = globalAPI.parseFramework[parseMethod](options);
                         options.source = options.parsed.token;
-                        diffoutput = diffview(options);
+                        diffoutput = global.prettydiff.api.diffview(options);
                         json = JSON.parse(diffoutput[0]).diff;
                         len = json.length;
                         do {
@@ -493,8 +492,10 @@
                             if (json[a][0] === "=") {
                                 count[0] = count[0] + 1;
                                 count[1] = count[1] + 1;
+                            } if (json[a][0] === "+") {
+                                insert();
                             } else {
-                                diffhtml();
+                                change();
                             }
                             a = a + 1;
                         } while (a < len);
@@ -503,11 +504,13 @@
                         // this silliness is required because the other libraries only recognize the 'source' option and not the 'diff' option but need to be equally modified
                         options.source = options.diff;
                         options.parsed = globalAPI.parseFramework[parseMethod](options);
-                        options.diff = global.prettydiff.beautify[options.lexer](options);
+                        //options.diff = global.prettydiff.beautify[options.lexer](options);
+                        options.diff = options.parsed.token;
                         options.source = source;
                         options.parsed = globalAPI.parseFramework[parseMethod](options);
-                        options.source = global.prettydiff.beautify[options.lexer](options);
-                        diffoutput = diffview(options);
+                        //options.source = global.prettydiff.beautify[options.lexer](options);
+                        options.source = options.parsed.token;
+                        diffoutput = global.prettydiff.api.diffview(options);
                         result = diffoutput[0];
                     }
                 }

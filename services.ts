@@ -941,11 +941,11 @@ interface readFile {
                             parse: ""
                         },
                         modifyFile = function node_apps_build_libraries_modifyFile(file:string, fileFlag:string):void {
-                            node.fs.readFile(file, "utf8", function node_apps_build_libraries_modifyFile(err:Error, data:string):void {
-                                const modify = function node_apps_build_libraries_modifyFile_modify(ops:modifyOps):void {
-                                        const start:number = (function node_apps_build_libraries_modifyFile_modify_startBuild():number {
+                            node.fs.readFile(file, "utf8", function node_apps_build_libraries_modifyFile_read(err:Error, data:string):void {
+                                const modify = function node_apps_build_libraries_modifyFile_read_modify(ops:modifyOps):void {
+                                        const start:number = (function node_apps_build_libraries_modifyFile_read_modify_startBuild():number {
                                                 const len = (ops.start.indexOf("//") === 0)
-                                                    ? (function node_apps_build_libraries_modifyFile_modify_startBuild_lineStart():number {
+                                                    ? (function node_apps_build_libraries_modifyFile_read_modify_startBuild_lineStart():number {
                                                         data = data.replace(new RegExp(ops.start + "\\s+"), ops.start + "\n");
                                                         return ops.start.length + 1;
                                                     }())
@@ -953,12 +953,28 @@ interface readFile {
                                                 return data.indexOf(ops.start) + len;
                                             }()),
                                             end:number = data.indexOf(ops.end);
+                                        if (start < 0) {
+                                            apps.errout([
+                                                "The injection start is missing from the file:",
+                                                `Injection start: ${ops.start}`,
+                                                `File flag: ${fileFlag}`
+                                            ]);
+                                            return;
+                                        }
+                                        if (end < start) {
+                                            apps.errout([
+                                                "The injection end is missing from the file:",
+                                                `Injection end: ${ops.end}`,
+                                                `File flag: ${fileFlag}`
+                                            ]);
+                                            return;
+                                        }
                                         if (ops.end.indexOf("//") === 0) {
                                             data = data.replace(new RegExp(ops.end + "\\s+"), ops.end + "\n");
                                         }
                                         data = [data.slice(0, start), ops.injectFlag + "\n", data.slice(end)].join("");
                                     },
-                                    buildDefaults = function node_apps_build_libraries_modifyFile_buildDefault(api:"dom"|"node"):string {
+                                    buildDefaults = function node_apps_build_libraries_modifyFile_read_buildDefault(api:"dom"|"node"):string {
                                         const obj:any = {},
                                             verse:string = (api === "node")
                                                 ? `version=${JSON.stringify(versionData)},`
@@ -975,7 +991,7 @@ interface readFile {
                                         obj.lexerOptions = {};
                                         return `options=${JSON.stringify(obj)},${verse}`;
                                     },
-                                    buildDocumentation = function node_apps_build_libraries_modifyFile_buildDocumentation():string {
+                                    buildDocumentation = function node_apps_build_libraries_modifyFile_read_buildDocumentation():string {
                                         const allOptions:string[] = [];
                                         let a:number = 0,
                                             b:number = 0,
@@ -1020,7 +1036,7 @@ interface readFile {
                                         } while (a < keyslen);
                                         return allOptions.join("");
                                     },
-                                    buildDomInterface = function node_apps_build_libraries_modifyFile_buildDomInterface():string {
+                                    buildDomInterface = function node_apps_build_libraries_modifyFile_read_buildDomInterface():string {
                                         const allItems:string[] = [],
                                             exclusions = {
                                                 "diff": "",
@@ -1120,7 +1136,7 @@ interface readFile {
                                     modify({
                                         end: "// prettydiff dom insertion end",
                                         injectFlag: saveas + libraries + mode
-                                            .replace(/,\s*\/\/\s*prettydiff\s+file\s+insertion\s+start\s+prettydiff\s*=\s*\{\};/, `;// prettydiff file insertion start${node.os.EOL}//filler${node.os.EOL}`)
+                                            .replace(/,\s*\/\/\s*prettydiff\s+file\s+insertion\s+start\s+prettydiff\s*=\s*\{\};/, ";")
                                             .replace(/global\s*\.prettydiff/g, "prettydiff"),
                                         start: "// prettydiff dom insertion start"
                                     });
@@ -1128,11 +1144,6 @@ interface readFile {
                                         end: "// finalFile insertion end",
                                         injectFlag: `const finalFile=${finalFile}`,
                                         start: "// finalFile insertion start"
-                                    });
-                                    modify({
-                                        end: "// diffview insertion end",
-                                        injectFlag: `diffview=${diffview}`,
-                                        start: "// diffview insertion start"
                                     });
                                 } else if (fileFlag === "node") {
                                     modify({
@@ -1151,59 +1162,21 @@ interface readFile {
                                         injectFlag: `const finalFile=${finalFile}`,
                                         start: "// finalFile insertion start"
                                     });
-                                    modify({
-                                        end: "// diffview insertion end",
-                                        injectFlag: `diffview=${diffview}`,
-                                        start: "// diffview insertion start"
-                                    });
                                 }
-                                node.fs.writeFile(file, data, function node_apps_build_libraries_documentation_write(errw:Error) {
+                                node.fs.writeFile(file, data, function node_apps_build_libraries_modifyFile_read_write(errw:Error) {
                                     if (errw !== null && errw.toString() !== "") {
                                         apps.errout([errw.toString()]);
                                         return;
                                     }
                                     flag[fileFlag] = true;
-                                    if (flag.dom === true && flag.node === true) {
-                                        if (flag.prettydiff === false) {
-                                            modifyFile(`${js}prettydiff.js`, "prettydiff");
-                                        } else if (flag.documentation === true && flag.html === true && flag.prettydiff === true) {
-                                            console.log(`${apps.humantime(false) + text.green}Option details written to files.${text.none}`);
-                                            next();
-                                        }
+                                    if (flag.dom === true && flag.documentation === true && flag.html === true && flag.node === true && flag.html === true && flag.prettydiff === true) {
+                                        console.log(`${apps.humantime(false) + text.green}Option details written to files.${text.none}`);
+                                        next();
                                     }
                                 });
                             });
                         },
-                        version = function node_apps_build_libraries_version(file:string, fileFlag:string):void {
-                            if (versionData.number !== "") {
-                                modifyFile(file, fileFlag);
-                                return;
-                            }
-                            node.child(`git log -1 --branches`, function node_apps_build_libraries_version_child(err:Error, stderr:string):void {
-                                if (err !== null) {
-                                    apps.errout([err.toString()]);
-                                    return;
-                                }
-                                const date:string[] = stderr.slice(stderr.indexOf("Date:") + 12).split(" ");
-                                versionData.date = `${date[1]} ${date[0]} ${date[3]}`;
-                                node.fs.readFile(`${projectPath}package.json`, "utf8", function node_apps_build_libraries_version_child_readPackage(errp:Error, data:string):void {
-                                    if (errp !== null) {
-                                        apps.errout([errp.toString()]);
-                                        return;
-                                    }
-                                    versionData.number = JSON.parse(data).version;
-                                    node.fs.readFile(`${projectPath}node_modules${sep}parse-framework${sep}package.json`, "utf8", function node_apps_build_libraries_version_child_readPackage_readFramework(errf:Error, frameData:string):void {
-                                        if (errf !== null) {
-                                            apps.errout([errf.toString()]);
-                                            return;
-                                        }
-                                        versionData.parse = JSON.parse(frameData).version;
-                                    });
-                                    modifyFile(file, fileFlag);
-                                });
-                            })
-                        },
-                        libraryFiles = function node_apps_build_libraries_libraryFiles(callback:Function) {
+                        libraryFiles = function node_apps_build_libraries_libraryFiles() {
                             libFiles.push(`${projectPath}node_modules${sep}file-saver${sep}FileSaver.min.js`);
                             const appendFile = function node_apps_build_libraries_libraryFiles_appendFile(filePath:string):void {
                                     node.fs.readFile(filePath, "utf8", function node_apps_build_libraries_libraryFiles_appendFile_read(errr:Error, filedata:string):void {
@@ -1220,33 +1193,26 @@ interface readFile {
                                                 return str.replace("var", "let");
                                             });
                                             saveas = filedata;
-                                        } else if (filename === "prettydiff.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
-                                            filedata = filedata
-                                                .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*/, "")
-                                                .replace(/global\s*\.prettydiff\s*\./g, "prettydiff.")
-                                                .replace(/("|')use strict("|');/, "");
-                                            mode = filedata;
-                                        } else if (filename === "finalFile.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
-                                            filedata = filedata
-                                                .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*/, "")
-                                                .replace(/("|')use strict("|');/, "");
-                                            finalFile = filedata;
-                                        } else if (filename === "diffview.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
-                                            filedata = filedata
-                                                .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*/, "")
-                                                .replace(/global\s*\.prettydiff\s*\.api\s*\.diffview\s*=\s*/g, "return ")
-                                                .replace(/("|')use strict("|');/, "");
-                                            diffview = filedata;
                                         } else {
                                             filedata = filedata
                                                 .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*/, "")
-                                                .replace(/global\s*\.prettydiff\s*\./g, "prettydiff.")
+                                                .replace(/global\s*\.\s*prettydiff\s*\./g, "prettydiff.")
                                                 .replace(/("|')use strict("|');/, "");
-                                            libraries = libraries + filedata;
+                                            if (filename === "prettydiff.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
+                                                mode = filedata;
+                                            } else if (filename === "finalFile.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
+                                                finalFile = filedata;
+                                            } else {
+                                                libraries = libraries + filedata;
+                                            }
                                         }
                                         a = a + 1;
                                         if (a === filelen) {
-                                            callback();
+                                            modifyFile(`${js}services.js`, "node");
+                                            modifyFile(`${projectPath}index.xhtml`, "html");
+                                            modifyFile(`${js}dom.js`, "dom");
+                                            modifyFile(`${projectPath}documentation.xhtml`, "documentation");
+                                            modifyFile(`${js}prettydiff.js`, "prettydiff");
                                         }
                                     });
                                 },
@@ -1280,14 +1246,34 @@ interface readFile {
                             libFiles.forEach(function node_apps_build_libraries_libraryFiles_each(value:string) {
                                 stat(value);
                             });
+                        },
+                        version = function node_apps_build_libraries_version():void {
+                            node.child(`git log -1 --branches`, function node_apps_build_libraries_version_child(err:Error, stderr:string):void {
+                                if (err !== null) {
+                                    apps.errout([err.toString()]);
+                                    return;
+                                }
+                                const date:string[] = stderr.slice(stderr.indexOf("Date:") + 12).split(" ");
+                                versionData.date = `${date[1]} ${date[0]} ${date[3]}`;
+                                node.fs.readFile(`${projectPath}package.json`, "utf8", function node_apps_build_libraries_version_child_readPackage(errp:Error, data:string):void {
+                                    if (errp !== null) {
+                                        apps.errout([errp.toString()]);
+                                        return;
+                                    }
+                                    versionData.number = JSON.parse(data).version;
+                                    node.fs.readFile(`${projectPath}node_modules${sep}parse-framework${sep}package.json`, "utf8", function node_apps_build_libraries_version_child_readPackage_readFramework(errf:Error, frameData:string):void {
+                                        if (errf !== null) {
+                                            apps.errout([errf.toString()]);
+                                            return;
+                                        }
+                                        versionData.parse = JSON.parse(frameData).version;
+                                        libraryFiles();
+                                    });
+                                });
+                            })
                         };
                     heading("Building Options");
-                    libraryFiles(function node_apps_build_libraries_libraryCallback() {
-                        modifyFile(`${js}dom.js`, "dom");
-                        version(`${js}services.js`, "node");
-                    });
-                    version(`${projectPath}index.xhtml`, "html");
-                    modifyFile(`${projectPath}documentation.xhtml`, "documentation");
+                    version();
                 },
                 lint     : function node_apps_build_lint():void {
                     heading("Linting");
