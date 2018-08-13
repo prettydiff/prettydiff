@@ -381,6 +381,19 @@
                                 insert: 0,
                                 replace: 0
                             },
+                            typeIgnore:string[] = [
+                                "attribute",
+                                "cdata",
+                                "comment",
+                                "conditional",
+                                "ignore",
+                                "jsx_attribute_end",
+                                "jsx_attribute_start",
+                                "script",
+                                "sgml",
+                                "style",
+                                "xml"
+                            ],
                             tab = function mode_diffhtml_tab(indentation:number):string {
                                 const tabout:string[] = (options.crlf === true)
                                     ? ["\r\n"]
@@ -502,13 +515,26 @@
                             if (json[a][0] === "=") {
                                 count[0] = count[0] + 1;
                                 count[1] = count[1] + 1;
-                            } else if (body > 1 && options.parsed.lexer[count[0]] === "markup" && options.parsed.token[count[0]].indexOf(`<span class="prettydiff_`) !== 0) {
+                            } else if (
+                                body > 1 &&
+                                options.parsed.lexer[count[0]] === "markup" &&
+                                options.parsed.token[count[0]].indexOf(`<span class="prettydiff_`) !== 0 &&
+                                ((json[a][0] === "+" && typeIgnore.indexOf(diff_parsed.types[count[1]]) < 0) || (json[a][0] !== "+" && typeIgnore.indexOf(options.parsed.types[count[0]]) < 0))
+                            ) {
                                 if (json[a][0] === "+") {
                                     insert();
                                 } else {
                                     del();
                                 }
                             } else {
+                                if (json[a][0] === "-") {
+                                    count[0] = count[0] + 1;
+                                } else if (json[a][0] === "+") {
+                                    count[1] = count[1] + 1;
+                                } else {
+                                    count[0] = count[0] + 1;
+                                    count[1] = count[1] + 1;
+                                }
                                 if (lexers[options.parsed.lexer[count[0]]] === undefined) {
                                     lexers[options.parsed.lexer[count[0]]] = 1;
                                 } else {
