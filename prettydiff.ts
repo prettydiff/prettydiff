@@ -376,7 +376,11 @@
                     result = diffoutput[0];
                 } else {
                     if (options.diff_rendered_html === true) {
-                        const lexers:any = {},
+                        const lexers:any = {
+                                del: 0,
+                                insert: 0,
+                                replace: 0
+                            },
                             tab = function mode_diffhtml_tab(indentation:number):string {
                                 const tabout:string[] = (options.crlf === true)
                                     ? ["\r\n"]
@@ -396,81 +400,87 @@
                             },
                             css:string[] = [
                                 `${tab(2)}<style type="text/css">`,
+                                "#prettydiff_summary{background:#eef8ff;border:2px solid #069}",
                                 ".prettydiff_rendered{border-style:solid;border-width:2px;display:inline-block}",
                                 ".prettydiff_delete{background:#ffd8d8;border-color:#c44}",
                                 ".prettydiff_insert{background:#d8ffd8;border-color:#090}",
                                 ".prettydiff_replace{background:#fec;border-color:#a86}"
                             ],
                             insert = function mode_insert():void {
-                                //console.log(options.parsed.token[count[0] + 1]);
-                                //console.log(json[a][1])
-                                count[1] = count[1] + 1;
+                                const inject:string[] = [`<span class="prettydiff_rendered prettydiff_insert">`];
+                                if (json[a + 1][0] === "+") {
+                                    do {
+                                        inject.push(json[a][1]);
+                                        count[1] = count[1] + 1;
+                                        a = a + 1;
+                                    } while (json[a + 1][0] === "+");
+                                }
+                                inject.push(json[a][1]);
+                                inject.push("</span>");
+                                options.parsed.token[count[0]] = `${inject.join("")} ${options.parsed.token[count[0]]}`;
+                                lexers.insert = lexers.insert + 1;
                             },
-                            change = function mode_change():void {
-                                const ci:number = (json[a][0] === "+")
-                                        ? 1
-                                        : 0,
-                                    table = (ci === 0)
-                                        ? diff_parsed
-                                        : options.parsed;
-                                let type:string = "",
-                                    begin:number = 0,
-                                    change:string = "",
-                                    x:number = count[0];
-                                if (json[a][0] === "-") {
-                                    change = "delete";
-                                } else {
-                                    change = "replace";
-                                }
-                                if (body === true && options.parsed.lexer[count[0]] === "markup" && options.parsed.token[count[0]].indexOf(`<span class="prettydiff_`) !== 0) {
-                                    type = options.parsed.types[count[0]];
-                                    if (type === "start" || type === "template_start" || type === "singleton" || type === "template") {
-                                        options.parsed.token[count[0]] = `<span class="prettydiff_rendered prettydiff_${change}">` + options.parsed.token[count[0]];
-                                        if (type === "singleton" || type === "template") {
-                                            options.parsed.token[count[0]] = options.parsed.token[count[0]] + "</span>";
-                                        } else {
-                                            begin = count[0];
-                                            do {
-                                                if (options.parsed.begin[x] === begin && (options.parsed.types[x] === "end" && type === "start") || (options.parsed.types[x] === "template_end" && type === "template_start")) {
-                                                    options.parsed.token[x] = options.parsed.token[x] + "</span>";
-                                                    break;
-                                                }
-                                                x = x + 1;
-                                            } while (x < len);
+                            del = function mode_del():void {
+                                const symb:string = json[a][0],
+                                    change:string = (symb === "-")
+                                        ? "delete"
+                                        : "replace";
+                                options.parsed.token[count[0]] = `<span class="prettydiff_rendered prettydiff_${change}">${options.parsed.token[count[0]]}`;
+                                if (json[a + 1][0] === symb) {
+                                    do {
+                                        count[0] = count[0] + 1;
+                                        if (change === "replace") {
+                                            count[1] = count[1] + 1;
                                         }
-                                    } else {
-                                        begin = options.parsed.begin[count[0]];
-                                        if (options.parsed.token[begin].indexOf(`<span class="prettydiff_`) !== 0) {
-                                            type = options.parsed.types[begin];
-                                            options.parsed.token[begin] = `<span class="prettydiff_rendered prettydiff_${change}">` + options.parsed.token[begin];
-                                            do {
-                                                if (options.parsed.begin[x] === begin && (options.parsed.types[x] === "end" && type === "start") || (options.parsed.types[x] === "template_end" && type === "template_start")) {
-                                                    options.parsed.token[x] = options.parsed.token[x] + "</span>";
-                                                    break;
-                                                }
-                                                x = x + 1;
-                                            } while (x < len);
+                                        a = a + 1;
+                                    } while (json[a + 1][0] === symb);
+                                }
+                                options.parsed.token[count[0]] = `${options.parsed.token[count[0]]}</span>`;
+                                if (change === "delete") {
+                                    lexers.del = lexers.del + 1;
+                                } else {
+                                    lexers.replace = lexers.replace + 1;
+                                }
+                            },
+                            summary = function mode_summary():void {
+                                const keys:string[] = Object.keys(lexers),
+                                    len:number = keys.length,
+                                    output:string[] = [],
+                                    lex:string[] = [];
+                                let a:number = 0,
+                                    lextest:boolean = false;
+                                output.push(`<div id="prettydiff_summary"><h1>Pretty Diff - Summary</h1>`);
+                                output.push("<p>This is the count of identified differences starting with visual differences colored in the document first.</p><ul>");
+                                output.push(`<li>Deletions - <strong>${lexers.del}</strong></li>`);
+                                output.push(`<li>Insertions - <strong>${lexers.insert}</strong></li>`);
+                                output.push(`<li>Replacements - <strong>${lexers.replace}</strong></li>`);
+                                output.push("</ul>");
+                                if (len > 3) {
+                                    lexers.del = 0;
+                                    lexers.insert = 0;
+                                    lexers.replace = 0;
+                                    lex.push("<hr/><p>This list of differences is not visible in the rendered HTML.</p><ul>");
+                                    do {
+                                        if (lexers[keys[a]] > 0) {
+                                            lextest = true;
+                                            lex.push(`<li>${keys[a]} - ${lexers[keys[a]]}</li>`);
                                         }
-                                    }
-                                } else {
-                                    if (lexers[table.lexer[count[ci]]] === undefined) {
-                                        lexers[table.lexer[count[ci]]] = 0;
-                                    }
-                                    lexers[table.lexer[count[ci]]] = lexers[table.lexer[count[ci]]] + 1;
+                                        a = a + 1;
+                                    } while (a < len);
+                                    lex.push("</ul>");
                                 }
-                                if (json[a][0] === "-") {
-                                    count[0] = count[0] + 1;
-                                } else {
-                                    count[0] = count[0] + 1;
-                                    count[1] = count[1] + 1;
+                                if (lextest === true) {
+                                    output.push(lex.join(""));
                                 }
+                                output.push("</div>");
+                                options.parsed.token[body] = `${options.parsed.token[body]} ${output.join("")}`;
                             };
                         let diff_parsed:parsedArray,
                             json:any,
                             a:number = 0,
                             count:[number, number] = [0, 0],
                             len:number = 0,
-                            body:boolean = false,
+                            body:number = 0,
                             head:boolean = false;
                         options.diff_format = "json";
                         options.source = options.diff;
@@ -486,30 +496,39 @@
                             if (head === false && options.parsed.types[count[0]] === "start" && options.parsed.lexer[count[0]] === "markup" && json[a][1].toLowerCase().indexOf("<head") === 0) {
                                 options.parsed.token[count[0]] = `${options.parsed.token[count[0]] + css.join(tab(3)) + tab(2)}</style>${tab(0)}`;
                                 head = true;
-                            } else if (body === false && options.parsed.types[count[0]] === "start" && options.parsed.lexer[count[0]] === "markup" && json[a][1].toLowerCase().indexOf("<body") === 0) {
-                                body = true;
+                            } else if (body < 1 && options.parsed.types[count[0]] === "start" && options.parsed.lexer[count[0]] === "markup" && options.parsed.token[count[0]].toLowerCase().indexOf("<body") === 0) {
+                                body = count[0];
                             }
                             if (json[a][0] === "=") {
                                 count[0] = count[0] + 1;
                                 count[1] = count[1] + 1;
-                            } if (json[a][0] === "+") {
-                                insert();
+                            } else if (body > 1 && options.parsed.lexer[count[0]] === "markup" && options.parsed.token[count[0]].indexOf(`<span class="prettydiff_`) !== 0) {
+                                if (json[a][0] === "+") {
+                                    insert();
+                                } else {
+                                    del();
+                                }
                             } else {
-                                change();
+                                if (lexers[options.parsed.lexer[count[0]]] === undefined) {
+                                    lexers[options.parsed.lexer[count[0]]] = 1;
+                                } else {
+                                    lexers[options.parsed.lexer[count[0]]] = lexers[options.parsed.lexer[count[0]]] + 1;
+                                }
                             }
                             a = a + 1;
                         } while (a < len);
+                        summary();
                         result = global.prettydiff.beautify.markup(options);
                     } else {
                         // this silliness is required because the other libraries only recognize the 'source' option and not the 'diff' option but need to be equally modified
                         options.source = options.diff;
                         options.parsed = globalAPI.parseFramework[parseMethod](options);
-                        //options.diff = global.prettydiff.beautify[options.lexer](options);
-                        options.diff = options.parsed.token;
+                        options.diff = global.prettydiff.beautify[options.lexer](options);
+                        //options.diff = options.parsed.token;
                         options.source = source;
                         options.parsed = globalAPI.parseFramework[parseMethod](options);
-                        //options.source = global.prettydiff.beautify[options.lexer](options);
-                        options.source = options.parsed.token;
+                        options.source = global.prettydiff.beautify[options.lexer](options);
+                        //options.source = options.parsed.token;
                         diffoutput = global.prettydiff.api.diffview(options);
                         result = diffoutput[0];
                     }

@@ -2,7 +2,7 @@
 (function diffview_init(): void {
     "use strict";
     const diffview = function diffview_(options : any): [string, number, number]{
-        const tab: string = (function diffview__tab(): string {
+        const tab: string = (function diffview_tab(): string {
                 let a: number = 0;
                 const output: string[] = [];
                 if (options.indent_char === "" || options.indent_size < 1) {
@@ -15,7 +15,7 @@
                 return output.join("");
             }()),
             // translates source code from a string to an array by splitting on line breaks
-            stringAsLines = function diffview__stringAsLines(str : string): string[]{
+            stringAsLines = function diffview_stringAsLines(str : string): string[]{
                 const lines = (options.diff_format === "text")
                     ? str
                     : str
@@ -37,7 +37,7 @@
             newTextArray: string[] = (typeof options.diff === "string")
                 ? stringAsLines(options.diff)
                 : options.diff,
-            codeBuild = function diffview__opcodes(): opcodes {
+            codeBuild = function diffview_opcodes(): opcodes {
                 const table: difftable = {},
                     one: string[] = baseTextArray,
                     two: string[] = newTextArray;
@@ -48,7 +48,7 @@
                     c: number = 0,
                     d: number = 0,
                     codes: opcodes = [],
-                    fix = function diffview__opcodes_fix(code:codes): void {
+                    fix = function diffview_opcodes_fix(code:codes): void {
                         let prior = codes[codes.length - 1];
                         if (prior !== undefined) {
                             if (prior[0] === code[0]) {
@@ -59,6 +59,18 @@
                                     prior[2] = code[2];
                                 } else if (code[0] === "insert") {
                                     prior[4] = code[4];
+                                }
+                                if (codes.length > 1 && prior[2] === code[2] && prior[4] === code[4]) {
+                                    if (prior[0] === "insert" && two[codes[codes.length - 2][4] - (prior[4] - prior[3])] === one[codes[codes.length - 2][1]]) {
+                                        codes.pop();
+                                        codes[codes.length - 1] = ["insert", -1, -1, codes[codes.length - 1][3], codes[codes.length - 1][4] - (prior[4] - prior[3])];
+                                        do {
+                                            // one-sided replacement undo, more like undelete
+                                            table[one[c]][0] = table[one[c]][0] + 1;
+                                            c = c - 1;
+                                        } while (c > codes[codes.length - 2][2]);
+                                        d = codes[codes.length - 1][4] - 1;
+                                    }
                                 }
                                 return;
                             }
@@ -142,43 +154,29 @@
                                 code[2] = prior[2] + 1;
                             } else if (prior[0] === "replace") {
                                 if (code[0] === "delete") {
-                                    if (one[code[2] - 1] === two[prior[4] - 1]) {
-                                        if (prior[2] - prior[1] > 1) {
-                                            prior[4] = prior[4] - 1;
-                                        }
-                                        c = c - 1;
-                                        d = d - 1;
-                                        return;
-                                    }
-                                    if (one[code[2]] === two[prior[4] - 1]) {
-                                        if (prior[2] - prior[1] > 1) {
-                                            prior[2] = prior[2] - 1;
-                                            prior[4] = prior[4] - 11;
-                                            table[one[c - 1]][0] = table[one[c - 1]][0] - 1;
-                                        }
-                                    }
-                                } else if (code[0] === "insert") {
-                                    if (one[prior[2] - 1] === two[code[4] - 1]) {
-                                        if (prior[2] - prior[1] > 1) {
-                                            prior[2] = prior[2] - 1;
-                                        }
-                                        c = c - 1;
-                                        d = d - 1;
-                                        return;
-                                    }
-                                    if (one[code[2] - 1] === two[prior[4]]) {
-                                        if (prior[4] - prior[3] > 1) {
-                                            prior[2] = prior[2] - 1;
-                                            prior[4] = prior[4] - 1;
-                                            table[two[d - 1]][1] = table[two[d - 1]][1] - 1;
-                                        }
-                                    }
+                                    c = code[2] - 1;
+                                    d = prior[3];
+                                    codes[codes.length - 1] = ["delete", prior[1], code[2] - 1, -1, -1];
+                                    return;
+                                }
+                                if (code[0] === "insert") {
+                                    c = prior[1];
+                                    d = code[4] - 1;
+                                    codes[codes.length - 1] = ["insert", -1, -1, prior[3], code[4] - 1];
+                                    return;
                                 }
                             }
                         }
-                        codes.push(code);
+                        if (codes.length > 1 && codes[codes.length - 2][0] === codes[codes.length - 1][0]) {
+                            codes[codes.length - 2][2] = codes[codes.length - 1][2];
+                            codes[codes.length - 2][4] = codes[codes.length - 1][4];
+                            codes.pop();
+                            diffview_opcodes_fix(code);
+                        } else {
+                            codes.push(code);
+                        }
                     },
-                    equality = function diffview__opcodes_equality(): void {
+                    equality = function diffview_opcodes_equality(): void {
                         do {
                             table[one[c]][0] = table[one[c]][0] - 1;
                             table[one[c]][1] = table[one[c]][1] - 1;
@@ -189,7 +187,7 @@
                         b = d - 1;
                         a = c - 1;
                     },
-                    deletion = function diffview__opcodes_deletion(): void {
+                    deletion = function diffview_opcodes_deletion(): void {
                         do {
                             table[one[c]][0] = table[one[c]][0] - 1;
                             c = c + 1;
@@ -198,7 +196,7 @@
                         a = c - 1;
                         b = d - 1;
                     },
-                    deletionStatic = function diffview__opcodes_deletionStatic(): void {
+                    deletionStatic = function diffview_opcodes_deletionStatic(): void {
                         table[one[a]][0] = table[one[a]][0] - 1;
                         fix([
                             "delete", a, a + 1,
@@ -208,7 +206,7 @@
                         a = c;
                         b = d - 1;
                     },
-                    insertion = function diffview__opcodes_insertion(): void {
+                    insertion = function diffview_opcodes_insertion(): void {
                         do {
                             table[two[d]][1] = table[two[d]][1] - 1;
                             d = d + 1;
@@ -217,7 +215,7 @@
                         a = c - 1;
                         b = d - 1;
                     },
-                    insertionStatic = function diffview__opcodes_insertionStatic(): void {
+                    insertionStatic = function diffview_opcodes_insertionStatic(): void {
                         table[two[b]][1] = table[two[b]][1] - 1;
                         fix([
                             "insert", -1, -1, b, b + 1
@@ -225,7 +223,7 @@
                         a = c - 1;
                         b = d;
                     },
-                    replacement = function diffview__opcodes_replacement(): void {
+                    replacement = function diffview_opcodes_replacement(): void {
                         do {
                             table[one[c]][0] = table[one[c]][0] - 1;
                             table[two[d]][1] = table[two[d]][1] - 1;
@@ -236,7 +234,7 @@
                         a = c - 1;
                         b = d - 1;
                     },
-                    replaceUniques = function diffview__opcodes_replaceUniques(): void {
+                    replaceUniques = function diffview_opcodes_replaceUniques(): void {
                         do {
                             table[one[c]][0] = table[one[c]][0] - 1;
                             c = c + 1;
@@ -338,7 +336,7 @@
         // 3.  The construction of the output into the 'node' array errorout is a count
         // of differences after the opcodes generate the other two core pieces of logic
         // are quaranteened into an anonymous function.
-        return(function diffview__report(): [string, number, number]{
+        return(function diffview_report(): [string, number, number]{
             let a: number = 0,
                 i: number = 0,
                 node: string[] = ["<div class='diff'>"],
@@ -360,6 +358,8 @@
                 repeat: boolean = false,
                 ctest: boolean = true,
                 code: codes,
+                baseItem:string = "",
+                newItem:string = "",
                 charcompOutput: [
                     string, string
                 ],
@@ -372,7 +372,7 @@
                 json: diffJSON = [],
                 clidata: string[] = [],
                 tabFix: RegExp = new RegExp(`^((${tab.replace(/\\/g, "\\")})+)`),
-                noTab = function diffview__report_noTab(str : string[]): string[]{
+                noTab = function diffview_report_noTab(str : string[]): string[]{
                     let b: number = 0;
                     const strLen: number = str.length,
                         output: string[] = [];
@@ -385,7 +385,7 @@
                     } while (b < strLen);
                     return output;
                 },
-                htmlfix = function diffview__report_htmlfix(item:string): string {
+                htmlfix = function diffview_report_htmlfix(item:string): string {
                     return item
                         .replace(/&/g, "&amp;")
                         .replace(/</g, "&lt;")
@@ -400,7 +400,7 @@
                 opcodesLength: number = opcodes.length,
                 // this is the character comparison logic that performs the 'largest common
                 // subsequence' between two lines of code
-                charcomp = function diffview__report_charcomp(lineA:string, lineB:string): [string, string]{
+                charcomp = function diffview_report_charcomp(lineA:string, lineB:string): [string, string]{
                     let b: number = 0,
                         currentdiff = [],
                         dataMinLength: number = 0,
@@ -430,7 +430,7 @@
                         regEnd: RegExp = (/_epdiffdiff\u005f/g),
                         strStart: string = "_pdiffdiff\u005f",
                         strEnd: string = "_epdiffdiff\u005f",
-                        tabdiff: [string, string, string, string] = (function diffview__report_charcomp_tabdiff(): [string, string, string, string]{
+                        tabdiff: [string, string, string, string] = (function diffview_report_charcomp_tabdiff(): [string, string, string, string]{
                             let tabMatchA: string = "",
                                 tabMatchB: string = "",
                                 splitA: string = "",
@@ -451,7 +451,7 @@
                             }
                             return [tabMatchA, tabMatchB, splitA, splitB];
                         }()),
-                        whiteout = function diffview__report_charcomp_whiteout(whitediff : string): string {
+                        whiteout = function diffview_report_charcomp_whiteout(whitediff : string): string {
                             const spacetest: RegExp = (/<((em)|(pd))>\u0020+<\/((em)|(pd))>/),
                                 crtest: RegExp = (/<((em)|(pd))>\r+<\/((em)|(pd))>/);
                             if (spacetest.test(whitediff) === true) {
@@ -463,20 +463,20 @@
                             return whitediff.replace(/\s+/, "(white space differences)");
                         },
                         // compare is the fuzzy string comparison algorithm
-                        compare = function diffview__report_charcomp_compare(start : number): [number, number, number, boolean]{
+                        compare = function diffview_report_charcomp_compare(start : number): [number, number, number, boolean]{
                             let x: number = 0,
                                 y: number = 0,
                                 whitespace: boolean = false,
                                 wordtest: boolean = false,
                                 store: compareStore = [];
                             const max: number = Math.max(dataA.length, dataB.length),
-                                sorta = function diffview__report_charcomp_compare_sorta(a : number[], b : number[]): 1 | -1 {
+                                sorta = function diffview_report_charcomp_compare_sorta(a : number[], b : number[]): 1 | -1 {
                                     if(a[1] - a[0] < b[1] - b[0]) {
                                         return 1;
                                     }
                                     return -1;
                                 },
-                                sortb = function diffview__report_charcomp_compare_sortb(a : number[], b : number[]): 1 | -1 {
+                                sortb = function diffview_report_charcomp_compare_sortb(a : number[], b : number[]): 1 | -1 {
                                     if(a[0] + a[1] > b[0] + b[1]) {
                                         return 1;
                                     }
@@ -1015,12 +1015,6 @@
                         }
                     }
                 } else {
-                    let baseItem:string = (options.api === "dom" && baseTextArray[baseStart] !==  undefined)
-                            ? baseTextArray[baseStart].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-                            : baseTextArray[baseStart],
-                        newItem:string = (options.api === "dom" && newTextArray[newStart] !== undefined)
-                            ? newTextArray[newStart].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-                            : newTextArray[newStart];
                     if (foldstart > -1) {
                         data[0][foldstart] = data[0][foldstart].replace("xxx", String(foldcount));
                     }
@@ -1048,6 +1042,16 @@
                             }
                         } else if (change !== "equal") {
                             diffline = diffline + 1;
+                        }
+                        if (options.api === "dom" && baseTextArray[baseStart] !==  undefined) {
+                            baseItem = baseTextArray[baseStart].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                        } else {
+                            baseItem  = baseTextArray[baseStart];
+                        }
+                        if (options.api === "dom" && newTextArray[newStart] !== undefined) {
+                            newItem = newTextArray[newStart].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                        } else {
+                            newItem = newTextArray[newStart];
                         }
                         // this is a check against false positives incurred by increasing or reducing of
                         // nesting.  At this time it only checks one level deep.

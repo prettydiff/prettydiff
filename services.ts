@@ -921,8 +921,7 @@ interface readFile {
                     });
                 },
                 libraries: function node_apps_build_libraries():void {
-                    let diffview:string = "",
-                        finalFile:string = "",
+                    let finalFile:string = "",
                         libraries:string = "",
                         mode:string = "",
                         saveas:string = "";
