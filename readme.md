@@ -3,11 +3,13 @@ A language aware diff, beautification, and minification tool.
 
 [![Build Status](https://semaphoreci.com/api/v1/prettydiff/prettydiff/branches/3-0-0/badge.svg)](https://semaphoreci.com/prettydiff/prettydiff)
 
+**This version of Pretty Diff is still in development and is not released to NPM.  For the current production version use branch 2.2.9 and NPM package [prettydiff2](https://www.npmjs.com/package/prettydiff2)**
+
 ## Build
 
 ```
-git clone git@github.com:prettydiff/prettydiff.git -b 3.0.0 prettydiff3
-cd prettydiff3
+git clone git@github.com:prettydiff/prettydiff.git
+cd prettydiff
 
 npm install typescript -g
 npm install eslint -g
@@ -17,7 +19,10 @@ node js/services build nocheck
 ```
 
 ## Usage
-The application run on the terminal with Node.js and in a web browser.
+The application runs on the terminal with Node.js and in a web browser.
+
+* To get started with Node try `node js/services commands`
+* To get started in a browser try this command with Node: `node js/services server` and then in your web browser go to http://localhost:9001
 
 ### Web Browser
 Executing in the web browser presents a handy GUI with interactive documentation immediately available. This is convenient when Node.js is not available or installing software is not allowed.
