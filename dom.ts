@@ -349,7 +349,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                     feedsubmit = function dom_load_feedsubmit():void {
                         let a:number = 0;
                         const datapack:any  = {},
-                            namecheck:any = (localStorage.getItem("settings") !== undefined)
+                            namecheck:any = (localStorage.getItem("settings") !== undefined && localStorage.getItem("settings") !== null)
                                 ? JSON.parse(localStorage.getItem("settings"))
                                 : {},
                             radios:NodeListOf<HTMLInputElement> = id("feedradio1")
@@ -886,7 +886,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                 if (options.diff === undefined) {
                     options.diff = "";
                 }
-                if (localStorage.getItem("source") !== undefined) {
+                if (localStorage.getItem("source") !== undefined && localStorage.getItem("source") !== null) {
                     options.source = localStorage.getItem("source");
                     if (test.ace === true) {
                         aceStore.codeIn.setValue(options.source);
@@ -894,7 +894,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                         textarea.codeIn.value = options.source;
                     }
                 }
-                if (localStorage.getItem("diff") !== undefined) {
+                if (localStorage.getItem("diff") !== undefined && localStorage.getItem("diff") !== null) {
                     options.diff = localStorage.getItem("diff");
                     if (options.mode === "diff") {
                         if (test.ace === true) {
@@ -2311,7 +2311,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                         if (localStorage !== null && localStorage.getItem("settings") !== undefined && localStorage.getItem("settings") !== null && localStorage.getItem("settings").indexOf(":undefined") > 0) {
                             localStorage.setItem("settings", localStorage.getItem("settings").replace(/:undefined/g, ":false"));
                         }
-                        data.settings = (localStorage.getItem("settings") !== undefined)
+                        data.settings = (localStorage.getItem("settings") !== undefined && localStorage.getItem("settings") !== null)
                             ? JSON.parse(localStorage.getItem("settings"))
                             : {};
                         if (colorParam.indexOf("c=") === 0 || colorParam.indexOf("&c=") > -1) {
@@ -2368,7 +2368,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                     if (localStorage !== null && localStorage.getItem("settings") !== undefined && localStorage.getItem("settings") !== null && localStorage.getItem("settings").indexOf(":undefined") > 0) {
                         localStorage.setItem("settings", localStorage.getItem("settings").replace(/:undefined/g, ":false"));
                     }
-                    data.settings = (localStorage.getItem("settings") !== undefined)
+                    data.settings = (localStorage.getItem("settings") !== undefined && localStorage.getItem("settings") !== null)
                         ? JSON.parse(localStorage.getItem("settings"))
                         : {};
                     if (colorParam.indexOf("c=") === 0 || colorParam.indexOf("&c=") > -1) {
@@ -4279,10 +4279,10 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                     }
                 };
             }
-            if (localStorage.getItem("settings") !== undefined) {
+            if (localStorage.getItem("settings") !== undefined && localStorage.getItem("settings") !== null) {
                 nametry = JSON.stringify(localStorage.getItem("settings"));
             }
-            if (localStorage.getItem("settings") === undefined || nametry === "" || nametry.indexOf("knownname") < 0) {
+            if (localStorage.getItem("settings") === undefined || localStorage.getItem("settings") === null || nametry === "" || nametry.indexOf("knownname") < 0) {
                 name = "\"" + Math
                     .random()
                     .toString()
