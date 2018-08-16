@@ -1,0 +1,3 @@
+const x = <Comp par={<SubComp>aasdfasdf</SubComp>}>
+        XXX
+    </Comp>

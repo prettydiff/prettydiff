@@ -1,0 +1,50 @@
+/*global global*/
+(function pdcomment_init() {
+    // parses the prettydiff settings comment
+    //
+    // - Source Priorities:
+    // * the prettydiff comment is only accepted if it occurs before non-comments (near the top)
+    // * options.source is the priority material for reading the comment
+    // * the prettydiff comment will be processed from options.diff only if it present there, missing from options.source, and options.mode is diff
+    //
+    // - Examples:
+    //    /*prettydiff.com width:80 preserve:4*/
+    //    /* prettydiff.com width:80 preserve:4 */
+    //    /*prettydiff.com width=80 preserve=4 */
+    //    // prettydiff.com width=80 preserve:4
+    //    <!-- prettydiff.com width:80 preserve=4 -->
+    //    <!--prettydiff.com width:40 preserve:2-->
+    //
+    // - Parsing Considerations:
+    // * there may be any amount of space at the start or end of the comment
+    // * "prettydiff.com" must exist at the start of the comment
+    // * comment must exist prior to non-comment tokens (near top of code)
+    // * parameters are name value pairs separated by white space
+    // * the delimiter separating name and value is either ":" or "=" characters
+    "use strict";
+    const pdcomment = function pdcomment_(options) {
+            let pdcom = options.source.search(/((\/(\*|\/))|<!--*)\s*prettydiff\.com/), a = (pdcom > -1)
+                ? pdcom
+                : options.diff.search(/((\/(\*|\/))|<!--*)\s*prettydiff\.com/), b = 0, quote = "", op = [];
+            const ops = [], source = (pdcom > -1)
+                ? options.source
+                : options.diff, len = source.length, comment = (source.charAt(a) === "<")
+                ? "<!--"
+                : (source.charAt(a + 1) === "/")
+                    ? "//"
+                    : "/\u002a", esc = function pdcomment_esc() {
+                if (source.charAt(a - 1) !== "\\") {
+                    return false;
+                }
+                let x = a;
+                do {
+                    x = x - 1;
+                } while (x > 0 && source.charAt(x) === "\\");
+                if ((a - x) % 2 === 0) {
+                    return true;
+                }
+                return false;
+            };
+    };
+    global.prettydiff.api.pdcommenttttt = pdcomment;
+}());

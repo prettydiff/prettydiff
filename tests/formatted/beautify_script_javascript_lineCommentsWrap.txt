@@ -1,0 +1,70 @@
+/*prettydiff.com wrap:40 preserve:4*/
+
+
+
+// this is a long line comment that
+// should wrap onto an additional line,
+// but we will see
+
+
+
+// this comment has line breaks that
+// should be preserved
+//
+// line breaks can contain white space,
+// which is to be ignored
+//
+// the white space in line breaks could
+// resemble code, but it should still be
+// ignored
+//
+// a long line that should wrap onto a
+// much smaller following line, but we
+// will see
+
+
+
+// comments starting with 4 spaces or a
+// tab are treated as code and should
+// not wrap
+//
+//    this is a long line that should not wrap as it is formatted as commented code in markdown
+//
+// comments that start with either an
+// asterisks, dash, or a number followed
+// by a dot are list items and comments
+// should not wrap onto list lines
+// * star line, but i am going to make
+// it longer to see if it wraps into the
+// next line
+// - dash line, but we also need to see
+// if this wraps into the next line
+// 46000. number line and again we need
+// to see if this wraps into the next
+// line
+// * arrrrgghhh
+
+
+
+// comments starting with 4 spaces or a
+// tab are treated as code and should
+// not wrap
+//
+//    this is a long line that should not wrap as it is formatted as commented code in markdown
+//
+// comments that start with either an
+// asterisks, dash, or a number followed
+// by a dot are list items and comments
+// should not wrap onto list lines
+// * star line, but i am going to make
+// it longer to see if it wraps into the
+// next line
+//
+// - dash line, but we also need to see
+// if this wraps into the next line
+//
+// 46000. number line and again we need
+// to see if this wraps into the next
+// line
+//
+// * arrrrgghhh
