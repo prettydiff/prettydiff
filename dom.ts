@@ -1136,7 +1136,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                         } else if ((param[0] === "d" || param[0] === "diff") && textarea.codeOut !== null) {
                             param[0] = "diff";
                             diff = param[1];
-                            if (test.ace === true) {
+                            if (test.ace === true && diff !== undefined) {
                                 aceStore
                                     .codeOut
                                     .setValue(diff);
@@ -1232,7 +1232,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                         }
                         b = b + 1;
                     } while (b < paramLen);
-                    if (source !== "") {
+                    if (source !== "" && source !== undefined && source !== null) {
                         if (textarea.codeIn !== null) {
                             if (test.ace === true) {
                                 aceStore
@@ -4217,7 +4217,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                         aceStore
                             .codeOut
                             .setReadOnly(false);
-                        if (options.diff !== undefined) {
+                        if (options.diff !== undefined && options.diff !== null) {
                             aceStore.codeOut.setValue(options.diff);
                         }
                         parent = <HTMLElement>output.parentNode;
