@@ -4,7 +4,7 @@
 /*jslint for: true, this: true*/
 /***********************************************************************
  This is written by Austin Cheney on 3 Mar 2009.
-
+ 
  Please see the license.txt file associated with the Pretty Diff
  application for license information.
  ***********************************************************************/
@@ -1023,7 +1023,7 @@ global.prettydiff.meta = {
                     theme = "ace/theme/idle_fingers";
                 }
                 if (color === "canvas") {
-                    theme = "ace/theme/canvas";
+                    theme = "ace/theme/textmate";
                 }
                 pd
                     .ace
@@ -4258,7 +4258,9 @@ global.prettydiff.meta = {
                     a = 0,
                     len = keys.length;
                 for (a = 0; a < len; a = a + 1) {
-                    api[keys[a]] = pd.param[keys[a]];
+                    if (keys[a] !== "mode") {
+                        api[keys[a]] = pd.param[keys[a]];
+                    }
                 }
             }());
         }
@@ -6701,7 +6703,7 @@ global.prettydiff.meta = {
                                 paramLen = paramLen - 1;
                             }
                         } else if (param[0] === "jsscope") {
-                            param[1] = "true";
+                            param[1] = "report";
                             if (pd.data.node.jsscope !== null) {
                                 pd.data.node.jsscope.checked = true;
                             }

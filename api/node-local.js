@@ -3,7 +3,7 @@
 /*jslint node: true*/
 /***********************************************************************
  node-local is written by Austin Cheney on 6 Nov 2012.
-
+ 
  Please see the license.txt file associated with the Pretty Diff
  application for license information.
  **********************************************************************/

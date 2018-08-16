@@ -1,4 +1,4 @@
-<?php
+<?php 
 $referer = $_SERVER['HTTP_REFERER'];
 $refpos = strpos($referer, 'prettydiff.com');
 if ($refpos === 0 || $refpos === 7 || $refpos === 11) {

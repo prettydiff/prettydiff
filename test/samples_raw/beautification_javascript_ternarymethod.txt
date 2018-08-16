@@ -1,9 +1,0 @@
-apps.getpjson((data.input[2] === undefined)
-    ? data.abspath + "package.json"
-    : apps.relToAbs(
-        data.input[2].replace(/(\/|\\)$/, "") + node.path.sep + "package.json",
-        data.cwd
-    ),
-function biddle_publish_callback() {
-    return;
-});

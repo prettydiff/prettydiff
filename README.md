@@ -1,4 +1,4 @@
-Try it online at [http://prettydiff.com/](http://prettydiff.com/).
+ Try it online at [http://prettydiff.com/](http://prettydiff.com/).
 
 # ![Pretty Diff logo](http://prettydiff.com/images/pdlogoxs.svg) Pretty Diff
 

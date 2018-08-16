@@ -1,6 +1,6 @@
 /*global - body element*/
 #prettydiff{text-align: center;font-size:10px;overflow-y:scroll}
-
+ 
 /*global - contentarea, the only immediate child of body*/
 #prettydiff .contentarea{border-style:solid;border-width:0.1em;font-family:"Century Gothic","Trebuchet MS";margin:0 auto;max-width:93em;padding:1em;text-align:left}
 

@@ -1,7 +1,0 @@
-var New = React.createClass({
-  render() {
-    return (
-      <InputText valid={validate} value={this.state} onChange={this.handleSalaryChange} label='test' onValidationError='test2' placeholder='test3' ref='test4' asdf='asdf' qwer='qwer' rty='rty' dfgsdfgsdfg='sdfgsdfg'/>
-    );
-  }
-});

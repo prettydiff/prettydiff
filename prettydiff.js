@@ -2,7 +2,7 @@
 /*jshint laxbreak: true*/
 /*global __dirname, ace, console, define, global, module, options, performance, process, require */
 /*
-
+ 
  Execute in a NodeJS app:
 
     var prettydiff = require("prettydiff"),
