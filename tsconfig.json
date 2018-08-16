@@ -8,8 +8,11 @@
         "**/*.ts"
     ],
     "exclude": [
+        "2",
+        "3",
         "js",
         "node_modules",
+        "parse-framework",
         "test"
     ]
 }
