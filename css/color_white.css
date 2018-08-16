@@ -38,20 +38,24 @@
 #prettydiff.white thead th{background:#eef}
 #prettydiff.white .report strong{color:#009}
 #prettydiff.white .report em{color:#080}
+#prettydiff.white .options li,
 #prettydiff.white h2 button,
 #prettydiff.white td,
 #prettydiff.white .segment,
 #prettydiff.white .count li,
 #prettydiff.white .diff-right,
 #prettydiff.white ol.segment li,
-#prettydiff.white .data li{border-color:#ccc}
+#prettydiff.white .data li,
+#prettydiff.white .data li span{border-color:#ccc}
 #prettydiff.white tbody th{border-color:#999}
 #prettydiff.white td.nested{background:#d8d8d8}
 #prettydiff.white th.nested{background:#eee}
 #prettydiff.white .count li.fold{color:#900}
 #prettydiff.white .count{background:#eed;border-color:#999}
+#prettydiff.white #addOptions .disabled{background:#fee;color:#300}
 #prettydiff.white h2 button{background:#f8f8f8;box-shadow:0.1em 0.1em 0.25em #ddd}
-#prettydiff.white li h4{color:#00f}
+#prettydiff.white li h4,
+#prettydiff.white li h5{color:#33c}
 #prettydiff.white code{background:#eee;border-color:#eee;color:#009}
 #prettydiff.white ol.segment h4 strong{color:#c00}
 #prettydiff.white .data .delete{background:#ffd8d8}
@@ -61,23 +65,23 @@
 #prettydiff.white .data .replace{background:#fec}
 #prettydiff.white .data .replace em{background:#ffe;border-color:#a86;color:#852}
 #prettydiff.white .data .empty{background:#ddd}
-#prettydiff.white .data em.s0{color:#000}
-#prettydiff.white .data em.s1{color:#f66}
-#prettydiff.white .data em.s2{color:#12f}
-#prettydiff.white .data em.s3{color:#090}
-#prettydiff.white .data em.s4{color:#d6d}
-#prettydiff.white .data em.s5{color:#7cc}
-#prettydiff.white .data em.s6{color:#c85}
-#prettydiff.white .data em.s7{color:#737}
-#prettydiff.white .data em.s8{color:#6d0}
-#prettydiff.white .data em.s9{color:#dd0}
-#prettydiff.white .data em.s10{color:#893}
-#prettydiff.white .data em.s11{color:#b97}
-#prettydiff.white .data em.s12{color:#bbb}
-#prettydiff.white .data em.s13{color:#cc3}
-#prettydiff.white .data em.s14{color:#333}
-#prettydiff.white .data em.s15{color:#9d9}
-#prettydiff.white .data em.s16{color:#880}
+#prettydiff.white .data em.s0{border-color:#000;color:#000}
+#prettydiff.white .data em.s1{border-color:#f66;color:#f66}
+#prettydiff.white .data em.s2{border-color:#12f;color:#12f}
+#prettydiff.white .data em.s3{border-color:#090;color:#090}
+#prettydiff.white .data em.s4{border-color:#d6d;color:#d6d}
+#prettydiff.white .data em.s5{border-color:#7cc;color:#7cc}
+#prettydiff.white .data em.s6{border-color:#c85;color:#c85}
+#prettydiff.white .data em.s7{border-color:#737;color:#737}
+#prettydiff.white .data em.s8{border-color:#6d0;color:#6d0}
+#prettydiff.white .data em.s9{border-color:#dd0;color:#dd0}
+#prettydiff.white .data em.s10{border-color:#893;color:#893}
+#prettydiff.white .data em.s11{border-color:#b97;color:#b97}
+#prettydiff.white .data em.s12{border-color:#bbb;color:#bbb}
+#prettydiff.white .data em.s13{border-color:#cc3;color:#cc3}
+#prettydiff.white .data em.s14{border-color:#333;color:#333}
+#prettydiff.white .data em.s15{border-color:#9d9;color:#9d9}
+#prettydiff.white .data em.s16{border-color:#880;color:#880}
 #prettydiff.white .data .l0{background:#fff}
 #prettydiff.white .data .l1{background:#fed}
 #prettydiff.white .data .l2{background:#def}

@@ -24,14 +24,10 @@
 #prettydiff.white #options,
 #prettydiff.white #addOptions,
 #prettydiff.white #footer{box-shadow:0 0.5em 1em #999}
-#prettydiff.white #beautyoutput,
-#prettydiff.white #minifyoutput,
-#prettydiff.white #parseoutput,
-#prettydiff.white #analysisoutput{background:#f2f2f2;border-color:#999}
+#prettydiff.white #output{background:#f2f2f2;border-color:#999}
 #prettydiff.white .ace_gutter{background:#ddd;border-color:#999}
 #prettydiff.white #update{background:#ddd;border-color:#999}
 #prettydiff.white #reports h3 button{background:#ddd;border-color:#999;color:#555}
-#prettydiff.white #webtool .output textarea{background:#ddd}
 #prettydiff.white #reports h3 button:hover{background:#eee;border-color:#999;box-shadow:0 0.25em 0.5em #ccc;color:#666}
 #prettydiff.white .save{background:#fc0;border-color:#a30;color:#a30}
 #prettydiff.white .minimize{background:#fcc;border-color:#c00;color:#c00}
@@ -44,6 +40,7 @@
 #prettydiff.white #webtool td.nested .header th,
 #prettydiff.white #webtool .header th{background:#eef}
 #prettydiff.white #webtool thead th{background:#eef}
+#prettydiff.white #webtool .readonly .ace_scroller,
 #prettydiff.white #webtool td.nested th{background:#eee}
 #prettydiff.white #textareaTabKey em{color:#00f}
 #prettydiff.white #announcement strong,
@@ -52,7 +49,8 @@
 #prettydiff.white .box .body p em{color:#080}
 #prettydiff.white .box .body p strong{color:#009}
 #prettydiff.white #webtool textarea{background:#eee;border-color:#999;color:#009}
-#prettydiff #loadmask span{background:#ccc}
+#prettydiff.white #webtool .readonly textarea{background:#ddd}
+#prettydiff.white .readonly .ace-tm .ace_indent-guide {background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEXd3d3u346CAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==") right repeat-y;}
 
 /*color - canvas, webtool only*/
 #prettydiff.canvas .filefocus,
@@ -74,18 +72,11 @@
 #prettydiff.canvas #options,
 #prettydiff.canvas #addOptions,
 #prettydiff.canvas #footer{box-shadow:0 0.5em 1em #b8a899}
-#prettydiff.canvas #beautyinput,
-#prettydiff.canvas #minifyinput,
-#prettydiff.canvas #parseoinput,
-#prettydiff.canvas #analysisinput,
+#prettydiff.canvas #input,
 #prettydiff.canvas #baseText,
 #prettydiff.canvas #newText{background:#f2f2f2;border-color:#999}
-#prettydiff.canvas #beautyoutput,
-#prettydiff.canvas #minifyoutput,
-#prettydiff.canvas #parseoutput,
-#prettydiff.canvas #analysisoutput{background:#ccccc8;border-color:#999}
+#prettydiff.canvas #output{background:#ccccc8;border-color:#999}
 #prettydiff.canvas #update{background:#ddd;border-color:#999}
-#prettydiff.canvas #webtool .output textarea{background:#ccccc8}
 #prettydiff.canvas .save{background:#fc0;border-color:#a30;color:#a30}
 #prettydiff.canvas .minimize{background:#fcc;border-color:#c00;color:#c00}
 #prettydiff.canvas .maximize{background:#beb;border-color:#060;color:#060}
@@ -95,7 +86,7 @@
 #prettydiff.canvas .maximize:hover{background:#efe;border-color:#010;color:#010}
 #prettydiff.canvas .resize:hover{background:#eef8ff;border-color:#006;color:#006}
 #prettydiff.canvas .ace_marker-layer .ace_start{background:#9f9}
-#prettydiff.canvas .ace_gutter{background:#ddddd8;border-color:#999}
+#prettydiff.canvas .ace_gutter{background:#ccccc8;border-color:#999;color:#333}
 #prettydiff.canvas .ace-tm .ace_marker-layer .ace_selection,
 #prettydiff.canvas .ace-canvas .ace_marker-layer .ace_selection,
 #prettydiff.canvas .ace_selection.ace_start{background:#ffe}
@@ -105,12 +96,53 @@
 #prettydiff.canvas #textareaTabKey em{color:#060}
 #prettydiff.canvas #announcement strong,
 #prettydiff.canvas #textareaTabKey strong{color:#900}
+#prettydiff.canvas #webtool .readonly .ace_scroller,
 #prettydiff.canvas .box .body{background:#ddddd8}
 #prettydiff.canvas .box .body p em{color:#060}
 #prettydiff.canvas .box .body p strong{color:#009}
 #prettydiff.canvas #webtool textarea{background:#ddddd8;border-color:#999;color:#420}
+#prettydiff.canvas #webtool .readonly textarea{background:#bbbbb8}
 #prettydiff.canvas .box h3 button{background:#eeeee8;border-color:#420;color:#900}
 #prettydiff.canvas .box h3 button:hover{background:#ccb;border-color:#630;color:#630}
+
+/*ace theme colors - canvas*/
+#prettydiff.canvas .ace-canvas .ace_identifier{color:#930;}
+#prettydiff.canvas .ace-canvas .ace_print-margin {width: 1px;background: #e8e8e8;}
+#prettydiff.canvas .ace-canvas .ace_fold {background-color: #6B72E6;}
+#prettydiff.canvas .ace-canvas {background-color: #e8e8e8;color: black;}
+#prettydiff.canvas .ace-canvas .ace_cursor {color: black;}
+#prettydiff.canvas .ace-canvas .ace_invisible {color: rgb(191, 191, 191);}
+#prettydiff.canvas .ace-canvas .ace_storage,.ace-canvas .ace_keyword {color: #660;}
+#prettydiff.canvas .ace-canvas .ace_constant {color: rgb(197, 6, 11);}
+#prettydiff.canvas .ace-canvas .ace_constant.ace_buildin {color: rgb(88, 72, 246);}
+#prettydiff.canvas .ace-canvas .ace_constant.ace_language {color: rgb(88, 92, 246);}
+#prettydiff.canvas .ace-canvas .ace_constant.ace_library {color: #390;}
+#prettydiff.canvas .ace-canvas .ace_invalid {background-color: rgba(255, 0, 0, 0.1);color: red;}
+#prettydiff.canvas .ace-canvas .ace_support.ace_function {color: rgb(60, 76, 114);}
+#prettydiff.canvas .ace-canvas .ace_support.ace_constant {color: #390;}
+#prettydiff.canvas .ace-canvas .ace_support.ace_type,.ace-canvas .ace_support.ace_class {color: rgb(109, 121, 222);}
+#prettydiff.canvas .ace-canvas .ace_keyword.ace_operator {color: rgb(104, 118, 135);}
+#prettydiff.canvas .ace-canvas .ace_string {color: rgb(3, 106, 7);}
+#prettydiff.canvas .ace-canvas .ace_comment {color: rgb(76, 136, 107);}
+#prettydiff.canvas .ace-canvas .ace_comment.ace_doc {color: rgb(0, 102, 255);}
+#prettydiff.canvas .ace-canvas .ace_comment.ace_doc.ace_tag {color: rgb(128, 159, 191);}
+#prettydiff.canvas .ace-canvas .ace_constant.ace_numeric {color: rgb(0, 0, 205);}
+#prettydiff.canvas .ace-canvas .ace_variable {color: rgb(49, 132, 149);}
+#prettydiff.canvas .ace-canvas .ace_xml-pe {color: rgb(104, 104, 91);}
+#prettydiff.canvas .ace-canvas .ace_entity.ace_name.ace_function {color: #0000A2;}
+#prettydiff.canvas .ace-canvas .ace_heading {color: rgb(12, 7, 255);}
+#prettydiff.canvas .ace-canvas .ace_list {color:rgb(185, 6, 144);}
+#prettydiff.canvas .ace-canvas .ace_meta.ace_tag {color:rgb(0, 22, 142);}
+#prettydiff.canvas .ace-canvas .ace_string.ace_regex {color: rgb(255, 0, 0)}
+#prettydiff.canvas .ace-canvas .ace_marker-layer .ace_selection {background: rgb(181, 213, 255);}
+#prettydiff.canvas .ace-canvas.ace_multiselect .ace_selection.ace_start {box-shadow: 0 0 3px 0px white;border-radius: 2px;}
+#prettydiff.canvas .ace-canvas .ace_marker-layer .ace_step {background: rgb(252, 255, 0);}
+#prettydiff.canvas .ace-canvas .ace_marker-layer .ace_stack {background: rgb(164, 229, 101);}
+#prettydiff.canvas .ace-canvas .ace_marker-layer .ace_bracket {margin: -1px 0 0 -1px;border: 1px solid rgb(192, 192, 192);}
+#prettydiff.canvas .ace-canvas .ace_marker-layer .ace_active-line {background: rgba(0, 0, 0, 0.07);}
+#prettydiff.canvas .ace-canvas .ace_gutter-active-line {background-color : #dcdcdc;}
+#prettydiff.canvas .ace-canvas .ace_marker-layer .ace_selected-word {background: rgb(250, 250, 255);border: 1px solid rgb(200, 200, 250);}
+#prettydiff.canvas .ace-tm .ace_indent-guide {background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==") right repeat-y;}
 
 /*color - shadow, webtool only*/
 #prettydiff.shadow .filefocus,
@@ -132,19 +164,12 @@
 #prettydiff.shadow #options,
 #prettydiff.shadow #addOptions,
 #prettydiff.shadow #footer{box-shadow:0 0.5em 1em #000}
-#prettydiff.shadow #beautyinput,
-#prettydiff.shadow #minifyinput,
-#prettydiff.shadow #parseoinput,
-#prettydiff.shadow #analysisinput,
-#prettydiff.shadow #baseText,
-#prettydiff.shadow #newText{background:#111;border-color:#666}
-#prettydiff.shadow #beautyoutput,
-#prettydiff.shadow #minifyoutput,
-#prettydiff.shadow #parseoutput,
-#prettydiff.shadow #analysisoutput{background:#333;border-color:#666}
+#prettydiff.shadow #input,
+#prettydiff.shadow #input.ace_editor,
+#prettydiff.shadow #output.ace_editor{background:#111;border-color:#666}
+#prettydiff.shadow #output{background:#333;border-color:#666}
 #prettydiff.shadow #textareaTabKey,
 #prettydiff.shadow #update{background:#666;border-color:#999}
-#prettydiff.shadow #webtool .output textarea{background:#333}
 #prettydiff.shadow .save{background:#fc0;border-color:#a30;color:#a30}
 #prettydiff.shadow .minimize{background:#fcc;border-color:#c00;color:#c00}
 #prettydiff.shadow .maximize{background:#beb;border-color:#060;color:#060}
@@ -175,12 +200,14 @@
 #prettydiff.shadow .ace-idle-fingers .ace_support.ace_constant{color:#8cc9fb}
 #prettydiff.shadow .unchecked{background:#666}
 #prettydiff.shadow #textareaTabKey em{color:#cf3}
+#prettydiff.shadow #webtool .readonly .ace_scroller,
 #prettydiff.shadow .box .body{background:#222}
 #prettydiff.shadow #announcement em,
 #prettydiff.shadow .box .body p em{color:#cf3}
 #prettydiff.shadow #announcement strong,
 #prettydiff.shadow .box .body p strong{color:#9cf}
 #prettydiff.shadow #webtool textarea{background:#222;border-color:#999;color:#ddd}
+#prettydiff.shadow #webtool .readonly textarea{background:#111}
 #prettydiff.shadow .box h3 button{background:#333;border-color:#666;color:#ccc}
 #prettydiff.shadow .box h3 button:hover{background:#777;border-color:#aaa;color:#fff}
 
@@ -227,12 +254,6 @@
 #prettydiff #doc-content > div,
 #prettydiff #doc-content > div > div,
 #prettydiff #webtool #reports{border-style:none}
-#prettydiff #diffBase,
-#prettydiff #diffNew,
-#prettydiff #Beautify,
-#prettydiff #Minify,
-#prettydiff #Parse,
-#prettydiff #Analysis,
 #prettydiff #option_comment,
 #prettydiff #functionGroup,
 #prettydiff #headline,
@@ -322,27 +343,21 @@
 
 /*webtool - paragraphs containing textareas for code input/output*/
 #prettydiff #webtool .input,
+#prettydiff #webtool .readonly,
+#prettydiff #webtool .output{clear:none;width:49%}
+#prettydiff #webtool .input{float:left}
 #prettydiff #webtool .output,
-#prettydiff #diffBase,
-#prettydiff #diffNew{clear:none;width:49%}
-#prettydiff #webtool .input,
-#prettydiff #diffBase{float:left}
-#prettydiff #webtool .output,
-#prettydiff #diffNew{float:right}
-#prettydiff #diffBase .input,
-#prettydiff #diffNew .input{float:none;width:100%}
+#prettydiff #webtool .readonly{float:right}
 #prettydiff #webtool .output textarea,
-#prettydiff #diffNew textarea{margin-left:-0.2em}
+#prettydiff #webtool .readonly{margin-left:-0.2em}
 
 /*webtool - labels to textareas for code input/output*/
 #prettydiff #webtool .input label,
-#prettydiff #webtool .output label{display:block;font-weight:bold}
+#prettydiff #webtool .readonly label,
+#prettydiff #webtool .output label{display:inline-block;font-weight:bold}
 
 /*webtool - file input*/
-#prettydiff #Beautify p.file,
-#prettydiff #Minify p.file,
-#prettydiff #Parse p.file,
-#prettydiff #Analysis p.file{clear:none;float:none;margin:0.5em 0 1em}
+#prettydiff p.file{clear:none;float:none;margin:0.5em 0 1em}
 #prettydiff .file input{padding:0 0.1em}
 #prettydiff .file input,
 #prettydiff .labeltext input{display:inline-block;margin:0 0.7em 0 0;width:16em}
@@ -350,11 +365,13 @@
 
 /*webtool - major section to contain textarea sections*/
 #prettydiff #codeInput{margin-bottom:1em;padding:1.2em}
-#prettydiff #codeInput #diffBase p,#codeInput #diffNew p{clear:both;float:none}
 #prettydiff #codeInput .input,
+#prettydiff #codeInput .readonly,
 #prettydiff #codeInput .output{margin:0}
 #prettydiff #codeInput label{font-size:1em}
 #prettydiff #codeInput textarea{font-size:1em;line-height:1.2em}
+#prettydiff #codeInput h2{display:block}
+#prettydiff #codeInput .inputLabel{margin-bottom:0}
 
 /*webtool - accessibility alternate navigation messaging for keyboard users when a textarea gains focus*/
 #prettydiff #textareaTabKey{border-style:solid;border-width:0.1em;left:51%;margin:-1.1em 0 0 -0.2em;padding:0.5em;position:absolute;width:28em}
@@ -364,32 +381,28 @@
 /*webtool - option styles*/
 #prettydiff #webtool #options,
 #prettydiff #webtool #addOptions{margin:0 0 1.2em}
-#prettydiff #addOptions div{border-style:none}
-#prettydiff #addOptions p.button{margin:0 0 1em}
-#prettydiff #resetOptions{margin:0 0 -6em}
-#prettydiff #options p.apiname,
-#prettydiff #addOptions p.apiname{float:left;font-size:1.2em;line-height:2.4;margin:0 -40em 0 15em;padding:0}
-#prettydiff span.apiname{display:inline-block;float:none;font-size:1em;margin:0 0 0 1em;width:auto}
+#prettydiff #webtool .option-description{font-size:1em;margin:-1.6em 0 0 29em}
+#prettydiff #webtool .option-description span{display:block}
+#prettydiff .options p.button{margin:0 0 1em}
+#prettydiff .options span{display:inline-block;min-width:16.5em}
+#prettydiff .options span label,
+#prettydiff .options span input{display:inline;font-weight:normal;margin:0}
+#prettydiff .options p{margin:0}
+#prettydiff .options label,
+#prettydiff #options p.label,
+#prettydiff #addOptions p.label{display:block;font-size:1em;font-weight:bold;margin:0 0 1em -1em}
+#prettydiff .options ul{margin:0 -1em;padding:0}
+#prettydiff .options li{border-style:dashed;border-width:0 0 0.1em;list-style:none;margin:0;padding:1em 2em;position:relative}
+#prettydiff #addOptions li .disabled{border-style:none;font-weight:bold;height:100%;left:0;opacity:0.5;position:absolute;text-align:right;top:0;width:100%;z-index:5;}
+#prettydiff #addOptions a.apiname{float:left;font-weight:normal;margin:0 -80em 0 30em;padding:0}
 #prettydiff .resetbutton{padding:0}
+#prettydiff #resetOptions{margin:-2em 0.65em -6em 0}
 #prettydiff #options button{float:right;height:2em;padding:0;width:15em}
-#prettydiff #options label{width:auto}
-#prettydiff #options p,
-#prettydiff #addOptions p{clear:both;font-size:1em;margin:0;padding:2em 0 0}
 #prettydiff #webtool .resetbutton,
 #prettydiff #webtool p.button{padding:0}
 #prettydiff #button-primary{margin:1em 0 0}
-#prettydiff #options p span{height:2em;margin:0 0 0 1em}
-#prettydiff fieldset{clear:both;margin:1em 0 0;padding:0 1em 1em}
-#prettydiff fieldset{clear:both;margin:1em 0 0;padding:0 1em 1em}
-#prettydiff .options select,
-#prettydiff .options fieldset select{float:left;margin:0 1em 0 0}
 #prettydiff .options{clear:both;margin-bottom:1em;padding:1em;width:auto}
-#prettydiff .options input[type=text]{margin-right:1em;width:11.6em}
-#prettydiff #webtool .options p span label,
-#prettydiff .options p span{font-size:1.1em;font-weight:normal}
-#prettydiff .options p span{display:block;float:left;margin-left:1em;min-width:16.5em;padding-bottom:0.5em}
-#prettydiff #webtool .options label,
-#prettydiff #webtool .options strong{font-size:1.2em}
+#prettydiff .options input[type=text]{margin-right:1em;width:13.1em}
 #prettydiff p button,
 #prettydiff h3 button,
 #prettydiff a.button{display:block;font-weight:bold;padding:0.2em 0;width:100%}
@@ -423,9 +436,9 @@
 
 /*webtool - update section (version and last update date)*/
 #prettydiff #webtool .metainfo{position:relative;}
-#prettydiff #update{clear:both;float:right;font-weight:bold;margin:0;padding:0.25em;position:absolute;right:0;top:0;z-index:2;}
-#prettydiff #update span{display:block}
-#prettydiff #update span span{display:block;float:right}
+#prettydiff #update{clear:both;float:right;margin:0;padding:0.25em;position:absolute;right:0;top:0;z-index:2;}
+#prettydiff #update strong{display:block;float:right}
+#prettydiff #update span{clear:both;display:block}
 
 /*webtool - overrides*/
 #prettydiff #webtool .beautify,
@@ -439,3 +452,5 @@
 #prettydiff #webtool .beautify h3,
 #prettydiff #webtool .diff h4,
 #prettydiff #webtool .beautify h4{margin:0}
+
+#prettydiff #webtool #statreport{display:none}

@@ -36,6 +36,7 @@
 #prettydiff.shadow select,
 #prettydiff.shadow legend{color: #ccc}
 #prettydiff.shadow .contentarea{box-shadow:0 1em 1em #000}
+#prettydiff.shadow .options li,
 #prettydiff.shadow h2 button,
 #prettydiff.shadow td,
 #prettydiff.shadow th,
@@ -59,11 +60,14 @@
 #prettydiff.shadow .diff h3{background:#000;border-color:#666}
 #prettydiff.shadow .segment,
 #prettydiff.shadow .data li,
-#prettydiff.shadow .diff-right{border-color:#444}
+#prettydiff.shadow .beautify li span,
+#prettydiff.shadow .diff-right{border-color:#888}
 #prettydiff.shadow .count li{border-color:#333}
 #prettydiff.shadow .count{background:#555;border-color:#333}
-#prettydiff.shadow li h4{color:#ff0}
+#prettydiff.shadow li h4,
+#prettydiff.shadow li h5{color:#ff0}
 #prettydiff.shadow code{background:#000;border-color:#000;color:#ddd}
+#prettydiff.shadow #addOptions .disabled{background:#300;color:#fdd}
 #prettydiff.shadow ol.segment h4 strong{color:#c00}
 #prettydiff.shadow .data .delete{background:#300}
 #prettydiff.shadow .data .delete em{background:#200;border-color:#c63;color:#c66}
@@ -73,23 +77,23 @@
 #prettydiff.shadow .data .replace em{background:#023;border-color:#09c;color:#7cf}
 #prettydiff.shadow .data .empty{background:#111}
 #prettydiff.shadow .diff .author{border-color:#666}
-#prettydiff.shadow .data em.s0{color:#fff}
-#prettydiff.shadow .data em.s1{color:#d60}
-#prettydiff.shadow .data em.s2{color:#aaf}
-#prettydiff.shadow .data em.s3{color:#0c0}
-#prettydiff.shadow .data em.s4{color:#f6f}
-#prettydiff.shadow .data em.s5{color:#0cc}
-#prettydiff.shadow .data em.s6{color:#dc3}
-#prettydiff.shadow .data em.s7{color:#a7a}
-#prettydiff.shadow .data em.s8{color:#7a7}
-#prettydiff.shadow .data em.s9{color:#ff6}
-#prettydiff.shadow .data em.s10{color:#33f}
-#prettydiff.shadow .data em.s11{color:#933}
-#prettydiff.shadow .data em.s12{color:#990}
-#prettydiff.shadow .data em.s13{color:#987}
-#prettydiff.shadow .data em.s14{color:#fc3}
-#prettydiff.shadow .data em.s15{color:#897}
-#prettydiff.shadow .data em.s16{color:#f30}
+#prettydiff.shadow .data em.s0{border-color:#fff;color:#fff}
+#prettydiff.shadow .data em.s1{border-color:#d60;color:#d60}
+#prettydiff.shadow .data em.s2{border-color:#aaf;color:#aaf}
+#prettydiff.shadow .data em.s3{border-color:#0c0;color:#0c0}
+#prettydiff.shadow .data em.s4{border-color:#f6f;color:#f6f}
+#prettydiff.shadow .data em.s5{border-color:#0cc;color:#0cc}
+#prettydiff.shadow .data em.s6{border-color:#dc3;color:#dc3}
+#prettydiff.shadow .data em.s7{border-color:#a7a;color:#a7a}
+#prettydiff.shadow .data em.s8{border-color:#7a7;color:#7a7}
+#prettydiff.shadow .data em.s9{border-color:#ff6;color:#ff6}
+#prettydiff.shadow .data em.s10{border-color:#33f;color:#33f}
+#prettydiff.shadow .data em.s11{border-color:#933;color:#933}
+#prettydiff.shadow .data em.s12{border-color:#990;color:#990}
+#prettydiff.shadow .data em.s13{border-color:#987;color:#987}
+#prettydiff.shadow .data em.s14{border-color:#fc3;color:#fc3}
+#prettydiff.shadow .data em.s15{border-color:#897;color:#897}
+#prettydiff.shadow .data em.s16{border-color:#f30;color:#f30}
 #prettydiff.shadow .data .l0{background:#333}
 #prettydiff.shadow .data .l1{background:#633}
 #prettydiff.shadow .data .l2{background:#335}
