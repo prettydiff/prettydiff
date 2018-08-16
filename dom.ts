@@ -744,7 +744,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                             : headline.getElementsByTagName("p")[0],
                         x           = Math.random(),
                         circulation = [
-                            "Status, <a href=\"https://github.com/prettydiff/prettydiff/issues/511\">https://github.com/prettydiff/prettydiff/issues/511</a>"
+                            "Experimental version 3.0.0.  For stable code please use <a href=\"2\">version 2</a>."
                         ];
                     if (headline !== null) {
                         headtext.innerHTML = circulation[Math.floor(x * circulation.length)];
