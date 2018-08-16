@@ -934,8 +934,9 @@ interface readFile {
                         },
                         optkeys:string[] = Object.keys(prettydiff.api.optionDef),
                         keyslen:number = optkeys.length,
-                        versionData = {
+                        versionData:any = {
                             date: "",
+                            dateRaw: "",
                             number: "",
                             parse: ""
                         },
@@ -1126,6 +1127,11 @@ interface readFile {
                                         injectFlag: `<strong>${versionData.date}</strong> <span>Version: <strong>${versionData.number}</strong></span>`,
                                         start: "<!-- start version data -->"
                                     });
+                                    modify({
+                                        end: "<!-- script cache bust end -->",
+                                        injectFlag: `<script src="js/dom.js?${versionData.dateRaw}" type="application/javascript"></script>`,
+                                        start: "<!-- script cache bust start -->"
+                                    });
                                 } else if (fileFlag === "dom") {
                                     modify({
                                         end: "// end option defaults",
@@ -1253,7 +1259,34 @@ interface readFile {
                                     return;
                                 }
                                 const date:string[] = stderr.slice(stderr.indexOf("Date:") + 12).split(" ");
+                                let month:string = "";
+                                if (date[0] === "Jan") {
+                                    month = "01";
+                                } else if (date[0] === "Feb") {
+                                    month = "02";
+                                } else if (date[0] === "Mar") {
+                                    month = "03";
+                                } else if (date[0] === "Apr") {
+                                    month = "04";
+                                } else if (date[0] === "May") {
+                                    month = "05";
+                                } else if (date[0] === "Jun") {
+                                    month = "06";
+                                } else if (date[0] === "Jul") {
+                                    month = "07";
+                                } else if (date[0] === "Aug") {
+                                    month = "08";
+                                } else if (date[0] === "Sep") {
+                                    month = "09";
+                                } else if (date[0] === "Oct") {
+                                    month = "10";
+                                } else if (date[0] === "Nov") {
+                                    month = "11";
+                                } else if (date[0] === "Dec") {
+                                    month = "12";
+                                }
                                 versionData.date = `${date[1]} ${date[0]} ${date[3]}`;
+                                versionData.dateRaw = `${date[3] + month + date[1]}`;
                                 node.fs.readFile(`${projectPath}package.json`, "utf8", function node_apps_build_libraries_version_child_readPackage(errp:Error, data:string):void {
                                     if (errp !== null) {
                                         apps.errout([errp.toString()]);
