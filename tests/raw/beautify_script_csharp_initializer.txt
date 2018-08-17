@@ -1,0 +1,21 @@
+public static List<TestTable> ToListForEach(DataTable dt)
+{
+    Int6 = row.IsNull("Int6") ? new int?() : new int?(Convert.ToInt32(row["Int6"]));
+    var data = new List<TestTable>();
+
+    foreach (DataRow row in dt.Rows)
+    {
+        data.Add(new TestTable()
+        {
+            VarChar9 = row["VarChar9"].ToString(),
+            VarChar10 = row["VarChar10"].ToString(),
+        });
+        data.Add(new TestASDF()
+        {
+            VarChar9 = row["VarChar9"].ToString(),
+            VarChar10 = row["VarChar10"].ToString()
+        });
+    }
+
+    return data;
+}

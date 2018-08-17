@@ -3968,6 +3968,7 @@ interface readFile {
                     options[key[a]] = prettydiff.api.optionDef[key[a]].default;
                     a = a + 1;
                 } while (a < len);
+                options.correct      = true;
                 options.diff_context = 4;
                 options.mode         = "diff";
                 options.object_sort  = true;
