@@ -64,11 +64,15 @@
                                     if (prior[0] === "insert" && two[codes[codes.length - 2][4] - (prior[4] - prior[3])] === one[codes[codes.length - 2][1]]) {
                                         codes.pop();
                                         codes[codes.length - 1] = ["insert", -1, -1, codes[codes.length - 1][3], codes[codes.length - 1][4] - (prior[4] - prior[3])];
+                                        if (codes[codes.length - 1][4] < 0) {
+                                            codes[codes.length - 1][4] = prior[4] - prior[3];
+                                        }
                                         do {
                                             // one-sided replacement undo, more like undelete
                                             table[one[c]][0] = table[one[c]][0] + 1;
                                             c = c - 1;
                                         } while (c > codes[codes.length - 2][2]);
+                                        
                                         d = codes[codes.length - 1][4] - 1;
                                     }
                                 }
@@ -153,13 +157,13 @@
                                 code[1] = prior[2];
                                 code[2] = prior[2] + 1;
                             } else if (prior[0] === "replace") {
-                                if (code[0] === "delete") {
+                                if (code[0] === "delete" && code[2] - 1 > a) {
                                     c = code[2] - 1;
                                     d = prior[3];
                                     codes[codes.length - 1] = ["delete", prior[1], code[2] - 1, -1, -1];
                                     return;
                                 }
-                                if (code[0] === "insert") {
+                                if (code[0] === "insert" && code[4] - 1 > b) {
                                     c = prior[1];
                                     d = code[4] - 1;
                                     codes[codes.length - 1] = ["insert", -1, -1, prior[3], code[4] - 1];

@@ -239,6 +239,8 @@
         options.lexerOptions[options.lexer].objectSort = options.object_sort;
         if (options.lexer === "script") {
             options.lexerOptions.script.varword = options.variable_list;
+        } else if (options.lexer === "style") {
+            options.lexerOptions.style.no_lead_zero = options.no_lead_zero;
         }
         if (options.mode === "parse") {
             const parse_format = (options.parse_format === "htmltable")

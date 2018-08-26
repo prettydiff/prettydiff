@@ -274,6 +274,57 @@
                 if (options.compressed_css === false) {
                     build.push(" ");
                 }
+            },
+            vertical = function beautify_style_vertical():void {
+                const start:number = data.begin[a],
+                    store:compareStore = [];
+                let b:number = a,
+                    c:number = 0,
+                    item:[number, number],
+                    longest:number = 0;
+                if (start < 0 || b <= start) {
+                    return;
+                }
+                do {
+                    b = b - 1;
+                    if (data.begin[b] === start) {
+                        if (data.token[b] === ":") {
+                            item = [b - 1, 0];
+                            do {
+                                b = b - 1;
+                                if ((data.token[b] === ";" && data.begin[b] === start) || (data.token[b] === "}" && data.begin[data.begin[b]] === start)) {
+                                    break;
+                                }
+                                if (data.types[b] !== "comment" && data.types[b] !== "selector" && data.token[b] !== "{" && data.begin[b] === start) {
+                                    item[1] = data.token[b].length + item[1];
+                                }
+                            } while (b > start + 1);
+                            if (item[1] > longest) {
+                                longest = item[1];
+                            }
+                            store.push(item);
+                        }
+                    } else if (data.types[b] === "end") {
+                        if (b < data.begin[b]) {
+                            break;
+                        }
+                        b = data.begin[b];
+                    }
+                } while (b > start);
+                b = store.length;
+                if (b < 2) {
+                    return;
+                }
+                do {
+                    b = b - 1;
+                    if (store[b][1] < longest) {
+                        c = store[b][1];
+                        do {
+                            data.token[store[b][0]] = data.token[store[b][0]] + " ";
+                            c = c + 1;
+                        } while (c < longest);
+                    }
+                } while (b > 0);
             };
         let output:string     = "",
             indent:number   = options.indent_level,
@@ -286,10 +337,22 @@
                 build.push(tab);
             } while (a > 0);
         }
+        if (options.vertical === true) {
+            a = len;
+            do {
+                a = a - 1;
+                if (data.token[a] === "}") {
+                    vertical();
+                }
+            } while (a > 0);
+        }
 
         //beautification loop
         a = options.start;
         do {
+            if (data.types[a + 1] === "end" && mixin === false) {
+                indent = indent - 1;
+            }
             if (data.types[a] === "start") {
                 if (data.types[a - 1] === "propvar" && options.compressed_css === false) {
                     build.push(" ");
@@ -307,13 +370,12 @@
                     }
                     build.push(data.token[a]);
                     indent = indent + 1;
-                    if (data.types[a + 1] !== "end" && (options.compressed_css === false || (options.compressed_css === true && data.types[a + 1] === "start")) && (data.types[a + 1] !== "selector" || options.css_insert_lines === false)) {
+                    if ((options.compressed_css === false || (options.compressed_css === true && data.types[a + 1] === "start")) && (data.types[a + 1] !== "selector" || options.css_insert_lines === false)) {
                         nl(indent);
                     }
                 }
             } else if (data.types[a] === "end") {
                 if (data.types[a + 1] === "external_else") {
-                    indent = indent - 1;
                     nl(indent);
                     build.push(data.token[a]);
                     build.push(" ");
@@ -325,16 +387,12 @@
                     build.push(data.token[a]);
                     build.push(" ");
                 } else {
-                    indent = indent - 1;
-                    if (data.types[a - 1] !== "start" && options.compressed_css === false) {
-                        nl(indent);
-                    }
                     build.push(data.token[a]);
                     if (options.compressed_css === true && data.types[a + 1] === "end") {
                         nl(indent - 1);
                     } else if (options.css_insert_lines === true && data.types[a + 1] === "selector" && data.lines[a] < 2 && data.token[a - 1] !== "{") {
                         build.push(lf);
-                    } else if (data.types[a + 1] !== "end" && data.types[a + 1] !== "semi" && data.types[a + 1] !== "comment") {
+                    } else if (data.types[a + 1] !== "semi") {
                         nl(indent);
                     }
                 }
@@ -342,9 +400,7 @@
                 if (data.token[a] !== "x;" && (options.compressed_css === false || (options.compressed_css === true && data.types[a + 1] !== "end"))) {
                     build.push(data.token[a]);
                 }
-                if (data.types[a + 1] === "comment-inline") {
-                    build.push(" ");
-                } else if (data.types[a + 1] !== "end" && data.types[a + 1] !== "comment" && options.compressed_css === false) {
+                if (options.compressed_css === false) {
                     if (options.css_insert_lines === true && data.types[a + 1] === "selector") {
                         build.push(lf);
                     } else if (data.lines[a + 1] > 0 || (data.types[a + 1] !== undefined && data.types[a + 1].indexOf("external") < 0)) {
@@ -369,18 +425,19 @@
                         build.push(" ");
                     }
                 }
-            } else if ((data.types[a] === "comment" || data.types[a] === "comment-inline") && data.types[a - 1] !== "colon" && data.types[a - 1] !== "property") {
-                if (data.types[a - 1] === "value" && data.types[a] === "comment-inline") {
-                    build.push(" ");
-                }
-                if (a > 0 && options.compressed_css === true && data.types[a] === "comment" && data.types[a - 1] !== "comment") {
-                    build.push(lf);
-                    nl(indent);
-                } else if (a > 0 && data.types[a - 1] !== "start" && data.types[a] !== "comment-inline") {
-                    nl(indent);
+            } else if (data.types[a] === "comment") {
+                if (data.lines[a] < 2) {
+                    let blen:number = build.length - 1;
+                    do {
+                        build.pop();
+                        blen = blen - 1;
+                    } while (blen > 0 && (/^\s+$/).test(build[blen]) === true);
+                    if (a > 0) {
+                        build.push(" ");
+                    }
                 }
                 build.push(data.token[a]);
-                if (data.types[a + 1] !== "end" && data.types[a + 1] !== "comment") {
+                if (data.lines[a + 1] > 1 || data.token[a].slice(0, 2) === "//") {
                     nl(indent);
                 }
             } else {
@@ -402,8 +459,10 @@
                     build.pop();
                 }
                 build.push(data.token[a]);
-                if (data.types[a].indexOf("external") > -1 && data.types[a + 1] !== "semi") {
-                    if ((data.types[a + 1] !== undefined && data.types[a + 1].indexOf("external") > -1) || (data.lines[a + 1] === 1 && data.types[a + 1] !== "end") || data.lines[a + 1] > 1) {
+                if (data.types[a] === "variable" && data.token[a + 1] === "{") {
+                    build.push(" ");
+                } else if (data.types[a].indexOf("external") > -1 && data.types[a + 1] !== "semi") {
+                    if ((data.types[a + 1] !== undefined && data.types[a + 1].indexOf("external") > -1) || data.lines[a + 1] > 1) {
                         nl(indent);
                     }
                 }

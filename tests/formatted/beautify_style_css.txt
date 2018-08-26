@@ -1,0 +1,117 @@
+/*Each line is one test unit, but multiple units (or all) can run at once*/
+
+$blue: #3bbfce;
+$defaultFont: Helvetica,Arial,sans-serif,"Courier New";
+$margin: 16px;
+$primaryColor: #80c040;
+$the-border: 1px;
+@mixin left($dist) {
+    float      : left;
+    margin-left: $dist;
+}
+@mixin table-scaffolding {
+    td,
+    th {
+        padding: 2px;
+    }
+    th {
+        font-weight: bold;
+        text-align : center;
+    }
+}
+#data {
+    @include left(10px);
+    @include table-scaffolding;
+}
+#header {
+    border-left : $the-border;
+    border-right: $the-border*2;
+}
+#header h2,
+.favorite li,
+li,
+p {
+    color      : $primaryColor;
+    font-family: $defaultFont;
+    font-size  : 24px;
+}
+.border {
+    border-color: $blue;
+    margin      : $margin/2;
+    padding     : $margin/2;
+}
+.button {
+    -moz-transition   : all 0.25s ease-in-out;
+    -ms-transition    : all 0.25s ease-in-out;
+    -o-transition     : all 0.25s ease-in-out;
+    -webkit-transition: all 0.25s ease-in-out;
+    background        : #80c040;
+    color             : #fff;
+    transition        : all 0.25s ease-in-out;
+}
+.button:hover {
+    background: #000;
+}
+.content-navigation {
+    border-color: $blue;
+    color       : darken($blue, 9%);
+}
+.styleguide-format {
+    background: rgba(0, 0, 0, 0.5);
+    border    : 1px 2px 1px 2px solid #00FF00;
+    color     : #000;
+}
+a {
+    margin-left : 0 !important;
+    margin-right: 20px;
+    margin-top  : 0.5em;
+}
+a {
+    margin: 4px 3px 2px 2px;
+}
+a {
+    @include transition;
+    color          : $primaryColor;
+    font           : {
+        family: Helvetica,Arial,sans-serif;
+        size  : 14px;
+    }
+    text-decoration: none;
+    &:hover {
+        text-decoration: underline;
+    }
+}
+a {
+    -moz-transition   : all 0.25s ease-in-out;
+    -ms-transition    : all 0.25s ease-in-out;
+    -o-transition     : all 0.25s ease-in-out;
+    -webkit-transition: all 0.25s ease-in-out;
+    color             : #80c040;
+    transition        : all 0.25s ease-in-out;
+}
+a {
+    margin : 4px 3px 2px 1px;
+    padding: 4px 3px 2px 1px;
+}
+a.th {
+    .shadow .box button {
+        box-shadow : 0 0.1em 0.2em rgba(0, 0, 0, 0.75);
+        text-shadow: 0.1em 0.1em 0.1em rgba(0, 0, 0, 0.5);
+    }
+    .shadow .box button.resize {
+        background  : #bbf;
+        border-color: #446;
+        color       : #446;
+    }
+}
+a:hover {
+    color: #000;
+}
+ul.category-list {
+    & > li {
+        list-style-type: disc;
+    }
+    a {
+        color: #f00;
+    }
+}
