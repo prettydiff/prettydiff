@@ -1,3 +1,5 @@
-const x = <Comp par={<SubComp>aasdfasdf</SubComp>}>
+const x = <Comp par={
+        <SubComp>aasdfasdf</SubComp>
+    }>
         XXX
     </Comp>

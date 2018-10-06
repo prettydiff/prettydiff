@@ -85,29 +85,29 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             }
         },
         test = {
-            //delect if Ace Code Editor is supported
+            // delect if Ace Code Editor is supported
             ace           : (location.href.toLowerCase().indexOf("ace=false") < 0 && typeof ace === "object"),
-            //get the lowercase useragent string
+            // get the lowercase useragent string
             agent         : (typeof navigator === "object")
                 ? navigator
                     .userAgent
                     .toLowerCase()
                 : "",
-            //test for standard web audio support
+            // test for standard web audio support
             audio         : ((typeof AudioContext === "function" || typeof AudioContext === "object") && AudioContext !== null)
                 ? new AudioContext()
                 : null,
-            //delays the toggling of test.load to false for asynchronous code sources
+            // delays the toggling of test.load to false for asynchronous code sources
             delayExecution: false,
-            //am I served from the Pretty Diff domain
+            // am I served from the Pretty Diff domain
             domain        : (location.href.indexOf("prettydiff.com") < 15 && location.href.indexOf("prettydiff.com") > -1),
-            //If the output is too large the report must open and minimize in a single step
+            // If the output is too large the report must open and minimize in a single step
             filled        : {
                 code: false,
                 feed: false,
                 stat: false
             },
-            //test for support of the file api
+            // test for support of the file api
             fs            : (typeof FileReader === "function"),
             // stores keypress state to avoid execution of event.execute from certain key
             // combinations
@@ -116,9 +116,13 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             // supplement to ensure keypress is returned to false only after other keys
             // other than ctrl are released
             keystore      : [],
-            //some operations should not occur as the page is initially loading
+            // some operations should not occur as the page is initially loading
             load          : true,
-            //supplies alternate keyboard navigation to editable text areas
+            // whether to save things locally
+            store         : (id("localStorage-no") !== null && id("localStorage-no").checked === true)
+                ? false
+                : true,
+            // supplies alternate keyboard navigation to editable text areas
             tabesc        : []
         },
         load                = function dom_load():void {
@@ -800,7 +804,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                 // preps stored settings
                 // should come after events are assigned
                 if (localStorage.getItem("settings") !== undefined && localStorage.getItem("settings") !== null) {
-                    if (localStorage.getItem("settings").indexOf(":undefined") > 0) {
+                    if (localStorage.getItem("settings").indexOf(":undefined") > 0 && test.store === true) {
                         localStorage.setItem("settings", localStorage.getItem("settings").replace(/:undefined/g, ":false"));
                     }
                     data.settings = JSON.parse(localStorage.getItem("settings"));
@@ -864,7 +868,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                             stat: {}
                         };
                     }
-                    if (data.settings.knownname === undefined) {
+                    if (data.settings.knownname === undefined && test.store === true) {
                         data.settings.knownname = `${Math
                             .random()
                             .toString()
@@ -1050,26 +1054,6 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                 prepBox("code");
                 prepBox("stat");
 
-                // sets up the option comment string
-                x = id("commentString");
-                if (x !== null) {
-                    if (localStorage.getItem("commentString") !== undefined && localStorage.getItem("commentString") !== null && localStorage.getItem("commentString") !== "") {
-                        data.commentString = JSON.parse(localStorage.getItem("commentString"));
-                    }
-                    if (x.value.length === 0) {
-                        x.innerHTML = "/*prettydiff.com \u002a/";
-                    } else {
-                        x.innerHTML = "/*prettydiff.com " + data
-                            .commentString
-                            .join(", ")
-                            .replace(/api\./g, "") + " \u002a/";
-                    }
-                    x = id("commentClear");
-                    if (x !== null) {
-                        x.onclick = clearComment;
-                    }
-                }
-
                 // sets default configurations from URI query string
                 // should come after all configurations are processed, so as to override
                 if (typeof location === "object" && typeof location.href === "string" && location.href.indexOf("?") > -1) {
@@ -1223,6 +1207,18 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                                     .codeOut
                                     .getSession()
                                     .setMode("ace/mode/html");
+                            }
+                        } else if (param[0] === "localstorage") {
+                            if (param[1] === "false" || param[1] === "" || param[1] === undefined) {
+                                test.store = false;
+                                if (id("localStorage-no") !== null) {
+                                    id("localStorage-no").checked = true;
+                                }
+                            } else {
+                                test.store = true;
+                                if (id("localStorage-yes") !== null) {
+                                    id("localStorage-yes").checked = true;
+                                }
                             }
                         } else if (options[param[0]] !== undefined) {
                             options[param[0]] = param[1];
@@ -2243,6 +2239,26 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                         id("button-primary").getElementsByTagName("button")[0].click();
                     };
                 }
+
+                // sets up the option comment string
+                x = id("commentString");
+                if (x !== null) {
+                    if (localStorage.getItem("commentString") !== undefined && localStorage.getItem("commentString") !== null && localStorage.getItem("commentString") !== "") {
+                        data.commentString = JSON.parse(localStorage.getItem("commentString"));
+                    }
+                    if (x.value.length === 0) {
+                        x.innerHTML = "/*prettydiff.com \u002a/";
+                    } else {
+                        x.innerHTML = "/*prettydiff.com " + data
+                            .commentString
+                            .join(", ")
+                            .replace(/api\./g, "") + " \u002a/";
+                    }
+                    x = id("commentClear");
+                    if (x !== null) {
+                        x.onclick = clearComment;
+                    }
+                }
             }
             if (pages === "documentation") {
                 let a:number = 0,
@@ -2272,7 +2288,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                             span.innerHTML = "Show";
                         }
                     },
-                    colorScheme:HTMLSelectElement = id("colorScheme"),
+                    colorScheme:HTMLSelectElement = id("option-color"),
                     hashgo      = function dom_load_documentation_hashgo():void {
                         let hash:string     = "",
                             test:boolean     = false,
@@ -2308,7 +2324,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                     colorChange = function dom_load_documentation_colorChange():void {
                         const options:NodeListOf<HTMLOptionElement> = colorScheme.getElementsByTagName("option"),
                             olen:number = options.length;
-                        if (localStorage !== null && localStorage.getItem("settings") !== undefined && localStorage.getItem("settings") !== null && localStorage.getItem("settings").indexOf(":undefined") > 0) {
+                        if (test.store === true && localStorage !== null && localStorage.getItem("settings") !== undefined && localStorage.getItem("settings") !== null && localStorage.getItem("settings").indexOf(":undefined") > 0) {
                             localStorage.setItem("settings", localStorage.getItem("settings").replace(/:undefined/g, ":false"));
                         }
                         data.settings = (localStorage.getItem("settings") !== undefined && localStorage.getItem("settings") !== null)
@@ -2365,7 +2381,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                 colorOptions = node.getElementsByTagName("option");
                 olen    = colorOptions.length;
                 if (node !== null) {
-                    if (localStorage !== null && localStorage.getItem("settings") !== undefined && localStorage.getItem("settings") !== null && localStorage.getItem("settings").indexOf(":undefined") > 0) {
+                    if (test.store === true && localStorage !== null && localStorage.getItem("settings") !== undefined && localStorage.getItem("settings") !== null && localStorage.getItem("settings").indexOf(":undefined") > 0) {
                         localStorage.setItem("settings", localStorage.getItem("settings").replace(/:undefined/g, ":false"));
                     }
                     data.settings = (localStorage.getItem("settings") !== undefined && localStorage.getItem("settings") !== null)
@@ -2425,6 +2441,65 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             test.load = false;
         };
     prettydiff.meta = meta;
+    // builds the Pretty Diff options comment as options are updated
+    method.app.commentString = function dom_app_commentString():void {
+        const comment:HTMLElement = id("commentString");
+        if (comment !== null) {
+            if (data.commentString.length === 0) {
+                comment.innerHTML = "/*prettydiff.com \u002a/";
+            } else if (data.commentString.length === 1) {
+                comment.innerHTML = "/*prettydiff.com " + data
+                    .commentString[0]
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/api\./g, "") + " \u002a/";
+            } else {
+                data.commentString.sort();
+                comment.innerHTML = "/*prettydiff.com " + data
+                    .commentString
+                    .join(", ")
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/api\./g, "") + " \u002a/";
+            }
+        }
+        method.app.hideOutput();
+        if (test.store === true) {
+            localStorage.setItem("commentString", JSON.stringify(data.commentString));
+        }
+    };
+    // stretches input to 100% width if output is a html report
+    method.app.hideOutput = function dom_app_hideOutput():void {
+        let hide:boolean;
+        if (options.complete_document === true) {
+            hide = false;
+        } else if (options.parse_format === "renderhtml" && options.mode === "parse") {
+            hide = true;
+        } else if (options.jsscope === "report" && options.mode === "beautify") {
+            hide = true;
+        } else {
+            hide = false;
+        }
+        if (hide === true) {
+            if (test.ace === true) {
+                id("output").parentNode.style.display = "none";
+                id("input").parentNode.style.width = "100%";
+            } else {
+                id("output").parentNode.parentNode.style.display = "none";
+                id("input").parentNode.parentNode.style.width = "100%";
+            }
+        } else {
+            if (test.ace === true) {
+                id("output").parentNode.style.display = "block";
+                id("input").parentNode.style.width = "49%";
+            } else {
+                id("output").parentNode.parentNode.style.display = "block";
+                id("input").parentNode.parentNode.style.width = "49%";
+            }
+        }
+    };
     // determine the specific language if auto or unknown
     method.app.langkey  = function dom_app_langkey(obj:any):[string, string, string] {
         let defaultval:string  = "",
@@ -2498,36 +2573,6 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
         }
         return value;
     };
-    // stretches input to 100% width if output is a html report
-    method.app.hideOutput = function dom_app_hideOutput():void {
-        let hide:boolean;
-        if (options.complete_document === true) {
-            hide = false;
-        } else if (options.parse_format === "renderhtml" && options.mode === "parse") {
-            hide = true;
-        } else if (options.jsscope === "report" && options.mode === "beautify") {
-            hide = true;
-        } else {
-            hide = false;
-        }
-        if (hide === true) {
-            if (test.ace === true) {
-                id("output").parentNode.style.display = "none";
-                id("input").parentNode.style.width = "100%";
-            } else {
-                id("output").parentNode.parentNode.style.display = "none";
-                id("input").parentNode.parentNode.style.width = "100%";
-            }
-        } else {
-            if (test.ace === true) {
-                id("output").parentNode.style.display = "block";
-                id("input").parentNode.style.width = "49%";
-            } else {
-                id("output").parentNode.parentNode.style.display = "block";
-                id("input").parentNode.parentNode.style.width = "49%";
-            }
-        }
-    };
     //store tool changes into localStorage to maintain state
     method.app.options  = function dom_app_options(event:Event):void {
         let x:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
@@ -2543,7 +2588,6 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             h3:HTMLElement,
             body:HTMLElement,
             opt:HTMLOptionElement;
-        const comment:HTMLElement = id("commentString");
         xname = x.nodeName.toLowerCase();
         if (xname === "div") {
             if (x.getAttribute("class") === "box") {
@@ -2617,7 +2661,9 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                 .innerHTML
                 .replace(/\s+/g, " ");
         }
-        localStorage.setItem("settings", JSON.stringify(data.settings));
+        if (test.store === true) {
+            localStorage.setItem("settings", JSON.stringify(data.settings));
+        }
         if (classy === "box") {
             return;
         }
@@ -2666,29 +2712,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             } else {
                 data.commentString.push(`${classy}: "${options[classy]}"`);
             }
-            if (comment !== null) {
-                if (data.commentString.length === 0) {
-                    comment.innerHTML = "/*prettydiff.com \u002a/";
-                } else if (data.commentString.length === 1) {
-                    comment.innerHTML = "/*prettydiff.com " + data
-                        .commentString[0]
-                        .replace(/&/g, "&amp;")
-                        .replace(/</g, "&lt;")
-                        .replace(/>/g, "&gt;")
-                        .replace(/api\./g, "") + " \u002a/";
-                } else {
-                    data.commentString.sort();
-                    comment.innerHTML = "/*prettydiff.com " + data
-                        .commentString
-                        .join(", ")
-                        .replace(/&/g, "&amp;")
-                        .replace(/</g, "&lt;")
-                        .replace(/>/g, "&gt;")
-                        .replace(/api\./g, "") + " \u002a/";
-                }
-            }
-            method.app.hideOutput();
-            localStorage.setItem("commentString", JSON.stringify(data.commentString));
+            method.app.commentString();
         }
     };
 
@@ -3445,7 +3469,9 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             }
             return false;
         }
-        localStorage.setItem("source", options.source);
+        if (test.store === true) {
+            localStorage.setItem("source", options.source);
+        }
         if (options.mode === "diff") {
             if (id("inputlabel") !== null) {
                 options.source_label = id("inputlabel").value;
@@ -3461,7 +3487,9 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             if (options.diff === undefined || options.diff === "") {
                 return false;
             }
-            localStorage.setItem("diff", options.diff);
+            if (test.store === true) {
+                localStorage.setItem("diff", options.diff);
+            }
         }
         if (options.lexer === "text" && options.mode !== "diff" && ann !== null) {
             ann.innerHTML = "The value of <em>options.lexer</em> is <strong>text</strong> but <em>options.mode</em> is not <strong>diff</strong>.";
@@ -3850,7 +3878,9 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             node.setAttribute("title", "Return this dialogue to its prior size and location.");
             data.settings.report[idval].max = true;
             data.settings.report[idval].min = false;
-            localStorage.setItem("settings", JSON.stringify(data.settings));
+            if (test.store === true) {
+                localStorage.setItem("settings", JSON.stringify(data.settings));
+            }
             data.settings.report[idval].top    = box.offsetTop;
             data.settings.report[idval].left   = box.offsetLeft;
             data.settings.report[idval].height = body.clientHeight - 36;
@@ -4142,7 +4172,27 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
     };
     //toggles between modes
     method.event.modeToggle = function dom_event_modeToggle(mode:string):void {
-        const cycleOptions = function dom_event_modeToggle_cycleOptions():void {
+        const commentString = function dom_event_modeToggle_commentString():void {
+                const value:string = `mode: "${options.mode}"`;
+                let a:number = data.commentString.length;
+                if (a > 0) {
+                    do {
+                        a = a - 1;
+                        if (data.commentString[a].indexOf("mode:") === 0) {
+                            data.commentString[a] = value;
+                            break;
+                        }
+                        if (data.commentString[a] < "mode:") {
+                            data.commentString.splice(a, 0, value);
+                            break;
+                        }
+                    } while (a > 0);
+                } else {
+                    data.commentString.push(value);
+                }
+                method.app.commentString();
+            },
+            cycleOptions = function dom_event_modeToggle_cycleOptions():void {
                 const li:HTMLLIElement[] = id("addOptions").getElementsByTagName("li"),
                     lilen:number = li.length,
                     disable = function dom_event_modeToggle_cycleOptions_disable(parent:HTMLElement, enable:boolean):void {
@@ -4260,7 +4310,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
         options.mode = mode;
         makeChanges();
         cycleOptions();
-        method.app.hideOutput();
+        commentString();
     };
     //reset tool to default configuration
     method.event.reset = function dom_event_reset():void {

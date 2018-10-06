@@ -1,11 +1,7 @@
-#!/usr/bin/env node
-
 import { Stats } from "fs";
 import * as http from "http";
 import { Stream, Writable } from "stream";
 import { Hash } from "crypto";
-import { debug } from "util";
-import { listeners } from "cluster";
 type directoryItem = [string, "file" | "directory" | "link" | "screen", number, number, Stats];
 interface directoryList extends Array<directoryItem> {
     [key:number]: directoryItem;
@@ -20,6 +16,7 @@ interface readFile {
     path: string;
     stat: Stats;
 }
+
 /*jslint node:true */
 /*eslint-env node*/
 /*eslint no-console: 0*/
@@ -1114,6 +1111,11 @@ interface readFile {
                                         end: "<!-- option list end -->",
                                         injectFlag: buildDocumentation(),
                                         start: "<!-- option list start -->"
+                                    });
+                                    modify({
+                                        end: "<!-- script cache bust end -->",
+                                        injectFlag: `<script src="js/dom.js?${Date.now()}" type="application/javascript"></script>`,
+                                        start: "<!-- script cache bust start -->"
                                     });
                                 } else if (fileFlag === "html") {
                                     modify({
@@ -2442,8 +2444,8 @@ interface readFile {
                 secondString = (finished === true)
                     ? (minutes === 1)
                         ? " 1 second "
-                        : `${minutes.toFixed(3)} seconds `
-                    : minutes.toFixed(3);
+                        : `${numberString(minutes)} seconds `
+                    : numberString(minutes);
             };
         memory       = process.memoryUsage();
         finalMem     = prettybytes(memory.rss);
@@ -2479,6 +2481,7 @@ interface readFile {
             if (minuteString === "") {
                 minuteString = "00";
             }
+            // pad single digit seconds with a 0
             if ((/^([0-9]\.)/).test(secondString) === true) {
                 secondString = `0${secondString}`;
             }
@@ -2512,9 +2515,11 @@ interface readFile {
                 const lintrun         = function node_apps_build_lint_lintrun(list:directoryList) {
                     let filesRead:number = 0,
                         filesLinted:number = 0,
-                        a:number = 0;
+                        a:number = 0,
+                        first:boolean = false;
                     const len = list.length,
                         lintit = function node_apps_build_lint_lintrun_lintit(val:string):void {
+                            console.log(`${apps.humantime(false)}Starting lint: ${val}`);
                             filesRead = filesRead + 1;
                             node.child(`eslint ${val}`, {
                                 cwd: projectPath
@@ -2529,6 +2534,10 @@ interface readFile {
                                         return;
                                     }
                                     filesLinted = filesLinted + 1;
+                                    if (first === false) {
+                                        first = true;
+                                        console.log("");
+                                    }
                                     console.log(`${apps.humantime(false) + text.green}Lint ${filesLinted} passed:${text.none} ${val}`);
                                     if (filesRead === filesLinted) {
                                         console.log(`${text.green}Lint complete for ${filesLinted} files!${text.none}`);
@@ -2544,6 +2553,8 @@ interface readFile {
                                 }
                             })
                         };
+                    console.log(`${apps.humantime(false)}Linting files...`);
+                    console.log("");
                     do {
                         if (list[a][1] === "file" && (/\.js$/).test(list[a][0]) === true) {
                             lintit(list[a][0]);
@@ -2551,6 +2562,7 @@ interface readFile {
                         a = a + 1;
                     } while (a < len);
                 };
+                console.log(`${apps.humantime(false)}Gathering JavaScript files from directory: ${text.green + lintpath + text.none}`);
                 apps.directory({
                     callback: lintrun,
                     exclusions: (command === "lint" && process.argv[0] !== undefined)
@@ -2893,7 +2905,7 @@ interface readFile {
     };
     // for testing the debug report generation
     // * the debug report is a markdown report for posting online
-    // to aid with troubleshoot a defect
+    // to aid with troubleshooting a defect
     apps.prettydiff_debug = function node_apps_debug():void {
         process.argv.push("prettydiff_debug");
         apps.errout(["Debug Command"]);
@@ -3797,7 +3809,7 @@ interface readFile {
                     }
                 };
                 if (irr !== "") {
-                    console.log(`${apps.humantime(false) + text.yellow}Test ignored (${irr}) ${a + 1}: ${text.none + tests[a].command}`);
+                    console.log(`${apps.humantime(false) + text.underline}Test ${a + 1} ignored (${text.angry + irr + text.none + text.underline}):${text.none} ${tests[a].command}`);
                 } else {
                     console.log(`${apps.humantime(false) + text.green}Passed simulation ${a + 1}: ${text.none + tests[a].command}`);
                 }
@@ -3970,6 +3982,9 @@ interface readFile {
                 } while (a < len);
                 options.correct      = true;
                 options.diff_context = 4;
+                options.lexerOptions = {};
+                options.lexerOptions[options.lexer] = {};
+                options.lexerOptions[options.lexer].objectSort = true;
                 options.mode         = "diff";
                 options.object_sort  = true;
                 options.preserve     = 2;
@@ -3995,7 +4010,9 @@ interface readFile {
                     output:string = "";
                 raw.sort(sort);
                 formatted.sort(sort);
-                console.log("");
+                if (command === "validation") {
+                    console.log("");
+                }
                 do {
                     if (raw[a] === undefined || formatted[a] === undefined) {
                         if (raw[a] === undefined) {
@@ -4042,9 +4059,6 @@ interface readFile {
                                 b = b + 1;
                             } while (b < noteslen);
                         }
-                        options.lexerOptions = {};
-                        options.lexerOptions[options.lexer] = {};
-                        options.lexerOptions[options.lexer].objectSort = true;
                         output = prettydiff.mode(options);
                         if (output === formatted[a][1]) {
                             filecount = filecount + 1;
@@ -4060,7 +4074,8 @@ interface readFile {
                             options.source       = output;
                             options.source_label = raw[a][1];
                             apps.log([prettydiff.api.diffview(options)[0]], "", "");
-                            break;
+                            apps.errout(["Validation test failure."]);
+                            return;
                         }
                     } else {
                         if (raw[a][0] < formatted[a][0]) {

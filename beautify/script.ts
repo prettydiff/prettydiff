@@ -1888,6 +1888,9 @@
                         const ch:string = options.indent_char,
                             tabby:string[] = [];
                         let index:number = options.indent_size;
+                        if (typeof index !== "number" || index < 1) {
+                            return "";
+                        }
                         do {
                             tabby.push(ch);
                             index = index - 1;

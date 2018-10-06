@@ -95,11 +95,9 @@
                         if (data.types[a] === "attribute") {
                             level.push(-10);
                         } else if (data.types[a] === "jsx_attribute_start") {
-                            level.push(-20);
+                            level.push(indent);
                         } else if (data.types[a] === "jsx_attribute_end") {
-                            if (level[data.begin[a - 1] - 1] === -20) {
-                                level[a - 1] = -20;
-                            }
+                            level[a - 1] = indent - 1;
                             level.push(-10);
                         } else if (data.types[a] === "comment") {
                             if (comstart < 0) {

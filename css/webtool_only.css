@@ -394,7 +394,8 @@
 #prettydiff .options ul{margin:0 -1em;padding:0}
 #prettydiff .options li{border-style:dashed;border-width:0 0 0.1em;list-style:none;margin:0;padding:1em 2em;position:relative}
 #prettydiff #addOptions li .disabled{border-style:none;font-weight:bold;height:100%;left:0;opacity:0.5;position:absolute;text-align:right;top:0;width:100%;z-index:5;}
-#prettydiff #addOptions a.apiname{float:left;font-weight:normal;margin:0 -80em 0 30em;padding:0}
+#prettydiff #addOptions a.apiname,
+#prettydiff #options span.apiname{float:left;font-weight:normal;margin:0 -80em 0 30em;padding:0}
 #prettydiff .resetbutton{padding:0}
 #prettydiff #resetOptions{margin:-2em 0.65em -6em 0}
 #prettydiff #options button{float:right;height:2em;padding:0;width:15em}

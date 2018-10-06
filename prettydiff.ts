@@ -195,9 +195,18 @@
             }
         }
         if (options.language === "auto") {
-            const lang:[string, string, string] = prettydiff.api.language.auto(options.source, "javascript");
+            const def:string = (options.language_default === "" || options.language_default === null || options.language_default === undefined)
+                    ? "javascript"
+                    : options.language_default,
+                lang:[string, string, string] = prettydiff.api.language.auto(options.source, def);
             if (lang[0] === "text") {
-                lang[2] = "Plain Text";
+                if (options.mode === "diff") {
+                    lang[2] = "Plain Text";
+                } else {
+                    lang[0] = "javascript";
+                    lang[1] = prettydiff.api.language.setlangmode(lang[0]);
+                    lang[2] = prettydiff.api.language.nameproper(lang[0]);
+                }
             } else if (lang[0] === "csv") {
                 lang[2] = "CSV";
             }
