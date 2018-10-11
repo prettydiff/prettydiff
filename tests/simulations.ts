@@ -221,7 +221,7 @@
                 test: "No path supplied for the directory command."
             },
             {
-                command: `directory ".${supersep}" ignore ["node_modules", ".git", ".DS_Store"] --verbose`,
+                command: `directory ".${supersep}" ignore ["node_modules", ".git", ".DS_Store", "2", "3", "beta", "ignore", "parse-framework"] --verbose`,
                 qualifier: "contains",
                 test: ` matching items from address `
             },
@@ -286,17 +286,17 @@
                 test: "parse-framework version "
             },
             {
-                command: `hash ${projectPath} list`,
+                command: `hash ${projectPath} list ignore ["node_modules", ".git", ".DS_Store", "2", "3", "beta", "ignore", "parse-framework"]`,
                 qualifier: "contains",
                 test: `tsconfig.json":"6f0e7b04ffb4e60164904713bb402821076f073249ae742412c5aeedb8994f2dca5f67b3abc0cc69a95e26f532051b0f3fbd4a5d0654a81475c866d397b96323"`
             },
             {
-                command: `hash ${projectPath} list ignore [.git, "node_modules", "tests", "js", "api", "beautify", "minify", "css", 'space test']`,
+                command: `hash ${projectPath} list ignore [.git, "node_modules", ".DS_Store", "2", "3", "beta", "ignore", "parse-framework", "tests", "js", "api", "beautify", "minify", "css", 'space test']`,
                 qualifier: "contains",
                 test: `tsconfig.json":"6f0e7b04ffb4e60164904713bb402821076f073249ae742412c5aeedb8994f2dca5f67b3abc0cc69a95e26f532051b0f3fbd4a5d0654a81475c866d397b96323"`
             },
             {
-                command: `hash ${projectPath} list ignore [.git, "node_modules", "tests", "js", "api", "beautify", "minify", "css", "space test", "test"]`,
+                command: `hash ${projectPath} list ignore [.git, "node_modules", ".DS_Store", "2", "3", "beta", "ignore", "parse-framework", "tests", "js", "api", "beautify", "minify", "css", "space test", "test"]`,
                 qualifier: "not contains",
                 test: "api"
             },
