@@ -84,7 +84,6 @@
                 let a:number     = options.start,
                     comstart:number = -1,
                     next:number = 0,
-                    skip:number     = 0,
                     indent:number       = (isNaN(options.indent_level) === true)
                         ? 0
                         : Number(options.indent_level);
@@ -95,9 +94,14 @@
                         if (data.types[a] === "attribute") {
                             level.push(-10);
                         } else if (data.types[a] === "jsx_attribute_start") {
+                            if (data.lexer[a + 1] !== lexer && data.types[a - 1] !== "jsx_attribute_end") {
+                                indent = indent + 1;
+                            }
                             level.push(indent);
                         } else if (data.types[a] === "jsx_attribute_end") {
-                            level[a - 1] = indent - 1;
+                            if (data.lexer[a - 1] === lexer && level[a - 1] > 0) {
+                                level[a - 1] = level[a - 1] - 1;
+                            }
                             level.push(-10);
                         } else if (data.types[a] === "comment") {
                             if (comstart < 0) {
@@ -133,17 +137,17 @@
                             }
                         }
                     } else {
-                        if (data.lexer[a - 1] === lexer) {
-                            skip = a;
+                        if (data.lexer[a + 1] === lexer && (data.begin[a + 1] === data.begin[a] || data.begin[a + 1] === undefined)) {
+                            level.push(a);
+                        } else {
+                            const skip:number = a;
                             do {
-                                if (data.lexer[skip + 1] === lexer && data.lexer[data.begin[skip + 1]] === lexer) {
+                                if (data.lexer[a] === lexer && data.begin[a] < 0) {
                                     break;
                                 }
-                                skip = skip + 1;
-                            } while (skip < c);
-                            level.push(skip + 1);
-                        } else {
-                            level.push(skip);
+                                a = a + 1;
+                            } while (a < c && (data.lexer[a + 1] !== lexer || data.begin[a + 1] >= skip));
+                            level.push(a);
                         }
                     }
                     a = a + 1;
@@ -152,7 +156,6 @@
             }());
         return (function beautify_markup_apply():string {
             const build:string[]        = [],
-                len:number = levels.length,
                 ind          = (function beautify_markup_apply_tab():string {
                     const indy:string[] = [options.indent_char],
                         size:number = options.indent_size - 1;
@@ -201,7 +204,7 @@
                                         break;
                                     }
                                     y = y + 1;
-                                } while (y < len);
+                                } while (y < c);
                             }
                             y = y + 1;
                             if (data.types[y] === "attribute" || data.types[y] === "jsx_attribute_start") {
@@ -232,15 +235,18 @@
                     if (data.token[a] === "</prettydiffli>" && options.correct === true) {
                         data.token[a] = "</li>";
                     }
-                    if (a < len - 1 && data.types[a + 1].indexOf("attribute") > -1 && data.types[a].indexOf("attribute") < 0) {
+                    if (a < c - 1 && data.types[a + 1].indexOf("attribute") > -1 && data.types[a].indexOf("attribute") < 0) {
                         attribute();
                     }
                     if (data.token[a] !== "</prettydiffli>" && data.token[a].slice(0, 2) !== "//" && data.token[a].slice(0, 2) !== "/*") {
+                        if (data.types[a] === "jsx_attribute_end" && levels[a] < 0) {
+                            build.push(nl(lastLevel - 1));
+                        }
                         build.push(data.token[a]);
                         if ((data.types[a] === "template" || data.types[a] === "template_start") && data.types[a - 1] === "content" && data.presv[a - 1] === true && options.mode === "beautify" && levels[a] === -20) {
                             build.push(" ");
                         }
-                        if (levels[a] > -1 || (options.force_indent === true && a < len - 1 && data.types[a + 1].indexOf("attribute") < 0)) {
+                        if (levels[a] > -1 || (options.force_indent === true && a < c - 1 && data.types[a + 1].indexOf("attribute") < 0)) {
                             lastLevel = levels[a];
                             build.push(nl(levels[a]));
                         } else if (levels[a] === -10) {
@@ -248,15 +254,21 @@
                         }
                     }
                 } else {
-                    options.end = levels[a];
-                    options.indent_level = lastLevel + 1;
-                    options.start = a;
-                    external = nl(lastLevel + 1) + prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "") + nl(lastLevel);
-                    build.push(external);
-                    a = levels[a] - 1;
+                    if (levels[a] - a < 1) {
+                        build.push(data.token[a]);
+                    } else {
+                        options.end = levels[a] + 1;
+                        options.indent_level = (data.types[a - 1] === "jsx_attribute_start")
+                            ? lastLevel
+                            : lastLevel + 1;
+                        options.start = a;
+                        external = prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "");
+                        build.push(external);
+                        a = levels[a];
+                    }
                 }
                 a = a + 1;
-            } while (a < len);
+            } while (a < c);
             if (build[0] === lf || build[0] === " ") {
                 build[0] = "";
             }

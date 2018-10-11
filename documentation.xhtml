@@ -69,9 +69,7 @@
                         <option selected="selected">White</option>
                     </select>
                 </p>
-                <p>Explore some
-                    <a href="samples.xhtml">samples</a>
-                    or browse
+                <p>Browse
                     <a href="https://github.com/prettydiff/prettydiff">Pretty Diff on GitHub</a>.</p>
             </section>
             <section id="doc-content" role="main">
@@ -136,79 +134,10 @@
                                     (AST). Pretty Diff, instead, produces parallel arrays for its internal
                                     operations. The parse mode simply makes these data arrays available for
                                     independent analysis.</dd>
-                                <dt>analysis</dt>
+                                <!--dt>analysis</dt>
                                 <dd>HTML formatted reports evaluating the code. The reports differ in content
-                                    and structure by the parser(s) used.</dd>
+                                    and structure by the parser(s) used.</dd-->
                             </dl>
-                        </div>
-                        <div class="segment" id="languages">
-                            <h3>Language Classifications</h3>
-                            <p>The project maintains three primary language libraries and a minor parser for
-                                CSV format. The three major libraries each include a parser, beautifier, and
-                                minifier. All libraries are located at the
-                                <a href="lib">lib</a>
-                                directory.</p>
-                            <dl>
-                                <dt>csspretty</dt>
-                                <dd>This library provides support for Cascading Style Sheets and similar
-                                    languages, such as the popular preprocessors: LESS and SCSS (SASS).</dd>
-                                <dt>jspretty</dt>
-                                <dd>This library provides support for JavaScript and several templating
-                                    languages that use a JavaScript-like syntax. React JSX format is supplied by
-                                    this library with assistance from the markuppretty library.</dd>
-                                <dt>markuppretty</dt>
-                                <dd>The markuppretty library supports XML, HTML, and a wide variety of HTML
-                                    templating schemes such as Handlebars and Mustache templates.</dd>
-                            </dl>
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <h2>
-                        <button aria-disabled="true" class="heading" role="presentation">Output Formats and Types
-                            <span aria-hidden="true">Show</span>
-                        </button>
-                    </h2>
-                    <div class="content-hide">
-                        <div class="segment">
-                            <h3>General Output</h3>
-                            <p>New in version 2 is that most opertions will output a single string. This
-                                makes the application more predictable and easier to integrate into other
-                                applications. Brief metadata about the operation is stored in a global object
-                                named
-                                <em>global.prettydiff.meta</em>.</p>
-                        </div>
-                        <div class="segment">
-                            <h3>Exceptions</h3>
-                            <p>For increased speed and convenience there are some features that could not be
-                                delivered as a single string. The list is as follows:</p>
-                            <ul>
-                                <li>Parse mode with
-                                    <strong>parseFormat:parallel</strong>
-                                    will return an object with a key named definition and a key named data. The data
-                                    property will contain an object of arrays by name and the definition object will
-                                    contain and object of identify key names to the data object where each value
-                                    defines the data type.</li>
-                                <li>Parse mode with
-                                    <strong>parseFormat:sequential</strong>
-                                    will a nearly identical object to that described by parseFormat:parallel. The
-                                    only difference is that the data property contains an array of array children
-                                    where each child array is a parsed token and corresponding data fields.</li>
-                                <li>Parse mode with
-                                    <strong>parseFormat:htmltable</strong>
-                                    will return a string of the parse data arranged in an HTML table.</li>
-                                <li>The option
-                                    <strong>nodeasync</strong>
-                                    returns an array where all prior described output is the first index and the
-                                    second index is an object containing brief metadata, otherwise stored in the
-                                    <em>global.prettydiff.meta</em>
-                                    object. The reason for this is to allow meta data collection during parallel
-                                    operations without collision. If this option is ignored then all prior described
-                                    output formats are generated and the meta data is dumped in the global.prettydiff.meta
-                                    object, but that meta data is not reliable. An unintended byproduct of this
-                                    feature is that Pretty Diff version 2 can accomplish nearly complete backwards
-                                    compatibility to Pretty Diff v1 by setting this option to true.</li>
-                            </ul>
                         </div>
                     </div>
                 </div>
@@ -252,25 +181,40 @@
                             <p>Various options are available for greater portability</p>
                             <ul>
                                 <li>
-                                    <h4>Bower</h4>
-                                    <p>
-                                        <code>bower install prettydiff</code>
-                                    </p>
-                                </li>
-                                <li>
                                     <h4>Github</h4>
                                     <p>
                                         <code>git clone https://github.com/prettydiff/prettydiff.git</code>
                                     </p>
                                 </li>
+                                <li>
+                                    <h4>NPM, Pretty Diff 2</h4>
+                                    <p>
+                                        <a href="https://www.npmjs.com/package/prettydiff2">https://www.npmjs.com/package/prettydiff2</a>
+                                    </p>
+                                </li>
+                                <li>
+                                    <h4>NPM, Pretty Diff 3</h4>
+                                    <p>Pretty Diff 3 is still experimental and so not published to NPM yet.  Once ready it will be reversioned Pretty Diff 100 and resume the original NPM namespace at <a href="https://www.npmjs.com/package/prettydiff">https://www.npmjs.com/package/prettydiff</a>.</p>
+                                </li>
                             </ul>
-                            <p>Pretty Diff is no longer published to NPM. For more information please see:
+                            <p>Pretty Diff version 2 is published to 
                                 <a
                                     href="https://github.com/prettydiff/prettydiff/issues/291"
                                     style="display:block">https://github.com/prettydiff/prettydiff/issues/291</a></p>
                         </div>
                         <div class="segment" id="runcode">
-                            <h3>Run the Code</h3>
+                            <h3>Setup/Run the Application</h3>
+                            <ol>
+                                <li>Download the application</li>
+                                <li>Install TypeScript: <code>npm install typescript -g</code></li>
+                                <li>Install ESLint: <code>npm install eslint -g</code></li>
+                                <li>Enter the project directory: <code>cd prettydiff</code></li>
+                                <li>Compile the code: <code>tsc --pretty</code></li>
+                                <li>Install dependencies: <code>npm install</code></li>
+                                <li>Build the application: <code>node js/services build</code></li>
+                            </ol>
+                            <p>To get started with the application on the command line try the <em>commands</em> command to see a list of available features and detailed instructions: <code>node js/services commands</code></p>
+                            <p>To run the application in a web browser execute the <em>server</em> command: <code>node js/services server</code></p>
                             <p>There is increased safety if values are always quoted in command line
                                 instructions.</p>
                             <!--ul>
@@ -351,7 +295,7 @@
                             <p>Prettydiff created by Austin Cheney originally on 3 Mar 2009.
                                 https://prettydiff.com/</p>
                             <p>As of version 2.1.17 Pretty Diff is licensed under CC0. Please see
-                                <a href="license.txt">license.txt</a> for additional information.</p>
+                                <a href="license">license</a> for additional information.</p>
                         </div>
                     </div>
                 </div>
@@ -370,20 +314,20 @@
                                 <li>The
                                     <a href="#styleguide">styleguide</a>
                                     option, which is only used in the
-                                    <a href="lib/jspretty.js">jspretty</a>
+                                    <a href="beautify/script.ts">beautify/script.ts</a>
                                     library.</li>
                                 <li>The
                                     <a href="#comment">Pretty Diff comment</a>.</li>
-                                <li>The
+                                <!--li>The
                                     <a href="#prettydiffrc">.prettydiffrc</a>
                                     file, which is only available to the
                                     <a href="api/node-local.js">node-local</a>
-                                    file (command line Node.js).</li>
+                                    file (command line Node.js).</li-->
                                 <li>User supplied options</li>
                                 <li>Default option values</li>
                             </ol>
                         </div>
-                        <div class="segment" id="prettydifrc">
+                        <!--div class="segment" id="prettydifrc">
                             <h3>The
                                 <a href=".prettydiffrc">.prettydiffrc</a>
                                 File</h3>
@@ -404,7 +348,7 @@
                                 code supplied by default in the .prettydiffrc file allows a template by which
                                 users can achieve this format directly without worrying about application and
                                 delivery concerns.</p>
-                        </div>
+                        </div-->
                         <div class="segment" id="comment">
                             <h3>Pretty Diff Comment</h3>
                             <p>The Pretty Diff option comment is similar in convention to the JSLint option
@@ -438,43 +382,15 @@
                                 <dt>ace</dt>
                                 <dd>If this parameter is provided with a false value the Ace code editor will be
                                     discarded in favor of regular HTML textarea elements.</dd>
-                                <dt>c</dt>
-                                <dd>A supported color scheme value. Currently supported values: white (default),
-                                    shadow, canvas</dd>
-                                <dt>correct</dt>
-                                <dd>When present this parameter forces option
-                                    <a href="#correct">correct</a>
-                                    to a value of
-                                    <em>true</em>. This parameter does not require a value.</dd>
-                                <dt>d</dt>
-                                <dd>The URI of a textual resource to compare to, which becomes the value of option
-                                    <a href="#diff">diff</a>. "?", "&amp;", and "#" characters in the URI value must
-                                    be URI escaped (percent encoded).</dd>
-                                <dt>jsscope</dt>
-                                <dd>When present this parameter sets the option
-                                    <a href="#jsscope">jsscope</a>
-                                    to a value of
-                                    <em></em>. This parameter does not require a value.</dd>
-                                <dt>l</dt>
-                                <dd>This parameter changes the value for option
-                                    <a href="language">language</a>
-                                    if provided a supported value.</dd>
-                                <dt>m</dt>
-                                <dd>This parameter changes the value for option
-                                    <a href="mode">mode</a>
-                                    if provided a supported value.</dd>
-                                <dt>s</dt>
-                                <dd>The URI of a textual resource to process or compare against, which becomes
-                                    the value of option
-                                    <a href="#source">source</a>. "?", "&amp;", and "#" characters in the URI value
-                                    must be URI escaped (percent encoded).</dd>
+                                <dt>localstorage</dt>
+                                <dd>Disables or enables all storage in the browser.</dd>
                             </dl>
                             <p>Any defined option name is also supported as a parameter.</p>
                             <p>Here is an example:
-                                <code>https://prettydiff.com/?s=https://prettydiff.com/prettydiff.js&amp;m=beautify&amp;correct</code>
+                                <code>https://prettydiff.com/?source=https://duckduckgo.com&amp;mode=beautify&amp;correct=true&amp;localstorage=false</code>
                             </p>
                         </div>
-                        <div class="segment">
+                        <!--div class="segment">
                             <h3>Feature Guides</h3>
                             <ol>
                                 <li>
@@ -534,7 +450,7 @@
                                     <a href="guide/unrelated_parser.xhtml">How to write a parser</a>
                                 </li>
                             </ol>
-                        </div>
+                        </div-->
                     </div>
                 </div>
                 <div>
@@ -554,95 +470,29 @@
                                 <li>Clone your forked repository to your local machine:
                                     <code>git clone https://github.com/username/prettydiff.git</code>
                                 </li>
+                                <li>Prepare the application for its first run:
+                                    <code>npm install typescript -g</code>
+                                    <code>npm install eslint -g</code>
+                                    <code>cd prettydiff</code>
+                                    <code>npm install</code>
+                                    <code>tsc --pretty</code>
+                                </li>
                                 <li>Create a new branch for your changes:
-                                    <code>git checkout -b branchName</code>
+                                    <code>git checkout -b <em>branchName</em></code>
                                 </li>
                                 <li>Run the unit tests to verify if your changes are breaking things:
-                                    <code>node test/lint.js</code>
+                                    <code>node js/services build</code>
                                 </li>
                                 <li>Open a pull request on Github. Ensure there are comments in the pull request
-                                    explaining the what the change does and why it is needed. Including additional
+                                    explaining what the change does and why it is needed. Including additional
                                     unit tests with the pull request earns extra love.</li>
                             </ol>
-                        </div>
-                        <div class="segment">
-                            <h3>Unit Tests</h3>
-                            <h4>Running the Tests</h4>
-                            <p>The unit tests require JSLint as a dev dependency. Run the unit tests with
-                                the following commands:
-                                <code>cd prettydiff</code>
-                                <code>git submodule init</code>
-                                <code>git submodule update</code>
-                                <code>node test/lint.js</code>
-                            </p>
-                            <p>The
-                                <a href="test/lint.js">unit test script</a>
-                                checks for the latest version of JSLint once per day that it runs.</p>
-                            <p>The unit tests run in phases, which are different kinds of tests. The name
-                                and order of the test phases are indicated in an array named
-                                <em>order</em>
-                                located at the top of the test script file. Alter that array to run only certain
-                                types of unit tests.</p>
-                        </div>
-                        <div class="segment">
-                            <h3>New Option Guidance</h3>
-                            <h4>Rapid Experimentation</h4>
-                            <p>The easiest way to experiment with adding new options is to arbitrarily add
-                                an option and value to the top of the given library. For example, if you
-                                wish to add a new JavaScript option then just before the
-                                <em>tokenizer</em>
-                                include a line of code like:
-                                <code>options.myNewOptionName = true</code>
-                                A new option reference exists that is avilable through out the application that can
-                                allow or suppress new logic with minimal regression. This line of code will have
-                                to be removed later, but it allows for rapid experimentation.</p>
-                            <h4>Checklist</h4>
-                            <p>The following checklist explains how to expand the documentation and
-                                supported APIs of Pretty Diff for new options.</p>
-                            <ul>
-                                <li>documentation.xhtml - Define the new option in the documentation
-                                    <a href="#options">options</a>
-                                    section.</li>
-                                <li>Web tool (if not a Node.js only option)
-                                    <ul>
-                                        <li>index.xhtml - Some options are mode specific while others aren't. Options
-                                            should be added to the appropriate language section of each supported mode.</li>
-                                        <li>api/dom.js - Add option support to the supported language modes of
-                                            <em>pd.event.recycle</em>. The supported language modes are defined as functions:
-                                            <em>dom__event_recycle_beautify</em>,
-                                            <em>dom__event_recycle_diff</em>,
-                                            <em>dom__event_recycle_minify</em>,
-                                            <em>dom__event_recycle_parse</em>,
-                                            <em>dom__event_recycle_analysis</em>.</li>
-                                    </ul>
-                                </li>
-                                <li>api/options.js
-                                    <p>Extend the following functions in the api/options.js file to define the option application wide.</p>
-                                    <ul>
-                                        <li><strong>definitions</strong> - define the option and provide a simple text description</li>
-                                        <li><strong>validate</strong> - the logic to assign values against accepted criteria</li>
-                                        <li><strong>pdcomment</strong> - only necessary if option is string type with a list of accepted values</li>
-                                        <li><strong>domops</strong> - associate ID names (from HTML) to values for populating the pretty diff comment in the web tool</li>
-                                    </ul>
-                                </li>
-                                <li>The various libraries are written for independent execution, so each gets
-                                    their own default definition for supported options, such as:
-                                    <em>jspretty__options</em>. in the lib/jspretty.js file. New options need to be
-                                    added in these locations where appropriate.</li>
-                            </ul>
-                            <h4>Additional Guidance</h4>
-                            <p>Keep things alphabetized where possible. Ideal option names are a balance of
-                                uniquely and specifically descriptive but also as short as possible. Options
-                                should ideally support a single data type, though exceptions can be made.
-                                Frequently run the unit tests to determine if the new option causses regression
-                                or understand if regression is necessary. Never be afraid to open a Github issue
-                                or send an email when further guidance is demanded or questions arise.</p>
                         </div>
                     </div>
                 </div>
             </section>
         </div>
-        <!-- script cache bust start --><script src="js/dom.js?1538841325159" type="application/javascript"></script>
+        <!-- script cache bust start --><script src="js/dom.js?1539251228145" type="application/javascript"></script>
 <!-- script cache bust end -->
     </body>
 </html>

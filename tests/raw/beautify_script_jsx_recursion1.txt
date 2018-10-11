@@ -1,0 +1,13 @@
+var List = React.createClass({
+    renderList: function () {
+        return this.props.items.map(function (item) {
+            return <ListItem item={value} key={keyvalue.id} />;
+        });
+    },
+
+    render: function () {
+        return <ul className="List">
+                this.renderList()
+            </ul>
+    }
+});

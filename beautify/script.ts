@@ -129,19 +129,18 @@
         const data:parsedArray = options.parsed,
             lexer:string = "script",
             scopes:scriptScopes = [],
+            b:number = (options.end < 1 || options.end > data.token.length)
+                ? data.token.length
+                : options.end,
             // levels sets the white space value between the current token and the next token
             // * -20 value means no white space
             // * -10 means to separate with a space
             // * 0 and above is the number of indentation to insert
             levels:number[] = (function beautify_script_level():number[] {
                 let a             = options.start, //will store the current level of indentation
-                    b:number = (options.end < 1 || options.end > data.token.length)
-                        ? data.token.length
-                        : options.end,
                     indent:number        = (isNaN(options.indent_level) === true)
                         ? 0
                         : Number(options.indent_level),
-                    skip:number = 0,
                     notcomment:boolean = false, // if in comments before any code
                     lastlist:boolean      = false, //remembers the list status of the most recently closed block
                     ctype:string         = "", //ctype stands for "current type"
@@ -1864,17 +1863,17 @@
                             ltoke = ctoke;
                         }
                     } else {
-                        if (data.lexer[a - 1] === lexer) {
-                            skip = a;
+                        if (data.lexer[a + 1] === lexer && (data.begin[a + 1] === data.begin[a] || data.begin[a + 1] === undefined)) {
+                            level.push(a);
+                        } else {
+                            const skip:number = a;
                             do {
-                                if (data.lexer[skip + 1] === lexer && data.lexer[data.begin[skip + 1]] === lexer) {
+                                if (data.lexer[a] === lexer && data.begin[a] < 0) {
                                     break;
                                 }
-                                skip = skip + 1;
-                            } while (skip < b);
-                            level.push(skip + 1);
-                        } else {
-                            level.push(skip);
+                                a = a + 1;
+                            } while (a < b && (data.lexer[a + 1] !== lexer || data.begin[a + 1] >= skip));
+                            level.push(a);
                         }
                     }
                     a = a + 1;
@@ -1883,7 +1882,6 @@
             }()),
             output:string = (function beautify_script_output():string {
                 const build:string[] = [],
-                    len:number = levels.length,
                     tab:string = (function beautify_script_output_tab():string {
                         const ch:string = options.indent_char,
                             tabby:string[] = [];
@@ -1904,7 +1902,7 @@
                     nl = function beautify_script_output_outnl(tabs:number):string {
                         const linesout:string[] = [],
                             total:number = (function beautify_script_output_outnl_total():number {
-                                if (a === len - 1) {
+                                if (a === b - 1) {
                                     return 1;
                                 }
                                 if (data.lines[a + 1] - 1 > pres) {
@@ -2009,7 +2007,7 @@
                             } while (aa > 0);
                         }
                     };
-                    a = len - 1;
+                    a = b - 1;
                     do {
                         a = a - 1;
                         if (data.lexer[a] === "script") {
@@ -2046,7 +2044,7 @@
                                 code[lastfold[0]] = code[lastfold[0]].replace("xxx", String(linecount));
                                 foldindex.pop();
                             } else if (data.types[a - 1] === "comment") {
-                                let endfold:number = (a === len - 1)
+                                let endfold:number = (a === b - 1)
                                     ? linecount
                                     : linecount - 1;
                                 code[lastfold[0]] = code[lastfold[0]].replace("xxx", String(endfold));
@@ -2165,7 +2163,7 @@
                         nlscope            = function beautify_script_output_scope_nlscope(x:number):void {
                             let dd = 0;
                             const total:number = (function beautify_script_output_outnl_total():number {
-                                    if (a === len - 1) {
+                                    if (a === b - 1) {
                                         return 0;
                                     }
                                     if (data.lines[a + 1] - 1 > pres) {
@@ -2205,7 +2203,7 @@
                                 code.push("<li>");
                                 code.push(String(linecount));
                                 code.push("</li>");
-                                if (a < len - 1 && data.types[a + 1] === "comment") {
+                                if (a < b - 1 && data.types[a + 1] === "comment") {
                                     build.push(`<em class="line">&#xA;</em></li><li class="c0">`);
                                     do {
                                         build.push(tab);
@@ -2254,7 +2252,7 @@
                     // tokens to create the output
                     a = 0;
                     do {
-                        if (levels[a] > -1 && a < len - 1) {
+                        if (levels[a] > -1 && a < b - 1) {
                             if (levels[a] < scoped.length) {
                                 do {
                                     scoped.pop();
@@ -2266,12 +2264,12 @@
                         } else if (invisibles.indexOf(data.token[a]) < 0) {
                             if (data.types[a] === "start" && (levels[a] > -1 || data.types[a + 1] === "comment")) {
                                 foldstart();
-                            } else if (data.token[a].indexOf("//") === 0 && a < len - 1 && data.token[a + 1].indexOf("//") === 0 && data.token[a - 1].indexOf("//") !== 0 && levels[a - 1] > -1) {
+                            } else if (data.token[a].indexOf("//") === 0 && a < b - 1 && data.token[a + 1].indexOf("//") === 0 && data.token[a - 1].indexOf("//") !== 0 && levels[a - 1] > -1) {
                                 foldstart();
                             } else if (foldindex.length > 0) {
                                 if (data.types[a] === "end") {
                                     foldend();
-                                } else if ((data.token[a].indexOf("//") !== 0 || a === len - 1) && data.token[foldindex[foldindex.length - 1][1]].indexOf("//") === 0) {
+                                } else if ((data.token[a].indexOf("//") !== 0 || a === b - 1) && data.token[foldindex[foldindex.length - 1][1]].indexOf("//") === 0) {
                                     foldend();
                                 }
                             }
@@ -2320,7 +2318,7 @@
                         }
                         if (levels[a] === -10) {
                             build.push(" ");
-                        } else if (levels[a] > -1 && a < len - 1 && data.token[a + 1].slice(0, 2) !== "/*") {
+                        } else if (levels[a] > -1 && a < b - 1 && data.token[a + 1].slice(0, 2) !== "/*") {
                             if (levels[a] > scoped.length) {
                                 do {
                                     scoped.push(false);
@@ -2332,7 +2330,7 @@
                             nlscope(levels[a]);
                         }
                         a = a + 1;
-                    } while (a < len);
+                    } while (a < b);
                     a = build.length - 1;
                     do {
                         if (build[a] === tab) {
@@ -2385,6 +2383,7 @@
                         code.join("")
                     ].join("").replace(/(\s+)$/, "").replace(options.binary_check, "");
                 }
+                a = options.start;
                 do {
                     if (data.lexer[a] === lexer || prettydiff.beautify[data.lexer[a]] === undefined) {
                         if (invisibles.indexOf(data.token[a]) < 0) {
@@ -2400,18 +2399,22 @@
                             build.push(" ");
                         }
                     } else {
-                        options.end = levels[a];
-                        options.indent_level = lastLevel + 1;
-                        options.start = a;
-                        if (data.types[a - 1] !== "operator") {
+                        if (data.types[a - 1] !== "operator" && data.token[a - 1] !== "return") {
                             build.push(nl(lastLevel + 1));
                         }
-                        external = prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "") + nl(lastLevel);
-                        build.push(external);
-                        a = levels[a] - 1;
+                        if (levels[a] - a < 1) {
+                            build.push(data.token[a]);
+                        } else {
+                            options.end = levels[a] + 1;
+                            options.indent_level = lastLevel + 1;
+                            options.start = a;
+                            external = prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "");
+                            build.push(external);
+                            a = levels[a];
+                        }
                     }
                     a = a + 1;
-                } while (a < len);
+                } while (a < b);
                 if (options.new_line === true && options.end === data.token.length) {
                     build.push(lf);
                 }
