@@ -260,14 +260,26 @@
                 if (leng === 0) {
                     items.push(item);
                 }
-                if (options.selector_list === true) {
-                    build.push(items.join(" "));
-                } else if (leng > 1) {
+                if (options.selector_list === true || leng < 2) {
+                    if (options.compressed_css === true) {
+                        build.push(items.join(" ").replace(/\s*,\s*/g, ","));
+                    } else {
+                        build.push(items.join(" ").replace(/\s*,\s*/g, ", "));
+                    }
+                } else {
                     aa = 1;
-                    build.push(items[0].replace(/,(\s*)/g, ", ").replace(/(,\u0020)$/, ","));
+                    if (options.compressed_css === true) {
+                        build.push(items[0].replace(/\s*,\s*/g, ","));
+                    } else {
+                        build.push(items[0].replace(/\s*,\s*/g, ", ").replace(/(,\u0020)$/, ","));
+                    }
                     do {
                         nl(indent);
-                        build.push(items[aa].replace(/,(\s*)/g, ", ").replace(/(,\u0020)$/, ","));
+                        if (options.compressed_css === true) {
+                            build.push(items[aa].replace(/\s*,\s*/g, ","));
+                        } else {
+                            build.push(items[aa].replace(/\s*,\s*/g, ", ").replace(/(,\u0020)$/, ","));
+                        }
                         aa = aa + 1;
                     } while (aa < leng);
                 }
@@ -337,7 +349,7 @@
                 build.push(tab);
             } while (a > 0);
         }
-        if (options.vertical === true) {
+        if (options.vertical === true && options.compressed_css === false) {
             a = len;
             do {
                 a = a - 1;
@@ -358,7 +370,11 @@
                     build.push(" ");
                 }
                 if (a > 0 && data.token[a - 1].charAt(data.token[a - 1].length - 1) === "#") {
-                    build.push(data.token[a]);
+                    if (options.compressed_css === true) {
+                        build.push(data.token[a].replace(/\s*,\s*/g, ","));
+                    } else {
+                        build.push(data.token[a].replace(/\s*,\s*/g, ", "));
+                    }
                 } else {
                     if (options.braces === true) {
                         if (build[build.length - 1] === " ") {
@@ -368,7 +384,11 @@
                     } else if (data.types[a - 1] === "colon") {
                         build.push(" ");
                     }
-                    build.push(data.token[a]);
+                    if (options.compressed_css === true) {
+                        build.push(data.token[a].replace(/\s*,\s*/g, ","));
+                    } else {
+                        build.push(data.token[a].replace(/\s*,\s*/g, ", "));
+                    }
                     indent = indent + 1;
                     if ((options.compressed_css === false || (options.compressed_css === true && data.types[a + 1] === "start")) && (data.types[a + 1] !== "selector" || options.css_insert_lines === false)) {
                         nl(indent);
@@ -445,8 +465,13 @@
                     if (data.types[a] === "value" || (data.types[a].indexOf("external") > -1 && data.types[a - 1] === "colon")) {
                         build.push(" ");
                     }
-                } else if (options.compressed_css === true && (data.types[a] === "value" || data.types[a] === "propvar")) {
-                    data.token[a] = data.token[a].replace(/(\s*,\s*)/g, ",");
+                }
+                if (data.types[a] === "value" || data.types[a] === "variable") {
+                    if (options.compressed_css === true) {
+                        data.token[a] = data.token[a].replace(/(\s*,\s*)/g, ",");
+                    } else {
+                        data.token[a] = data.token[a].replace(/(\s*,\s*)/g, ", ");
+                    }
                 }
                 if (data.types[a] === "external_start") {
                     indent = indent + 1;

@@ -481,7 +481,11 @@ interface readFile {
                     return mode;
                 }
                 console.log(`Command ${boldarg} is not a supported command.`);
-                console.log(`Please try: ${text.cyan}prettydiff commands${text.none}`);
+                console.log("");
+                console.log("Please try:");
+                console.log(`  ${text.angry}*${text.none} globally installed - ${text.cyan}prettydiff commands${text.none}`);
+                console.log(`  ${text.angry}*${text.none} locally installed  - ${text.cyan}node js/services commands${text.none}`);
+                console.log("");
                 process.exit(1);
                 return "";
             }
@@ -2018,7 +2022,13 @@ interface readFile {
                 bell();
             },
             debug = function node_apps_errout_debug():void {
-                const stack:string = new Error().stack
+                const stack:string = new Error().stack,
+                    source:string = options.source,
+                    diff:string = options.diff,
+                    totalmem:number = node.os.totalmem(),
+                    freemem:number = node.os.freemem();
+                delete options.source;
+                delete options.diff;
                 console.log("");
                 console.log("---");
                 console.log("");
@@ -2039,12 +2049,12 @@ interface readFile {
                 console.log("");
                 console.log(`${text.green}## Stack Trace${text.none}`);
                 console.log("```");
-                console.log(stack);
+                console.log(stack.replace(/\s*Error\s+/, "    "));
                 console.log("```");
                 console.log("");
                 console.log(`${text.green}## Environment${text.none}`);
                 console.log(`* OS - **${node.os.platform()} ${node.os.release()}**`);
-                console.log(`* Mem - ${node.os.totalmem()} - ${node.os.freemem()} = **${apps.commas(node.os.totalmem() - node.os.freemem())}**`);
+                console.log(`* Mem - ${apps.commas(totalmem)} - ${apps.commas(freemem)} = **${apps.commas(totalmem - freemem)}**`);
                 console.log(`* CPU - ${node.os.arch()} ${node.os.cpus().length} cores`);
                 console.log("");
                 console.log(`${text.green}## Command Line Instruction${text.none}`);
@@ -2052,6 +2062,22 @@ interface readFile {
                 console.log(cli);
                 console.log("```");
                 console.log("");
+                if (command === "beautify" || command === "diff" || command === "minify" || command === "parse") {
+                    console.log(`${text.green}## Source Sample${text.none}`);
+                    console.log("```");
+                    console.log(source);
+                    console.log("```");
+                    console.log("");
+                } else {
+                    delete options.parsed;
+                }
+                if (command === "diff") {
+                    console.log(`${text.green}## Diff Sample${text.none}`);
+                    console.log("```");
+                    console.log(diff);
+                    console.log("```");
+                    console.log("");
+                }
                 console.log(`${text.green}## Options${text.none}`);
                 console.log("```");
                 console.log(options);
@@ -2059,9 +2085,6 @@ interface readFile {
                 console.log("");
                 console.log(`${text.green}## Time${text.none}`);
                 bell();
-                console.log("");
-                console.log("---");
-                console.log("");
             };
         errorflag = true;
         if (writeflag !== "") {
@@ -2685,6 +2708,10 @@ interface readFile {
                 }
             },
             conclusion = function node_apps_log_conclusion():void {
+                if (process.argv.indexOf("debug") > -1 || process.argv.indexOf("prettydiff_debug") > -1) {
+                    process.argv[2] = "prettydiff_debug";
+                    return apps.errout(["Debug statement requested."]);
+                }
                 if (verbose === true && (output.length > 1 || output[0] !== "")) {
                     console.log("");
                 }

@@ -34,6 +34,11 @@
         },
         tests:simulationItem[] = [
             {
+                command: "asdf",
+                qualifier: "contains",
+                test: `${text.angry}*${text.none} locally installed  - ${text.cyan}node js/services commands${text.none}`
+            },
+            {
                 command: "b",
                 qualifier: "is",
                 test: `Command '${text.angry}b${text.none}' is ambiguous as it could refer to any of: [${text.cyan}base64, beautify, build${text.none}]`
