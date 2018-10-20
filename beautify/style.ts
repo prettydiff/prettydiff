@@ -426,6 +426,8 @@
                     } else if (data.lines[a + 1] > 0 || (data.types[a + 1] !== undefined && data.types[a + 1].indexOf("external") < 0)) {
                         nl(indent);
                     }
+                } else if (data.types[a + 1] === "comment") {
+                    nl(indent);
                 }
             } else if (data.types[a] === "selector") {
                 if (a > 0 && data.types[a - 1] !== "comment" && (options.css_insert_lines === true || (options.compressed_css === true && (data.types[a - 1] === "start" || data.types[a - 1] === "semi")))) {

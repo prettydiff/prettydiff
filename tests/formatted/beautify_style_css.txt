@@ -1,7 +1,7 @@
 /*Each line is one test unit, but multiple units (or all) can run at once*/
 
 $blue: #3bbfce;
-$defaultFont: Helvetica,Arial,sans-serif,"Courier New";
+$defaultFont: Helvetica, Arial, sans-serif, "Courier New";
 $margin: 16px;
 $primaryColor: #80c040;
 $the-border: 1px;
@@ -73,7 +73,7 @@ a {
     @include transition;
     color          : $primaryColor;
     font           : {
-        family: Helvetica,Arial,sans-serif;
+        family: Helvetica, Arial, sans-serif;
         size  : 14px;
     }
     text-decoration: none;

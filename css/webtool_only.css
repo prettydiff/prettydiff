@@ -264,6 +264,7 @@
 #prettydiff .box .body,
 #prettydiff .options input[type=text],
 #prettydiff .options{border-style:solid;border-width:0.1em}
+#prettydiff #webtool .comment-container{border-style:none;padding-bottom:0}
 
 /*webtool - functionGroup stores the mode radio buttons, headline is first thing on the page*/
 #prettydiff #functionGroup,
