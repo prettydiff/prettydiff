@@ -251,7 +251,9 @@
         if (typeof options.lexerOptions.markup !== "object") {
             options.lexerOptions.markup = {};
         }
-        options.lexerOptions[options.lexer].objectSort = options.object_sort;
+        if (options.lexerOptions[options.lexer] !== undefined) {
+            options.lexerOptions[options.lexer].objectSort = options.object_sort;
+        }
         options.lexerOptions.script.varword = options.variable_list;
         options.lexerOptions.style.no_lead_zero = options.no_lead_zero;
         options.lexerOptions.markup.tagSort = options.tag_sort;
