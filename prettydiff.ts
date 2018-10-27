@@ -242,15 +242,19 @@
         if (typeof options.lexerOptions !== "object") {
             options.lexerOptions = {};
         }
-        if (typeof options.lexerOptions[options.lexer] !== "object") {
-            options.lexerOptions[options.lexer] = {};
+        if (typeof options.lexerOptions.script !== "object") {
+            options.lexerOptions.script = {};
+        }
+        if (typeof options.lexerOptions.style !== "object") {
+            options.lexerOptions.style = {};
+        }
+        if (typeof options.lexerOptions.markup !== "object") {
+            options.lexerOptions.markup = {};
         }
         options.lexerOptions[options.lexer].objectSort = options.object_sort;
-        if (options.lexer === "script") {
-            options.lexerOptions.script.varword = options.variable_list;
-        } else if (options.lexer === "style") {
-            options.lexerOptions.style.no_lead_zero = options.no_lead_zero;
-        }
+        options.lexerOptions.script.varword = options.variable_list;
+        options.lexerOptions.style.no_lead_zero = options.no_lead_zero;
+        options.lexerOptions.markup.tagSort = options.tag_sort;
         if (options.mode === "parse") {
             const parse_format = (options.parse_format === "htmltable")
                     ? "table"
