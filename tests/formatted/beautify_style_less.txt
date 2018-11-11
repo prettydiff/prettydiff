@@ -135,8 +135,8 @@
             font-size  : @font-size-xxs;
             line-height: @line-height-xxs;
         }
-        // Styled hovers of additional descriptive content
-        // IE7 users will still get <abbr> titles
+        // Styled hovers of additional descriptive content IE7 users will still get
+        // <abbr> titles
         [data-tooltip] {
             position: relative;
         }
@@ -273,8 +273,8 @@
         .itemCard-button .button-primary {
             overflow                     : hidden;
 
-            // Copied from buttons.less to inline here
-            // Workaround for GOF-704 IE9/IE10 mixed inline/external media query bug
+            // Copied from buttons.less to inline here Workaround for GOF-704 IE9/IE10 mixed
+            // inline/external media query bug
             @ie7-offset-horizontal-top   : 5px;
             @ie7-offset-horizontal-bottom: 2px;
             @button-line-height          : (@font-size-xl + 3); // make everything work like firefox
@@ -525,8 +525,7 @@
     }
 }
 
-// item-responsify mixin
-//   targetClass - the class of the module container
+// item-responsify mixin targetClass - the class of the module container
 .item-responsify(@targetClass) {
     @lg : {
         .@{targetClass} {
@@ -614,7 +613,8 @@
                     &:focus,
                     &:hover,
                     &:visited {
-                        // convert to an invisible button that covers the entire card at smallest breakpoints
+                        // convert to an invisible button that covers the entire card at smallest
+                        // breakpoints
                         background-color: transparent;
                         background-image: none;
                         border          : none;
@@ -668,7 +668,8 @@
                     display: none;
                 }
                 .itemDetails {
-                    // details is not supported in smallest view as its trigger is hidden, collapse/hide regardless of .is-open
+                    // details is not supported in smallest view as its trigger is hidden,
+                    // collapse/hide regardless of .is-open
                     max-height: 0;
                     overflow  : hidden;
                     .transition(all 0s linear);

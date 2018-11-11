@@ -203,14 +203,15 @@
                 if (options.mode === "diff") {
                     lang[2] = "Plain Text";
                 } else {
-                    lang[0] = "javascript";
                     lang[1] = prettydiff.api.language.setlangmode(lang[0]);
                     lang[2] = prettydiff.api.language.nameproper(lang[0]);
                 }
             } else if (lang[0] === "csv") {
                 lang[2] = "CSV";
             }
-            options.language = lang[0];
+            options.language = (lang[0] === "text" && options.mode !== "diff")
+                ? "javascript"
+                : "text";
             options.lexer = lang[1];
             options.language_name = lang[2];
         }

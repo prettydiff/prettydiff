@@ -140,14 +140,24 @@
                         if (data.lexer[a + 1] === lexer && (data.begin[a + 1] === data.begin[a] || data.begin[a + 1] === undefined)) {
                             level.push(a);
                         } else {
-                            const skip:number = a;
-                            do {
-                                if (data.lexer[a] === lexer && data.begin[a] < 0) {
-                                    break;
-                                }
-                                a = a + 1;
-                            } while (a < c && (data.lexer[a + 1] !== lexer || data.begin[a + 1] >= skip));
-                            level.push(a);
+                            if (data.lexer[a + 1] === lexer && (data.begin[a + 1] === data.begin[a] || data.begin[a + 1] === undefined)) {
+                                level.push(a);
+                            } else {
+                                const skip:number = a;
+                                do {
+                                    if (data.lexer[a] === lexer && data.begin[a] < 0) {
+                                        break;
+                                    }
+                                    level.push(0);
+                                    a = a + 1;
+                                } while (a < c && (data.lexer[a + 1] !== lexer || data.begin[a + 1] >= skip));
+                                level.push(a);
+                                level[skip] = a;
+                            }
+                        }
+                        next = nextIndex();
+                        if (data.lexer[next] === lexer && (data.types[next] === "end" || data.types[next] === "template_end")) {
+                            indent = indent - 1;
                         }
                     }
                     a = a + 1;
@@ -258,12 +268,13 @@
                         build.push(data.token[a]);
                     } else {
                         options.end = levels[a] + 1;
-                        options.indent_level = (data.types[a - 1] === "jsx_attribute_start")
-                            ? lastLevel
-                            : lastLevel + 1;
+                        options.indent_level = lastLevel;
                         options.start = a;
                         external = prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "");
                         build.push(external);
+                        if (data.types[a - 1] !== "jsx_attribute_start") {
+                            build.push(nl(lastLevel - 1));
+                        }
                         a = levels[a];
                     }
                 }

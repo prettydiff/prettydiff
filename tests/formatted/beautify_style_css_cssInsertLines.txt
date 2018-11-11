@@ -1,15 +1,11 @@
 /*prettydiff.com css_insert_lines:true, object_sort:false, preserve:4*/
 
-/* top
-comment1*/
-/*blah blah1
-*/
+/* top comment1 */
+/* blah blah1 */
 a {
 
-    /* top
-comment2*/
-    /*blah blah2
-*/
+    /* top comment2 */
+    /* blah blah2 */
     b {
         color: Red;
     }

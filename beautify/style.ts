@@ -193,13 +193,6 @@
             indent:number   = options.indent_level,
             mixin:boolean    = false,
             a:number        = 0;
-        if (options.indent_level > 0) {
-            a = options.indent_level;
-            do {
-                a = a - 1;
-                build.push(tab);
-            } while (a > 0);
-        }
         if (options.vertical === true && options.compressed_css === false) {
             a = len;
             do {

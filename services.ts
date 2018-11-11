@@ -3793,7 +3793,7 @@ interface readFile {
                                 list[3] = `0${list[3]}`;
                             } while (list[3].length < 3);
                         }
-                        console.log(`[${text.bold + text.purple + list.join(":") + text.none}] Total compile time.`);
+                        console.log(`[${text.bold + text.purple + list.join(":") + text.none}] Total compile time.\u0007`);
                     };
                 console.log("");
                 start = time(`Compiling TypeScript for ${text.green + filename + text.none}`);
