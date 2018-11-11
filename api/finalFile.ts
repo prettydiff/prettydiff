@@ -1378,9 +1378,9 @@
                     "Name(\"ol\"),listLen=listnodes.length;do{lists.push(listnodes[a].getElementsByTa" +
                     "gName(\"li\"));a=a+1}while(a<listLen);max=(max>=lists[0].length)?lists[0].length" +
                     ":Number(title[2]);if(inner.charAt(0)===\"-\"){node.innerHTML=\"+\"+inner.substr(" +
-                    "1);a=min;if(minmax){do{b=0;do{lists[b][a].style.display=\"none\";b=b+1}while(b<l" +
+                    "1);a=min;if(min<max){do{b=0;do{lists[b][a].style.display=\"none\";b=b+1}while(b<l" +
                     "istLen);a=a+1}while(a<max)}}else{node.innerHTML=\"-\"+inner.substr(1);a=min;if(m" +
-                    "inmax){do{b=0;do{lists[b][a].style.display=\"block\";b=b+1}while(b<listLen);a=a+" +
+                    "in<max){do{b=0;do{lists[b][a].style.display=\"block\";b=b+1}while(b<listLen);a=a+" +
                     "1}while(a<max)}}};diffList=document.getElementsByTagName(\"ol\");if(diffList.len" +
                     "gth>0){const cells=diffList[0].getElementsByTagName(\"li\"),len=cells.length;let" +
                     " a=0;do{if(cells[a].getAttribute(\"class\")===\"fold\"){cells[a].onclick=difffol" +
