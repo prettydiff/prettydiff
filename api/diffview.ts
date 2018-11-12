@@ -49,7 +49,8 @@
                     d: number = 0,
                     codes: opcodes = [],
                     fix = function diffview_opcodes_fix(code:codes): void {
-                        let prior = codes[codes.length - 1];
+                        let len:number = codes.length - 1,
+                            prior:[string, number, number, number, number] = codes[len];
                         if (prior !== undefined) {
                             if (prior[0] === code[0]) {
                                 if (code[0] === "replace" || code[0] === "equal") {
@@ -63,17 +64,17 @@
                                 if (codes.length > 1 && prior[2] === code[2] && prior[4] === code[4]) {
                                     if (prior[0] === "insert" && two[codes[codes.length - 2][4] - (prior[4] - prior[3])] === one[codes[codes.length - 2][1]]) {
                                         codes.pop();
-                                        codes[codes.length - 1] = ["insert", -1, -1, codes[codes.length - 1][3], codes[codes.length - 1][4] - (prior[4] - prior[3])];
-                                        if (codes[codes.length - 1][4] < 0) {
-                                            codes[codes.length - 1][4] = prior[4] - prior[3];
+                                        len = len - 1;
+                                        codes[len] = ["insert", -1, -1, codes[len][3], codes[len][4] - (prior[4] - prior[3])];
+                                        if (codes[len][4] < 0) {
+                                            codes[len][4] = prior[4] - prior[3];
                                         }
                                         do {
                                             // one-sided replacement undo, more like undelete
                                             table[one[c]][0] = table[one[c]][0] + 1;
                                             c = c - 1;
                                         } while (c > codes[codes.length - 2][2]);
-                                        
-                                        d = codes[codes.length - 1][4] - 1;
+                                        d = codes[len][4] - 1;
                                     }
                                 }
                                 return;
@@ -81,99 +82,82 @@
                             if (prior[0] === "insert" && prior[4] - prior[3] === 1) {
                                 if (code[2] - code[1] === 1) {
                                     if (code[0] === "replace") {
-                                        prior[0] = "replace";
-                                        prior[1] = code[1];
-                                        prior[2] = code[2];
-                                        code[0] = "insert";
-                                        code[1] = -1;
-                                        code[2] = -1;
+                                        codes[len] = ["replace", code[1], code[2], prior[3], prior[4]];
+                                        prior = codes[len];
+                                        code = ["insert", -1, -2, code[3], code[4]];
                                     } else if (code[0] === "delete") {
-                                        code[0] = "replace";
-                                        code[3] = prior[3];
-                                        code[4] = prior[4];
+                                        code = ["replace", code[1], code[2], prior[3], prior[4]];
                                         codes.pop();
-                                        prior = codes[codes.length - 1];
-                                        if (prior[0] === "replace") {
+                                        len = len - 1;
+                                        prior = codes[len];
+                                        if (codes[len][0] === "replace") {
                                             prior[2] = code[2];
                                             prior[4] = code[4];
                                             return;
                                         }
                                     }
                                 } else if (code[0] === "delete") {
-                                    prior[0] = "replace";
-                                    prior[1] = code[1];
-                                    prior[2] = code[1] + 1;
+                                    codes[len] = ["replace", code[1], code[1] + 1, prior[3], prior[4]];
+                                    prior = codes[len];
                                     code[1] = code[1] + 1;
                                 } else if (code[0] === "replace") {
-                                    prior[0] = "replace";
-                                    prior[1] = code[1];
-                                    prior[2] = code[1] + 1;
+                                    codes[len] = ["replace", code[1], code[1] + 1, prior[3], prior[4]];
+                                    prior = codes[len];
                                     c = prior[2];
                                     d = prior[4];
                                     return;
                                 }
                             } else if (prior[0] === "insert" && code[0] === "delete" && code[2] - code[1] === 1) {
                                 prior[4] = prior[4] - 1;
-                                code[0] = "replace";
-                                code[3] = prior[4];
-                                code[4] = prior[4] + 1;
+                                code = ["replace", code[1], code[2], prior[4], prior[4] + 1];
                             } else if (prior[0] === "delete" && prior[2] - prior[1] === 1) {
                                 if (code[4] - code[3] === 1) {
                                     if (code[0] === "replace") {
-                                        prior[0] = "replace";
-                                        prior[3] = code[3];
-                                        prior[4] = code[4];
-                                        code[0] = "delete";
-                                        code[3] = -1;
-                                        code[4] = -1;
+                                        codes[len] = ["replace", prior[1], prior[2], code[3], code[4]];
+                                        prior = codes[len];
+                                        code = ["delete", code[1], code[2], -1, -1];
                                     } else if (code[0] === "insert") {
-                                        code[0] = "replace";
-                                        code[1] = prior[1];
-                                        code[2] = prior[2];
+                                        code = ["replace", prior[1], prior[2], code[3], code[4]];
                                         codes.pop();
-                                        prior = codes[codes.length - 1];
-                                        if (prior[0] === "replace") {
+                                        len = len - 1;
+                                        prior = codes[len];
+                                        if (codes[len][0] === "replace") {
                                             prior[2] = code[2];
                                             prior[4] = code[4];
                                             return;
                                         }
                                     }
                                 } else if (code[0] === "insert") {
-                                    prior[0] = "replace";
-                                    prior[3] = code[3];
-                                    prior[4] = code[3] + 1;
+                                    codes[len] = ['replace', prior[1], prior[2], code[3], code[3] + 1];
+                                    prior = codes[len];
                                     code[3] = code[3] + 1;
                                 } else if (code[0] === "replace") {
-                                    prior[0] = "replace";
-                                    prior[3] = code[3];
-                                    prior[4] = code[4] + 1;
+                                    codes[len] = ["replace", prior[1], prior[2], code[3], code[4] + 1];
                                     c = prior[2];
                                     d = prior[4];
                                     return;
                                 }
                             } else if (prior[0] === "delete" && code[0] === "insert" && code[4] - code[3] === 1) {
                                 prior[2] = prior[2] - 1;
-                                code[0] = "replace";
-                                code[1] = prior[2];
-                                code[2] = prior[2] + 1;
+                                code = ["replace", prior[2], prior[2] + 1, code[3], code[4]];
                             } else if (prior[0] === "replace") {
                                 if (code[0] === "delete" && code[2] - 1 > a) {
                                     c = code[2] - 1;
                                     d = prior[3];
-                                    codes[codes.length - 1] = ["delete", prior[1], code[2] - 1, -1, -1];
+                                    codes[len] = ["delete", prior[1], code[2] - 1, -1, -1];
                                     return;
                                 }
                                 if (code[0] === "insert" && code[4] - 1 > b) {
                                     c = prior[1];
                                     d = code[4] - 1;
-                                    codes[codes.length - 1] = ["insert", -1, -1, prior[3], code[4] - 1];
+                                    codes[len] = ["insert", -1, -1, prior[3], code[4] - 1];
                                     return;
                                 }
                             }
                         }
-                        if (codes.length > 1 && codes[codes.length - 2][0] === codes[codes.length - 1][0]) {
-                            codes[codes.length - 2][2] = codes[codes.length - 1][2];
-                            codes[codes.length - 2][4] = codes[codes.length - 1][4];
+                        if (codes.length > 1 && codes[codes.length - 2][0] === codes[len][0]) {
+                            codes[codes.length - 2][2] = codes[len][2];
+                            codes[codes.length - 2][4] = codes[len][4];
                             codes.pop();
                             diffview_opcodes_fix(code);
                         } else {

@@ -194,6 +194,9 @@
                 return "Error: option parse_format with value 'table' is not available with read_method directory or subdirectory.";
             }
         }
+        if (options.language === "text" && options.mode !== "diff") {
+            options.language = "auto";
+        }
         if (options.language === "auto") {
             const def:string = (options.language_default === "" || options.language_default === null || options.language_default === undefined)
                     ? "javascript"
@@ -209,11 +212,6 @@
             } else if (lang[0] === "csv") {
                 lang[2] = "CSV";
             }
-            options.language = (lang[0] === "text" && options.mode !== "diff")
-                ? "javascript"
-                : "text";
-            options.lexer = lang[1];
-            options.language_name = lang[2];
         }
 
         // test complete_document in dom (try to generate xml errors)

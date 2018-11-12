@@ -171,7 +171,7 @@
             {
                 command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" read_method:file diff_format:html 2`,
                 qualifier: "contains",
-                test: "folds from line XXXX to line 12"
+                test: "folds from line XXXX to line 14"
             },
             {
                 artifact: `${projectPath}test.diff`,
