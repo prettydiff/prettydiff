@@ -1,0 +1,176 @@
+/*prettydiff.com vertical:true correct:true*/
+(function doc() {
+    "use strict";
+    let diffList      = [];
+    const body        = document.getElementsByTagName("body")[0],
+        color         = document.getElementById("colorScheme"),
+        change        = function doc_colorChange() {
+            const name = color[color.selectedIndex].innerHTML.toLowerCase();
+            body.setAttribute("class", name);
+        },
+        colSliderGrab = function doc_colSliderGrab(event) {
+            let subOffset            = 0,
+                withinRange          = false,
+                offset               = 0,
+                status               = "ew",
+                diffLeft,
+                node                 = event.srcElement || event.target;
+            const touch              = (event !== null && event.type === "touchstart"),
+                diffRight            = (function doc_colSliderGrab_nodeFix() {
+                    if (node.nodeName === "li") {
+                        node = node.parentNode;
+                    }
+                    return node.parentNode;
+                }()),
+                diff                 = diffRight.parentNode,
+                lists                = diff.getElementsByTagName("ol"),
+                par1                 = lists[2].parentNode,
+                par2                 = lists[2].parentNode.parentNode,
+                counter              = lists[0].clientWidth,
+                data                 = lists[1].clientWidth,
+                width                = par1.clientWidth,
+                total                = par2.clientWidth,
+                min                  = ((total - counter - data - 2) - width),
+                max                  = (total - width - counter),
+                minAdjust            = min + 15,
+                maxAdjust            = max - 20;
+            diffLeft                 = diffRight.previousSibling;
+            offset                   = par1.offsetLeft - par2.offsetLeft;
+            event.preventDefault();
+            subOffset                = (par1.scrollLeft > document.body.scrollLeft)
+                ? par1.scrollLeft
+                : document.body.scrollLeft;
+            offset                   = offset - subOffset;
+            offset                   = offset + node.clientWidth;
+            node.style.cursor        = "ew-resize";
+            diff.style.width         = (total / 10) + "em";
+            diff.style.display       = "inline-block";
+            if (diffLeft.nodeType !== 1) {
+                do {
+                    diffLeft = diffLeft.previousSibling;
+                } while (diffLeft.nodeType !== 1);
+            }
+            diffLeft.style.display   = "block";
+            diffRight.style.width    = (diffRight.clientWidth / 10) + "em";
+            diffRight.style.position = "absolute";
+            if (touch === true) {
+                document.ontouchmove  = function doc_colSliderGrab_Touchboxmove(f) {
+                    f.preventDefault();
+                    subOffset           = offset - f.touches[0].clientX;
+                    if (subOffset > minAdjust && subOffset < maxAdjust) {
+                        withinRange = true;
+                    }
+                    if (withinRange === true && subOffset > maxAdjust) {
+                        diffRight.style.width = ((total - counter - 2) / 10) + "em";
+                        status                = "e";
+                    } else if (withinRange === true && subOffset < minAdjust) {
+                        diffRight.style.width = ((total - counter - data - 2) / 10) + "em";
+                        status                = "w";
+                    } else if (subOffset < max && subOffset > min) {
+                        diffRight.style.width = ((width + subOffset) / 10) + "em";
+                        status                = "ew";
+                    }
+                    document.ontouchend = function doc_colSliderGrab_Touchboxmove_drop(f) {
+                        f.preventDefault();
+                        node.style.cursor    = status + "-resize";
+                        document.ontouchmove = null;
+                        document.ontouchend  = null;
+                    };
+                };
+                document.ontouchstart = null;
+            } else {
+                document.onmousemove = function doc_colSliderGrab_Mouseboxmove(f) {
+                    f.preventDefault();
+                    subOffset          = offset - f.clientX;
+                    if (subOffset > minAdjust && subOffset < maxAdjust) {
+                        withinRange = true;
+                    }
+                    if (withinRange === true && subOffset > maxAdjust) {
+                        diffRight.style.width = ((total - counter - 2) / 10) + "em";
+                        status                = "e";
+                    } else if (withinRange === true && subOffset < minAdjust) {
+                        diffRight.style.width = ((total - counter - data - 2) / 10) + "em";
+                        status                = "w";
+                    } else if (subOffset < max && subOffset > min) {
+                        diffRight.style.width = ((width + subOffset) / 10) + "em";
+                        status                = "ew";
+                    }
+                    document.onmouseup = function doc_colSliderGrab_Mouseboxmove_drop(f) {
+                        f.preventDefault();
+                        node.style.cursor    = status + "-resize";
+                        document.onmousemove = null;
+                        document.onmouseup   = null;
+                    };
+                };
+                document.onmousedown = null;
+            }
+            return false;
+        },
+        difffold      = function doc_difffold(event) {
+            let a         = 0,
+                b         = 0,
+                max,
+                lists     = [];
+            const node    = event.srcElement || event.target,
+                title     = node.getAttribute("title").split("line "),
+                min       = Number(title[1].substr(0, title[1].indexOf(" "))),
+                inner     = node.innerHTML,
+                parent    = node.parentNode.parentNode,
+                par1      = parent.parentNode,
+                listnodes = (parent.getAttribute("class") === "diff")
+                    ? parent.getElementsByTagName("ol")
+                    : par1.getElementsByTagName("ol"),
+                listLen   = listnodes.length;
+            do {
+                lists.push(listnodes[a].getElementsByTagName("li"));
+                a = a + 1;
+            } while (a < listLen);
+            max           = (max >= lists[0].length)
+                ? lists[0].length
+                : Number(title[2]);
+            if (inner.charAt(0) === "-") {
+                node.innerHTML = "+" + inner.substr(1);
+                a              = min;
+                if (min < max) {
+                    do {
+                        b = 0;
+                        do {
+                            lists[b][a].style.display = "none";
+                            b                         = b + 1;
+                        } while (b < listLen);
+                        a = a + 1;
+                    } while (a < max);
+                }
+            } else {
+                node.innerHTML = "-" + inner.substr(1);
+                a              = min;
+                if (min < max) {
+                    do {
+                        b = 0;
+                        do {
+                            lists[b][a].style.display = "block";
+                            b                         = b + 1;
+                        } while (b < listLen);
+                        a = a + 1;
+                    } while (a < max);
+                }
+            }
+        };
+    diffList          = document.getElementsByTagName("ol");
+    if (diffList.length > 0) {
+        const cells = diffList[0].getElementsByTagName("li"),
+            len     = cells.length;
+        let a       = 0;
+        do {
+            if (cells[a].getAttribute("class") === "fold") {
+                cells[a].onclick = difffold;
+            }
+            a = a + 1;
+        } while (a < len);
+    }
+    if (diffList.length > 3) {
+        diffList[2].onmousedown  = colSliderGrab;
+        diffList[2].ontouchstart = colSliderGrab;
+    }
+    color.onchange    = change;
+}());

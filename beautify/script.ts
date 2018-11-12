@@ -1200,6 +1200,7 @@
                                             } else if (
                                                 data.token[x] === ";" ||
                                                 data.token[x] === "," ||
+                                                data.types[x] === "operator" ||
                                                 (
                                                     (data.types[x] === "word" || data.types[x] === "reference") &&
                                                     (data.types[x - 1] === "word" || data.types[x - 1] === "reference")
@@ -1950,12 +1951,14 @@
                                 complex = 0;
                                 do {
                                     if (data.begin[bb] === begin) {
-                                        if (data.token[bb] === "," || data.token[bb] === ";" || levels[bb] > -1) {
+                                        if (data.token[bb] === "," || data.token[bb] === ";" || data.token[bb] === "x;" || levels[bb] > -1) {
                                             if (data.token[bb + 1] === ".") {
                                                 complex = complex + (options.indent_size * options.indent_char.length);
                                             }
                                             break;
                                         }
+                                    } else if (levels[bb] > -1) {
+                                        break;
                                     }
                                     if (data.types[bb] !== "comment") {
                                         if (levels[bb - 1] === -10) {
