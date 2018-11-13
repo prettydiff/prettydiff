@@ -200,18 +200,20 @@
         if (options.language === "auto") {
             const def:string = (options.language_default === "" || options.language_default === null || options.language_default === undefined)
                     ? "javascript"
-                    : options.language_default,
-                lang:[string, string, string] = prettydiff.api.language.auto(options.source, def);
+                    : options.language_default;
+            let lang:[string, string, string] = prettydiff.api.language.auto(options.source, def);
             if (lang[0] === "text") {
                 if (options.mode === "diff") {
                     lang[2] = "Plain Text";
                 } else {
-                    lang[1] = prettydiff.api.language.setlangmode(lang[0]);
-                    lang[2] = prettydiff.api.language.nameproper(lang[0]);
+                    lang = ["javascript", "script", "JavaScript"];
                 }
             } else if (lang[0] === "csv") {
                 lang[2] = "CSV";
             }
+            options.language = lang[0];
+            options.lexer = lang[1];
+            options.language_name = lang[2];
         }
 
         // test complete_document in dom (try to generate xml errors)
@@ -381,7 +383,7 @@
                 result = JSON.stringify(options.parsed);
             }
         } else {
-            if (global.prettydiff[modeValue][options.lexer] === undefined && (options.mode !== "diff" || (options.mode === "diff" && options.language !== "text"))) {
+            if (global.prettydiff[modeValue][options.lexer] === undefined && ((options.mode !== "diff" && options.language === "text") || options.language !== "text")) {
                 result = `Error: Library prettydiff.${modeValue}.${options.lexer} does not exist.`;
             } else if (options.mode === "diff") {
                 let diffoutput:[string, number, number];
