@@ -1094,7 +1094,7 @@ interface readFile {
                                                 }
                                                 item.push(`<p class="option-description">${opt.definition.replace(/"/g, "&quot;")}`);
                                                 if (select === true) {
-                                                    item.push(` <span><strong>${opt.default}</strong> &mdash; ${opt.values[String(opt.default)]}</span>`);
+                                                    item.push(` <span><strong>${opt.default}</strong> &#8212; ${opt.values[String(opt.default)]}</span>`);
                                                 }
                                                 item.push("</p>");
                                                 item.push(`<div class="disabled" style="display:none"></div>`);

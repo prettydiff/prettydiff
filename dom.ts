@@ -8,8 +8,9 @@
  Please see the license.txt file associated with the Pretty Diff
  application for license information.
  ****************************************************************************/
-if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
-    location.replace(location.href.replace("http", "https"));
+if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || location.href.indexOf("www.prettydiff.com") > -1) {
+    let loc:string = location.href.replace("http", "https").replace("https://www.", "https://");
+    location.replace(loc);
 }
 (function dom_init():void {
     "use strict";
@@ -30,7 +31,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             return document.getElementById(x);
         },
         page = (function dom__dataPage():HTMLDivElement {
-            const divs:NodeListOf<HTMLDivElement> = document.getElementsByTagName("div");
+            const divs:HTMLCollectionOf<HTMLDivElement> = document.getElementsByTagName("div");
             if (divs.length === 0) {
                 return null;
             }
@@ -132,9 +133,9 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             if (pages === "webtool") {
                 let a:number = 0,
                     x:HTMLInputElement,
-                    inputs:NodeListOf<HTMLInputElement>,
-                    selects:NodeListOf<HTMLSelectElement>,
-                    buttons:NodeListOf<HTMLButtonElement>,
+                    inputs:HTMLCollectionOf<HTMLInputElement>,
+                    selects:HTMLCollectionOf<HTMLSelectElement>,
+                    buttons:HTMLCollectionOf<HTMLButtonElement>,
                     inputsLen:number       = 0,
                     idval:string              = "",
                     name:string            = "",
@@ -144,7 +145,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                         const div:HTMLDivElement        = document.createElement("div"),
                             node:HTMLDivElement       = textarea[nodeName],
                             parent:HTMLElement     = <HTMLElement>node.parentNode.parentNode,
-                            labels:NodeListOf<HTMLLabelElement> = parent.getElementsByTagName("label"),
+                            labels:HTMLCollectionOf<HTMLLabelElement> = parent.getElementsByTagName("label"),
                             label:HTMLLabelElement = labels[labels.length - 1],
                             attributes:NamedNodeMap = node.attributes,
                             p:HTMLParagraphElement = document.createElement("p"),
@@ -320,7 +321,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                         const feedradio       = function dom_load_feedradio(event:Event):boolean {
                             let parent:HTMLElement,
                                 aa:number,
-                                radios:NodeListOf<HTMLInputElement>;
+                                radios:HTMLCollectionOf<HTMLInputElement>;
                             const elly:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
                                 item:HTMLElement   = <HTMLElement>elly.parentNode,
                                 radio:HTMLInputElement  = item.getElementsByTagName("input")[0];
@@ -356,7 +357,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                             namecheck:any = (localStorage.getItem("settings") !== undefined && localStorage.getItem("settings") !== null)
                                 ? JSON.parse(localStorage.getItem("settings"))
                                 : {},
-                            radios:NodeListOf<HTMLInputElement> = id("feedradio1")
+                            radios:HTMLCollectionOf<HTMLInputElement> = id("feedradio1")
                                 .parentNode
                                 .parentNode
                                 .getElementsByTagName("input"),
@@ -695,7 +696,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                         }
                     },
                     selectDescription = function dom_load_selectDescription(el:HTMLSelectElement):void {
-                        const options:NodeListOf<HTMLOptionElement> = el.getElementsByTagName("option"),
+                        const options:HTMLCollectionOf<HTMLOptionElement> = el.getElementsByTagName("option"),
                             desc:string = options[el.selectedIndex].getAttribute("data-description"),
                             opt:HTMLOptionElement = <HTMLOptionElement>el[el.selectedIndex],
                             value:string = opt.value,
@@ -761,7 +762,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                 // changing the default value of diff_format and complete_document for the browser tool
                 {
                     let el:HTMLElement = document.getElementById("option-diff_format"),
-                        ops:NodeListOf<HTMLOptionElement> = el.getElementsByTagName("option"),
+                        ops:HTMLCollectionOf<HTMLOptionElement> = el.getElementsByTagName("option"),
                         sel:HTMLSelectElement,
                         a:number = 0;
                     options.diff_format = "html";
@@ -1061,7 +1062,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                         c:number        = 0,
                         paramLen:number = 0,
                         param:string[]    = [],
-                        colors:NodeListOf<HTMLOptionElement>,
+                        colors:HTMLCollectionOf<HTMLOptionElement>,
                         lang:HTMLInputElement = id("option-language"),
                         source:string   = "",
                         diff:string     = "";
@@ -2269,7 +2270,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                             .toLowerCase()
                             .split("?")[1]
                         : "";
-                const docbuttons:NodeListOf<HTMLButtonElement>  = document.getElementsByTagName("button"),
+                const docbuttons:HTMLCollectionOf<HTMLButtonElement>  = document.getElementsByTagName("button"),
                     docbuttonClick = function dom_load_documentation_showhide(event:Event):void {
                         const x:HTMLElement = <HTMLElement>event.target || <HTMLElement>event.srcElement,
                             span:HTMLSpanElement = x.getElementsByTagName("span")[0],
@@ -2322,7 +2323,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                         }
                     },
                     colorChange = function dom_load_documentation_colorChange():void {
-                        const options:NodeListOf<HTMLOptionElement> = colorScheme.getElementsByTagName("option"),
+                        const options:HTMLCollectionOf<HTMLOptionElement> = colorScheme.getElementsByTagName("option"),
                             olen:number = options.length;
                         if (test.store === true && localStorage !== null && localStorage.getItem("settings") !== undefined && localStorage.getItem("settings") !== null && localStorage.getItem("settings").indexOf(":undefined") > 0) {
                             localStorage.setItem("settings", localStorage.getItem("settings").replace(/:undefined/g, ":false"));
@@ -2369,7 +2370,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             }
             if (pages === "page") {
                 let b:number          = 0,
-                    colorOptions:NodeListOf<HTMLOptionElement>,
+                    colorOptions:HTMLCollectionOf<HTMLOptionElement>,
                     olen:number       = 0,
                     colorParam:string = (typeof location === "object" && typeof location.href === "string" && location.href.indexOf("?") > -1)
                         ? location
@@ -2413,10 +2414,10 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                 {
                     let inca:number  = 0,
                         incb:number  = 0,
-                        ol:NodeListOf<HTMLOListElement>,
-                        li:NodeListOf<HTMLLIElement>,
+                        ol:HTMLCollectionOf<HTMLOListElement>,
+                        li:HTMLCollectionOf<HTMLLIElement>,
                         lilen:number = 0;
-                    const div:NodeListOf<HTMLDivElement> = document.getElementsByTagName("div"),
+                    const div:HTMLCollectionOf<HTMLDivElement> = document.getElementsByTagName("div"),
                         len:number   = div.length;
                     inca = 0;
                     do {
@@ -2535,13 +2536,13 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
         value = data.langvalue;
         if (test.ace === true) {
             if (value[0] === "script" || value[0] === "tss") {
-                value[0] = "javascript";
+                value = ["javascript", value[1], value[2]];
             } else if (value[0] === "dustjs") {
-                value[0] = "html";
+                value = ["html", value[1], value[2]];
             } else if (value[0] === "markup") {
-                value[0] = "xml";
+                value = ["xml", value[1], value[2]];
             } else if (value[1] === "style") {
-                value[0] = "css";
+                value = ["css", value[1], value[2]];
             }
             if (textarea.codeIn !== null) {
                 aceStore
@@ -2727,7 +2728,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             parent:[HTMLElement, HTMLElement] = [<HTMLElement>el.parentNode, <HTMLElement>el.parentNode.nextSibling],
             min:number   = Number(title[1].substr(0, title[1].indexOf(" "))),
             max:number   = Number(title[2]),
-            list:[NodeListOf<HTMLLIElement>, NodeListOf<HTMLLIElement>]  = [
+            list:[HTMLCollectionOf<HTMLLIElement>, HTMLCollectionOf<HTMLLIElement>]  = [
                 parent[0].getElementsByTagName("li"),
                 parent[1].getElementsByTagName("li")
             ];
@@ -2760,7 +2761,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
     //change the color scheme of the web UI
     method.event.colorScheme = function dom_event_colorScheme(event:Event):void {
         const item:HTMLSelectElement = id("option-color"),
-            option:NodeListOf<HTMLOptionElement>    = item.getElementsByTagName("option"),
+            option:HTMLCollectionOf<HTMLOptionElement>    = item.getElementsByTagName("option"),
             optionLen:number = option.length,
             index:number     = (function dom_event_colorScheme_indexLen():number {
                 if (item.selectedIndex < 0 || item.selectedIndex > optionLen) {
@@ -2832,7 +2833,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                 return <HTMLElement>node.parentNode;
             }()),
             diff:HTMLElement        = <HTMLElement>diffRight.parentNode,
-            lists:NodeListOf<HTMLOListElement>       = diff.getElementsByTagName("ol"),
+            lists:HTMLCollectionOf<HTMLOListElement>       = diff.getElementsByTagName("ol"),
             par1:HTMLElement   = <HTMLElement>lists[2].parentNode,
             par2:HTMLElement   = <HTMLElement>lists[2].parentNode.parentNode,
             counter:number     = lists[0].clientWidth,
@@ -2925,7 +2926,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
         let a:number         = 0,
             b:number         = 0,
             max:number,
-            lists:NodeListOf<HTMLLIElement>[] = [];
+            lists:HTMLCollectionOf<HTMLLIElement>[] = [];
         const node:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
             title:string[]     = node
                 .getAttribute("title")
@@ -2934,7 +2935,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             inner:string     = node.innerHTML,
             parent:HTMLElement    = <HTMLElement>node.parentNode.parentNode,
             par1:HTMLElement = <HTMLElement>parent.parentNode,
-            listnodes:NodeListOf<HTMLOListElement> = (parent.getAttribute("class") === "diff")
+            listnodes:HTMLCollectionOf<HTMLOListElement> = (parent.getAttribute("class") === "diff")
                 ? parent.getElementsByTagName("ol")
                 : par1.getElementsByTagName("ol"),
             listLen:number   = listnodes.length;
@@ -2998,9 +2999,9 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                         return input.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
                     },
                     renderOutput  = function dom_event_execute_app_renderOutput():void {
-                        let diffList:NodeListOf<HTMLOListElement>,
+                        let diffList:HTMLCollectionOf<HTMLOListElement>,
                             button:HTMLButtonElement,
-                            buttons:NodeListOf<HTMLButtonElement>,
+                            buttons:HTMLCollectionOf<HTMLButtonElement>,
                             pdlang:string     = "",
                             parent:HTMLElement,
                             chromeSave:boolean = false;
@@ -3231,7 +3232,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                                     .body
                                     .getElementsByTagName("ol");
                                 if (diffList.length > 0) {
-                                    const list:NodeListOf<HTMLLIElement> = diffList[0].getElementsByTagName("li");
+                                    const list:HTMLCollectionOf<HTMLLIElement> = diffList[0].getElementsByTagName("li");
                                     let a:number    = 0,
                                         b:number    = list.length;
                                     do {
@@ -3304,7 +3305,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                                     .body
                                     .getElementsByTagName("ol");
                                 if (diffList.length > 0) {
-                                    const cells:NodeListOf<HTMLLIElement> = diffList[0].getElementsByTagName("li"),
+                                    const cells:HTMLCollectionOf<HTMLLIElement> = diffList[0].getElementsByTagName("li"),
                                         len:number   = cells.length;
                                     let a:number     = 0;
                                     do {
@@ -3497,7 +3498,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
 
         //gather updated dom nodes
         {
-            const li:NodeListOf<HTMLLIElement> = id("addOptions").getElementsByTagName("li"),
+            const li:HTMLCollectionOf<HTMLLIElement> = id("addOptions").getElementsByTagName("li"),
                 reg:RegExp = (/option-((true-)|(false-))?/);
             let a:number = li.length,
                 select:HTMLSelectElement,
@@ -3702,7 +3703,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             parent:HTMLElement     = box.getElementsByTagName("p")[0],
             save:boolean       = (parent.innerHTML.indexOf("save") > -1),
             minifyTest:boolean = (parent.style.display === "none"),
-            buttons:NodeListOf<HTMLButtonElement>    = box
+            buttons:HTMLCollectionOf<HTMLButtonElement>    = box
                 .getElementsByTagName("p")[0]
                 .getElementsByTagName("button"),
             minButton:HTMLButtonElement  = (save === true)
@@ -3848,7 +3849,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             body:HTMLElement,
             top:number,
             left:number,
-            buttons:NodeListOf<HTMLButtonElement>,
+            buttons:HTMLCollectionOf<HTMLButtonElement>,
             resize:HTMLButtonElement;
         if (node.nodeType !== 1) {
             return;
@@ -4101,7 +4102,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             idval:string        = "",
             body:HTMLElement,
             heading:HTMLElement,
-            buttons:NodeListOf<HTMLButtonElement>,
+            buttons:HTMLCollectionOf<HTMLButtonElement>,
             save:boolean      = false,
             buttonMin:HTMLButtonElement,
             buttonMax:HTMLButtonElement,
@@ -4196,8 +4197,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
                 const li:HTMLLIElement[] = id("addOptions").getElementsByTagName("li"),
                     lilen:number = li.length,
                     disable = function dom_event_modeToggle_cycleOptions_disable(parent:HTMLElement, enable:boolean):void {
-                        const inputs:NodeListOf<HTMLInputElement> = parent.getElementsByTagName("input"),
-                            sels:NodeListOf<HTMLSelectElement> = parent.getElementsByTagName("select");
+                        const inputs:HTMLCollectionOf<HTMLInputElement> = parent.getElementsByTagName("input"),
+                            sels:HTMLCollectionOf<HTMLSelectElement> = parent.getElementsByTagName("select");
                         if (sels.length > 0) {
                             if (enable === true) {
                                 sels[0].disabled = false;
@@ -4245,7 +4246,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true) {
             makeChanges = function dom_event_modeToggle_makeChanges():void {
                 const text:string = mode.charAt(0).toUpperCase() + mode.slice(1),
                     ci:HTMLElement = id("codeInput"),
-                    cilabel:NodeListOf<HTMLLabelElement> = ci.getElementsByTagName("label"),
+                    cilabel:HTMLCollectionOf<HTMLLabelElement> = ci.getElementsByTagName("label"),
                     input:HTMLTextAreaElement = id("input"),
                     output:HTMLTextAreaElement = id("output"),
                     outLabel:HTMLElement = <HTMLElement>ci.getElementsByClassName("inputLabel")[1],

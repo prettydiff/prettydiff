@@ -1,0 +1,57 @@
+// on hold pending service worker type dependencies achieve compatibility with TypeScript 3
+//
+// convert to .ts but do not move to api directory. This must be a separate file not integrated into dom.js
+//
+// service worker support on hold until compatibility is achieved with TypeScript 3
+// * this follow comments code goes into dom.js to initiate the request
+//    if ("serviceWorker" in navigator) {
+//        navigator.serviceWorker.register("/js/api/serviceWorker.js")
+//            .then(function dom_load_serviceRegister(reg) {
+//                // registration worked
+//                console.log("Registration succeeded. Scope is " + reg.scope);
+//            })
+//            .catch(function dom_load_serviceFail(error) {
+//                // registration failed
+//                console.log("Registration failed with " + error);
+//            });
+//    }
+
+self.oninstall = function worker_install(event) {
+    event.waitUntil(caches.open("v1").then(function worker_install_open(cache) {
+        return cache.addAll([
+            "/",
+            "/documentation.xhtml",
+            "/css/color_canvas.css",
+            "/css/color_shadow.css",
+            "/css/color_white.css",
+            "/css/documentation.css",
+            "/css/global.css",
+            "/css/index.css",
+            "/css/page_specific.css",
+            "/css/reports.css",
+            "/css/webtool_only.css",
+            "/node_modules/parse-framework/js/browser.js",
+            "/js/dom.js"
+        ]);
+    }));
+};
+self.onfetch = function service_fetch(event) {
+    event.respondWith(caches.match(event.request).then(function worker_fetch_respond(response) {
+        // caches.match() always resolves
+        // but in case of success response will have value
+        if (response !== undefined) {
+            return response;
+        } else {
+            return fetch(event.request).then(function worker_fetch_respond_response(response) {
+                // response may be used only once
+                // we need to save clone to put one copy in cache
+                // and serve second one
+                let responseClone = response.clone();
+                caches.open("v1").then(function worker_fetch_respond_response_open(cache) {
+                    cache.put(event.request, responseClone);
+                });
+                return response;
+            });
+        }
+    }));
+};
