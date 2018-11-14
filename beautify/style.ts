@@ -140,6 +140,8 @@
             },
             vertical = function beautify_style_vertical():void {
                 const start:number = data.begin[a],
+                    startChar:string = data.token[start],
+                    endChar:string = data.token[a],
                     store:compareStore = [];
                 let b:number = a,
                     c:number = 0,
@@ -155,10 +157,10 @@
                             item = [b - 1, 0];
                             do {
                                 b = b - 1;
-                                if ((data.token[b] === ";" && data.begin[b] === start) || (data.token[b] === "}" && data.begin[data.begin[b]] === start)) {
+                                if ((((data.token[b] === ";" && startChar === "{") || (data.token[b] === "," && startChar === "(")) && data.begin[b] === start) || (data.token[b] === endChar && data.begin[data.begin[b]] === start)) {
                                     break;
                                 }
-                                if (data.types[b] !== "comment" && data.types[b] !== "selector" && data.token[b] !== "{" && data.begin[b] === start) {
+                                if (data.types[b] !== "comment" && data.types[b] !== "selector" && data.token[b] !== startChar && data.begin[b] === start) {
                                     item[1] = data.token[b].length + item[1];
                                 }
                             } while (b > start + 1);
@@ -197,7 +199,7 @@
             a = len;
             do {
                 a = a - 1;
-                if (data.token[a] === "}") {
+                if (data.token[a] === "}" || data.token[a] === ")") {
                     vertical();
                 }
             } while (a > 0);
@@ -251,6 +253,9 @@
                     build.push(data.token[a]);
                     build.push(" ");
                 } else {
+                    if ((/^\s+$/).test(build[build.length - 1]) === false && (options.compressed_css === false || (options.compressed_css === true && data.types[data.begin[a] + 1] === "start")) && (data.types[data.begin[a] + 1] !== "selector" || options.css_insert_lines === false)) {
+                        nl(indent);
+                    }
                     build.push(data.token[a]);
                     if (options.compressed_css === true && data.types[a + 1] === "end") {
                         nl(indent - 1);

@@ -1,0 +1,9 @@
+$breakpoints: (
+    'small': '(min-width: 320px)',
+    'small_only': '(min-width: 320px) and (max-width: 599px)',
+    'medium': '(min-width: 600px)',
+    'medium_only': '(min-width: 600px) and (max-width: 1022px)',
+    'large': '(min-width: 1023px)',
+    'oversize': '(min-width: #{$max-width})'
+)
+!default;
