@@ -1,0 +1,9 @@
+/*prettydiff.com braces:true*/
+
+
+var a = 1;
+function (x) {
+if (x) {
+return 5;
+}
+}

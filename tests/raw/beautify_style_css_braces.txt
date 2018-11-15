@@ -1,0 +1,6 @@
+/*prettydiff.com braces:true*/
+
+
+.test {
+    font-size: 12pt;
+}
