@@ -1,6 +1,7 @@
 // on hold pending service worker type dependencies achieve compatibility with TypeScript 3
 //
 // convert to .ts but do not move to api directory. This must be a separate file not integrated into dom.js
+// * add @types/service_worker_api to package.json
 //
 // service worker support on hold until compatibility is achieved with TypeScript 3
 // * this follow comments code goes into dom.js to initiate the request

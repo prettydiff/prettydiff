@@ -1,0 +1,17 @@
+/*prettydiff.com method_chain:3*/
+
+var a = 1;
+
+a
+    .test
+    .test
+    .method();
+b.test();
+c.test.method();
+d
+    .test
+    .test
+    .method()
+    .test;
+e.method();
+f.method().test;
