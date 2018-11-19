@@ -817,7 +817,7 @@
 .library-actions .libraryaction,
 .nav .fileaction {
     @include border-radius(0.3em);
-    background-image   : url("../images/page_white.png");
+    background-image   : url('../images/page_white.png');
     background-position: 2px 2px;
     background-repeat  : no-repeat;
     color              : #666;

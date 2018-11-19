@@ -14,7 +14,7 @@ a {
 #extras-ingredients input,
 #extras-ingredients select {
     font-size : 1.2em;
-    background: url("http://asdf.com/");
+    background: url('http://asdf.com/');
     /*asdf*/
     $var;
     margin    : 4em 1em 3em 2em;

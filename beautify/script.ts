@@ -2369,11 +2369,7 @@
                     code.push("</ol>");
                     code.push(last);
                     if (options.new_line === true) {
-                        if (options.crlf === true) {
-                            code.push("\r\n");
-                        } else {
-                            code.push("\n");
-                        }
+                        code.push(lf);
                     }
                     return [
                         "<p>Scope analysis does not provide support for undeclared variables.</p>",

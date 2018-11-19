@@ -255,6 +255,10 @@
         if (options.lexerOptions[options.lexer] !== undefined) {
             options.lexerOptions[options.lexer].objectSort = options.object_sort;
         }
+        if (options.quote_convert !== "none") {
+            options.lexerOptions.script.quote_convert = options.quote_convert;
+            options.lexerOptions.style.quote_convert = options.quote_convert;
+        }
         options.lexerOptions.script.varword = options.variable_list;
         options.lexerOptions.style.no_lead_zero = options.no_lead_zero;
         options.lexerOptions.markup.tagSort = options.tag_sort;
