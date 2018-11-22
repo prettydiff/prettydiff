@@ -115,8 +115,16 @@
                             if (data.types[next] === "end" || data.types[next] === "template_end") {
                                 indent = indent - 1;
                             }
-                            if (options.force_indent === false && data.lines[next] === 0 && (data.types[a] === "content" || data.types[a] === "singleton")) {
-                                level.push(-20);
+                            if (options.force_indent === false && (data.types[a] === "content" || data.types[a] === "singleton" || data.types[a] === "template")) {
+                                if (next < c && (data.types[next].indexOf("end") > -1 || data.types[next].indexOf("start") > -1) && data.lines[next] > 0) {
+                                    level.push(indent);
+                                } else if (data.lines[next] === 0) {
+                                    level.push(-20);
+                                } else if (data.lines[next] === 1) {
+                                    level.push(-10);
+                                } else {
+                                    level.push(indent);
+                                }
                             } else if (data.types[a] === "start" || data.types[a] === "template_start") {
                                 indent = indent + 1;
                                 if (options.force_indent === true) {
