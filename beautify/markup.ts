@@ -17,7 +17,7 @@
                     nextIndex = function beautify_markup_levels_next():number {
                         let x:number = a + 1,
                             y:number = 0;
-                        if (data.types[x] === "comment" || data.types[x] === "attribute" || data.types[x] === "jsx_attribute_start") {
+                        if (data.types[x] === "comment" || data.types[x] === "attribute" || data.types[x] === "template_attribute" || data.types[x] === "jsx_attribute_start") {
                             do {
                                 if (data.types[x] === "jsx_attribute_start") {
                                     y = x;
@@ -27,7 +27,7 @@
                                         }
                                         x = x + 1;
                                     } while (x < c);
-                                } else if (data.types[x] !== "comment" && data.types[x] !== "attribute") {
+                                } else if (data.types[x] !== "comment" && data.types[x] !== "attribute" && data.types[x] !== "template_attribute") {
                                     return x;
                                 }
                                 x = x + 1;
@@ -67,7 +67,7 @@
                             }
 
                             // indentation must be applied to the tag preceeding the comment
-                            if (data.types[x] === "attribute" || data.types[x] === "jsx_attribute_start") {
+                            if (data.types[x] === "attribute" || data.types[x] === "template_attribute" || data.types[x] === "jsx_attribute_start") {
                                 level[data.begin[x]] = ind;
                             } else {
                                 level[x] = ind;
@@ -91,7 +91,7 @@
                 // level -> space after token
                 do {
                     if (data.lexer[a] === lexer) {
-                        if (data.types[a] === "attribute") {
+                        if (data.types[a] === "attribute" || data.types[a] === "template_attribute") {
                             level.push(-10);
                         } else if (data.types[a] === "jsx_attribute_start") {
                             if (data.lexer[a + 1] !== lexer && data.types[a - 1] !== "jsx_attribute_end") {
@@ -217,7 +217,7 @@
                                 } while (y < c);
                             }
                             y = y + 1;
-                            if (data.types[y] === "attribute" || data.types[y] === "jsx_attribute_start") {
+                            if (data.types[y] === "attribute" || data.types[y] === "template_attribute" || data.types[y] === "jsx_attribute_start") {
                                 beautify_markup_apply_attribute_findEnd();
                             } else {
                                 levels[y - 1] = lev;
