@@ -2536,10 +2536,9 @@ interface readFile {
                 return;
             }
             if (command === "lint") {
+                verbose = true;
                 callback = function node_apps_lint_callback():void {
-                    if (verbose === true) {
-                        apps.log([`Lint complete for ${lintpath}`], "", lintpath);
-                    }
+                    apps.log([`Lint complete for ${lintpath}`], "", lintpath);
                 };
             }
             (function node_apps_build_lint_getFiles():void {
