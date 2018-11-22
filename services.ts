@@ -44,7 +44,11 @@ interface readFile {
         libFiles:string[] = [api, `${js}beautify${sep}`, `${js}minify${sep}`, `${js}prettydiff.js`],
         // node option default start
         options:any = {},
-        version:any = {},
+        version:any = {
+            date: "",
+            number: "",
+            parse: ""
+        },
         // node option default end
         text:any     = {
             angry    : "\u001b[1m\u001b[31m",
@@ -1257,33 +1261,37 @@ interface readFile {
                                 stat(value);
                             });
                         },
-                        version = function node_apps_build_libraries_version():void {
-                            node.child(`git log -1 --branches`, function node_apps_build_libraries_version_child(err:Error, stderr:string):void {
+                        versionGather = function node_apps_build_libraries_versionGather():void {
+                            node.child(`git log -1 --branches`, function node_apps_build_libraries_versionGather_child(err:Error, stderr:string):void {
                                 if (err !== null) {
                                     apps.errout([err.toString()]);
                                     return;
                                 }
                                 const date:string[] = stderr.slice(stderr.indexOf("Date:") + 12).split(" ");
                                 versionData.date = `${date[1]} ${date[0]} ${date[3]}`;
-                                node.fs.readFile(`${projectPath}package.json`, "utf8", function node_apps_build_libraries_version_child_readPackage(errp:Error, data:string):void {
+                                node.fs.readFile(`${projectPath}package.json`, "utf8", function node_apps_build_libraries_versionGather_child_readPackage(errp:Error, data:string):void {
                                     if (errp !== null) {
                                         apps.errout([errp.toString()]);
                                         return;
                                     }
                                     versionData.number = JSON.parse(data).version;
-                                    node.fs.readFile(`${projectPath}node_modules${sep}parse-framework${sep}package.json`, "utf8", function node_apps_build_libraries_version_child_readPackage_readFramework(errf:Error, frameData:string):void {
+                                    node.fs.readFile(`${projectPath}node_modules${sep}parse-framework${sep}package.json`, "utf8", function node_apps_build_libraries_versionGather_child_readPackage_readFramework(errf:Error, frameData:string):void {
                                         if (errf !== null) {
                                             apps.errout([errf.toString()]);
                                             return;
                                         }
                                         versionData.parse = JSON.parse(frameData).version;
+                                        // update information for display in current build
+                                        version.date = versionData.date;
+                                        version.number = versionData.number;
+                                        version.parse = versionData.parse;
                                         libraryFiles();
                                     });
                                 });
                             })
                         };
                     heading("Building Options");
-                    version();
+                    versionGather();
                 },
                 lint     : function node_apps_build_lint():void {
                     heading("Linting");
