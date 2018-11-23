@@ -609,8 +609,6 @@
         }
         return result;
     };
-    if (prettydiff !== undefined) {
-        prettydiff.mode = mode;
-    }
+    global.prettydiff.mode = mode;
     return mode;
 }());

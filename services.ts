@@ -1184,8 +1184,31 @@ interface readFile {
                                     }
                                     flag[fileFlag] = true;
                                     if (flag.dom === true && flag.documentation === true && flag.html === true && flag.node === true && flag.html === true && flag.prettydiff === true) {
-                                        console.log(`${apps.humantime(false) + text.green}Option details written to files.${text.none}`);
-                                        next();
+                                        node.fs.readFile(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}browser.js`, function node_apps_build_libraries_modifyFile_read_write_readParser(erp:Error, parser:string) {
+                                            let thirdparty:string = parser + libraries + finalFile + mode
+                                                .replace(/global(API)?\./g, "")
+                                                .replace(/globalAPI\s*=\s*\(options\.api\s*===\s*"dom"\)\s*\?\s*window\s*:\s*global,/, "")
+                                                .replace(/if\s*\(options\.api\s*===\s*"dom"\)\s*\{\s*globalAPI\s*=\s*window;\s*\}/, "")
+                                                .replace(/,\s*\/\/ prettydiff file insertion start\s+prettydiff\s*=\s*\{\}/, "");
+                                            thirdparty = thirdparty.replace(/("|')use strict("|');/g, "");
+                                            thirdparty = thirdparty.replace(/\s*window\.parseFramework/, "(function () {\"use strict\";const prettydiff={api:{},beautify:{},minify:{}},parseFramework");
+                                            thirdparty = thirdparty.replace(/window\.parseFramework/g, "parseFramework");
+                                            thirdparty = thirdparty.replace(/parseFramework\s*=\s*\(parseFramework\s*\|\|\s*\{\s*lexer:\s*\{\},\s*parse:\s*parse,\s*parseerror:\s*"",\s*parserArrays:\s*parserArrays,\s*parserObjects:\s*parserObjects\s*\}\);/, "");
+                                            thirdparty = `${thirdparty}prettydiff.defaults=${JSON.stringify(options)};window.prettydiff=prettydiff;}());`;
+                                        
+                                            if (erp !== null && erp.toString() !== "") {
+                                                apps.errout([erp.toString()]);
+                                                return;
+                                            }
+                                            node.fs.writeFile(`${js}thirdparty.js`, `${thirdparty}`, function node_apps_build_libraries_modifyFile_read_write_readParser_thirdparty(erth:Error) {
+                                                if (erth !== null && erth.toString() !== "") {
+                                                    apps.errout([erth.toString()]);
+                                                    return;
+                                                }
+                                                console.log(`${apps.humantime(false) + text.green}Option details written to files.${text.none}`);
+                                                next();
+                                            });
+                                        });
                                     }
                                 });
                             });
