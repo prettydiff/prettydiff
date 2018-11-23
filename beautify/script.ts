@@ -818,6 +818,7 @@
                                 level.push(-20);
                                 return;
                             }
+                            ternary.push(a);
                             if (options.ternary_line === true) {
                                 level[a - 1] = -10;
                             } else {
@@ -826,7 +827,6 @@
                                     c = c - 1;
                                 } while (c > -1 && level[c] < -9);
                                 ei.push(a);
-                                ternary.push(a);
                                 indent = indent + 1;
                                 if (level[c] === indent && data.token[c + 1] !== ":") {
                                     indent = indent + 1;
@@ -867,6 +867,9 @@
                                         if (data.token[c] === "?") {
                                             ternary.pop();
                                             endExtraInd();
+                                            if (options.ternary_line === true) {
+                                                level[a - 1] = -10;
+                                            }
                                             level.push(-10);
                                             return;
                                         }

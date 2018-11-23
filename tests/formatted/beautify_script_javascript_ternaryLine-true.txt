@@ -1,0 +1,4 @@
+/*prettydiff.com ternary_line:true*/
+const obj = {
+    prop: isTrue ? alternativeA : alternativeB
+};
