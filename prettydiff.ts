@@ -609,9 +609,8 @@
         }
         return result;
     };
-    if (global === undefined) {
-        window["prettydiff"] = mode;
-    } else {
-        global.prettydiff.mode = mode;
+    if (prettydiff !== undefined) {
+        prettydiff.mode = mode;
     }
+    return mode;
 }());
