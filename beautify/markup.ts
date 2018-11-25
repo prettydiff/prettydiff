@@ -191,16 +191,13 @@
                 nl           = function beautify_markup_apply_nl(tabs:number):string {
                     const linesout:string[] = [],
                         pres:number = options.preserve + 1,
-                        end:string = (options.crlf === true)
-                            ? "\r\n"
-                            : "\n",
                         total:number = Math.min((data.lines[a + 1] - 1), pres);
                     let index = 0;
                     if (tabs < 0) {
                         tabs = 0;
                     }
                     do {
-                        linesout.push(end);
+                        linesout.push(lf);
                         index = index + 1;
                     } while (index < total);
                     if (tabs > 0) {
@@ -211,6 +208,69 @@
                         } while (index < tabs);
                     }
                     return linesout.join("");
+                },
+                content = function beautify_markup_apply_content():void {
+                    let aa:number  = (levels[a - 1] === -20)
+                            ? options.wrap - data.token[a - 1].length
+                            : options.wrap,
+                        str:string = data.token[a].replace(/\s+/g, " "),
+                        len:number = (levels[a - 1] === -20)
+                            ? data.token[a - 1].length + str.length
+                            : str.length;
+                    const wrap:number = options.wrap,
+                        indy:string = (function beautify_markup_apply_content_lev():string {
+                            let bb:number = a,
+                                cc:number = 0,
+                                output:string[] = [];
+                            if (levels[bb] < 0) {
+                                do {
+                                    bb = bb - 1;
+                                } while (bb > 0 && levels[bb] < 0);
+                            }
+                            cc = levels[bb] + 1;
+                            if (cc > 0) {
+                                do {
+                                    cc = cc - 1;
+                                    output.push(ind);
+                                } while (cc > 0);
+                            }
+                            return lf + output.join("");
+                        }()),
+                        store:string[] = [],
+                        wrapper = function beautify_markup_apply_content_wrapper():void {
+                            if (str.charAt(aa) === " ") {
+                                store.push(str.slice(0, aa));
+                                str = str.slice(aa + 1);
+                                len = str.length;
+                                aa = wrap;
+                                return;
+                            }
+                            do {
+                                aa = aa - 1;
+                            } while (aa > 0 && str.charAt(aa) !== " ");
+                            if (aa > 0) {
+                                store.push(str.slice(0, aa));
+                                str = str.slice(aa + 1);
+                                len = str.length;
+                                aa = wrap;
+                            } else {
+                                aa = wrap;
+                                do {
+                                    aa = aa + 1;
+                                } while (aa < len && str.charAt(aa) !== " ");
+                                store.push(str.slice(0, aa));
+                                str = str.slice(aa + 1);
+                                len = str.length;
+                                aa = wrap;
+                            }
+                        };
+                    do {
+                        wrapper();
+                    } while (aa < len);
+                    if (str !== "" && str !== " ") {
+                        store.push(str);
+                    }
+                    data.token[a] = store.join(indy);
                 },
                 attribute = function beautify_markup_apply_attribute():void {
                     const end:string[]|null = (/\/?>$/).exec(data.token[a]),
@@ -236,13 +296,44 @@
                         return;
                     }
                     let y:number = a + 1,
+                        len:number = data.token[a].length + 1,
                         lev:number = levels[a],
                         ending:string = end[0];
                     if (data.token[a].indexOf("</") === 0) {
                         return;
                     }
+                    if ((data.types[a] === "start" || data.types[a] === "singleton") && data.types[y] === "attribute" && options.wrap > 0) {
+                        do {
+                            len = len + data.token[y].length + 1;
+                            y = y + 1;
+                        } while (y < c - 1 && data.types[y] === "attribute");
+                        if (y < c - 1 && data.types[y].indexOf("attribute") < 0 && y > a + 2) {
+                            let atts:string[] = data.token.slice(a + 1, y),
+                                z:number = 0,
+                                zz:number = atts.length;
+                            atts.sort();
+                            data.token.splice(a + 1, y - (a + 1));
+                            do {
+                                data.token.splice((a + 1) + z, 0, atts[z]);
+                                z = z + 1;
+                            } while (z < zz);
+                            data.token[a] = data.token[a].replace(ending, "");
+                            data.token[y - 1] = data.token[y - 1] + ending;
+                            if (len > options.wrap) {
+                                do {
+                                    y = y - 1;
+                                    levels[y] = lev;
+                                } while (y > a);
+                            } else {
+                                levels[a] = -10;
+                                levels[y - 1] = lev;
+                            }
+                            return;
+                        }
+                    }
                     data.token[a] = data.token[a].slice(0, data.token[a].lastIndexOf(ending));
                     levels[a] = -10;
+                    y = a + 1;
                     findEnd();
                 };
             let a:number            = options.start,
@@ -255,6 +346,9 @@
                     }
                     if (a < c - 1 && data.types[a + 1].indexOf("attribute") > -1 && data.types[a].indexOf("attribute") < 0) {
                         attribute();
+                    }
+                    if ((a < 1 || data.types[a - 1].indexOf("template") < 0) && (a === c - 1 || data.types[a + 1].indexOf("template") < 0) && data.types[a] === "content" && options.wrap > 0) {
+                        content();
                     }
                     if (data.token[a] !== "</prettydiffli>" && data.token[a].slice(0, 2) !== "//" && data.token[a].slice(0, 2) !== "/*") {
                         if (data.types[a] === "jsx_attribute_end" && levels[a] < 0) {

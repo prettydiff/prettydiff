@@ -27,18 +27,8 @@ node js/services build nocheck
 The application runs on the terminal with Node.js and in a web browser.
 
 * To get started with Node try `node js/services commands`
-* To get started in a browser try this command with Node: `node js/services server` and then in your web browser go to http://localhost:9001
-
-### Web Browser
-Executing in the web browser presents a handy GUI with interactive documentation immediately available. This is convenient when Node.js is not available or installing software is not allowed.
-
-* To execute immediately simply open **index.xhtml** using the local file system path in your web browser.
-* To test and automatically rebuild and refresh upon code modification launch the server:
-   - `node js/services server`
-   - Open http://localhost:9001/ in your web browser
-
-### Third Party HTML
-If you want to host Pretty Diff in a different browser application see the [third party HTML demo](https://prettydiff.com/thirdparty.html) to get started.
+* To get started in a browser try this command with Node: `node js/services server` and then in your web browser go to http://localhost:9001 or simply navigate your browser to the project's *index.xhtml* file in the local filesystem.
+* To run the application in a different browser application simply reference or include the built *js/thirdparty.js* file. See the [third party demo](thirdparty.md) for an example.
 
 ### Terminal
 Executing in a terminal shell is powerful when you need access to additional tools, the local file system, or wish to integrate Pretty Diff output into other application tasks.  The application comes with some additional utilities not available to the browser, such as: hashing, base64 encoding, file system tools, and other features.
@@ -49,3 +39,9 @@ Executing in a terminal shell is powerful when you need access to additional too
 * The option list supports filtering against the documentation headings and values: `node js/services options mode:diff api:node`
 * For detailed documentation about a specific option execute the option command with the named option: `node js/services options readmethod`
 * To see execution details of a specific command specify the *verbose* flag: `node js/services options readmethod --verbose`
+
+### Options
+For supported option documentation you may read the *documentation.xhtml* file in a browser or use these commands on the terminal:
+
+* `node js/services options`
+* `node js/services options mode` (use the command with an option name for detailed information)

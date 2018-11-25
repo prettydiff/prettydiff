@@ -80,13 +80,12 @@
                         </button>
                     </h2>
                     <div class="content-hide">
-                        <div class="segment">
+                        <div class="segment" id="purpose">
                             <h3>Purpose</h3>
                             <p>Pretty Diff is a language aware code comparison tool, beautifier, minifier,
-                                and parser for a variety of web oriented languages.</p>
-                            <p>Pretty Diff was created to compare code samples for various web based
-                                languages even if one (or both) code samples were minified. Currently, the
-                                project operates by beautifying code and then comparing that the beautified
+                                and parser for a variety of languages.</p>
+                            <p>Pretty Diff was created to compare code samples for various languages regardless of differences in comments, white space, and other factors. Currently, the
+                                project operates by beautifying code and then comparing the beautified
                                 product of the code samples. The goal in a
                                 <a href="https://github.com/prettydiff/prettydiff/issues/71">future version</a>
                                 is to introduce the comparison step directly into the beautifiers between the
@@ -101,8 +100,8 @@
                                     interfaces, and without a build process. All documentation and required
                                     supporting artifacts are included with the project code.</dd>
                                 <dt>productivity</dt>
-                                <dd>The project should save a developer substantial time by make code easier to
-                                    read against a varient of settings and opinions and reduce the steps to complete
+                                <dd>The project should save a developer substantial time by making code easier to
+                                    read against a variety of settings and reduce the steps to complete
                                     a given code analysis task.</dd>
                                 <dt>reproducibility</dt>
                                 <dd>Code pushed through the project in any one mode should be equally restorable
@@ -110,8 +109,8 @@
                                 <dt>simplicity</dt>
                                 <dd>The project should do more with less code. The intended audience of this
                                     project are software developers, who may need to modify the project code to fit
-                                    custom needs. Less code means custom mode, but also means clearer separation of
-                                    concerns, clearer organization, and fewer algorithms.</dd>
+                                    custom needs. Less code means increased portability. Clearer simple code allows separation of
+                                    concerns, and cleaner organization.</dd>
                             </dl>
                         </div>
                         <div class="segment" id="modes">
@@ -131,9 +130,7 @@
                                     restored to its prior state through beautification, excluding code comments.</dd>
                                 <dt>parse</dt>
                                 <dd>Most code parsers generate a final product called an Abstract Syntax Tree
-                                    (AST). Pretty Diff, instead, produces parallel arrays for its internal
-                                    operations. The parse mode simply makes these data arrays available for
-                                    independent analysis.</dd>
+                                    (AST). Pretty Diff, instead, leans on the <a href="http://github.com/unibeautify/parse-framework">parse-framework</a> project which produces parse output as a data table.</dd>
                                 <!--dt>analysis</dt>
                                 <dd>HTML formatted reports evaluating the code. The reports differ in content
                                     and structure by the parser(s) used.</dd-->
@@ -187,25 +184,15 @@
                                     </p>
                                 </li>
                                 <li>
-                                    <h4>NPM, Pretty Diff 2</h4>
-                                    <p>
-                                        <a href="https://www.npmjs.com/package/prettydiff2">https://www.npmjs.com/package/prettydiff2</a>
-                                    </p>
-                                </li>
-                                <li>
                                     <h4>NPM, Pretty Diff 3</h4>
                                     <p>Pretty Diff 3 is still experimental and so not published to NPM yet.  Once ready it will be reversioned Pretty Diff 100 and resume the original NPM namespace at <a href="https://www.npmjs.com/package/prettydiff">https://www.npmjs.com/package/prettydiff</a>.</p>
                                 </li>
                             </ul>
-                            <p>Pretty Diff version 2 is published to 
-                                <a
-                                    href="https://github.com/prettydiff/prettydiff/issues/291"
-                                    style="display:block">https://github.com/prettydiff/prettydiff/issues/291</a></p>
                         </div>
                         <div class="segment" id="runcode">
                             <h3>Setup/Run the Application</h3>
                             <ol>
-                                <li>Download the application</li>
+                                <li>Get the code</li>
                                 <li>Install TypeScript: <code>npm install typescript -g</code></li>
                                 <li>Install ESLint: <code>npm install eslint -g</code></li>
                                 <li>Enter the project directory: <code>cd prettydiff</code></li>
@@ -214,61 +201,8 @@
                                 <li>Build the application: <code>node js/services build</code></li>
                             </ol>
                             <p>To get started with the application on the command line try the <em>commands</em> command to see a list of available features and detailed instructions: <code>node js/services commands</code></p>
-                            <p>To run the application in a web browser execute the <em>server</em> command: <code>node js/services server</code></p>
-                            <p>There is increased safety if values are always quoted in command line
-                                instructions.</p>
-                            <!--ul>
-                                <li>
-                                    <p>Run it from a web browser by pointing to the address of the project's
-                                        index.xhtml file.</p>
-                                </li>
-                                <li>
-                                    <p>Run it on the command line with Node.js
-                                        <code>cd prettydiff</code>
-                                        <code>node api/node-local.js option:value option:value</code>
-                                        <code></code>
-                                        <code>node api/node-local.js help &nbsp;&nbsp;&nbsp;&nbsp; - prints instructions to the console</code>
-                                        <code>node api/node-local.js version &nbsp; - prints only the version string to the console</code>
-                                        <code>node api/node-local.js list &nbsp;&nbsp;&nbsp;&nbsp; - displays a list of all current settings on the console</code>
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>Run it from a biddle installation
-                                        <code>biddle global prettydiff</code>
-                                        <code>prettydiff option:value option:value</code>
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>Run it on the command line with Node.js and Bower installation
-                                        <code>cd bower_components/prettydiff</code>
-                                        <code>node api/node-local.js option:value option:value</code>
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>Run it from your own Node application
-                                        <code>var prettydiff = require("prettydiff"),</code>
-                                        <code>&nbsp;&nbsp;&nbsp;&nbsp;args&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= {</code>
-                                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source: "asdf",</code>
-                                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diff&nbsp;&nbsp;: "asdd",</code>
-                                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lang&nbsp;&nbsp;: "text"</code>
-                                        <code>&nbsp;&nbsp;&nbsp;&nbsp;},</code>
-                                        <code>&nbsp;&nbsp;&nbsp;&nbsp;output&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=
-                                            prettydiff(args);</code>
-                                    </p>
-                                </li>
-                                <li>
-                                    <p>Run it from your own web application (
-                                        <em>ensure the library files are requested into your application</em>)
-                                        <code>var global = {},</code>
-                                        <code>&nbsp;&nbsp;&nbsp;&nbsp;args&nbsp;&nbsp;&nbsp;= {</code>
-                                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;source: "asdf",</code>
-                                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;diff&nbsp;&nbsp;: "asdd",</code>
-                                        <code>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lang&nbsp;&nbsp;: "text",</code>
-                                        <code>&nbsp;&nbsp;&nbsp;&nbsp;},</code>
-                                        <code>&nbsp;&nbsp;&nbsp;&nbsp;output = prettydiff(args);</code>
-                                    </p>
-                                </li>
-                            </ul-->
+                            <p>To run the application in a web browser with Pretty Diff's HTML execute the <em>server</em> command: <code>node js/services server</code> or simply navigate your browser to the project's <em>index.xhtml</em> file in the local filesystem.</p>
+                            <p>To run the application in a different browser application simply reference or include the built <em>js/thirdparty.js</em> file. See the <a href="thirdparty.html">third party demo</a> for an example.</p>
                         </div>
                     </div>
                 </div>
@@ -318,11 +252,6 @@
                                     library.</li>
                                 <li>The
                                     <a href="#comment">Pretty Diff comment</a>.</li>
-                                <!--li>The
-                                    <a href="#prettydiffrc">.prettydiffrc</a>
-                                    file, which is only available to the
-                                    <a href="api/node-local.js">node-local</a>
-                                    file (command line Node.js).</li-->
                                 <li>User supplied options</li>
                                 <li>Default option values</li>
                             </ol>
@@ -390,72 +319,11 @@
                                 <code>https://prettydiff.com/?source=https://duckduckgo.com&amp;mode=beautify&amp;correct=true&amp;localstorage=false</code>
                             </p>
                         </div>
-                        <!--div class="segment">
-                            <h3>Feature Guides</h3>
-                            <ol>
-                                <li>
-                                    <a href="guide/closure_with_jsscope.xhtml">Using jsscope to understand scope, inheritance, and scope chains in JavaScript</a>
-                                </li>
-                                <li>
-                                    <a href="guide/tag_ignore.xhtml">Ignoring specified tags from markup beautification</a>
-                                </li>
-                                <li>
-                                    <a href="guide/diffcli.xhtml">So its kind of like recursive command line diff, but in JavaScript</a>
-                                </li>
-                                <li>
-                                    <a href="guide/react_jsx.xhtml">Processing the JSX format from Facebook's React</a>
-                                </li>
-                                <li>
-                                    <a href="guide/jshtml.xhtml">Saving colorful JavaScript code samples</a>
-                                </li>
-                                <li>
-                                    <a href="guide/styleguide.xhtml">Conforming to popular style guides with the styleguide option</a>
-                                </li>
-                                <li>
-                                    <a href="guide/jscorrect.xhtml">What Pretty Diff can do to auto-correct some sloppiness in JavaScript.</a>
-                                </li>
-                                <li>
-                                    <a href="guide/codeArchitecture.xhtml">Brief overview of the prettydiff.js code architecture</a>
-                                </li>
-                                <li>
-                                    <a href="guide/nativeModules.xhtml">Native Modules in Pretty Diff</a>
-                                </li>
-                                <li>
-                                    <a href="guide/prettydiffrc.xhtml">The .prettydiffrc file</a>
-                                </li>
-                            </ol>
-                        </div>
-                        <div class="segment">
-                            <h3>Additional guides not directly related to the Pretty Diff application</h3>
-                            <ol>
-                                <li>
-                                    <a href="guide/unrelated_codeisevil.xhtml">Code is Evil</a>
-                                </li>
-                                <li>
-                                    <a href="guide/unrelated_diff.xhtml">An explanation of the diff algorithm in Pretty Diff</a>
-                                </li>
-                                <li>
-                                    <a href="guide/unrelated_dom.xhtml">The DOM Explained, Quick and Simple</a>
-                                </li>
-                                <li>
-                                    <a href="guide/unrelated_abtest.xhtml">A/B Testing for the Web</a>
-                                </li>
-                                <li>
-                                    <a href="guide/unrelated_closureToAChild.xhtml">Explaining Closure To A Child</a>
-                                </li>
-                                <li>
-                                    <a href="guide/unrelated_rockstar.xhtml">Becoming a JavaScript Rock Star (In the Real World)</a>
-                                </li>
-                                <li>
-                                    <a href="guide/unrelated_parser.xhtml">How to write a parser</a>
-                                </li>
-                            </ol>
-                        </div-->
                     </div>
                 </div>
                 <div>
                     <h2>
-                        <button aria-disabled="true" class="heading" role="presentation">Developer Information
+                        <button aria-disabled="true" class="heading" role="presentation">Contributor Information
                             <span aria-hidden="true">Show</span>
                         </button>
                     </h2>
@@ -463,7 +331,7 @@
                         <div class="segment">
                             <h3>Contribution Guide</h3>
                             <p>For questions, features, or bug reports please open an issue on
-                                <a href="https://github.com/prettydiff/prettydiff/issues">Github</a>.</p>
+                                <a href="https://github.com/prettydiff/prettydiff/issues">Github</a>. If you are executing from the command line insert the <em>debug</em> word at the end of your command and Pretty Diff will generate an issue template in markdown format that you can simply copy and paste into Github.</p>
                             <p>If you wish to propose code changes then follow these steps:</p>
                             <ol>
                                 <li>Fork the repository on Github.</li>
@@ -480,19 +348,25 @@
                                 <li>Create a new branch for your changes:
                                     <code>git checkout -b <em>branchName</em></code>
                                 </li>
+                                <li>Create test units. A pull request will be rejected without tests unless there is a strong expection. The build process employs different kinds of tests.
+                                    <ul>
+                                        <li>The <strong>simulation</strong> command runs just the simulation tests. These tests validate features of the command line operation. These tests are stored in the file <em>tests/simulations.ts</em>.</li>
+                                        <li>The <strong>validation</strong> command runs the code unit tests that validate the beautification and minification functions.  These tests are stored in the <em>tests/formatted</em> and <em>tests/raw</em> directories. A file in the raw directory containing a test unit is compared against a same named file in the formatted directory storing the Pretty Diff output.</li>
+                                        <li>The diff tests are execution as a part of the simulation tests. The code units for the diff tests are stored in the directories <em>tests/diffbase</em> and <em>tests/diffnew</em>.</li>
+                                        <li>The parser has its own unit tests that are part of that project.  Please see its Github repository: <a href="http://github.com/unibeautify/parse-framework">parse-framework</a>.</li>
+                                    </ul>
+                                </li>
                                 <li>Run the unit tests to verify if your changes are breaking things:
                                     <code>node js/services build</code>
                                 </li>
-                                <li>Open a pull request on Github. Ensure there are comments in the pull request
-                                    explaining what the change does and why it is needed. Including additional
-                                    unit tests with the pull request earns extra love.</li>
+                                <li>Finally, open a pull request on Github or if you are having trouble with the build open a Github issue and ask for help.</li>
                             </ol>
                         </div>
                     </div>
                 </div>
             </section>
         </div>
-        <!-- script cache bust start --><script src="js/dom.js?1543084078539" type="application/javascript"></script>
+        <!-- script cache bust start --><script src="js/dom.js?1543146147185" type="application/javascript"></script>
 <!-- script cache bust end -->
     </body>
 </html>

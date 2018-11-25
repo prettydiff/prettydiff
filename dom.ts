@@ -2665,7 +2665,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
         if (test.store === true) {
             localStorage.setItem("settings", JSON.stringify(data.settings));
         }
-        if (classy === "box") {
+        if (classy === "box" || page.getAttribute("id") !== "webtool") {
             return;
         }
         if (item.nodeName.toLowerCase() === "select") {
@@ -2780,7 +2780,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
         document
             .getElementsByTagName("body")[0]
             .setAttribute("class", color);
-        if (test.ace === true) {
+        if (test.ace === true && page.getAttribute("id") === "webtool") {
             if (color === "white") {
                 theme = "ace/theme/textmate";
             }
