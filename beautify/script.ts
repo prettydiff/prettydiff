@@ -255,7 +255,11 @@
                         if (data.types[a + 1] !== "comment") {
                             notcomment = true;
                         }
-                        level.push(indent);
+                        if (data.token[data.begin[a]] === "(") {
+                            level.push(indent + 1);
+                        } else {
+                            level.push(indent);
+                        }
                     },
                     destructfix   = function beautify_script_destructFix(listFix:boolean, override:boolean):void {
                         // listfix  - at the end of a list correct the containing list override - to
@@ -664,6 +668,9 @@
                             level[a - 1] = indent;
                         } else {
                             level.push(-20);
+                        }
+                        if (data.types[a - 1] === "comment") {
+                            level[a - 1] = indent;
                         }
                         endExtraInd();
                         lastlist = list[list.length - 1];
@@ -1818,6 +1825,9 @@
                         if (data.stack[a] === "object" && (ltoke === "{" || ltoke === ",") && (data.token[a + 1] === "(" || data.token[a + 1] === "x(")) {
                             level.push(-20);
                             return;
+                        }
+                        if (data.types[a - 1] === "comment" && data.token[data.begin[a]] === "(") {
+                            level[a - 1] = indent + 1;
                         }
                         level.push(-10);
                     };

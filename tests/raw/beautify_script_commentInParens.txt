@@ -1,0 +1,7 @@
+function () {
+    if (participant.user === currentUserId || // ... to the user himself
+    participant.observing // ... to participants who are currently observing the conversation
+    ) {
+      continue;
+    }
+}
