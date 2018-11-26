@@ -370,7 +370,8 @@
                                 ltoke !== "{" &&
                                 ltoke !== "x{" &&
                                 ltype !== "end" &&
-                                ltype !== "literal" &&
+                                ltype !== "string" &&
+                                ltype !== "number" &&
                                 ltype !== "separator" &&
                                 ltoke !== "++" &&
                                 ltoke !== "--" &&
@@ -444,7 +445,7 @@
                             level[a - 1]                  = indent;
                             level.push(-20);
                         } else if (ctoke === ")" || ctoke === "x)") {
-                            if (options.wrap > 0 && ctoke === ")") {
+                            if (options.wrap > 0 && ctoke === ")" && a > data.begin[a] - 2) {
                                 let len   = 0,
                                     aa    = 0,
                                     short = 0,
@@ -543,7 +544,10 @@
                                         }
                                     }
                                 } while (aa > open && ready === false);
-                                if (((comma === true || mark === true) && len >= wrap) || level[open] > -9) {
+                                if (comma === false && data.token[data.begin[a] + 1].charAt(0) === "`") {
+                                    level[data.begin[a]] = -20;
+                                    level[a - 1] = -20;
+                                } else if (((comma === true || mark === true) && len >= wrap) || level[open] > -9) {
                                     if (tern === true) {
                                         ind = level[open];
                                         if (data.token[open - 1] === "[") {
@@ -717,7 +721,7 @@
                             ei.push(-1);
                         }
                     },
-                    literal       = function beautify_script_literal():void {
+                    string       = function beautify_script_string():void {
                         if (ctoke.indexOf("#!/") === 0) {
                             level.push(indent);
                         } else {
@@ -933,10 +937,10 @@
                             return;
                         }
                         if (ctoke === "++" || ctoke === "--") {
-                            if (ltype === "literal" || ltype === "reference") {
+                            if (ltype === "number" || ltype === "reference") {
                                 level[a - 1] = -20;
                                 level.push(-10);
-                            } else if (a < b - 1 && (data.types[a + 1] === "literal" || data.types[a + 1] === "reference")) {
+                            } else if (a < b - 1 && (data.types[a + 1] === "number" || data.types[a + 1] === "reference")) {
                                 level.push(-20);
                             } else {
                                 level.push(-10);
@@ -1298,7 +1302,7 @@
                             }
                             level[a - 1]                    = -20;
                             itemcount[itemcount.length - 1] = itemcount[itemcount.length - 1] + 1;
-                            if ((data.token[data.begin[a]] === "(" || data.token[data.begin[a]] === "x(") && options.language !== "jsx" && data.stack[a] !== "global" && (data.types[a - 1] !== "literal" || data.token[a - 2] !== "+" || (data.types[a - 1] === "literal" && data.token[a - 2] === "+" && data.types[a - 3] !== "literal"))) {
+                            if ((data.token[data.begin[a]] === "(" || data.token[data.begin[a]] === "x(") && options.language !== "jsx" && data.stack[a] !== "global" && ((data.types[a - 1] !== "string" && data.types[a - 1] !== "number") || data.token[a - 2] !== "+" || (data.types[a - 1] === "string" && data.types[a - 1] !== "number" && data.token[a - 2] === "+" && data.types[a - 3] !== "string" && data.types[a - 3] !== "number"))) {
                                 level.push(-10);
                                 return;
                             }
@@ -1337,7 +1341,7 @@
                                 level.push(-10);
                                 return;
                             }
-                            if (destruct[destruct.length - 1] === false || (data.token[a - 2] === "+" && ltype === "literal" && level[a - 2] > 0 && (ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'"))) {
+                            if (destruct[destruct.length - 1] === false || (data.token[a - 2] === "+" && (ltype === "string" || ltype === "number") && level[a - 2] > 0 && (ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'"))) {
                                 if (data.stack[a] === "method") {
                                     if (data.token[a - 2] === "+" && (ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'") && (data.token[a - 3].charAt(0) === "\"" || data.token[a - 3].charAt(0) === "'")) {
                                         level.push(indent + 2);
@@ -1368,7 +1372,7 @@
                                             } else if (methtest === false && destruct[destruct.length - 1] === true) {
                                                 level[c] = -20;
                                             }
-                                            if (data.token[a - 2] === "+" && ltype === "literal" && level[a - 2] > 0 && (ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'")) {
+                                            if (data.token[a - 2] === "+" && ltype === "string" && level[a - 2] > 0 && (ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'")) {
                                                 d = a - 2;
                                                 do {
                                                     if (data.token[d] !== "+") {
@@ -1472,7 +1476,7 @@
                             } else if (deep === "array" || ctoke === "(" || ctoke === "x(") {
                                 //array, method, paren
                                 destruct.push(true);
-                            } else if (ctoke === "{" && deep === "object" && ltype !== "operator" && ltype !== "start" && ltype !== "literal" && deeper !== "object" && deeper !== "array" && a > 0) {
+                            } else if (ctoke === "{" && deep === "object" && ltype !== "operator" && ltype !== "start" && ltype !== "string" && ltype !== "number" && deeper !== "object" && deeper !== "array" && a > 0) {
                                 //curly brace not in a list and not assigned
                                 destruct.push(true);
                             } else {
@@ -1490,7 +1494,7 @@
                                     level[a - 1] = indent;
                                 } else if (options.braces === true && ltype !== "operator" && ltoke !== "return") {
                                     level[a - 1] = indent - 1;
-                                } else if (deep === "function" || ltoke === ")" || ltoke === "x)" || ltoke === "," || ltoke === "}" || ltype === "markup") {
+                                } else if (data.stack[a + 1] !== "block" && (deep === "function" || ltoke === ")" || ltoke === "x)" || ltoke === "," || ltoke === "}" || ltype === "markup")) {
                                     level[a - 1] = -10;
                                 } else if (ltoke === "{" || ltoke === "x{" || ltoke === "[" || ltoke === "}" || ltoke === "x}") {
                                     level[a - 1] = indent - 1;
@@ -1556,7 +1560,7 @@
                                 level.push(-20);
                                 return;
                             }
-                            if ((ltoke === "-" && (a < 2 || (data.token[a - 2] !== ")" && data.token[a - 2] !== "x)" && data.token[a - 2] !== "]" && data.types[a - 2] !== "reference" && data.types[a - 2] !== "literal"))) || (options.space === false && ltoke === "function")) {
+                            if ((ltoke === "-" && (a < 2 || (data.token[a - 2] !== ")" && data.token[a - 2] !== "x)" && data.token[a - 2] !== "]" && data.types[a - 2] !== "reference" && data.types[a - 2] !== "string" && data.types[a - 2] !== "number"))) || (options.space === false && ltoke === "function")) {
                                 level[a - 1] = -20;
                             }
                             level.push(-20);
@@ -1744,7 +1748,7 @@
                             level.push(-10);
                             return;
                         }
-                        if (ltype === "literal" && ltoke.charAt(ltoke.length - 1) === "{" && options.brace_padding === false) {
+                        if ((ltype === "string" || ltype === "number") && ltoke.charAt(ltoke.length - 1) === "{" && options.brace_padding === false) {
                             level[a - 1] = -20;
                         } else if (ltoke === "-" && a > 1) {
                             if (data.types[a - 2] === "operator" || data.token[a - 2] === ",") {
@@ -1842,8 +1846,8 @@
                             comment();
                         } else if (ctype === "regex") {
                             level.push(-20);
-                        } else if (ctype === "literal") {
-                            literal();
+                        } else if (ctype === "string") {
+                            string();
                         } else if (ctype === "separator") {
                             separator();
                         } else if (ctype === "start") {

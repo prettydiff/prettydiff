@@ -362,11 +362,21 @@
                                 <li>Finally, open a pull request on Github or if you are having trouble with the build open a Github issue and ask for help.</li>
                             </ol>
                         </div>
+                        <div class="segment">
+                            <h3>Troubleshooting Help</h3>
+                            <p>A few helpful tips in case you get stuck.</p>
+                            <ul>
+                                <li>If an update to the code breaks the build and the application can no longer build try recompiling from TypeScript and then running the Pretty Diff build again.  The command is <code>tsc --pretty</code>.</li>
+                                <li>Ensure dependencies are up to date.  Try running <code>npm update</code>. A version mismatch between Pretty Diff and the parser could result in unpredictable behavior.</li>
+                                <li>If you need help generating the appropriate details for a Github issue try using the <em>debug</em> feature.  Simply run your command on the terminal and add <em>debug</em> or <em>prettydiff_debug</em> to generate an issue template in markdown format.</li>
+                                <li>When everything seems correct on the Pretty Diff side but the result is still wrong there could be a defect in the parser.  Clone the parser as a separate project and run its tests by using the <em>validation</em> command.  You could also use the parser's <em>server</em> command to run a frontend in your browser that is easier to read.  The parser is at <a href="http://github.com/unibeautify/parse-framework">parse-framework</a></li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </section>
         </div>
-        <!-- script cache bust start --><script src="js/dom.js?1543147973302" type="application/javascript"></script>
+        <!-- script cache bust start --><script src="js/dom.js?1543202101196" type="application/javascript"></script>
 <!-- script cache bust end -->
     </body>
 </html>
