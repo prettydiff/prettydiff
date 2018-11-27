@@ -1,0 +1,8 @@
+function x() {
+    return (
+        <View>
+            <Text></Text>
+        </View>
+    );
+    a;
+}

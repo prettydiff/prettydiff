@@ -370,13 +370,14 @@
                                 <li>Ensure dependencies are up to date.  Try running <code>npm update</code>. A version mismatch between Pretty Diff and the parser could result in unpredictable behavior.</li>
                                 <li>If you need help generating the appropriate details for a Github issue try using the <em>debug</em> feature.  Simply run your command on the terminal and add <em>debug</em> or <em>prettydiff_debug</em> to generate an issue template in markdown format.</li>
                                 <li>When everything seems correct on the Pretty Diff side but the result is still wrong there could be a defect in the parser.  Clone the parser as a separate project and run its tests by using the <em>validation</em> command.  You could also use the parser's <em>server</em> command to run a frontend in your browser that is easier to read.  The parser is at <a href="http://github.com/unibeautify/parse-framework">parse-framework</a></li>
+                                <li>If you modify the build code you have to rebuild twice to test the changes.  This is because the first build compiles the updated code and the second build executes the updated code.</li>
                             </ul>
                         </div>
                     </div>
                 </div>
             </section>
         </div>
-        <!-- script cache bust start --><script src="js/dom.js?1543202101196" type="application/javascript"></script>
+        <!-- script cache bust start --><script src="js/dom.js?1543343591971" type="application/javascript"></script>
 <!-- script cache bust end -->
     </body>
 </html>

@@ -2405,7 +2405,9 @@
                         if (invisibles.indexOf(data.token[a]) < 0) {
                             build.push(data.token[a]);
                         }
-                        if (levels[a] > -1) {
+                        if (data.lexer[a + 1] !== lexer && data.begin[a] === data.begin[a + 1] && data.types[a + 1].indexOf("end") < 0) {
+                            build.push(" ");
+                        } else if (levels[a] > -1) {
                             if (((levels[a] > -1 && data.token[a] === "{") || (levels[a] > -1 && data.token[a + 1] === "}")) && data.lines[a] < 3 && options.brace_line === true) {
                                 build.push(nl(0));
                             }
@@ -2413,6 +2415,9 @@
                             build.push(nl(levels[a]));
                         } else if (levels[a] === -10) {
                             build.push(" ");
+                            if (data.lexer[a + 1] !== lexer) {
+                                lastLevel = lastLevel + 1;
+                            }
                         }
                     } else {
                         if (data.types[a - 1] !== "operator" && data.token[a - 1] !== "return") {
@@ -2427,6 +2432,9 @@
                             external = prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "");
                             build.push(external);
                             a = levels[a];
+                            if (data.token[a + 1] === ")") {
+                                build.push(nl(lastLevel));
+                            }
                         }
                     }
                     a = a + 1;

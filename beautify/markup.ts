@@ -115,7 +115,9 @@
                             if (data.types[next] === "end" || data.types[next] === "template_end") {
                                 indent = indent - 1;
                             }
-                            if (options.force_indent === false && (data.types[a] === "content" || data.types[a] === "singleton" || data.types[a] === "template")) {
+                            if (data.token[a] === "}" && data.types[a + 1] === "end") {
+                                level.push(-10);
+                            } else if (options.force_indent === false && (data.types[a] === "content" || data.types[a] === "singleton" || data.types[a] === "template")) {
                                 if (next < c && (data.types[next].indexOf("end") > -1 || data.types[next].indexOf("start") > -1) && data.lines[next] > 0) {
                                     level.push(indent);
                                 } else if (data.lines[next] === 0) {
@@ -127,7 +129,9 @@
                                 }
                             } else if (data.types[a] === "start" || data.types[a] === "template_start") {
                                 indent = indent + 1;
-                                if (options.force_indent === true) {
+                                if (data.token[a + 1] === "{" && data.lexer[a + 2] !== lexer) {
+                                    level.push(-10);
+                                } else if (options.force_indent === true) {
                                     level.push(indent);
                                 } else if (data.types[a] === "start" && data.types[next] === "end") {
                                     level.push(-20);
@@ -359,8 +363,13 @@
                             build.push(" ");
                         }
                         if (levels[a] > -1 || (options.force_indent === true && a < c - 1 && data.types[a + 1].indexOf("attribute") < 0)) {
-                            lastLevel = levels[a];
-                            build.push(nl(levels[a]));
+                            if (data.token[a + 1] === "}" && data.lexer[a + 1] === lexer && data.types[a + 1] === "script") {
+                                lastLevel = levels[data.begin[a + 1]] - 1;
+                                build.push(nl(lastLevel));
+                            } else {
+                                lastLevel = levels[a];
+                                build.push(nl(levels[a]));
+                            }
                         } else if (levels[a] === -10) {
                             build.push(" ");
                         }
@@ -374,7 +383,9 @@
                         options.start = a;
                         external = prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "");
                         build.push(external);
-                        if (data.types[a - 1] !== "jsx_attribute_start") {
+                        if (data.begin[a] === data.begin[a + 1] && data.token[options.end + 1] === "{") {
+                            build.push(" ");
+                        } else if (data.types[a - 1] !== "jsx_attribute_start") {
                             build.push(nl(lastLevel - 1));
                         }
                         a = levels[a];
