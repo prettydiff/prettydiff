@@ -35,6 +35,30 @@
                         }
                         return x;
                     },
+                    anchorList = function beautify_markup_levels_anchorList():void {
+                        let aa:number = a;
+                        const stop:number = data.begin[a];
+                        // verify list is only a link list before making changes
+                        do {
+                            aa = aa - 1;
+                            if (data.token[aa] === "</li>" && data.begin[data.begin[aa]] === stop && data.token[aa - 1] === "</a>" && data.begin[aa - 1] === data.begin[aa] + 1) {
+                                aa = data.begin[aa];
+                            } else {
+                                return;
+                            }
+                        } while (aa > stop + 1);
+
+                        // now make the changes
+                        aa = a;
+                        do {
+                            aa = aa - 1;
+                            if (data.token[aa] === "</li>" && data.begin[data.begin[aa]] === stop && data.token[aa - 1] === "</a>" && data.begin[aa - 1] === data.begin[aa] + 1) {
+                                level[aa - 1] = -20; 
+                                aa = data.begin[aa];
+                                level[aa] = -20;
+                            }
+                        } while (aa > stop + 1);
+                    },
                     comment = function beautify_markup_levels_comment():void {
                         let x:number = a,
                             test:boolean = false;
@@ -114,8 +138,11 @@
                             next = nextIndex();
                             if (data.types[next] === "end" || data.types[next] === "template_end") {
                                 indent = indent - 1;
+                                if (data.token[a] === "</ol>" || data.token[a] === "</ul>") {
+                                    anchorList();
+                                }
                             }
-                            if (data.token[a] === "}" && data.types[a + 1] === "end") {
+                            if (data.token[a] === "}" && data.types[a] === "script" && data.types[a + 1] === "end") {
                                 level.push(-10);
                             } else if (options.force_indent === false && (data.types[a] === "content" || data.types[a] === "singleton" || data.types[a] === "template")) {
                                 if (next < c && (data.types[next].indexOf("end") > -1 || data.types[next].indexOf("start") > -1) && data.lines[next] > 0) {
@@ -268,6 +295,16 @@
                                 aa = wrap;
                             }
                         };
+                    // HTML anchor lists do not get wrapping unless the content itself exceeds the wrapping limit
+                    if (
+                        (data.token[data.begin[a]] === "<a" || data.token[data.begin[a]] === "<a>") &&
+                        (data.token[data.begin[data.begin[a]]] === "<li>" || data.token[data.begin[data.begin[a]]] === "<li") &&
+                        levels[a - 1] === -20 &&
+                        levels[data.begin[a] - 1] === -20 &&
+                        data.token[a].length < options.wrap
+                    ) {
+                        return;
+                    }
                     do {
                         wrapper();
                     } while (aa < len);
