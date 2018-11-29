@@ -929,7 +929,8 @@ interface readFile {
                     let finalFile:string = "",
                         libraries:string = "",
                         mode:string = "",
-                        saveas:string = "";
+                        saveas:string = "",
+                        parser:string = "";
                     const flag = {
                             documentation: false,
                             dom: false,
@@ -1149,9 +1150,7 @@ interface readFile {
                                     });
                                     modify({
                                         end: "// prettydiff dom insertion end",
-                                        injectFlag: saveas + libraries + mode
-                                            .replace(/,\s*\/\/\s*prettydiff\s+file\s+insertion\s+start\s+prettydiff\s*=\s*\{\};/, ";")
-                                            .replace(/global\s*\.prettydiff/g, "prettydiff"),
+                                        injectFlag: saveas + libraries + mode,
                                         start: "// prettydiff dom insertion start"
                                     });
                                     modify({
@@ -1159,6 +1158,7 @@ interface readFile {
                                         injectFlag: `const finalFile=${finalFile}`,
                                         start: "// finalFile insertion start"
                                     });
+                                    data = `${parser + data.replace(/window\.parseFramework/g, "parseFramework")}}());`;
                                 } else if (fileFlag === "node") {
                                     modify({
                                         end: "// node option default end",
@@ -1184,30 +1184,15 @@ interface readFile {
                                     }
                                     flag[fileFlag] = true;
                                     if (flag.dom === true && flag.documentation === true && flag.html === true && flag.node === true && flag.html === true && flag.prettydiff === true) {
-                                        node.fs.readFile(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}browser.js`, function node_apps_build_libraries_modifyFile_read_write_readParser(erp:Error, parser:string) {
-                                            let thirdparty:string = parser + libraries + finalFile + mode
-                                                .replace(/global(API)?\./g, "")
-                                                .replace(/globalAPI\s*=\s*\(options\.api\s*===\s*"dom"\)\s*\?\s*window\s*:\s*global,/, "")
-                                                .replace(/if\s*\(options\.api\s*===\s*"dom"\)\s*\{\s*globalAPI\s*=\s*window;\s*\}/, "")
-                                                .replace(/,\s*\/\/ prettydiff file insertion start\s+prettydiff\s*=\s*\{\}/, "");
-                                            thirdparty = thirdparty.replace(/("|')use strict("|');/g, "");
-                                            thirdparty = thirdparty.replace(/\s*window\.parseFramework/, "(function () {\"use strict\";const prettydiff={api:{},beautify:{},minify:{}},parseFramework");
-                                            thirdparty = thirdparty.replace(/window\.parseFramework/g, "parseFramework");
-                                            thirdparty = thirdparty.replace(/parseFramework\s*=\s*\(parseFramework\s*\|\|\s*\{\s*lexer:\s*\{\},\s*parse:\s*parse,\s*parseerror:\s*"",\s*parserArrays:\s*parserArrays,\s*parserObjects:\s*parserObjects\s*\}\);/, "");
-                                            thirdparty = `${thirdparty}prettydiff.defaults=${JSON.stringify(options)};window.prettydiff=prettydiff;}());`;
-                                        
-                                            if (erp !== null && erp.toString() !== "") {
-                                                apps.errout([erp.toString()]);
+                                        let thirdparty:string = parser + libraries + finalFile + mode;
+                                        thirdparty = `${thirdparty}prettydiff.defaults=${JSON.stringify(options)};window.prettydiff=prettydiff;}());`;
+                                        node.fs.writeFile(`${js}thirdparty.js`, `${thirdparty}`, function node_apps_build_libraries_modifyFile_read_write_readParser_thirdparty(erth:Error) {
+                                            if (erth !== null && erth.toString() !== "") {
+                                                apps.errout([erth.toString()]);
                                                 return;
                                             }
-                                            node.fs.writeFile(`${js}thirdparty.js`, `${thirdparty}`, function node_apps_build_libraries_modifyFile_read_write_readParser_thirdparty(erth:Error) {
-                                                if (erth !== null && erth.toString() !== "") {
-                                                    apps.errout([erth.toString()]);
-                                                    return;
-                                                }
-                                                console.log(`${apps.humantime(false) + text.green}Option details written to files.${text.none}`);
-                                                next();
-                                            });
+                                            console.log(`${apps.humantime(false) + text.green}Option details written to files.${text.none}`);
+                                            next();
                                         });
                                     }
                                 });
@@ -1215,6 +1200,7 @@ interface readFile {
                         },
                         libraryFiles = function node_apps_build_libraries_libraryFiles() {
                             libFiles.push(`${projectPath}node_modules${sep}file-saver${sep}FileSaver.min.js`);
+                            libFiles.push(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}browser.js`);
                             const appendFile = function node_apps_build_libraries_libraryFiles_appendFile(filePath:string):void {
                                     node.fs.readFile(filePath, "utf8", function node_apps_build_libraries_libraryFiles_appendFile_read(errr:Error, filedata:string):void {
                                         const filenames:string[] = filePath.split(sep),
@@ -1230,13 +1216,24 @@ interface readFile {
                                                 return str.replace("var", "let");
                                             });
                                             saveas = filedata;
+                                        } else if (filename === "browser.js") {
+                                            filedata = filedata
+                                                .replace(/("|')use strict("|');/g, "")
+                                                .replace(/\s*window\.parseFramework/, "(function () {\"use strict\";const prettydiff={api:{},beautify:{},minify:{}},parseFramework")
+                                                .replace(/window\.parseFramework/g, "parseFramework")
+                                                .replace(/parseFramework\s*=\s*\(parseFramework\s*\|\|\s*\{\s*lexer:\s*\{\},\s*parse:\s*parse,\s*parseerror:\s*"",\s*parserArrays:\s*parserArrays,\s*parserObjects:\s*parserObjects\s*\}\);/, "");
+                                            parser = filedata;
                                         } else {
                                             filedata = filedata
                                                 .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*/, "")
                                                 .replace(/global\s*\.\s*prettydiff\s*\./g, "prettydiff.")
                                                 .replace(/("|')use strict("|');/, "");
                                             if (filename === "prettydiff.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
-                                                mode = filedata;
+                                                mode = filedata
+                                                    .replace(/global(API)?\./g, "")
+                                                    .replace(/globalAPI\s*=\s*\(options\.api\s*===\s*"dom"\)\s*\?\s*window\s*:\s*global,/, "")
+                                                    .replace(/if\s*\(options\.api\s*===\s*"dom"\)\s*\{\s*globalAPI\s*=\s*window;\s*\}/, "")
+                                                    .replace(/,\s*\/\/\s*prettydiff file insertion start\s+prettydiff\s*=\s*\{\}/, ";");
                                             } else if (filename === "finalFile.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
                                                 finalFile = filedata;
                                             } else {
