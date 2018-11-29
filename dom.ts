@@ -2985,7 +2985,11 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             autotest:boolean    = false,
             node:HTMLSelectElement        = id("option-jsscope");
         const startTime:number = Date.now(),
-            langvalue:string = (id("option-language") === null || id("option-language").value === "")
+            lex:HTMLSelectElement = id("option-lexer"),
+            lexval:HTMLOptionElement = (lex === null)
+                ? null
+                : <HTMLOptionElement>lex[lex.selectedIndex],
+            langvalue:string = (id("option-language") === null || id("option-language").value === "" || lexval === null || lexval.value === "" || lexval.value === "auto")
                 ? "auto"
                 : id("option-language").value,
             ann:HTMLParagraphElement = id("announcement"),

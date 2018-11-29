@@ -197,7 +197,7 @@
         if (options.language === "text" && options.mode !== "diff") {
             options.language = "auto";
         }
-        if (options.language === "auto") {
+        if (options.language === "auto" || options.lexer === "auto") {
             const def:string = (options.language_default === "" || options.language_default === null || options.language_default === undefined)
                     ? "javascript"
                     : options.language_default;
