@@ -1,0 +1,33 @@
+
+/*media.css*/
+@media print{
+    #prettydiff div{width:100%}
+    #prettydiff #webtool td{font-size:0.8em;white-space:normal}
+    #prettydiff #webtool p,
+    #prettydiff .options,
+    #prettydiff #webtool ul,
+    #prettydiff ul{display:none}
+}
+@media (max-width: 1000px) {
+    #prettydiff #functionGroup{height:4em}
+    #prettydiff #webtool #infolinks{float:left;margin:4em 0 -8em;padding:0}
+}
+@media (max-width: 640px){
+    #prettydiff #codeInput label{display:none}
+    #prettydiff #diffBase,
+    #prettydiff #diffNew{width:46%}
+    #prettydiff #dcolorScheme{margin:0 0 1em}
+    #prettydiff #functionGroup span{margin-left:0.5em;position:relative;z-index:10}
+    #prettydiff #infolinks{margin:0}
+    #prettydiff #reports{display:none}
+    #prettydiff #update{margin-top:2.75em}
+    #prettydiff .labeltext input,
+    #prettydiff .file input{width:12em}
+}
+@media (max-width: 575px) {
+    #prettydiff #webtool #functionGroup{height:6em}
+    #prettydiff #webtool #functionGroup span{height: 2.5em}
+    #prettydiff #webtool #infolinks{float:left;margin:6em 0 -12em;padding:0}
+    #prettydiff #webtool .apiname,
+    #prettydiff #webtool .option-description{display:none}
+}

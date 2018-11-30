@@ -875,6 +875,7 @@ interface readFile {
         const order = [
                 "npminstall",
                 "language",
+                "css",
                 "typescript",
                 "libraries",
                 "lint",
@@ -907,15 +908,50 @@ interface readFile {
                 phases[phase]();
             },
             phases = {
+                css: function node_apps_build_css():void {
+                    heading("Merging CSS");
+                    node.fs.readdir(`${projectPath}css`, "utf8", function node_apps_build_css_readdir(erc:Error, fileList:string[]):void {
+                        const fileStore:any = {};
+                        let filelen:number = fileList.length;
+                        if (erc !== null) {
+                            apps.errout([erc.toString()]);
+                            return;
+                        }
+                        fileList.forEach(function node_apps_build_css_readdir_each(value:string):void {
+                            node.fs.readFile(`${projectPath}css${sep + value}`, "utf8", function node_apps_build_css_readdir_each_readfile(erf:Error, fileData:string) {
+                                if (erf !== null) {
+                                    apps.errout([erf.toString()]);
+                                    return;
+                                }
+                                if (value !== "index.css") {
+                                    let name:string = fileData.slice(0, fileData.indexOf(".")).replace(/\s+$/, "").replace(/(\s*\/\*\s*)/, "");
+                                    fileStore[name] = fileData;
+                                }
+                                filelen = filelen - 1;
+                                if (filelen < 1) {
+                                    const index:string = fileStore.color_white + fileStore.color_canvas + fileStore.color_shadow + fileStore.global + fileStore.reports + fileStore.documentation + fileStore.page_specific + fileStore.webtool_only + fileStore.media;
+                                    node.fs.writeFile(`${projectPath}css${sep}index.css`, index, "utf8", function node_apps_build_css_readdir_each_readfile_write(erw:Error):void {
+                                        if (erw !== null) {
+                                            apps.errout([erw.toString()]);
+                                            return;
+                                        }
+                                        console.log(`${apps.humantime(false) + text.green}CSS combined into a single file.${text.none}`);
+                                        next();
+                                    });
+                                }
+                            });
+                        });
+                    });
+                },
                 language: function node_apps_build_language():void {
                     heading("Sourcing Language File");
-                    node.fs.readFile(`${projectPath}node_modules${sep}parse-framework${sep}language.ts`, "utf8", function node_args_language(err:Error, fileData:string) {
+                    node.fs.readFile(`${projectPath}node_modules${sep}parse-framework${sep}language.ts`, "utf8", function node_apps_build_language_read(err:Error, fileData:string) {
                         if (err !== null) {
                             console.log(err.toString());
                             return;
                         }
                         fileData = fileData.replace("global.parseFramework.language", "global.prettydiff.api.language");
-                        node.fs.writeFile(`api${sep}language.ts`, fileData, function node_args_language_write(errw:Error) {
+                        node.fs.writeFile(`api${sep}language.ts`, fileData, function node_apps_build_language_read_write(errw:Error) {
                             if (errw !== null) {
                                 console.log(errw.toString());
                                 return;
