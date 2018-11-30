@@ -1162,6 +1162,11 @@ interface readFile {
                                         injectFlag: `<script src="js/dom.js?${Date.now()}" type="application/javascript"></script>`,
                                         start: "<!-- script cache bust start -->"
                                     });
+                                    modify({
+                                        end: "<!-- css insertion end -->",
+                                        injectFlag: `<link href="css/index.css?${Date.now()}" media="all" rel="stylesheet" type="text/css"/>`,
+                                        start: "<!-- css insertion start -->"
+                                    });
                                 } else if (fileFlag === "html") {
                                     modify({
                                         end: "<!-- documented options end -->",
@@ -1177,6 +1182,11 @@ interface readFile {
                                         end: "<!-- script cache bust end -->",
                                         injectFlag: `<script src="js/dom.js?${Date.now()}" type="application/javascript"></script>`,
                                         start: "<!-- script cache bust start -->"
+                                    });
+                                    modify({
+                                        end: "<!-- css insertion end -->",
+                                        injectFlag: `<link href="css/index.css?${Date.now()}" media="all" rel="stylesheet" type="text/css"/>`,
+                                        start: "<!-- css insertion start -->"
                                     });
                                 } else if (fileFlag === "dom") {
                                     modify({
@@ -1194,7 +1204,7 @@ interface readFile {
                                         injectFlag: `const finalFile=${finalFile}`,
                                         start: "// finalFile insertion start"
                                     });
-                                    data = `${parser + data.replace(/window\.parseFramework/g, "parseFramework")}}());`;
+                                    data = `${parser + data.replace(/("|')use strict("|');/g, "").replace(/window\.parseFramework/g, "parseFramework")}}());`;
                                 } else if (fileFlag === "node") {
                                     modify({
                                         end: "// node option default end",
@@ -1269,7 +1279,7 @@ interface readFile {
                                                     .replace(/global(API)?\./g, "")
                                                     .replace(/globalAPI\s*=\s*\(options\.api\s*===\s*"dom"\)\s*\?\s*window\s*:\s*global,/, "")
                                                     .replace(/if\s*\(options\.api\s*===\s*"dom"\)\s*\{\s*globalAPI\s*=\s*window;\s*\}/, "")
-                                                    .replace(/,\s*\/\/\s*prettydiff file insertion start\s+prettydiff\s*=\s*\{\}/, ";");
+                                                    .replace(/,\s*\/\/\s*prettydiff file insertion start\s+prettydiff\s*=\s*\{\};/, ";");
                                             } else if (filename === "finalFile.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
                                                 finalFile = filedata;
                                             } else {

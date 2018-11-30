@@ -23,7 +23,6 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             difftotal: 0,
             difflines: 0
         },
-        prettydiff:any = {},
         id = function dom_id(x:string):any {
             if (document.getElementById === undefined) {
                 return;

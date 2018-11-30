@@ -118,14 +118,11 @@
                         if (data.types[a] === "attribute" || data.types[a] === "template_attribute") {
                             level.push(-10);
                         } else if (data.types[a] === "jsx_attribute_start") {
+                            level.push(indent);
                             if (data.lexer[a + 1] !== lexer && data.types[a - 1] !== "jsx_attribute_end") {
                                 indent = indent + 1;
                             }
-                            level.push(indent);
                         } else if (data.types[a] === "jsx_attribute_end") {
-                            if (data.lexer[a - 1] === lexer && level[a - 1] > 0) {
-                                level[a - 1] = level[a - 1] - 1;
-                            }
                             level.push(-10);
                         } else if (data.types[a] === "comment") {
                             if (comstart < 0) {
