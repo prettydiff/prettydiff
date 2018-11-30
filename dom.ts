@@ -2982,7 +2982,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             requestd:boolean    = false,
             completed:boolean   = false,
             completes:boolean   = false,
-            autotest:boolean    = false,
+            autolang:boolean    = false,
+            autolexer:boolean = false,
             node:HTMLSelectElement        = id("option-jsscope");
         const startTime:number = Date.now(),
             lex:HTMLSelectElement = id("option-lexer"),
@@ -3073,8 +3074,11 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             output = output.replace(/(\s+)$/, "");
                         }
                         data.zIndex = data.zIndex + 1;
-                        if (autotest === true) {
+                        if (autolang === true) {
                             options.language = "auto";
+                        }
+                        if (autolexer === true) {
+                            options.lexer = "auto";
                         }
                         button           = report
                             .code
@@ -3200,8 +3204,10 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                         table.push(output);
                                         table.push("</div>");
                                         output = table.join("");
-                                        if (autotest === true) {
+                                        if (autolang === true) {
                                             output = `<p>Code type is set to <strong>auto</strong>. <span>Presumed language is <em>${data.langvalue[2]}</em>.</span></p>${output}`;
+                                        } else if (autolexer === true) {
+                                            output = `<p>Lexer is set to <strong>auto</strong>. <span>Presumed language is <em>${data.langvalue[2]}</em>.</span></p>${output}`;
                                         }
                                         report.code.body.innerHTML = output;
                                         if (report.code.body.style.display === "none") {
@@ -3293,8 +3299,12 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             if (options.complete_document === true || options.diff_rendered_html === true) {
                                 output = `<textarea>${sanitize(output)}</textarea>`;
                             }
-                            report.code.body.innerHTML = `<p>Code type is set to <strong>auto</strong>. Presumed language is <em>${data.langvalue[2]}</em>.</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
-                            if (autotest === true && report.code.body.firstChild !== null) {
+                            if (autolang === true) {
+                                report.code.body.innerHTML = `<p>Code type is set to <strong>auto</strong>. Presumed language is <em>${data.langvalue[2]}</em>.</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
+                            } else if (autolexer === true) {
+                                report.code.body.innerHTML = `<p>Lexer is set to <strong>auto</strong>. Presumed language is <em>${data.langvalue[2]}</em>.</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
+                            }
+                            if ((autolang === true || autolexer === true) && report.code.body.firstChild !== null) {
                                 if (report.code.body.firstChild.nodeType > 1) {
                                     report
                                         .code
@@ -3339,8 +3349,10 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             }
                         } else if (options.mode === "analysis") {
                             if (id("analysishtml-yes") !== null && id("analysishtml-yes").checked === true && report.code.box !== null) {
-                                if (autotest === true) {
+                                if (autolang === true) {
                                     report.code.body.innerHTML = `<p>Code type is set to <strong>auto</strong>. <span>Presumed language is <em>${data.langvalue[2]}</em>.</span></p>${output}`;
+                                } else if (autolexer === true) {
+                                    report.code.body.innerHTML = `<p>Lexer is set to <strong>auto</strong>. <span>Presumed language is <em>${data.langvalue[2]}</em>.</span></p>${output}`;
                                 } else {
                                     report.code.body.innerHTML = output;
                                 }
@@ -3372,8 +3384,10 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             } else {
                                 if (meta.lang[0] === "jsx") {
                                     ann.innerHTML = "Presumed language is <strong>React JSX</strong>.";
-                                } else if (autotest === true) {
+                                } else if (autolang === true) {
                                     ann.innerHTML = `Code type is set to <em>auto</em>. Presumed language is <strong>${data.langvalue[2]}</strong>.`;
+                                } else if (autolexer === true) {
+                                    ann.innerHTML = `Lexer is set to <em>auto</em>. Presumed language is <strong>${data.langvalue[2]}</strong>.`;
                                 } else {
                                     ann.innerHTML = "Language set to <strong>" + data.langvalue[2] + "</strong>.";
                                 }
@@ -3542,7 +3556,10 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             options.language = "auto";
         }
         if (options.language === "auto") {
-            autotest = true;
+            autolang = true;
+        }
+        if (options.lexer === "auto") {
+            autolexer = true;
         }
         if (test.ace === true) {
             options.source = aceStore.codeIn.getValue();

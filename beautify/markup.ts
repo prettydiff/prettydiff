@@ -305,6 +305,9 @@
                     ) {
                         return;
                     }
+                    if (len < wrap) {
+                        return;
+                    }
                     do {
                         wrapper();
                     } while (aa < len);
@@ -314,7 +317,7 @@
                     data.token[a] = store.join(indy);
                 },
                 attribute = function beautify_markup_apply_attribute():void {
-                    const end:string[]|null = (/\/?>$/).exec(data.token[a]),
+                    const end:string[]|null = (/(\/|\?)?>$/).exec(data.token[a]),
                         findEnd = function beautify_markup_apply_attribute_findEnd() {
                             const begin:number = y;
                             if (data.types[y] === "jsx_attribute_start") {
@@ -330,7 +333,7 @@
                                 beautify_markup_apply_attribute_findEnd();
                             } else {
                                 levels[y - 1] = lev;
-                                data.token[y - 1] = data.token[y - 1] + ending;
+                                data.token[y - 1] = data.token[y - 1] + space + ending;
                             }
                         };
                     if (end === null) {
@@ -339,19 +342,27 @@
                     let y:number = a + 1,
                         len:number = data.token[a].length + 1,
                         lev:number = levels[a],
-                        ending:string = end[0];
+                        ending:string = end[0],
+                        space:string = (options.space_close === true && ending !== ">")
+                            ? " "
+                            : "";
                     if (data.token[a].indexOf("</") === 0) {
                         return;
                     }
-                    if ((data.types[a] === "start" || data.types[a] === "singleton") && data.types[y] === "attribute" && options.wrap > 0) {
+                    if ((data.types[a] === "start" || data.types[a] === "singleton") && data.types[y] === "attribute") {
+                        // first, determine tag contains attributes data types not JSX escapes or template_attributes
                         do {
                             len = len + data.token[y].length + 1;
                             y = y + 1;
                         } while (y < c - 1 && data.types[y] === "attribute");
+
+                        // second, ensure tag contains more than one attribute
                         if (y < c - 1 && data.types[y].indexOf("attribute") < 0 && y > a + 2) {
                             let atts:string[] = data.token.slice(a + 1, y),
                                 z:number = 0,
                                 zz:number = atts.length;
+
+                            // third, sort attributes alphabetically
                             atts.sort();
                             data.token.splice(a + 1, y - (a + 1));
                             do {
@@ -359,11 +370,17 @@
                                 z = z + 1;
                             } while (z < zz);
                             data.token[a] = data.token[a].replace(ending, "");
-                            data.token[y - 1] = data.token[y - 1] + ending;
-                            if (len > options.wrap) {
+                            data.token[y - 1] = data.token[y - 1] + space + ending;
+
+                            // finally, indent attributes if tag length exceeds the wrap limit
+                            if (len > options.wrap && options.wrap > 0) {
                                 do {
                                     y = y - 1;
-                                    levels[y] = lev;
+                                    if (data.types[y + 1] === "attribute") {
+                                        levels[y] = levels[a - 1] + 1;
+                                    } else {
+                                        levels[y] = lev;
+                                    }
                                 } while (y > a);
                             } else {
                                 levels[a] = -10;

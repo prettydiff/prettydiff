@@ -4069,11 +4069,11 @@ interface readFile {
                 }
                 do {
                     if (raw[a] === undefined || formatted[a] === undefined) {
-                        if (raw[a] === undefined) {
-                            console.log(`${text.yellow}raw directory is missing file:${text.none} ${formatted[a][0]}`);
+                        if (raw[a] === undefined && formatted[a] !== undefined) {
+                            console.log(`${text.angry}raw directory is missing file:${text.none} ${formatted[a][0]}`);
                             formatted.splice(a, 1);
-                        } else {
-                            console.log(`${text.yellow}formatted directory is missing file:${text.none} ${raw[a][0]}`);
+                        } else if (formatted[a] === undefined && raw[a] !== undefined) {
+                            console.log(`${text.angry}formatted directory is missing file:${text.none} ${raw[a][0]}`);
                             raw.splice(a, 1);
                         }
                         if (a === len - 1) {
@@ -4133,10 +4133,10 @@ interface readFile {
                         }
                     } else {
                         if (raw[a][0] < formatted[a][0]) {
-                            console.log(`${text.yellow}formatted directory is missing file:${text.none} ${raw[a][0]}`);
+                            console.log(`${text.angry}formatted directory is missing file:${text.none} ${raw[a][0]}`);
                             raw.splice(a, 1);
                         } else {
-                            console.log(`${text.yellow}raw directory is missing file:${text.none} ${formatted[a][0]}`);
+                            console.log(`${text.angry}raw directory is missing file:${text.none} ${formatted[a][0]}`);
                             formatted.splice(a, 1);
                         }
                     }
