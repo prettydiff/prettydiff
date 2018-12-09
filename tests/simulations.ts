@@ -166,7 +166,7 @@
             {
                 command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" read_method:file diff_format:html`,
                 qualifier: "contains",
-                test: `Pretty Diff found ${text.cyan}0${text.none} differences on ${text.cyan}0${text.none} lines.`
+                test: "<p><strong>Number of differences:</strong> <em>0</em> differences from <em>0</em> lines of code.</p>"
             },
             {
                 command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" read_method:file diff_format:html 2`,
@@ -461,7 +461,7 @@
             {
                 command: "parse tsconfig",
                 qualifier: "is",
-                test: `{"begin":[-1,-1],"lexer":["script","script"],"lines":[0,1],"presv":[false,false],"stack":["global","global"],"token":["tsconfig","\\n"],"types":["word","string"]}`
+                test: `{"begin":[-1,-1],"lexer":["script","script"],"lines":[0,0],"presv":[false,false],"stack":["global","global"],"token":["tsconfig","x;"],"types":["word","separator"]}`
             },
             {
                 command: "parse tsconfig read_method:file",

@@ -2796,6 +2796,7 @@ interface readFile {
         if (code !== "") {
             if (options.output === "" || options.output === undefined) {
                 console.log(code);
+                conclusion();
             } else {
                 const out:string = node.path.resolve(options.output);
                 node.fs.writeFile(out, code, function node_apps_output_writeFile(err:Error):void {
@@ -2807,8 +2808,7 @@ interface readFile {
                     conclusion();
                 });
             }
-        }
-        if (code === "" || options.output === "") {
+        } else if (code === "" || options.output === "") {
             conclusion();
         }
     };
@@ -4087,6 +4087,7 @@ interface readFile {
                     };
                 let a:number = 0,
                     b:number = 0,
+                    missing:number = 0,
                     filecount:number = 0,
                     noteslen:number = 0,
                     notes:string[] = [],
@@ -4104,11 +4105,6 @@ interface readFile {
                         } else if (formatted[a] === undefined && raw[a] !== undefined) {
                             console.log(`${text.angry}formatted directory is missing file:${text.none} ${raw[a][0]}`);
                             raw.splice(a, 1);
-                        }
-                        if (a === len - 1) {
-                            console.log("");
-                            console.log(`${text.green}Core Unit Testing Complete${text.none}`);
-                            return;
                         }
                     } else if (raw[a][0] === formatted[a][0]) {
                         let value:string = "",
@@ -4160,6 +4156,7 @@ interface readFile {
                             return;
                         }
                     } else {
+                        missing = missing + 1;
                         if (raw[a][0] < formatted[a][0]) {
                             console.log(`${text.angry}formatted directory is missing file:${text.none} ${raw[a][0]}`);
                             raw.splice(a, 1);
@@ -4173,10 +4170,24 @@ interface readFile {
                 if (a === len) {
                     if (command === "validation") {
                         verbose = true;
-                        apps.log([`${text.green}All ${len} files passed.${text.none}`], "", "");
+                        if (missing > 0) {
+                            let plural:string = (missing === 1)
+                                ? " is"
+                                : "s are";
+                            apps.log([`${text.green + text.bold + filecount + text.none} files passed, but ${text.cyan + text.bold + missing + text.none} file${plural} missing.`], "", "");
+                        } else {
+                            apps.log([`${text.green}All ${filecount} files passed.${text.none}`], "", "");
+                        }
                     } else {
                         console.log("");
-                        console.log(`${text.green}All ${len} files passed.${text.none}`);
+                        if (missing > 0) {
+                            let plural:string = (missing === 1)
+                                ? " is"
+                                : "s are";
+                            console.log(`${text.green + text.bold + filecount + text.none} files passed, but ${text.cyan + text.bold + missing + text.none} file${plural} missing.`);
+                        } else {
+                            console.log(`${text.green}All ${filecount} files passed.${text.none}`);
+                        }
                         callback();
                     }
                 }
