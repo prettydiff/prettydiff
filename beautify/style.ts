@@ -7,7 +7,7 @@
                 ? "\r\n"
                 : "\n",
             len:number      = (options.end > 0)
-                ? options.end
+                ? options.end + 1
                 : data.token.length,
             build:string[]    = [],
             //a single unit of indentation

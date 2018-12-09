@@ -1,3 +1,6 @@
+import { join } from "path";
+import { types } from "util";
+
 /*global global, prettydiff*/
 (function beautify_markup_init():void {
     "use strict";
@@ -6,7 +9,7 @@
             lexer:string = "markup",
             c:number            = (options.end < 1 || options.end > data.token.length)
                 ? data.token.length
-                : options.end,
+                : options.end + 1,
             lf:"\r\n"|"\n"      = (options.crlf === true)
                 ? "\r\n"
                 : "\n",
@@ -17,7 +20,7 @@
                     nextIndex = function beautify_markup_levels_next():number {
                         let x:number = a + 1,
                             y:number = 0;
-                        if (data.types[x] === "comment" || data.types[x] === "attribute" || data.types[x] === "template_attribute" || data.types[x] === "jsx_attribute_start") {
+                        if (data.types[x] === "comment" || (a < c - 1 && data.types[x].indexOf("attribute") > -1)) {
                             do {
                                 if (data.types[x] === "jsx_attribute_start") {
                                     y = x;
@@ -104,6 +107,119 @@
                             level[x] = -20;
                         }
                         comstart = -1;
+                    },
+                    external = function beautify_markup_levels_external():void {
+                        let skip = a;
+                        do {
+                            if (data.lexer[a + 1] === lexer && data.begin[a + 1] < skip) {
+                                break;
+                            }
+                            level.push(0);
+                            a = a + 1;
+                        } while (a < c);
+                        level[skip] = a;
+                        level.push(indent - 1);
+                        next = nextIndex();
+                        if (data.lexer[next] === lexer && (data.types[next] === "end" || data.types[next] === "template_end")) {
+                            indent = indent - 1;
+                        }
+                    },
+                    attribute = function beautify_markup_levels_attribute():void {
+                        const parent:number = a - 1;
+                        let y:number = a,
+                            len:number = data.token[parent].length + 1,
+                            startType:boolean = false,
+                            exFirst:number = 0,
+                            count:number = 0,
+                            lev:number = (data.types[parent] !== "start")
+                                ? (data.types[next] === "end" || data.types[next] === "template_end")
+                                    ? indent + 2
+                                    : indent + 1
+                                : indent,
+                            earlyexit:boolean = false;
+
+                        // first, set levels and determine if there are template attributes
+                        do {
+                            if (data.types[a].indexOf("attribute") > 0) {
+                                if (data.types[a] === "template_attribute") {
+                                    count = count + 1;
+                                    level.push(-10);
+                                } else if (data.types[a].indexOf("start") > 0) {
+                                    count = count + 1;
+                                    startType = true;
+                                    if (a < c - 2 && data.types[a + 2].indexOf("attribute")  > 0 && data.types[a + 2].indexOf("end") > 0) {
+                                        level.push(-20);
+                                        level.push(-20);
+                                        a = a + 1;
+                                    } else {
+                                        level.push(lev);
+                                        if (data.lexer[a + 1] !== lexer) {
+                                            a = a + 1;
+                                            exFirst = a;
+                                            external();
+                                            if (data.types.slice(exFirst, a + 1).indexOf("start") < 0) {
+                                                level[exFirst - 1] = -20;
+                                                level[a] = -20;
+                                            }
+                                        }
+                                    }
+                                } else if (data.types[a].indexOf("end") > 0) {
+                                    if (level[a - 1] !== -20) {
+                                        level[a - 1] = lev - 1;
+                                    }
+                                    level.push(lev);
+                                } else {
+                                    count = count + 1;
+                                    level.push(lev);
+                                }
+                                earlyexit = true;
+                            } else if (data.types[a] === "attribute") {
+                                count = count + 1;
+                                len = len + data.token[a].length + 1;
+                                level.push(-10);
+                            } else if (data.begin[a] < parent + 1) {
+                                break;
+                            }
+                            a = a + 1;
+                        } while (a < c);
+
+                        a = a - 1;
+                        level[a] = level[parent];
+                        if (startType === true && count > 1) {
+                            level[parent] = lev;
+                        } else {
+                            level[parent] = -10;
+                        }
+                        if (earlyexit === true) {
+                            return;
+                        }
+                        y = a;
+
+                        // second, ensure tag contains more than one attribute
+                        if (y > parent + 2) {
+                            let atts:string[] = data.token.slice(parent + 1, y + 1),
+                                z:number = 0,
+                                zz:number = atts.length;
+
+                            // third, sort attributes alphabetically
+                            atts.sort();
+                            data.token.splice(parent + 1, y - parent);
+                            do {
+                                data.token.splice((parent + 1) + z, 0, atts[z]);
+                                z = z + 1;
+                            } while (z < zz);
+
+                            // finally, indent attributes if tag length exceeds the wrap limit
+                            if (options.space_close === false) {
+                                len = len - 1;
+                            }
+                            if (len > options.wrap && options.wrap > 0) {
+                                do {
+                                    y = y - 1;
+                                    level[y] = lev;
+                                } while (y > parent);
+                            }
+                        }
                     };
                 let a:number     = options.start,
                     comstart:number = -1,
@@ -115,15 +231,8 @@
                 // level -> space after token
                 do {
                     if (data.lexer[a] === lexer) {
-                        if (data.types[a] === "attribute" || data.types[a] === "template_attribute") {
-                            level.push(-10);
-                        } else if (data.types[a] === "jsx_attribute_start") {
-                            level.push(indent);
-                            if (data.lexer[a + 1] !== lexer && data.types[a - 1] !== "jsx_attribute_end") {
-                                indent = indent + 1;
-                            }
-                        } else if (data.types[a] === "jsx_attribute_end") {
-                            level.push(-10);
+                        if (data.types[a].indexOf("attribute") > -1) {
+                            attribute();
                         } else if (data.types[a] === "comment") {
                             if (comstart < 0) {
                                 comstart = a;
@@ -140,7 +249,11 @@
                                 }
                             }
                             if (data.token[a] === "}" && data.types[a] === "script" && data.types[a + 1] === "end") {
-                                level.push(-10);
+                                if (data.lines[a + 1] < 1) {
+                                    level.push(-20);
+                                } else {
+                                    level.push(-10);
+                                }
                             } else if (options.force_indent === false && (data.types[a] === "content" || data.types[a] === "singleton" || data.types[a] === "template")) {
                                 if (next < c && (data.types[next].indexOf("end") > -1 || data.types[next].indexOf("start") > -1) && data.lines[next] > 0) {
                                     level.push(indent);
@@ -153,8 +266,16 @@
                                 }
                             } else if (data.types[a] === "start" || data.types[a] === "template_start") {
                                 indent = indent + 1;
-                                if (data.token[a + 1] === "{" && data.lexer[a + 2] !== lexer) {
-                                    level.push(-10);
+                                if (options.language === "jsx" && data.token[a + 1] === "{") {
+                                    if (data.lexer[a + 2] !== lexer && data.token[a + 3] === "}" && data.lexer[a + 3] === lexer) {
+                                        if (data.types[a + 4] === "end") {
+                                            level.push(-20);
+                                        } else {
+                                            level.push(indent);
+                                        }
+                                    } else {
+                                        level.push(-10);
+                                    }
                                 } else if (options.force_indent === true) {
                                     level.push(indent);
                                 } else if (data.types[a] === "start" && data.types[next] === "end") {
@@ -173,28 +294,7 @@
                             }
                         }
                     } else {
-                        if (data.lexer[a + 1] === lexer && (data.begin[a + 1] === data.begin[a] || data.begin[a + 1] === undefined)) {
-                            level.push(a);
-                        } else {
-                            if (data.lexer[a + 1] === lexer && (data.begin[a + 1] === data.begin[a] || data.begin[a + 1] === undefined)) {
-                                level.push(a);
-                            } else {
-                                const skip:number = a;
-                                do {
-                                    if (data.lexer[a] === lexer && data.begin[a] < 0) {
-                                        break;
-                                    }
-                                    level.push(0);
-                                    a = a + 1;
-                                } while (a < c && (data.lexer[a + 1] !== lexer || data.begin[a + 1] >= skip));
-                                level.push(a);
-                                level[skip] = a;
-                            }
-                        }
-                        next = nextIndex();
-                        if (data.lexer[next] === lexer && (data.types[next] === "end" || data.types[next] === "template_end")) {
-                            indent = indent - 1;
-                        }
+                        external();
                     }
                     a = a + 1;
                 } while (a < c);
@@ -202,7 +302,7 @@
             }());
         return (function beautify_markup_apply():string {
             const build:string[]        = [],
-                ind          = (function beautify_markup_apply_tab():string {
+                ind:string          = (function beautify_markup_apply_tab():string {
                     const indy:string[] = [options.indent_char],
                         size:number = options.indent_size - 1;
                     let aa:number   = 0;
@@ -313,133 +413,71 @@
                     }
                     data.token[a] = store.join(indy);
                 },
-                attribute = function beautify_markup_apply_attribute():void {
-                    const end:string[]|null = (/(\/|\?)?>$/).exec(data.token[a]),
-                        findEnd = function beautify_markup_apply_attribute_findEnd() {
-                            const begin:number = y;
-                            if (data.types[y] === "jsx_attribute_start") {
-                                do {
-                                    if (data.types[y] === "jsx_attribute_end" && data.begin[y] === begin) {
-                                        break;
-                                    }
-                                    y = y + 1;
-                                } while (y < c);
-                            }
-                            y = y + 1;
-                            if (data.types[y] === "attribute" || data.types[y] === "template_attribute" || data.types[y] === "jsx_attribute_start") {
-                                beautify_markup_apply_attribute_findEnd();
-                            } else {
-                                levels[y - 1] = lev;
-                                data.token[y - 1] = data.token[y - 1] + space + ending;
-                            }
-                        };
+                attributeEnd = function beautify_markup_apply_attributeEnd():void {
+                    const parent:string = data.token[a],
+                        regend:RegExp = (/(\/|\?)?>$/),
+                        end:string[]|null = regend.exec(parent);
+                    let y:number = a + 1,
+                        space:string = (options.space_close === true && end[0] === "/>")
+                            ? " "
+                            : "",
+                        jsx:boolean = false;
                     if (end === null) {
                         return;
                     }
-                    let y:number = a + 1,
-                        len:number = data.token[a].length + 1,
-                        lev:number = levels[a],
-                        ending:string = end[0],
-                        space:string = (options.space_close === true && ending !== ">")
-                            ? " "
-                            : "";
-                    if (data.token[a].indexOf("</") === 0) {
-                        return;
-                    }
-                    if ((data.types[a] === "start" || data.types[a] === "singleton") && data.types[y] === "attribute") {
-                        // first, determine tag contains attributes data types not JSX escapes or template_attributes
-                        do {
-                            len = len + data.token[y].length + 1;
-                            y = y + 1;
-                        } while (y < c - 1 && data.types[y] === "attribute");
-
-                        // second, ensure tag contains more than one attribute
-                        if (y < c - 1 && data.types[y].indexOf("attribute") < 0 && y > a + 2) {
-                            let atts:string[] = data.token.slice(a + 1, y),
-                                z:number = 0,
-                                zz:number = atts.length;
-
-                            // third, sort attributes alphabetically
-                            atts.sort();
-                            data.token.splice(a + 1, y - (a + 1));
-                            do {
-                                data.token.splice((a + 1) + z, 0, atts[z]);
-                                z = z + 1;
-                            } while (z < zz);
-                            data.token[a] = data.token[a].replace(ending, "");
-                            data.token[y - 1] = data.token[y - 1] + space + ending;
-
-                            // finally, indent attributes if tag length exceeds the wrap limit
-                            if (len > options.wrap && options.wrap > 0) {
-                                do {
-                                    y = y - 1;
-                                    if (data.types[y + 1] === "attribute") {
-                                        levels[y] = levels[a - 1] + 1;
-                                    } else {
-                                        levels[y] = lev;
-                                    }
-                                } while (y > a);
-                            } else {
-                                levels[a] = -10;
-                                levels[y - 1] = lev;
+                    data.token[a] = parent.replace(regend, "");
+                    do {
+                        if (data.types[y] === "jsx_attribute_end" && data.begin[data.begin[y]] === a) {
+                            jsx = false;
+                        } else if (data.begin[y] === a) {
+                            if (data.types[y] === "jsx_attribute_start") {
+                                jsx = true;
+                            } else if (data.types[y].indexOf("attribute") < 0 && jsx === false) {
+                                break;
                             }
-                            return;
+                        } else if (jsx === false) {
+                            break;
                         }
-                    }
-                    data.token[a] = data.token[a].slice(0, data.token[a].lastIndexOf(ending));
-                    levels[a] = -10;
-                    y = a + 1;
-                    findEnd();
+                        y = y + 1;
+                    } while (y < c);
+                    data.token[y - 1] = data.token[y - 1] + space + end[0];
                 };
             let a:number            = options.start,
                 external:string = "",
-                lastLevel:number = 0;
+                lastLevel:number = options.indent_level;
             do {
                 if (data.lexer[a] === lexer || prettydiff.beautify[data.lexer[a]] === undefined) {
                     if (data.token[a] === "</prettydiffli>" && options.correct === true) {
                         data.token[a] = "</li>";
                     }
-                    if (a < c - 1 && data.types[a + 1].indexOf("attribute") > -1 && data.types[a].indexOf("attribute") < 0) {
-                        attribute();
+                    if ((data.types[a] === "start" || data.types[a] === "singleton" || data.types[a] === "xml" || data.types[a] === "sgml") && data.types[a].indexOf("attribute") < 0 && a < c - 1 && data.types[a + 1].indexOf("attribute") > -1) {
+                        attributeEnd();
                     }
                     if ((a < 1 || data.types[a - 1].indexOf("template") < 0) && (a === c - 1 || data.types[a + 1].indexOf("template") < 0) && data.types[a] === "content" && options.wrap > 0) {
                         content();
                     }
-                    if (data.token[a] !== "</prettydiffli>" && data.token[a].slice(0, 2) !== "//" && data.token[a].slice(0, 2) !== "/*") {
-                        if (data.types[a] === "jsx_attribute_end" && levels[a] < 0) {
-                            build.push(nl(lastLevel - 1));
-                        }
+                    if (data.token[a] !== "</prettydiffli>") {
                         build.push(data.token[a]);
-                        if ((data.types[a] === "template" || data.types[a] === "template_start") && data.types[a - 1] === "content" && data.presv[a - 1] === true && options.mode === "beautify" && levels[a] === -20) {
+                        if (levels[a] === -10) {
                             build.push(" ");
-                        }
-                        if (levels[a] > -1 || (options.force_indent === true && a < c - 1 && data.types[a + 1].indexOf("attribute") < 0)) {
-                            if (data.token[a + 1] === "}" && data.lexer[a + 1] === lexer && data.types[a + 1] === "script") {
-                                lastLevel = levels[data.begin[a + 1]] - 1;
-                                build.push(nl(lastLevel));
-                            } else {
-                                lastLevel = levels[a];
-                                build.push(nl(levels[a]));
-                            }
-                        } else if (levels[a] === -10) {
-                            build.push(" ");
+                        } else if (levels[a] > -1) {
+                            lastLevel = levels[a];
+                            build.push(nl(levels[a]));
                         }
                     }
                 } else {
                     if (levels[a] - a < 1) {
                         build.push(data.token[a]);
                     } else {
-                        options.end = levels[a] + 1;
+                        options.end = levels[a];
                         options.indent_level = lastLevel;
                         options.start = a;
                         external = prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "");
                         build.push(external);
-                        if (data.begin[a] === data.begin[a + 1] && data.token[options.end + 1] === "{") {
-                            build.push(" ");
-                        } else if (data.types[a - 1] !== "jsx_attribute_start") {
-                            build.push(nl(lastLevel - 1));
-                        }
                         a = levels[a];
+                        if (levels[a] > -1) {
+                            build.push(nl(levels[a]));
+                        }
                     }
                 }
                 a = a + 1;

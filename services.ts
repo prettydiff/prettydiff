@@ -974,6 +974,7 @@ interface readFile {
                             node: false,
                             prettydiff: false
                         },
+                        date:number = Date.now(),
                         optkeys:string[] = Object.keys(prettydiff.api.optionDef),
                         keyslen:number = optkeys.length,
                         versionData:any = {
@@ -1157,16 +1158,7 @@ interface readFile {
                                         injectFlag: buildDocumentation(),
                                         start: "<!-- option list start -->"
                                     });
-                                    modify({
-                                        end: "<!-- script cache bust end -->",
-                                        injectFlag: `<script src="js/dom.js?${Date.now()}" type="application/javascript"></script>`,
-                                        start: "<!-- script cache bust start -->"
-                                    });
-                                    modify({
-                                        end: "<!-- css insertion end -->",
-                                        injectFlag: `<link href="css/index.css?${Date.now()}" media="all" rel="stylesheet" type="text/css"/>`,
-                                        start: "<!-- css insertion start -->"
-                                    });
+                                    data = data.replace(/\.css\?\d*/g, `.css?${date}`).replace(/\.js\?\d*/g, `.js?${date}`);
                                 } else if (fileFlag === "html") {
                                     modify({
                                         end: "<!-- documented options end -->",
@@ -1178,16 +1170,7 @@ interface readFile {
                                         injectFlag: `<strong>${versionData.date}</strong> <span>Version: <strong>${versionData.number}</strong></span>`,
                                         start: "<!-- start version data -->"
                                     });
-                                    modify({
-                                        end: "<!-- script cache bust end -->",
-                                        injectFlag: `<script src="js/dom.js?${Date.now()}" type="application/javascript"></script>`,
-                                        start: "<!-- script cache bust start -->"
-                                    });
-                                    modify({
-                                        end: "<!-- css insertion end -->",
-                                        injectFlag: `<link href="css/index.css?${Date.now()}" media="all" rel="stylesheet" type="text/css"/>`,
-                                        start: "<!-- css insertion start -->"
-                                    });
+                                    data = data.replace(/\.css\?\d*/g, `.css?${date}`).replace(/\.js\?\d*/g, `.js?${date}`);
                                 } else if (fileFlag === "dom") {
                                     modify({
                                         end: "// end option defaults",
@@ -4173,8 +4156,7 @@ interface readFile {
                             options.mode         = "diff";
                             options.source       = output;
                             options.source_label = raw[a][1];
-                            apps.log([prettydiff.api.diffview(options)[0]], "", "");
-                            apps.errout(["Validation test failure."]);
+                            apps.errout([prettydiff.api.diffview(options)[0], "", `${text.angry}Validation test failure${text.none}`, `Failed on file ${text.cyan + text.bold + raw[a][0] + text.none}`, ""]);
                             return;
                         }
                     } else {

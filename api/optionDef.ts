@@ -261,7 +261,7 @@
         end              : {
             api       : "any",
             default   : 0,
-            definition: "Which index of the parse table should the application stop. This option is usefu" +
+            definition: "The last index to process. This option is usefu" +
                     "l internally when recursively sliding between various libraries. The default val" +
                     "ue of 0 means to ignore this option.",
             label     : "End Index",
@@ -381,7 +381,7 @@
             api       : "any",
             default   : 0,
             definition: "How much indentation padding should be applied to beautification? This option is" +
-                    " internally used for code requires switching between libraries.",
+                    " internally used for code that requires switching between libraries.",
             label     : "Indentation Padding",
             lexer     : "any",
             mode      : "beautify",
