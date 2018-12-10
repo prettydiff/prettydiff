@@ -2465,7 +2465,7 @@
                             }
                         }
                     } else {
-                        if (levels[a] - a < 1) {
+                        if (levels[a + 1] === a - 1) {
                             build.push(data.token[a]);
                         } else {
                             if (data.types[a - 1] !== "operator" && data.token[a - 1] !== "return" && data.token[a - 1] !== "(") {
@@ -2480,7 +2480,7 @@
                             options.start = a;
                             external = prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "");
                             build.push(external);
-                            a = levels[a];
+                            a = prettydiff.iterator;
                             if (levels[a] === -10) {
                                 build.push(" ");
                             } else if (levels[a] > -1) {
@@ -2497,6 +2497,7 @@
                     }
                     a = a + 1;
                 } while (a < b);
+                prettydiff.iterator = b - 1;
                 if (options.new_line === true && options.end === data.token.length) {
                     build.push(lf);
                 }

@@ -111,7 +111,7 @@ import { types } from "util";
                     external = function beautify_markup_levels_external():void {
                         let skip = a;
                         do {
-                            if (data.lexer[a + 1] === lexer && data.begin[a + 1] < skip) {
+                            if (data.lexer[a + 1] === lexer && data.begin[a + 1] < skip && data.types[a + 1] !== "start" && data.types[a + 1] !== "singleton") {
                                 break;
                             }
                             level.push(0);
@@ -128,9 +128,6 @@ import { types } from "util";
                         const parent:number = a - 1;
                         let y:number = a,
                             len:number = data.token[parent].length + 1,
-                            startType:boolean = false,
-                            exFirst:number = 0,
-                            count:number = 0,
                             lev:number = (data.types[parent] !== "start")
                                 ? (data.types[next] === "end" || data.types[next] === "template_end")
                                     ? indent + 2
@@ -142,39 +139,41 @@ import { types } from "util";
                         do {
                             if (data.types[a].indexOf("attribute") > 0) {
                                 if (data.types[a] === "template_attribute") {
-                                    count = count + 1;
                                     level.push(-10);
                                 } else if (data.types[a].indexOf("start") > 0) {
-                                    count = count + 1;
-                                    startType = true;
                                     if (a < c - 2 && data.types[a + 2].indexOf("attribute")  > 0 && data.types[a + 2].indexOf("end") > 0) {
                                         level.push(-20);
                                         level.push(-20);
                                         a = a + 1;
                                     } else {
-                                        level.push(lev);
+                                        if (data.types[parent] === "start") {
+                                            level.push(lev);
+                                        } else {
+                                            level.push(lev + 1);
+                                        }
                                         if (data.lexer[a + 1] !== lexer) {
                                             a = a + 1;
-                                            exFirst = a;
                                             external();
-                                            if (data.types.slice(exFirst, a + 1).indexOf("start") < 0) {
-                                                level[exFirst - 1] = -20;
-                                                level[a] = -20;
-                                            }
                                         }
                                     }
                                 } else if (data.types[a].indexOf("end") > 0) {
                                     if (level[a - 1] !== -20) {
-                                        level[a - 1] = lev - 1;
+                                        if (data.types[parent] === "start") {
+                                            level[a - 1] = lev - 1;
+                                        } else {
+                                            level[a - 1] = lev;
+                                        }
                                     }
-                                    level.push(lev);
+                                    if (data.types[parent] === "start") {
+                                        level.push(lev - 1);
+                                    } else {
+                                        level.push(lev);
+                                    }
                                 } else {
-                                    count = count + 1;
                                     level.push(lev);
                                 }
                                 earlyexit = true;
                             } else if (data.types[a] === "attribute") {
-                                count = count + 1;
                                 len = len + data.token[a].length + 1;
                                 level.push(-10);
                             } else if (data.begin[a] < parent + 1) {
@@ -185,11 +184,7 @@ import { types } from "util";
 
                         a = a - 1;
                         level[a] = level[parent];
-                        if (startType === true && count > 1) {
-                            level[parent] = lev;
-                        } else {
-                            level[parent] = -10;
-                        }
+                        level[parent] = -10;
                         if (earlyexit === true) {
                             return;
                         }
@@ -453,7 +448,7 @@ import { types } from "util";
                     if ((data.types[a] === "start" || data.types[a] === "singleton" || data.types[a] === "xml" || data.types[a] === "sgml") && data.types[a].indexOf("attribute") < 0 && a < c - 1 && data.types[a + 1].indexOf("attribute") > -1) {
                         attributeEnd();
                     }
-                    if ((a < 1 || data.types[a - 1].indexOf("template") < 0) && (a === c - 1 || data.types[a + 1].indexOf("template") < 0) && data.types[a] === "content" && options.wrap > 0) {
+                    if ((a < 1 || data.types[a - 1].indexOf("template") < 0) && (a > c - 2 || data.types[a + 1].indexOf("template") < 0) && data.types[a] === "content" && options.wrap > 0) {
                         content();
                     }
                     if (data.token[a] !== "</prettydiffli>") {
@@ -466,7 +461,7 @@ import { types } from "util";
                         }
                     }
                 } else {
-                    if (levels[a] - a < 1) {
+                    if (data.begin[a + 1] === a - 1) {
                         build.push(data.token[a]);
                     } else {
                         options.end = levels[a];
@@ -474,7 +469,7 @@ import { types } from "util";
                         options.start = a;
                         external = prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "");
                         build.push(external);
-                        a = levels[a];
+                        a = prettydiff.iterator;
                         if (levels[a] > -1) {
                             build.push(nl(levels[a]));
                         }
@@ -482,6 +477,7 @@ import { types } from "util";
                 }
                 a = a + 1;
             } while (a < c);
+            prettydiff.iterator = c - 1;
             if (build[0] === lf || build[0] === " ") {
                 build[0] = "";
             }

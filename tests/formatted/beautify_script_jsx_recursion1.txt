@@ -10,9 +10,10 @@ var List = React.createClass({
             .props
             .items
             .map(function (item) {
-                return <ListItem
-                    item={value}
-                    key={keyvalue.id;}/>;
+                return <ListItem item={value}
+                    key={
+                        keyvalue.id;
+                    }/>;
             });
     }
 });
