@@ -54,6 +54,9 @@ interface domMethods {
 interface diffview {
     (): [string, number, number]
 }
+interface externalIndex {
+    [key: string]: number;
+}
 interface finalFile {
     css: {
         color: {

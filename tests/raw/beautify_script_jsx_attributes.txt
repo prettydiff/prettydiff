@@ -1,0 +1,104 @@
+var content = (
+        <Nav>
+            {/* child comment, put {} around */}
+            <aPerson
+                /* multi
+         line
+         comment */
+         //attr="test"
+                name={window.isLoggedIn ? window.name : ''} // end of line comment
+            > a </aperson>
+        </Nav>
+    );
+var content = (
+        <Nav>
+            {/* child comment, put {} around */}
+            <bPerson
+                /* multi
+         line
+         comment */
+         //attr="test"
+                name={window.isLoggedIn ? window.name : ''} // end of line comment
+            />
+        </Nav>
+    );
+var content = (
+        <Nav>
+            {/* child comment, put {} around */}
+            <cPerson
+                name={window.isLoggedIn ? window.name : ''} // end of line comment
+            />
+        </Nav>
+    );
+var content = (
+        <Nav>
+            {/* child comment, put {} around */}
+            <dPerson
+                // end of line comment
+            /> cat
+        </Nav>
+    );
+var content = (
+        <Nav>
+            {/* child comment, put {} around */}
+            <ePerson
+                // end of line comment
+                cat = "asdf"
+            /> cat
+        </Nav>
+    );
+var content = (
+        <Nav>
+            {/* child comment, put {} around */}
+            <fPerson
+                // end of line comment
+            > a </fPerson>
+        </Nav>
+    );
+var content = (
+        <Nav>
+            {/* child comment, put {} around */}
+            <gPerson
+                // end of line comment
+                cat="meow"
+            > a </gPerson>
+        </Nav>
+    );
+function () {
+        return this.props.items.map(function (item) {
+            return <aListItem key={item.id} />;
+        });
+    }
+function () {
+        return this.props.items.map(function (item) {
+            return <bListItem item={item} key={item.id} />;
+        });
+    }
+function () {
+        return this.props.items.map(function (item) {
+            return <cListItem item={return <tag>{item}</tag>} key={item.id} />;
+        });
+    }
+function () {
+        return this.props.items.map(function (item) {
+            return <dListItem item={return <tag>{item}</tag>} />;
+        });
+    }
+function () {
+        return (
+            <li className="ListItem">
+                <aa href={ "/items/" + this.props.item.id }>
+                    this.props.item.name
+                </aa>
+            </li>
+        );
+    }
+function () {
+        return (
+            <li className="ListItem">
+                <ba cat="A" href={ "/items/" + this.props.item.id }>
+                    this.props.item.name
+                </ba>
+            </li>
+        );
+    }

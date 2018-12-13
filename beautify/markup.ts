@@ -1,6 +1,3 @@
-import { join } from "path";
-import { types } from "util";
-
 /*global global, prettydiff*/
 (function beautify_markup_init():void {
     "use strict";
@@ -13,6 +10,7 @@ import { types } from "util";
             lf:"\r\n"|"\n"      = (options.crlf === true)
                 ? "\r\n"
                 : "\n",
+            externalIndex:externalIndex = {},
             levels:number[] = (function beautify_markup_levels():number[] {
                 const level:number[]      = (options.start > 0)
                         ? Array(options.start).fill(0, 0, options.start)
@@ -30,7 +28,7 @@ import { types } from "util";
                                         }
                                         x = x + 1;
                                     } while (x < c);
-                                } else if (data.types[x] !== "comment" && data.types[x] !== "attribute" && data.types[x] !== "template_attribute") {
+                                } else if (data.types[x] !== "comment" && data.types[x].indexOf("attribute") < 0) {
                                     return x;
                                 }
                                 x = x + 1;
@@ -117,7 +115,7 @@ import { types } from "util";
                             level.push(0);
                             a = a + 1;
                         } while (a < c);
-                        level[skip] = a;
+                        externalIndex[skip] = a;
                         level.push(indent - 1);
                         next = nextIndex();
                         if (data.lexer[next] === lexer && (data.types[next] === "end" || data.types[next] === "template_end")) {
@@ -128,25 +126,62 @@ import { types } from "util";
                         const parent:number = a - 1;
                         let y:number = a,
                             len:number = data.token[parent].length + 1,
-                            lev:number = (data.types[parent] !== "start")
-                                ? (data.types[next] === "end" || data.types[next] === "template_end")
-                                    ? indent + 2
-                                    : indent + 1
-                                : indent,
-                            earlyexit:boolean = false;
+                            plural:boolean = false,
+                            lev:number = (function beautify_markup_levels_attribute_level():number {
+                                if (data.types[a].indexOf("start") > 0) {
+                                    let x:number = a;
+                                    do {
+                                        if (data.types[x].indexOf("end") > 0 && data.begin[x] === a) {
+                                            if (x < c - 1 && data.types[x + 1].indexOf("attribute") > -1) {
+                                                plural = true;
+                                                break;
+                                            }
+                                        }
+                                        x = x + 1;
+                                    } while (x < c);
+                                } else if (a < c - 1 && data.types[a + 1].indexOf("attribute") > -1) {
+                                    plural = true;
+                                }
+                                if (data.types[next] === "end" || data.types[next] === "template_end") {
+                                    if (data.types[parent] === "singleton") {
+                                        return indent + 2;
+                                    }
+                                    return indent + 1;
+                                }
+                                if (data.types[parent] === "singleton") {
+                                    return indent + 1;
+                                }
+                                return indent;
+                            }()),
+                            earlyexit:boolean = false,
+                            attStart:boolean = false;
+                        
+                        if (plural === false && data.types[a] === "comment_attribute") {
+                            // lev must be indent unless the "next" type is end then its indent + 1
+                            level.push(indent);
+                            if (data.types[parent] === "singleton") {
+                                level[parent] = indent + 1;
+                            } else {
+                                level[parent] = indent;
+                            }
+                            return;
+                        }
 
                         // first, set levels and determine if there are template attributes
                         do {
                             if (data.types[a].indexOf("attribute") > 0) {
                                 if (data.types[a] === "template_attribute") {
                                     level.push(-10);
+                                } else if (data.types[a] === "comment_attribute") {
+                                    level.push(lev);
                                 } else if (data.types[a].indexOf("start") > 0) {
-                                    if (a < c - 2 && data.types[a + 2].indexOf("attribute")  > 0 && data.types[a + 2].indexOf("end") > 0) {
-                                        level.push(-20);
+                                    attStart = true;
+                                    if (a < c - 2 && data.types[a + 2].indexOf("attribute")  > 0) {
                                         level.push(-20);
                                         a = a + 1;
+                                        externalIndex[a] = a;
                                     } else {
-                                        if (data.types[parent] === "start") {
+                                        if (parent === a - 1 && plural === false) {
                                             level.push(lev);
                                         } else {
                                             level.push(lev + 1);
@@ -158,14 +193,10 @@ import { types } from "util";
                                     }
                                 } else if (data.types[a].indexOf("end") > 0) {
                                     if (level[a - 1] !== -20) {
-                                        if (data.types[parent] === "start") {
-                                            level[a - 1] = lev - 1;
-                                        } else {
-                                            level[a - 1] = lev;
-                                        }
+                                        level[a - 1] = level[data.begin[a]] - 1;
                                     }
-                                    if (data.types[parent] === "start") {
-                                        level.push(lev - 1);
+                                    if (data.lexer[a + 1] !== lexer) {
+                                        level.push(-20);
                                     } else {
                                         level.push(lev);
                                     }
@@ -175,7 +206,11 @@ import { types } from "util";
                                 earlyexit = true;
                             } else if (data.types[a] === "attribute") {
                                 len = len + data.token[a].length + 1;
-                                level.push(-10);
+                                if (attStart === true || (a < c - 1 && data.types[a + 1] !== "template_attribute" && data.types[a + 1].indexOf("attribute") > 0)) {
+                                    level.push(lev);
+                                } else {
+                                    level.push(-10);
+                                }
                             } else if (data.begin[a] < parent + 1) {
                                 break;
                             }
@@ -183,7 +218,12 @@ import { types } from "util";
                         } while (a < c);
 
                         a = a - 1;
-                        level[a] = level[parent];
+                        if (level[a - 1] > 0 && data.types[a].indexOf("end") > 0 && data.types[a].indexOf("attribute") > 0 && data.types[parent] !== "singleton" && plural === true) {
+                            level[a - 1] = level[a - 1] - 1;
+                        }
+                        if (level[a] !== -20) {
+                            level[a] = level[parent];
+                        }
                         level[parent] = -10;
                         if (earlyexit === true) {
                             return;
@@ -254,7 +294,7 @@ import { types } from "util";
                                     level.push(indent);
                                 } else if (data.lines[next] === 0) {
                                     level.push(-20);
-                                } else if (data.lines[next] === 1) {
+                                } else if (data.lines[next] > 0 && data.token[next] === "{" && data.types[next] === "script") {
                                     level.push(-10);
                                 } else {
                                     level.push(indent);
@@ -262,12 +302,8 @@ import { types } from "util";
                             } else if (data.types[a] === "start" || data.types[a] === "template_start") {
                                 indent = indent + 1;
                                 if (options.language === "jsx" && data.token[a + 1] === "{") {
-                                    if (data.lexer[a + 2] !== lexer && data.token[a + 3] === "}" && data.lexer[a + 3] === lexer) {
-                                        if (data.types[a + 4] === "end") {
-                                            level.push(-20);
-                                        } else {
-                                            level.push(indent);
-                                        }
+                                    if (data.lines[a + 1] === 0) {
+                                        level.push(-20);
                                     } else {
                                         level.push(-10);
                                     }
@@ -283,6 +319,8 @@ import { types } from "util";
                                     level.push(indent);
                                 }
                             } else if (options.force_indent === false && data.lines[next] === 0 && (data.types[next] === "content" || data.types[next] === "singleton")) {
+                                level.push(-20);
+                            } else if (data.token[a + 2] === "}" && data.types[a + 2] === "script") {
                                 level.push(-20);
                             } else {
                                 level.push(indent);
@@ -430,11 +468,14 @@ import { types } from "util";
                             } else if (data.types[y].indexOf("attribute") < 0 && jsx === false) {
                                 break;
                             }
-                        } else if (jsx === false) {
+                        } else if (jsx === false && (data.begin[y] < a || data.types[y].indexOf("attribute") < 0)) {
                             break;
                         }
                         y = y + 1;
                     } while (y < c);
+                    if (data.types[y - 1] === "comment_attribute") {
+                        space = nl(levels[y - 2] - 1);
+                    }
                     data.token[y - 1] = data.token[y - 1] + space + end[0];
                 };
             let a:number            = options.start,
@@ -461,10 +502,10 @@ import { types } from "util";
                         }
                     }
                 } else {
-                    if (data.begin[a + 1] === a - 1) {
+                    if (externalIndex[a] === a) {
                         build.push(data.token[a]);
                     } else {
-                        options.end = levels[a];
+                        options.end = externalIndex[a];
                         options.indent_level = lastLevel;
                         options.start = a;
                         external = prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "");

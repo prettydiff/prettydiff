@@ -3,7 +3,8 @@
     <li class="{@eq key="myKey" value="{url}"}active expanded{:else}inactive{/eq}"></li>
 </ul>
 <form class="form form-login" action="{{ path("fos_user_security_check") }}" method="post"></form>
-<p class="hello">Copyright {{ Testing }}{{ Testing }}</p>
+<p class="hello">Copyright
+    {{ Testing }}{{ Testing }}</p>
 <input type="hidden" name="test" value="{{ id["index"] }}"/>
 <input type="hidden" name="test" value={{ id["index"] }}/>
 
@@ -15,7 +16,10 @@
 {% some other statement %}
 
 <div>
-    Variable1: {{ variable1 }} / Variable2: {{ Variable2 }}
+    Variable1:
+    {{ variable1 }}
+    / Variable2:
+    {{ Variable2 }}
 </div>
 <b first="<c:out qwer="rtyu" asdf="zxcv"/> werasdf"/>
 <d attr="if a < b return true"/>
