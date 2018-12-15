@@ -2773,7 +2773,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 .innerHTML
                 .toLowerCase()
                 .replace(/\s+/g, ""),
-            logo      = id("pdlogo");
+            logo      = id("pdlogo"),
+            output    = id("output");
         let theme:string     = "",
             logoColor:string = "";
         document
@@ -2795,6 +2796,25 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             aceStore
                 .codeOut
                 .setTheme(theme);
+        }
+        if (output !== null) {
+            if (options.mode === "diff") {
+                if (options.color === "white") {
+                    output.style.background = "#fff";
+                } else if (options.color === "shadow") {
+                    output.style.background = "transparent";
+                } else if (options.color === "canvas") {
+                    output.style.background = "#f2f2f2";
+                }
+            } else {
+                if (options.color === "white") {
+                    output.style.background = "#f2f2f2";
+                } else if (options.color === "shadow") {
+                    output.style.background = "#111";
+                } else if (options.color === "canvas") {
+                    output.style.background = "#ccccc8";
+                }
+            }
         }
         if (logo !== null) {
             if (color === "canvas") {
@@ -3073,9 +3093,6 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             output = output.replace(/(\s+)$/, "");
                         }
                         data.zIndex = data.zIndex + 1;
-                        if (autolang === true) {
-                            options.language = "auto";
-                        }
                         if (autolexer === true) {
                             options.lexer = "auto";
                         }
@@ -3346,30 +3363,6 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             } else {
                                 textarea.codeOut.value = output;
                             }
-                        } else if (options.mode === "analysis") {
-                            if (id("analysishtml-yes") !== null && id("analysishtml-yes").checked === true && report.code.box !== null) {
-                                if (autolang === true) {
-                                    report.code.body.innerHTML = `<p>Code type is set to <strong>auto</strong>. <span>Presumed language is <em>${data.langvalue[2]}</em>.</span></p>${output}`;
-                                } else if (autolexer === true) {
-                                    report.code.body.innerHTML = `<p>Lexer is set to <strong>auto</strong>. <span>Presumed language is <em>${data.langvalue[2]}</em>.</span></p>${output}`;
-                                } else {
-                                    report.code.body.innerHTML = output;
-                                }
-                                if (report.code.body.style.display === "none") {
-                                    report.code.box.getElementsByTagName("h3")[0].click();
-                                }
-                                report.code.box.style.top   = (data.settings.report.code.top / 10) + "em";
-                                report.code.box.style.right = "auto";
-                            } else if (test.ace === true) {
-                                aceStore
-                                    .codeOut
-                                    .setValue(output);
-                                aceStore
-                                    .codeOut
-                                    .clearSelection();
-                            } else {
-                                textarea.codeOut.value = sanitize(output);
-                            }
                         }
                         if (ann !== null) {
                             if (errortext.indexOf("end tag") > 0 || errortext.indexOf("Duplicate id") > 0) {
@@ -3381,8 +3374,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                     .getElementsByTagName("strong")[0]
                                     .innerHTML + "</strong> <span>See 'Code Report' for details</span>";
                             } else {
-                                if (meta.lang[0] === "jsx") {
-                                    ann.innerHTML = "Presumed language is <strong>React JSX</strong>.";
+                                if (autolang === true && options.language === "jsx") {
+                                    ann.innerHTML = "Code type is set to <em>auto</em>. Presumed language is <strong>React JSX</strong>.";
                                 } else if (autolang === true) {
                                     ann.innerHTML = `Code type is set to <em>auto</em>. Presumed language is <strong>${data.langvalue[2]}</strong>.`;
                                 } else if (autolexer === true) {
@@ -4282,6 +4275,13 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                     sourceLabel.style.display = "block";
                     outputLabel.style.display = "block";
                     outputFile.style.display = "block";
+                    if (options.color === "white") {
+                        output.style.background = "#fff";
+                    } else if (options.color === "shadow") {
+                        output.style.background = "transparent";
+                    } else if (options.color === "canvas") {
+                        output.style.background = "#f2f2f2";
+                    }
                     input.onkeyup = null;
                     if (test.ace === true) {
                         aceStore.codeIn.onkeyup = null;
@@ -4312,6 +4312,13 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                     outputLabel.style.display = "none";
                     outputFile.style.display = "none";
                     input.onkeyup = method.event.execute;
+                    if (options.color === "white") {
+                        output.style.background = "#f2f2f2";
+                    } else if (options.color === "shadow") {
+                        output.style.background = "#111";
+                    } else if (options.color === "canvas") {
+                        output.style.background = "#ccccc8";
+                    }
                     if (test.ace === true) {
                         aceStore.codeOut.setValue("");
                         aceStore

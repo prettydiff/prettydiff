@@ -59,6 +59,7 @@
 #prettydiff.white li h5{color:#33c}
 #prettydiff.white code{background:#eee;border-color:#eee;color:#009}
 #prettydiff.white ol.segment h4 strong{color:#c00}
+#prettydiff.white .beautify li .new{background:#ee0;color:#c00;}
 #prettydiff.white .data .delete{background:#ffd8d8}
 #prettydiff.white .data .delete em{background:#fff8f8;border-color:#c44;color:#900}
 #prettydiff.white .data .insert{background:#d8ffd8}
@@ -152,6 +153,7 @@
 #prettydiff.canvas li h4{color:#06f}
 #prettydiff.canvas code{background:#eee;border-color:#eee;color:#00f}
 #prettydiff.canvas ol.segment h4 strong{color:#c00}
+#prettydiff.canvas .beautify li .new{background:#ee0;color:#c00;}
 #prettydiff.canvas button{background-color:#ddddd8;border-color:#420;box-shadow:0 0.25em 0.5em #b8a899;color:#900}
 #prettydiff.canvas button:hover{background-color:#ccb;border-color:#630;box-shadow:0 0.25em 0.5em #b8a899;color:#630}
 #prettydiff.canvas td.nested{background:#ccccc8}
@@ -269,6 +271,7 @@
 #prettydiff.shadow th,
 #prettydiff.shadow .segment,
 #prettydiff.shadow ol.segment li{border-color:#666}
+#prettydiff.shadow .beautify li .new{background:#bb0;color:#900}
 #prettydiff.shadow .count li.fold{color:#cf3}
 #prettydiff.shadow th{background:#000}
 #prettydiff.shadow h2 button{background:#585858;box-shadow:0.1em 0.1em 0.25em #000}
@@ -618,7 +621,7 @@
 #prettydiff.white #options,
 #prettydiff.white #addOptions,
 #prettydiff.white #footer{box-shadow:0 0.5em 1em #999}
-#prettydiff.white #output{background:#f2f2f2;border-color:#999}
+#prettydiff.white #output{border-color:#999}
 #prettydiff.white .ace_gutter{background:#ddd;border-color:#999}
 #prettydiff.white #update{background:#ddd;border-color:#999}
 #prettydiff.white #reports h3 button{background:#ddd;border-color:#999;color:#555}
@@ -643,7 +646,6 @@
 #prettydiff.white .box .body p em{color:#080}
 #prettydiff.white .box .body p strong{color:#009}
 #prettydiff.white #webtool textarea{background:#eee;border-color:#999;color:#009}
-#prettydiff.white #webtool .readonly textarea{background:#ddd}
 #prettydiff.white .readonly .ace-tm .ace_indent-guide {background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEXd3d3u346CAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==") right repeat-y;}
 
 /*color - canvas, webtool only*/
@@ -669,7 +671,7 @@
 #prettydiff.canvas #input,
 #prettydiff.canvas #baseText,
 #prettydiff.canvas #newText{background:#f2f2f2;border-color:#999}
-#prettydiff.canvas #output{background:#ccccc8;border-color:#999}
+#prettydiff.canvas #output{border-color:#999}
 #prettydiff.canvas #update{background:#ddd;border-color:#999}
 #prettydiff.canvas .save{background:#fc0;border-color:#a30;color:#a30}
 #prettydiff.canvas .minimize{background:#fcc;border-color:#c00;color:#c00}
@@ -760,8 +762,8 @@
 #prettydiff.shadow #footer{box-shadow:0 0.5em 1em #000}
 #prettydiff.shadow #input,
 #prettydiff.shadow #input.ace_editor,
-#prettydiff.shadow #output.ace_editor{background:#111;border-color:#666}
-#prettydiff.shadow #output{background:#333;border-color:#666}
+#prettydiff.shadow #output.ace_editor{border-color:#666}
+#prettydiff.shadow #output{border-color:#666}
 #prettydiff.shadow #textareaTabKey,
 #prettydiff.shadow #update{background:#666;border-color:#999}
 #prettydiff.shadow .save{background:#fc0;border-color:#a30;color:#a30}
@@ -801,7 +803,6 @@
 #prettydiff.shadow #announcement strong,
 #prettydiff.shadow .box .body p strong{color:#9cf}
 #prettydiff.shadow #webtool textarea{background:#222;border-color:#999;color:#ddd}
-#prettydiff.shadow #webtool .readonly textarea{background:#111}
 #prettydiff.shadow .box h3 button{background:#333;border-color:#666;color:#ccc}
 #prettydiff.shadow .box h3 button:hover{background:#777;border-color:#aaa;color:#fff}
 

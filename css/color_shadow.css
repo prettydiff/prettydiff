@@ -43,6 +43,7 @@
 #prettydiff.shadow th,
 #prettydiff.shadow .segment,
 #prettydiff.shadow ol.segment li{border-color:#666}
+#prettydiff.shadow .beautify li .new{background:#bb0;color:#900}
 #prettydiff.shadow .count li.fold{color:#cf3}
 #prettydiff.shadow th{background:#000}
 #prettydiff.shadow h2 button{background:#585858;box-shadow:0.1em 0.1em 0.25em #000}

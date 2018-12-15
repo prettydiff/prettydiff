@@ -59,6 +59,7 @@
 #prettydiff.white li h5{color:#33c}
 #prettydiff.white code{background:#eee;border-color:#eee;color:#009}
 #prettydiff.white ol.segment h4 strong{color:#c00}
+#prettydiff.white .beautify li .new{background:#ee0;color:#c00;}
 #prettydiff.white .data .delete{background:#ffd8d8}
 #prettydiff.white .data .delete em{background:#fff8f8;border-color:#c44;color:#900}
 #prettydiff.white .data .insert{background:#d8ffd8}

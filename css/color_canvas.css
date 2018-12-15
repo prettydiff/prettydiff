@@ -42,6 +42,7 @@
 #prettydiff.canvas li h4{color:#06f}
 #prettydiff.canvas code{background:#eee;border-color:#eee;color:#00f}
 #prettydiff.canvas ol.segment h4 strong{color:#c00}
+#prettydiff.canvas .beautify li .new{background:#ee0;color:#c00;}
 #prettydiff.canvas button{background-color:#ddddd8;border-color:#420;box-shadow:0 0.25em 0.5em #b8a899;color:#900}
 #prettydiff.canvas button:hover{background-color:#ccb;border-color:#630;box-shadow:0 0.25em 0.5em #b8a899;color:#630}
 #prettydiff.canvas td.nested{background:#ccccc8}

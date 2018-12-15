@@ -123,6 +123,9 @@
             } else if (options.language === "titanium") {
                 options.correct = false;
             }
+            if (options.language !== "javascript" && options.language !== "typescript" && options.language !== "jsx") {
+                options.jsscope = "none";
+            }
         }());
         let scolon:number = 0,
             news:number = 0;
@@ -1233,7 +1236,7 @@
                         if (ltoke === "var") {
                             // hoisted references following declaration keyword
                             hoist();
-                        } else if (ltoke === "function") {// && (data.token[a - 2] === "=" || data.types[a - 2] !== "operator") && data.types[a - 2] !== "start" && data.types[a - 2] !== "end") {
+                        } else if (ltoke === "function") {
                             scopes.push([data.token[a], a, -10]);
                         } else if (ltoke === "let" || ltoke === "const") {
                             // not hoisted references following declaration keyword
@@ -2115,14 +2118,19 @@
                         }
                     } while (a > 0);
                 }
-                if (options.jsscope !== "none" && options.language === "javascript") {
+                if (options.jsscope !== "none") {
                     let linecount:number          = 1,
                         last:string               = "",
                         scope:number              = 0,
                         scoped:boolean[] = [],
                         indent:number             = options.indent_level,
-                        foldindex:[number, number][] = [];
+                        foldindex:[number, number][] = [],
+                        start:number = options.start,
+                        exlines:string[] = [],
+                        exlevel:number = 0,
+                        exline:RegExp;
                     const code:string[] = [],
+                        optionValue:string = options.jsscope,
                         foldstart = function beautify_script_output_scope_foldstart():void {
                             let index:number = code.length;
                             do {
@@ -2148,81 +2156,53 @@
                             }
                         },
                         reference = function beautify_script_output_scope_reference():void {
-                            let i:number = 0,
-                                s:number = scopes.length - 1;
-                            const applyScope = function beautify_script_output_scope_reference_applyScope(scopeValue:number, token:string):void {
+                            let s:number = scopes.length;
+                            const applyScope = function beautify_script_output_scope_reference_applyScope():void {
                                 // applyScope function exists to prevent presenting spaces as part of reference names if option 'vertical' is set to true
-                                const spaceIndex:number = token.indexOf(" ");
-                                let space:string = "";
+                                let token:string = data.token[a],
+                                    space:string = "";
+                                const spaceIndex:number = token.indexOf(" "),
+                                    scopeValue:string = (function beautify_script_output_scope_reference_applyScope_scopeValue():string {
+                                        let begin:number = data.begin[scopes[s][1]],
+                                            value:string = "";
+                                        if (data.stack[a] === "arguments") {
+                                            value = data.token[data.begin[data.begin[a]]];
+                                            value = value.slice(value.indexOf("class=") + 8);
+                                            value = value.slice(0, value.indexOf(">") - 1);
+                                            return String(Number(value) + 1);
+                                        }
+                                        if (scopes[s][1] < 0 || begin < 0) {
+                                            return "0";
+                                        }
+                                        if (data.token[scopes[s][1]] !== undefined && data.token[scopes[s][1]].indexOf("<em") === 0) {
+                                            begin = scopes[s][1];
+                                        } else if (data.token[begin] === undefined || data.token[begin].indexOf("<em") !== 0) {
+                                            do {
+                                                begin = data.begin[begin];
+                                            } while (begin > 0 && data.token[begin].indexOf("<em") !== 0);
+                                            if (begin < 0) {
+                                                return "0";
+                                            }
+                                        }
+                                        value = data.token[begin];
+                                        value = value.slice(value.indexOf("class=") + 8);
+                                        value = value.slice(0, value.indexOf(">") - 1);
+                                        return value;
+                                    }());
                                 if (spaceIndex > 0) {
                                     space = token.slice(spaceIndex);
                                     token = token.slice(0, spaceIndex);
                                 }
-                                build.push(`<em class="s${scopeValue}">${token}</em>${space}`);
+                                data.token[a] = `<em class="s${scopeValue}">${token}</em>${space}`;
+                                build.push(data.token[a]);
                             };
                             if (scopes.length < 1) {
                                 return;
                             }
-                            if (data.stack[a] === "arguments") {
-                                if (scopes[s - 1][1] > a) {
-                                    do {
-                                        s = s - 1;
-                                    } while (s > 0 && scopes[s][1] > a);
-                                }
-                                do {
-                                    if (scopes[s][1] === a) {
-                                        scopes[s][2] = scope + 1;
-                                        break;
-                                    }
-                                    s = s - 1;
-                                } while (s > -1);
-                                build.push(`<em class="s${scope + 1}">${data.token[a]}</em>`);
-                                return;
-                            }
-                            if (data.stack[a + 2] === "arguments" || data.token[a - 1] === "let" || data.token[a - 1] === "const" || data.token[a - 1] === "var") {
-                                if (s > 0 && scopes[s - 1][1] > a) {
-                                    do {
-                                        s = s - 1;
-                                    } while (s > 0 && scopes[s][1] > a);
-                                }
-                                do {
-                                    if (scopes[s][1] === a) {
-                                        scopes[s][2] = scope;
-                                        break;
-                                    }
-                                    s = s - 1;
-                                } while (s > -1);
-                                applyScope(scope, data.token[a]);
-                                return;
-                            }
-                            if (s > 0 && scopes[s - 1][1] > a) {
-                                do {
-                                    s = s - 1;
-                                } while (s > 0 && scopes[s][1] > a);
-                            }
-                            if (scopes[s][0] === data.token[a]) {
-                                if (scopes[s][2] === -10) {
-                                    applyScope(scope, data.token[a]);
-                                    scopes[s][2] = scope;
-                                } else {
-                                    applyScope(scopes[s][2], data.token[a]);
-                                }
-                                return;
-                            }
                             do {
                                 s = s - 1;
-                                if (scopes[s][0] === data.token[a]) {
-                                    i = scopes[s][1];
-                                    if (i === -1) {
-                                        applyScope(0, data.token[a]);
-                                    } else if (i === data.begin[a]) {
-                                        applyScope(scope, data.token[a]);
-                                    } else if (scopes[s].length < 3) {
-                                        applyScope(scope, data.token[a]);
-                                        scopes[s].push(scope);
-                                    } else {
-                                        applyScope(scopes[s][2], data.token[a]);
-                                    }
+                                if (data.token[a].replace(/\s+/, "") === scopes[s][0] && scopes[s][1] <= a) {
+                                    applyScope();
                                     return;
                                 }
                             } while (s > 0);
@@ -2231,19 +2211,16 @@
                         // splits block comments, which are single tokens, into multiple lines of output
                         blockline          = function beautify_script_output_scope_blockline(x:string):void {
                             const commentLines:string[] = x.split(lf),
-                                ii:number           = commentLines.length - 1;
+                                ii:number           = commentLines.length;
                             let hh:number           = 0;
                             if (levels[a] > 0) {
                                 do {
                                     commentLines[0] = tab + commentLines[0];
                                     hh = hh + 1;
                                 } while (hh < levels[a]);
-                                hh = 0;
                             }
-                            if (a === 0) {
-                                build.push(`${commentLines[hh]}`);
-                                hh = 1;
-                            }
+                            hh = 1;
+                            build.push(commentLines[0]);
                             if (hh < ii) {
                                 do {
                                     linecount = linecount + 1;
@@ -2328,12 +2305,13 @@
                                 c = c + 1;
                             } while (c < d);
                         };
+                    options.jsscope = "none";
                     code.push("<div class=\"beautify\" data-prettydiff-ignore=\"true\"><ol class=\"count\">");
                     code.push("<li>");
                     code.push("1");
                     code.push("</li>");
                     if (data.types[a] === "comment" && data.token[a].indexOf("/*") === 0) {
-                        build.push("<ol class=\"data\"><li class=\"c0\">");
+                        build.push(`<ol class="data"><li class="c0">${tab}`);
                     } else {
                         build.push("<ol class=\"data\"><li>");
                     }
@@ -2348,82 +2326,116 @@
                     // tokens to create the output
                     a = 0;
                     do {
-                        if (levels[a] > -1 && a < b - 1) {
-                            if (levels[a] < scoped.length) {
-                                do {
-                                    scoped.pop();
-                                } while (levels[a] < scoped.length);
-                            }
-                        }
-                        if (data.types[a] === "comment" && data.token[a].indexOf("/*") === 0) {
-                            blockline(data.token[a]);
-                        } else if (invisibles.indexOf(data.token[a]) < 0) {
-                            if (data.types[a] === "start" && (levels[a] > -1 || data.types[a + 1] === "comment")) {
-                                foldstart();
-                            } else if (data.token[a].indexOf("//") === 0 && a < b - 1 && data.token[a + 1].indexOf("//") === 0 && data.token[a - 1].indexOf("//") !== 0 && levels[a - 1] > -1) {
-                                foldstart();
-                            } else if (foldindex.length > 0) {
-                                if (data.types[a] === "end") {
-                                    foldend();
-                                } else if ((data.token[a].indexOf("//") !== 0 || a === b - 1) && data.token[foldindex[foldindex.length - 1][1]].indexOf("//") === 0) {
-                                    foldend();
+                        if (data.lexer[a] === lexer || prettydiff.beautify[data.lexer[a]] === undefined) {
+                            if (levels[a] > -1 && a < b - 1) {
+                                if (levels[a] < scoped.length) {
+                                    do {
+                                        scoped.pop();
+                                    } while (levels[a] < scoped.length);
                                 }
                             }
-                            if (data.types[a] === "reference") {
-                                reference();
-                            } else if (data.token[a] === "{") {
-                                if (data.stack[a + 1] === "object" || data.stack[a + 1] === "class") {
-                                    scoped.push(false);
-                                    build.push("{");
-                                } else {
-                                    if (scoped.length === levels[a]) {
-                                        if (scoped[scoped.length - 1] === false) {
-                                            scoped[scoped.length - 1] = true;
+                            if (data.types[a] === "comment" && data.token[a].indexOf("/*") === 0) {
+                                blockline(data.token[a]);
+                            } else if (invisibles.indexOf(data.token[a]) < 0) {
+                                if (data.types[a] === "start" && (levels[a] > -1 || data.types[a + 1] === "comment")) {
+                                    foldstart();
+                                } else if (data.token[a].indexOf("//") === 0 && a < b - 1 && data.token[a + 1].indexOf("//") === 0 && data.token[a - 1].indexOf("//") !== 0 && levels[a - 1] > -1) {
+                                    foldstart();
+                                } else if (foldindex.length > 0) {
+                                    if (data.types[a] === "end") {
+                                        foldend();
+                                    } else if ((data.token[a].indexOf("//") !== 0 || a === b - 1) && data.token[foldindex[foldindex.length - 1][1]].indexOf("//") === 0) {
+                                        foldend();
+                                    }
+                                }
+                                if (data.types[a] === "reference") {
+                                    reference();
+                                } else if (data.token[a] === "{") {
+                                    if (data.stack[a + 1] === "object" || data.stack[a + 1] === "class") {
+                                        scoped.push(false);
+                                        build.push("{");
+                                    } else {
+                                        if (scoped.length === levels[a]) {
+                                            if (scoped[scoped.length - 1] === false) {
+                                                scoped[scoped.length - 1] = true;
+                                                scope = scope + 1;
+                                            }
+                                        } else {
+                                            scoped.push(true);
                                             scope = scope + 1;
                                         }
+                                        data.token[a] = `<em class="s${scope}">{</em>`;
+                                        build.push(data.token[a]);
+                                    }
+                                    if (levels[a] > scoped.length) {
+                                        do {
+                                            scoped.push(false);
+                                        } while (levels[a] > scoped.length);
+                                    }
+                                } else if (data.token[a] === "}") {
+                                    if (data.stack[a] === "object" || data.stack[a] === "class") {
+                                        build.push("}");
                                     } else {
-                                        scoped.push(true);
-                                        scope = scope + 1;
+                                        build.push(`<em class="s${scope}">}</em>`);
+                                        scope = scope - 1;
                                     }
-                                    build.push(`<em class="s${scope}">{</em>`);
-                                }
-                                if (levels[a] > scoped.length) {
-                                    do {
-                                        scoped.push(false);
-                                    } while (levels[a] > scoped.length);
-                                }
-                            } else if (data.token[a] === "}") {
-                                if (data.stack[a] === "object" || data.stack[a] === "class") {
-                                    build.push("}");
                                 } else {
-                                    build.push(`<em class="s${scope}">}</em>`);
-                                    scope = scope - 1;
-                                }
-                            } else {
-                                if (data.types[a] === "string" && data.token[a].indexOf("\n") > 0) {
-                                    multiline(data.token[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
-                                } else if (data.types[a] === "operator" || data.types[a] === "comment" || data.types[a] === "string" || data.types[a] === "regex") {
-                                    build.push(data.token[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
-                                } else {
-                                    if (data.types[a] === "start" && levels[a] > -1) {
-                                        scoped.push(false);
+                                    if (data.types[a] === "string" && data.token[a].indexOf("\n") > 0) {
+                                        multiline(data.token[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                    } else if (data.types[a] === "operator" || data.types[a] === "comment" || data.types[a] === "string" || data.types[a] === "regex") {
+                                        build.push(data.token[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                                    } else {
+                                        if (data.types[a] === "start" && levels[a] > -1) {
+                                            scoped.push(false);
+                                        }
+                                        build.push(data.token[a]);
                                     }
-                                    build.push(data.token[a]);
                                 }
                             }
-                        }
-                        if (levels[a] === -10) {
-                            build.push(" ");
-                        } else if (levels[a] > -1 && a < b - 1 && data.token[a + 1].slice(0, 2) !== "/*") {
-                            if (levels[a] > scoped.length) {
-                                do {
-                                    scoped.push(false);
-                                } while (levels[a] > scoped.length);
-                            }
-                            if (((levels[a] > -1 && data.token[a] === "{") || (levels[a] > -1 && data.token[a + 1] === "}")) && data.lines[a] < 3 && options.brace_line === true) {
+                            if (a < b - 1 && data.lexer[a + 1] !== lexer && data.begin[a] === data.begin[a + 1] && data.types[a + 1].indexOf("end") < 0 && data.token[a] !== ",") {
+                                build.push(" ");
+                            } else if (levels[a] > -1 && a < b - 1) {
+                                lastLevel = levels[a];
                                 nlscope(levels[a]);
+                            } else if (levels[a] === -10) {
+                                build.push(" ");
+                                if (data.lexer[a + 1] !== lexer) {
+                                    lastLevel = lastLevel + 1;
+                                }
                             }
-                            nlscope(levels[a]);
+                        } else {
+                            if (externalIndex[a] === a) {
+                                build.push(data.token[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                            } else {
+                                options.end = externalIndex[a];
+                                options.indent_level = lastLevel;
+                                options.start = a;
+                                external = prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+                                if (external.indexOf(lf) > -1) {
+                                    if (start === 0) {
+                                        exline = new RegExp(`\\r?\\n(${tab}){${lastLevel}}`, "g");
+                                        external = external.replace(exline, lf);
+                                    }
+                                    exlines = external.split(lf);
+                                    exlevel = 0;
+                                    if (exlines.length > 1) {
+                                        do {
+                                            build.push(exlines[exlevel]);
+                                            nlscope(lastLevel);
+                                            exlevel = exlevel + 1;
+                                        } while (exlevel < exlines.length - 1);
+                                        build.push(exlines[exlevel]);
+                                    }
+                                } else {
+                                    build.push(external);
+                                }
+                                a = prettydiff.iterator;
+                                if (levels[a] === -10) {
+                                    build.push(" ");
+                                } else if (levels[a] > -1) {
+                                    nlscope(levels[a]);
+                                }
+                            }
                         }
                         a = a + 1;
                     } while (a < b);
@@ -2464,6 +2476,7 @@
                     if (options.new_line === true) {
                         code.push(lf);
                     }
+                    options.jsscope = optionValue;
                     return [
                         "<p>Scope analysis does not provide support for undeclared variables.</p>",
                         "<p><em>",

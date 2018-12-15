@@ -400,7 +400,7 @@
             api       : "any",
             default   : "none",
             definition: "An educational tool to generate HTML output of JavaScript code to identify scope" +
-                    " regions and declared references by color.",
+                    " regions and declared references by color.  This option is ignored unless the code language is JavaScript or TypeScript.",
             label     : "JavaScript Scope Identification",
             lexer     : "script",
             mode      : "beautify",
