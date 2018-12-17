@@ -502,7 +502,7 @@
                         }
                     }
                 } else {
-                    if (externalIndex[a] === a) {
+                    if (externalIndex[a] === a && data.types[a] !== "reference") {
                         build.push(data.token[a]);
                     } else {
                         options.end = externalIndex[a];
@@ -510,10 +510,10 @@
                         options.start = a;
                         external = prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "");
                         build.push(external);
-                        a = prettydiff.iterator;
-                        if (levels[a] > -1) {
-                            build.push(nl(levels[a]));
+                        if (levels[prettydiff.iterator] > -1 && externalIndex[a] > a) {
+                            build.push(nl(levels[prettydiff.iterator]));
                         }
+                        a = prettydiff.iterator;
                     }
                 }
                 a = a + 1;

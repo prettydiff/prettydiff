@@ -131,7 +131,7 @@
             news:number = 0;
         const data:parsedArray = options.parsed,
             lexer:string = "script",
-            scopes:scriptScopes = [],
+            scopes:scriptScopes = prettydiff.scopes,
             b:number = (options.end < 1 || options.end > data.token.length)
                 ? data.token.length
                 : options.end + 1,
@@ -197,7 +197,7 @@
                                 aa = aa - 1;
                                 globallist[aa] = globallist[aa].replace(/\s+/g, "");
                                 if (globallist[aa] !== "") {
-                                    scopes.push([globallist[aa], -1, -10]);
+                                    scopes.push([globallist[aa], -1]);
                                 }
                             } while (aa > 0);
                         }
@@ -1216,14 +1216,14 @@
                         const hoist = function beautify_script_level_reference_hoist():void {
                                 let func:number = data.begin[a];
                                 if (func < 0) {
-                                    scopes.push([data.token[a], -1, -10]);
+                                    scopes.push([data.token[a], -1]);
                                 } else {
                                     if (data.stack[func + 1] !== "function") {
                                         do {
                                             func = data.begin[func];
                                         } while (func > -1 && data.stack[func + 1] !== "function");
                                     }
-                                    scopes.push([data.token[a], func, -10]);
+                                    scopes.push([data.token[a], func]);
                                 }
                             };
                         if (ltype !== "separator" && ltype !== "start" && ltype !== "end") {
@@ -1233,16 +1233,16 @@
                                 level[a - 1] = -20;
                             }
                         }
-                        if (ltoke === "var") {
+                        if (ltoke === "var" && data.lexer[a - 1] === lexer) {
                             // hoisted references following declaration keyword
                             hoist();
                         } else if (ltoke === "function") {
-                            scopes.push([data.token[a], a, -10]);
+                            scopes.push([data.token[a], a]);
                         } else if (ltoke === "let" || ltoke === "const") {
                             // not hoisted references following declaration keyword
-                            scopes.push([data.token[a], a, -10]);
+                            scopes.push([data.token[a], a]);
                         } else if (data.stack[a] === "arguments") {
-                            scopes.push([data.token[a], a, -10]);
+                            scopes.push([data.token[a], a]);
                         } else if (ltoke === ",") {
                             // references following a comma, must be tested to see if a declaration list
                             let index:number = a;
@@ -1252,7 +1252,7 @@
                             if (data.token[index] === "var") {
                                 hoist();
                             } else if (data.token[index] === "let" || data.token[index] === "const") {
-                                scopes.push([data.token[a], a, -10]);
+                                scopes.push([data.token[a], a]);
                             }
                         }
                         level.push(-10);
@@ -2027,6 +2027,71 @@
                         }
                         return linesout.join("");
                     },
+                    reference = function beautify_script_output_reference():void {
+                        let s:number = scopes.length,
+                            t:number = 0;
+                        const applyScope = function beautify_script_output_reference_applyScope():void {
+                            // applyScope function exists to prevent presenting spaces as part of reference names if option 'vertical' is set to true
+                            let token:string = data.token[a],
+                                space:string = "";
+                            const spaceIndex:number = token.indexOf(" "),
+                                scopeValue:string = (function beautify_script_output_reference_applyScope_scopeValue():string {
+                                    let begin:number = data.begin[scopes[s][1]],
+                                        value:string = "";
+                                    if (scopes[s][1] < 0 || begin < 0) {
+                                        return "0";
+                                    }
+                                    if (data.token[scopes[s][1]] !== undefined && data.token[scopes[s][1]].indexOf("<em") === 0) {
+                                        begin = scopes[s][1];
+                                    } else if (data.token[begin] === undefined || data.token[begin].indexOf("<em") !== 0) {
+                                        do {
+                                            begin = data.begin[begin];
+                                        } while (begin > 0 && data.token[begin].indexOf("<em") !== 0);
+                                    }
+                                    if (begin < 0) {
+                                        value = "0";
+                                    } else {
+                                        value = data.token[begin];
+                                        value = value.slice(value.indexOf("class=") + 8);
+                                        value = value.slice(0, value.indexOf(">") - 1);
+                                    }
+                                    if (data.stack[a] === "arguments" || data.stack[scopes[s][1]] === "arguments") {
+                                        return String(Number(value) + 1);
+                                    }
+                                    return value;
+                                }());
+                            if (spaceIndex > 0) {
+                                space = token.slice(spaceIndex);
+                                token = token.slice(0, spaceIndex);
+                            }
+                            data.token[a] = `prettydiffltem class="s${scopeValue}"prettydiffgt${token}prettydifflt/emprettydiffgt${space}`;
+                            build.push(data.token[a]);
+                        };
+                        if (scopes.length < 1) {
+                            return;
+                        }
+                        do {
+                            s = s - 1;
+                            if (data.token[a].replace(/\s+/, "") === scopes[s][0] && scopes[s][1] <= a) {
+                                t = scopes[s][1];
+                                if (t < 0 || data.stack[a] === "arguments" || t === a) {
+                                    applyScope();
+                                    return;
+                                }
+                                do {
+                                    t = t + 1;
+                                    if (data.types[t] === "end" && data.begin[t] === scopes[s][1]) {
+                                        break;
+                                    }
+                                } while (t < a);
+                                if (t === a) {
+                                    applyScope();
+                                    return;
+                                }
+                            }
+                        } while (s > 0);
+                        build.push(data.token[a]);
+                    },
                     invisibles:string[] = ["x;", "x}", "x{", "x(", "x)"];
                 let a:number = options.start,
                     external:string = "",
@@ -2118,7 +2183,7 @@
                         }
                     } while (a > 0);
                 }
-                if (options.jsscope !== "none") {
+                if (options.jsscope !== "none" && options.jsscope !== "interim") {
                     let linecount:number          = 1,
                         last:string               = "",
                         scope:number              = 0,
@@ -2154,59 +2219,6 @@
                                 code[lastfold[0]] = code[lastfold[0]].replace("xxx", String(endfold));
                                 foldindex.pop();
                             }
-                        },
-                        reference = function beautify_script_output_scope_reference():void {
-                            let s:number = scopes.length;
-                            const applyScope = function beautify_script_output_scope_reference_applyScope():void {
-                                // applyScope function exists to prevent presenting spaces as part of reference names if option 'vertical' is set to true
-                                let token:string = data.token[a],
-                                    space:string = "";
-                                const spaceIndex:number = token.indexOf(" "),
-                                    scopeValue:string = (function beautify_script_output_scope_reference_applyScope_scopeValue():string {
-                                        let begin:number = data.begin[scopes[s][1]],
-                                            value:string = "";
-                                        if (data.stack[a] === "arguments") {
-                                            value = data.token[data.begin[data.begin[a]]];
-                                            value = value.slice(value.indexOf("class=") + 8);
-                                            value = value.slice(0, value.indexOf(">") - 1);
-                                            return String(Number(value) + 1);
-                                        }
-                                        if (scopes[s][1] < 0 || begin < 0) {
-                                            return "0";
-                                        }
-                                        if (data.token[scopes[s][1]] !== undefined && data.token[scopes[s][1]].indexOf("<em") === 0) {
-                                            begin = scopes[s][1];
-                                        } else if (data.token[begin] === undefined || data.token[begin].indexOf("<em") !== 0) {
-                                            do {
-                                                begin = data.begin[begin];
-                                            } while (begin > 0 && data.token[begin].indexOf("<em") !== 0);
-                                            if (begin < 0) {
-                                                return "0";
-                                            }
-                                        }
-                                        value = data.token[begin];
-                                        value = value.slice(value.indexOf("class=") + 8);
-                                        value = value.slice(0, value.indexOf(">") - 1);
-                                        return value;
-                                    }());
-                                if (spaceIndex > 0) {
-                                    space = token.slice(spaceIndex);
-                                    token = token.slice(0, spaceIndex);
-                                }
-                                data.token[a] = `<em class="s${scopeValue}">${token}</em>${space}`;
-                                build.push(data.token[a]);
-                            };
-                            if (scopes.length < 1) {
-                                return;
-                            }
-                            do {
-                                s = s - 1;
-                                if (data.token[a].replace(/\s+/, "") === scopes[s][0] && scopes[s][1] <= a) {
-                                    applyScope();
-                                    return;
-                                }
-                            } while (s > 0);
-                            build.push(data.token[a]);
                         },
                         // splits block comments, which are single tokens, into multiple lines of output
                         blockline          = function beautify_script_output_scope_blockline(x:string):void {
@@ -2305,7 +2317,7 @@
                                 c = c + 1;
                             } while (c < d);
                         };
-                    options.jsscope = "none";
+                    options.jsscope = "interim";
                     code.push("<div class=\"beautify\" data-prettydiff-ignore=\"true\"><ol class=\"count\">");
                     code.push("<li>");
                     code.push("1");
@@ -2315,6 +2327,7 @@
                     } else {
                         build.push("<ol class=\"data\"><li>");
                     }
+                    a = 0;
                     if (indent > 0) {
                         do {
                             build.push(tab);
@@ -2324,7 +2337,7 @@
                     scope = 0;
                     // this loops combines the white space as determined from the algorithm with the
                     // tokens to create the output
-                    a = 0;
+                    a = options.start;
                     do {
                         if (data.lexer[a] === lexer || prettydiff.beautify[data.lexer[a]] === undefined) {
                             if (levels[a] > -1 && a < b - 1) {
@@ -2456,7 +2469,7 @@
                         build.push("<em class=\"line\">&#xA;</em></li>");
                     }
                     build.push("</ol></div>");
-                    last = build.join("");
+                    last = build.join("").replace(/prettydifflt/g, "<").replace(/prettydiffgt/g, ">");
                     if (last.match(/<li/g) !== null) {
                         scope = last
                             .match(/<li/g)
@@ -2492,7 +2505,11 @@
                 do {
                     if (data.lexer[a] === lexer || prettydiff.beautify[data.lexer[a]] === undefined) {
                         if (invisibles.indexOf(data.token[a]) < 0) {
-                            build.push(data.token[a]);
+                            if (data.types[a] === "reference" && options.jsscope === "interim") {
+                                reference();
+                            } else {
+                                build.push(data.token[a]);
+                            }
                         }
                         if (a < b - 1 && data.lexer[a + 1] !== lexer && data.begin[a] === data.begin[a + 1] && data.types[a + 1].indexOf("end") < 0 && data.token[a] !== ",") {
                             build.push(" ");

@@ -387,6 +387,7 @@
                 result = JSON.stringify(options.parsed);
             }
         } else {
+            global.prettydiff.scopes = [];
             if (global.prettydiff[modeValue][options.lexer] === undefined && ((options.mode !== "diff" && options.language === "text") || options.language !== "text")) {
                 result = `Error: Library prettydiff.${modeValue}.${options.lexer} does not exist.`;
             } else if (options.mode === "diff") {

@@ -185,8 +185,8 @@ interface record {
     token: string;
     types: string;
 }
-interface scriptScopes extends Array<[string, number, number]>{
-    [index:number]: [string, number, number];
+interface scriptScopes extends Array<[string, number]>{
+    [index:number]: [string, number];
 }
 interface simulationItem {
     artifact?: string;
