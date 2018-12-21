@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta content="application/javascript" http-equiv="content-script-type"/>
+        <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
+            name="google-site-verification"/>
+        <meta content="#bbbbff" name="msapplication-TileColor"/>
+        <meta content="images/pdlogo.svg" name="msapplication-TileImage"/>
+    </head>
+</html>

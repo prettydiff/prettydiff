@@ -167,6 +167,10 @@
                             return;
                         }
 
+                        if (lev < 1) {
+                            lev = 1;
+                        }
+
                         // first, set levels and determine if there are template attributes
                         do {
                             if (data.types[a].indexOf("attribute") > 0) {
@@ -206,7 +210,7 @@
                                 earlyexit = true;
                             } else if (data.types[a] === "attribute") {
                                 len = len + data.token[a].length + 1;
-                                if (attStart === true || (a < c - 1 && data.types[a + 1] !== "template_attribute" && data.types[a + 1].indexOf("attribute") > 0)) {
+                                if (options.force_attribute === true || attStart === true || (a < c - 1 && data.types[a + 1] !== "template_attribute" && data.types[a + 1].indexOf("attribute") > 0)) {
                                     level.push(lev);
                                 } else {
                                     level.push(-10);
@@ -224,7 +228,11 @@
                         if (level[a] !== -20) {
                             level[a] = level[parent];
                         }
-                        level[parent] = -10;
+                        if (options.force_attribute === true) {
+                            level[parent] = lev;
+                        } else {
+                            level[parent] = -10;
+                        }
                         if (earlyexit === true) {
                             return;
                         }
@@ -248,7 +256,7 @@
                             if (options.space_close === false) {
                                 len = len - 1;
                             }
-                            if (len > options.wrap && options.wrap > 0) {
+                            if (len > options.wrap && options.wrap > 0 && options.force_attribute === false) {
                                 do {
                                     y = y - 1;
                                     level[y] = lev;
