@@ -1,0 +1,7 @@
+function y () {
+    const x = function (e) {
+        return e + a;
+    };
+    let a = 0;
+    return x(5);
+}

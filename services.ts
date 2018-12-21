@@ -4065,6 +4065,7 @@ interface readFile {
                 } while (a < len);
                 options.correct      = true;
                 options.diff_context = 4;
+                options.end_comma    = "none";
                 options.lexerOptions = {};
                 options.lexerOptions[options.lexer] = {};
                 options.lexerOptions[options.lexer].objectSort = true;
@@ -4108,7 +4109,8 @@ interface readFile {
                         }
                     } else if (raw[a][0] === formatted[a][0]) {
                         let value:string = "",
-                            numb:number = 0;
+                            numb:number = 0,
+                            name:string = "";
                         reset();
                         notes = raw[a][0].split("_");
                         noteslen = notes.length;
@@ -4119,9 +4121,24 @@ interface readFile {
                         if (noteslen > 3) {
                             b = 3;
                             do {
-                                if (b < noteslen - 1 && options[notes[b] + "_" + notes[b + 1].replace(".txt", "")] !== undefined) {
-                                    notes[b + 1] = notes[b] + "_" + notes[b + 1];
-                                    b = b + 1;
+                                if (b < noteslen - 2 && notes[b].indexOf("-") < 0 && notes[b + 1].indexOf("-") < 0) {
+                                    name = `${notes[b]}_${notes[b + 1]}_${notes[b + 2].replace(".txt", "")}`;
+                                    if (name.indexOf("-") > 0) {
+                                        name = name.slice(0, name.indexOf("-"));
+                                    }
+                                    if (options[name] !== undefined) {
+                                        notes[b + 2] = `${notes[b]}_${notes[b + 1]}_${notes[b + 2]}`;
+                                        b = b + 2;
+                                    }
+                                } else if (b < noteslen - 1 && notes[b].indexOf("-") < 0) {
+                                    name = `${notes[b]}_${notes[b + 1].replace(".txt", "")}`;
+                                    if (name.indexOf("-") > 0) {
+                                        name = name.slice(0, name.indexOf("-"));
+                                    }
+                                    if (options[name] !== undefined) {
+                                        notes[b + 1] = `${notes[b]}_${notes[b + 1]}`;
+                                        b = b + 1;
+                                    }
                                 }
                                 notes[b] = notes[b].replace(".txt", "");
                                 if (notes[b].indexOf("-") > 0 && options[notes[b].slice(0, notes[b].indexOf("-"))] !== undefined) {
@@ -4174,7 +4191,7 @@ interface readFile {
                             let plural:string = (missing === 1)
                                 ? " is"
                                 : "s are";
-                            apps.log([`${text.green + text.bold + filecount + text.none} files passed, but ${text.cyan + text.bold + missing + text.none} file${plural} missing.`], "", "");
+                            apps.log([`${text.green + text.bold + filecount + text.none} files passed, but ${text.angry + missing} file${plural} missing${text.none}.`], "", "");
                         } else {
                             apps.log([`${text.green}All ${filecount} files passed.${text.none}`], "", "");
                         }
@@ -4184,7 +4201,7 @@ interface readFile {
                             let plural:string = (missing === 1)
                                 ? " is"
                                 : "s are";
-                            console.log(`${text.green + text.bold + filecount + text.none} files passed, but ${text.cyan + text.bold + missing + text.none} file${plural} missing.`);
+                            console.log(`${text.green + text.bold + filecount + text.none} files passed, but ${text.angry + missing} file${plural} missing${text.none}.`);
                         } else {
                             console.log(`${text.green}All ${filecount} files passed.${text.none}`);
                         }

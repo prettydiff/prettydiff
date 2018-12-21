@@ -1,0 +1,4 @@
+var a = function x() {
+    return t;
+};
+var b = c.d.f( 1234 );

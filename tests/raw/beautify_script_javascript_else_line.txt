@@ -1,0 +1,7 @@
+var a = function x() {
+var h;
+//qwer
+if (x) {y;}else{t;}
+return t};
+// asdf
+var b = c.d.f(1234);

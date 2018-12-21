@@ -63,7 +63,7 @@
                 "white" : "A white and pale grey color scheme"
             }
         },
-        comm_line        : {
+        comment_line     : {
             api       : "any",
             default   : false,
             definition: "If a blank new line should be forced above comments.",
@@ -149,16 +149,6 @@
             lexer     : "css",
             mode      : "beautify",
             type      : "boolean"
-        },
-        csv_char         : {
-            api       : "any",
-            default   : ",",
-            definition: "The character to be used as a separator if lang is 'csv'.  Any string combinatio" +
-                    "n is accepted.",
-            label     : "Character Separator",
-            lexer     : "csv",
-            mode      : "any",
-            type      : "string"
         },
         diff             : {
             api       : "any",
@@ -252,7 +242,7 @@
         else_line        : {
             api       : "any",
             default   : false,
-            definition: "If elseline is true then the keyword 'else' is forced onto a new line.",
+            definition: "If else_line is true then the keyword 'else' is forced onto a new line.",
             label     : "Else On New Line",
             lexer     : "script",
             mode      : "beautify",
@@ -274,14 +264,14 @@
             default   : "never",
             definition: "If there should be a trailing comma in arrays and objects. Value \"multiline\" o" +
                     "nly applies to modes beautify and diff.",
-            label     : "Indent Comments",
+            label     : "Trailing Comma",
             lexer     : "script",
             mode      : "beautify",
             type      : "string",
             values    : {
                 "always"   : "Always ensure there is a tailing comma",
-                "multiline": "Ignore this option",
-                "never"    : "Remove trailing commas"
+                "never"    : "Remove trailing commas",
+                "none"     : "Ignore this option"
             }
         },
         end_quietly      : {

@@ -170,7 +170,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         div.style.fontSize              = "1.4em";
                         edit                            = ace.edit(div);
                         textarea[nodeName]          = div.getElementsByTagName("textarea")[0];
-                        edit[dollar + "blockScrolling"] = Infinity;
+                        edit[`${dollar}blockScrolling`] = Infinity;
                         return edit;
                     },
                     aces = function dom_load_aces(event:Event):void {
@@ -198,7 +198,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                     if (location.href.indexOf("?") < location.href.length - 1 && location.href.indexOf("?") > 0) {
                                         symbol = "&";
                                     }
-                                    location.replace(addy + symbol + "ace=false");
+                                    location.replace(`${addy + symbol}ace=false`);
                                 }
                             };
                         if (el.checked === true) {
@@ -461,7 +461,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                 reader.onload  = fileLoad;
                                 reader.onerror = function dom_event_file_onerror(event:any):void {
                                     if (textareaEl !== undefined) {
-                                        textareaEl.value = "Error reading file:\n\nThis is the browser's description: " + event.error.name;
+                                        textareaEl.value = `Error reading file:\n\nThis is the browser's description: ${event.error.name}`;
                                     }
                                     fileCount   = -1;
                                 };
@@ -491,19 +491,19 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             math = (height / 14) - (15.81 + headline);
                             aceStore.height = math;
                             if (input !== null) {
-                                input.style.height = math + "em";
+                                input.style.height = `${math}em`;
                                 aceStore
                                     .codeIn
-                                    .setStyle("height:" + math + "em");
+                                    .setStyle(`height:${math}em`);
                                 aceStore
                                     .codeIn
                                     .resize();
                             }
                             if (output !== null) {
-                                output.style.height = math + "em";
+                                output.style.height = `${math}em`;
                                 aceStore
                                     .codeOut
-                                    .setStyle("height:" + math + "em");
+                                    .setStyle(`height:${math}em`);
                                 aceStore
                                     .codeOut
                                     .resize();
@@ -511,10 +511,10 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         } else {
                             math = (height / 14.4) - (15.425 + headline);
                             if (input !== null) {
-                                input.style.height = math + "em";
+                                input.style.height = `${math}em`;
                             }
                             if (output !== null) {
-                                output.style.height = math + "em";
+                                output.style.height = `${math}em`;
                             }
                         }
                     },
@@ -554,7 +554,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         }
                     },
                     insize   = function dom_load_insize():void {
-                        const el:HTMLInputElement = id("option-insize");
+                        const el:HTMLInputElement = id("option-indent_size");
                         if (test.ace === true) {
                             if (textarea.codeIn !== null) {
                                 aceStore
@@ -660,26 +660,26 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             if (buttonGroup.innerHTML.indexOf("save") > 0) {
                                 buttonGroup.getElementsByTagName("button")[1].innerHTML = "\u035f";
                                 if (test.agent.indexOf("macintosh") > 0) {
-                                    parent.style.width = ((data.settings.report[boxName].width / 10) - 8.15) + "em";
+                                    parent.style.width = `${(data.settings.report[boxName].width / 10) - 8.15}em`;
                                 } else {
-                                    parent.style.width = ((data.settings.report[boxName].width / 10) - 9.75) + "em";
+                                    parent.style.width = `${(data.settings.report[boxName].width / 10) - 9.75}em`;
                                 }
                             } else {
                                 buttonGroup.getElementsByTagName("button")[0].innerHTML = "\u035f";
                                 if (test.agent.indexOf("macintosh") > 0) {
-                                    parent.style.width = ((data.settings.report[boxName].width / 10) - 5.15) + "em";
+                                    parent.style.width = `${(data.settings.report[boxName].width / 10) - 5.15}em`;
                                 } else {
-                                    parent.style.width = ((data.settings.report[boxName].width / 10) - 6.75) + "em";
+                                    parent.style.width = `${(data.settings.report[boxName].width / 10) - 6.75}em`;
                                 }
                             }
                             if (data.settings.report[boxName].top < 15) {
                                 data.settings.report[boxName].top = 15;
                             }
                             report[boxName].box.style.right    = "auto";
-                            report[boxName].box.style.left     = (data.settings.report[boxName].left / 10) + "em";
-                            report[boxName].box.style.top      = (data.settings.report[boxName].top / 10) + "em";
-                            report[boxName].body.style.width   = (data.settings.report[boxName].width / 10) + "em";
-                            report[boxName].body.style.height  = (data.settings.report[boxName].height / 10) + "em";
+                            report[boxName].box.style.left     = `${data.settings.report[boxName].left / 10}em`;
+                            report[boxName].box.style.top      = `${data.settings.report[boxName].top / 10}em`;
+                            report[boxName].body.style.width   = `${data.settings.report[boxName].width / 10}em`;
+                            report[boxName].body.style.height  = `${data.settings.report[boxName].height / 10}em`;
                             report[boxName].body.style.display = "block";
                         }
                         if (boxName === "feed") {
@@ -736,7 +736,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         tabkey.style.display = "block";
                         if (test.ace === true) {
                             let item = <HTMLElement>el.parentNode;
-                            item.setAttribute("class", item.getAttribute("class") + " filefocus");
+                            item.setAttribute("class", `${item.getAttribute("class")} filefocus`);
                         }
                     };
 
@@ -1153,11 +1153,11 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                 aceStore
                                     .codeIn
                                     .getSession()
-                                    .setMode("ace/mode/" + param[1]);
+                                    .setMode(`ace/mode/${param[1]}`);
                                 aceStore
                                     .codeOut
                                     .getSession()
-                                    .setMode("ace/mode/" + param[1]);
+                                    .setMode(`ace/mode/${param[1]}`);
                             }
                             method.app.langkey({
                                 sample: aceStore.codeIn.getValue(),
@@ -2207,7 +2207,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
 
                 // connecting to web sockets if running as localhost
                 if (location.href.indexOf("//localhost:") > 0) {
-                    let ws = new WebSocket("ws://localhost:" + ((function dom_load_webSocketsPort():number {
+                    let ws = new WebSocket(`ws://localhost:${(function dom_load_webSocketsPort():number {
                         const uri = location.href;
                         let str:string = uri.slice(location.href.indexOf("host:") + 5),
                             ind:number = str.indexOf("/");
@@ -2227,7 +2227,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             return 8080;
                         }
                         return ind;
-                    }()) + 1));
+                    }()) + 1}`);
                     ws.addEventListener("message", function dom_load_webSockets(event):void {
                         if (event.data === "reload") {
                             location.reload();
@@ -2249,10 +2249,10 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                     if (x.value.length === 0) {
                         x.innerHTML = "/*prettydiff.com \u002a/";
                     } else {
-                        x.innerHTML = "/*prettydiff.com " + data
+                        x.innerHTML = `/*prettydiff.com ${data
                             .commentString
                             .join(", ")
-                            .replace(/api\./g, "") + " \u002a/";
+                            .replace(/api\./g, "")} \u002a/`;
                     }
                     x = id("commentClear");
                     if (x !== null) {
@@ -2448,21 +2448,21 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             if (data.commentString.length === 0) {
                 comment.innerHTML = "/*prettydiff.com \u002a/";
             } else if (data.commentString.length === 1) {
-                comment.innerHTML = "/*prettydiff.com " + data
+                comment.innerHTML = `/*prettydiff.com ${data
                     .commentString[0]
                     .replace(/&/g, "&amp;")
                     .replace(/</g, "&lt;")
                     .replace(/>/g, "&gt;")
-                    .replace(/api\./g, "") + " \u002a/";
+                    .replace(/api\./g, "")} \u002a/`;
             } else {
                 data.commentString.sort();
-                comment.innerHTML = "/*prettydiff.com " + data
+                comment.innerHTML = `/*prettydiff.com ${data
                     .commentString
                     .join(", ")
                     .replace(/&/g, "&amp;")
                     .replace(/</g, "&lt;")
                     .replace(/>/g, "&gt;")
-                    .replace(/api\./g, "") + " \u002a/";
+                    .replace(/api\./g, "")} \u002a/`;
             }
         }
         method.app.hideOutput();
@@ -2515,7 +2515,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             : (langdefault.value === "text" && options.mode !== "diff")
                 ? "javascript"
                 : langdefault.value;
-        defaultt = language.setlangmode(defaultval);
+        defaultt = language.setlexer(defaultval);
         if (defaultval === "auto") {
             obj.name = "auto";
         }
@@ -2526,11 +2526,11 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
         } else if (obj.name === "text") {
             data.langvalue = ["plain_text", "text", "Plain Text"];
         } else if (obj.name !== "") {
-            data.langvalue = [obj.name, language.setlangmode(obj.name), language.nameproper(obj.name)];
+            data.langvalue = [obj.name, language.setlexer(obj.name), language.nameproper(obj.name)];
         } else if (obj.sample !== "" || test.ace === false) {
             data.langvalue = language.auto(obj.sample, defaultt);
         } else {
-            data.langvalue = [defaultt, language.setlangmode(defaultt), language.nameproper(defaultt)];
+            data.langvalue = [defaultt, language.setlexer(defaultt), language.nameproper(defaultt)];
         }
         value = data.langvalue;
         if (test.ace === true) {
@@ -2547,13 +2547,13 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 aceStore
                     .codeIn
                     .getSession()
-                    .setMode("ace/mode/" + value[0]);
+                    .setMode(`ace/mode/${value[0]}`);
             }
             if (textarea.codeOut !== null) {
                 aceStore
                     .codeOut
                     .getSession()
-                    .setMode("ace/mode/" + value[0]);
+                    .setMode(`ace/mode/${value[0]}`);
             }
         }
         if (obj.name === "text") {
@@ -2738,9 +2738,9 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 list[1][a].style.display = "none";
                 a = a + 1;
             } while (a < max);
-            el.innerHTML = "+" + el
+            el.innerHTML = `+${el
                 .innerHTML
-                .substr(1);
+                .substr(1)}`;
         } else {
             do {
                 list[0][a].style.display = "block";
@@ -2752,9 +2752,9 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 }
                 a = a + 1;
             } while (a < max);
-            el.innerHTML = "-" + el
+            el.innerHTML = `-${el
                 .innerHTML
-                .substr(1);
+                .substr(1)}`;
         }
     };
     //change the color scheme of the web UI
@@ -2824,10 +2824,10 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             } else {
                 logoColor = "666";
             }
-            logo.style.borderColor = "#" + logoColor;
+            logo.style.borderColor = `#${logoColor}`;
             logo
                 .getElementsByTagName("g")[0]
-                .setAttribute("fill", "#" + logoColor);
+                .setAttribute("fill", `#${logoColor}`);
         }
         if (test.load === false && event !== null) {
             method
@@ -2877,7 +2877,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
         }
         offset             = offset + node.clientWidth;
         node.style.cursor  = "ew-resize";
-        diff.style.width   = (total / 10) + "em";
+        diff.style.width   = `${total / 10}em`;
         diff.style.display = "inline-block";
         if (diffLeft.nodeType !== 1) {
             do {
@@ -2885,7 +2885,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             } while (diffLeft.nodeType !== 1);
         }
         diffLeft.style.display   = "block";
-        diffRight.style.width    = (diffRight.clientWidth / 10) + "em";
+        diffRight.style.width    = `${diffRight.clientWidth / 10}em`;
         diffRight.style.position = "absolute";
         if (touch === true) {
             document.ontouchmove  = function dom_event_colSliderGrab_Touchboxmove(f:TouchEvent):void {
@@ -2895,18 +2895,18 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                     withinRange = true;
                 }
                 if (withinRange === true && subOffset > maxAdjust) {
-                    diffRight.style.width = ((total - counter - 2) / 10) + "em";
+                    diffRight.style.width = `${(total - counter - 2) / 10}em`;
                     status                = "e";
                 } else if (withinRange === true && subOffset < minAdjust) {
-                    diffRight.style.width = ((total - counter - data - 2) / 10) + "em";
+                    diffRight.style.width = `${(total - counter - data - 2) / 10}em`;
                     status                = "w";
                 } else if (subOffset < max && subOffset > min) {
-                    diffRight.style.width = ((width + subOffset) / 10) + "em";
+                    diffRight.style.width = `${(width + subOffset) / 10}em`;
                     status                = "ew";
                 }
                 document.ontouchend = function dom_event_colSliderGrab_Touchboxmove_drop(f:TouchEvent):void {
                     f.preventDefault();
-                    node.style.cursor = status + "-resize";
+                    node.style.cursor = `${status}-resize`;
                     document.ontouchmove = null;
                     document.ontouchend  = null;
                 };
@@ -2920,18 +2920,18 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                     withinRange = true;
                 }
                 if (withinRange === true && subOffset > maxAdjust) {
-                    diffRight.style.width = ((total - counter - 2) / 10) + "em";
+                    diffRight.style.width = `${(total - counter - 2) / 10}em`;
                     status                = "e";
                 } else if (withinRange === true && subOffset < minAdjust) {
-                    diffRight.style.width = ((total - counter - data - 2) / 10) + "em";
+                    diffRight.style.width = `${(total - counter - data - 2) / 10}em`;
                     status                = "w";
                 } else if (subOffset < max && subOffset > min) {
-                    diffRight.style.width = ((width + subOffset) / 10) + "em";
+                    diffRight.style.width = `${(width + subOffset) / 10}em`;
                     status                = "ew";
                 }
                 document.onmouseup = function dom_event_colSliderGrab_Mouseboxmove_drop(f:MouseEvent):void {
                     f.preventDefault();
-                    node.style.cursor = status + "-resize";
+                    node.style.cursor = `${status}-resize`;
                     document.onmousemove = null;
                     document.onmouseup   = null;
                 };
@@ -2966,7 +2966,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             ? lists[0].length
             : Number(title[2]);
         if (inner.charAt(0) === "-") {
-            node.innerHTML = "+" + inner.substr(1);
+            node.innerHTML = `+${inner.substr(1)}`;
             a = min;
             if (min < max) {
                 do {
@@ -2979,7 +2979,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 } while (a < max);
             }
         } else {
-            node.innerHTML = "-" + inner.substr(1);
+            node.innerHTML = `-${inner.substr(1)}`;
             a = min;
             if (min < max) {
                 do {
@@ -3043,7 +3043,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             arr = str.split("");
                             len = str.length - 4
                             do {
-                                arr[len] = arr[len] + ",";
+                                arr[len] = `${arr[len]},`;
                                 len = len - 3;
                             } while (len > -1);
                             return arr.join("");
@@ -3052,10 +3052,10 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             const plural       = function dom_event_execute_app_renderOutput_proctime_plural(x:number, y:string):string {
                                     let a = x + y;
                                     if (x !== 1) {
-                                        a = a + "s";
+                                        a = `${a}s`;
                                     }
                                     if (y !== " second") {
-                                        a = a + " ";
+                                        a = `${a} `;
                                     }
                                     return a;
                                 },
@@ -3065,14 +3065,14 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                     minutes      = elapsed - (minutes * 60);
                                     secondString = (minutes === 1)
                                         ? "1 second"
-                                        : minutes.toFixed(3) + " seconds";
+                                        : `${minutes.toFixed(3)} seconds`;
                                 };
                             let elapsed:number      = (Date.now() - startTime) / 1000,
                                 minuteString:string = "",
                                 hourString:string   = "",
                                 minutes:number      = 0,
                                 hours:number        = 0,
-                                secondString:string = elapsed + "";
+                                secondString:string = String(elapsed);
                             if (elapsed >= 60 && elapsed < 3600) {
                                 minute();
                             } else if (elapsed >= 3600) {
@@ -3229,7 +3229,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                         if (report.code.body.style.display === "none") {
                                             report.code.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0].focus();
                                         }
-                                        report.code.box.style.top   = (data.settings.report.code.top / 10) + "em";
+                                        report.code.box.style.top   = `${data.settings.report.code.top / 10}em`;
                                         report.code.box.style.right = "auto";
                                     }
                                 }
@@ -3251,7 +3251,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                 if (report.code.body.style.display === "none") {
                                     report.code.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0].focus();
                                 }
-                                report.code.box.style.top   = (data.settings.report.code.top / 10) + "em";
+                                report.code.box.style.top   = `${data.settings.report.code.top / 10}em`;
                                 report.code.box.style.right = "auto";
                                 diffList                                 = report
                                     .code
@@ -3370,9 +3370,9 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                 ann.innerHTML = sanitize(errortext);
                             } else if (id("jserror") !== null) {
                                 ann.removeAttribute("class");
-                                ann.innerHTML = "<strong>" + id("jserror")
+                                ann.innerHTML = `<strong>${id("jserror")
                                     .getElementsByTagName("strong")[0]
-                                    .innerHTML + "</strong> <span>See 'Code Report' for details</span>";
+                                    .innerHTML}</strong> <span>See 'Code Report' for details</span>`;
                             } else {
                                 if (autolang === true && options.language === "jsx") {
                                     ann.innerHTML = "Code type is set to <em>auto</em>. Presumed language is <strong>React JSX</strong>.";
@@ -3381,7 +3381,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                 } else if (autolexer === true) {
                                     ann.innerHTML = `Lexer is set to <em>auto</em>. Presumed language is <strong>${data.langvalue[2]}</strong>.`;
                                 } else {
-                                    ann.innerHTML = "Language set to <strong>" + data.langvalue[2] + "</strong>.";
+                                    ann.innerHTML = `Language set to <strong>${data.langvalue[2]}</strong>.`;
                                 }
                                 if (options.mode === "parse" && options.parse_format !== "htmltable") {
                                     pdlang = "tokens";
@@ -3607,7 +3607,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 if (filetest === true) {
                     xhr.open("GET", options.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
                 } else {
-                    xhr.open("GET", "proxy.php?x=" + options.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                    xhr.open("GET", `proxy.php?x=${options.source.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?")}`, true);
                 }
                 xhr.send();
             }
@@ -3655,7 +3655,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                     if (filetest === true) {
                         xhr.open("GET", options.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
                     } else {
-                        xhr.open("GET", "proxy.php?x=" + options.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?"), true);
+                        xhr.open("GET", `proxy.php?x=${options.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?")}`, true);
                     }
                     xhr.send();
                 }
@@ -3701,7 +3701,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
         sel              = node.selectionStart;
         start            = val.substring(0, sel);
         end              = val.substring(sel, val.length);
-        node.value          = start + "\t" + end;
+        node.value          = `${start}\t${end}`;
         node.selectionStart = sel + 1;
         node.selectionEnd   = sel + 1;
         event.preventDefault();
@@ -3755,12 +3755,12 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 if (boxTop < 10) {
                     box.style.top = "1em";
                 } else if (boxTop > (max - 40)) {
-                    box.style.top = ((max / 10) - 4) + "em";
+                    box.style.top = `${(max / 10) - 4}em`;
                 } else {
-                    box.style.top = (boxTop / 10) + "em";
+                    box.style.top = `${boxTop / 10}em`;
                 }
                 if (boxLeft < ((headingWidth * -1) + 40)) {
-                    box.style.left = (((headingWidth * -1) + 40) / 10) + "em";
+                    box.style.left = `${((headingWidth * -1) + 40) / 10}em`;
                 }
                 body.style.opacity = "1";
                 box.style.height   = "auto";
@@ -3775,16 +3775,16 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             boxmoveTouch    = function dom_event_grab_boxmoveTouch(f:TouchEvent):boolean {
                 f.preventDefault();
                 box.style.right = "auto";
-                box.style.left      = ((boxLeft + (f.touches[0].clientX - touchX)) / 10) + "em";
-                box.style.top       = ((boxTop + (f.touches[0].clientY - touchY)) / 10) + "em";
+                box.style.left      = `${(boxLeft + (f.touches[0].clientX - touchX)) / 10}em`;
+                box.style.top       = `${(boxTop + (f.touches[0].clientY - touchY)) / 10}em`;
                 document.ontouchend = drop;
                 return false;
             },
             boxmoveClick = function dom_event_grab_boxmoveClick(f:MouseEvent):boolean {
                 f.preventDefault();
                 box.style.right = "auto";
-                box.style.left     = ((boxLeft + (f.clientX - mouseX)) / 10) + "em";
-                box.style.top      = ((boxTop + (f.clientY - mouseY)) / 10) + "em";
+                box.style.left     = `${(boxLeft + (f.clientX - mouseX)) / 10}em`;
+                box.style.top      = `${(boxTop + (f.clientY - mouseY)) / 10}em`;
                 document.onmouseup = drop;
                 return false;
             };
@@ -3825,9 +3825,9 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             } while (heading.nodeType !== 1);
         }
         body.style.opacity = ".5";
-        heading.style.top  = (box.clientHeight / 20) + "0em";
+        heading.style.top  = `${box.clientHeight / 20}0em`;
         box.style.height   = ".1em";
-        resize.style.top   = ((Number(body.style.height.replace("em", "")) + 5.45) / 1.44) + "em";
+        resize.style.top   = `${(Number(body.style.height.replace("em", "")) + 5.45) / 1.44}em`;
         if (touch === true) {
             document.ontouchmove  = boxmoveTouch;
             document.ontouchstart = null;
@@ -3900,16 +3900,16 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             data.settings.report[idval].height = body.clientHeight - 36;
             data.settings.report[idval].width  = body.clientWidth - 3;
             data.settings.report[idval].zindex = box.style.zIndex;
-            box.style.top               = (top / 10) + "em";
-            box.style.left              = (left / 10) + "em";
+            box.style.top               = `${top / 10}em`;
+            box.style.left              = `${left / 10}em`;
             if (typeof window.innerHeight === "number") {
-                body.style.height = ((window.innerHeight / 10) - 5.5) + "em";
+                body.style.height = `${(window.innerHeight / 10) - 5.5}em`;
                 if (save === true) {
-                    heading.style.width = ((window.innerWidth / 10) - 13.76) + "em";
+                    heading.style.width = `${(window.innerWidth / 10) - 13.76}em`;
                 } else {
-                    heading.style.width = ((window.innerWidth / 10) - 10.76) + "em";
+                    heading.style.width = `${(window.innerWidth / 10) - 10.76}em`;
                 }
-                body.style.width = ((window.innerWidth / 10) - 4.1) + "em";
+                body.style.width = `${(window.innerWidth / 10) - 4.1}em`;
             }
             resize.style.display = "none";
 
@@ -3918,15 +3918,15 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             data.settings.report[idval].max = false;
             node.innerHTML              = "\u2191";
             node.setAttribute("title", "Maximize this dialogue to the browser window.");
-            box.style.top  = (data.settings.report[idval].top / 10) + "em";
-            box.style.left = (data.settings.report[idval].left / 10) + "em";
+            box.style.top  = `${data.settings.report[idval].top / 10}em`;
+            box.style.left = `${data.settings.report[idval].left / 10}em`;
             if (save === true) {
-                heading.style.width = ((data.settings.report[idval].width / 10) - 9.76) + "em";
+                heading.style.width = `${(data.settings.report[idval].width / 10) - 9.76}em`;
             } else {
-                heading.style.width = ((data.settings.report[idval].width / 10) - 6.76) + "em";
+                heading.style.width = `${(data.settings.report[idval].width / 10) - 6.76}em`;
             }
-            body.style.width     = (data.settings.report[idval].width / 10) + "em";
-            body.style.height    = (data.settings.report[idval].height / 10) + "em";
+            body.style.width     = `${data.settings.report[idval].width / 10}em`;
+            body.style.height    = `${data.settings.report[idval].height / 10}em`;
             box.style.zIndex     = data.settings.report[idval].zindex;
             resize.style.display = "block";
             method
@@ -3956,19 +3956,19 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         height                   = height + incH;
                         left                = left + incL;
                         top                 = top + incT;
-                        body.style.width    = width + "em";
-                        body.style.height   = height + "em";
-                        heading.style.width = (width - saveSpace) + "em";
-                        box.style.left      = left + "em";
-                        box.style.top       = top + "em";
+                        body.style.width    = `${width}em`;
+                        body.style.height   = `${height}em`;
+                        heading.style.width = `${width - saveSpace}em`;
+                        box.style.left      = `${left}em`;
+                        box.style.top       = `${top}em`;
                         if (width + incW < widthTarget || height + incH < heightTarget) {
                             setTimeout(dom_event_minimize_growth_grow, 1);
                         } else {
-                            box.style.left      = leftTarget + "em";
-                            box.style.top       = topTarget + "em";
-                            body.style.width    = widthTarget + "em";
-                            body.style.height   = heightTarget + "em";
-                            heading.style.width = (widthTarget - saveSpace) + "em";
+                            box.style.left      = `${leftTarget}em`;
+                            box.style.top       = `${topTarget}em`;
+                            body.style.width    = `${widthTarget}em`;
+                            body.style.height   = `${heightTarget}em`;
+                            heading.style.width = `${widthTarget - saveSpace}em`;
                             method
                                 .app
                                 .options(e);
@@ -4012,11 +4012,11 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 widthTarget  = widthTarget - 0.3;
                 heightTarget = heightTarget - 3.55;
                 if (step === 1) {
-                    box.style.left    = leftTarget + "em";
-                    box.style.top     = ((window.innerHeight / 10) - 30) + "em";
-                    body.style.width  = widthTarget + "em";
-                    body.style.height = heightTarget + "em";
-                    heading.style.width    = (widthTarget - saveSpace) + "em";
+                    box.style.left    = `${leftTarget}em`;
+                    box.style.top     = `${(window.innerHeight / 10) - 30}em`;
+                    body.style.width  = `${widthTarget}em`;
+                    body.style.height = `${heightTarget}em`;
+                    heading.style.width    = `${widthTarget - saveSpace}em`;
                     body.style.right = "auto";
                     body.style.display = "block";
                     box.getElementsByTagName("p")[0].style.display = "block";
@@ -4054,17 +4054,17 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         top                 = top + incT;
                         width                    = width - incW;
                         height                   = height - incH;
-                        body.style.width    = width + "em";
-                        heading.style.width = width + "em";
-                        body.style.height   = height + "em";
-                        box.style.left      = left + "em";
-                        box.style.top       = top + "em";
+                        body.style.width    = `${width}em`;
+                        heading.style.width = `${width}em`;
+                        body.style.height   = `${height}em`;
+                        box.style.left      = `${left}em`;
+                        box.style.top       = `${top}em`;
                         if (width - incW > 16.8) {
                             setTimeout(dom_event_minimize_shrinkage_shrink, 1);
                         } else {
                             box.style.left      = "auto";
                             box.style.top       = "auto";
-                            box.style.right     = final + "em";
+                            box.style.right     = `${final}em`;
                             data.settings.report[idval].max = false;
                             body.style.display  = "none";
                             heading.getElementsByTagName("button")[0].style.cursor = "pointer";
@@ -4361,13 +4361,13 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 nametry = JSON.stringify(localStorage.getItem("settings"));
             }
             if (localStorage.getItem("settings") === undefined || localStorage.getItem("settings") === null || nametry === "" || nametry.indexOf("knownname") < 0) {
-                name = "\"" + Math
+                name = `"${Math
                     .random()
                     .toString()
                     .slice(2) + Math
                     .random()
                     .toString()
-                    .slice(2) + "\"";
+                    .slice(2)}"`;
             }
             data.settings.knownname = name;
         }
@@ -4414,13 +4414,13 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 document.onmouseup = null;
             },
             boxsize    = function dom_event_resize_boxsize(f:MouseEvent):void {
-                body.style.width = ((bodyWidth + ((f.clientX - offsetw) - offX)) / 10) + "em";
+                body.style.width = `${(bodyWidth + ((f.clientX - offsetw) - offX)) / 10}em`;
                 if (save === true) {
-                    heading.style.width = (((bodyWidth + (f.clientX - offX)) / 10) - 10.15) + "em";
+                    heading.style.width = `${((bodyWidth + (f.clientX - offX)) / 10) - 10.15}em`;
                 } else {
-                    heading.style.width = (((bodyWidth + (f.clientX - offX)) / 10) - 7.15) + "em";
+                    heading.style.width = `${((bodyWidth + (f.clientX - offX)) / 10) - 7.15}em`;
                 }
-                body.style.height  = ((bodyHeight + ((f.clientY - offseth) - offY)) / 10) + "em";
+                body.style.height  = `${(bodyHeight + ((f.clientY - offseth) - offY)) / 10}em`;
                 document.onmouseup = drop;
             };
         bodyWidth  = body.clientWidth,

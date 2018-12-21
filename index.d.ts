@@ -85,7 +85,7 @@ interface finalFile {
 interface language {
     auto(sample:string, defaultLang:string): languageAuto;
     nameproper(input:string): string;
-    setlangmode(input:string):string;
+    setlexer(input:string):string;
 }
 interface library {
     (): string;
