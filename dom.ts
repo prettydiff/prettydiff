@@ -3388,7 +3388,9 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                 } else {
                                     pdlang = "characters";
                                 }
-                                if (meta.error === "" || meta.error === undefined) {
+                                if (window.parseFramework.parseerror !== "" && ann !== null) {
+                                    ann.innerHTML = `${ann.innerHTML}<span><strong>Parse Error:</strong> ${sanitize(window.parseFramework.parseerror)}</span>`;
+                                } else if (meta.error === "" || meta.error === undefined) {
                                     ann.innerHTML = `${ann.innerHTML}<span><em>Execution time:</em> <strong>${sanitize(meta.time)}</strong>. <em>Output size:</em> <strong>${commanumb(meta.outsize)} ${pdlang}</strong></span>`;
                                 } else {
                                     ann.innerHTML = `${ann.innerHTML}<span><strong>${sanitize(meta.error)}</strong></span>`;
@@ -3427,9 +3429,6 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                     meta.difflines = diffmeta.lines;
                 } else {
                     meta.insize = options.source.length;
-                    if (window.parseFramework.parseerror !== "" && ann !== null) {
-                        ann.innerHTML = `<strong>Parse Error:</strong> ${sanitize(window.parseFramework.parseerror)}`;
-                    }
                     output = prettydiff.mode(options);
                     if (output.indexOf("Error: ") === 0) {
                         ann.innerHTML = output.replace("Error: ", "");

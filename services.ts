@@ -4129,6 +4129,15 @@ interface readFile {
                                     if (options[name] !== undefined) {
                                         notes[b + 2] = `${notes[b]}_${notes[b + 1]}_${notes[b + 2]}`;
                                         b = b + 2;
+                                    } else if (b < noteslen - 1 && notes[b].indexOf("-") < 0) {
+                                        name = `${notes[b]}_${notes[b + 1].replace(".txt", "")}`;
+                                        if (name.indexOf("-") > 0) {
+                                            name = name.slice(0, name.indexOf("-"));
+                                        }
+                                        if (options[name] !== undefined) {
+                                            notes[b + 1] = `${notes[b]}_${notes[b + 1]}`;
+                                            b = b + 1;
+                                        }
                                     }
                                 } else if (b < noteslen - 1 && notes[b].indexOf("-") < 0) {
                                     name = `${notes[b]}_${notes[b + 1].replace(".txt", "")}`;

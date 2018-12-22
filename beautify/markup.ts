@@ -63,7 +63,7 @@
                     comment = function beautify_markup_levels_comment():void {
                         let x:number = a,
                             test:boolean = false;
-                        if (data.lines[a + 1] === 0) {
+                        if (data.lines[a + 1] === 0 && options.force_indent === false) {
                             do {
                                 if (data.lines[x] > 0) {
                                     test = true;
@@ -291,19 +291,19 @@
                                     anchorList();
                                 }
                             }
-                            if (data.token[a] === "}" && data.types[a] === "script" && data.types[a + 1] === "end") {
+                            if (data.types[a] === "script_end" && data.types[a + 1] === "end") {
                                 if (data.lines[a + 1] < 1) {
                                     level.push(-20);
                                 } else {
                                     level.push(-10);
                                 }
-                            } else if (options.force_indent === false && (data.types[a] === "content" || data.types[a] === "singleton" || data.types[a] === "template")) {
-                                if (next < c && (data.types[next].indexOf("end") > -1 || data.types[next].indexOf("start") > -1) && data.lines[next] > 0) {
+                            } else if ((options.force_indent === false || (options.force_indent === true && data.types[next] === "script_start")) && (data.types[a] === "content" || data.types[a] === "singleton" || data.types[a] === "template")) {
+                                if (data.lines[next] > 0 && data.types[next] === "script_start") {
+                                    level.push(-10);
+                                } else if (next < c && (data.types[next].indexOf("end") > -1 || data.types[next].indexOf("start") > -1) && data.lines[next] > 0) {
                                     level.push(indent);
                                 } else if (data.lines[next] === 0) {
                                     level.push(-20);
-                                } else if (data.lines[next] > 0 && data.token[next] === "{" && data.types[next] === "script") {
-                                    level.push(-10);
                                 } else {
                                     level.push(indent);
                                 }
@@ -315,10 +315,10 @@
                                     } else {
                                         level.push(-10);
                                     }
-                                } else if (options.force_indent === true) {
-                                    level.push(indent);
                                 } else if (data.types[a] === "start" && data.types[next] === "end") {
                                     level.push(-20);
+                                } else if (options.force_indent === true) {
+                                    level.push(indent);
                                 } else if (data.types[a] === "template_start" && data.types[next] === "template_end") {
                                     level.push(-20);
                                 } else if (data.lines[next] === 0 && (data.types[next] === "content" || data.types[next] === "singleton")) {
@@ -328,7 +328,7 @@
                                 }
                             } else if (options.force_indent === false && data.lines[next] === 0 && (data.types[next] === "content" || data.types[next] === "singleton")) {
                                 level.push(-20);
-                            } else if (data.token[a + 2] === "}" && data.types[a + 2] === "script") {
+                            } else if (data.types[a + 2] === "script_end") {
                                 level.push(-20);
                             } else {
                                 level.push(indent);
