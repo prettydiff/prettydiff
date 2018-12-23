@@ -137,6 +137,9 @@
                                 } else {
                                     level.push(indent);
                                 }
+                                if (options.comment_line === true && level[a] > -1 && data.lines[a] < 3) {
+                                    data.lines[a] = 3;
+                                }
                             }
                             if (data.types[a + 1] !== "comment") {
                                 notcomment = true;
@@ -158,6 +161,9 @@
                             level.push(indent + 1);
                         } else {
                             level.push(indent);
+                        }
+                        if (options.comment_line === true && level[a] > -1 && data.lines[a] < 3) {
+                            data.lines[a] = 3;
                         }
                     },
                     destructfix   = function beautify_script_level_destructFix(listFix:boolean, override:boolean):void {
