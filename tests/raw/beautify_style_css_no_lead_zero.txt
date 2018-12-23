@@ -1,0 +1,6 @@
+#prettydiff td {border-style:solid;border-width:0.1em;padding:0.1em 0.2em}
+#prettydiff #doc_contents ol ol li{font-size:0.75em;list-style:lower-alpha;margin:0.5em 0 1em 3em}
+#prettydiff #dcolorScheme{float:right;margin:-0.3em 0 0}
+#prettydiff #a11y div{margin:0.5em 0;border-style:solid;border-width:0.1em}
+#prettydiff #a11y h4{margin:0.25em 0}
+#prettydiff .beautify h4{border-style:none none solid none;border-width:0 0 0.1em 0;box-shadow:none;display:block;font-size:1.2em;margin:0 0 0 -.1em;padding:0.2em 2em;text-align:left}

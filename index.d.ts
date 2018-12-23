@@ -140,8 +140,7 @@ interface option {
     }
 }
 interface optionDef {
-    binaryCheck: RegExp;
-    definitions: any;
+    [key:string]: option;
 }
 interface optionFunctions {
     definitions?: {};

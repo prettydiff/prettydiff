@@ -768,7 +768,7 @@
         ternary_line     : {
             api       : "any",
             default   : false,
-            definition: "If ternary operators in JavaScript (? and :) should remain on the same line.",
+            definition: "If ternary operators in JavaScript ? and : should remain on the same line.",
             label     : "Keep Ternary Statements On One Line",
             lexer     : "script",
             mode      : "beautify",

@@ -41,7 +41,7 @@ Executing in a terminal shell is powerful when you need access to additional too
 * To see execution details of a specific command specify the *verbose* flag: `node js/services options readmethod --verbose`
 
 ### Options
-For supported option documentation you may read the *documentation.xhtml* file in a browser or use these commands on the terminal:
+For supported option documentation you may read the *documentation.xhtml* file in a browser, [options.md](options.md) markdown file, or use these commands on the terminal:
 
 * `node js/services options`
 * `node js/services options mode` (use the command with an option name for detailed information)

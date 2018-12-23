@@ -2,6 +2,7 @@ import { Stats } from "fs";
 import * as http from "http";
 import { Stream, Writable } from "stream";
 import { Hash } from "crypto";
+import { domainToASCII } from "url";
 type directoryItem = [string, "file" | "directory" | "link" | "screen", number, number, Stats];
 interface directoryList extends Array<directoryItem> {
     [key:number]: directoryItem;
@@ -639,7 +640,7 @@ interface readFile {
             },
             readOptions = function node_args_readOptions():void {
                 const list:string[] = process.argv,
-                    def = prettydiff.api.optionDef,
+                    def:optionDef = prettydiff.api.optionDef,
                     keys:string[] = (command === "options")
                         ? Object.keys(def.mode)
                         : [],
@@ -876,6 +877,7 @@ interface readFile {
                 "npminstall",
                 "language",
                 "css",
+                "optionsMarkdown",
                 "typescript",
                 "libraries",
                 "lint",
@@ -1373,6 +1375,58 @@ interface readFile {
                             console.log(`${apps.humantime(false) + text.green}Dependencies appear to be already installed...${text.none}`);
                             next();
                         }
+                    });
+                },
+                optionsMarkdown: function node_apps_build_optionsMarkdown():void {
+                    const def:optionDef = prettydiff.api.optionDef,
+                        keys:string[] = Object.keys(def),
+                        len:number = keys.length,
+                        doc:string[] = ["# Pretty Diff Options"];
+                    let a:number = 0,
+                        b:number = 0,
+                        lenv:number = 0,
+                        vals:string[] = [],
+                        valstring:string[] = [];
+                    heading("Writing options documentation in markdown format");
+                    do {
+                        doc.push("");
+                        doc.push(`## ${keys[a]}`);
+                        doc.push("property | value");
+                        doc.push("-----------|---");
+                        doc.push(`api        | ${def[keys[a]].api}`);
+                        doc.push(`default    | ${def[keys[a]].default}`);
+                        doc.push(`definition | ${def[keys[a]].definition}`);
+                        doc.push(`label      | ${def[keys[a]].label}`);
+                        doc.push(`lexer      | ${def[keys[a]].lexer}`);
+                        doc.push(`mode       | ${def[keys[a]].mode}`);
+                        doc.push(`type       | ${def[keys[a]].type}`);
+                        if (def[keys[a]].values !== undefined) {
+                            vals = Object.keys(def[keys[a]].values);
+                            valstring = [`values | ${vals[0]}`];
+                            b = 1;
+                            lenv = vals.length;
+                            do {
+                                valstring.push(vals[b]);
+                                b = b + 1;
+                            } while (b < lenv);
+                            doc.push(valstring.join(", "));
+                            b = 0;
+                            doc.push("");
+                            doc.push("### Value Definitions");
+                            do {
+                                doc.push(`* **${vals[b]}** - ${def[keys[a]].values[vals[b]]}`);
+                                b = b + 1;
+                            } while (b < lenv);
+                        }
+                        a = a + 1;
+                    } while (a < len);
+                    node.fs.writeFile("options.md", doc.join("\n"), "utf8", function node_apps_build_optionsMarkdown_writeFile(err:Error) {
+                        if (err !== null) {
+                            apps.errout([err.toString()]);
+                            return;
+                        }
+                        console.log(`${apps.humantime(false) + text.green}Options documentation successfully written to markdown file.${text.none}`);
+                        next();
                     });
                 },
                 parseFramework: function node_apps_build_parseFramework():void {
@@ -2897,7 +2951,7 @@ interface readFile {
     };
     // CLI documentation for supported Pretty Diff options
     apps.options = function node_apps_options():void {
-        const def:any = prettydiff.api.optionDef;
+        const def:optionDef = prettydiff.api.optionDef;
         if (def[process.argv[0]] === undefined) {
             if (process.argv.length < 1) {
                 // all options in a list

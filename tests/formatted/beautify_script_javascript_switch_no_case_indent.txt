@@ -1,0 +1,18 @@
+function () {
+    var a = 1;
+    switch (a) {
+    case 1:
+        something;
+        break;
+    case 2:
+        blah;
+        break;
+    case 3:
+    case 4:
+    case 5:
+        nothing;
+        break;
+    default:
+        last;
+    }
+}

@@ -545,6 +545,8 @@
                             }
                             if (options.language === "jsx") {
                                 markupList();
+                            } else if (ctoke === "]" && level[data.begin[a]] > -1) {
+                                level[a - 1] = level[data.begin[a]] - 1;
                             } else {
                                 level[a - 1] = -20;
                             }
@@ -602,6 +604,9 @@
                                 } while (c > -1);
                             } else if (options.language === "jsx") {
                                 markupList();
+                            }
+                            if (level[data.begin[a]] > -1) {
+                                level[a - 1] = level[data.begin[a]] - 1;
                             }
                             level.push(-20);
                         } else if (ctoke === "}" || ctoke === "x}" || list[list.length - 1] === true) {
