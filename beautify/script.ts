@@ -565,7 +565,7 @@
                                 level.push(-20);
                             }
                         } else if (ctoke === "]") {
-                            if ((list[list.length - 1] === true && destruct[destruct.length - 1] === false) || (ltoke === "]" && level[a - 2] === indent + 1)) {
+                            if ((list[list.length - 1] === true && destruct[destruct.length - 1] === false && options.format_array !== "inline") || (ltoke === "]" && level[a - 2] === indent + 1)) {
                                 level[a - 1]    = indent;
                                 level[data.begin[a]] = indent + 1;
                             } else if (level[a - 1] === -10) {
@@ -577,8 +577,8 @@
                                 if (ltoke === "}" || ltoke === "x}") {
                                     level[a - 1] = indent;
                                 }
-                                let c = a - 1,
-                                    d = 1;
+                                let c:number = a - 1,
+                                    d:number = 1;
                                 do {
                                     if (data.token[c] === "]") {
                                         d = d + 1;
@@ -605,7 +605,23 @@
                             } else if (options.language === "jsx") {
                                 markupList();
                             }
-                            if (level[data.begin[a]] > -1) {
+                            if (options.format_array === "inline") {
+                                let c:number = a,
+                                    begin:number = data.begin[a];
+                                do {
+                                    c = c - 1;
+                                    if (data.types[c] === "end") {
+                                        break;
+                                    }
+                                } while (c > begin);
+                                if (c > begin) {
+                                    level[data.begin[a]] = indent + 1;
+                                    level[a - 1] = indent;
+                                } else {
+                                    level[data.begin[a]] = -20;
+                                    level[a - 1] = -20;
+                                }
+                            } else if (level[data.begin[a]] > -1) {
                                 level[a - 1] = level[data.begin[a]] - 1;
                             }
                             level.push(-20);
@@ -1236,6 +1252,26 @@
                                     } while (aa > data.begin[a]);
                                 }
                             }
+                            if (data.stack[a] === "array" && options.format_array === "indent") {
+                                level[a - 1] = -20;
+                                level.push(indent);
+                                return;
+                            }
+                            if (data.stack[a] === "array" && options.format_array === "inline") {
+                                level[a - 1] = -20;
+                                level.push(-10);
+                                return;
+                            }
+                            if (data.stack[a] === "object" && options.format_object === "indent") {
+                                level[a - 1] = -20;
+                                level.push(indent);
+                                return;
+                            }
+                            if (data.stack[a] === "object" && options.format_object === "inline") {
+                                level[a - 1] = -20;
+                                level.push(-10);
+                                return;
+                            }
                             if (ei.length > 0) {
                                 if (ei[ei.length - 1] > -1) {
                                     endExtraInd();
@@ -1420,7 +1456,7 @@
                         arrbreak.push(false);
                         wordlist.push(false);
                         itemcount.push(0);
-                        if (options.never_flatten === true || options.language === "qml" || deep === "attribute" || ltype === "generic" || (deep === "class" && ltoke !== "(" && ltoke !== "x(") || (ctoke === "[" && data.token[a + 1] === "function")) {
+                        if (options.never_flatten === true || (deep === "array" && options.format_array === "indent") || options.language === "qml" || deep === "attribute" || ltype === "generic" || (deep === "class" && ltoke !== "(" && ltoke !== "x(") || (ctoke === "[" && data.token[a + 1] === "function")) {
                             destruct.push(false);
                         } else {
                             if (deep === "expression" || deep === "method") {
@@ -1992,7 +2028,7 @@
                                 complex = 0;
                                 do {
                                     if (data.begin[bb] === begin) {
-                                        if (data.token[bb] === "," || data.token[bb] === ";" || data.token[bb] === "x;" || levels[bb] > -1) {
+                                        if (data.token[bb] === "," || data.token[bb] === ";" || data.token[bb] === "x;" || (levels[bb] > -1 && data.types[bb] !== "comment")) {
                                             if (data.token[bb + 1] === ".") {
                                                 complex = complex + (options.indent_size * options.indent_char.length);
                                             }
@@ -2055,7 +2091,7 @@
                     do {
                         a = a - 1;
                         if (data.lexer[a] === "script") {
-                            if (data.token[a] === "}" && data.token[a - 1] !== "{") {
+                            if (data.token[a] === "}" && data.token[a - 1] !== "{" && levels[data.begin[a]] > 0) {
                                 vertical(a);
                             }
                         } else {

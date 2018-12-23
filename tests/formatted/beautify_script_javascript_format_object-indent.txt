@@ -1,9 +1,6 @@
 function jspretty__tokenize() {
     var depthlist = [
-            [
-                "global",
-                0
-            ]
+            ["global", 0]
         ],
         pdepth    = [],
         // identify variable declarations
@@ -18,34 +15,34 @@ function jspretty__tokenize() {
             toyota: "blue"
         },
         error     = [
-            message,
-            token[g] + error[1]
+            message, token[g] + error[1]
+        ],
+        longarr   = [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
         ];
-    class ({
-        cat : "meow",
-        dogggy : "bark"
-    });
+    class ({cat : "meow", dogggy : "bark"});
     return {
-        cat   : "meow",
-        dogggy: "bark"
+        zat   : "meow",
+        zogggy: "bark"
     };
     return {
         cat: "meow",
-        dog: [
-            "bark",
-            "growl"
-        ]
+        dog: ["bark", "growl"]
     };
     foo({
         a: "a",
         b: "b",
         c: "c"
     });
-    foo(t, [
-        "a",
-        "b",
-        "c"
-    ]);
+    foo(t, ["a", "b", "c"]);
     foo(t, {
         a: "a",
         b: "b",
@@ -64,11 +61,7 @@ function jspretty__tokenize() {
         b: "b",
         c: "c"
     }) from "wherever";
-    import ([
-        "a",
-        "b",
-        "c"
-    ]) from "wherever";
+    import (["a", "b", "c"]) from "wherever";
     const {
         DefaultRoute,
         Redirect,

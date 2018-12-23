@@ -25,7 +25,7 @@ var a = [
         dog: "bark"
     },
     f = ({cat, dog}),
-    g = import ({cat : "meow", dog: "bark"}) from dog,
+    g = import ({cat: "meow", dog: "bark"}) from dog,
     h = {
         cat: "meow",
         cub: "bear",

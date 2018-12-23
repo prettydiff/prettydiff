@@ -20,15 +20,20 @@ function jspretty__tokenize() {
         error     = [
             message,
             token[g] + error[1]
+        ],
+        longarr   = [
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9
         ];
-    class ({
-        cat : "meow",
-        dogggy : "bark"
-    });
-    return {
-        cat   : "meow",
-        dogggy: "bark"
-    };
+    class ({cat : "meow", dogggy : "bark"});
+    return {cat: "meow", dogggy: "bark"};
     return {
         cat: "meow",
         dog: [
@@ -36,11 +41,7 @@ function jspretty__tokenize() {
             "growl"
         ]
     };
-    foo({
-        a: "a",
-        b: "b",
-        c: "c"
-    });
+    foo({a: "a", b: "b", c: "c"});
     foo(t, [
         "a",
         "b",
@@ -51,29 +52,16 @@ function jspretty__tokenize() {
         b: "b",
         c: "c"
     });
-    import React, {
-        PropTypes
-    } from 'react';
-    import {
-        Bar,
-        Foo
-    } from 'FooBar';
+    import React, {PropTypes} from 'react';
+    import {Bar, Foo} from 'FooBar';
     import ("a", "b", "c") from "wherever";
-    import ({
-        a: "a",
-        b: "b",
-        c: "c"
-    }) from "wherever";
+    import ({a: "a", b: "b", c: "c"}) from "wherever";
     import ([
         "a",
         "b",
         "c"
     ]) from "wherever";
-    const {
-        DefaultRoute,
-        Redirect,
-        Route
-    } = Router;
+    const {DefaultRoute, Redirect, Route} = Router;
     class App extends Component {
         render() {
             return (
