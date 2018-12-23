@@ -1276,7 +1276,7 @@
         html  : {
             body  : "/\u002a]]>\u002a/</style></head><body id=\"prettydiff\" class=\"",
             color : "white",
-            end   : "//]]>\r\n</script></body></html>",
+            htmlEnd: "</script></body></html>",
             head  : "<?xml version=\"1.0\" encoding=\"UTF-8\" ?><!DOCTYPE html PUBLIC \"-//W3C//DTD X" +
                     "HTML 1.1//EN\" \"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\"><html xmlns=\"ht" +
                     "tp://www.w3.org/1999/xhtml\" xml:lang=\"en\"><head><title>Pretty Diff - The diff" +
@@ -1309,7 +1309,8 @@
                     "\">White</option></select></p><p>Find <a href=\"https://github.com/prettydiff/pr" +
                     "ettydiff\">Pretty Diff on GitHub</a>.</p></section><section role=\"main\" class=" +
                     "\"report\">",
-            script: "</section></div><script type=\"application/javascript\">//<![CDATA[\r\n"
+            scriptEnd  : "//]]>",
+            scriptStart: "</section></div><script type=\"application/javascript\">//<![CDATA["
         },
         order : [],
         script: {
@@ -1413,9 +1414,12 @@
         finalFile.html.intro, // 8
         "", // 9 - for meta analysis, like stats and accessibility
         "", // 10 - for generated report
-        finalFile.html.script, // 11
-        finalFile.script.minimal, // 12
-        finalFile.html.end // 13
+        finalFile.html.scriptStart, // 11
+        "\n", // 12 Empty line here from options.crlf
+        finalFile.script.minimal, // 13
+        finalFile.html.scriptEnd, // 14
+        "\n", // 15 Empty line here from options.crlf
+        finalFile.html.htmlEnd // 16
     ];
     return finalFile;
 }());

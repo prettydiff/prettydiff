@@ -1,0 +1,18 @@
+function jspretty__tokenize() {
+xxxxxxvar depthlist = [
+xxxxxxxxxx["global", 0]
+xxxxxxxx],
+xxxxxxxxpdepth      = [],
+xxxxxxxx// identify variable declarations
+xxxxxxxxvart        = {
+xxxxxxxxxxcount: [],
+xxxxxxxxxxindex: [],
+xxxxxxxxxxlen  : -1
+xxxxxxxx},
+xxxxxxxxcar         = {
+xxxxxxxxxxhonda : "white",
+xxxxxxxxxxkia   : "green",
+xxxxxxxxxxtoyota: "blue"
+xxxxxxxx};
+xxxx};
+xxxx

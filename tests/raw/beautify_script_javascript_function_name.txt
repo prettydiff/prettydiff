@@ -1,0 +1,9 @@
+function jspretty__tokenize() {
+    var depthlist = [
+            ["global", 0]
+        ],
+        pdepth = [],
+        // identify variable declarations
+        vart          = {count: [], index: [], len: -1},
+        car       = {honda: "white", kia: "green", toyota: "blue"};
+};

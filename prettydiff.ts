@@ -723,12 +723,16 @@
 
             finalFile.order[7] = options.color;
             finalFile.order[10] = result;
+            if (options.crlf === true) {
+                finalFile.order[12] = "\r\n";
+                finalFile.order[15] = "\r\n";
+            }
             if (options.mode === "diff") {
-                finalFile.order[12] = finalFile.script.diff;
+                finalFile.order[13] = finalFile.script.diff;
             } else if (options.mode === "beautify" && options.language === "javascript" && options.jsscope !== "none") {
-                finalFile.order[12] = finalFile.script.beautify;
+                finalFile.order[13] = finalFile.script.beautify;
             } else {
-                finalFile.order[12] = finalFile.script.minimal;
+                finalFile.order[13] = finalFile.script.minimal;
             }
             // escape changes characters that result in xml wellformedness errors
             return finalFile.order.join("");

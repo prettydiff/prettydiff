@@ -70,10 +70,11 @@ interface finalFile {
     html: {
         body: string;
         color: string;
-        end: string;
         head: string;
+        htmlEnd: string;
         intro: string;
-        script: string;
+        scriptEnd: string;
+        scriptStart: string;
     };
     order: string[];
     script: {
