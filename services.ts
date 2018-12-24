@@ -4206,11 +4206,16 @@ interface readFile {
                                 notes[b] = notes[b].replace(".txt", "");
                                 if (notes[b].indexOf("-") > 0 && options[notes[b].slice(0, notes[b].indexOf("-"))] !== undefined) {
                                     value = notes[b].slice(notes[b].indexOf("-") + 1);
+                                    notes[b] = notes[b].slice(0, notes[b].indexOf("-"));
                                     numb = Number(value);
-                                    if (isNaN(numb) === true) {
-                                        options[notes[b].slice(0, notes[b].indexOf("-"))] = value;
+                                    if (value === "true" && prettydiff.api.optionDef[notes[b]].type === "boolean") {
+                                        options[notes[b]] = true;
+                                    } else if (value === "false" && prettydiff.api.optionDef[notes[b]].type === "boolean") {
+                                        options[notes[b]] = false;
+                                    } else if (isNaN(numb) === true) {
+                                        options[notes[b]] = value;
                                     } else {
-                                        options[notes[b].slice(0, notes[b].indexOf("-"))] = numb;
+                                        options[notes[b]] = numb;
                                     }
                                 } else if (options[notes[b]] !== undefined && prettydiff.api.optionDef[notes[b]].type === "boolean") {
                                     options[notes[b]] = true;

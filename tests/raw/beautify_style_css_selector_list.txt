@@ -1,0 +1,3 @@
+#prettydiff table.code td,
+#prettydiff table.code th,
+#prettydiff .report .analysis .parseData td{font-family:'Courier New',Courier,'Lucida Console',monospace;text-align:left;white-space:pre}

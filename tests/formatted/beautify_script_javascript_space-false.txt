@@ -1,0 +1,6 @@
+var a = function() {
+    return x;
+};
+function() {
+    return y;
+}

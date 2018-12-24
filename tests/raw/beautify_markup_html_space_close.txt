@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <body class="white" id="prettydiff">
+            <h1 class="content-hide">Pretty Diff, a language aware file comparison tool, beautifier, minifier and parser.</h1>
+            <div id="headline" style="display:block">
+                <h2>Announcement &#8212;</h2>
+                <p></p>
+                <span class="clear"></span>
+            </div>
+            <p id="functionGroup" role="menu">
+                <strong>Function</strong>
+                <span>
+                    <input checked="checked" id="modediff" name="mode" type="radio"/>
+                    <label for="modediff">Compare</label>
+                </span>
+                <span>
+                    <input id="modebeautify" name="mode" type="radio"/>
+                    <label for="modebeautify">Beautify</label>
+                </span>
+                <span>
+                    <input id="modeminify" name="mode" type="radio"/>
+                    <label for="modeminify">Minify</label>
+                </span>
+                <span>
+                    <input id="modeparse" name="mode" type="radio"/>
+                    <label for="modeparse">Parse Table</label>
+                </span>
+                <!--span>
+                    <input id="modeanalysis" name="mode" type="radio"/>
+                    <label for="modeanalysis">Analysis</label>
+                </span-->
+            </p>
+            <div class="metainfo">
+                <p id="announcement" role="alert"></p>
+                <p id="update">Latest Commit:<!-- start version data --><strong>21 Dec 2018</strong> <span>Version: <strong>3.0.0</strong></span>
+<!-- end version data -->
+                </p>
+            </div>
+            <div id="codeInput" role="main">
+                <p id="textareaTabKey" style="display:none">
+                    <strong>Accessibility note:</strong>
+                    Hold
+                    <em>shift</em>
+                    and press
+                    <em>control</em>
+                    key twice to focus on the previous element or press some long forgotten control key so that I can see this text wrap a few times
+                    <em>control</em>
+                    twice to focus away from this textarea.</p>
+                <h2>Compare Code</h2>
+                <div class="input">
+                    <p class="file">
+                        <input id="inputfile" multiple="multiple" type="file"/>
+                        <label for="inputfile">Compare source file</label>
+                    </p>
+                    <p class="file">
+                        <input id="inputlabel" type="text" value="Source"/>
+                        <label for="inputlabel">Source code label <a href="documentation.xhtml#sourcelabel">(sourcelabel)</a></label>
+                    </p>
+                    <p class="inputLabel">
+                        <label for="input">Compare source code</label>
+                        <textarea cols="80" id="input" rows="10" wrap="off"></textarea>
+                    </p>
+                </div>
+                <div class="output">
+                    <p class="file">
+                        <input id="outputfile" multiple="multiple" type="file"/>
+                        <label for="outputfile">Compare new file</label>
+                    </p>
+                    <p class="file">
+                        <input id="outputlabel" type="text" value="New"/>
+                        <label for="outputlabel">New code label <a href="documentation.xhtml#difflabel">(difflabel)</a></label>
+                    </p>
+                    <p class="inputLabel">
+                        <label for="output">Compare new code</label>
+                        <textarea cols="40" id="output" rows="10" wrap="off"></textarea>
+                    </p>
+                </div>
+                <span class="clear"></span>
+            </div>
+    </body>
+</html>
