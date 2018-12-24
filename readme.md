@@ -13,7 +13,7 @@ A language aware diff, beautification, and minification tool.
 ## Build
 
 ```
-git clone git@github.com:prettydiff/prettydiff.git
+git clone https://github.com/prettydiff/prettydiff.git
 cd prettydiff
 
 npm install typescript -g

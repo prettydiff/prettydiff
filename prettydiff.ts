@@ -383,6 +383,9 @@
             options.lexerOptions.script.quote_convert = options.quote_convert;
             options.lexerOptions.style.quote_convert = options.quote_convert;
         }
+        if (options.tag_merge === true) {
+            options.lexerOptions.markup.tag_merge = true;
+        }
         options.lexerOptions.script.varword = options.variable_list;
         options.lexerOptions.style.no_lead_zero = options.no_lead_zero;
         options.lexerOptions.markup.tagSort = options.tag_sort;

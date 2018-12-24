@@ -414,7 +414,7 @@
                         regend:RegExp = (/(\/|\?)?>$/),
                         end:string[]|null = regend.exec(parent);
                     let y:number = a + 1,
-                        space:string = (options.space_close === true && end[0] === "/>")
+                        space:string = (options.space_close === true && end !== null && end[0] === "/>")
                             ? " "
                             : "",
                         jsx:boolean = false;
