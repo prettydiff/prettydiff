@@ -378,81 +378,36 @@
                     }
                     return linesout.join("");
                 },
-                content = function beautify_markup_apply_content():void {
-                    let aa:number  = (levels[a - 1] === -20)
-                            ? options.wrap - data.token[a - 1].length
-                            : options.wrap,
-                        str:string = data.token[a].replace(/\s+/g, " "),
-                        len:number = (levels[a - 1] === -20)
-                            ? data.token[a - 1].length + str.length
-                            : str.length;
-                    const wrap:number = options.wrap,
-                        indy:string = (function beautify_markup_apply_content_lev():string {
-                            let bb:number = a,
-                                cc:number = 0,
-                                output:string[] = [];
-                            if (levels[bb] < 0) {
+                multiline = function beautify_markup_apply_multiline():void {
+                    const lines:string[] = data.token[a].split(lf),
+                        line:number = data.lines[a + 1],
+                        lev:number = (levels[a - 1] > -1)
+                            ? levels[a - 1]
+                            : (function beautify_markup_apply_multiline_lev():number {
+                                let bb:number = a - 1;
                                 do {
                                     bb = bb - 1;
-                                } while (bb > 0 && levels[bb] < 0);
-                            }
-                            cc = levels[bb] + 1;
-                            if (cc > 0) {
-                                do {
-                                    cc = cc - 1;
-                                    output.push(ind);
-                                } while (cc > 0);
-                            }
-                            return lf + output.join("");
-                        }()),
-                        store:string[] = [],
-                        wrapper = function beautify_markup_apply_content_wrapper():void {
-                            if (str.charAt(aa) === " ") {
-                                store.push(str.slice(0, aa));
-                                str = str.slice(aa + 1);
-                                len = str.length;
-                                aa = wrap;
-                                return;
-                            }
-                            do {
-                                aa = aa - 1;
-                            } while (aa > 0 && str.charAt(aa) !== " ");
-                            if (aa > 0) {
-                                store.push(str.slice(0, aa));
-                                str = str.slice(aa + 1);
-                                len = str.length;
-                                aa = wrap;
-                            } else {
-                                aa = wrap;
-                                do {
-                                    aa = aa + 1;
-                                } while (aa < len && str.charAt(aa) !== " ");
-                                store.push(str.slice(0, aa));
-                                str = str.slice(aa + 1);
-                                len = str.length;
-                                aa = wrap;
-                            }
-                        };
-                    // HTML anchor lists do not get wrapping unless the content itself exceeds the wrapping limit
-                    if (
-                        (data.token[data.begin[a]] === "<a" || data.token[data.begin[a]] === "<a>") &&
-                        (data.token[data.begin[data.begin[a]]] === "<li>" || data.token[data.begin[data.begin[a]]] === "<li") &&
-                        levels[a - 1] === -20 &&
-                        levels[data.begin[a] - 1] === -20 &&
-                        data.token[a].length < options.wrap
-                    ) {
-                        return;
-                    }
-                    if (len < wrap) {
-                        return;
-                    }
+                                    if (levels[bb] > -1) {
+                                        return levels[bb] + 1;
+                                    }
+                                } while (bb > 0);
+                                return 1;
+                            }());
+                    let aa:number = 0,
+                        len:number = lines.length - 1;
+                    data.lines[a + 1] = 0;
                     do {
-                        wrapper();
+                        build.push(lines[aa]);
+                        build.push(nl(lev));
+                        aa = aa + 1;
                     } while (aa < len);
-                    if (str !== "" && str !== " ") {
-                        store.push(str);
+                    data.lines[a + 1] = line;
+                    build.push(lines[len]);
+                    if (levels[a] === -10) {
+                        build.push(" ");
+                    } else if (levels[a] > -1) {
+                        build.push(nl(levels[a]));
                     }
-                    data.token[a] = store.join(indy);
                 },
                 attributeEnd = function beautify_markup_apply_attributeEnd():void {
                     const parent:string = data.token[a],
@@ -497,10 +452,9 @@
                     if ((data.types[a] === "start" || data.types[a] === "singleton" || data.types[a] === "xml" || data.types[a] === "sgml") && data.types[a].indexOf("attribute") < 0 && a < c - 1 && data.types[a + 1].indexOf("attribute") > -1) {
                         attributeEnd();
                     }
-                    if ((a < 1 || data.types[a - 1].indexOf("template") < 0) && (a > c - 2 || data.types[a + 1].indexOf("template") < 0) && data.types[a] === "content" && options.wrap > 0) {
-                        content();
-                    }
-                    if (data.token[a] !== "</prettydiffli>") {
+                    if (data.token[a].indexOf(lf) > 0 && (data.types[a] === "content" || data.types[a] === "comment")) {
+                        multiline();
+                    } else if (data.token[a] !== "</prettydiffli>") {
                         build.push(data.token[a]);
                         if (levels[a] === -10) {
                             build.push(" ");

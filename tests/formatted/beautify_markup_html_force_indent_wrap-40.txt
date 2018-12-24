@@ -3,9 +3,9 @@
 <html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
     <body class="white" id="prettydiff">
         <h1 class="content-hide">
-            Pretty Diff, a language aware file
-            comparison tool, beautifier, minifier
-            and parser.
+            Pretty Diff, a
+            language aware file comparison tool,
+            beautifier, minifier and parser.
         </h1>
         <div id="headline" style="display:block">
             <h2>
@@ -55,10 +55,10 @@
                     Parse Table
                 </label>
             </span>
-            <!--span>
-                    <input id="modeanalysis" name="mode" type="radio"/>
-                    <label for="modeanalysis">Analysis</label>
-                </span-->
+            <!-- span>
+                <input id="modeanalysis" name="mode" type="radio"/>
+                <label for="modeanalysis">Analysis</label>
+            </span -->
         </p>
         <div class="metainfo">
             <p id="announcement" role="alert"></p>
@@ -91,9 +91,9 @@
                     control
                 </em>
                 key twice to focus on the previous
-                    element or press some long forgotten
-                    control key so that I can see this text
-                    wrap a few times
+                element or press some long forgotten
+                control key so that I can see this text
+                wrap a few times
                 <em>
                     control
                 </em>

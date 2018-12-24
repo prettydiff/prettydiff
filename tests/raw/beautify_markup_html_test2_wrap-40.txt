@@ -1,0 +1,7 @@
+<a>
+    
+    some really long text that should wrap a few times so that I can test text wrapping for markup in the parser with a bunch of words that dont really mean anything on their own but provide a necessary amount of variability to test with for the point of wrapping a few times with this long text that simply won't easily end
+
+<!-- some really long text that should wrap a few times so that I can test text wrapping for markup in the parser with a bunch of words that dont really mean anything on their own but provide a necessary amount of variability to test with for the point of wrapping a few times with this long text that simply won't easily end -->
+<span someatt="fakevalue">some really long text that should wrap a few times so that I can test text wrapping for markup in the parser with a bunch of words that dont really mean anything on their own but provide a necessary amount of variability to test with for the point of wrapping a few times with this long text that simply won't easily end</span>
+</a>
