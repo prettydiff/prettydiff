@@ -603,6 +603,16 @@
             mode      : "beautify",
             type      : "boolean"
         },
+        preserve_text    : {
+            api       : "any",
+            default   : false,
+            definition: "If text in the provided markup code should be preserved exactly as provided. Thi" +
+                    "s option eliminates beautification and wrapping of text content.",
+            label     : "Preserve Markup Text White Space",
+            lexer     : "markup",
+            mode      : "any",
+            type      : "boolean"
+        },
         quote            : {
             api       : "any",
             default   : false,
@@ -772,16 +782,6 @@
             label     : "Keep Ternary Statements On One Line",
             lexer     : "script",
             mode      : "beautify",
-            type      : "boolean"
-        },
-        text_preserve    : {
-            api       : "any",
-            default   : false,
-            definition: "If text in the provided markup code should be preserved exactly as provided. Thi" +
-                    "s option eliminates beautification and wrapping of text content.",
-            label     : "Preserve Markup Text White Space",
-            lexer     : "markup",
-            mode      : "any",
             type      : "boolean"
         },
         top_comments     : {

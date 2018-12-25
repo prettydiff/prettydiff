@@ -1,0 +1,5 @@
+<test>
+    <x> <!-- comment 1--></x>
+    <b doggy="bark"/>
+    <a> <d cat="meow"/> <c></c> </a>
+</test>

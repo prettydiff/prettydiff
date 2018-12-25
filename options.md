@@ -680,6 +680,17 @@ lexer      | any
 mode       | beautify
 type       | boolean
 
+## preserve_text
+property | value
+-----------|---
+api        | any
+default    | false
+definition | If text in the provided markup code should be preserved exactly as provided. This option eliminates beautification and wrapping of text content.
+label      | Preserve Markup Text White Space
+lexer      | markup
+mode       | any
+type       | boolean
+
 ## quote
 property | value
 -----------|---
@@ -870,17 +881,6 @@ definition | If ternary operators in JavaScript ? and : should remain on the sam
 label      | Keep Ternary Statements On One Line
 lexer      | script
 mode       | beautify
-type       | boolean
-
-## text_preserve
-property | value
------------|---
-api        | any
-default    | false
-definition | If text in the provided markup code should be preserved exactly as provided. This option eliminates beautification and wrapping of text content.
-label      | Preserve Markup Text White Space
-lexer      | markup
-mode       | any
 type       | boolean
 
 ## top_comments

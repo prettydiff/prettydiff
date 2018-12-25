@@ -1,0 +1,7 @@
+const name      = (ext === true)
+                            ? (jsxbrace === true)
+                                ? "script"
+                                : (parse.structure[parse.structure.length - 1][1] > -1)
+                                    ? tagName(data.token[parse.structure[parse.structure.length - 1][1]].toLowerCase())
+                                    : tagName(data.token[data.begin[parse.count]].toLowerCase())
+                            : "",s;

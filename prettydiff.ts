@@ -377,7 +377,9 @@
             options.lexerOptions.markup = {};
         }
         if (options.lexerOptions[options.lexer] !== undefined) {
-            options.lexerOptions[options.lexer].objectSort = options.object_sort;
+            options.lexerOptions.markup.tagSort = options.tag_sort;
+            options.lexerOptions.script.objectSort = options.object_sort;
+            options.lexerOptions.style.objectSort = options.object_sort;
         }
         if (options.quote_convert !== "none") {
             options.lexerOptions.script.quote_convert = options.quote_convert;
@@ -385,6 +387,9 @@
         }
         if (options.tag_merge === true) {
             options.lexerOptions.markup.tag_merge = true;
+        }
+        if (options.preserve_text === true) {
+            options.lexerOptions.markup.preserve_text = true;
         }
         options.lexerOptions.script.varword = options.variable_list;
         options.lexerOptions.style.no_lead_zero = options.no_lead_zero;
