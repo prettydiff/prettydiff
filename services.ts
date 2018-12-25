@@ -4124,6 +4124,7 @@ interface readFile {
                 options.lexerOptions[options.lexer] = {};
                 options.lexerOptions[options.lexer].objectSort = true;
                 options.mode         = "diff";
+                options.new_line     = true;
                 options.object_sort  = true;
                 options.preserve     = 2;
                 options.read_method  = "screen";

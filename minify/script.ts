@@ -15,9 +15,9 @@
                 : "\n",
             lexer:string = "script",
             invisibles:string[] = ["x;", "x}", "x{", "x(", "x)"],
-            end:number  = (options.end > 0)
-                ? options.end
-                : data.token.length,
+            end:number  = (options.end < 1 || options.end > data.token.length)
+                ? data.token.length
+                : options.end + 1,
             build:string[]    = [],
             lastsemi = function minify_script_lastsemi() {
                 let aa:number = a,
@@ -40,7 +40,7 @@
         let a:number        = options.start,
             external:string = "",
             linelen:number  = 0;
-        if (options.top_comments === true && data.types[a] === "comment") {
+        if (options.top_comments === true && data.types[a] === "comment" && options.start === 0) {
             if (a > 0) {
                 build.push(lf);
             }
@@ -96,20 +96,24 @@
                     }
                 }
             } else {
-                options.start = a;
+                let skip:number = a;
                 do {
-                    if (data.lexer[a + 1] === lexer && data.lexer[data.begin[a + 1]] === lexer) {
+                    if (data.lexer[a + 1] === lexer && data.begin[a + 1] < skip) {
+                        break;
+                    }
+                    if (data.token[skip - 1] === "return" && data.types[a] === "end" && data.begin[a] === skip) {
                         break;
                     }
                     a = a + 1;
                 } while (a < end);
+                options.start = skip;
                 options.end = a;
-                options.indent_level = 0;
                 external = prettydiff.minify[data.lexer[a]](options).replace(/\s+$/, "");
                 build.push(external);
             }
             a = a + 1;
         } while (a < end);
+        prettydiff.iterator = end - 1;
         if (options.new_line === true) {
             if (options.crlf === true) {
                 build.push("\r\n");

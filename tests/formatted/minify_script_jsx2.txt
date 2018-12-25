@@ -1,0 +1,1 @@
+var content=(<Nav>{}<aPerson name={window.isLoggedIn?window.name:'';}>a</aperson></Nav>);

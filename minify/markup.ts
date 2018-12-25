@@ -4,12 +4,13 @@
     const markup = function minify_markup(options:any):string {
         const data:parsedArray = options.parsed,
             lexer:string = "markup",
-            c:number            = (options.end < 1)
+            c:number            = (options.end < 1 || options.end > data.token.length)
                 ? data.token.length
-                : options.end,
+                : options.end + 1,
             lf:"\r\n"|"\n"      = (options.crlf === true)
                 ? "\r\n"
                 : "\n",
+            externalIndex:externalIndex = {},
             levels:number[] = (function minify_markup_levels():number[] {
                 const level:number[]      = (options.start > 0)
                         ? Array(options.start).fill(0, 0, options.start)
@@ -34,6 +35,19 @@
                             } while (x < c);
                         }
                         return x;
+                    },
+                    external = function minify_markup_levels_external():void {
+                        let skip = a;
+                        do {
+                            if (data.lexer[a + 1] === lexer && data.begin[a + 1] < skip && data.types[a + 1] !== "start" && data.types[a + 1] !== "singleton") {
+                                break;
+                            }
+                            level.push(-20);
+                            a = a + 1;
+                        } while (a < c);
+                        externalIndex[skip] = a;
+                        level.push(-20);
+                        next = nextIndex();
                     },
                     comment = function minify_markup_levels_comment():void {
                         let x:number = a,
@@ -67,14 +81,23 @@
                     };
                 let a:number     = options.start,
                     next:number = 0,
-                    comstart:number = -1,
-                    skip:number     = 0;
+                    comstart:number = -1;
                 // data.lines -> space before token
                 // level -> space after token
                 do {
                     if (data.lexer[a] === lexer) {
-                        if (data.types[a] === "attribute") {
-                            level.push(-10);
+                        if (data.types[a].indexOf("attribute") > -1) {
+                            if (data.types[a] === "comment_attribute" && data.token[a].slice(0, 2) === "//") {
+                                level.push(-10);
+                            } else if (a < c - 1 && data.types[a + 1].indexOf("attribute") < 0) {
+                                if (data.lines[a + 1] > 0) {
+                                    level.push(-10);
+                                } else {
+                                    level.push(-20);
+                                }
+                            } else {
+                                level.push(-10);
+                            }
                         } else if (data.types[a] === "jsx_attribute_start") {
                             level.push(-20);
                         } else if (data.types[a] === "jsx_attribute_end") {
@@ -92,7 +115,8 @@
                                 data.types[a] === "content" ||
                                 data.types[a] === "singleton" ||
                                 data.types[next] === "content" ||
-                                data.types[next] === "singleton"
+                                data.types[next] === "singleton" ||
+                                (data.types[next] !== undefined && data.types[next].indexOf("attribute") > 0)
                             )) {
                                 level.push(-10);
                             } else {
@@ -100,18 +124,7 @@
                             }
                         }
                     } else {
-                        if (data.lexer[a - 1] === lexer) {
-                            skip = a;
-                            do {
-                                if (data.lexer[skip + 1] === lexer && data.lexer[data.begin[skip + 1]] === lexer) {
-                                    break;
-                                }
-                                skip = skip + 1;
-                            } while (skip < c);
-                            level.push(skip + 1);
-                        } else {
-                            level.push(skip);
-                        }
+                        external();
                     }
                     a = a + 1;
                 } while (a < c);
@@ -122,40 +135,46 @@
                 len:number = levels.length,
                 // a new line character plus the correct amount of identation for the given line
                 // of code
-                attribute = function minify_markup_apply_attribute():void {
-                    const end:string[]|null = (/\/?>$/).exec(data.token[a]),
-                        findEnd = function minify_markup_apply_attribute_findEnd() {
-                            const begin:number = y;
-                            if (data.types[y] === "jsx_attribute_start") {
-                                do {
-                                    if (data.types[y] === "jsx_attribute_end" && data.begin[y] === begin) {
-                                        break;
-                                    }
-                                    y = y + 1;
-                                } while (y < len);
-                            }
-                            y = y + 1;
-                            if (data.types[y] === "attribute" || data.types[y] === "jsx_attribute_start") {
-                                minify_markup_apply_attribute_findEnd();
-                            } else {
-                                levels[y - 1] = lev;
-                                data.token[y - 1] = data.token[y - 1] + ending;
-                            }
-                        };
+                attributeEnd = function minify_markup_apply_attributeEnd():void {
+                    const parent:string = data.token[a],
+                        regend:RegExp = (/(\/|\?)?>$/),
+                        end:string[]|null = regend.exec(parent);
+                    let y:number = a + 1,
+                        x:number = 0,
+                        jsx:boolean = false;
                     if (end === null) {
                         return;
                     }
-                    let y:number = a + 1,
-                        lev:number = levels[a],
-                        ending:string = end[0];
-                    data.token[a] = data.token[a].replace(ending, "");
-                    levels[a] = -10;
-                    findEnd();
+                    data.token[a] = parent.replace(regend, "");
+                    do {
+                        if (data.types[y] === "jsx_attribute_end" && data.begin[data.begin[y]] === a) {
+                            jsx = false;
+                        } else if (data.begin[y] === a) {
+                            if (data.types[y] === "jsx_attribute_start") {
+                                jsx = true;
+                            } else if (data.types[y].indexOf("attribute") < 0 && jsx === false) {
+                                break;
+                            }
+                        } else if (jsx === false && (data.begin[y] < a || data.types[y].indexOf("attribute") < 0)) {
+                            break;
+                        }
+                        y = y + 1;
+                    } while (y < c);
+                    if (data.types[y - 1] === "comment_attribute") {
+                        x = y;
+                        do {
+                            y = y - 1;
+                        } while (y > a && data.types[y - 1] === "comment_attribute");
+                        if (data.lines[x] < 1) {
+                            levels[y - 1] = -20;
+                        }
+                    }
+                    data.token[y - 1] = data.token[y - 1] + end[0];
                 };
             let a:number            = options.start,
                 external:string = "",
                 lastLevel:number = 0;
-            if (options.top_comments === true && data.types[a] === "comment") {
+            if (options.top_comments === true && data.types[a] === "comment" && options.start === 0) {
                 if (a > 0) {
                     build.push(lf);
                 }
@@ -167,30 +186,40 @@
             }
             do {
                 if (data.lexer[a] === lexer || prettydiff.minify[data.lexer[a]] === undefined) {
-                    if (a < len - 1 && data.types[a + 1].indexOf("attribute") > -1 && data.types[a].indexOf("attribute") < 0) {
-                        attribute();
+                    if ((data.types[a] === "start" || data.types[a] === "singleton" || data.types[a] === "xml" || data.types[a] === "sgml") && data.types[a].indexOf("attribute") < 0 && a < c - 1 && data.types[a + 1].indexOf("attribute") > -1) {
+                        attributeEnd();
                     }
-                    if (data.types[a] !== "comment") {
+                    if (data.types[a] !== "comment" && data.types[a] !== "comment_attribute") {
                         build.push(data.token[a]);
                         if ((data.types[a] === "template" || data.types[a] === "template_start") && data.types[a - 1] === "content" && data.presv[a - 1] === true && options.mode === "minify" && levels[a] === -20) {
                             build.push(" ");
                         }
                         if (levels[a] > -1) {
                             lastLevel = levels[a];
-                        } else if (levels[a] === -10) {
+                        } else if (levels[a] === -10 && data.types[a] !== "jsx_attribute_start") {
                             build.push(" ");
                         }
                     }
                 } else {
-                    options.end = levels[a];
-                    options.indent_level = lastLevel + 1;
-                    options.start = a;
-                    external = prettydiff.minify[data.lexer[a]](options).replace(/\s+$/, "");
-                    build.push(external);
-                    a = levels[a] - 1;
+                    if (externalIndex[a] === a && data.types[a] !== "reference") {
+                        if (data.types[a] !== "comment") {
+                            build.push(data.token[a]);
+                        }
+                    } else {
+                        options.end = externalIndex[a];
+                        options.indent_level = lastLevel;
+                        options.start = a;
+                        external = prettydiff.minify[data.lexer[a]](options).replace(/\s+$/, "");
+                        build.push(external);
+                        if (levels[prettydiff.iterator] > -1 && externalIndex[a] > a) {
+                            build.push(lf);
+                        }
+                        a = prettydiff.iterator;
+                    }
                 }
                 a = a + 1;
             } while (a < len);
+            prettydiff.iterator = len - 1;
             if (build[0] === lf || build[0] === " ") {
                 build[0] = "";
             }

@@ -1,0 +1,15 @@
+var content = (
+    <Nav> {/* child comment, put {} around */}
+        <aPerson /* multi
+         line
+         comment */
+            //attr="test"
+            name={
+                window.isLoggedIn
+                    ? window.name
+                    : '';
+            }
+            // end of line comment
+        >a</aperson>
+    </Nav>
+);
