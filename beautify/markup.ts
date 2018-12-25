@@ -180,7 +180,7 @@
                                     level.push(lev);
                                 } else if (data.types[a].indexOf("start") > 0) {
                                     attStart = true;
-                                    if (a < c - 2 && data.types[a + 2].indexOf("attribute")  > 0) {
+                                    if (a < c - 2 && data.types[a + 2].indexOf("attribute") > 0) {
                                         level.push(-20);
                                         a = a + 1;
                                         externalIndex[a] = a;
@@ -210,7 +210,9 @@
                                 earlyexit = true;
                             } else if (data.types[a] === "attribute") {
                                 len = len + data.token[a].length + 1;
-                                if (options.force_attribute === true || attStart === true || (a < c - 1 && data.types[a + 1] !== "template_attribute" && data.types[a + 1].indexOf("attribute") > 0)) {
+                                if (options.unformatted === true) {
+                                    level.push(-10);
+                                } else if (options.force_attribute === true || attStart === true || (a < c - 1 && data.types[a + 1] !== "template_attribute" && data.types[a + 1].indexOf("attribute") > 0)) {
                                     level.push(lev);
                                 } else {
                                     level.push(-10);
@@ -233,7 +235,7 @@
                         } else {
                             level[parent] = -10;
                         }
-                        if (earlyexit === true) {
+                        if (earlyexit === true || options.unformatted === true) {
                             return;
                         }
                         y = a;
@@ -452,7 +454,7 @@
                     if ((data.types[a] === "start" || data.types[a] === "singleton" || data.types[a] === "xml" || data.types[a] === "sgml") && data.types[a].indexOf("attribute") < 0 && a < c - 1 && data.types[a + 1].indexOf("attribute") > -1) {
                         attributeEnd();
                     }
-                    if (data.token[a].indexOf(lf) > 0 && (data.types[a] === "content" || data.types[a] === "comment")) {
+                    if (data.token[a].indexOf(lf) > 0 && ((data.types[a] === "content" && options.preserve_text === false) || data.types[a] === "comment")) {
                         multiline();
                     } else if (data.token[a] !== "</prettydiffli>") {
                         build.push(data.token[a]);

@@ -797,7 +797,7 @@
         unformatted      : {
             api       : "any",
             default   : false,
-            definition: "If markup tags should have their insides preserved.",
+            definition: "If markup tags should have their insides preserved. This option is only available to markup and does not support child tokens that require a different lexer.",
             label     : "Markup Tag Preservation",
             lexer     : "markup",
             mode      : "any",

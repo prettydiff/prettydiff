@@ -1,0 +1,30 @@
+<!--/*prettydiff.com wrap:40*/-->
+<mvc:view controllername="sapui5.controller.alex" xmlns:core="sap.ui.core" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+    <app>
+        <pages>
+            <page title="Title">
+                <content>This is a long string that is
+                    expected to wrap onto a new line so we
+                    will have to see what happens as this
+                    goes on. This is a long string that is
+                    expected to wrap onto a new line so we
+                    will have to see what happens as this
+                    goes on.</content>
+                ASDF is a long string that is expected
+                to wrap onto a new line so we will have
+                to see what happens as this goes on.
+            </page>
+        </pages>
+    </app>
+
+    <app>
+        <pages>
+            <page title="Title"></page>
+            <page title="Title"></page>
+            <page title="Title"></page>
+            <page title="Title"></page>
+            <page title="Title"></page>
+        </pages>
+    </app>
+
+</mvc:view>

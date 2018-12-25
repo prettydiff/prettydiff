@@ -385,7 +385,7 @@
             options.lexerOptions.script.quote_convert = options.quote_convert;
             options.lexerOptions.style.quote_convert = options.quote_convert;
         }
-        if (options.tag_merge === true) {
+        if (options.tag_merge === true && options.unformatted === false) {
             options.lexerOptions.markup.tag_merge = true;
         }
         if (options.preserve_text === true) {
