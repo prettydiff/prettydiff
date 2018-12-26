@@ -108,18 +108,17 @@
                 } while (a < end);
                 options.start = skip;
                 options.end = a;
+                if (a > end - 1) {
+                    a = end - 1;
+                }
                 external = prettydiff.minify[data.lexer[a]](options).replace(/\s+$/, "");
                 build.push(external);
             }
             a = a + 1;
         } while (a < end);
         prettydiff.iterator = end - 1;
-        if (options.new_line === true) {
-            if (options.crlf === true) {
-                build.push("\r\n");
-            } else {
-                build.push("\n");
-            }
+        if (options.new_line === true && a === data.token.length && build[build.length - 1].indexOf(lf) < 0) {
+            build.push(lf);
         }
         return build.join("");
     };

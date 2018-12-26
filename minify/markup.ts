@@ -132,7 +132,6 @@
             }());
         return (function minify_markup_apply():string {
             const build:string[]        = [],
-                len:number = levels.length,
                 // a new line character plus the correct amount of identation for the given line
                 // of code
                 attributeEnd = function minify_markup_apply_attributeEnd():void {
@@ -182,11 +181,11 @@
                     build.push(data.token[a]);
                     build.push(lf);
                     a = a + 1;
-                } while (a < len && data.types[a] === "comment");
+                } while (a < c && data.types[a] === "comment");
             }
             do {
                 if (data.lexer[a] === lexer || prettydiff.minify[data.lexer[a]] === undefined) {
-                    if ((data.types[a] === "start" || data.types[a] === "singleton" || data.types[a] === "xml" || data.types[a] === "sgml") && data.types[a].indexOf("attribute") < 0 && a < c - 1 && data.types[a + 1].indexOf("attribute") > -1) {
+                    if ((data.types[a] === "start" || data.types[a] === "singleton" || data.types[a] === "xml" || data.types[a] === "sgml") && data.types[a].indexOf("attribute") < 0 && a < c - 1 && data.types[a + 1] !== undefined && data.types[a + 1].indexOf("attribute") > -1) {
                         attributeEnd();
                     }
                     if (data.types[a] !== "comment" && data.types[a] !== "comment_attribute") {
@@ -218,12 +217,12 @@
                     }
                 }
                 a = a + 1;
-            } while (a < len);
-            prettydiff.iterator = len - 1;
+            } while (a < c);
+            prettydiff.iterator = c - 1;
             if (build[0] === lf || build[0] === " ") {
                 build[0] = "";
             }
-            if (options.new_line === true && options.end === data.token.length) {
+            if (options.new_line === true && a === data.token.length && build[build.length - 1].indexOf(lf) < 0) {
                 build.push(lf);
             }
             return build.join("");

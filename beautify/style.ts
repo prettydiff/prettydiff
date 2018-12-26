@@ -376,7 +376,7 @@
             a = a + 1;
         } while (a < len);
         prettydiff.iterator = len - 1;
-        if (options.new_line === true && options.end === data.token.length) {
+        if (options.new_line === true && a === data.token.length && build[build.length - 1].indexOf(lf) < 0) {
             build.push(lf);
         }
         output = build.join("");

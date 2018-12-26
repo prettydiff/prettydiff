@@ -2467,7 +2467,7 @@
                     a = a + 1;
                 } while (a < b);
                 prettydiff.iterator = b - 1;
-                if (options.new_line === true && options.end === data.token.length) {
+                if (options.new_line === true && a === data.token.length && levels[a - 1] < 0) {
                     build.push(lf);
                 }
                 return build.join("");

@@ -13,7 +13,7 @@
         let a:number        = options.start;
 
         //beautification loop
-        if (options.topcoms === true && data.types[a] === "comment" && options.start === 0) {
+        if (options.top_comments === true && data.types[a] === "comment" && options.start === 0) {
             if (a > 0) {
                 build.push(lf);
             }
@@ -32,7 +32,7 @@
             } while (a < len);
         }
         prettydiff.iterator = len - 1;
-        if (options.new_line === true && options.end === data.token.length) {
+        if (options.new_line === true && a === data.token.length && build[build.length - 1].indexOf(lf) < 0) {
             build.push(lf);
         }
         return build.join("");

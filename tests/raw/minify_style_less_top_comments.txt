@@ -1,0 +1,31 @@
+/*prettydiff.com topcoms: true, inchar: " ", insize: 4, vertical: true */
+/*global ace, ArrayBuffer, AudioContext, console, document, FileReader, localStorage, location, navigator, setTimeout, Uint8Array, window, XMLHttpRequest*/
+/*jshint laxbreak: true*/
+/*jslint for: true*/
+/*****************************************************************************
+ This is written by Austin Cheney on 3 Mar 2009.
+
+ Please see the license.txt file associated with the Pretty Diff
+ application for license information.
+ ****************************************************************************/
+@carrier-logo-height: 33px;
+@carrier-logo-width: 44px;
+
+.itemResultsCard() {
+    @arrow-size     : 10px;
+    @font-size-xxs  : 10px;
+    @line-height-xxs: 12px;
+
+    .itemResultsCard {
+        border: 1px solid @color-neutral-md-light;
+        .clearfix();
+        color : @color-black;
+
+        // Card Layout Sections
+        .itemSummary {
+            .display-inline-block();
+            float: left;
+            width: 70%;
+        }
+    }
+}

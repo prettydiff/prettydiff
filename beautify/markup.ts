@@ -18,6 +18,9 @@
                     nextIndex = function beautify_markup_levels_next():number {
                         let x:number = a + 1,
                             y:number = 0;
+                        if (data.types[x] === undefined) {
+                            return x - 1;
+                        }
                         if (data.types[x] === "comment" || (a < c - 1 && data.types[x].indexOf("attribute") > -1)) {
                             do {
                                 if (data.types[x] === "jsx_attribute_start") {
@@ -451,10 +454,10 @@
                     if (data.token[a] === "</prettydiffli>" && options.correct === true) {
                         data.token[a] = "</li>";
                     }
-                    if ((data.types[a] === "start" || data.types[a] === "singleton" || data.types[a] === "xml" || data.types[a] === "sgml") && data.types[a].indexOf("attribute") < 0 && a < c - 1 && data.types[a + 1].indexOf("attribute") > -1) {
+                    if ((data.types[a] === "start" || data.types[a] === "singleton" || data.types[a] === "xml" || data.types[a] === "sgml") && data.types[a].indexOf("attribute") < 0 && a < c - 1 && data.types[a + 1] !== undefined && data.types[a + 1].indexOf("attribute") > -1) {
                         attributeEnd();
                     }
-                    if (data.token[a].indexOf(lf) > 0 && ((data.types[a] === "content" && options.preserve_text === false) || data.types[a] === "comment")) {
+                    if (data.token[a] !== undefined && data.token[a].indexOf(lf) > 0 && ((data.types[a] === "content" && options.preserve_text === false) || data.types[a] === "comment")) {
                         multiline();
                     } else if (data.token[a] !== "</prettydiffli>") {
                         build.push(data.token[a]);
@@ -486,7 +489,7 @@
             if (build[0] === lf || build[0] === " ") {
                 build[0] = "";
             }
-            if (options.new_line === true && options.end === data.token.length) {
+            if (options.new_line === true && a === data.token.length && levels[a - 1] < 0) {
                 build.push(lf);
             }
             return build.join("");

@@ -1,0 +1,11 @@
+/*prettydiff.com topcoms: true, inchar: " ", insize: 4, vertical: true */
+/*global ace, ArrayBuffer, AudioContext, console, document, FileReader, localStorage, location, navigator, setTimeout, Uint8Array, window, XMLHttpRequest*/
+/*jshint laxbreak: true*/
+/*jslint for: true*/
+/*****************************************************************************
+ This is written by Austin Cheney on 3 Mar 2009.
+
+ Please see the license.txt file associated with the Pretty Diff
+ application for license information.
+ ****************************************************************************/
+if((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href)===true||location.href.indexOf("www.prettydiff.com")>-1){let loc:string=location.href.replace("http","https").replace("https://www.","https://");location.replace(loc)}

@@ -1,0 +1,28 @@
+<!-- first comment -->
+<!-- second comment -->
+<!--
+/*prettydiff.com topcoms: true, inchar: " ", insize: 4, vertical: true */
+/*global ace, ArrayBuffer, AudioContext, console, document, FileReader, localStorage, location, navigator, setTimeout, Uint8Array, window, XMLHttpRequest*/
+/*jshint laxbreak: true*/
+/*jslint for: true*/
+/*****************************************************************************
+ This is written by Austin Cheney on 3 Mar 2009.
+
+ Please see the license.txt file associated with the Pretty Diff
+ application for license information.
+ ****************************************************************************/
+ -->
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <!-- comment within the code -->
+        <title>parse framework browser tool</title>
+        <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/>
+        <meta content="text/css" http-equiv="content-style-type"/>
+        <meta content="application/javascript" http-equiv="content-script-type"/>
+        <link href="../runtimes/browsertest.css" media="all" rel="stylesheet" type="text/css"/>
+    </head>
+</html>
