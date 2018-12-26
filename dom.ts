@@ -1,4 +1,3 @@
-/*prettydiff.com topcoms: true, inchar: " ", insize: 4, vertical: true */
 /*global ace, ArrayBuffer, AudioContext, console, document, FileReader, localStorage, location, navigator, setTimeout, Uint8Array, window, XMLHttpRequest*/
 /*jshint laxbreak: true*/
 /*jslint for: true*/

@@ -87,10 +87,17 @@
                 do {
                     if (data.lexer[a] === lexer) {
                         if (data.types[a].indexOf("attribute") > -1) {
+                            if (data.types[a - 1].indexOf("attribute") < 0) {
+                                level[a - 1] = -10;
+                            }
                             if (data.types[a] === "comment_attribute" && data.token[a].slice(0, 2) === "//") {
                                 level.push(-10);
+                            } else if (data.types[a] === "jsx_attribute_start") {
+                                level.push(-20);
+                            } else if (data.types[a] === "jsx_attribute_end") {
+                                level.push(-10);
                             } else if (a < c - 1 && data.types[a + 1].indexOf("attribute") < 0) {
-                                if (data.lines[a + 1] > 0) {
+                                if (data.lines[a + 1] > 0 && data.lexer[a + 1] === lexer && data.types[a + 1] !== "start" && data.types[a + 1] !== "xml" && data.types[a + 1] !== "sgml") {
                                     level.push(-10);
                                 } else {
                                     level.push(-20);
@@ -98,10 +105,6 @@
                             } else {
                                 level.push(-10);
                             }
-                        } else if (data.types[a] === "jsx_attribute_start") {
-                            level.push(-20);
-                        } else if (data.types[a] === "jsx_attribute_end") {
-                            level.push(-10);
                         } else if (data.types[a] === "comment") {
                             if (comstart < 0) {
                                 comstart = a;

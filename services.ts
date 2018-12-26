@@ -872,7 +872,8 @@ interface readFile {
     };
     // build system
     apps.build = function node_apps_build():void {
-        let firstOrder:boolean = true;
+        let firstOrder:boolean = true,
+            sectionTime:[number, number] = [0, 0];
         const order = [
                 "npminstall",
                 "language",
@@ -897,8 +898,64 @@ interface readFile {
                 console.log(text.cyan + message + text.none);
                 console.log("");
             },
-            next = function node_apps_build_next():void {
-                let phase = order[0];
+            timeDifference = function node_apps_build_timeDifference(input:string):void {
+                let now:string[] = input.replace(`${text.cyan}[`, "").replace(`]${text.none} `, "").split(":"),
+                    numb:[number, number] = [(Number(now[0]) * 3600) + (Number(now[1]) * 60) + Number(now[2].split(".")[0]), Number(now[2].split(".")[1])],
+                    difference:[number, number],
+                    times:string[] = [],
+                    time:number = 0,
+                    str:string = "";
+                difference = [numb[0] - sectionTime[0], (numb[1] + 1000000000) - (sectionTime[1] + 1000000000)];
+                sectionTime = numb;
+                if (difference[1] < 0) {
+                    difference[0] = difference[0] - 1;
+                    difference[1] = difference[1] + 1000000000;
+                }
+                if (difference[0] < 3600) {
+                    times.push("00");
+                } else {
+                    time = Math.floor(difference[0] / 3600);
+                    difference[0] = difference[0] - (time * 3600);
+                    if (time < 10) {
+                        times.push(`0${time}`);
+                    } else {
+                        times.push(String(time));
+                    }
+                }
+                if (difference[0] < 60) {
+                    times.push("00");
+                } else {
+                    time = Math.floor(difference[0] / 60);
+                    difference[0] = difference[0] - (time * 60);
+                    if (time < 10) {
+                        times.push(`0${time}`);
+                    } else {
+                        times.push(String(time));
+                    }
+                }
+                if (difference[0] < 1) {
+                    times.push("00");
+                } else if (difference[0] < 10) {
+                    times.push(`0${difference[0]}`);
+                } else {
+                    times.push(String(difference[0]));
+                }
+                str = String(difference[1]);
+                if (str.length < 9) {
+                    do {
+                        str = `0${str}`;
+                    } while (str.length < 9);
+                }
+                times[2] = `${times[2]}.${str}`;
+                console.log(`${text.cyan + text.bold}[${times.join(":")}]${text.none} ${text.green}Total section time.${text.none}`);
+            },
+            next = function node_apps_build_next(message:string):void {
+                let phase = order[0],
+                    time:string = apps.humantime(false);
+                if (message !== "") {
+                    console.log(time + message);
+                    timeDifference(time);
+                }
                 if (order.length < 1) {
                     verbose = true;
                     heading("All tasks complete... Exiting clean!\u0007");
@@ -937,8 +994,7 @@ interface readFile {
                                             apps.errout([erw.toString()]);
                                             return;
                                         }
-                                        console.log(`${apps.humantime(false) + text.green}CSS combined into a single file.${text.none}`);
-                                        next();
+                                        next(`${text.green}CSS combined into a single file.${text.none}`);
                                     });
                                 }
                             });
@@ -958,8 +1014,7 @@ interface readFile {
                                 console.log(errw.toString());
                                 return;
                             }
-                            console.log(`${apps.humantime(false) + text.green}Language dependency file sourced from parse-framework.${text.none}`);
-                            next();
+                            next(`${text.green}Language dependency file sourced from parse-framework.${text.none}`);
                         });
                     });
                 },
@@ -1222,8 +1277,7 @@ interface readFile {
                                                 apps.errout([erth.toString()]);
                                                 return;
                                             }
-                                            console.log(`${apps.humantime(false) + text.green}Option details written to files.${text.none}`);
-                                            next();
+                                            next(`${text.green}Option details written to files.${text.none}`);
                                         });
                                     }
                                 });
@@ -1345,8 +1399,11 @@ interface readFile {
                     versionGather();
                 },
                 lint     : function node_apps_build_lint():void {
+                    const callback = function node_apps_build_lint_callback(message:string):void {
+                        next(message);
+                    };
                     heading("Linting");
-                    apps.lint(next);
+                    apps.lint(callback);
                 },
                 npminstall: function node_apps_build_npminstall():void {
                     heading("First Time Developer Dependency Installation");
@@ -1364,16 +1421,14 @@ interface readFile {
                                         apps.errout([stderr]);
                                         return;
                                     }
-                                    console.log(`${apps.humantime(false) + text.green}Installed dependencies.${text.none}`);
-                                    next();
+                                    next(`${text.green}Installed dependencies.${text.none}`);
                                 });
                             } else {
                                 apps.errout([errs.toString()]);
                                 return;
                             }
                         } else {
-                            console.log(`${apps.humantime(false) + text.green}Dependencies appear to be already installed...${text.none}`);
-                            next();
+                            next(`${text.green}Dependencies appear to be already installed...${text.none}`);
                         }
                     });
                 },
@@ -1425,8 +1480,7 @@ interface readFile {
                             apps.errout([err.toString()]);
                             return;
                         }
-                        console.log(`${apps.humantime(false) + text.green}Options documentation successfully written to markdown file.${text.none}`);
-                        next();
+                        next(`${text.green}Options documentation successfully written to markdown file.${text.none}`);
                     });
                 },
                 parseFramework: function node_apps_build_parseFramework():void {
@@ -1458,8 +1512,7 @@ interface readFile {
                                             apps.errout([stberr]);
                                             return;
                                         }
-                                        console.log(`${apps.humantime(false) + text.green}The parse-framework dependency built.${text.none}`);
-                                        next();
+                                        next(`${text.green}The parse-framework dependency built.${text.none}`);
                                     });
                                 });
                             } else {
@@ -1467,14 +1520,16 @@ interface readFile {
                                 return;
                             }
                         } else {
-                            console.log(`${apps.humantime(false) + text.green}The parse-framework dependency appears to already be built.${text.none}`);
-                            next();
+                            next(`${text.green}The parse-framework dependency appears to already be built.${text.none}`);
                         }
                     });
                 },
                 simulation: function node_apps_build_simulation():void {
+                    const callback = function node_apps_build_lint_callback(message:string):void {
+                        next(message);
+                    };
                     heading("Simulations of Node.js commands from js/services.js");
-                    apps.simulation(next);
+                    apps.simulation(callback);
                 },
                 typescript: function node_apps_build_typescript():void {
                     const flag = {
@@ -1498,18 +1553,16 @@ interface readFile {
                                     apps.errout([stderr]);
                                     return;
                                 }
-                                console.log(`${apps.humantime(false) + text.green}TypeScript build completed without warnings.${text.none}`);
-                                next();
+                                next(`${text.green}TypeScript build completed without warnings.${text.none}`);
                             });
                         };
                     heading("TypeScript Compilation");
                     node.fs.stat(`${projectPath}services.ts`, function node_apps_build_typescript_services(err:Error) {
                         if (err !== null) {
                             if (err.toString().indexOf("no such file or directory") > 0) {
-                                console.log(`${apps.humantime(false) + text.angry}TypeScript code files not present.${text.none}`);
                                 flag.services = true;
                                 if (flag.typescript === true) {
-                                    next();
+                                    next(`${text.angry}TypeScript code files not present.${text.none}`);
                                 }
                             } else {
                                 apps.errout([err]);
@@ -1526,11 +1579,10 @@ interface readFile {
                         if (err !== null) {
                             const str = err.toString();
                             if (str.indexOf("command not found") > 0 || str.indexOf("is not recognized") > 0) {
-                                console.log(`${apps.humantime(false) + text.angry}TypeScript does not appear to be installed.`);
-                                console.log(`Install TypeScript with this command: ${text.green}npm install typescript -g${text.none}`);
+                                console.log(`${text.angry}TypeScript does not appear to be installed.${text.none}`);
                                 flag.typescript = true;
                                 if (flag.services === true) {
-                                    next();
+                                    next(`${text.angry}Install TypeScript with this command: ${text.green}npm install typescript -g${text.none}`);
                                 }
                             } else {
                                 apps.errout([err.toString(), stdout]);
@@ -1548,8 +1600,11 @@ interface readFile {
                     });
                 },
                 validation: function node_apps_build_validation():void {
+                    const callback = function node_apps_build_lint_callback(message:string):void {
+                        next(message);
+                    };
                     heading("Pretty Diff validation tests");
-                    apps.validation(next);
+                    apps.validation(callback);
                 }
             };
         if (process.argv.indexOf("nocheck") > -1) {
@@ -1557,7 +1612,7 @@ interface readFile {
             order.splice(order.indexOf("simulation"), 1);
             order.splice(order.indexOf("validation"), 1);
         }
-        next();
+        next("");
     };
     // CLI commands documentation generator
     apps.commands = function node_apps_commands():void {
@@ -2632,9 +2687,10 @@ interface readFile {
                 console.log("ESLint is not globally installed or is corrupt.");
                 console.log(`Install ESLint using the command: ${text.green}npm install eslint -g${text.none}`);
                 console.log("");
-                console.log("Skipping code validation...");
                 if (callback !== undefined) {
-                    callback();
+                    callback("Skipping code validation...");
+                } else {
+                    console.log("Skipping code validation...");
                 }
                 return;
             }
@@ -2673,9 +2729,11 @@ interface readFile {
                                     }
                                     console.log(`${apps.humantime(false) + text.green}Lint ${filesLinted} passed:${text.none} ${val}`);
                                     if (filesRead === filesLinted) {
-                                        console.log(`${text.green}Lint complete for ${filesLinted} files!${text.none}`);
+                                        console.log("");
                                         if (callback !== undefined) {
-                                            callback();
+                                            callback(`${text.green}Lint complete for ${filesLinted} files!${text.none}`);
+                                        } else {
+                                            console.log(`${text.green}Lint complete for ${filesLinted} files!${text.none}`);
                                         }
                                         return;
                                     }
@@ -3939,10 +3997,8 @@ interface readFile {
                     if (a < len) {
                         wrapper();
                     } else {
-                        const complete:string = `${text.green}Successfully completed all ${text.cyan + len + text.green} simulation tests.${text.none}`;
                         console.log("");
-                        console.log(complete);
-                        callback();
+                        callback(`${text.green}Successfully completed all ${text.cyan + len + text.green} simulation tests.${text.none}`);
                     }
                 };
                 if (irr !== "") {
@@ -4265,16 +4321,17 @@ interface readFile {
                             apps.log([`${text.green}All ${filecount} files passed.${text.none}`], "", "");
                         }
                     } else {
+                        let msg:string = "";
                         console.log("");
                         if (missing > 0) {
                             let plural:string = (missing === 1)
                                 ? " is"
                                 : "s are";
-                            console.log(`${text.green + text.bold + filecount + text.none} files passed, but ${text.angry + missing} file${plural} missing${text.none}.`);
+                            msg = `${text.green + text.bold + filecount + text.none} files passed, but ${text.angry + missing} file${plural} missing${text.none}.`;
                         } else {
-                            console.log(`${text.green}All ${filecount} files passed.${text.none}`);
+                            msg = `${text.green}All ${filecount} files passed.${text.none}`;
                         }
-                        callback();
+                        callback(msg);
                     }
                 }
             },
