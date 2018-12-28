@@ -747,7 +747,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             : headline.getElementsByTagName("p")[0],
                         x           = Math.random(),
                         circulation = [
-                            "Experimental version 3.0.0.  For stable code please use <a href=\"2\">version 2</a>."
+                            "Now updated to <a href='https://www.npmjs.com/package/prettydiff'>NPM</a>.",
+                            "Check out the <a href='https://prettydiff.com/parse-framework/runtimes/browsertest.xhtml'>parsing utility</a> that makes this possible."
                         ];
                     if (headline !== null) {
                         headtext.innerHTML = circulation[Math.floor(x * circulation.length)];

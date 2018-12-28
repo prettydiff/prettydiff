@@ -100,7 +100,8 @@
                     count = 0;
                 }
             } else {
-                let skip:number = a;
+                let skip:number = a,
+                    quit:boolean = false;
                 do {
                     if (data.lexer[a + 1] === lexer && data.begin[a + 1] < skip) {
                         break;
@@ -113,13 +114,18 @@
                 options.start = skip;
                 options.end = a;
                 if (a > end - 1) {
-                    a = end - 1;
+                    a = skip;
+                    quit = true;
+                    options.end = end - 2;
                 }
                 external = prettydiff.minify[data.lexer[a]](options).replace(/\s+$/, "");
-                if (options.wrap > 0 && options.minify_wrap === true && data.token[a - 1] !== "return") {
+                if (options.wrap > 0 && options.minify_wrap === true && data.token[skip - 1] !== "return") {
                     build.push(lf);
                 }
                 build.push(external);
+                if (quit === true) {
+                    break;
+                }
                 if (options.wrap > 0 && options.minify_wrap === true) {
                     build.push(lf);
                     count = 0;

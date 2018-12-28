@@ -376,14 +376,13 @@
         if (typeof options.lexerOptions.markup !== "object") {
             options.lexerOptions.markup = {};
         }
+        options.lexerOptions.markup.quote_convert = options.quote_convert;
+        options.lexerOptions.script.quote_convert = options.quote_convert;
+        options.lexerOptions.style.quote_convert = options.quote_convert;
         if (options.lexerOptions[options.lexer] !== undefined) {
             options.lexerOptions.markup.tagSort = options.tag_sort;
             options.lexerOptions.script.objectSort = options.object_sort;
             options.lexerOptions.style.objectSort = options.object_sort;
-        }
-        if (options.quote_convert !== "none") {
-            options.lexerOptions.script.quote_convert = options.quote_convert;
-            options.lexerOptions.style.quote_convert = options.quote_convert;
         }
         if (options.tag_merge === true && options.unformatted === false) {
             options.lexerOptions.markup.tag_merge = true;
