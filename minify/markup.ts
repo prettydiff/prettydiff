@@ -1,3 +1,5 @@
+import { REPLServer } from "repl";
+
 /*global global, prettydiff*/
 (function minify_markup_init():void {
     "use strict";
@@ -87,6 +89,9 @@
                 do {
                     if (data.lexer[a] === lexer) {
                         if (data.types[a].indexOf("attribute") > -1) {
+                            if (data.types[a] === "attribute") {
+                                data.token[a] = data.token[a].replace(/\s+/g, " ");
+                            }
                             if (data.types[a - 1].indexOf("attribute") < 0) {
                                 level[a - 1] = -10;
                             }
@@ -113,6 +118,9 @@
                                 comment();
                             }
                         } else if (data.types[a] !== "comment") {
+                            if (data.types[a] === "content") {
+                                data.token[a] = data.token[a].replace(/\s+/g, " ");
+                            }
                             next = nextIndex();
                             if (data.lines[next] > 0 && (
                                 data.types[a] === "content" ||
@@ -174,8 +182,13 @@
                     data.token[y - 1] = data.token[y - 1] + end[0];
                 };
             let a:number            = options.start,
+                b:number         = 0,
+                next:number      = 0,
                 external:string = "",
-                lastLevel:number = 0;
+                lastLevel:number = 0,
+                count:number     = 0,
+                linelen:number   = 0,
+                lines:string[]   = [];
             if (options.top_comments === true && data.types[a] === "comment" && options.start === 0) {
                 if (a > 0) {
                     build.push(lf);
@@ -193,27 +206,77 @@
                     }
                     if (data.types[a] !== "comment" && data.types[a] !== "comment_attribute") {
                         build.push(data.token[a]);
+                        count = count + data.token[a].length;
                         if ((data.types[a] === "template" || data.types[a] === "template_start") && data.types[a - 1] === "content" && data.presv[a - 1] === true && options.mode === "minify" && levels[a] === -20) {
                             build.push(" ");
+                            count = count + 1;
                         }
                         if (levels[a] > -1) {
                             lastLevel = levels[a];
                         } else if (levels[a] === -10 && data.types[a] !== "jsx_attribute_start") {
                             build.push(" ");
+                            count = count + 1;
+                        }
+                    }
+                    next = a + 1;
+                    if (next < c - 1 && data.types[next].indexOf("comment") > -1) {
+                        do {
+                            next = next + 1;
+                        } while (next < c - 1 && data.types[next].indexOf("comment") > -1);
+                    }
+                    if (next < c - 1 && count + data.token[next].length > options.wrap && options.wrap > 0 && options.minify_wrap === true) {
+                        if (build[build.length - 1] === " ") {
+                            build.pop();
+                        }
+                        if ((data.types[next] === "content" || data.types[next] === "attribute") && data.token[next].indexOf(" ") > 0) {
+                            lines = data.token[next].split(" ");
+                            b = 0;
+                            linelen = lines.length;
+                            if (count + lines[0] + 1 > options.wrap) {
+                                build.push(lf);
+                                count = 0;
+                            }
+                            do {
+                                count = count + lines[b].length + 1;
+                                if (count > options.wrap) {
+                                    count = lines[b].length + 1;
+                                    build.push(lf);
+                                }
+                                build.push(lines[b]);
+                                build.push(" ");
+                                b = b + 1;
+                            } while (b < linelen);
+                            if (next < c - 2 && count + data.token[next + 1].length > options.wrap) {
+                                if (build[build.length - 1] === " ") {
+                                    build.pop();
+                                }
+                                build.push(lf);
+                                count = 0;
+                            }
+                            a = next;
+                        } else {
+                            build.push(lf);
+                            count = 0;
                         }
                     }
                 } else {
                     if (externalIndex[a] === a && data.types[a] !== "reference") {
                         if (data.types[a] !== "comment") {
                             build.push(data.token[a]);
+                            count = count + data.token[a].length;
                         }
                     } else {
                         options.end = externalIndex[a];
                         options.indent_level = lastLevel;
                         options.start = a;
                         external = prettydiff.minify[data.lexer[a]](options).replace(/\s+$/, "");
+                        if (options.wrap > 0 && options.minify_wrap === true) {
+                            build.push(lf);
+                        }
                         build.push(external);
                         if (levels[prettydiff.iterator] > -1 && externalIndex[a] > a) {
+                            build.push(lf);
+                        } else if (options.wrap > 0 && options.minify_wrap === true) {
                             build.push(lf);
                         }
                         a = prettydiff.iterator;

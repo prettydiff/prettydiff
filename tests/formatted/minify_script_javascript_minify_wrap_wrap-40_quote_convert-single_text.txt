@@ -1,0 +1,58 @@
+if(exclusions[optName]!==''&&(opt.api===
+'any'||opt.api==='dom')){item=[
+`<li data-mode="${opt.mode}">`];if(opt.
+type==='boolean'){item.push(
+`<p class="label">${opt.label
+} <a class="apiname" href="documentation.xhtml#${
+optName}">(${optName})</a></p>`);if(opt.
+default===true){item.push(
+`<span><input type="radio" id="option-false-${
+optName}" name="option-${optName
+}" value="false"/> <label for="option-false-${
+optName}">false</label></span>`);item.
+push(
+`<span><input type="radio" checked="checked" id="option-true-${
+optName}" name="option-${optName
+}" value="true"/> <label for="option-true-${
+optName}">true</label></span>`)}else{
+item.push(
+`<span><input type="radio" checked="checked" id="option-false-${
+optName}" name="option-${optName
+}" value="false"/> <label for="option-false-${
+optName}">false</label></span>`);item.
+push(
+`<span><input type="radio" id="option-true-${
+optName}" name="option-${optName
+}" value="true"/> <label for="option-true-${
+optName}">true</label></span>`)}select=
+false}else{item.push(
+`<label for="option-${optName
+}" class="label">${opt.label}`);item.
+push(
+` <a class="apiname" href="documentation.xhtml#${
+optName}">(${optName})</a>`);item.push(
+`</label>`);if(opt.type==='number'||(opt
+.type==='string'&&opt.values===undefined
+)){item.push(
+`<input type="text" id="option-${optName
+}" value="${opt.default}" data-type="${
+opt.type}"/>`);select=false}else{item.
+push(`<select id="option-${optName}">`);
+vals=Object.keys(opt.values);vallen=vals
+.length;b=0;do{item.push(
+`<option data-description="${opt.values[
+vals[b]].replace(/"/g,'&quot;')}" ${(opt
+.default===vals[b])?
+'selected="selected"':''}>${vals[b]
+}</option>`);b=b+1}while(b<vallen);item.
+push(`</select>`);select=true}}item.push
+(`<p class="option-description">${opt.
+definition.replace(/"/g,'&quot;')}`);if(
+select===true){item.push(
+` <span><strong>${opt.default
+}</strong> &#8212; ${opt.values[String(
+opt.default)]}</span>`)}item.push('</p>'
+);item.push(
+`<div class="disabled" style="display:none"></div>`
+);item.push(`</li>`);allItems.push(item.
+join(''))}

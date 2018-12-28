@@ -31,6 +31,7 @@
                     if (bb < 0) {
                         if (data.token[aa - 1] === "for") {
                             build.push(";");
+                            count = count + 1;
                         }
                         return;
                     }
@@ -38,8 +39,8 @@
                 } while (aa > -1);
             };
         let a:number        = options.start,
-            external:string = "",
-            linelen:number  = 0;
+            count:number    = 0,
+            external:string = "";
         if (options.top_comments === true && data.types[a] === "comment" && options.start === 0) {
             if (a > 0) {
                 build.push(lf);
@@ -55,6 +56,7 @@
                 if (data.types[a] !== "comment") {
                     if (data.types[a - 1] === "operator" && data.types[a] === "operator" && data.token[a] !== "!") {
                         build.push(" ");
+                        count = count + 1;
                     }
                     if ((data.types[a] === "word" || data.types[a] === "references") && (
                         data.types[a + 1] === "word" ||
@@ -69,31 +71,33 @@
                             data.token[a - 1].charAt(0) !== "'"
                         ) {
                             build.push(" ");
+                            count = count + 1;
                         }
                         build.push(data.token[a]);
                         build.push(" ");
+                        count = count + data.token[a].length + 1;
                     } else if (data.token[a] === "x;" && data.token[a + 1] !== "}") {
                         build.push(";");
+                        count = count + 1;
                     } else if (data.token[a] === ";" && data.token[a + 1] === "}") {
                         lastsemi();
                     } else if (invisibles.indexOf(data.token[a]) < 0) {
                         build.push(data.token[a]);
+                        count = count + data.token[a].length;
                     }
-                    if (options.wrap > 0) {
-                        linelen = linelen + data.token[a].length;
-                        if (
-                            (
-                                data.types[a] === "operator" ||
-                                data.types[a] === "separator" ||
-                                data.types[a] === "start"
-                            ) &&
-                            a < length - 1 &&
-                            linelen + data.token[a + 1].length > options.wrap
-                        ) {
-                            build.push(lf);
-                            linelen = 0;
-                        }
+                }
+                if (a < end - 1 && count + data.token[a + 1].length > options.wrap && options.wrap > 0 && options.minify_wrap === true) {
+                    if (build[build.length - 1] === " ") {
+                        build.pop();
                     }
+                    if (data.token[a + 1] === ";") {
+                        build.pop();
+                        build.push(lf);
+                        build.push(data.token[a]);
+                    } else {
+                        build.push(lf);
+                    }
+                    count = 0;
                 }
             } else {
                 let skip:number = a;
@@ -112,7 +116,14 @@
                     a = end - 1;
                 }
                 external = prettydiff.minify[data.lexer[a]](options).replace(/\s+$/, "");
+                if (options.wrap > 0 && options.minify_wrap === true && data.token[a - 1] !== "return") {
+                    build.push(lf);
+                }
                 build.push(external);
+                if (options.wrap > 0 && options.minify_wrap === true) {
+                    build.push(lf);
+                    count = 0;
+                }
             }
             a = a + 1;
         } while (a < end);

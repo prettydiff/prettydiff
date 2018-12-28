@@ -898,7 +898,7 @@ interface readFile {
                 console.log(text.cyan + message + text.none);
                 console.log("");
             },
-            timeDifference = function node_apps_build_timeDifference(input:string):void {
+            sectionTimer = function node_apps_build_sectionTime(input:string):void {
                 let now:string[] = input.replace(`${text.cyan}[`, "").replace(`]${text.none} `, "").split(":"),
                     numb:[number, number] = [(Number(now[0]) * 3600) + (Number(now[1]) * 60) + Number(now[2].split(".")[0]), Number(now[2].split(".")[1])],
                     difference:[number, number],
@@ -954,7 +954,7 @@ interface readFile {
                     time:string = apps.humantime(false);
                 if (message !== "") {
                     console.log(time + message);
-                    timeDifference(time);
+                    sectionTimer(time);
                 }
                 if (order.length < 1) {
                     verbose = true;

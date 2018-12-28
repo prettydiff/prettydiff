@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Pretty Diff - The difference tool</title>
+        <link href="https://prettydiff.com" rel="canonical" type="application/xhtml+xml"/>
+        <link href="https://prettydiff.com/images/favicon.ico" rel="icon"
+            type="image/x-icon"/>
+        <link href="https://prettydiff.com/labels.rdf" rel="meta" title="ICRA labels"
+            type="application/rdf+xml"/>
+        <link href="humans.txt" rel="author" type="text/plain"/>
+        <link href="css/index.css?1545970643821" media="all" rel="stylesheet" type="text/css"/>
+        <link href="images/apple-touch-icon-57.png" rel="apple-touch-icon" sizes="57x57"/>
+        <link href="images/apple-touch-icon-72.png" rel="apple-touch-icon" sizes="72x72"/>
+        <link href="images/apple-touch-icon-114.png" rel="apple-touch-icon"
+            sizes="114x114"/>
+        <link href="images/apple-touch-icon-144.png" rel="apple-touch-icon"
+            sizes="144x144"/>
+        <meta content="width=device-width, initial-scale=1" name="viewport"/>
+        <meta content="index, follow" name="robots"/>
+        <meta content="Pretty Diff - The difference tool" name="DC.title"/>
+        <meta content="#fff" name="theme-color"/>
+        <meta
+            content="(pics-1.1 'http://www.icra.org/pics/vocabularyv03/' l gen true for 'https://prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1) gen true for 'https://www.prettydiff.com' r (n 0 s 0 v 0 l 0 oa 0 ob 0 oc 0 od 0 oe 0 of 0 og 0 oh 0 c 1))"
+            http-equiv="pics-Label"/>
+        <meta content="Austin Cheney" name="author"/>
+        <meta
+            content="Pretty Diff tool can minify, beautify (pretty-print), or diff between minified and beautified code. This tool can even beautify and minify React JSX and many other languages."
+            name="description"/>
+        <meta content="Global" name="distribution"/>
+        <meta content="en" http-equiv="Content-Language"/>
+        <meta content="application/xhtml+xml;charset=UTF-8" http-equiv="Content-Type"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Enter"/>
+        <meta content="blendTrans(Duration=0)" http-equiv="Page-Exit"/>
+        <meta content="text/css" http-equiv="content-style-type"/>
+        <meta content="application/javascript" http-equiv="content-script-type"/>
+        <meta content="qL8AV9yjL2-ZFGV9ey6wU3t7pTZdpD4lIetUSiNen7E"
+            name="google-site-verification"/>
+        <meta content="#bbbbff" name="msapplication-TileColor"/>
+        <meta content="images/pdlogo.svg" name="msapplication-TileImage"/>
+    </head>
+    <body class="white" id="prettydiff">
+        <div class="contentarea" id="webtool">
+            <h1 class="content-hide">Pretty Diff, a language aware file comparison tool, beautifier, minifier and
+                parser.</h1>
+            <p aria-atomic="true" aria-live="assertive" id="arialive" role="alert"
+                style="display:none"></p>
+            <div id="headline" style="display:block">
+                <h2>Announcement &#8212;</h2>
+                <p></p>
+                <span class="clear"></span>
+            </div>
+            <ul id="infolinks">
+                <li>
+                    <a href="https://www.npmjs.com/package/prettydiff">NPM</a>
+                </li>
+                <li>
+                    <a href="https://github.com/prettydiff/prettydiff/">GitHub</a>
+                </li>
+                <li>
+                    <a href="documentation.xhtml">Documentation</a>
+                </li>
+            </ul>
+            <p id="functionGroup" role="menu">
+                <strong>Function</strong>
+                <span>
+                    <input checked="checked" id="modediff" name="mode" type="radio"/>
+                    <label for="modediff">Compare</label>
+                </span>
+                <span>
+                    <input id="modebeautify" name="mode" type="radio"/>
+                    <label for="modebeautify">Beautify</label>
+                </span>
+                <span>
+                    <input id="modeminify" name="mode" type="radio"/>
+                    <label for="modeminify">Minify</label>
+                </span>
+                <span>
+                    <input id="modeparse" name="mode" type="radio"/>
+                    <label for="modeparse">Parse Table</label>
+                </span>
+                <!--span>
+                    <input id="modeanalysis" name="mode" type="radio"/>
+                    <label for="modeanalysis">Analysis</label>
+                </span-->
+            </p>
+            <div class="metainfo">
+                <p id="announcement" role="alert"></p>
+                <p id="update">Latest Commit:<!-- start version data --><strong>27 Dec 2018</strong> <span>Version: <strong>100.0.0</strong></span>
+<!-- end version data -->
+                </p>
+            </div>
+            <div id="codeInput" role="main">
+                <p id="textareaTabKey" style="display:none">
+                    <strong>Accessibility note:</strong>
+                    Hold
+                    <em>shift</em>
+                    and press
+                    <em>control</em>
+                    key twice to focus on the previous element or press
+                    <em>control</em>
+                    twice to focus away from this textarea.</p>
+                <h2>Compare Code</h2>
+                <div class="input">
+                    <p class="file">
+                        <input id="inputfile" multiple="multiple" type="file"/>
+                        <label for="inputfile">Compare source file</label>
+                    </p>
+                    <p class="file">
+                        <input id="inputlabel" type="text" value="Source"/>
+                        <label for="inputlabel">Source code label <a href="documentation.xhtml#sourcelabel">(sourcelabel)</a></label>
+                    </p>
+                    <p class="inputLabel">
+                        <label for="input">Compare source code</label>
+                        <textarea cols="80" id="input" rows="10" wrap="off"></textarea>
+                    </p>
+                </div>
+                <div class="output">
+                    <p class="file">
+                        <input id="outputfile" multiple="multiple" type="file"/>
+                        <label for="outputfile">Compare new file</label>
+                    </p>
+                    <p class="file">
+                        <input id="outputlabel" type="text" value="New"/>
+                        <label for="outputlabel">New code label <a href="documentation.xhtml#difflabel">(difflabel)</a></label>
+                    </p>
+                    <p class="inputLabel">
+                        <label for="output">Compare new code</label>
+                        <textarea cols="40" id="output" rows="10" wrap="off"></textarea>
+                    </p>
+                </div>
+                <span class="clear"></span>
+            </div>
+            <p class="button" id="button-primary">
+                <button type="button" value="Execute">Execute</button>
+            </p>
+            <div id="reports">
+                <h2>Reporting data which updates with each use of the tool</h2>
+                <div class="box" id="feedreport" role="dialog_nonmodal" style="display:none">
+                    <h3 class="heading"
+                        title="Grab this title element to open this dialogue or move it around around the screen.">
+                        <button>Feedback</button>
+                    </h3>
+                    <p class="buttons" style="display:none">
+                        <button class="minimize" title="Minimize this dialogue ">&#8593;</button>
+                        <button class="maximize" title="Maximize this dialogue to the browser window.">&#8593;</button>
+                        <button class="resize" title="Resize this dialogue.">&#8596;</button>
+                    </p>
+                    <div class="body" id="feedreportbody" style="display:none" xml:space="preserve">
+                        <p id="feedintro">Please feel free to submit feedback about Pretty Diff at any
+                            time by answering the following questions.</p>
+                        <p class="radiogroup">
+                            <span class="feedlabel">How likely are you to recommend Pretty Diff to a friend or coworker?</span>
+                            <span>
+                                <label class="feedradio1" for="feedradio1">1</label><input id="feedradio1" name="feedradio" type="radio" value="1"/>
+                                <span>Never</span>
+                            </span>
+                            <span>
+                                <label class="feedradio2" for="feedradio2">2</label><input id="feedradio2" name="feedradio" type="radio" value="2"/>
+                                <span>Not Likely</span>
+                            </span>
+                            <span>
+                                <label class="feedradio3" for="feedradio3">3</label><input id="feedradio3" name="feedradio" type="radio" value="3"/>
+                                <span>Rarely</span>
+                            </span>
+                            <span>
+                                <label class="feedradio4" for="feedradio4">4</label><input id="feedradio4" name="feedradio" type="radio" value="4"/>
+                                <span>Maybe</span>
+                            </span>
+                            <span>
+                                <label class="feedradio5" for="feedradio5">5</label><input id="feedradio5" name="feedradio" type="radio" value="5"/>
+                                <span>Probably</span>
+                            </span>
+                            <span>
+                                <label class="feedradio6" for="feedradio6">6</label><input id="feedradio6" name="feedradio" type="radio" value="6"/>
+                                <span>Frequently</span>
+                            </span>
+                            <span>
+                                <label class="feedradio7" for="feedradio7">7</label><input id="feedradio7" name="feedradio" type="radio" value="7"/>
+                                <span>Always</span>
+                            </span>
+                        </p>
+                        <p>
+                            <label for="feedtextarea">What is your primary reason for the above answer?</label>
+                            <textarea id="feedtextarea"></textarea>
+                        </p>
+                        <p>
+                            <label for="feedemail">Email address (optional)</label>
+                            <input id="feedemail" type="text"/></p>
+                        <p>
+                            <button id="feedsubmit" type="button">Submit feedback</button>
+                        </p>
+                    </div>
+                </div>
+                <div class="box" id="codereport" role="dialog_nonmodal">
+                    <h3 class="heading"
+                        title="Grab this title element to open this dialogue or move it around the screen.">
+                        <button>Code Report</button>
+                    </h3>
+                    <p class="buttons" style="display:none">
+                        <a href="#">
+                            <button class="save" tabindex="-1"
+                                title="Convert diff report to text that can be saved.">S</button>
+                        </a>
+                        <button class="minimize" title="Minimize this dialogue">&#8593;</button>
+                        <button class="maximize" title="Maximize this dialogue to the browser window.">&#8593;</button>
+                        <button class="resize" title="Resize this dialogue.">&#8596;</button>
+                    </p>
+                    <div class="body" id="codereportbody" style="display:none" xml:space="preserve"></div>
+                </div>
+                <div class="box" id="statreport" role="dialog_nonmodal">
+                    <h3 class="heading"
+                        title="Grab this title element to open this dialogue or move it around the screen.">
+                        <button>Usage Statistics</button>
+                    </h3>
+                    <p class="buttons" style="display:none">
+                        <button class="minimize" title="Minimize this dialogue">&#8593;</button>
+                        <button class="maximize" title="Maximize this dialogue to the browser window.">&#8593;</button>
+                        <button class="resize" title="Resize this dialogue.">&#8596;</button>
+                    </p>
+                    <div class="body" id="statreportbody" style="display:none" xml:space="preserve">
+                        <table class="report">
+                            <tbody>
+                                <tr>
+                                    <th colspan="2" class="heading">General statistics</th>
+                                </tr>
+                                <tr>
+                                    <th>Total number of page loads</th>
+                                    <td id="stvisit">0</td>
+                                </tr>
+                                <tr>
+                                    <th>Total usage count</th>
+                                    <td id="stusage">0</td>
+                                </tr>
+                                <tr>
+                                    <th>Start date of logging</th>
+                                    <td id="stfdate"></td>
+                                </tr>
+                                <tr>
+                                    <th>Average page loads per day</th>
+                                    <td id="stavday">0</td>
+                                </tr>
+                                <tr>
+                                    <th>Average uses per day</th>
+                                    <td id="stuseday">0</td>
+                                </tr>
+                                <tr>
+                                    <th>Largest code source</th>
+                                    <td id="stlarge">0</td>
+                                </tr>
+                                <tr>
+                                    <th colspan="2" class="heading">Usage statistics</th>
+                                </tr>
+                                <tr>
+                                    <th>Diff</th>
+                                    <td id="stdiff">0</td>
+                                </tr>
+                                <tr>
+                                    <th>Beautification</th>
+                                    <td id="stbeau">0</td>
+                                </tr>
+                                <tr>
+                                    <th>Minification</th>
+                                    <td id="stminn">0</td>
+                                </tr>
+                                <tr>
+                                    <th>Parse Table</th>
+                                    <td id="stpars">0</td>
+                                </tr>
+                                <tr>
+                                    <th>Analysis</th>
+                                    <td id="stanal">0</td>
+                                </tr>
+                                <tr>
+                                    <th colspan="2" class="heading">Language statistics</th>
+                                </tr>
+                                <tr>
+                                    <th>Markup</th>
+                                    <td id="stmarkup">0</td>
+                                </tr>
+                                <tr>
+                                    <th>JavaScript</th>
+                                    <td id="stjs">0</td>
+                                </tr>
+                                <tr>
+                                    <th>CSS</th>
+                                    <td id="stcss">0</td>
+                                </tr>
+                                <tr>
+                                    <th>CSV</th>
+                                    <td id="stcsv">0</td>
+                                </tr>
+                                <tr>
+                                    <th>Plain text</th>
+                                    <td id="sttext">0</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="options" id="options" role="toolbar">
+                <h2>Web Tool Options</h2>
+                <p class="resetbutton">
+                    <button id="resetOptions" type="button">Reset Options</button>
+                </p>
+                <ul>
+                    <li>
+                        <p class="label">Ace Code Editor</p>
+                        <span>
+                            <input checked="checked" id="ace-yes" name="ace-radio" type="radio"/>
+                            <label for="ace-yes">Enable Ace Code Editor</label>
+                        </span>
+                        <span>
+                            <input id="ace-no" name="ace-radio" type="radio"/>
+                            <label for="ace-no">Disable Ace Code Editor (Faster and more accessible)</label>
+                        </span>
+                    </li>
+                    <li>
+                        <p class="label">Local Storage <span class="apiname">(localStorage)</span></p>
+                        <span>
+                            <input id="localStorage-no" name="localStorage-radio" type="radio"/>
+                            <label for="localStorage-no">Save nothing</label>
+                        </span>
+                        <span>
+                            <input checked="checked" id="localStorage-yes" name="localStorage-radio" type="radio"/>
+                            <label for="localStorage-yes">Save input and application state in local browser</label>
+                        </span>
+                    </li>
+                    <li class="comment-container">
+                        <button id="commentClear">Reset Comment String</button>
+                        <label class="label" for="commentString">Pretty Diff Comment</label>
+                        <textarea cols="30" id="commentString" readonly="readonly" rows="2">/*prettydiff.com */</textarea>
+                    </li>
+                </ul>
+            </div>
+            <div id="addOptions" class="options" role="toolbar">
+                <h2>Pretty Diff Options</h2>
+                <ul>
+                <!-- documented options start --><li data-mode="beautify"><p class="label">Brace Lines <a class="apiname" href="documentation.xhtml#brace_line">(brace_line)</a></p><span><input type="radio" checked="checked" id="option-false-brace_line" name="option-brace_line" value="false"/> <label for="option-false-brace_line">false</label></span><span><input type="radio" id="option-true-brace_line" name="option-brace_line" value="true"/> <label for="option-true-brace_line">true</label></span><p class="option-description">If true an empty line will be inserted after opening curly braces and before closing curly braces.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Brace Padding <a class="apiname" href="documentation.xhtml#brace_padding">(brace_padding)</a></p><span><input type="radio" checked="checked" id="option-false-brace_padding" name="option-brace_padding" value="false"/> <label for="option-false-brace_padding">false</label></span><span><input type="radio" id="option-true-brace_padding" name="option-brace_padding" value="true"/> <label for="option-true-brace_padding">true</label></span><p class="option-description">Inserts a space after the start of a container and before the end of the container if the contents of that container are not indented; such as: conditions, function arguments, and escaped sequences of template strings.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><label for="option-brace_style" class="label">Brace Style <a class="apiname" href="documentation.xhtml#brace_style">(brace_style)</a></label><select id="option-brace_style"><option data-description="Sets options.formatObject to 'indent' and options.neverflatten to true." >collapse</option><option data-description="Sets options.bracepadding to true and options.formatObject to 'inline'." >collapse-preserve-inline</option><option data-description="Sets options.braces to true, options.formatObject to 'indent', and options.neverflatten to true." >expand</option><option data-description="Ignores this option" selected="selected">none</option></select><p class="option-description">Emulates JSBeautify's brace_style option using existing Pretty Diff options. <span><strong>none</strong> &#8212; Ignores this option</span></p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Style of Indent <a class="apiname" href="documentation.xhtml#braces">(braces)</a></p><span><input type="radio" checked="checked" id="option-false-braces" name="option-braces" value="false"/> <label for="option-false-braces">false</label></span><span><input type="radio" id="option-true-braces" name="option-braces" value="true"/> <label for="option-true-braces">true</label></span><p class="option-description">Determines if opening curly braces will exist on the same line as their condition or be forced onto a new line.</p><div class="disabled" style="display:none"></div></li><li data-mode="any"><label for="option-color" class="label">
+                    Color <a class="apiname" href="documentation.xhtml#color">(color)</a></label><select id="option-color"><option data-description="A light brown color scheme" >canvas</option><option data-description="A black and ashen color scheme" >shadow</option><option data-description="A white and pale grey color scheme" selected="selected">white</option></select><p class="option-description">The color scheme of the reports. <span><strong>white</strong> &#8212; A white and pale grey color scheme</span></p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Force an Empty Line Above Comments <a class="apiname" href="documentation.xhtml#comment_line">(comment_line)</a></p><span><input type="radio" checked="checked" id="option-false-comment_line" name="option-comment_line" value="false"/> <label for="option-false-comment_line">false</label></span><span><input type="radio" id="option-true-comment_line" name="option-comment_line" value="true"/> <label for="option-true-comment_line">true</label></span><p class="option-description">If a blank new line should be forced above comments.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Indent Comments <a class="apiname" href="documentation.xhtml#comments">(comments)</a></p><span><input type="radio" checked="checked" id="option-false-comments" name="option-comments" value="false"/> <label for="option-false-comments">false</label></span><span><input type="radio" id="option-true-comments" name="option-comments" value="true"/> <label for="option-true-comments">true</label></span><p class="option-description">This will determine whether comments should always start at position 0 of each line or if comments should be indented according to the code.</p><div class="disabled" style="display:none"></div></li><li data-mode="any"><p class="label">Generate A Complete HTML File <a class="apiname" href="documentation.xhtml#complete_document">(complete_document)</a></p><span><input type="radio" checked="checked" id="option-false-complete_document" name="option-complete_document" value="false"/> <label for="option-false-complete_document">false</label></span><span><input type="radio" id="option-true-complete_document" name="option-complete_document" value="true"/> <label for="option-true-complete_document">true</label></span><p class="option-description">Allows a preference for generating a complete HTML document instead of only generating content.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Compressed CSS <a class="apiname" href="documentation.xhtml#compressed_css">(compressed_css)</a></p><span><input type="radio" checked="checked" id="option-false-compressed_css" name="option-compressed_css" value="false"/> <label for="option-false-compressed_css">false</label></span><span><input type="radio" id="option-true-compressed_css" name="option-compressed_css" value="true"/> <label for="option-true-compressed_css">true</label></span>
+                    <p class="option-description">If CSS should be beautified in a style where the properties and values are minifed for faster reading of selectors.</p><div class="disabled" style="display:none"></div></li><li data-mode="minify"><p class="label">IE Comments (HTML Only) <a class="apiname" href="documentation.xhtml#conditional">(conditional)</a></p><span><input type="radio" checked="checked" id="option-false-conditional" name="option-conditional" value="false"/> <label for="option-false-conditional">false</label></span><span><input type="radio" id="option-true-conditional" name="option-conditional" value="true"/> <label for="option-true-conditional">true</label></span><p class="option-description">If true then conditional comments used by Internet Explorer are preserved at minification of markup.</p><div class="disabled" style="display:none"></div></li><li data-mode="diff"><p class="label">Ignore Content <a class="apiname" href="documentation.xhtml#content">(content)</a></p><span><input type="radio" checked="checked" id="option-false-content" name="option-content" value="false"/> <label for="option-false-content">false</label></span><span><input type="radio" id="option-true-content" name="option-content" value="true"/> <label for="option-true-content">true</label></span><p class="option-description">This will normalize all string content to 'text' so as to eliminate some differences from the output.</p><div class="disabled" style="display:none"></div></li><li data-mode="any"><p class="label">Fix Sloppy Code <a class="apiname" href="documentation.xhtml#correct">(correct)</a></p><span><input type="radio" checked="checked" id="option-false-correct" name="option-correct" value="false"/> <label for="option-false-correct">false</label></span><span><input type="radio" id="option-true-correct" name="option-correct" value="true"/> <label for="option-true-correct">true</label></span><p class="option-description">Automatically correct some sloppiness in code.</p><div class="disabled" style="display:none"></div></li><li data-mode="any"><p class="label">Line Termination <a class="apiname" href="documentation.xhtml#crlf">(crlf)</a></p><span><input type="radio" checked="checked" id="option-false-crlf" name="option-crlf" value="false"/> <label for="option-false-crlf">false</label></span><span><input type="radio" id="option-true-crlf" name="option-crlf" value="true"/> <label for="option-true-crlf">true</label></span><p class="option-description">If line termination should be Windows (CRLF) format.  Unix (LF) format is the default.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Insert Empty Lines <a class="apiname" href="documentation.xhtml#css_insert_lines">(css_insert_lines)</a></p><span><input type="radio" checked="checked" id="option-false-css_insert_lines" name="option-css_insert_lines" value="false"/> <label for="option-false-css_insert_lines">false</label></span><span><input type="radio" id="option-true-css_insert_lines" name="option-css_insert_lines" value="true"/>
+                    <label for="option-true-css_insert_lines">true</label></span><p class="option-description">Inserts new line characters between every CSS code block.</p><div class="disabled" style="display:none"></div></li><li data-mode="diff"><p class="label">Code Comments <a class="apiname" href="documentation.xhtml#diff_comments">(diff_comments)</a></p><span><input type="radio" checked="checked" id="option-false-diff_comments" name="option-diff_comments" value="false"/> <label for="option-false-diff_comments">false</label></span><span><input type="radio" id="option-true-diff_comments" name="option-diff_comments" value="true"/> <label for="option-true-diff_comments">true</label></span><p class="option-description">If true then comments will be preserved so that both code and comments are compared by the diff engine.</p><div class="disabled" style="display:none"></div></li><li data-mode="diff"><label for="option-diff_context" class="label">Context Size <a class="apiname" href="documentation.xhtml#diff_context">(diff_context)</a></label><input type="text" id="option-diff_context" value="-1" data-type="number"/><p class="option-description">This shortens the diff output by allowing a specified number of equivalent lines between each line of difference.  This option is only used with diff_format:html.</p><div class="disabled" style="display:none"></div></li><li data-mode="diff"><label for="option-diff_format" class="label">Diff Format <a class="apiname" href="documentation.xhtml#diff_format">(diff_format)</a></label><select id="option-diff_format"><option data-description="An HTML format for embedding in web pages, or as a complete web page if document_complete is true." >html</option><option data-description="A JSON format." >json</option><option data-description="Formatted similar to the Unix 'diff' command line utility." selected="selected">text</option></select><p class="option-description">The format of the output.  The command line output format is text, similar to Unix 'diff'. <span><strong>text</strong> &#8212; Formatted similar to the Unix 'diff' command line utility.</span></p><div class="disabled" style="display:none"></div></li><li data-mode="diff"><label for="option-diff_label" class="label">Label for Diff Sample <a class="apiname" href="documentation.xhtml#diff_label">(diff_label)</a></label><input type="text" id="option-diff_label" value="New Sample" data-type="string"/><p class="option-description">This allows for a descriptive label for the diff file code of the diff HTML output.</p><div class="disabled" style="display:none"></div></li><li data-mode="diff"><p class="label">Compare Rendered HTML <a class="apiname" href="documentation.xhtml#diff_rendered_html">(diff_rendered_html)</a></p><span><input type="radio" checked="checked" id="option-false-diff_rendered_html" name="option-diff_rendered_html" value="false"/> <label for="option-false-diff_rendered_html">false</label></span><span><input type="radio" id="option-true-diff_rendered_html" name="option-diff_rendered_html" value="true"/>
+                    <label for="option-true-diff_rendered_html">true</label></span><p class="option-description">Compares complete HTML documents and injects custom CSS so that the differences display not in the code, but in the rendered page in a browser.  This option is currently confined only to markup languages, read_method file, and mode diff.  Option diff_format is ignored.</p><div class="disabled" style="display:none"></div></li><li data-mode="diff"><p class="label">Remove White Space <a class="apiname" href="documentation.xhtml#diff_space_ignore">(diff_space_ignore)</a></p><span><input type="radio" checked="checked" id="option-false-diff_space_ignore" name="option-diff_space_ignore" value="false"/> <label for="option-false-diff_space_ignore">false</label></span><span><input type="radio" id="option-true-diff_space_ignore" name="option-diff_space_ignore" value="true"/> <label for="option-true-diff_space_ignore">true</label></span><p class="option-description">If white space only differences should be ignored by the diff tool.</p><div class="disabled" style="display:none"></div></li><li data-mode="diff"><label for="option-diff_view" class="label">Diff View Type <a class="apiname" href="documentation.xhtml#diff_view">(diff_view)</a></label><select id="option-diff_view"><option data-description="A single column where insertions and deletions are vertically adjacent." >inline</option><option data-description="Two column comparison of changes." selected="selected">sidebyside</option></select><p class="option-description">This determines whether the diff HTML output should display as a side-by-side comparison or if the differences should display in a single table column. <span><strong>sidebyside</strong> &#8212; Two column comparison of changes.</span></p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Else On New Line <a class="apiname" href="documentation.xhtml#else_line">(else_line)</a></p><span><input type="radio" checked="checked" id="option-false-else_line" name="option-else_line" value="false"/> <label for="option-false-else_line">false</label></span><span><input type="radio" id="option-true-else_line" name="option-else_line" value="true"/> <label for="option-true-else_line">true</label></span><p class="option-description">If else_line is true then the keyword 'else' is forced onto a new line.</p><div class="disabled" style="display:none"></div></li><li data-mode="any"><label for="option-end" class="label">End Index <a class="apiname" href="documentation.xhtml#end">(end)</a></label><input type="text" id="option-end" value="0" data-type="number"/><p class="option-description">The last index to process. This option is useful internally when recursively sliding between various libraries. The default value of 0 means to ignore this option.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><label for="option-end_comma" class="label">Trailing Comma <a class="apiname" href="documentation.xhtml#end_comma">(end_comma)</a></label>
+                    <select id="option-end_comma"><option data-description="Always ensure there is a tailing comma" >always</option><option data-description="Remove trailing commas" selected="selected">never</option><option data-description="Ignore this option" >none</option></select><p class="option-description">If there should be a trailing comma in arrays and objects. Value &quot;multiline&quot; only applies to modes beautify and diff. <span><strong>never</strong> &#8212; Remove trailing commas</span></p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Force Indentation of All Attributes <a class="apiname" href="documentation.xhtml#force_attribute">(force_attribute)</a></p><span><input type="radio" checked="checked" id="option-false-force_attribute" name="option-force_attribute" value="false"/> <label for="option-false-force_attribute">false</label></span><span><input type="radio" id="option-true-force_attribute" name="option-force_attribute" value="true"/> <label for="option-true-force_attribute">true</label></span><p class="option-description">If all markup attributes should be indented each onto their own line.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Force Indentation of All Content <a class="apiname" href="documentation.xhtml#force_indent">(force_indent)</a></p><span><input type="radio" checked="checked" id="option-false-force_indent" name="option-force_indent" value="false"/> <label for="option-false-force_indent">false</label></span><span><input type="radio" id="option-true-force_indent" name="option-force_indent" value="true"/> <label for="option-true-force_indent">true</label></span><p class="option-description">Will force indentation upon all content and tags without regard for the creation of new text nodes.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><label for="option-format_array" class="label">Formatting Arrays <a class="apiname" href="documentation.xhtml#format_array">(format_array)</a></label><select id="option-format_array"><option data-description="Default formatting" selected="selected">default</option><option data-description="Always indent each index of an array" >indent</option><option data-description="Ensure all array indexes appear on a single line" >inline</option></select><p class="option-description">Determines if all array indexes should be indented, never indented, or left to the default. <span><strong>default</strong> &#8212; Default formatting</span></p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><label for="option-format_object" class="label">Formatting Objects <a class="apiname" href="documentation.xhtml#format_object">(format_object)</a></label><select id="option-format_object"><option data-description="Default formatting" selected="selected">default</option><option data-description="Always indent each key/value pair" >indent</option><option data-description="Ensure all key/value pairs appear on the same single line" >inline</option>
+                    </select><p class="option-description">Determines if all object keys should be indented, never indented, or left to the default. <span><strong>default</strong> &#8212; Default formatting</span></p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Space After Function Name <a class="apiname" href="documentation.xhtml#function_name">(function_name)</a></p><span><input type="radio" checked="checked" id="option-false-function_name" name="option-function_name" value="false"/> <label for="option-false-function_name">false</label></span><span><input type="radio" id="option-true-function_name" name="option-function_name" value="true"/> <label for="option-true-function_name">true</label></span><p class="option-description">If a space should follow a JavaScript function name.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><label for="option-indent_char" class="label">Indentation Characters <a class="apiname" href="documentation.xhtml#indent_char">(indent_char)</a></label><input type="text" id="option-indent_char" value=" " data-type="string"/><p class="option-description">The string characters to comprise a single indentation. Any string combination is accepted.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><label for="option-indent_level" class="label">Indentation Padding <a class="apiname" href="documentation.xhtml#indent_level">(indent_level)</a></label><input type="text" id="option-indent_level" value="0" data-type="number"/><p class="option-description">How much indentation padding should be applied to beautification? This option is internally used for code that requires switching between libraries.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><label for="option-indent_size" class="label">Indent Size <a class="apiname" href="documentation.xhtml#indent_size">(indent_size)</a></label><input type="text" id="option-indent_size" value="4" data-type="number"/><p class="option-description">The number of 'inchar' values to comprise a single indentation.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><label for="option-jsscope" class="label">JavaScript Scope Identification <a class="apiname" href="documentation.xhtml#jsscope">(jsscope)</a></label><select id="option-jsscope"><option data-description="generates HTML output with escaped angle braces and ampersands for embedding as code, which is handy in code producing tools" >html</option><option data-description="prevents use of this option" selected="selected">none</option><option data-description="generates HTML output that renders in web browsers" >report</option></select><p class="option-description">An educational tool to generate HTML output of JavaScript code to identify scope regions and declared references by color.  This option is ignored unless the code language is JavaScript or TypeScript. <span><strong>none</strong> &#8212; prevents use of this option</span></p>
+                    <div class="disabled" style="display:none"></div></li><li data-mode="any"><label for="option-language" class="label">Language <a class="apiname" href="documentation.xhtml#language">(language)</a></label><input type="text" id="option-language" value="auto" data-type="string"/><p class="option-description">The lowercase single word common name of the source code's programming language. The value 'auto' imposes language and lexer auto-detection, which ignores deliberately specified lexer values.</p><div class="disabled" style="display:none"></div></li><li data-mode="any"><label for="option-language_default" class="label">Language Auto-Detection Default <a class="apiname" href="documentation.xhtml#language_default">(language_default)</a></label><input type="text" id="option-language_default" value="text" data-type="string"/><p class="option-description">The fallback option if option 'lang' is set to 'auto' and a language cannot be detected.</p><div class="disabled" style="display:none"></div></li><li data-mode="any"><label for="option-language_name" class="label">Formatted Name of the Code's Language <a class="apiname" href="documentation.xhtml#language_name">(language_name)</a></label><input type="text" id="option-language_name" value="JavaScript" data-type="string"/><p class="option-description">The formatted proper name of the code sample's language for use in reports read by people.</p><div class="disabled" style="display:none"></div></li><li data-mode="any"><label for="option-lexer" class="label">Parsing Lexer <a class="apiname" href="documentation.xhtml#lexer">(lexer)</a></label><select id="option-lexer"><option data-description="The value 'auto' imposes language and lexer auto-detection, which ignores deliberately specified language values." selected="selected">auto</option><option data-description="parses languages like XML and HTML" >markup</option><option data-description="parses languages with a C style syntax, such as JavaScript" >script</option><option data-description="parses CSS like languages" >style</option></select><p class="option-description">This option determines which sets of rules to use in the language parser. If option 'language' has a value of 'auto', which is the default value, this option is ignored. <span><strong>auto</strong> &#8212; The value 'auto' imposes language and lexer auto-detection, which ignores deliberately specified language values.</span></p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><label for="option-method_chain" class="label">Method Chains <a class="apiname" href="documentation.xhtml#method_chain">(method_chain)</a></label><input type="text" id="option-method_chain" value="3" data-type="number"/><p class="option-description">When to break consecutively chained methods and properties onto separate lines. A negative value disables this option. A value of 0 ensures method chains are never broken.</p><div class="disabled" style="display:none"></div></li><li data-mode="minify"><p class="label">Minification Wrapping
+                    <a class="apiname" href="documentation.xhtml#minify_wrap">(minify_wrap)</a></p><span><input type="radio" checked="checked" id="option-false-minify_wrap" name="option-minify_wrap" value="false"/> <label for="option-false-minify_wrap">false</label></span><span><input type="radio" id="option-true-minify_wrap" name="option-minify_wrap" value="true"/> <label for="option-true-minify_wrap">true</label></span><p class="option-description">Whether minified script should wrap after a specified character width.  This option requires a value from option 'wrap'.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Never Flatten Destructured Lists <a class="apiname" href="documentation.xhtml#never_flatten">(never_flatten)</a></p><span><input type="radio" checked="checked" id="option-false-never_flatten" name="option-never_flatten" value="false"/> <label for="option-false-never_flatten">false</label></span><span><input type="radio" id="option-true-never_flatten" name="option-never_flatten" value="true"/> <label for="option-true-never_flatten">true</label></span><p class="option-description">If destructured lists in script should never be flattend.</p><div class="disabled" style="display:none"></div></li><li data-mode="any"><p class="label">New Line at End of Code <a class="apiname" href="documentation.xhtml#new_line">(new_line)</a></p><span><input type="radio" checked="checked" id="option-false-new_line" name="option-new_line" value="false"/> <label for="option-false-new_line">false</label></span><span><input type="radio" id="option-true-new_line" name="option-new_line" value="true"/> <label for="option-true-new_line">true</label></span><p class="option-description">Insert an empty line at the end of output.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Case Indentation <a class="apiname" href="documentation.xhtml#no_case_indent">(no_case_indent)</a></p><span><input type="radio" checked="checked" id="option-false-no_case_indent" name="option-no_case_indent" value="false"/> <label for="option-false-no_case_indent">false</label></span><span><input type="radio" id="option-true-no_case_indent" name="option-no_case_indent" value="true"/> <label for="option-true-no_case_indent">true</label></span><p class="option-description">If a case statement should receive the same indentation as the containing switch block.</p><div class="disabled" style="display:none"></div></li><li data-mode="any"><p class="label">Leading 0s <a class="apiname" href="documentation.xhtml#no_lead_zero">(no_lead_zero)</a></p><span><input type="radio" checked="checked" id="option-false-no_lead_zero" name="option-no_lead_zero" value="false"/> <label for="option-false-no_lead_zero">false</label></span><span><input type="radio" id="option-true-no_lead_zero" name="option-no_lead_zero" value="true"/> <label for="option-true-no_lead_zero">true</label></span><p class="option-description">Whether leading 0s in CSS values immediately preceeding a decimal should be removed or prevented.</p>
+                    <div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Object/Attribute Sort <a class="apiname" href="documentation.xhtml#object_sort">(object_sort)</a></p><span><input type="radio" checked="checked" id="option-false-object_sort" name="option-object_sort" value="false"/> <label for="option-false-object_sort">false</label></span><span><input type="radio" id="option-true-object_sort" name="option-object_sort" value="true"/> <label for="option-true-object_sort">true</label></span><p class="option-description">Sorts markup attributes and properties by key name in script and style.</p><div class="disabled" style="display:none"></div></li><li data-mode="parse"><label for="option-parse_format" class="label">Parse Format <a class="apiname" href="documentation.xhtml#parse_format">(parse_format)</a></label><select id="option-parse_format"><option data-description="generates the 'table' type output for the DOM but escapes the HTML tags for rendering as HTML code in a HTML tool" >htmltable</option><option data-description="returns an object containing series of parallel arrays" selected="selected">parallel</option><option data-description="returns an array where each index is a child object containing the parsed token and all descriptive data" >sequential</option><option data-description="generates a colorful grid of output for either the dom or command line interface" >table</option></select><p class="option-description">Determines the output format for 'parse' mode. <span><strong>parallel</strong> &#8212; returns an object containing series of parallel arrays</span></p><div class="disabled" style="display:none"></div></li><li data-mode="parse"><p class="label">Retain White Space Tokens in Parse Output <a class="apiname" href="documentation.xhtml#parse_space">(parse_space)</a></p><span><input type="radio" checked="checked" id="option-false-parse_space" name="option-parse_space" value="false"/> <label for="option-false-parse_space">false</label></span><span><input type="radio" id="option-true-parse_space" name="option-parse_space" value="true"/> <label for="option-true-parse_space">true</label></span><p class="option-description">Whether whitespace tokens should be included in markup parse output.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><label for="option-preserve" class="label">Preserve Consecutive New Lines <a class="apiname" href="documentation.xhtml#preserve">(preserve)</a></label><input type="text" id="option-preserve" value="0" data-type="number"/><p class="option-description">The maximum number of consecutive empty lines to retain.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Eliminate Word Wrap Upon Comments <a class="apiname" href="documentation.xhtml#preserve_comment">(preserve_comment)</a></p><span><input type="radio" checked="checked" id="option-false-preserve_comment" name="option-preserve_comment" value="false"/> <label for="option-false-preserve_comment">false</label>
+                    </span><span><input type="radio" id="option-true-preserve_comment" name="option-preserve_comment" value="true"/> <label for="option-true-preserve_comment">true</label></span><p class="option-description">Prevent comment reformatting due to option wrap.</p><div class="disabled" style="display:none"></div></li><li data-mode="any"><p class="label">Preserve Markup Text White Space <a class="apiname" href="documentation.xhtml#preserve_text">(preserve_text)</a></p><span><input type="radio" checked="checked" id="option-false-preserve_text" name="option-preserve_text" value="false"/> <label for="option-false-preserve_text">false</label></span><span><input type="radio" id="option-true-preserve_text" name="option-preserve_text" value="true"/> <label for="option-true-preserve_text">true</label></span><p class="option-description">If text in the provided markup code should be preserved exactly as provided. This option eliminates beautification and wrapping of text content.</p><div class="disabled" style="display:none"></div></li><li data-mode="diff"><p class="label">Normalize Quotes <a class="apiname" href="documentation.xhtml#quote">(quote)</a></p><span><input type="radio" checked="checked" id="option-false-quote" name="option-quote" value="false"/> <label for="option-false-quote">false</label></span><span><input type="radio" id="option-true-quote" name="option-quote" value="true"/> <label for="option-true-quote">true</label></span><p class="option-description">If true and mode is 'diff' then all single quote characters will be replaced by double quote characters in both the source and diff file input so as to eliminate some differences from the diff report HTML output.</p><div class="disabled" style="display:none"></div></li><li data-mode="any"><label for="option-quote_convert" class="label">Indent Size <a class="apiname" href="documentation.xhtml#quote_convert">(quote_convert)</a></label><select id="option-quote_convert"><option data-description="Converts single quotes to double quotes" >double</option><option data-description="Ignores this option" selected="selected">none</option><option data-description="Converts double quotes to single quotes" >single</option></select><p class="option-description">If the quotes of script strings or markup attributes should be converted to single quotes or double quotes. <span><strong>none</strong> &#8212; Ignores this option</span></p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Indent Size <a class="apiname" href="documentation.xhtml#selector_list">(selector_list)</a></p><span><input type="radio" checked="checked" id="option-false-selector_list" name="option-selector_list" value="false"/> <label for="option-false-selector_list">false</label></span><span><input type="radio" id="option-true-selector_list" name="option-selector_list" value="true"/> <label for="option-true-selector_list">true</label></span><p class="option-description">If comma separated CSS selectors should present on a single line of code.</p><div class="disabled" style="display:none"></div></li><li data-mode="diff"><p class="label">Indent Size <a class="apiname" href="documentation.xhtml#semicolon">(semicolon)</a></p><span><input type="radio" checked="checked" id="option-false-semicolon" name="option-semicolon" value="false"/> <label for="option-false-semicolon">false</label></span><span><input type="radio" id="option-true-semicolon" name="option-semicolon" value="true"/> <label for="option-true-semicolon">true</label></span><p class="option-description">If true and mode is 'diff' and lang is 'javascript' all semicolon characters that immediately preceed any white space containing a new line character will be removed so as to elimate some differences from the code comparison.</p><div class="disabled" style="display:none"></div></li><li data-mode="diff"><label for="option-source_label" class="label">Label for Source Sample <a class="apiname" href="documentation.xhtml#source_label">(source_label)</a></label><input type="text" id="option-source_label" value="Source Sample" data-type="string"/><p class="option-description">This allows for a descriptive label of the source file code for the diff HTML output.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Function Space <a class="apiname" href="documentation.xhtml#space">(space)</a></p><span><input type="radio" id="option-false-space" name="option-space" value="false"/> <label for="option-false-space">false</label></span><span><input type="radio" checked="checked" id="option-true-space" name="option-space" value="true"/> <label for="option-true-space">true</label></span><p class="option-description">Inserts a space following the function keyword for anonymous functions.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Close Markup Self-Closing Tags with a Space <a class="apiname" href="documentation.xhtml#space_close">(space_close)</a></p><span><input type="radio" checked="checked" id="option-false-space_close" name="option-space_close" value="false"/> <label for="option-false-space_close">false</label></span><span><input type="radio" id="option-true-space_close" name="option-space_close" value="true"/> <label for="option-true-space_close">true</label></span><p class="option-description">Markup self-closing tags end will end with ' />' instead of '/>'.</p><div class="disabled" style="display:none"></div></li><li data-mode="any"><label for="option-start" class="label">Start Index <a class="apiname" href="documentation.xhtml#start">(start)</a></label><input type="text" id="option-start" value="0" data-type="number"/><p class="option-description">The parse table index to start working from. This is internally used for code samples that require switching between different libraries.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><label for="option-styleguide" class="label">Script Styleguide <a class="apiname" href="documentation.xhtml#styleguide">(styleguide)</a></label><select id="option-styleguide"><option data-description="https://github.com/airbnb/javascript" >airbnb</option><option data-description="http://jslint.com/" >crockford</option><option data-description="https://google.github.io/styleguide/jsguide.html" >google</option><option data-description="https://contribute.jquery.org/style-guide/js/" >jquery</option><option data-description="http://jslint.com/" >jslint</option><option data-description="https://www.mediawiki.org/wiki/Manual:Coding_conventions/JavaScript" >mediawiki</option><option data-description="https://github.com/mrdoob/three.js/wiki/Mr.doob's-Code-Style%E2%84%A2" >mrdoob</option><option data-description="Ignores this option" selected="selected">none</option><option data-description="https://standardjs.com/" >standard</option><option data-description="https://github.com/ymaps/codestyle/blob/master/javascript.md" >yandex</option></select><p class="option-description">Provides a collection of option presets to easily conform to popular JavaScript style guides. <span><strong>none</strong> &#8212; Ignores this option</span></p><div class="disabled" style="display:none"></div></li><li data-mode="any"><p class="label">Merge Adjacent Start and End tags <a class="apiname" href="documentation.xhtml#tag_merge">(tag_merge)</a></p><span><input type="radio" checked="checked" id="option-false-tag_merge" name="option-tag_merge" value="false"/> <label for="option-false-tag_merge">false</label></span><span><input type="radio" id="option-true-tag_merge" name="option-tag_merge" value="true"/> <label for="option-true-tag_merge">true</label></span><p class="option-description">Allows immediately adjacement start and end markup tags of the same name to be combined into a single self-closing tag.</p><div class="disabled" style="display:none"></div></li><li data-mode="any"><p class="label">Sort Markup Child Items <a class="apiname" href="documentation.xhtml#tag_sort">(tag_sort)</a></p><span><input type="radio" checked="checked" id="option-false-tag_sort" name="option-tag_sort" value="false"/> <label for="option-false-tag_sort">false</label></span><span><input type="radio" id="option-true-tag_sort" name="option-tag_sort" value="true"/> <label for="option-true-tag_sort">true</label></span><p class="option-description">Sort child items of each respective markup parent element.</p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Keep Ternary Statements On One Line <a class="apiname" href="documentation.xhtml#ternary_line">(ternary_line)</a></p><span><input type="radio" checked="checked" id="option-false-ternary_line" name="option-ternary_line" value="false"/> <label for="option-false-ternary_line">false</label></span><span><input type="radio" id="option-true-ternary_line" name="option-ternary_line" value="true"/> <label for="option-true-ternary_line">true</label></span><p class="option-description">If ternary operators in JavaScript ? and : should remain on the same line.</p><div class="disabled" style="display:none"></div></li><li data-mode="minify"><p class="label">Retain Comment At Code Start <a class="apiname" href="documentation.xhtml#top_comments">(top_comments)</a></p><span><input type="radio" checked="checked" id="option-false-top_comments" name="option-top_comments" value="false"/> <label for="option-false-top_comments">false</label></span><span><input type="radio" id="option-true-top_comments" name="option-top_comments" value="true"/> <label for="option-true-top_comments">true</label></span><p class="option-description">If mode is 'minify' this determines whether comments above the first line of code should be kept.</p><div class="disabled" style="display:none"></div></li><li data-mode="any"><p class="label">Markup Tag Preservation <a class="apiname" href="documentation.xhtml#unformatted">(unformatted)</a></p><span><input type="radio" checked="checked" id="option-false-unformatted" name="option-unformatted" value="false"/> <label for="option-false-unformatted">false</label></span><span><input type="radio" id="option-true-unformatted" name="option-unformatted" value="true"/> <label for="option-true-unformatted">true</label></span><p class="option-description">If markup tags should have their insides preserved. This option is only available to markup and does not support child tokens that require a different lexer.</p><div class="disabled" style="display:none"></div></li><li data-mode="any"><label for="option-variable_list" class="label">Variable Declaration Lists <a class="apiname" href="documentation.xhtml#variable_list">(variable_list)</a></label><select id="option-variable_list"><option data-description="Ensurce each reference is a single declaration statement." >each</option><option data-description="Ensure consecutive declarations are a comma separated list." >list</option><option data-description="Ignores this option." selected="selected">none</option></select><p class="option-description">If consecutive JavaScript variables should be merged into a comma separated list or if variables in a list should be separated. <span><strong>none</strong> &#8212; Ignores this option.</span></p><div class="disabled" style="display:none"></div></li><li data-mode="beautify"><p class="label">Vertical Alignment <a class="apiname" href="documentation.xhtml#vertical">(vertical)</a></p><span><input type="radio" checked="checked" id="option-false-vertical" name="option-vertical" value="false"/> <label for="option-false-vertical">false</label></span><span><input type="radio" id="option-true-vertical" name="option-vertical" value="true"/> <label for="option-true-vertical">true</label></span><p class="option-description">If lists of assignments and properties should be vertically aligned. This option is not used with the markup lexer.</p><div class="disabled" style="display:none"></div></li><li data-mode="any"><label for="option-wrap" class="label">Wrap <a class="apiname" href="documentation.xhtml#wrap">(wrap)</a></label><input type="text" id="option-wrap" value="0" data-type="number"/><p class="option-description">Character width limit before applying word wrap. A 0 value disables this option. A negative value concatenates script strings.</p><div class="disabled" style="display:none"></div></li>
+<!-- documented options end -->
+                </ul>
+                <p class="button">
+                    <button type="button" value="Execute">Execute</button>
+                </p>
+            </div>
+            <!--div id="footer">
+                <p id="emailme">Please post comments, feedback, and requests at
+                    <a href="https://github.com/austincheney/prettydiff">Github</a>.</p>
+                <p>Special thanks to
+                    <a href="http://g6auc.me.uk/">Harry Whitfield</a>,
+                    <a href="https://plus.google.com/105958105635636993368/posts">Andreas Greuel</a>, and countless others.</p>
+            </div-->
+        </div>
+        <script src="node_modules/ace-builds/src-min-noconflict/ace.js" type="application/javascript"></script>
+        <script src="js/dom.js?1545970643821" type="application/javascript"></script>
+    </body>
+</html>
