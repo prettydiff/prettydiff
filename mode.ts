@@ -234,7 +234,8 @@
         }
         if (options.mode === "minify" && options.minify_wrap === false) {
             options.wrap = -1;
-        }if (options.lexer === "script") {
+        }
+        if (options.lexer === "script") {
             let styleguide = {
                     airbnb: function beautify_script_options_styleairbnb() {
                         options.brace_padding = true;

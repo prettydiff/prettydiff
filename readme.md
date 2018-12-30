@@ -45,7 +45,35 @@ To get started immediately simply navigate your browser to the project's *index.
 
 To run the web tool in a browser with all capabilities launch a local web server with this command: `prettydiff server` (global) or `node js/services server` (local) and then in your web browser go to http://localhost:9001.  This features a handy file system watcher and a web sockets service for users wanting to experiment with the code.  Once the server is active and the page is open in a web browser any changes to the code will automatically rebuild the project and reload the page.
 
-To run the application as a third party application in the browser use the *js/thirdparty.js* file. See the [third party demo](thirdparty.md) for an example.  This provides all the necessary code in a single file without any DOM bindings.
+### Integration
+To run Pretty Diff as a utility in a third party application simply include either *js/browser.js* or *js/prettydiff.js*.  Those two files are identical except for the very end where an object named `prettydiff` is assigned.  Both files provide all options with defaul values assigned to an object named `prettydiff.defaults`.
+
+#### Browser
+**js/browser.js** - In this file an object named `prettydiff` is assigned to the browser's *window* object.  To access Pretty Diff simply call `window.prettydiff.mode(myOptions);`.  The default options would be `window.prettydiff.defaults`.  See the [browser demo](browser.html) for an example.  This provides all the necessary code in a single file without any DOM bindings.
+
+#### Node.js
+**js/prettydiff.js** - In this file an object named `prettydiff` is assigned to Node's *module.exports*.  To access Pretty Diff simply require the file: `let prettydiff = require("prettydiff");`.  Default options are available as `prettydiff.defaults`.  To execute simply call `prettydiff.mode(prettydiff.defaults);` where the *mode* property is the application and requires an options object.
+
+```javascript
+// integrate into the browser
+let output     = "",
+    prettydiff = window.prettydiff.mode,
+    options    = window.prettydiff.defaults;
+options.source = "my code";
+output         = prettydiff(options);
+// You can include the Pretty Diff code in any way that is convenient,
+// whether that is using an HTML script tag or concatenating the
+// js/browser.js code with your other code.
+
+// integrate into a Node.js app
+let output     = "",
+    prettydiff = require("prettydiff"),
+    options    = prettydiff.defaults;
+options.source = "my code";
+output         = prettydiff.mode(options);
+// You should not have to point to the specific file.
+// The js/prettydiff.js is defined as 'main' in the package.json.
+```
 
 ### Options
 For supported option documentation you may read the *documentation.xhtml* file in a browser, [options.md](options.md) markdown file, or use these commands on the terminal:

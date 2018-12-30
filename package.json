@@ -1,5 +1,6 @@
 {
     "author": "Austin Cheney",
+    "bin": "./bin/prettydiff",
     "bugs": {
         "url": "https://github.com/prettydiff/prettydiff/issues"
     },
@@ -38,5 +39,5 @@
         "start": "node js/services build nocheck",
         "test": "node js/services build"
     },
-    "version": "100.0.2"
+    "version": "100.0.3"
 }
