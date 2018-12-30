@@ -42,7 +42,7 @@ interface readFile {
         }()),
         js:string = `${projectPath}js${sep}`,
         api:string = `${js}api${sep}`,
-        libFiles:string[] = [api, `${js}beautify${sep}`, `${js}minify${sep}`, `${js}prettydiff.js`],
+        libFiles:string[] = [api, `${js}beautify${sep}`, `${js}minify${sep}`, `${js}mode.js`],
         // node option default start
         options:any = {},
         version:any = {
@@ -1025,11 +1025,12 @@ interface readFile {
                         saveas:string = "",
                         parser:string = "";
                     const flag = {
+                            browser: false,
                             documentation: false,
-                            dom: false,
                             html: false,
                             node: false,
-                            prettydiff: false
+                            prettydiff: false,
+                            webtool: false
                         },
                         date:number = Date.now(),
                         optkeys:string[] = Object.keys(prettydiff.api.optionDef),
@@ -1228,7 +1229,7 @@ interface readFile {
                                         start: "<!-- start version data -->"
                                     });
                                     data = data.replace(/\.css\?\d*/g, `.css?${date}`).replace(/\.js\?\d*/g, `.js?${date}`);
-                                } else if (fileFlag === "dom") {
+                                } else if (fileFlag === "webtool") {
                                     modify({
                                         end: "// end option defaults",
                                         injectFlag: buildDefaults("dom"),
@@ -1251,7 +1252,7 @@ interface readFile {
                                         injectFlag: buildDefaults("node"),
                                         start:"// node option default start"
                                     });
-                                } else if (fileFlag === "prettydiff") {
+                                } else if (fileFlag === "mode") {
                                     modify({
                                         end: "// prettydiff file insertion end",
                                         injectFlag: `prettydiff={};${libraries}`,
@@ -1269,15 +1270,27 @@ interface readFile {
                                         return;
                                     }
                                     flag[fileFlag] = true;
-                                    if (flag.dom === true && flag.documentation === true && flag.html === true && flag.node === true && flag.html === true && flag.prettydiff === true) {
-                                        let thirdparty:string = parser + libraries + finalFile + mode;
-                                        thirdparty = `${thirdparty}prettydiff.defaults=${JSON.stringify(options)};window.prettydiff=prettydiff;}());`;
-                                        node.fs.writeFile(`${js}thirdparty.js`, `${thirdparty}`, function node_apps_build_libraries_modifyFile_read_write_readParser_thirdparty(erth:Error) {
+                                    if (flag.documentation === true && flag.html === true && flag.node === true && flag.webtool === true) {
+                                        let thirdparty:string = parser + libraries + finalFile + mode.replace(/,\s*\/\/\s*prettydiff\s*file\s*insertion\s*start\s+prettydiff\s*=\s*\{\};\s*\/\/\s*prettydiff\s*file\s*insertion\s*end/, ";");
+                                        node.fs.writeFile(`${js}browser.js`, `${thirdparty}window.prettydiff=prettydiff;}());`, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser(erbr:Error) {
+                                            if (erbr !== null && erbr.toString() !== "") {
+                                                apps.errout([erbr.toString()]);
+                                                return;
+                                            }
+                                            flag.browser = true;
+                                            if (flag.prettydiff === true) {
+                                                next(`${text.green}Option details written to files.${text.none}`);
+                                            }
+                                        });
+                                        node.fs.writeFile(`${js}prettydiff.js`, `${thirdparty}module.exports=prettydiff;}());`, function node_apps_build_libraries_modifyFile_read_write_readParser_writePrettydiff(erth:Error) {
                                             if (erth !== null && erth.toString() !== "") {
                                                 apps.errout([erth.toString()]);
                                                 return;
                                             }
-                                            next(`${text.green}Option details written to files.${text.none}`);
+                                            flag.prettydiff = true;
+                                            if (flag.browser === true) {
+                                                next(`${text.green}Option details written to files.${text.none}`);
+                                            }
                                         });
                                     }
                                 });
@@ -1304,7 +1317,7 @@ interface readFile {
                                         } else if (filename === "browser.js") {
                                             filedata = filedata
                                                 .replace(/("|')use strict("|');/g, "")
-                                                .replace(/\s*window\.parseFramework/, "(function () {\"use strict\";const prettydiff={api:{},beautify:{},minify:{}},parseFramework")
+                                                .replace(/\s*window\.parseFramework/, `(function () {"use strict";const prettydiff={api:{},beautify:{},defaults:${JSON.stringify(options)},minify:{}},parseFramework`)
                                                 .replace(/window\.parseFramework/g, "parseFramework")
                                                 .replace(/parseFramework\s*=\s*\(parseFramework\s*\|\|\s*\{\s*lexer:\s*\{\},\s*parse:\s*parse,\s*parseerror:\s*"",\s*parserArrays:\s*parserArrays,\s*parserObjects:\s*parserObjects\s*\}\);/, "");
                                             parser = filedata;
@@ -1313,7 +1326,7 @@ interface readFile {
                                                 .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*/, "")
                                                 .replace(/global\s*\.\s*prettydiff\s*\./g, "prettydiff.")
                                                 .replace(/("|')use strict("|');/, "");
-                                            if (filename === "prettydiff.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
+                                            if (filename === "mode.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
                                                 mode = filedata
                                                     .replace(/global(API)?\./g, "")
                                                     .replace(/globalAPI\s*=\s*\(options\.api\s*===\s*"dom"\)\s*\?\s*window\s*:\s*global,/, "")
@@ -1329,9 +1342,9 @@ interface readFile {
                                         if (a === filelen) {
                                             modifyFile(`${js}services.js`, "node");
                                             modifyFile(`${projectPath}index.xhtml`, "html");
-                                            modifyFile(`${js}dom.js`, "dom");
+                                            modifyFile(`${js}prettydiff-webtool.js`, "webtool");
+                                            modifyFile(`${js}mode.js`, "mode");
                                             modifyFile(`${projectPath}documentation.xhtml`, "documentation");
-                                            modifyFile(`${js}prettydiff.js`, "prettydiff");
                                         }
                                     });
                                 },
