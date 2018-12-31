@@ -1,0 +1,11 @@
+(function node() {
+    apps.readMethod = function node_apps_readMethod(diff) {
+        if (options.source === "") {
+            apps.errout([
+                `Pretty Diff requires option ${text.cyan}source${text.none} when using command ${text.green + command + text.none}. Example:`,
+                `${text.cyan}prettydiff ${command} source:"myFile.js"${text.none}`
+            ]);
+            return;
+        }
+    }
+}())

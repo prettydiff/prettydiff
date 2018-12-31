@@ -323,6 +323,13 @@ interface readFile {
                     }
                 ]
             },
+            performance: {
+                description: "Provides an indication of how quickly a task executes.  11 execution runs are performed.  The first of those is dropped to account for variance from cold compile time and the remaining 10 are averaged.",
+                example: [{
+                    code: "prettydiff performance prettydiff beautify js/services.js",
+                    defined: "Just specify the actual command to execute.  Pretty Diff will execute it as a child process."
+                }]
+            },
             prettydiff_debug: {
                 description: "Generates a debug statement in markdown format.",
                 example: [{
@@ -1634,7 +1641,7 @@ interface readFile {
         if (commands[process.argv[0]] === undefined) {
             // all commands in a list
             apps.lists({
-                emptyline: true,
+                emptyline: false,
                 heading: "Commands",
                 obj: commands,
                 property: "description"
@@ -3110,6 +3117,71 @@ interface readFile {
         }
         options.mode = "parse";
         apps.readMethod(false);
+    };
+    // handler for the performance command
+    apps.performance = function node_apps_performance():void {
+        let index:number = 11,
+            total:number = 0,
+            low:number = 0,
+            high:number = 0,
+            start:[number, number],
+            end:[number, number];
+        const store:number[] = [],
+            interval = function node_apps_performance_interval():void {
+                start = process.hrtime();
+                node.child(process.argv.join(" "), {
+                    maxBuffer: 999999999999
+                }, function node_apps_performance_interval_child(err:Error, stdout:string, stderr:string):void {
+                    if (err !== null) {
+                        apps.errout([err.toString()]);
+                        return;
+                    }
+                    if (stderr !== "") {
+                        apps.errout([stderr]);
+                        return;
+                    }
+                    index = index - 1;
+                    if (index > -1) {
+                        end = process.hrtime(start);
+                        store.push((end[0] * 1e9) + end[1]);
+                        // specifying a delay between intervals allows for garbage collection without interference to the performance testing
+                        setTimeout(node_apps_performance_interval, 400);
+                    } else {
+                        console.log("");
+                        store.forEach(function node_apps_performance_total(value:number, index:number) {
+                            if (index > 0) {
+                                if (index < 10) {
+                                    console.log(`${text.yellow + index + text.none}:  ${value}`);
+                                } else {
+                                    console.log(`${text.yellow + index + text.none}: ${value}`);
+                                }
+                                total = total + value;
+                                if (value > high) {
+                                    high = value;
+                                } else if (value < low) {
+                                    low = value;
+                                }
+                            } else {
+                                console.log(`${text.yellow}0:${text.none}  ${value} ${text.angry}(first run is ignored)${text.none}`);
+                            }
+                        });
+                        console.log("");
+                        console.log(`[${text.bold + text.green + (total / 1e7) + text.none}] Milliseconds, \u00b1${text.cyan + ((((high - low) / total) / 2) * 100).toFixed(2) + text.none}%`);
+                        console.log(`[${text.cyan + apps.commas(stdout.length) + text.none}] Character size of task's output to terminal.`);
+                        console.log("");
+                    }
+                });
+            };
+            if (process.argv.length < 1) {
+                return apps.errout([
+                    `The ${text.angry}performance${text.none} command requires a complete task to perform.`,
+                    `Example: ${text.cyan}prettydiff performance ${text.bold}node js/services beautify js/services.js${text.none}`
+                ]);
+            }
+            console.log("");
+            console.log(`${text.bold}Pretty Diff - Performance Test Tool${text.none}`);
+            console.log(`There is a ${text.cyan}400ms delay between intervals${text.none} to allow for garbage collection to complete before adversely impacting the next test cycle.`);
+        interval();
     };
     // for testing the debug report generation
     // * the debug report is a markdown report for posting online

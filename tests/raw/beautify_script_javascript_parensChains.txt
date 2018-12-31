@@ -1,0 +1,25 @@
+(function node() {
+    "use strict";
+    const command = (function node_command() {
+            return filtered[0];
+        }()),
+        exclusions = (function node_exclusions() {
+            if (match) {
+                const listBuilder = function node_exclusions_listBuilder() {
+                    if (process) {
+                        list.push(process.argv[a].replace.slice);
+                    }
+                };
+                if (igindex) {
+                    list.push(process.argv[a].replace.slice);
+                }
+            }
+            if (process.argv[a].replace(/\s+/g, "").indexOf("source:") === 0 || process.argv[a].replace(/\s+/g, "").indexOf("source=") === 0 || process.argv[a].replace(/\s+/g, "").indexOf("source\"") === 0 || process.argv[a].replace(/\s+/g, "").indexOf("source'") === 0) {
+                        source = true;
+                    }
+                    else if (process.argv[a].replace(/\s+/g, "").indexOf("diff:") === 0 || process.argv[a].replace(/\s+/g, "").indexOf("diff=") === 0 || process.argv[a].replace(/\s+/g, "").indexOf("diff\"") === 0 || process.argv[a].replace(/\s+/g, "").indexOf("diff'") === 0) {
+                        diff = true;
+                    }
+        }()),
+        apps = {};
+}());

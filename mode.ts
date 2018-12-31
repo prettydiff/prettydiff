@@ -9,6 +9,8 @@
             modeValue:"beautify"|"minify" = options.mode,
             result:string = "";
         const pdcomment = function mode_pdcomment(options:any):void {
+                let sindex:number = options.source.search(/((\/(\*|\/))|<!--*)\s*prettydiff\.com/),
+                    dindex:number = options.diff.search(/((\/(\*|\/))|<!--*)\s*prettydiff\.com/);
                 // parses the prettydiff settings comment
                 //
                 // - Source Priorities:
@@ -31,11 +33,11 @@
                 // * parameters are name value pairs separated by white space
                 // * the delimiter separating name and value is either ":" or "=" characters
             
-                if (options.source.search(/((\/(\*|\/))|<!--*)\s*prettydiff\.com/) > -1 || (options.mode === "diff" && options.diff.search(/((\/(\*|\/))|<!--*)\s*prettydiff\.com/) > -1)) {
-                    let pdcom:number = options.source.search(/((\/(\*|\/))|<!--*)\s*prettydiff\.com/),
+                if ((sindex > -1 && (sindex === 0 || "\"':".indexOf(options.source.charAt(sindex - 1)) < 0)) || (options.mode === "diff" && dindex > -1 && (dindex === 0 || "\"':".indexOf(options.diff.charAt(dindex - 1)) < 0))) {
+                    let pdcom:number = sindex,
                         a:number = (pdcom > -1)
                             ? pdcom
-                            : options.diff.search(/((\/(\*|\/))|<!--*)\s*prettydiff\.com/),
+                            : dindex,
                         b:number = 0,
                         quote:string = "",
                         item:string = "",

@@ -9,10 +9,7 @@ window.requestAnimationFrame(function () {
             let body             = document.getElementsByTagName("body")[0],
                 width            = 0,
                 height           = 0;
-            body.style.minHeight = `${Math.max(
-                document.documentElement.clientHeight,
-                window.innerHeight || 0
-            )}px`;
+            body.style.minHeight = `${Math.max(document.documentElement.clientHeight, window.innerHeight || 0)}px`;
             width                = Math.min(body.clientWidth, window.innerWidth);
             height               = Math.min(body.clientHeight, window.innerHeight - 10);
             if (width > height) {

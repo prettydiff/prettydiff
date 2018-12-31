@@ -386,7 +386,7 @@
                             level[a - 1]                  = indent;
                             level.push(-20);
                         } else if (ctoke === ")" || ctoke === "x)") {
-                            if (ctoke === ")" && a > data.begin[a] - 2 && data.lexer[data.begin[a] + 1] === lexer) {
+                            if (ctoke === ")" && a > data.begin[a] - 2 && data.lexer[data.begin[a] + 1] === lexer && data.token[data.begin[a] + 1] !== "function") {
                                 const open:number = (data.begin[a] < 0)
                                     ? 0
                                     : data.begin[a];
@@ -426,7 +426,7 @@
                                             short = len;
                                         }
                                         aa = aa - 1;
-                                    } while (aa > 0 && level[aa] < -9);
+                                    } while (aa > open && level[aa] < -9);
                                     if (data.token[aa + 1] === ".") {
                                         ind = level[aa] + 1;
                                     }
@@ -723,6 +723,9 @@
                         const ei:number[] = (extraindent[extraindent.length - 1] === undefined)
                             ? []
                             : extraindent[extraindent.length - 1];
+                        if (data.token[data.begin[a] - 1] === "if") {
+                            fixchain();
+                        }
                         if (ei.length > 0 && ei[ei.length - 1] > -1 && data.stack[a] === "array") {
                             arrbreak[arrbreak.length - 1] = true;
                         }
@@ -1021,9 +1024,10 @@
                                 if (data.token[a].charAt(0) === "\"" || data.token[a].charAt(0) === "'") {
                                     a = a + 1;
                                     level.push(-10);
-                                    return;
                                 }
-                            } else if (data.token[data.begin[a]] !== "(" || meth > options.wrap - 1 || meth === 0) {
+                                return;
+                            }
+                            if (data.token[data.begin[a]] !== "(" || meth > options.wrap - 1 || meth === 0) {
                                 if (meth > 0) {
                                     line = meth;
                                 }
@@ -1168,15 +1172,21 @@
                                 if (options.method_chain > 0) {
                                     let x:number = a,
                                         y:number = data.begin[a],
-                                        z:number[] = [];
+                                        z:number[] = [],
+                                        ify:boolean = (data.token[y - 1] === "if");
                                     do {
                                         if (data.types[x] === "end") {
                                             x = data.begin[x];
                                         }
                                         if (data.begin[x] === y) {
+                                            if (data.types[x] === "string" && data.token[x].indexOf("${") === data.token[x].length - 2) {
+                                                break;
+                                            }
                                             if (data.token[x] === ".") {
                                                 if (level[x - 1] > 0) {
-                                                    level[a - 1] = indent;
+                                                    level[a - 1] = (ify === true)
+                                                        ? indent + 1
+                                                        : indent;
                                                     return;
                                                 }
                                                 z.push(x);
@@ -1201,7 +1211,9 @@
                                     x = 0;
                                     y = z.length;
                                     do {
-                                        level[z[x] - 1] = indent;
+                                        level[z[x] - 1] = (ify === true)
+                                            ? indent + 1
+                                            : indent;
                                         x = x + 1;
                                     } while (x < y);
                                     x = z[z.length - 1] - 1;
@@ -1211,7 +1223,9 @@
                                         }
                                         x = x + 1;
                                     } while (x < a);
-                                    indent = indent + 1;
+                                    indent = (ify === true)
+                                        ? indent + 2
+                                        : indent + 1;
                                 }
                                 level[a - 1] = indent;
                             };
