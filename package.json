@@ -39,5 +39,5 @@
         "start": "node js/services build nocheck",
         "test": "node js/services build"
     },
-    "version": "100.0.4"
+    "version": "100.1.0"
 }
