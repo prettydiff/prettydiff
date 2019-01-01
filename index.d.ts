@@ -169,6 +169,16 @@ interface parseOptions {
     outputFormat: "objects" | "arrays";
     source: "string";
 }
+interface performance {
+    codeLength: number;
+    diff: string;
+    end: [number, number];
+    index: number;
+    source: string;
+    start: [number, number];
+    store: number[];
+    test: boolean;
+}
 interface readDirectory {
     callback: Function;
     exclusions: string[];

@@ -474,6 +474,31 @@
                 test: "Parsed input from terminal."
             },
             {
+                command: "performance hash browser-demo.js",
+                qualifier: "contains",
+                test: "] Character size"
+            },
+            {
+                command: "performance base64 browser-demo.js",
+                qualifier: "contains",
+                test: "] Milliseconds, \u00b1"
+            },
+            {
+                command: "performance beautify browser-demo.js",
+                qualifier: "contains",
+                test: "Pretty Diff version"
+            },
+            {
+                command: "performance build browser-demo.js",
+                qualifier: "contains",
+                test: "The performance tool cannot test the build command."
+            },
+            {
+                command: "performance performance browser-demo.js",
+                qualifier: "contains",
+                test: "The performance tool cannot test itself."
+            },
+            {
                 command: "prettydiff_debug",
                 qualifier: "contains",
                 test: `${text.green}## Command Line Instruction${text.none}`

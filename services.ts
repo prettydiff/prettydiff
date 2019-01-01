@@ -324,11 +324,17 @@ interface readFile {
                 ]
             },
             performance: {
-                description: "Provides an indication of how quickly a task executes.  11 execution runs are performed.  The first of those is dropped to account for variance from cold compile time and the remaining 10 are averaged.",
-                example: [{
-                    code: "prettydiff performance prettydiff beautify js/services.js",
-                    defined: "Just specify the actual command to execute.  Pretty Diff will execute it as a child process."
-                }]
+                description: "Executes the Pretty Diff application 11 times.  The first execution is dropped and the remaining 10 are averaged.  Specify a complete Pretty Diff terminal command.",
+                example: [
+                        {
+                        code: "prettydiff performance beautify source:\"js/services.js\" method_chain:3",
+                        defined: "Just specify the actual command to execute.  Pretty Diff will execute the provided command as though the 'performance' command weren't there."
+                    },
+                    {
+                        code: "prettydiff performance base64 js/services.js",
+                        defined: "The command to test may be any command supported by Pretty Diff's terminal services."
+                    }
+                ]
             },
             prettydiff_debug: {
                 description: "Generates a debug statement in markdown format.",
@@ -385,6 +391,67 @@ interface readFile {
                 }]
             }
         },
+        exclusions = (function node_exclusions():string[] {
+            const args = process.argv.join(" "),
+                match = args.match(/\signore\s*\[/);
+            if (match !== null) {
+                const list:string[] = [],
+                    listBuilder = function node_exclusions_listBuilder():void {
+                        do {
+                            if (process.argv[a] === "]" || process.argv[a].charAt(process.argv[a].length - 1) === "]") {
+                                if (process.argv[a] !== "]") {
+                                    list.push(process.argv[a].replace(/,$/, "").slice(0, process.argv[a].length - 1));
+                                }
+                                process.argv.splice(igindex, (a + 1) - igindex);
+                                break;
+                            }
+                            list.push(process.argv[a].replace(/,$/, ""));
+                            a = a + 1;
+                        } while (a < len);
+                    };
+                let a:number = 0,
+                    len:number = process.argv.length,
+                    igindex:number = process.argv.indexOf("ignore");
+                if (igindex > -1 && igindex < len - 1 && process.argv[igindex + 1].charAt(0) === "[") {
+                    a = igindex + 1;
+                    if (process.argv[a] !== "[") {
+                        process.argv[a] = process.argv[a].slice(1).replace(/,$/, "");
+                    }
+                    listBuilder();
+                } else {
+                    do {
+                        if (process.argv[a].indexOf("ignore[") === 0) {
+                            igindex = a;
+                            break;
+                        }
+                        a = a + 1;
+                    } while (a < len);
+                    if (process.argv[a] !== "ignore[") {
+                        process.argv[a] = process.argv[a].slice(7);
+                        if (process.argv[a].charAt(process.argv[a].length - 1) === "]") {
+                            list.push(process.argv[a].replace(/,$/, "").slice(0, process.argv[a].length - 1));
+                        } else {
+                            listBuilder();
+                        }
+                    }
+                }
+                return list;
+            }
+            return [];
+        }()),
+        performance:performance = {
+            codeLength: 0,
+            diff: "",
+            end: [0,0],
+            index: 0,
+            source: "",
+            start: [0,0],
+            store: [],
+            test: false
+        },
+        apps:any = {};
+    let verbose:boolean = false,
+        errorflag:boolean = false,
         command:string = (function node_command():string {
             let comkeys:string[] = Object.keys(commands),
                 filtered:string[] = [],
@@ -516,57 +583,6 @@ interface readFile {
             }
             return filtered[0];
         }()),
-        exclusions = (function node_exclusions():string[] {
-            const args = process.argv.join(" "),
-                match = args.match(/\signore\s*\[/);
-            if (match !== null) {
-                const list:string[] = [],
-                    listBuilder = function node_exclusions_listBuilder():void {
-                        do {
-                            if (process.argv[a] === "]" || process.argv[a].charAt(process.argv[a].length - 1) === "]") {
-                                if (process.argv[a] !== "]") {
-                                    list.push(process.argv[a].replace(/,$/, "").slice(0, process.argv[a].length - 1));
-                                }
-                                process.argv.splice(igindex, (a + 1) - igindex);
-                                break;
-                            }
-                            list.push(process.argv[a].replace(/,$/, ""));
-                            a = a + 1;
-                        } while (a < len);
-                    };
-                let a:number = 0,
-                    len:number = process.argv.length,
-                    igindex:number = process.argv.indexOf("ignore");
-                if (igindex > -1 && igindex < len - 1 && process.argv[igindex + 1].charAt(0) === "[") {
-                    a = igindex + 1;
-                    if (process.argv[a] !== "[") {
-                        process.argv[a] = process.argv[a].slice(1).replace(/,$/, "");
-                    }
-                    listBuilder();
-                } else {
-                    do {
-                        if (process.argv[a].indexOf("ignore[") === 0) {
-                            igindex = a;
-                            break;
-                        }
-                        a = a + 1;
-                    } while (a < len);
-                    if (process.argv[a] !== "ignore[") {
-                        process.argv[a] = process.argv[a].slice(7);
-                        if (process.argv[a].charAt(process.argv[a].length - 1) === "]") {
-                            list.push(process.argv[a].replace(/,$/, "").slice(0, process.argv[a].length - 1));
-                        } else {
-                            listBuilder();
-                        }
-                    }
-                }
-                return list;
-            }
-            return [];
-        }()),
-        apps:any = {};
-    let verbose:boolean = false,
-        errorflag:boolean = false,
         writeflag:string = ""; // location of written assets in case of an error and they need to be deleted
 
     (function node_args():void {
@@ -758,7 +774,13 @@ interface readFile {
                     a = a + 1;
                 } while (a < len);
                 if (options.source === "" && process.argv.length > 0 && process.argv[0].indexOf("=") < 0 && process.argv[0].replace(/^[a-zA-Z]:\\/, "").indexOf(":") < 0) {
-                    options.source = process.argv[0];
+                    if (command === "performance") {
+                        options.source = (process.argv.length < 1)
+                            ? ""
+                            : process.argv[1];
+                    } else {
+                        options.source = process.argv[0];
+                    }
                 }
             };
         let dirs:number = 0,
@@ -1902,7 +1924,7 @@ interface readFile {
             params = {
                 callback: function node_copy_callback() {
                     const out:string[] = ["Pretty Diff copied "];
-                    console.log("");
+                    out.push("");
                     out.push(text.green);
                     out.push(text.bold);
                     out.push(numb.dirs);
@@ -2916,9 +2938,30 @@ interface readFile {
                     apps.humantime(true);
                 }
             };
+        if (performance.test === true) {
+            performance.end = process.hrtime(performance.start);
+            const time = (performance.end[0] * 1e9) + performance.end[1];
+            performance.store.push(time);
+            if (performance.index > 0) {
+                if (performance.index < 10) {
+                    console.log(`${text.yellow + performance.index + text.none}:  ${time}`);
+                } else {
+                    console.log(`${text.yellow + performance.index + text.none}: ${time}`);
+                }
+            } else {
+                console.log(`${text.yellow}0:${text.none}  ${time} ${text.angry}(first run is ignored)${text.none}`);
+            }
+            options.diff = performance.diff;
+            options.source = performance.source;
+            performance.codeLength = code.length;
+            performance.index = performance.index + 1;
+            // specifying a delay between intervals allows for garbage collection without interference to the performance testing
+            setTimeout(apps.performance, 400);
+            return;
+        }
         if (command === "diff" && options.read_method !== "directory" && options.read_method !== "subdirectory") {
             diffOutput();
-        } else if (verbose === true && tense !== "") {
+        } else if (verbose === true && tense !== "" && command !== "performance") {
             if (options.read_method === "screen") {
                 output.push(`${tense} input from terminal.`);
             } else if (verbose === true && options.read_method === "file") {
@@ -3120,68 +3163,62 @@ interface readFile {
     };
     // handler for the performance command
     apps.performance = function node_apps_performance():void {
-        let index:number = 11,
-            total:number = 0,
-            low:number = 0,
-            high:number = 0,
-            start:[number, number],
-            end:[number, number];
-        const store:number[] = [],
-            interval = function node_apps_performance_interval():void {
-                start = process.hrtime();
-                node.child(process.argv.join(" "), {
-                    maxBuffer: 999999999999
-                }, function node_apps_performance_interval_child(err:Error, stdout:string, stderr:string):void {
-                    if (err !== null) {
-                        apps.errout([err.toString()]);
-                        return;
-                    }
-                    if (stderr !== "") {
-                        apps.errout([stderr]);
-                        return;
-                    }
-                    index = index - 1;
-                    if (index > -1) {
-                        end = process.hrtime(start);
-                        store.push((end[0] * 1e9) + end[1]);
-                        // specifying a delay between intervals allows for garbage collection without interference to the performance testing
-                        setTimeout(node_apps_performance_interval, 400);
-                    } else {
-                        console.log("");
-                        store.forEach(function node_apps_performance_total(value:number, index:number) {
-                            if (index > 0) {
-                                if (index < 10) {
-                                    console.log(`${text.yellow + index + text.none}:  ${value}`);
-                                } else {
-                                    console.log(`${text.yellow + index + text.none}: ${value}`);
-                                }
-                                total = total + value;
-                                if (value > high) {
-                                    high = value;
-                                } else if (value < low) {
-                                    low = value;
-                                }
-                            } else {
-                                console.log(`${text.yellow}0:${text.none}  ${value} ${text.angry}(first run is ignored)${text.none}`);
-                            }
-                        });
-                        console.log("");
-                        console.log(`[${text.bold + text.green + (total / 1e7) + text.none}] Milliseconds, \u00b1${text.cyan + ((((high - low) / total) / 2) * 100).toFixed(2) + text.none}%`);
-                        console.log(`[${text.cyan + apps.commas(stdout.length) + text.none}] Character size of task's output to terminal.`);
-                        console.log("");
-                    }
-                });
-            };
+        if (performance.test === false) {
             if (process.argv.length < 1) {
                 return apps.errout([
-                    `The ${text.angry}performance${text.none} command requires a complete task to perform.`,
-                    `Example: ${text.cyan}prettydiff performance ${text.bold}node js/services beautify js/services.js${text.none}`
+                    `The ${text.angry}performance${text.none} command requires a Pretty Diff command to performance test.`,
+                    `Example: ${text.cyan}prettydiff performance ${text.bold}beautify js/services.js${text.none}`,
+                    "",
+                    `See available commands with ${text.cyan}prettydiff commands${text.none}`
                 ]);
+            }
+            command = process.argv[0];
+            if (command === "build") {
+                apps.errout(["The performance tool cannot test the build command.  This creates too much noise and potential for corruption."]);
+                return;
+            }
+            if (command === "performance") {
+                apps.errout(["The performance tool cannot test itself.  This creates an endless loop."]);
+                return;
+            }
+            if (commands[command] === undefined) {
+                apps.errout([`Command ${text.angry + command + text.none} is not defined.`]);
+                return;
             }
             console.log("");
             console.log(`${text.bold}Pretty Diff - Performance Test Tool${text.none}`);
             console.log(`There is a ${text.cyan}400ms delay between intervals${text.none} to allow for garbage collection to complete before adversely impacting the next test cycle.`);
-        interval();
+            console.log("");
+            performance.diff = options.diff;
+            performance.source = options.source;
+            performance.test = true;
+            verbose = false;
+            process.argv.splice(0, 1);
+        }
+        if (performance.index < 11) {
+            performance.start = process.hrtime();
+            apps[command]();
+        } else {
+            let total:number = 0,
+                low:number = 0,
+                high:number = 0;
+            console.log("");
+            performance.store.forEach(function node_apps_performance_total(value:number) {
+                total = total + value;
+                if (value > high) {
+                    high = value;
+                } else if (value < low) {
+                    low = value;
+                }
+            });
+            performance.test = false;
+            verbose = true;
+            command = "performance";
+            apps.log([
+                    `[${text.bold + text.green + (total / 1e7) + text.none}] Milliseconds, \u00b1${text.cyan + ((((high - low) / total) / 2) * 100).toFixed(2) + text.none}%`,
+                    `[${text.cyan + apps.commas(performance.codeLength) + text.none}] Character size of task's output to terminal.`
+                ], "", "");
+        }
     };
     // for testing the debug report generation
     // * the debug report is a markdown report for posting online
