@@ -1,0 +1,19 @@
+(function () {
+    (function dom_init() {
+
+        const method = function dom_event_reset() {
+            localStorage.setItem("settings", `{"feedback":{"newb":${
+                newb
+                    .settings
+                    .feedback
+                    .veteran
+            },"veteran":${
+                dat
+                    .settings
+                    .feedback
+                    .veteran
+            }},"report":{"code":{},"feed":{},"stat":{}},"knownname":${knownname}}`);
+
+        };
+    ]());
+}());

@@ -1,5 +1,3 @@
-import { REPLServer } from "repl";
-
 /*global global, prettydiff*/
 (function minify_markup_init():void {
     "use strict";

@@ -1245,7 +1245,7 @@ interface readFile {
                                         injectFlag: buildDocumentation(),
                                         start: "<!-- option list start -->"
                                     });
-                                    data = data.replace(/\.css\?\d*/g, `.css?${date}`).replace(/\.js\?\d*/g, `.js?${date}`);
+                                    data = data.replace(/(\.css\?\d*)/g, `.css?${date}`).replace(/(\.js\?\d*)/g, `.js?${date}`);
                                 } else if (fileFlag === "html") {
                                     modify({
                                         end: "<!-- documented options end -->",
@@ -1257,7 +1257,7 @@ interface readFile {
                                         injectFlag: `<strong>${versionData.date}</strong> <span>Version: <strong>${versionData.number}</strong></span>`,
                                         start: "<!-- start version data -->"
                                     });
-                                    data = data.replace(/\.css\?\d*/g, `.css?${date}`).replace(/\.js\?\d*/g, `.js?${date}`);
+                                    data = data.replace(/(\.css\?\d*)/g, `.css?${date}`).replace(/(\.js\?\d*)/g, `.js?${date}`);
                                 } else if (fileFlag === "webtool") {
                                     modify({
                                         end: "// end option defaults",
@@ -1339,7 +1339,7 @@ interface readFile {
                                         if (filename === "FileSaver.min.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
                                             filedata = filedata
                                                 .replace(/var\s+saveAs\s*=\s*saveAs\s*\|\|\s*function\(/, `// eslint-disable-next-line${node.os.EOL}prettydiff.saveAs=function prettydiff_saveAs(`)
-                                                .replace(/[{|}|;|(*/)]\s*var\s/g, function node_apps_build_libraries_libraryFiles_appendFile_read_saveAsFix(str:string):string {
+                                                .replace(/(\{|\}|;|(\*\/))\s*var\s/g, function node_apps_build_libraries_libraryFiles_appendFile_read_saveAsFix(str:string):string {
                                                 return str.replace("var", "let");
                                             });
                                             saveas = filedata;
@@ -1352,7 +1352,7 @@ interface readFile {
                                             parser = filedata;
                                         } else {
                                             filedata = filedata
-                                                .replace(/\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*/, "")
+                                                .replace(/(\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*)/, "")
                                                 .replace(/global\s*\.\s*prettydiff\s*\./g, "prettydiff.")
                                                 .replace(/("|')use strict("|');/, "");
                                             if (filename === "mode.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
@@ -4157,6 +4157,10 @@ interface readFile {
                     if (err !== null) {
                         if (err.toString().indexOf("getaddrinfo ENOTFOUND") > -1) {
                             increment("no internet connection");
+                            return;
+                        }
+                        if (err.toString().indexOf("certificate has expired") > -1) {
+                            increment("TLS certificate expired on HTTPS request");
                             return;
                         }
                         if (stdout === "") {

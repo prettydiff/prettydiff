@@ -9,15 +9,25 @@ window.requestAnimationFrame(function () {
             let body             = document.getElementsByTagName("body")[0],
                 width            = 0,
                 height           = 0;
-            body.style.minHeight = `${Math.max(document.documentElement.clientHeight, window.innerHeight || 0)}px`;
+            body.style.minHeight = `${
+                Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+            }px`;
             width                = Math.min(body.clientWidth, window.innerWidth);
             height               = Math.min(body.clientHeight, window.innerHeight - 10);
             if (width > height) {
-                con.style.width  = `${height - 100}px`;
-                con.style.height = `${height - 100}px`;
+                con.style.width  = `${
+                    height - 100
+                }px`;
+                con.style.height = `${
+                    height - 100
+                }px`;
             } else {
-                con.style.width  = `${width - 100}px`;
-                con.style.height = `${width - 100}px`;
+                con.style.width  = `${
+                    width - 100
+                }px`;
+                con.style.height = `${
+                    width - 100
+                }px`;
             }
             {
                 let a           = 1,
@@ -50,10 +60,26 @@ window.requestAnimationFrame(function () {
                         bb = (cb * (1.5 / cellwidth));
                         styles.push(`
               .tile.tile-position-${a}-${b} {
-                  -webkit-transform: translate(${ca + ba}em, ${cb + bb}em);
-                  -moz-transform   : translate(${ca + ba}em, ${cb + bb}em);
-                  -ms-transform    : translate(${ca + ba}em, ${cb + bb}em);
-                  transform        : translate(${ca + ba}em, ${cb + bb}em);
+                  -webkit-transform: translate(${
+                            ca + ba
+                        }em, ${
+                            cb + bb
+                        }em);
+                  -moz-transform   : translate(${
+                            ca + ba
+                        }em, ${
+                            cb + bb
+                        }em);
+                  -ms-transform    : translate(${
+                            ca + ba
+                        }em, ${
+                            cb + bb
+                        }em);
+                  transform        : translate(${
+                            ca + ba
+                        }em, ${
+                            cb + bb
+                        }em);
               }`);
                         b  = b + 1;
                     } while (b < value + 1);

@@ -3,8 +3,7 @@
 // is good for testing to see what
 // happens with a variety of options and
 // so forth
-/* 
-   comment on a line that exceeds the
+/* comment on a line that exceeds the
    wrapping limit by quite a bit which
    is good for testing to see what
    happens with a variety of options
