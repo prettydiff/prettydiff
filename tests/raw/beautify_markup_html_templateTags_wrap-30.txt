@@ -1,0 +1,9 @@
+<div>
+<a cat="meow"/> <b cat="meow" dog="bark" asdf="asdf" qwer="qwer" rtyu="rtyu" zxcv="zxcv"/>Variable1: {{ variable1 }} / VariableT: {{ VariableN }}
+</div>
+<div>
+    Variable1:
+    {{ variablex }}
+    / Variable2:
+    {{ Variable2 }}
+</div>

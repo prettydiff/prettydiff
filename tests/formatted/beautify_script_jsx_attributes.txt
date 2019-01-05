@@ -53,8 +53,7 @@ var content = (
     <Nav> {/* child comment, put {} around */}
         <ePerson // end of line comment
             cat="asdf"
-        />
-        cat
+        /> cat
     </Nav>
 );
 var content = (

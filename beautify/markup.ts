@@ -56,9 +56,9 @@
                         aa = a;
                         do {
                             aa = aa - 1;
-                            if (data.token[aa] === "</li>" && data.begin[data.begin[aa]] === stop && data.token[aa - 1] === "</a>" && data.begin[aa - 1] === data.begin[aa] + 1) {
-                                level[aa - 1] = -20; 
-                                aa = data.begin[aa];
+                            if (data.types[aa + 1] === "attribute") {
+                                level[aa] = -10;
+                            } else if (data.token[aa] !== "</li>") {
                                 level[aa] = -20;
                             }
                         } while (aa > stop + 1);
@@ -108,6 +108,66 @@
                             level[x] = -20;
                         }
                         comstart = -1;
+                    },
+                    content = function beautify_markup_levels_content():void {
+                        let end:boolean = false;
+                        if (options.force_indent === true || options.force_attribute === true) {
+                            level.push(indent);
+                            return;
+                        }
+                        if (next < c && (data.types[next].indexOf("end") > -1 || data.types[next].indexOf("start") > -1) && data.lines[next] > 0) {
+                            level.push(indent);
+                            end = true;
+                            if (data.types[a] === "singleton" && a > 0 && data.types[a - 1].indexOf("attribute") > -1 && data.types[data.begin[a - 1]] === "singleton") {
+                                if (data.begin[a] < 0) {
+                                    level[a - 1] = indent;
+                                } else {
+                                    level[a - 1] = indent + 1;
+                                }
+                            }
+                        } else if (data.types[a] === "singleton" && a > 0 && data.types[a - 1].indexOf("attribute") > -1) {
+                            level[a - 1] = indent;
+                            count = data.token[a].length;
+                            level.push(-10);
+                        } else if (data.lines[next] === 0) {
+                            level.push(-20);
+                        } else {
+                            count = count + 1;
+                            level.push(-10);
+                        }
+                        if (a > 0 && data.types[a - 1].indexOf("attribute") > -1 && data.lines[a] < 1) {
+                            level[a - 1] = -20;
+                        }
+                        if (count > options.wrap) {
+                            let d:number = a,
+                                e:number = Math.max(data.begin[a], 0);
+                            do {
+                                d = d - 1;
+                                if (level[d] > -1) {
+                                    count = data.token[a].length;
+                                    if (data.lines[a + 1] > 0) {
+                                        count = count + 1;
+                                    }
+                                    return;
+                                }
+                                if (data.types[d].indexOf("start") > -1) {
+                                    count = 0;
+                                    return;
+                                }
+                                if ((data.types[d] !== "attribute" || (data.types[d] === "attribute" && data.types[d + 1] !== "attribute")) && data.lines[d + 1] > 0) {
+                                    if (data.types[d] !== "singleton" || (data.types[d] === "singleton" && data.types[d + 1] !== "attribute")) {
+                                        count = data.token[a].length;
+                                        if (data.lines[a + 1] > 0) {
+                                            count = count + 1;
+                                        }
+                                        break;
+                                    }
+                                }
+                            } while (d > e);
+                            level[d] = (end === true)
+                                ? indent + 1
+                                : indent;
+                        }
                     },
                     external = function beautify_markup_levels_external():void {
                         let skip = a;
@@ -176,6 +236,7 @@
 
                         // first, set levels and determine if there are template attributes
                         do {
+                            count = count + data.token[a].length + 1;
                             if (data.types[a].indexOf("attribute") > 0) {
                                 if (data.types[a] === "template_attribute") {
                                     level.push(-10);
@@ -234,11 +295,13 @@
                             level[a] = level[parent];
                         }
                         if (options.force_attribute === true) {
+                            count = 0;
                             level[parent] = lev;
                         } else {
                             level[parent] = -10;
                         }
                         if (earlyexit === true || options.unformatted === true) {
+                            count = 0;
                             return;
                         }
                         y = a;
@@ -262,6 +325,7 @@
                                 len = len - 1;
                             }
                             if (len > options.wrap && options.wrap > 0 && options.force_attribute === false) {
+                                count = data.token[a].length;
                                 do {
                                     y = y - 1;
                                     level[y] = lev;
@@ -272,6 +336,7 @@
                 let a:number     = options.start,
                     comstart:number = -1,
                     next:number = 0,
+                    count:number = 0,
                     indent:number       = (isNaN(options.indent_level) === true)
                         ? 0
                         : Number(options.indent_level);
@@ -303,8 +368,11 @@
                                     level.push(-10);
                                 }
                             } else if ((options.force_indent === false || (options.force_indent === true && data.types[next] === "script_start")) && (data.types[a] === "content" || data.types[a] === "singleton" || data.types[a] === "template")) {
+                                count = count + data.token[a].length;
                                 if (data.lines[next] > 0 && data.types[next] === "script_start") {
                                     level.push(-10);
+                                } else if (options.wrap > 0) {
+                                    content();
                                 } else if (next < c && (data.types[next].indexOf("end") > -1 || data.types[next].indexOf("start") > -1) && data.lines[next] > 0) {
                                     level.push(indent);
                                 } else if (data.lines[next] === 0) {
@@ -339,7 +407,11 @@
                                 level.push(indent);
                             }
                         }
+                        if (data.types[a] !== "content" && data.types[a] !== "singleton" && data.types[a] !== "template" && data.types[a] !== "attribute") {
+                            count = 0;
+                        }
                     } else {
+                        count = 0;
                         external();
                     }
                     a = a + 1;
@@ -461,7 +533,7 @@
                         multiline();
                     } else if (data.token[a] !== "</prettydiffli>") {
                         build.push(data.token[a]);
-                        if (levels[a] === -10) {
+                        if (levels[a] === -10 && a < c - 1) {
                             build.push(" ");
                         } else if (levels[a] > -1) {
                             lastLevel = levels[a];
