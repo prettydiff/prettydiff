@@ -5,7 +5,7 @@ A language aware diff, beautification, and minification tool.
 * Current version - https://prettydiff.com/
 * Prior version - https://prettydiff.com/2
 
-[![Build Status](https://semaphoreci.com/api/v1/prettydiff/prettydiff/branches/3-0-0/badge.svg)](https://semaphoreci.com/prettydiff/prettydiff)
+[![Build Status](https://semaphoreci.com/api/v1/prettydiff/prettydiff/branches/master/badge.svg)](https://semaphoreci.com/prettydiff/prettydiff)
 
 ## Build
 ### Local install for development
