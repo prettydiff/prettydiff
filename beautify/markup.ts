@@ -110,14 +110,14 @@
                         comstart = -1;
                     },
                     content = function beautify_markup_levels_content():void {
-                        let end:boolean = false;
+                        let ind:number = indent;
                         if (options.force_indent === true || options.force_attribute === true) {
                             level.push(indent);
                             return;
                         }
                         if (next < c && (data.types[next].indexOf("end") > -1 || data.types[next].indexOf("start") > -1) && data.lines[next] > 0) {
                             level.push(indent);
-                            end = true;
+                            ind = ind + 1;
                             if (data.types[a] === "singleton" && a > 0 && data.types[a - 1].indexOf("attribute") > -1 && data.types[data.begin[a - 1]] === "singleton") {
                                 if (data.begin[a] < 0) {
                                     level[a - 1] = indent;
@@ -141,32 +141,67 @@
                         if (count > options.wrap) {
                             let d:number = a,
                                 e:number = Math.max(data.begin[a], 0);
-                            do {
-                                d = d - 1;
-                                if (level[d] > -1) {
-                                    count = data.token[a].length;
-                                    if (data.lines[a + 1] > 0) {
-                                        count = count + 1;
+                            if (data.types[a] === "content" && options.preserve_text === false) {
+                                let countx:number = 0,
+                                    chars:string[] = data.token[a].replace(/\s+/g, " ").split(" ");
+                                do {
+                                    d = d - 1;
+                                    if (level[d] < 0) {
+                                        countx = countx + data.token[d].length;
+                                        if (level[d] === -10) {
+                                            countx = countx + 1;
+                                        }
+                                    } else {
+                                        break;
                                     }
-                                    return;
+                                } while (d > 0);
+                                d = 0;
+                                e = chars.length;
+                                do {
+                                    if (chars[d].length + countx > options.wrap) {
+                                        chars[d] = lf + chars[d];
+                                        countx = chars[d].length;
+                                    } else {
+                                        chars[d] = ` ${chars[d]}`;
+                                        countx = countx + chars[d].length;
+                                    }
+                                    d = d + 1;
+                                } while (d < e);
+                                if (chars[0].charAt(0) === " ") {
+                                    data.token[a] = chars.join("").slice(1);
+                                } else {
+                                    level[a - 1] = ind;
+                                    data.token[a] = chars.join("").replace(lf, "");
                                 }
-                                if (data.types[d].indexOf("start") > -1) {
-                                    count = 0;
-                                    return;
+                                if (data.token[a].indexOf(lf) > 0) {
+                                    count = data.token[a].length - data.token[a].lastIndexOf(lf);
                                 }
-                                if ((data.types[d] !== "attribute" || (data.types[d] === "attribute" && data.types[d + 1] !== "attribute")) && data.lines[d + 1] > 0) {
-                                    if (data.types[d] !== "singleton" || (data.types[d] === "singleton" && data.types[d + 1] !== "attribute")) {
+                            } else {
+                                do {
+                                    d = d - 1;
+                                    if (level[d] > -1) {
                                         count = data.token[a].length;
                                         if (data.lines[a + 1] > 0) {
                                             count = count + 1;
                                         }
-                                        break;
+                                        return;
                                     }
-                                }
-                            } while (d > e);
-                            level[d] = (end === true)
-                                ? indent + 1
-                                : indent;
+                                    if (data.types[d].indexOf("start") > -1) {
+                                        count = 0;
+                                        return;
+                                    }
+                                    if ((data.types[d] !== "attribute" || (data.types[d] === "attribute" && data.types[d + 1] !== "attribute")) && data.lines[d + 1] > 0) {
+                                        if (data.types[d] !== "singleton" || (data.types[d] === "singleton" && data.types[d + 1] !== "attribute")) {
+                                            count = data.token[a].length;
+                                            if (data.lines[a + 1] > 0) {
+                                                count = count + 1;
+                                            }
+                                            break;
+                                        }
+                                    }
+                                } while (d > e);
+                                level[d] = ind;
+                            }
                         }
                     },
                     external = function beautify_markup_levels_external():void {
@@ -461,11 +496,18 @@
                         lev:number = (levels[a - 1] > -1)
                             ? levels[a - 1]
                             : (function beautify_markup_apply_multiline_lev():number {
-                                let bb:number = a - 1;
+                                let bb:number = a - 1,
+                                    start:boolean = (data.types[bb].indexOf("start") > -1);
                                 do {
                                     bb = bb - 1;
                                     if (levels[bb] > -1) {
+                                        if (data.types[a] === "content" && start === false) {
+                                            return levels[bb];
+                                        }
                                         return levels[bb] + 1;
+                                    }
+                                    if (data.types[bb].indexOf("start") > -1) {
+                                        start = true;
                                     }
                                 } while (bb > 0);
                                 return 1;

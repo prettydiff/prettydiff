@@ -11,6 +11,6 @@
     {{ VariableN }}
 </div>
 <div>
-    Variable1: {{ variablex }}
-    / Variable2: {{ Variable2 }}
+    Variable1: {{ variablex }} /
+    Variable2: {{ Variable2 }}
 </div>

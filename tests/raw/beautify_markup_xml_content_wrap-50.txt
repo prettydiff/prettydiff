@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<!--prettydiff.com wrap:50-->
+<html>
+<body cat="meow">
+
+some really <test with="attribute"/> long text tha should not wrap just    too early but then we will see right, or maybe not I guess arrghhh
+
+</body>
+</html>

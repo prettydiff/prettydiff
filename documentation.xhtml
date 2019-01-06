@@ -16,7 +16,7 @@
             rel="meta"
             title="ICRA labels"
             type="application/rdf+xml"/>
-        <link href="css/index.css?1546753196040" media="all" rel="stylesheet" type="text/css"/>
+        <link href="css/index.css?1546806991805" media="all" rel="stylesheet" type="text/css"/>
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
         <meta content="index, follow" name="robots"/>
         <meta content="Pretty Diff - The difference tool" name="DC.title"/>
@@ -294,9 +294,7 @@
                                 is present in the diff code but not the source code then this option comment
                                 will be processed. In order for the option comment to be recognized it must
                                 start with
-                                <strong>/*prettydiff.com</strong>
-                                and end with
-                                <strong>*/</strong>. The options are listed in this comment separated by commas
+                                <strong>prettydiff.com</strong>. The options are listed in this comment separated by commas
                                 as a colon separated name value pair. The options match the exact value
                                 definition for the Pretty Diff application properties above and options that
                                 allow abstract values must have their values enclosed in either single or double
@@ -305,11 +303,11 @@
                                 interpretation. These are examples of appropriate option strings:</p>
                             <ul>
                                 <li>
-                                    <code>/*prettydiff.com mode:beautify, lang:javascript, inchar:"abc"*/</code>
+                                    <code>/*prettydiff.com mode:beautify, language:javascript, indent_char:"abc"*/</code>
                                 </li>
                                 <li>
-                                    <code>&lt;!--/*prettydiff.com mode: beautify, lang: javascript,
-                                        inchar: "abc", html: true */--&gt;</code>
+                                    <code>&lt;!--prettydiff.com mode: beautify, language: javascript,
+                                        indent_char: "abc", html: true --&gt;</code>
                                 </li>
                             </ul>
                         </div>
@@ -375,6 +373,6 @@
                 </div>
             </section>
         </div>
-        <script src="js/prettydiff-webtool.js?1546753196040" type="application/javascript"></script>
+        <script src="js/prettydiff-webtool.js?1546806991805" type="application/javascript"></script>
     </body>
 </html>

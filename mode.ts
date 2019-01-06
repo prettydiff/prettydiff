@@ -218,11 +218,6 @@
             options.language_name = lang[2];
         }
 
-        // test complete_document in dom (try to generate xml errors)
-        // test updated script strings in finalFile
-        // write simulation tests for complete_document
-        // write validation tests for complete_document
-
         pdcomment(options);
         
         if (options.api === "dom") {

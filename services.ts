@@ -914,7 +914,8 @@ interface readFile {
                     "css",
                     "optionsMarkdown",
                     "typescript",
-                    "libraries"],
+                    "libraries"
+                ],
                 test: [
                     "lint",
                     "simulation",
@@ -1004,7 +1005,9 @@ interface readFile {
                 order[type].splice(0, 1);
                 phases[phase]();
             },
+            // These are all the parts of the execution cycle, but their order is dictated by the 'order' object.
             phases = {
+                // phase css merges the css for all supported HTML into a single file
                 css: function node_apps_build_css():void {
                     heading("Merging CSS");
                     node.fs.readdir(`${projectPath}css`, "utf8", function node_apps_build_css_readdir(erc:Error, fileList:string[]):void {
@@ -1039,6 +1042,7 @@ interface readFile {
                         });
                     });
                 },
+                // phase language applies the language file from the parser
                 language: function node_apps_build_language():void {
                     heading("Sourcing Language File");
                     node.fs.readFile(`${projectPath}node_modules${sep}parse-framework${sep}language.ts`, "utf8", function node_apps_build_language_read(err:Error, fileData:string) {
@@ -1056,6 +1060,7 @@ interface readFile {
                         });
                     });
                 },
+                // phase libraries builds the JavaScript that is called for execution
                 libraries: function node_apps_build_libraries():void {
                     let finalFile:string = "",
                         libraries:string = "",
@@ -1449,6 +1454,7 @@ interface readFile {
                     heading("Building Options");
                     versionGather();
                 },
+                // phase lint is merely a call to apps.lint
                 lint     : function node_apps_build_lint():void {
                     const callback = function node_apps_build_lint_callback(message:string):void {
                         next(message);
@@ -1456,6 +1462,7 @@ interface readFile {
                     heading("Linting");
                     apps.lint(callback);
                 },
+                // phase npminstall checks if dependencies are absent
                 npminstall: function node_apps_build_npminstall():void {
                     heading("First Time Developer Dependency Installation");
                     node.fs.stat(`${projectPath}node_modules${sep}ace-builds`, function node_apps_build_npminstall_stat(errs:Error):void {
@@ -1483,6 +1490,7 @@ interface readFile {
                         }
                     });
                 },
+                // phase optionsMarkdown builds a markdown file of options documentation
                 optionsMarkdown: function node_apps_build_optionsMarkdown():void {
                     const def:optionDef = prettydiff.api.optionDef,
                         keys:string[] = Object.keys(def),
@@ -1534,6 +1542,7 @@ interface readFile {
                         next(`${text.green}Options documentation successfully written to markdown file.${text.none}`);
                     });
                 },
+                // phase parseFramework checks if the parser is built and builds it if necessary
                 parseFramework: function node_apps_build_parseFramework():void {
                     heading("Checking for built parse-framework");
                     const frame:string = `node_modules${sep}parse-framework`;
@@ -1575,6 +1584,7 @@ interface readFile {
                         }
                     });
                 },
+                // phase simulation is merely a call to apps.simulation
                 simulation: function node_apps_build_simulation():void {
                     const callback = function node_apps_build_lint_callback(message:string):void {
                         next(message);
@@ -1582,6 +1592,7 @@ interface readFile {
                     heading("Simulations of Node.js commands from js/services.js");
                     apps.simulation(callback);
                 },
+                // phase typescript compiles the working code into JavaScript
                 typescript: function node_apps_build_typescript():void {
                     const flag = {
                             services: false,
@@ -1650,6 +1661,7 @@ interface readFile {
                         }
                     });
                 },
+                // phase validation is merely a call to apps.validation
                 validation: function node_apps_build_validation():void {
                     const callback = function node_apps_build_lint_callback(message:string):void {
                         next(message);
