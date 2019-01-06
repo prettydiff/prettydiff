@@ -35,9 +35,9 @@
         "url": "git+https://github.com/prettydiff/prettydiff.git"
     },
     "scripts": {
-        "prepublishOnly": "node js/services build",
-        "start": "node js/services build nocheck",
-        "test": "node js/services build"
+        "prepublishOnly": "node js/services test",
+        "start": "node js/services build",
+        "test": "node js/services test"
     },
-    "version": "100.1.1"
+    "version": "100.1.2"
 }

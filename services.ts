@@ -122,11 +122,7 @@ interface readFile {
                 example: [
                     {
                         code: "prettydiff build",
-                        defined: "Compiles from TypeScript into JavaScript, compiles libraries, and lints the code."
-                    },
-                    {
-                        code: "prettydiff build nocheck",
-                        defined: "Runs the build without running any of the sanity checks."
+                        defined: "Compiles from TypeScript into JavaScript and puts librarys together."
                     }
                 ]
             },
@@ -374,6 +370,13 @@ interface readFile {
                 example: [{
                     code: "prettydiff simulation",
                     defined: "Runs tests against the commands offered by the services file."
+                }]
+            },
+            test: {
+                description: "Builds the application and then runs all the test commands",
+                example: [{
+                    code: "prettydiff test",
+                    defined: "After building the code, it will lint the JavaScript output, test Node.js commands as simulations, and validate the Pretty Diff modes against test samples."
                 }]
             },
             validation: {
@@ -900,27 +903,33 @@ interface readFile {
         apps.readMethod(false);
     };
     // build system
-    apps.build = function node_apps_build():void {
+    apps.build = function node_apps_build(test:boolean):void {
         let firstOrder:boolean = true,
             sectionTime:[number, number] = [0, 0];
-        const order = [
-                "npminstall",
-                "language",
-                "css",
-                "optionsMarkdown",
-                "typescript",
-                "libraries",
-                "lint",
-                "parseFramework",
-                "simulation",
-                "validation"
-            ],
-            orderlen:number = order.length,
+        const order = {
+                build: [
+                    "npminstall",
+                    "parseFramework",
+                    "language",
+                    "css",
+                    "optionsMarkdown",
+                    "typescript",
+                    "libraries"],
+                test: [
+                    "lint",
+                    "simulation",
+                    "validation"
+                ]
+            },
+            type:string = (test === true)
+                ? "test"
+                : "build",
+            orderlen:number = order[type].length,
             heading = function node_apps_build_heading(message:string):void {
                 if (firstOrder === true) {
                     console.log("");
                     firstOrder = false;
-                } else if (order.length < orderlen) {
+                } else if (order[type].length < orderlen) {
                     console.log("________________________________________________________________________");
                     console.log("");
                 }
@@ -979,20 +988,20 @@ interface readFile {
                 console.log(`${text.cyan + text.bold}[${times.join(":")}]${text.none} ${text.green}Total section time.${text.none}`);
             },
             next = function node_apps_build_next(message:string):void {
-                let phase = order[0],
+                let phase = order[type][0],
                     time:string = apps.humantime(false);
                 if (message !== "") {
                     console.log(time + message);
                     sectionTimer(time);
                 }
-                if (order.length < 1) {
+                if (order[type].length < 1) {
                     verbose = true;
-                    heading("All tasks complete... Exiting clean!\u0007");
+                    heading(`${text.none}All ${text.green + text.bold + type + text.none} tasks complete... Exiting clean!\u0007`);
                     apps.log([""], "", "");
                     process.exit(0);
                     return;
                 }
-                order.splice(0, 1);
+                order[type].splice(0, 1);
                 phases[phase]();
             },
             phases = {
@@ -1649,11 +1658,6 @@ interface readFile {
                     apps.validation(callback);
                 }
             };
-        if (process.argv.indexOf("nocheck") > -1) {
-            order.splice(order.indexOf("lint"), 1);
-            order.splice(order.indexOf("simulation"), 1);
-            order.splice(order.indexOf("validation"), 1);
-        }
         next("");
     };
     // CLI commands documentation generator
@@ -4278,6 +4282,9 @@ interface readFile {
             console.log("");
         }
         wrapper();
+    };
+    apps.test = function node_apps_test():void {
+        apps.build(true);
     };
     // unit test validation runner for Pretty Diff mode commands
     apps.validation = function node_apps_validation(callback:Function):void {

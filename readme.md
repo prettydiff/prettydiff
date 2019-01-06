@@ -15,9 +15,10 @@ cd prettydiff
 
 npm install typescript -g
 npm install eslint -g
+npm install
 tsc --pretty
 
-node js/services build nocheck
+node js/services build
 ```
 
 ### Global install with NPM
@@ -25,7 +26,22 @@ node js/services build nocheck
 npm install typescript -g
 npm install eslint -g
 npm install prettydiff -g
-prettydiff build nocheck
+prettydiff build
+```
+
+## Test it
+### Local install for development
+```
+node js/services test
+```
+or
+```
+npm test
+```
+
+### Global install with NPM
+```
+prettydiff test
 ```
 
 ## Usage

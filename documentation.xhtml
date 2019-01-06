@@ -16,7 +16,7 @@
             rel="meta"
             title="ICRA labels"
             type="application/rdf+xml"/>
-        <link href="css/index.css?1546715186959" media="all" rel="stylesheet" type="text/css"/>
+        <link href="css/index.css?1546753196040" media="all" rel="stylesheet" type="text/css"/>
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
         <meta content="index, follow" name="robots"/>
         <meta content="Pretty Diff - The difference tool" name="DC.title"/>
@@ -191,14 +191,22 @@
                         </div>
                         <div class="segment" id="runcode">
                             <h3>Setup/Run the Application</h3>
+                            <h4>Setup as a local application</h4>
                             <ol>
-                                <li>Get the code</li>
-                                <li>Install TypeScript: <code>npm install typescript -g</code></li>
-                                <li>Install ESLint: <code>npm install eslint -g</code></li>
-                                <li>Enter the project directory: <code>cd prettydiff</code></li>
-                                <li>Compile the code: <code>tsc --pretty</code></li>
-                                <li>Install dependencies: <code>npm install</code></li>
-                                <li>Build the application: <code>node js/services build</code></li>
+                                <li><code>git clone https://github.com/prettydiff/prettydiff.git</code></li>
+                                <li><code>cd prettydiff</code></li>
+                                <li><code>npm install typescript -g</code></li>
+                                <li><code>npm install eslint -g</code></li>
+                                <li><code>npm install</code></li>
+                                <li><code>tsc --pretty</code></li>
+                                <li><code>node js/services build</code></li>
+                            </ol>
+                            <h4>Setup as a global NPM package</h4>
+                            <ol>
+                                <li><code>npm install typescript -g</code></li>
+                                <li><code>npm install eslint -g</code></li>
+                                <li><code>npm install prettydiff -g</code></li>
+                                <li><code>prettydiff build</code></li>
                             </ol>
                             <p>To get started with the application on the command line try the <em>commands</em> command to see a list of available features and detailed instructions: <code>node js/services commands</code></p>
                             <p>To run the application in a web browser with Pretty Diff's HTML execute the <em>server</em> command: <code>node js/services server</code> or simply navigate your browser to the project's <em>index.xhtml</em> file in the local filesystem.</p>
@@ -334,17 +342,7 @@
                                 <a href="https://github.com/prettydiff/prettydiff/issues">Github</a>. If you are executing from the command line insert the <em>debug</em> word at the end of your command and Pretty Diff will generate an issue template in markdown format that you can simply copy and paste into Github.</p>
                             <p>If you wish to propose code changes then follow these steps:</p>
                             <ol>
-                                <li>Fork the repository on Github.</li>
-                                <li>Clone your forked repository to your local machine:
-                                    <code>git clone https://github.com/username/prettydiff.git</code>
-                                </li>
-                                <li>Prepare the application for its first run:
-                                    <code>npm install typescript -g</code>
-                                    <code>npm install eslint -g</code>
-                                    <code>cd prettydiff</code>
-                                    <code>npm install</code>
-                                    <code>tsc --pretty</code>
-                                </li>
+                                <li>Fork the repository on Github and then clone down the fork to your local computer.</li>
                                 <li>Create a new branch for your changes:
                                     <code>git checkout -b <em>branchName</em></code>
                                 </li>
@@ -357,7 +355,7 @@
                                     </ul>
                                 </li>
                                 <li>Run the unit tests to verify if your changes are breaking things:
-                                    <code>node js/services build</code>
+                                    <code>node js/services test</code>
                                 </li>
                                 <li>Finally, open a pull request on Github or if you are having trouble with the build open a Github issue and ask for help.</li>
                             </ol>
@@ -377,6 +375,6 @@
                 </div>
             </section>
         </div>
-        <script src="js/dom.js?1546715186959" type="application/javascript"></script>
+        <script src="js/prettydiff-webtool.js?1546753196040" type="application/javascript"></script>
     </body>
 </html>
