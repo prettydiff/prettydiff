@@ -294,10 +294,10 @@ class Header extends Component {
             return(a);
         } else {
             return [
-                <li key="signin" className="nav-item">
+                <li className="nav-item" key="signin">
                     <Link className="nav-link" to="/signin">Sign in</Link>
                 </li>,
-                <li key="signout" className="nav-item">
+                <li className="nav-item" key="signout">
                     <Link className="nav-link" to="/signup ">Sign Up</Link>
                 </li>
             ];

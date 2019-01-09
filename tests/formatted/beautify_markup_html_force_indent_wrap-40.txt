@@ -1,13 +1,17 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml encoding="UTF-8" version="1.0"?>
 <!DOCTYPE html>
-<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<html
+    xml:lang="en"
+    xmlns="http://www.w3.org/1999/xhtml">
     <body class="white" id="prettydiff">
         <h1 class="content-hide">
             Pretty Diff, a
             language aware file comparison tool,
             beautifier, minifier and parser.
         </h1>
-        <div id="headline" style="display:block">
+        <div
+            id="headline"
+            style="display:block">
             <h2>
                 Announcement &#8212;
             </h2>
@@ -78,7 +82,9 @@
             </p>
         </div>
         <div id="codeInput" role="main">
-            <p id="textareaTabKey" style="display:none">
+            <p
+                id="textareaTabKey"
+                style="display:none">
                 <strong>
                     Accessibility note:
                 </strong>

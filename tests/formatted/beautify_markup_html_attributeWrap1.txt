@@ -1,24 +1,43 @@
-<?xml encoding="UTF-8" version="1.0"?>
+<?xml
+    encoding="UTF-8"
+    version="1.0"?>
 <!DOCTYPE html>
-<!-- prettydiff.com wrap:80 space_close:true -->
-<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<!-- prettydiff.com wrap:30
+space_close:true -->
+<html
+    xml:lang="en"
+    xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <title>Pretty Diff - The difference tool</title>
+        <title>Pretty Diff - The
+            difference tool</title>
         <link
             href="https://prettydiff.com"
             rel="canonical"
             type="application/xhtml+xml" />
+
         <link
-            href="https://prettydiff.com/images/favicon.ico"
+            href="https://prettydiff.com/images/favicon.ico
+                asdf"
             rel="icon"
-            type="image/x-icon" />
+            type="image/x-icon
+                https://pretfes/favicon.ico qw" />
+        <link type="image/x-icon
+            https://prettydiff.com/images/favicon.ico" />
+
         <link
             href="https://prettydiff.com/labels.rdf"
             rel="meta"
             title="ICRA labels"
             type="application/rdf+xml" />
-        <link href="humans.txt" rel="author" type="text/plain" />
-        <link href="css/index.css" media="all" rel="stylesheet" type="text/css" />
+        <link
+            href="humans.txt"
+            rel="author"
+            type="text/plain" />
+        <link
+            href="css/index.css"
+            media="all"
+            rel="stylesheet"
+            type="text/css" />
         <link
             href="css/webtool_only.css"
             media="all"

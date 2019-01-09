@@ -221,7 +221,24 @@
                         }
                     },
                     attribute = function beautify_markup_levels_attribute():void {
-                        const parent:number = a - 1;
+                        const parent:number = a - 1,
+                            wrap = function beautify_markup_levels_attribute_wrap(index:number):void {
+                                const item:string[] = data.token[index].replace(/\s+/g, " ").split(" "),
+                                    ilen:number = item.length;
+                                let bb:number = 1,
+                                    acount:number = item[0].length;
+                                do {
+                                    if (acount + item[bb].length > options.wrap) {
+                                        acount = item[bb].length;
+                                        item[bb] = lf + item[bb];
+                                    } else {
+                                        item[bb] = ` ${item[bb]}`;
+                                        acount = acount + item[bb].length;
+                                    }
+                                    bb = bb + 1;
+                                } while (bb < ilen);
+                                data.token[index] = item.join("");
+                            };
                         let y:number = a,
                             len:number = data.token[parent].length + 1,
                             plural:boolean = false,
@@ -342,9 +359,9 @@
                         y = a;
 
                         // second, ensure tag contains more than one attribute
-                        if (y > parent + 2) {
-                            let atts:string[] = data.token.slice(parent + 1, y + 1),
-                                z:number = 0,
+                        if (y > parent + 1) {
+                            let z:number = 0;
+                            const atts:string[] = data.token.slice(parent + 1, y + 1),
                                 zz:number = atts.length;
 
                             // third, sort attributes alphabetically
@@ -362,10 +379,15 @@
                             if (len > options.wrap && options.wrap > 0 && options.force_attribute === false) {
                                 count = data.token[a].length;
                                 do {
+                                    if (data.token[y].length > options.wrap && (/\s/).test(data.token[y]) === true) {
+                                        wrap(y);
+                                    }
                                     y = y - 1;
                                     level[y] = lev;
                                 } while (y > parent);
                             }
+                        } else if (options.wrap > 0 && data.types[a] === "attribute" && data.token[a].length > options.wrap && (/\s/).test(data.token[a]) === true) {
+                            wrap(a);
                         }
                     };
                 let a:number     = options.start,
@@ -385,7 +407,7 @@
                             if (comstart < 0) {
                                 comstart = a;
                             }
-                            if (data.types[a + 1] !== "comment") {
+                            if (data.types[a + 1] !== "comment" || (a > 0 && data.types[a - 1].indexOf("end") > -1)) {
                                 comment();
                             }
                         } else if (data.types[a] !== "comment") {
@@ -494,10 +516,15 @@
                     const lines:string[] = data.token[a].split(lf),
                         line:number = data.lines[a + 1],
                         lev:number = (levels[a - 1] > -1)
-                            ? levels[a - 1]
+                            ? (data.types[a] === "attribute")
+                                ? levels[a - 1] + 1
+                                : levels[a - 1]
                             : (function beautify_markup_apply_multiline_lev():number {
                                 let bb:number = a - 1,
-                                    start:boolean = (data.types[bb].indexOf("start") > -1);
+                                    start:boolean = (bb > -1 && data.types[bb].indexOf("start") > -1);
+                                if (levels[a] > -1 && data.types[a] === "attribute") {
+                                    return levels[a] + 1;
+                                }
                                 do {
                                     bb = bb - 1;
                                     if (levels[bb] > -1) {
@@ -571,7 +598,7 @@
                     if ((data.types[a] === "start" || data.types[a] === "singleton" || data.types[a] === "xml" || data.types[a] === "sgml") && data.types[a].indexOf("attribute") < 0 && a < c - 1 && data.types[a + 1] !== undefined && data.types[a + 1].indexOf("attribute") > -1) {
                         attributeEnd();
                     }
-                    if (data.token[a] !== undefined && data.token[a].indexOf(lf) > 0 && ((data.types[a] === "content" && options.preserve_text === false) || data.types[a] === "comment")) {
+                    if (data.token[a] !== undefined && data.token[a].indexOf(lf) > 0 && ((data.types[a] === "content" && options.preserve_text === false) || data.types[a] === "comment" || data.types[a] === "attribute")) {
                         multiline();
                     } else if (data.token[a] !== "</prettydiffli>") {
                         build.push(data.token[a]);

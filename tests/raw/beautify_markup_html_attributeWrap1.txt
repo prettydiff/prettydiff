@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<!-- prettydiff.com wrap:30 space_close:true -->
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Pretty Diff - The difference tool</title>
+        <link href="https://prettydiff.com" rel="canonical" type="application/xhtml+xml"/>
+        
+        <link href="https://prettydiff.com/images/favicon.ico asdf" rel="icon"
+            type="image/x-icon https://pretfes/favicon.ico qw"/>
+        <link type="image/x-icon https://prettydiff.com/images/favicon.ico"/>
+            
+        <link href="https://prettydiff.com/labels.rdf" rel="meta" title="ICRA labels"
+            type="application/rdf+xml"/>
+        <link href="humans.txt" rel="author" type="text/plain"/>
+        <link href="css/index.css" media="all" rel="stylesheet" type="text/css"/>
+        <link href="css/webtool_only.css" media="all" rel="stylesheet" type="text/css"/>
+        <link href="images/apple-touch-icon-57.png" rel="apple-touch-icon" sizes="57x57"/>
+        <link href="images/apple-touch-icon-72.png" rel="apple-touch-icon" sizes="72x72"/>
+        <link href="images/apple-touch-icon-114.png" rel="apple-touch-icon"
+            sizes="114x114"/>
+        <link href="images/apple-touch-icon-144.png" rel="apple-touch-icon"
+            sizes="144x144"/>
+            </head></html>
