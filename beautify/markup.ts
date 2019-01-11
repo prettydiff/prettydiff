@@ -227,6 +227,9 @@
                                     ilen:number = item.length;
                                 let bb:number = 1,
                                     acount:number = item[0].length;
+                                if ((/=("|')?(<|(\{(\{|%|#|@|!|\?|^))|(\[%))/).test(data.token[index]) === true) {
+                                    return;
+                                }
                                 do {
                                     if (acount + item[bb].length > options.wrap) {
                                         acount = item[bb].length;
