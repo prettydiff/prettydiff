@@ -126,8 +126,49 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
         },
         load                = function dom_load():void {
             const pages:string            = (page === null || page === undefined || page.getAttribute("id") === null)
-                ? ""
-                : page.getAttribute("id");
+                    ? ""
+                    : page.getAttribute("id"),
+                security = function dom_load_security():void {
+                    const scripts:HTMLCollectionOf<HTMLScriptElement> = document.getElementsByTagName("script"),
+                        exclusions:string[] = [
+                            "js/prettydiff-webtool.js",
+                            "node_modules/ace-builds/src-min-noconflict/ace.js"
+                        ],
+                        len:number = scripts.length,
+                        exlen:number = exclusions.length;
+                    let a:number = 0,
+                        b:number = 0,
+                        src:string = "";
+                    // this prevents errors, but it also means you are executing too early.
+                    if (len > 0) {
+                        do {
+                            src = scripts[a].getAttribute("src");
+                            if (src === null) {
+                                break;
+                            }
+                            if (src.indexOf("?") > 0) {
+                                src = src.slice(0, src.indexOf("?"));
+                            }
+                            b = 0;
+                            do {
+                                if (src.indexOf(exclusions[b]) > -1) {
+                                    break;
+                                }
+                                b = b + 1;
+                            } while (b < exlen);
+                            if (b === exlen) {
+                                break;
+                            }
+                            a = a + 1;
+                        } while (a < len);
+                        if (a < len) {
+                            let warning:HTMLDivElement = document.createElement("div");
+                                warning.setAttribute("id", "security-warning");
+                                warning.innerHTML = `<h1>Warning</h1><h2>This page contains unauthorized script and may be a security risk.</h2><code>${(src === null) ? scripts[a].innerHTML : src}</code>`;
+                                document.getElementsByTagName("body")[0].insertBefore(warning, document.getElementsByTagName("body")[0].firstChild);
+                        }
+                    }
+                };
             if (pages === "webtool") {
                 let a:number = 0,
                     x:HTMLInputElement,
@@ -2235,6 +2276,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                     });
                     document.getElementsByTagName("body")[0].style.display = "none";
                     window.onload = function dom_load_webSocketLoaded():void {
+                        security();
                         document.getElementsByTagName("body")[0].style.display = "block";
                         id("button-primary").getElementsByTagName("button")[0].click();
                     };
@@ -2366,6 +2408,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 }
                 window.onhashchange = hashgo;
                 hashgo();
+                window.onload = security;
             }
             if (pages === "page") {
                 let b:number          = 0,
@@ -2437,6 +2480,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         inca = inca + 1;
                     } while (inca < len);
                 }
+                window.onload = security;
             }
             test.load = false;
         };

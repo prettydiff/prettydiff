@@ -40,6 +40,7 @@
                     itemcount:number[]      = [], //counts items in destructured lists
                     assignlist:boolean[]    = [false], //are you in a list right now?
                     wordlist:boolean[]      = [],
+                    count:number[]          = [],
                     fixchain      = function beautify_script_level_fixchain():void {
                         let bb:number = a - 1,
                             cc:number = data.begin[a];
@@ -390,7 +391,29 @@
                             level[a - 1]                  = indent;
                             level.push(-20);
                         } else if (ctoke === ")" || ctoke === "x)") {
-                            if (ctoke === ")" && a > data.begin[a] - 2 && data.lexer[data.begin[a] + 1] === lexer && data.token[data.begin[a] + 1] !== "function") {
+                            if (options.wrap > 0 && (data.stack[a] === "expression" || (data.stack[a] === "paren" && (data.stack[a + 1] === "paren" || data.stack[a + 1] === "expression"))) && ctoke === ")" && ltoke !== "(") {
+                                const countx:number = count.pop() + 1,
+                                    wrap:number = options.wrap,
+                                    begin:number = data.begin[a],
+                                    len:number = count.length;
+                                let aa:number = a - 1;
+                                if (countx > wrap) {
+                                    level[data.begin[a]] = indent + len + 1;
+                                    level[a - 1] = indent + len;
+                                    do {
+                                        if (data.begin[aa] === begin) {
+                                            if (data.token[aa] === "&&" || data.token[aa] === "||") {
+                                                level[aa] = indent + len + 1;
+                                            }
+                                        } else {
+                                            aa = data.begin[aa];
+                                        }
+                                        aa = aa - 1;
+                                    } while (aa > begin);
+                                } else if (len > 0) {
+                                    count[len - 1] = count[len - 1] + countx;
+                                }
+                            } else if (ctoke === ")" && a > data.begin[a] - 2 && data.lexer[data.begin[a] + 1] === lexer && data.token[data.begin[a] + 1] !== "function") {
                                 const open:number = (data.begin[a] < 0)
                                     ? 0
                                     : data.begin[a];
@@ -1538,6 +1561,9 @@
                             return;
                         }
                         if (ctoke === "(" || ctoke === "x(") {
+                            if (options.wrap > 0 && (data.stack[a + 1] === "expression" || (data.stack[a + 1] === "paren" && (data.stack[a] === "paren" || data.stack[a] === "expression"))) && ctoke === "(" && data.token[a + 1] !== ")") {
+                                count.push(1);
+                            }
                             if (ltoke === "-" && (data.token[a - 2] === "(" || data.token[a - 2] === "x(")) {
                                 level[a - 2] = -20;
                             }
@@ -1926,9 +1952,15 @@
                             ltype = ctype;
                             ltoke = ctoke;
                         }
+                        if (options.wrap > 0 && (data.stack[a] === "expression" || (data.stack[a] === "paren" && (data.stack[data.begin[a]] === "paren" || data.stack[data.begin[a]] === "expression"))) && data.token[a] !== ")") {
+                            count[count.length - 1] = count[count.length - 1] + data.token[a].length;
+                            if (level[a] === -10) {
+                                count[count.length - 1] = count[count.length - 1] + 1;
+                            }
+                        }
                     } else {
                         external();
-                    }//console.log(a+" "+data.token[a]+" "+level.join());
+                    }
                     a = a + 1;
                 } while (a < b);
                 return level;
@@ -2384,6 +2416,7 @@
                                 options.indent_level = lastLevel;
                                 options.start = a;
                                 external = prettydiff.beautify[data.lexer[a]](options)
+                                    .replace(/\s+$/, "")
                                     .replace(/&/g, "&amp;")
                                     .replace(/</g, "&lt;")
                                     .replace(/>/g, "&gt;")

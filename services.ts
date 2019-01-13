@@ -4061,7 +4061,7 @@ interface readFile {
                     timeStore = date.valueOf();
                     return timeStore;
                 };
-            if (extension === "ts" && timeStore < Date.now() - 1000) {
+            if ((extension === "ts" || extension === "css") && timeStore < Date.now() - 1000) {
                 let start:number,
                     compile:number,
                     duration = function node_apps_server_watch_duration(length:number):void {
@@ -4102,8 +4102,8 @@ interface readFile {
                         console.log(`[${text.bold + text.purple + list.join(":") + text.none}] Total compile time.\u0007`);
                     };
                 console.log("");
-                start = time(`Compiling TypeScript for ${text.green + filename + text.none}`);
-                node.child(`node js/services build nocheck`, {
+                start = time(`Compiling for ${text.green + filename + text.none}`);
+                node.child(`node js/services build`, {
                     cwd: projectPath
                 }, function node_apps_server_watch_child(err:Error, stdout:string, stderr:string):void {
                     if (err !== null) {

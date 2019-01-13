@@ -20,33 +20,43 @@
                         .slice);
                 }
             }
-            if (process
+            if (
+                process
                     .argv[a]
                     .replace(/\s+/g, "")
-                    .indexOf("source:") === 0 || process
+                    .indexOf("source:") === 0 ||
+                process
                     .argv[a]
                     .replace(/\s+/g, "")
-                    .indexOf("source=") === 0 || process
+                    .indexOf("source=") === 0 ||
+                process
                     .argv[a]
                     .replace(/\s+/g, "")
-                    .indexOf("source\"") === 0 || process
+                    .indexOf("source\"") === 0 ||
+                process
                     .argv[a]
                     .replace(/\s+/g, "")
-                    .indexOf("source'") === 0) {
+                    .indexOf("source'") === 0
+            ) {
                 source = true;
-            } else if (process
+            } else if (
+                process
                     .argv[a]
                     .replace(/\s+/g, "")
-                    .indexOf("diff:") === 0 || process
+                    .indexOf("diff:") === 0 ||
+                process
                     .argv[a]
                     .replace(/\s+/g, "")
-                    .indexOf("diff=") === 0 || process
+                    .indexOf("diff=") === 0 ||
+                process
                     .argv[a]
                     .replace(/\s+/g, "")
-                    .indexOf("diff\"") === 0 || process
+                    .indexOf("diff\"") === 0 ||
+                process
                     .argv[a]
                     .replace(/\s+/g, "")
-                    .indexOf("diff'") === 0) {
+                    .indexOf("diff'") === 0
+            ) {
                 diff = true;
             }
         }()),

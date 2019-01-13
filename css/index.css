@@ -806,6 +806,11 @@
 #prettydiff.shadow .box h3 button{background:#333;border-color:#666;color:#ccc}
 #prettydiff.shadow .box h3 button:hover{background:#777;border-color:#aaa;color:#fff}
 
+#prettydiff #security-warning{background:#fcc;border:0.2em solid #f00;font-family:"Century Gothic", "Trebuchet MS";padding:1em;text-align:left}
+#prettydiff #security-warning h1{margin:0}
+#prettydiff #security-warning h2{font-size:2em;margin-bottom:0.5em}
+#prettydiff #security-warning code{background:#fee;border:0.1em solid #f99;font-family:monospace;font-size:1.5em;padding:0.5em;white-space:pre;width:auto}
+
 /*webtool - changing default ace colors to acheive minimum color contrast*/
 #prettydiff .ace_variable{color:#247284}
 #prettydiff .ace_comment{color:#375}

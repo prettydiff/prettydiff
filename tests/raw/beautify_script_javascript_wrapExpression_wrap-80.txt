@@ -1,0 +1,42 @@
+let a = 1;
+
+if ((data.token[a + 1] === "}" || data.token[a + 1] === "]") && (data.stack[a] === "object" || data.stack[a] === "array") && data.token[data.begin[a] - 1] === ",") {
+    destructfix(true, false);
+}
+
+if (data.stack[a] !== "attribute") {
+    if (ctoke !== ")" && ctoke !== "x)" && (ltype !== "markup" || (ltype === "markup" && data.token[a - 2] !== "return"))) {
+        indent = indent - 1;
+    }
+    if (ctoke === "}" && data.stack[a] === "switch" && options.no_case_indent === false) {
+        indent = indent - 1;
+    }
+}
+
+if (
+    data.types[a - 1] !== "comment" &&
+    ltoke !== "{" &&
+    ltoke !== "x{" &&
+    ltype !== "end" &&
+    ltype !== "string" &&
+    ltype !== "number" &&
+    ltype !== "separator" &&
+    ltoke !== "++" &&
+    ltoke !== "--" &&
+    (a < 2 || data.token[a - 2] !== ";" || data.token[a - 2] !== "x;" || ltoke === "break" || ltoke === "return")
+) {
+    x;}
+    
+if (
+    data.types[a - 1] !== "comment" &&
+    ltoke !== "{" &&
+    ltoke !== "x{" &&
+    ltype !== "end" &&
+    ltype !== "string" &&
+    ltype !== "number" &&
+    ltype !== "separator" &&
+    ltoke !== "++" &&
+    ltoke !== "--" &&
+    (a < 2 || data.token[a - 2] !== ";" || data.token[a - 2] !== "x;")
+) {
+    x;}

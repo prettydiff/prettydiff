@@ -1,0 +1,21 @@
+  render() {
+    return (
+        <CartHeader />
+        <main className='container'>
+        <CartItems items={this.state.cart} />
+        <Total total={this.state.total} />
+        <AddItem products={this.state.products} addItem={this.addItem} />
+        </main>
+        <CartFooter copyright='2016'/>
+      
+    );
+  }
+  <!doctype>
+<html>
+<head><title>asdf</title>
+<style type="text/css">
+a{color:red}
+</style>
+</head>
+<body><h1>qwer</h1></body>
+</html>

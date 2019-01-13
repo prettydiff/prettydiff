@@ -216,7 +216,7 @@
                         externalIndex[skip] = a;
                         level.push(indent - 1);
                         next = nextIndex();
-                        if (data.lexer[next] === lexer && (data.types[next] === "end" || data.types[next] === "template_end")) {
+                        if (data.lexer[next] === lexer && data.stack[a].indexOf("attribute") < 0 && (data.types[next] === "end" || data.types[next] === "template_end")) {
                             indent = indent - 1;
                         }
                     },
