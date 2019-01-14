@@ -52,6 +52,8 @@
 #prettydiff.white .box .body p strong{color:#009}
 #prettydiff.white #webtool textarea{background:#eee;border-color:#999;color:#009}
 #prettydiff.white .readonly .ace-tm .ace_indent-guide {background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEXd3d3u346CAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==") right repeat-y;}
+#prettydiff.white .ace_print-margin{background:#ddd}
+#prettydiff.white .readonly .ace_print-margin{background:#ccc}
 
 /*color - canvas, webtool only*/
 #prettydiff.canvas .filefocus,
@@ -107,8 +109,9 @@
 #prettydiff.canvas .box h3 button:hover{background:#ccb;border-color:#630;color:#630}
 
 /*ace theme colors - canvas*/
+#prettydiff.canvas .ace_print-margin{background:#ccc}
+#prettydiff.canvas .readonly .ace_print-margin{background:#bbb}
 #prettydiff.canvas .ace-canvas .ace_identifier{color:#930;}
-#prettydiff.canvas .ace-canvas .ace_print-margin {width: 1px;background: #e8e8e8;}
 #prettydiff.canvas .ace-canvas .ace_fold {background-color: #6B72E6;}
 #prettydiff.canvas .ace-canvas {background-color: #e8e8e8;color: black;}
 #prettydiff.canvas .ace-canvas .ace_cursor {color: black;}
@@ -210,6 +213,10 @@
 #prettydiff.shadow #webtool textarea{background:#222;border-color:#999;color:#ddd}
 #prettydiff.shadow .box h3 button{background:#333;border-color:#666;color:#ccc}
 #prettydiff.shadow .box h3 button:hover{background:#777;border-color:#aaa;color:#fff}
+#prettydiff.shadow .ace_active-line{background:#444}
+#prettydiff.shadow .readonly .ace_active-line{background:#333}
+#prettydiff.shadow .ace_print-margin{background:#666}
+#prettydiff.shadow .readonly .ace_print-margin{background:#444}
 
 #prettydiff #security-warning{background:#fcc;border:0.2em solid #f00;font-family:"Century Gothic", "Trebuchet MS";padding:1em;text-align:left}
 #prettydiff #security-warning h1{margin:0}

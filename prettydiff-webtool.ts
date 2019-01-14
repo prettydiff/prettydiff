@@ -132,7 +132,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                     const scripts:HTMLCollectionOf<HTMLScriptElement> = document.getElementsByTagName("script"),
                         exclusions:string[] = [
                             "js/prettydiff-webtool.js",
-                            "node_modules/ace-builds/src-min-noconflict/ace.js"
+                            "node_modules/ace-builds"
                         ],
                         len:number = scripts.length,
                         exlen:number = exclusions.length;
@@ -855,7 +855,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         el:HTMLElement,
                         sel:HTMLSelectElement,
                         name:string,
-                        opt:HTMLOptionElement;
+                        opt:HTMLOptionElement,
+                        numb:number;
                     do {
                         if (keys[a] !== "report" && keys[a] !== "knownname" && keys[a] !== "feedback") {
                             el = id(keys[a]) || id(data.settings[keys[a]]);
@@ -881,9 +882,17 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                         id(data.settings[keys[a]]).checked = true;
                                     } else if (keys[a].indexOf("option-") === 0) {
                                         if (id(keys[a]).getAttribute("data-type") === "number") {
-                                            if (isNaN(Number(data.settings[keys[a]])) === false) {
+                                            numb = Number(data.settings[keys[a]]);
+                                            if (isNaN(numb) === false) {
                                                 id(keys[a]).value = data.settings[keys[a]];
-                                                options[keys[a].replace("option-", "")] = Number(data.settings[keys[a]]);
+                                                options[keys[a].replace("option-", "")] = numb;
+                                                if (test.ace === true && keys[a] === "option-wrap") {
+                                                    if (numb < 1) {
+                                                        numb = 80;
+                                                    }
+                                                    aceStore.codeIn.setPrintMarginColumn(numb);
+                                                    aceStore.codeOut.setPrintMarginColumn(numb);
+                                                }
                                             }
                                         } else {
                                             id(keys[a]).value = data.settings[keys[a]];
@@ -2757,6 +2766,14 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 data.commentString.push(`${classy}: "${options[classy]}"`);
             }
             method.app.commentString();
+        }
+        if (test.ace === true && x.getAttribute("id") === "option-wrap" && isNaN(Number(input.value)) === false) {
+            let numb:number = Number(input.value);
+            if (numb < 1) {
+                numb = 80;
+            }
+            aceStore.codeIn.setPrintMarginColumn(numb);
+            aceStore.codeOut.setPrintMarginColumn(numb);
         }
     };
 
