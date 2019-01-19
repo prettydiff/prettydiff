@@ -199,7 +199,14 @@
         if (options.language === "text" && options.mode !== "diff") {
             options.language = "auto";
         }
-        if (options.language === "auto" || options.lexer === "auto") {
+        if (options.lexer === "text" && options.mode !== "diff") {
+            options.lexer = "auto";
+        }
+        if (options.language === "text" || options.lexer === "text") {
+            options.language = "text";
+            options.language_name = "Plain Text";
+            options.lexer = "text";
+        } else if (options.language === "auto" || options.lexer === "auto") {
             const def:string = (options.language_default === "" || options.language_default === null || options.language_default === undefined)
                     ? "javascript"
                     : options.language_default;
@@ -524,6 +531,9 @@
                 let diffoutput:[string, number, number];
                 const source:string = options.source;
 
+                if (options.diff_format === "json") {
+                    options.complete_document = false;
+                }
                 if (options.language === "text") {
                     diffoutput = global.prettydiff.api.diffview(options);
                     result = diffoutput[0];

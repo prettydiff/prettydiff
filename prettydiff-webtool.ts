@@ -3380,6 +3380,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                 report.code.body.innerHTML = `<p>Code type is set to <strong>auto</strong>. Presumed language is <em>${data.langvalue[2]}</em>.</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
                             } else if (autolexer === true) {
                                 report.code.body.innerHTML = `<p>Lexer is set to <strong>auto</strong>. Presumed language is <em>${data.langvalue[2]}</em>.</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
+                            } else {
+                                report.code.body.innerHTML = `<p>Language set to Plain Text.</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
                             }
                             if ((autolang === true || autolexer === true) && report.code.body.firstChild !== null) {
                                 if (report.code.body.firstChild.nodeType > 1) {
@@ -3441,6 +3443,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                     ann.innerHTML = `Code type is set to <em>auto</em>. Presumed language is <strong>${data.langvalue[2]}</strong>.`;
                                 } else if (autolexer === true) {
                                     ann.innerHTML = `Lexer is set to <em>auto</em>. Presumed language is <strong>${data.langvalue[2]}</strong>.`;
+                                } else if (options.language === "text") {
+                                    ann.innerHTML = "Language set to <strong>Plain Text</strong>.";
                                 } else {
                                     ann.innerHTML = `Language set to <strong>${data.langvalue[2]}</strong>.`;
                                 }
@@ -3474,7 +3478,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 data.langvalue = lang;
 
                 if (options.mode === "diff") {
-                    if (prettydiff.beautify[options.lexer] === undefined) {
+                    if (prettydiff.beautify[options.lexer] === undefined && options.lexer !== "text") {
                         if (ann !== null) {
                             ann.innerHTML = `Library <em>prettydiff.beautify.${options.lexer}</em> is <strong>undefined</strong>.`;
                         }
@@ -3542,28 +3546,6 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
         }
         if (test.store === true) {
             localStorage.setItem("source", options.source);
-        }
-        if (options.mode === "diff") {
-            if (id("inputlabel") !== null) {
-                options.source_label = id("inputlabel").value;
-            }
-            if (id("outputlabel") !== null) {
-                options.diff_label = id("outputlabel").value;
-            }
-            if (test.ace === true) {
-                options.diff = aceStore.codeOut.getValue();
-            } else {
-                options.diff = textarea.codeOut.value;
-            }
-            if (options.diff === undefined || options.diff === "") {
-                return false;
-            }
-            if (test.store === true) {
-                localStorage.setItem("diff", options.diff);
-            }
-        }
-        if (options.lexer === "text" && options.mode !== "diff" && ann !== null) {
-            ann.innerHTML = "The value of <em>options.lexer</em> is <strong>text</strong> but <em>options.mode</em> is not <strong>diff</strong>.";
         }
 
         //gather updated dom nodes
@@ -3673,8 +3655,29 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             }
         }
         if (options.mode === "diff") {
-            if (options.diff_format === "json") {
-                options.complete_document = false;
+            if (id("inputlabel") !== null) {
+                options.source_label = id("inputlabel").value;
+            }
+            if (id("outputlabel") !== null) {
+                options.diff_label = id("outputlabel").value;
+            }
+            if (test.ace === true) {
+                options.diff = aceStore.codeOut.getValue();
+            } else {
+                options.diff = textarea.codeOut.value;
+            }
+            if (options.diff === undefined || options.diff === "") {
+                return false;
+            }
+            if (test.store === true) {
+                localStorage.setItem("diff", options.diff);
+            }
+            if (options.language === "text" || options.lexer === "text") {
+                options.language = "text";
+                options.lexer = "text";
+                options.language_name = "Plain Text";
+                autolang = false;
+                autolexer = false;
             }
             if (test.ace === true) {
                 options.diff = aceStore.codeOut.getValue();
@@ -3718,6 +3721,14 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         xhr.open("GET", `proxy.php?x=${options.diff.replace(/(\s*)$/, "").replace(/%26/g, "&").replace(/%3F/, "?")}`, true);
                     }
                     xhr.send();
+                }
+            }
+        } else {
+            if (ann !== null) {
+                if (options.language === "text") {
+                    ann.innerHTML = "The value of <em>options.language</em> is <strong>text</strong> but <em>options.mode</em> is not <strong>diff</strong>.";
+                } else if (options.lexer === "text") {
+                    ann.innerHTML = "The value of <em>options.lexer</em> is <strong>text</strong> but <em>options.mode</em> is not <strong>diff</strong>.";
                 }
             }
         }
@@ -4542,7 +4553,11 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         .audio
                         .play();
                 }
-                const color:HTMLSelectElement  = id("option-color"),
+                const body:HTMLBodyElement = document.getElementsByTagName("body")[0],
+                    scroll:number = (document.documentElement.scrollTop > body.scrollTop)
+                        ? document.documentElement.scrollTop
+                        : body.scrollTop,
+                    color:HTMLSelectElement  = id("option-color"),
                     max:number    = color
                         .getElementsByTagName("option")
                         .length - 1,
@@ -4551,11 +4566,6 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         method
                             .event
                             .colorScheme(event);
-                        if (test.ace === true) {
-                            id("input").getElementsByTagName("textarea")[0].focus();
-                        } else {
-                            id("input").focus();
-                        }
                     };
                 let ind:number    = color.selectedIndex;
                 ind = ind - 1;
@@ -4568,6 +4578,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                     ind = 0;
                 }
                 setTimeout(change, 1500);
+                document.documentElement.scrollTop = scroll;
+                body.scrollTop = scroll;
             }
             test.keysequence = [];
         }

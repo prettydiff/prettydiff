@@ -405,7 +405,7 @@
         language         : {
             api       : "any",
             default   : "auto",
-            definition: "The lowercase single word common name of the source code's programming language. The value 'auto' imposes language and lexer auto-detection, which ignores deliberately specified lexer values.",
+            definition: "The lowercase single word common name of the source code's programming language. The value 'auto' imposes language and lexer auto-detection, which ignores deliberately specified lexer values. The value 'text' is converted to 'auto' if options 'mode' is not 'diff'. Value 'text' allows literal comparisons.",
             label     : "Language",
             lexer     : "any",
             mode      : "any",
@@ -436,7 +436,7 @@
             default   : "auto",
             definition: "This option determines which sets of rules to use in the language parser. If opt" +
                     "ion 'language' has a value of 'auto', which is the default value, this option is" +
-                    " ignored.",
+                    " ignored. The value 'text' is converted to 'auto' if options 'mode' is not 'diff'. Value 'text' allows literal comparisons.",
             label     : "Parsing Lexer",
             lexer     : "any",
             mode      : "any",
