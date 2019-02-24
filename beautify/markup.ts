@@ -431,9 +431,9 @@
                                 count = count + data.token[a].length;
                                 if (data.lines[next] > 0 && data.types[next] === "script_start") {
                                     level.push(-10);
-                                } else if (options.wrap > 0) {
+                                } else if (options.wrap > 0 && (data.types[a].indexOf("template") < 0 || (next < c && data.types[a].indexOf("template") > -1 && data.types[next].indexOf("template_") < 0))) {
                                     content();
-                                } else if (next < c && (data.types[next].indexOf("end") > -1 || data.types[next].indexOf("start") > -1) && data.lines[next] > 0) {
+                                } else if (next < c && (data.types[next].indexOf("end") > -1 || data.types[next].indexOf("start") > -1) && (data.lines[next] > 0 || data.types[next].indexOf("template_") > -1)) {
                                     level.push(indent);
                                 } else if (data.lines[next] === 0) {
                                     level.push(-20);

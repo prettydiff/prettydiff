@@ -1,0 +1,1 @@
+{%- capture NYDUHGWUGA -%}{{ current_tags }}{%- endcapture -%}
