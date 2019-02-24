@@ -353,6 +353,7 @@
             prettydiff:any = {};
         // prettydiff file insertion end
 
+        prettydiff.api.language = globalAPI.sparser.libs.language;
         if (options.api === "node" && (options.read_method === "directory" || options.read_method === "subdirectory")) {
             if (options.mode === "parse" && options.parse_format === "table") {
                 return "Error: option parse_format with value 'table' is not available with read_method directory or subdirectory.";
