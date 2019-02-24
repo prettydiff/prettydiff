@@ -7,7 +7,7 @@
     "dependencies": {
         "@types/node": "^10.12.27",
         "file-saver": "^1.3.8",
-        "sparser": "^1.0.3"
+        "sparser": "^1.0.4"
     },
     "description": "A language aware diff tool.",
     "devDependencies": {
@@ -39,5 +39,5 @@
         "start": "node js/services build",
         "test": "node js/services test"
     },
-    "version": "100.2.0"
+    "version": "100.2.1"
 }

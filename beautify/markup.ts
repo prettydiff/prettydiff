@@ -355,7 +355,7 @@
                         } else {
                             level[parent] = -10;
                         }
-                        if (earlyexit === true || options.unformatted === true) {
+                        if (earlyexit === true || options.unformatted === true || data.token[parent] === "<%xml%>") {
                             count = 0;
                             return;
                         }
