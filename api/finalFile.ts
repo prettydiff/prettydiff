@@ -1,4 +1,3 @@
-/*global global*/
 (function finalFile_init(): finalFile {
     "use strict";
     const finalFile: finalFile = {
