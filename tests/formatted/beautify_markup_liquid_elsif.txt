@@ -1,0 +1,9 @@
+{%- if QKXKMAWGSJ == BZFUVQXJCA -%}
+    {%- assign AHTLWGULPX = ZFNFPFTHEM -%}
+    {%- assign VDMZYOUPDC = "true" -%}
+{%- elsif QKXKMAWGSJ == JAKWIEDTJW -%}
+    {%- assign BYIRBIYELK = ZFNFPFTHEM -%}
+    {%- assign VDMZYOUPDC = "true" -%}
+{%- elsif QKXKMAWGSJ == WEAIIXXGXM -%}
+    {%- assign DIQVZZAKXB = ZFNFPFTHEM -%}
+{%- endif -%}

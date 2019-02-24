@@ -8,7 +8,9 @@
 <input type="hidden" name="test" value={{ id["index"] }}/>
 
 {% switch variable %}
-    {% case "value1" %} {% case "value2" %} {% default %}
+    {% case "value1" %}
+    {% case "value2" %}
+    {% default %}
 {% endswitch %}
 {% some other statement %}
 
