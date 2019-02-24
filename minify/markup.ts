@@ -2,7 +2,7 @@
 (function minify_markup_init():void {
     "use strict";
     const markup = function minify_markup(options:any):string {
-        const data:parsedArray = options.parsed,
+        const data:data = options.parsed,
             lexer:string = "markup",
             c:number            = (options.end < 1 || options.end > data.token.length)
                 ? data.token.length
@@ -205,7 +205,7 @@
                     if (data.types[a] !== "comment" && data.types[a] !== "comment_attribute") {
                         build.push(data.token[a]);
                         count = count + data.token[a].length;
-                        if ((data.types[a] === "template" || data.types[a] === "template_start") && data.types[a - 1] === "content" && data.presv[a - 1] === true && options.mode === "minify" && levels[a] === -20) {
+                        if ((data.types[a] === "template" || data.types[a] === "template_start") && data.types[a - 1] === "content" && options.mode === "minify" && levels[a] === -20) {
                             build.push(" ");
                             count = count + 1;
                         }

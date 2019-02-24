@@ -789,7 +789,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         x           = Math.random(),
                         circulation = [
                             "Now updated to <a href='https://www.npmjs.com/package/prettydiff'>NPM</a>.",
-                            "Check out the <a href='https://prettydiff.com/parse-framework/runtimes/browsertest.xhtml'>parsing utility</a> that makes this possible."
+                            "Check out the <a href='https://sparser.io/demo/'>parsing utility</a> that makes this possible."
                         ];
                     if (headline !== null) {
                         headtext.innerHTML = circulation[Math.floor(x * circulation.length)];
@@ -3284,7 +3284,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                         if (autolang === true) {
                                             output = `<p>Code type is set to <strong>auto</strong>. <span>Presumed language is <em>${data.langvalue[2]}</em>.</span></p>${output}`;
                                         } else if (autolexer === true) {
-                                            output = `<p>Lexer is set to <strong>auto</strong>. <span>Presumed language is <em>${data.langvalue[2]}</em>.</span></p>${output}`;
+                                            output = `<p>Lexer is set to <strong>auto</strong>. <span>Presumed lexer is <em>${data.langvalue[1]}</em>.</span></p>${output}`;
                                         }
                                         report.code.body.innerHTML = output;
                                         if (report.code.body.style.display === "none") {
@@ -3379,7 +3379,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             if (autolang === true) {
                                 report.code.body.innerHTML = `<p>Code type is set to <strong>auto</strong>. Presumed language is <em>${data.langvalue[2]}</em>.</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
                             } else if (autolexer === true) {
-                                report.code.body.innerHTML = `<p>Lexer is set to <strong>auto</strong>. Presumed language is <em>${data.langvalue[2]}</em>.</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
+                                report.code.body.innerHTML = `<p>Lexer is set to <strong>auto</strong>. Presumed lexer is <em>${data.langvalue[1]}</em>.</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
                             } else {
                                 report.code.body.innerHTML = `<p>Language set to Plain Text.</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
                             }
@@ -3442,7 +3442,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                 } else if (autolang === true) {
                                     ann.innerHTML = `Code type is set to <em>auto</em>. Presumed language is <strong>${data.langvalue[2]}</strong>.`;
                                 } else if (autolexer === true) {
-                                    ann.innerHTML = `Lexer is set to <em>auto</em>. Presumed language is <strong>${data.langvalue[2]}</strong>.`;
+                                    ann.innerHTML = `Lexer is set to <em>auto</em>. Presumed lexer is <strong>${data.langvalue[1]}</strong>.`;
                                 } else if (options.language === "text") {
                                     ann.innerHTML = "Language set to <strong>Plain Text</strong>.";
                                 } else {
@@ -3453,8 +3453,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                 } else {
                                     pdlang = "characters";
                                 }
-                                if (window.parseFramework.parseerror !== "" && ann !== null) {
-                                    ann.innerHTML = `${ann.innerHTML}<span><strong>Parse Error:</strong> ${sanitize(window.parseFramework.parseerror)}</span>`;
+                                if (window.sparser.parseerror !== "" && ann !== null) {
+                                    ann.innerHTML = `${ann.innerHTML}<span><strong>Parse Error:</strong> ${sanitize(window.sparser.parseerror)}</span>`;
                                 } else if (meta.error === "" || meta.error === undefined) {
                                     ann.innerHTML = `${ann.innerHTML}<span><em>Execution time:</em> <strong>${sanitize(meta.time)}</strong>. <em>Output size:</em> <strong>${commanumb(meta.outsize)} ${pdlang}</strong></span>`;
                                 } else {

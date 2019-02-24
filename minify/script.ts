@@ -9,7 +9,7 @@
                 options.correct = false;
             }
         }());
-        const data:parsedArray = options.parsed,
+        const data:data = options.parsed,
             lf:"\r\n"|"\n"      = (options.crlf === true)
                 ? "\r\n"
                 : "\n",

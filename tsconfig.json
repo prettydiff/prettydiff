@@ -12,7 +12,6 @@
         "3",
         "js",
         "node_modules",
-        "parse-framework",
         "test"
     ]
 }

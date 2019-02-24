@@ -2,7 +2,7 @@
 (function minify_style_init():void {
     "use strict";
     const style = function minify_style(options:any):string {
-        const data:parsedArray = options.parsed,
+        const data:data = options.parsed,
             lf:"\r\n"|"\n"         = (options.crlf === true)
                 ? "\r\n"
                 : "\n",

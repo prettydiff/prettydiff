@@ -1,7 +1,7 @@
 /*global global*/
 (function options_init(): void {
     "use strict";
-    const optionDef = {
+    const optionDef:optionDef = {
         brace_line       : {
             api       : "any",
             default   : false,
@@ -32,9 +32,9 @@
             mode      : "beautify",
             type      : "string",
             values    : {
-                "collapse"                : "Sets options.formatObject to 'indent' and options.neverflatten to true.",
-                "collapse-preserve-inline": "Sets options.bracepadding to true and options.formatObject to 'inline'.",
-                "expand"                  : "Sets options.braces to true, options.formatObject to 'indent', and options.never" +
+                "collapse"                : "Sets options.format_object to 'indent' and options.neverflatten to true.",
+                "collapse-preserve-inline": "Sets options.bracepadding to true and options.format_object to 'inline'.",
+                "expand"                  : "Sets options.braces to true, options.format_object to 'indent', and options.never" +
                         "flatten to true.",
                 "none"                    : "Ignores this option"
             }
@@ -98,7 +98,7 @@
             definition: "If CSS should be beautified in a style where the properties and values are minif" +
                     "ed for faster reading of selectors.",
             label     : "Compressed CSS",
-            lexer     : "css",
+            lexer     : "style",
             mode      : "beautify",
             type      : "boolean"
         },
@@ -146,7 +146,7 @@
             default   : false,
             definition: "Inserts new line characters between every CSS code block.",
             label     : "Insert Empty Lines",
-            lexer     : "css",
+            lexer     : "style",
             mode      : "beautify",
             type      : "boolean"
         },
@@ -486,7 +486,7 @@
             lexer     : "any",
             mode      : "any",
             type      : "string",
-            values    : { // analysis: "returns a code examination report",
+            values    : {
                 beautify: "beautifies code and returns a string",
                 diff    : "returns either command line list of differences or an HTML report",
                 minify  : "minifies code and returns a string",

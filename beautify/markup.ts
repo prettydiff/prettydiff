@@ -2,7 +2,7 @@
 (function beautify_markup_init():void {
     "use strict";
     const markup = function beautify_markup(options:any):string {
-        const data:parsedArray = options.parsed,
+        const data:data = options.parsed,
             lexer:string = "markup",
             c:number            = (options.end < 1 || options.end > data.token.length)
                 ? data.token.length

@@ -1,10 +1,5 @@
 <!--/*prettydiff.com wrap:40*/-->
-<mvc:view
-    controllername="sapui5.controller.alex"
-    xmlns:core="sap.ui.core"
-    xmlns:html="http://www.w3.org/1999/xhtml"
-    xmlns:mvc="sap.ui.core.mvc"
-    xmlns="sap.m">
+<mvc:view controllername="sapui5.controller.alex" xmlns:core="sap.ui.core" xmlns:html="http://www.w3.org/1999/xhtml" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
     <app>
         <pages>
             <page title="Title">

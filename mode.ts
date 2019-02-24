@@ -2,15 +2,20 @@
 (function mode_init() {
     "use strict";
     const mode = function mode_(options:any, diffmeta?:diffmeta):string {
-        let parseMethod:string = "parserArrays",
-            globalAPI:any = (options.api === "dom")
+        let globalAPI:any = (options.api === "dom")
                 ? window
                 : global,
             modeValue:"beautify"|"minify" = options.mode,
             result:string = "";
         const pdcomment = function mode_pdcomment(options:any):void {
+                const ops:any = globalAPI.sparser.options;
                 let sindex:number = options.source.search(/((\/(\*|\/))|<!--*)\s*prettydiff\.com/),
-                    dindex:number = options.diff.search(/((\/(\*|\/))|<!--*)\s*prettydiff\.com/);
+                    dindex:number = options.diff.search(/((\/(\*|\/))|<!--*)\s*prettydiff\.com/),
+                    a:number = 0,
+                    b:number = 0,
+                    keys:string[],
+                    def:any,
+                    len:number;
                 // parses the prettydiff settings comment
                 //
                 // - Source Priorities:
@@ -153,27 +158,27 @@
                                 op = [ops[a].slice(0, ops[a].indexOf("=")), ops[a].slice(ops[a].indexOf("=") + 1)];
                             } else if (ops[a].indexOf(":") > 0) {
                                 op = [ops[a].slice(0, ops[a].indexOf(":")), ops[a].slice(ops[a].indexOf(":") + 1)];
-                            } else if (global.prettydiff.api.optionDef[ops[a]] !== undefined && global.prettydiff.api.optionDef[ops[a]].type === "boolean") {
+                            } else if (globalAPI.prettydiff.api.optionDef[ops[a]] !== undefined && globalAPI.prettydiff.api.optionDef[ops[a]].type === "boolean") {
                                 options[ops[a]] = true;
                             }
-                            if (op.length === 2 && global.prettydiff.api.optionDef[op[0]] !== undefined) {
+                            if (op.length === 2 && globalAPI.prettydiff.api.optionDef[op[0]] !== undefined) {
                                 if ((op[1].charAt(0) === "\"" || op[1].charAt(0) === "'" || op[1].charAt(0) === "`") && op[1].charAt(op[1].length - 1) === op[1].charAt(0)) {
                                     op[1] = op[1].slice(1, op[1].length - 1);
                                 }
-                                if (global.prettydiff.api.optionDef[op[0]].type === "number" && isNaN(Number(op[1])) === false) {
+                                if (globalAPI.prettydiff.api.optionDef[op[0]].type === "number" && isNaN(Number(op[1])) === false) {
                                     options[op[0]] = Number(op[1]);
-                                } else if (global.prettydiff.api.optionDef[op[0]].type === "boolean") {
+                                } else if (globalAPI.prettydiff.api.optionDef[op[0]].type === "boolean") {
                                     if (op[1] === "true") {
                                         options[op[0]] = true;
                                     } else if (op[1] === "false") {
                                         options[op[0]] = false;
                                     }
                                 } else {
-                                    if (global.prettydiff.api.optionDef[op[0]].values !== undefined) {
-                                        b = global.prettydiff.api.optionDef[op[0]].values.length;
+                                    if (globalAPI.prettydiff.api.optionDef[op[0]].values !== undefined) {
+                                        b = globalAPI.prettydiff.api.optionDef[op[0]].values.length;
                                         do {
                                             b = b - 1;
-                                            if (global.prettydiff.api.optionDef[op[0]].values[b] === op[1]) {
+                                            if (globalAPI.prettydiff.api.optionDef[op[0]].values[b] === op[1]) {
                                                 options[op[0]] = op[1];
                                                 break;
                                             }
@@ -186,6 +191,163 @@
                         } while (a > 0);
                     }
                 }
+        
+                if (options.api === "dom") {
+                    globalAPI = window;
+                }
+                if (options.mode === "diff") {
+                    modeValue = "beautify";
+                }
+                if (options.mode === "minify" && options.minify_wrap === false) {
+                    options.wrap = -1;
+                }
+                if (options.lexer === "script") {
+                    let styleguide = {
+                            airbnb: function beautify_script_options_styleairbnb() {
+                                options.brace_padding = true;
+                                options.correct      = true;
+                                options.lexerOptions.script.end_comma     = "always";
+                                options.indent_char       = " ";
+                                options.indent_size       = 2;
+                                options.preserve     = 1;
+                                options.quote_convert = "single";
+                                options.variable_list      = "each";
+                                options.wrap         = 80;
+                            },
+                            crockford: function beautify_script_options_stylecrockford() {
+                                options.brace_padding  = false;
+                                options.correct       = true;
+                                options.else_line      = false;
+                                options.lexerOptions.script.end_comma      = "never";
+                                options.indent_char        = " ";
+                                options.indent_size        = 4;
+                                options.no_case_indent  = true;
+                                options.space         = true;
+                                options.variable_list      = "each";
+                                options.vertical            = false;
+                            },
+                            google: function beautify_script_options_stylegoogle() {
+                                options.correct      = true;
+                                options.indent_char       = " ";
+                                options.indent_size       = 4;
+                                options.preserve     = 1;
+                                options.quote_convert = "single";
+                                options.vertical           = false;
+                                options.wrap         = -1;
+                            },
+                            jquery: function beautify_script_options_stylejquery() {
+                                options.brace_padding = true;
+                                options.correct      = true;
+                                options.indent_char       = "\u0009";
+                                options.indent_size       = 1;
+                                options.quote_convert = "double";
+                                options.variable_list      = "each";
+                                options.wrap         = 80;
+                            },
+                            jslint: function beautify_script_options_stylejslint() {
+                                options.brace_padding  = false;
+                                options.correct       = true;
+                                options.else_line      = false;
+                                options.lexerOptions.script.end_comma      = "never";
+                                options.indent_char        = " ";
+                                options.indent_size        = 4;
+                                options.no_case_indent  = true;
+                                options.space         = true;
+                                options.variable_list       = "each";
+                                options.vertical            = false;
+                            },
+                            mrdoobs: function beautify_script_options_stylemrdoobs() {
+                                options.brace_line    = true;
+                                options.brace_padding = true;
+                                options.correct      = true;
+                                options.indent_char       = "\u0009";
+                                options.indent_size       = 1;
+                                options.vertical           = false;
+                            },
+                            mediawiki: function beautify_script_options_stylemediawiki() {
+                                options.brace_padding = true;
+                                options.correct      = true;
+                                options.indent_char       = "\u0009";
+                                options.indent_size       = 1;
+                                options.preserve     = 1;
+                                options.quote_convert = "single";
+                                options.space        = false;
+                                options.wrap         = 80;
+                            },
+                            meteor: function beautify_script_options_stylemeteor() {
+                                options.correct = true;
+                                options.indent_char  = " ";
+                                options.indent_size  = 2;
+                                options.wrap    = 80;
+                            },
+                            yandex: function beautify_script_options_styleyandex() {
+                                options.brace_padding = false;
+                                options.correct      = true;
+                                options.quote_convert = "single";
+                                options.variable_list      = "each";
+                                options.vertical           = false;
+                            }
+                        },
+                        brace_style = {
+                            collapse: function beautify_brace_options_collapse() {
+                                options.brace_line    = false;
+                                options.brace_padding = false;
+                                options.braces       = false;
+                                options.format_object = "indent";
+                                options.never_flatten = true;
+                            },
+                            "collapse-preserve-inline": function beautify_brace_options_collapseInline() {
+                                options.brace_line    = false;
+                                options.brace_padding = true;
+                                options.braces       = false;
+                                options.format_object = "inline";
+                                options.never_flatten = false;
+                            },
+                            expand: function beautify_brace_options_expand() {
+                                options.brace_line    = false;
+                                options.brace_padding = false;
+                                options.braces       = true;
+                                options.format_object = "indent";
+                                options.never_flatten = true;
+                            }
+                        };
+                    if (styleguide[options.styleguide] !== undefined) {
+                        styleguide[options.styleguide]();
+                    }
+                    if (brace_style[options.brace_style] !== undefined) {
+                        brace_style[options.brace_style]();
+                    }
+                    if (options.language === "json") {
+                        options.wrap = 0;
+                    } else if (options.language === "titanium") {
+                        options.correct = false;
+                    }
+                    if (options.language !== "javascript" && options.language !== "typescript" && options.language !== "jsx") {
+                        options.jsscope = "none";
+                    }
+                }
+                if (options.lexer !== "markup" || options.language === "text") {
+                    options.diff_rendered_html = false;
+                } else if (options.api === "node" && options.read_method !== "file") {
+                    options.diff_rendered_html = false;
+                }
+                def = globalAPI.sparser.libs.optionDef;
+                keys = Object.keys(def);
+                len = keys.length;
+                do {
+                    if (options[keys[a]] !== undefined) {
+                        if (def[keys[a]].lexer[0] === "all") {
+                            ops[keys[a]] = options[keys[a]];
+                        } else {
+                            b = def[keys[a]].lexer.length;
+                            do {
+                                b = b - 1;
+                                ops.lexer_options[def[keys[a]].lexer[b]][keys[a]] = options[keys[a]];
+                            } while (b > 0);
+                        }
+                    }
+                    a = a + 1;
+                } while (a < len);
             },
             // prettydiff file insertion start
             prettydiff:any = {};
@@ -210,7 +372,7 @@
             const def:string = (options.language_default === "" || options.language_default === null || options.language_default === undefined)
                     ? "javascript"
                     : options.language_default;
-            let lang:[string, string, string] = prettydiff.api.language.auto(options.source, def);
+            let lang:[string, string, string] = globalAPI.prettydiff.api.language.auto(options.source, def);
             if (lang[0] === "text") {
                 if (options.mode === "diff") {
                     lang[2] = "Plain Text";
@@ -220,185 +382,16 @@
             } else if (lang[0] === "csv") {
                 lang[2] = "CSV";
             }
-            options.language = lang[0];
-            options.lexer = lang[1];
-            options.language_name = lang[2];
+            if (options.language === "auto") {
+                options.language = lang[0];
+                options.language_name = lang[2];
+            }
+            if (options.lexer === "auto") {
+                options.lexer = lang[1];
+            }
         }
 
         pdcomment(options);
-        
-        if (options.api === "dom") {
-            globalAPI = window;
-        }
-        if (options.mode === "parse" && options.parse_format === "sequential") {
-            parseMethod = "parserObjects";
-        }
-        if (options.mode === "diff") {
-            modeValue = "beautify";
-        }
-        if (options.mode === "minify" && options.minify_wrap === false) {
-            options.wrap = -1;
-        }
-        if (options.lexer === "script") {
-            let styleguide = {
-                    airbnb: function beautify_script_options_styleairbnb() {
-                        options.brace_padding = true;
-                        options.correct      = true;
-                        options.lexerOptions.script.end_comma     = "always";
-                        options.indent_char       = " ";
-                        options.indent_size       = 2;
-                        options.preserve     = 1;
-                        options.quote_convert = "single";
-                        options.variable_list      = "each";
-                        options.wrap         = 80;
-                    },
-                    crockford: function beautify_script_options_stylecrockford() {
-                        options.brace_padding  = false;
-                        options.correct       = true;
-                        options.else_line      = false;
-                        options.lexerOptions.script.end_comma      = "never";
-                        options.indent_char        = " ";
-                        options.indent_size        = 4;
-                        options.no_case_indent  = true;
-                        options.space         = true;
-                        options.variable_list      = "each";
-                        options.vertical            = false;
-                    },
-                    google: function beautify_script_options_stylegoogle() {
-                        options.correct      = true;
-                        options.indent_char       = " ";
-                        options.indent_size       = 4;
-                        options.preserve     = 1;
-                        options.quote_convert = "single";
-                        options.vertical           = false;
-                        options.wrap         = -1;
-                    },
-                    jquery: function beautify_script_options_stylejquery() {
-                        options.brace_padding = true;
-                        options.correct      = true;
-                        options.indent_char       = "\u0009";
-                        options.indent_size       = 1;
-                        options.quote_convert = "double";
-                        options.variable_list      = "each";
-                        options.wrap         = 80;
-                    },
-                    jslint: function beautify_script_options_stylejslint() {
-                        options.brace_padding  = false;
-                        options.correct       = true;
-                        options.else_line      = false;
-                        options.lexerOptions.script.end_comma      = "never";
-                        options.indent_char        = " ";
-                        options.indent_size        = 4;
-                        options.no_case_indent  = true;
-                        options.space         = true;
-                        options.variable_list       = "each";
-                        options.vertical            = false;
-                    },
-                    mrdoobs: function beautify_script_options_stylemrdoobs() {
-                        options.brace_line    = true;
-                        options.brace_padding = true;
-                        options.correct      = true;
-                        options.indent_char       = "\u0009";
-                        options.indent_size       = 1;
-                        options.vertical           = false;
-                    },
-                    mediawiki: function beautify_script_options_stylemediawiki() {
-                        options.brace_padding = true;
-                        options.correct      = true;
-                        options.indent_char       = "\u0009";
-                        options.indent_size       = 1;
-                        options.preserve     = 1;
-                        options.quote_convert = "single";
-                        options.space        = false;
-                        options.wrap         = 80;
-                    },
-                    meteor: function beautify_script_options_stylemeteor() {
-                        options.correct = true;
-                        options.indent_char  = " ";
-                        options.indent_size  = 2;
-                        options.wrap    = 80;
-                    },
-                    yandex: function beautify_script_options_styleyandex() {
-                        options.brace_padding = false;
-                        options.correct      = true;
-                        options.quote_convert = "single";
-                        options.variable_list      = "each";
-                        options.vertical           = false;
-                    }
-                },
-                brace_style = {
-                    collapse: function beautify_brace_options_collapse() {
-                        options.brace_line    = false;
-                        options.brace_padding = false;
-                        options.braces       = false;
-                        options.format_object = "indent";
-                        options.never_flatten = true;
-                    },
-                    "collapse-preserve-inline": function beautify_brace_options_collapseInline() {
-                        options.brace_line    = false;
-                        options.brace_padding = true;
-                        options.braces       = false;
-                        options.format_object = "inline";
-                        options.never_flatten = false;
-                    },
-                    expand: function beautify_brace_options_expand() {
-                        options.brace_line    = false;
-                        options.brace_padding = false;
-                        options.braces       = true;
-                        options.format_object = "indent";
-                        options.never_flatten = true;
-                    }
-                };
-            if (styleguide[options.styleguide] !== undefined) {
-                styleguide[options.styleguide]();
-            }
-            if (brace_style[options.brace_style] !== undefined) {
-                brace_style[options.brace_style]();
-            }
-            if (options.language === "json") {
-                options.wrap = 0;
-            } else if (options.language === "titanium") {
-                options.correct = false;
-            }
-            if (options.language !== "javascript" && options.language !== "typescript" && options.language !== "jsx") {
-                options.jsscope = "none";
-            }
-        }
-        if (options.lexer !== "markup" || options.language === "text") {
-            options.diff_rendered_html = false;
-        } else if (options.api === "node" && options.read_method !== "file") {
-            options.diff_rendered_html = false;
-        }
-        if (typeof options.lexerOptions !== "object") {
-            options.lexerOptions = {};
-        }
-        if (typeof options.lexerOptions.script !== "object") {
-            options.lexerOptions.script = {};
-        }
-        if (typeof options.lexerOptions.style !== "object") {
-            options.lexerOptions.style = {};
-        }
-        if (typeof options.lexerOptions.markup !== "object") {
-            options.lexerOptions.markup = {};
-        }
-        options.lexerOptions.markup.quote_convert = options.quote_convert;
-        options.lexerOptions.script.quote_convert = options.quote_convert;
-        options.lexerOptions.style.quote_convert = options.quote_convert;
-        if (options.lexerOptions[options.lexer] !== undefined) {
-            options.lexerOptions.markup.tagSort = options.tag_sort;
-            options.lexerOptions.script.objectSort = options.object_sort;
-            options.lexerOptions.style.objectSort = options.object_sort;
-        }
-        if (options.tag_merge === true && options.unformatted === false) {
-            options.lexerOptions.markup.tag_merge = true;
-        }
-        if (options.preserve_text === true) {
-            options.lexerOptions.markup.preserve_text = true;
-        }
-        options.lexerOptions.script.varword = options.variable_list;
-        options.lexerOptions.style.no_lead_zero = options.no_lead_zero;
-        options.lexerOptions.markup.tagSort = options.tag_sort;
-        options.lexerOptions.script.end_comma = options.end_comma;
         if (options.mode === "parse") {
             const parse_format = (options.parse_format === "htmltable")
                     ? "table"
@@ -407,7 +400,7 @@
                     ? "dom"
                     : options.api;
 
-            options.parsed = globalAPI.parseFramework[parseMethod](options);
+            options.parsed = globalAPI.sparser.parser();
             if (parse_format === "table") {
                 if (api === "dom") {
                     const parsLen:number = options.parsed.token.length,
@@ -457,7 +450,7 @@
                     let a:number   = 0,
                         str:string[] = [];
                     const os = require("os"),
-                        outputArrays:parsedArray = options.parsed,
+                        outputArrays:data = options.parsed,
                         nodeText:any     = {
                             angry    : "\u001b[1m\u001b[31m",
                             blue     : "\u001b[34m",
@@ -487,8 +480,8 @@
                             }
                             str.push(" | ");
                         },
-                        heading:string = "index | begin | lexer  | lines | presv | stack       | types       | token",
-                        bar:string     = "------|-------|--------|-------|-------|-------------|-------------|------";
+                        heading:string = "index | begin | ender | lexer  | lines | stack       | types       | token",
+                        bar:string     = "------|-------|-------|--------|-------|-------------|-------------|------";
                     output.push("");
                     output.push(heading);
                     output.push(bar);
@@ -508,9 +501,9 @@
                         }
                         pad(a.toString(), 5);
                         pad(outputArrays.begin[a].toString(), 5);
+                        pad(outputArrays.ender[a].toString(), 5);
                         pad(outputArrays.lexer[a].toString(), 5);
                         pad(outputArrays.lines[a].toString(), 5);
-                        pad(outputArrays.presv[a].toString(), 5);
                         pad(outputArrays.stack[a].toString(), 11);
                         pad(outputArrays.types[a].toString(), 11);
                         str.push(outputArrays.token[a].replace(/\s/g, " "));
@@ -524,18 +517,17 @@
                 result = JSON.stringify(options.parsed);
             }
         } else {
-            global.prettydiff.scopes = [];
-            if (global.prettydiff[modeValue][options.lexer] === undefined && ((options.mode !== "diff" && options.language === "text") || options.language !== "text")) {
+            globalAPI.prettydiff.scopes = [];
+            if (globalAPI.prettydiff[modeValue][options.lexer] === undefined && ((options.mode !== "diff" && options.language === "text") || options.language !== "text")) {
                 result = `Error: Library prettydiff.${modeValue}.${options.lexer} does not exist.`;
             } else if (options.mode === "diff") {
                 let diffoutput:[string, number, number];
-                const source:string = options.source;
 
                 if (options.diff_format === "json") {
                     options.complete_document = false;
                 }
                 if (options.language === "text") {
-                    diffoutput = global.prettydiff.api.diffview(options);
+                    diffoutput = globalAPI.prettydiff.api.diffview(options);
                     result = diffoutput[0];
                 } else {
                     if (options.diff_rendered_html === true) {
@@ -651,7 +643,7 @@
                                 output.push("</div>");
                                 options.parsed.token[body] = `${options.parsed.token[body]} ${output.join("")}`;
                             };
-                        let diff_parsed:parsedArray,
+                        let diff_parsed:data,
                             json:any,
                             a:number = 0,
                             count:[number, number] = [0, 0],
@@ -659,13 +651,12 @@
                             body:number = 0,
                             head:boolean = false;
                         options.diff_format = "json";
-                        options.source = options.diff;
-                        diff_parsed = globalAPI.parseFramework[parseMethod](options);
-                        options.diff = diff_parsed.token;
-                        options.source = source;
-                        options.parsed = globalAPI.parseFramework[parseMethod](options);
+                        options.parsed = globalAPI.sparser.parser();
                         options.source = options.parsed.token;
-                        diffoutput = global.prettydiff.api.diffview(options);
+                        globalAPI.sparser.options.source = options.diff;
+                        diff_parsed = globalAPI.sparser.parser();
+                        options.diff = diff_parsed.token;
+                        diffoutput = globalAPI.prettydiff.api.diffview(options);
                         json = JSON.parse(diffoutput[0]).diff;
                         len = json.length;
                         do {
@@ -707,18 +698,17 @@
                             a = a + 1;
                         } while (a < len);
                         summary();
-                        result = global.prettydiff.beautify.markup(options);
+                        result = globalAPI.prettydiff.beautify.markup(options);
                     } else {
                         // this silliness is required because the other libraries only recognize the 'source' option and not the 'diff' option but need to be equally modified
-                        options.source = options.diff;
-                        options.parsed = globalAPI.parseFramework[parseMethod](options);
-                        options.diff = global.prettydiff.beautify[options.lexer](options);
-                        //options.diff = options.parsed.token;
-                        options.source = source;
-                        options.parsed = globalAPI.parseFramework[parseMethod](options);
-                        options.source = global.prettydiff.beautify[options.lexer](options);
+                        options.parsed = globalAPI.sparser.parser();
+                        options.source = globalAPI.prettydiff.beautify[options.lexer](options);
                         //options.source = options.parsed.token;
-                        diffoutput = global.prettydiff.api.diffview(options);
+                        globalAPI.sparser.options.source = options.diff;
+                        options.parsed = globalAPI.sparser.parser();
+                        options.diff = globalAPI.prettydiff.beautify[options.lexer](options);
+                        //options.diff = options.parsed.token;
+                        diffoutput = globalAPI.prettydiff.api.diffview(options);
                         result = diffoutput[0];
                     }
                 }
@@ -727,8 +717,8 @@
                     diffmeta.lines = diffoutput[2];
                 }
             } else {
-                options.parsed = globalAPI.parseFramework[parseMethod](options);
-                result = global.prettydiff[modeValue][options.lexer](options);
+                options.parsed = globalAPI.sparser.parser();
+                result = globalAPI.prettydiff[modeValue][options.lexer](options);
             }
         }
         if (options.complete_document === true && options.jsscope !== "report") {

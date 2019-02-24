@@ -35,9 +35,9 @@ type       | string
 values | collapse, collapse-preserve-inline, expand, none
 
 ### Value Definitions
-* **collapse** - Sets options.formatObject to 'indent' and options.neverflatten to true.
-* **collapse-preserve-inline** - Sets options.bracepadding to true and options.formatObject to 'inline'.
-* **expand** - Sets options.braces to true, options.formatObject to 'indent', and options.neverflatten to true.
+* **collapse** - Sets options.format_object to 'indent' and options.neverflatten to true.
+* **collapse-preserve-inline** - Sets options.bracepadding to true and options.format_object to 'inline'.
+* **expand** - Sets options.braces to true, options.format_object to 'indent', and options.neverflatten to true.
 * **none** - Ignores this option
 
 ## braces
@@ -108,7 +108,7 @@ api        | any
 default    | false
 definition | If CSS should be beautified in a style where the properties and values are minifed for faster reading of selectors.
 label      | Compressed CSS
-lexer      | css
+lexer      | style
 mode       | beautify
 type       | boolean
 
@@ -163,7 +163,7 @@ api        | any
 default    | false
 definition | Inserts new line characters between every CSS code block.
 label      | Insert Empty Lines
-lexer      | css
+lexer      | style
 mode       | beautify
 type       | boolean
 

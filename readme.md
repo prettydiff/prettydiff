@@ -23,10 +23,7 @@ node js/services build
 
 ### Global install with NPM
 ```
-npm install typescript -g
-npm install eslint -g
 npm install prettydiff -g
-prettydiff build
 ```
 
 ## Test it
@@ -40,7 +37,11 @@ npm test
 ```
 
 ### Global install with NPM
+The instructions for installing Pretty Diff globally via NPM do not indicate installing ESLint or Typescript, but the build and test commands will not work without them.
+
 ```
+npm install -g typescript
+npm install -g eslint
 prettydiff test
 ```
 

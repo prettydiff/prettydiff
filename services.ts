@@ -2,7 +2,6 @@ import { Stats } from "fs";
 import * as http from "http";
 import { Stream, Writable } from "stream";
 import { Hash } from "crypto";
-import { domainToASCII } from "url";
 type directoryItem = [string, "file" | "directory" | "link" | "screen", number, number, Stats];
 interface directoryList extends Array<directoryItem> {
     [key:number]: directoryItem;
@@ -182,7 +181,7 @@ interface readFile {
                 example: [
                     {
                         code: "prettydiff directory source:\"my/directory/path\"",
-                        defined: "Returns an array where each index is an array of [absolute path, type, stat]. Type can refer to 'file', 'directory', or 'link' for symbolic links."
+                        defined: "Returns an array where each index is an array of [absolute path, type, parent index, file count, stat]. Type can refer to 'file', 'directory', or 'link' for symbolic links.  The parent index identify which index in the array is the objects containing directory and the file count is the number of objects a directory type object contains."
                     },
                     {
                         code: "prettydiff directory source:\"my/directory/path\" shallow",
@@ -483,6 +482,7 @@ interface readFile {
                     }
                     return false;
                 },
+                // determines if mode option is specified, and so it will become the command in the absense of an accepted command
                 modeval = function node_command_modeval():boolean {
                     let a:number = 0,
                         diff:boolean = false,
@@ -571,7 +571,7 @@ interface readFile {
                 process.exit(1);
                 return "";
             }
-            if (filtered.length > 1) {
+            if (filtered.length > 1 && comkeys.indexOf(arg) < 0) {
                 if (modeval() === true) {
                     return mode;
                 }
@@ -675,7 +675,7 @@ interface readFile {
                         : options,
                     optionName = function node_args_optionName(bindArgument:boolean):void {
                         if (a === 0 || options[list[a]] === undefined) {
-                            if (keys.indexOf(list[a]) < 0 && options[list[a]] === undefined) {
+                            if (keys.indexOf(list[a]) < 0 && def[list[a]] === undefined) {
                                 list.splice(a, 1);
                                 len = len - 1;
                                 a = a - 1;
@@ -909,8 +909,7 @@ interface readFile {
         const order = {
                 build: [
                     "npminstall",
-                    "parseFramework",
-                    "language",
+                    "sparser",
                     "css",
                     "optionsMarkdown",
                     "typescript",
@@ -1039,24 +1038,6 @@ interface readFile {
                                     });
                                 }
                             });
-                        });
-                    });
-                },
-                // phase language applies the language file from the parser
-                language: function node_apps_build_language():void {
-                    heading("Sourcing Language File");
-                    node.fs.readFile(`${projectPath}node_modules${sep}parse-framework${sep}language.ts`, "utf8", function node_apps_build_language_read(err:Error, fileData:string) {
-                        if (err !== null) {
-                            console.log(err.toString());
-                            return;
-                        }
-                        fileData = fileData.replace("global.parseFramework.language", "global.prettydiff.api.language");
-                        node.fs.writeFile(`api${sep}language.ts`, fileData, function node_apps_build_language_read_write(errw:Error) {
-                            if (errw !== null) {
-                                console.log(errw.toString());
-                                return;
-                            }
-                            next(`${text.green}Language dependency file sourced from parse-framework.${text.none}`);
                         });
                     });
                 },
@@ -1288,7 +1269,7 @@ interface readFile {
                                         injectFlag: `const finalFile=${finalFile}`,
                                         start: "// finalFile insertion start"
                                     });
-                                    data = `${parser + data.replace(/("|')use strict("|');/g, "").replace(/window\.parseFramework/g, "parseFramework")}}());`;
+                                    data = `${parser + data.replace(/("|')use strict("|');/g, "").replace(/window\.sparser/g, "sparser")}}());`;
                                 } else if (fileFlag === "node") {
                                     modify({
                                         end: "// node option default end",
@@ -1314,7 +1295,7 @@ interface readFile {
                                     }
                                     flag[fileFlag] = true;
                                     if (flag.documentation === true && flag.html === true && flag.node === true && flag.webtool === true) {
-                                        let thirdparty:string = parser + libraries + finalFile + mode.replace(/,\s*\/\/\s*prettydiff\s*file\s*insertion\s*start\s+prettydiff\s*=\s*\{\};\s*\/\/\s*prettydiff\s*file\s*insertion\s*end/, ";");
+                                        let thirdparty:string = `${parser + libraries + finalFile + mode.replace(/,\s*\/\/\s*prettydiff\s*file\s*insertion\s*start\s+prettydiff\s*=\s*\{\};\s*\/\/\s*prettydiff\s*file\s*insertion\s*end/, ";")}prettydiff.api.language=sparser.libs.language;`;
                                         node.fs.writeFile(`${js}browser.js`, `${thirdparty}window.prettydiff=prettydiff;}());`, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser(erbr:Error) {
                                             if (erbr !== null && erbr.toString() !== "") {
                                                 apps.errout([erbr.toString()]);
@@ -1341,7 +1322,7 @@ interface readFile {
                         },
                         libraryFiles = function node_apps_build_libraries_libraryFiles() {
                             libFiles.push(`${projectPath}node_modules${sep}file-saver${sep}FileSaver.min.js`);
-                            libFiles.push(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}browser.js`);
+                            libFiles.push(`${projectPath}node_modules${sep}sparser${sep}js${sep}browser.js`);
                             const appendFile = function node_apps_build_libraries_libraryFiles_appendFile(filePath:string):void {
                                     node.fs.readFile(filePath, "utf8", function node_apps_build_libraries_libraryFiles_appendFile_read(errr:Error, filedata:string):void {
                                         const filenames:string[] = filePath.split(sep),
@@ -1357,12 +1338,13 @@ interface readFile {
                                                 return str.replace("var", "let");
                                             });
                                             saveas = filedata;
-                                        } else if (filename === "browser.js") {
+                                        } else if (filePath === `${projectPath}node_modules${sep}sparser${sep}js${sep}browser.js`) {
+                                            // both sparser and prettydiff contain a browser.js file, so it is important to target the correct one
                                             filedata = filedata
                                                 .replace(/("|')use strict("|');/g, "")
-                                                .replace(/\s*window\.parseFramework/, `(function () {"use strict";const prettydiff={api:{},beautify:{},defaults:${JSON.stringify(options)},minify:{}},parseFramework`)
-                                                .replace(/window\.parseFramework/g, "parseFramework")
-                                                .replace(/parseFramework\s*=\s*\(parseFramework\s*\|\|\s*\{\s*lexer:\s*\{\},\s*parse:\s*parse,\s*parseerror:\s*"",\s*parserArrays:\s*parserArrays,\s*parserObjects:\s*parserObjects\s*\}\);/, "");
+                                                .replace(/\s*const\s+parser/, `"use strict";const prettydiff={api:{},beautify:{},defaults:${JSON.stringify(options)},minify:{}},parser`)
+                                                .replace(/window\.sparser/g, "sparser")
+                                                .replace(/sparser\s*=\s*sparser;\s*\}\(\)\);(prettydiff\.beautify=\{\};)?(prettydiff\.api=\{\};)?(prettydiff\.minify=\{\};)?/, "");
                                             parser = filedata;
                                         } else {
                                             filedata = filedata
@@ -1436,7 +1418,7 @@ interface readFile {
                                         return;
                                     }
                                     versionData.number = JSON.parse(data).version;
-                                    node.fs.readFile(`${projectPath}node_modules${sep}parse-framework${sep}package.json`, "utf8", function node_apps_build_libraries_versionGather_child_readPackage_readFramework(errf:Error, frameData:string):void {
+                                    node.fs.readFile(`${projectPath}node_modules${sep}sparser${sep}package.json`, "utf8", function node_apps_build_libraries_versionGather_child_readPackage_readSparser(errf:Error, frameData:string):void {
                                         if (errf !== null) {
                                             apps.errout([errf.toString()]);
                                             return;
@@ -1542,17 +1524,17 @@ interface readFile {
                         next(`${text.green}Options documentation successfully written to markdown file.${text.none}`);
                     });
                 },
-                // phase parseFramework checks if the parser is built and builds it if necessary
-                parseFramework: function node_apps_build_parseFramework():void {
-                    heading("Checking for built parse-framework");
-                    const frame:string = `node_modules${sep}parse-framework`;
-                    node.fs.stat(`${frame + sep}js${sep}parse.js`, function node_apps_build_parseFramework(ers:nodeError):void {
+                // phase sparser checks if the parser is built and builds it if necessary
+                sparser: function node_apps_build_sparser():void {
+                    heading("Checking for built sparser (parser tool)");
+                    const frame:string = `node_modules${sep}sparser`;
+                    node.fs.stat(`${frame + sep}js${sep}parse.js`, function node_apps_build_sparser(ers:nodeError):void {
                         if (ers !== null) {
                             if (ers.code === "ENOENT") {
-                                console.log(`${apps.humantime(false)}Parse Framework does not appear to be built... building now.`);
+                                console.log(`${apps.humantime(false)}Sparser does not appear to be built... building now.`);
                                 node.child(`tsc --pretty`, {
                                     cwd: frame
-                                }, function node_apps_build_parseFramework_tsc(err:Error, stdout:string, stderr:string):void {
+                                }, function node_apps_build_sparser_tsc(err:Error, stdout:string, stderr:string):void {
                                     if (err !== null) {
                                         apps.errout([err.toString()]);
                                         return;
@@ -1563,7 +1545,7 @@ interface readFile {
                                     }
                                     node.child(`node js${sep}services build`, {
                                         cwd: frame
-                                    }, function node_apps_build_parseFramework_tsc_build(erb:Error, stbout:string, stberr:string):void {
+                                    }, function node_apps_build_sparser_tsc_build(erb:Error, stbout:string, stberr:string):void {
                                         if (erb !== null) {
                                             apps.errout([erb.toString()]);
                                             return;
@@ -1572,7 +1554,7 @@ interface readFile {
                                             apps.errout([stberr]);
                                             return;
                                         }
-                                        next(`${text.green}The parse-framework dependency built.${text.none}`);
+                                        next(`${text.green}The Sparser dependency is built.${text.none}`);
                                     });
                                 });
                             } else {
@@ -1580,7 +1562,7 @@ interface readFile {
                                 return;
                             }
                         } else {
-                            next(`${text.green}The parse-framework dependency appears to already be built.${text.none}`);
+                            next(`${text.green}The Sparser dependency appears to already be built.${text.none}`);
                         }
                     });
                 },
@@ -1682,7 +1664,8 @@ interface readFile {
                 emptyline: false,
                 heading: "Commands",
                 obj: commands,
-                property: "description"
+                property: "description",
+                total: true
             });
         } else {
             // specificly mentioned option
@@ -2830,6 +2813,7 @@ interface readFile {
         // * lists.heading   - string  - a text heading to precede the list
         // * lists.obj       - object  - an object to traverse
         // * lists.property  - string  - The child property to read from or "eachkey" to
+        // * lists.total     - number  - To display a count
         // access a directly assigned primitive
         const keys:string[] = Object.keys(lists.obj).sort(),
             output:string[] = [],
@@ -2898,7 +2882,7 @@ interface readFile {
             output.push(`locally installed - ${text.green}node js/services commands hash${text.none}`);
             output.push("");
             output.push(`Commands are tested using the ${text.green}simulation${text.none} command.`);
-        } else if (command === "options") {
+        } else if (command === "options" && lists.total === true) {
             output.push(`${text.green + lenn + text.none} matching option${plural}.`);
         }
         apps.log(output, "", "");
@@ -2949,7 +2933,7 @@ interface readFile {
                 });
                 if (verbose === true) {
                     console.log("");
-                    console.log(`parse-framework version ${text.angry + version.parse + text.none}`);
+                    console.log(`Sparser version ${text.angry + version.parse + text.none}`);
                     console.log(`Pretty Diff version ${text.angry + version.number + text.none} dated ${text.cyan + version.date + text.none}`);
                     apps.humantime(true);
                 }
@@ -3096,7 +3080,8 @@ interface readFile {
                     emptyline: true,
                     heading: "Options",
                     obj: def,
-                    property: "definition"
+                    property: "definition",
+                    total: true
                 });
             } else {
                 // queried list of options
@@ -3126,12 +3111,14 @@ interface readFile {
                     a:number = 0,
                     b:number = 0,
                     name:string = "",
-                    value:string = "";
+                    value:string = "",
+                    isArray:boolean = false;
                 do {
                     namevalue(process.argv[a]);
                     b = 0;
                     do {
-                        if (def[keys[b]][name] === undefined || (value !== "" && def[keys[b]][name] !== value)) {
+                        isArray = Array.isArray(def[keys[b]][name]);
+                        if (def[keys[b]][name] === undefined || (isArray === true && def[keys[b]][name].indexOf(value) < 0) || (isArray === false && value !== "" && def[keys[b]][name] !== value)) {
                             keys.splice(b, 1);
                             b = b - 1;
                             keylen = keylen - 1;
@@ -3155,7 +3142,8 @@ interface readFile {
                         emptyline: true,
                         heading: "Options",
                         obj: output,
-                        property: "definition"
+                        property: "definition",
+                        total: true
                     });
                 }
             }
@@ -3165,9 +3153,12 @@ interface readFile {
                 emptyLine: false,
                 heading: `Option: ${text.green + process.argv[0] + text.none}`,
                 obj: def[process.argv[0]],
-                property: "eachkey"
+                property: "eachkey",
+                total: false
             });
         }
+        verbose = true;
+        apps.log([""], "");
     };
     // handler for the parse command
     apps.parse = function node_apps_parse():void {
@@ -3344,7 +3335,7 @@ interface readFile {
         }
         const readmethod:string = options.read_method,
             //auto:boolean = (readmethod === "auto"),
-            all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`),
+            all = require(`${projectPath}node_modules${sep}sparser${sep}js${sep}lexers${sep}all`),
             item:string = (diff === true)
                 ? "diff"
                 : "source",
@@ -3774,7 +3765,7 @@ interface readFile {
                     if (readmethod === "auto") {
                         if (err !== null) {
                             const index:any = {
-                                "sep": options[item].indexOf(node.path.sep),
+                                "sep": options[item].indexOf(sep),
                                 "<": options[item].indexOf("<"),
                                 "=": options[item].indexOf("="),
                                 ";": options[item].indexOf(";"),
@@ -3822,8 +3813,8 @@ interface readFile {
                     }
                 });
             };
-        if (global.parseFramework === undefined) {
-            require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}parse`);
+        if (global.sparser === undefined) {
+            require(`${projectPath}node_modules${sep}sparser${sep}js${sep}parse`);
         }
         all(options, function node_apps_readmethod_allLexers() {
             resolve();
@@ -3952,9 +3943,9 @@ interface readFile {
                     uri:string = (quest > 0)
                         ? request.url.slice(0, quest)
                         : request.url,
-                    file:string = projectPath + uri.slice(1).replace(/\//g, node.path.sep);
+                    file:string = projectPath + uri.slice(1).replace(/\//g, sep);
                 if (uri === "/") {
-                    file = `${projectPath + node.path.sep}index.xhtml`;
+                    file = `${projectPath + sep}index.xhtml`;
                 }
                 if (request.url.indexOf("favicon.ico") < 0 && request.url.indexOf("images/apple") < 0) {
                     node.fs.readFile(file, "utf8", function node_apps_server_create_readFile(err:Error, data:string):void {
@@ -4163,24 +4154,24 @@ interface readFile {
                 ]);
             },
             wrapper = function node_apps_simulation_wrapper():void {
-                node.child(`node js/services ${tests[a].command}`, {cwd: cwd, maxBuffer: 2048 * 500}, function node_apps_simulation_wrapper_child(err:nodeError, stdout:string, stderror:string|Buffer) {
+                node.child(`node js/services ${tests[a].command}`, {cwd: cwd, maxBuffer: 2048 * 500}, function node_apps_simulation_wrapper_child(errs:nodeError, stdout:string, stderror:string|Buffer) {
                     if (tests[a].artifact === "" || tests[a].artifact === undefined) {
                         writeflag = "";
                     } else {
                         tests[a].artifact = node.path.resolve(tests[a].artifact);
                         writeflag = tests[a].artifact;
                     }
-                    if (err !== null) {
-                        if (err.toString().indexOf("getaddrinfo ENOTFOUND") > -1) {
+                    if (errs !== null) {
+                        if (errs.toString().indexOf("getaddrinfo ENOTFOUND") > -1) {
                             increment("no internet connection");
                             return;
                         }
-                        if (err.toString().indexOf("certificate has expired") > -1) {
+                        if (errs.toString().indexOf("certificate has expired") > -1) {
                             increment("TLS certificate expired on HTTPS request");
                             return;
                         }
                         if (stdout === "") {
-                            apps.errout([err.toString()]);
+                            apps.errout([errs.toString()]);
                             return;
                         }
                     }
@@ -4285,8 +4276,8 @@ interface readFile {
 
         let a:number = 0;
         if (command === "simulation") {
-            callback = function node_apps_lint_callback():void {
-                apps.log(["\u0007"], "", ""); // bell sound
+            callback = function node_apps_lint_callback(message:string):void {
+                apps.log([message, "\u0007"], "", ""); // bell sound
             };
             verbose = true;
             console.log("");
@@ -4300,10 +4291,10 @@ interface readFile {
     };
     // unit test validation runner for Pretty Diff mode commands
     apps.validation = function node_apps_validation(callback:Function):void {
-        require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}parse`);
+        require(`${projectPath}node_modules${sep}sparser${sep}js${sep}parse`);
         let count_raw = 0,
             count_formatted = 0;
-        const all = require(`${projectPath}node_modules${sep}parse-framework${sep}js${sep}lexers${sep}all`),
+        const all = require(`${projectPath}node_modules${sep}sparser${sep}js${sep}lexers${sep}all`),
             flag = {
                 raw: false,
                 formatted: false
@@ -4323,7 +4314,7 @@ interface readFile {
                 options.end_comma    = "none";
                 options.lexerOptions = {};
                 options.lexerOptions[options.lexer] = {};
-                options.lexerOptions[options.lexer].objectSort = true;
+                options.lexerOptions[options.lexer].object_sort = true;
                 options.mode         = "diff";
                 options.new_line     = true;
                 options.object_sort  = true;
@@ -4589,7 +4580,7 @@ interface readFile {
                     }
                     outputArray.push(string.slice(0, wrapper).replace(/ $/, ""));
                     string = string.slice(wrapper + 1);
-                    if (string.length + indent.length > wrap) {
+                    if (string.length + indent.length > wrap && string.replace(/\s+/g, "").length < wrap) {
                         string = indent + string;
                         node_apps_options_wrapit_formLine();
                     } else if (string !== "") {

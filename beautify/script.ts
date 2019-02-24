@@ -4,7 +4,7 @@
     const script = function beautify_script(options:any):string {
         let scolon:number = 0,
             news:number = 0;
-        const data:parsedArray = options.parsed,
+        const data:data = options.parsed,
             lexer:string = "script",
             scopes:scriptScopes = prettydiff.scopes,
             b:number = (options.end < 1 || options.end > data.token.length)
@@ -93,9 +93,9 @@
                             if (a < b - 1 && data.stack[aa] !== "block" && (data.token[aa] === "{" || data.token[aa] === "x{")) {
                                 let bb:number = scopes.length;
                                 data.begin.splice(a, 0, data.begin[aa]);
+                                data.ender.splice(a, 0, data.ender[aa]);
                                 data.lexer.splice(a, 0, data.lexer[aa]);
                                 data.lines.splice(a, 0, data.lines[aa]);
-                                data.presv.splice(a, 0, data.presv[aa]);
                                 data.stack.splice(a, 0, data.stack[aa]);
                                 data.token.splice(a, 0, data.token[aa]);
                                 data.types.splice(a, 0, data.types[aa]);
@@ -111,9 +111,9 @@
                                 }
                                 aa = aa + 1;
                                 data.begin.splice(aa, 1);
+                                data.ender.splice(aa, 1);
                                 data.lexer.splice(aa, 1);
                                 data.lines.splice(aa, 1);
-                                data.presv.splice(aa, 1);
                                 data.stack.splice(aa, 1);
                                 data.token.splice(aa, 1);
                                 data.types.splice(aa, 1);
@@ -300,7 +300,7 @@
                             destructfix(true, false);
                         }
                         if (data.stack[a] !== "attribute") {
-                            if (ctoke !== ")" && ctoke !== "x)" && (ltype !== "markup" || (ltype === "markup" && data.token[a - 2] !== "return"))) {
+                            if (ctoke !== ")" && ctoke !== "x)" && (data.lexer[a - 1] !== "markup" || (data.lexer[a - 1] === "markup" && data.token[a - 2] !== "return"))) {
                                 indent = indent - 1;
                             }
                             if (ctoke === "}" && data.stack[a] === "switch" && options.no_case_indent === false) {

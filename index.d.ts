@@ -4,15 +4,15 @@ declare var prettydiff: any;
 declare var window: Window;
 declare module NodeJS {
     interface Global {
-        parseFramework: any;
+        sparser: any;
         prettydiff: any
     }
 }
 type api = "any" | "dom" | "node";
 type codes = [string, number, number, number, number];
 type languageAuto = [string, string, string];
-type lexer = "markup" | "script" | "style";
-type mode = "analysis" | "beautify" | "diff" | "minify" | "parse";
+type lexer = "any" | "markup" | "script" | "style";
+type mode = "beautify" | "diff" | "minify" | "parse";
 type qualifier = "begins" | "contains" | "ends" | "file begins" | "file contains" | "file ends" | "file is" | "file not" | "file not contains" | "filesystem contains" | "filesystem not contains" | "is" | "not" | "not contains";
 interface commandList {
     [key: string]: {
@@ -25,6 +25,15 @@ interface commandList {
 }
 interface compareStore extends Array<[number, number]>{
     [index:number]: [number, number];
+}
+interface data {
+    begin: number[];
+    ender: number[];
+    lexer: string[];
+    lines: number[];
+    stack: string[];
+    token: string[];
+    types: string[];
 }
 interface diffJSON extends Array<["+"|"-"|"=", string]|["r", string, string]> {
     [index:number]: ["+"|"-"|"=", string]|["r", string, string];
@@ -40,6 +49,9 @@ interface diffStatus {
 interface difftable {
     [key: string]: [number, number];
 }
+interface diffview {
+    (): [string, number, number]
+}
 interface dom {
     [key: string]: any;
 }
@@ -50,9 +62,6 @@ interface domMethods {
     event: {
         [key: string]: any;
     };
-}
-interface diffview {
-    (): [string, number, number]
 }
 interface externalIndex {
     [key: string]: number;
@@ -124,6 +133,7 @@ interface nodeLists {
     heading: string;
     obj: any;
     property: "eachkey" | string;
+    total: boolean;
 }
 interface opcodes extends Array<codes> {
     [index: number]: codes;
@@ -134,7 +144,7 @@ interface option {
     definition: string;
     label: string;
     lexer: lexer;
-    mode: mode;
+    mode: "any" | mode;
     type: "boolean" | "number" | "string";
     values?: {
         [key: string]: string;
@@ -146,28 +156,6 @@ interface optionDef {
 interface optionFunctions {
     definitions?: {};
 
-}
-interface parsedArray {
-    begin: number[];
-    lexer: string[];
-    lines: number[];
-    presv: boolean[];
-    stack: string[];
-    token: string[];
-    types: string[];
-}
-interface parsedObject {
-    [index: number]: record;
-}
-interface parseOptions {
-    lexer: "string";
-    lexerOptions: {
-        [key: string]: {
-            [key: string]: any;
-        }
-    };
-    outputFormat: "objects" | "arrays";
-    source: "string";
 }
 interface performance {
     codeLength: number;
@@ -188,9 +176,9 @@ interface readDirectory {
 }
 interface record {
     begin: number;
+    ender: number;
     lexer: string;
     lines: number;
-    presv: boolean;
     stack: string;
     token: string;
     types: string;
@@ -206,5 +194,5 @@ interface simulationItem {
     test: string;
 }
 interface Window {
-    parseFramework: any;
+    sparser: any;
 }
