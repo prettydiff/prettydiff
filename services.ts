@@ -1354,6 +1354,7 @@ interface readFile {
                                             if (filename === "mode.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
                                                 mode = filedata
                                                     .replace(/global(API)?\./g, "")
+                                                    .replace(/\/\*global\s+global(\s*,\s*window)?\*\//, "")
                                                     .replace(/globalAPI\s*=\s*\(options\.api\s*===\s*"dom"\)\s*\?\s*window\s*:\s*global,/, "")
                                                     .replace(/if\s*\(options\.api\s*===\s*"dom"\)\s*\{\s*globalAPI\s*=\s*window;\s*\}/, "")
                                                     .replace(/,\s*\/\/\s*prettydiff file insertion start\s+prettydiff\s*=\s*\{\};/, ";");
