@@ -66,33 +66,6 @@ a {
     margin-right: 20px;
     margin-top  : 0.5em;
 }
-a {
-    margin: 4px 3px 2px 2px;
-}
-a {
-    @include transition;
-    color          : $primaryColor;
-    font           : {
-        family: Helvetica, Arial, sans-serif;
-        size  : 14px;
-    }
-    text-decoration: none;
-    &:hover {
-        text-decoration: underline;
-    }
-}
-a {
-    -moz-transition   : all 0.25s ease-in-out;
-    -ms-transition    : all 0.25s ease-in-out;
-    -o-transition     : all 0.25s ease-in-out;
-    -webkit-transition: all 0.25s ease-in-out;
-    color             : #80c040;
-    transition        : all 0.25s ease-in-out;
-}
-a {
-    margin : 4px 3px 2px 1px;
-    padding: 4px 3px 2px 1px;
-}
 a.th {
     .shadow .box button {
         box-shadow : 0 0.1em 0.2em rgba(0, 0, 0, 0.75);
@@ -106,6 +79,33 @@ a.th {
 }
 a:hover {
     color: #000;
+}
+b {
+    margin: 4px 3px 2px 2px;
+}
+c {
+    margin : 4px 3px 2px 1px;
+    padding: 4px 3px 2px 1px;
+}
+d {
+    @include transition;
+    color          : $primaryColor;
+    font           : {
+        family: Helvetica, Arial, sans-serif;
+        size  : 14px;
+    }
+    text-decoration: none;
+    &:hover {
+        text-decoration: underline;
+    }
+}
+e {
+    -moz-transition   : all 0.25s ease-in-out;
+    -ms-transition    : all 0.25s ease-in-out;
+    -o-transition     : all 0.25s ease-in-out;
+    -webkit-transition: all 0.25s ease-in-out;
+    color             : #80c040;
+    transition        : all 0.25s ease-in-out;
 }
 ul.category-list {
     & > li {
