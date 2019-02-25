@@ -3307,7 +3307,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                 }
                             }
                         } else if (options.mode === "beautify") {
-                            if (options.jsscope === "report" && options.complete_document === false && report.code.box !== null && data.langvalue[0] === "javascript" && output.indexOf("Error:") !== 0) {
+                            if (options.jsscope === "report" && options.complete_document === false && report.code.box !== null && (data.langvalue[0] === "javascript" || data.langvalue[0] === "jsx") && output.indexOf("Error:") !== 0) {
                                 report.code.body.innerHTML = output;
                                 if (report.code.body.style.display === "none") {
                                     report.code.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0].focus();

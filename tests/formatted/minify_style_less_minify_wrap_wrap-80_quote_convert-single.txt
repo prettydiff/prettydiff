@@ -17,4 +17,3 @@ position:relative;z-index:10;}#prettydiff #infolinks{margin:0;}
 #prettydiff #webtool p,#prettydiff #webtool ul,#prettydiff .options,
 #prettydiff ul{display:none;}#prettydiff #webtool td{font-size:0.8em;
 white-space:normal;}#prettydiff div{width:100%;}}
-.adfasdfasdfasdfasdfasdfasdfasdfasdfasds{color:red;}

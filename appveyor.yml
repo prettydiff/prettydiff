@@ -1,0 +1,23 @@
+ 
+# Install scripts. (runs after repo cloning)
+install:
+  # Get the latest stable version of Node.js or io.js
+  - ps: Install-Product node
+
+# Post-install test scripts.
+test_script:
+  # Output useful info for debugging.
+  - node --version
+  # setup
+  - npm install -g eslint
+  - npm cache clean --force
+  - rm -f package-lock.json
+  - npm install
+  - npm install --dev typescript@latest
+  - node_modules\.bin\tsc --pretty
+  - node js/services build local
+  # run tests
+  - npm test
+
+# Don't actually build.
+build: off

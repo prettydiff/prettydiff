@@ -1295,7 +1295,7 @@ interface readFile {
                                     }
                                     flag[fileFlag] = true;
                                     if (flag.documentation === true && flag.html === true && flag.node === true && flag.webtool === true) {
-                                        let thirdparty:string = `${parser + libraries + finalFile + mode.replace(/,\s*\/\/\s*prettydiff\s*file\s*insertion\s*start\s+prettydiff\s*=\s*\{\};\s*\/\/\s*prettydiff\s*file\s*insertion\s*end/, ";")}prettydiff.api.language=sparser.libs.language;`;
+                                        let thirdparty:string = parser + libraries + finalFile + mode.replace(/,\s*\/\/\s*prettydiff\s*file\s*insertion\s*start\s+prettydiff\s*=\s*\{\};\s*\/\/\s*prettydiff\s*file\s*insertion\s*end/, ";");
                                         node.fs.writeFile(`${js}browser.js`, `${thirdparty}window.prettydiff=prettydiff;}());`, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser(erbr:Error) {
                                             if (erbr !== null && erbr.toString() !== "") {
                                                 apps.errout([erbr.toString()]);
@@ -1323,6 +1323,7 @@ interface readFile {
                         libraryFiles = function node_apps_build_libraries_libraryFiles() {
                             libFiles.push(`${projectPath}node_modules${sep}file-saver${sep}FileSaver.min.js`);
                             libFiles.push(`${projectPath}node_modules${sep}sparser${sep}js${sep}browser.js`);
+                            libFiles.push(`${projectPath}node_modules${sep}sparser${sep}js${sep}libs${sep}language.js`);
                             const appendFile = function node_apps_build_libraries_libraryFiles_appendFile(filePath:string):void {
                                     node.fs.readFile(filePath, "utf8", function node_apps_build_libraries_libraryFiles_appendFile_read(errr:Error, filedata:string):void {
                                         const filenames:string[] = filePath.split(sep),
@@ -1354,11 +1355,14 @@ interface readFile {
                                             if (filename === "mode.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
                                                 mode = filedata
                                                     .replace(/global(API)?\./g, "")
+                                                    .replace(/\/\*global\s+global(\s*,\s*window)?\*\//, "")
                                                     .replace(/globalAPI\s*=\s*\(options\.api\s*===\s*"dom"\)\s*\?\s*window\s*:\s*global,/, "")
                                                     .replace(/if\s*\(options\.api\s*===\s*"dom"\)\s*\{\s*globalAPI\s*=\s*window;\s*\}/, "")
                                                     .replace(/,\s*\/\/\s*prettydiff file insertion start\s+prettydiff\s*=\s*\{\};/, ";");
                                             } else if (filename === "finalFile.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
                                                 finalFile = filedata;
+                                            } else if (filename === "language.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
+                                                libraries = libraries + filedata.replace("global.sparser.libs.language", "prettydiff.api.language");
                                             } else {
                                                 libraries = libraries + filedata;
                                             }
@@ -1580,8 +1584,11 @@ interface readFile {
                             services: false,
                             typescript: false
                         },
+                        command:string = (process.argv[0] === "local")
+                            ? "node_modules\\.bin\\tsc --pretty"
+                            : "tsc --pretty",
                         ts = function node_apps_build_typescript_ts() {
-                            node.child("tsc --pretty", {
+                            node.child(command, {
                                 cwd: projectPath
                             }, function node_apps_build_typescript_callback(err:Error, stdout:string, stderr:string):void {
                                 if (stdout !== "" && stdout.indexOf(` \u001b[91merror${text.none} `) > -1) {
@@ -4313,8 +4320,6 @@ interface readFile {
                 options.diff_context = 4;
                 options.end_comma    = "none";
                 options.lexerOptions = {};
-                options.lexerOptions[options.lexer] = {};
-                options.lexerOptions[options.lexer].object_sort = true;
                 options.mode         = "diff";
                 options.new_line     = true;
                 options.object_sort  = true;

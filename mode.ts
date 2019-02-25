@@ -46,6 +46,7 @@
                         b:number = 0,
                         quote:string = "",
                         item:string = "",
+                        valkey:string[] = [],
                         op:string[] = [];
                     const ops:string[] = [],
                         source:string = (pdcom > -1)
@@ -158,27 +159,28 @@
                                 op = [ops[a].slice(0, ops[a].indexOf("=")), ops[a].slice(ops[a].indexOf("=") + 1)];
                             } else if (ops[a].indexOf(":") > 0) {
                                 op = [ops[a].slice(0, ops[a].indexOf(":")), ops[a].slice(ops[a].indexOf(":") + 1)];
-                            } else if (globalAPI.prettydiff.api.optionDef[ops[a]] !== undefined && globalAPI.prettydiff.api.optionDef[ops[a]].type === "boolean") {
+                            } else if (prettydiff.api.optionDef[ops[a]] !== undefined && prettydiff.api.optionDef[ops[a]].type === "boolean") {
                                 options[ops[a]] = true;
                             }
-                            if (op.length === 2 && globalAPI.prettydiff.api.optionDef[op[0]] !== undefined) {
+                            if (op.length === 2 && prettydiff.api.optionDef[op[0]] !== undefined) {
                                 if ((op[1].charAt(0) === "\"" || op[1].charAt(0) === "'" || op[1].charAt(0) === "`") && op[1].charAt(op[1].length - 1) === op[1].charAt(0)) {
                                     op[1] = op[1].slice(1, op[1].length - 1);
                                 }
-                                if (globalAPI.prettydiff.api.optionDef[op[0]].type === "number" && isNaN(Number(op[1])) === false) {
+                                if (prettydiff.api.optionDef[op[0]].type === "number" && isNaN(Number(op[1])) === false) {
                                     options[op[0]] = Number(op[1]);
-                                } else if (globalAPI.prettydiff.api.optionDef[op[0]].type === "boolean") {
+                                } else if (prettydiff.api.optionDef[op[0]].type === "boolean") {
                                     if (op[1] === "true") {
                                         options[op[0]] = true;
                                     } else if (op[1] === "false") {
                                         options[op[0]] = false;
                                     }
                                 } else {
-                                    if (globalAPI.prettydiff.api.optionDef[op[0]].values !== undefined) {
-                                        b = globalAPI.prettydiff.api.optionDef[op[0]].values.length;
+                                    if (prettydiff.api.optionDef[op[0]].values !== undefined) {
+                                        valkey = Object.keys(prettydiff.api.optionDef[op[0]].values);
+                                        b = valkey.length;
                                         do {
                                             b = b - 1;
-                                            if (globalAPI.prettydiff.api.optionDef[op[0]].values[b] === op[1]) {
+                                            if (valkey[b] === op[1]) {
                                                 options[op[0]] = op[1];
                                                 break;
                                             }
@@ -352,7 +354,6 @@
             // prettydiff file insertion start
             prettydiff:any = {};
         // prettydiff file insertion end
-
         if (options.api === "node" && (options.read_method === "directory" || options.read_method === "subdirectory")) {
             if (options.mode === "parse" && options.parse_format === "table") {
                 return "Error: option parse_format with value 'table' is not available with read_method directory or subdirectory.";
@@ -372,7 +373,7 @@
             const def:string = (options.language_default === "" || options.language_default === null || options.language_default === undefined)
                     ? "javascript"
                     : options.language_default;
-            let lang:[string, string, string] = globalAPI.prettydiff.api.language.auto(options.source, def);
+            let lang:[string, string, string] = prettydiff.api.language.auto(options.source, def);
             if (lang[0] === "text") {
                 if (options.mode === "diff") {
                     lang[2] = "Plain Text";
@@ -517,8 +518,8 @@
                 result = JSON.stringify(options.parsed);
             }
         } else {
-            globalAPI.prettydiff.scopes = [];
-            if (globalAPI.prettydiff[modeValue][options.lexer] === undefined && ((options.mode !== "diff" && options.language === "text") || options.language !== "text")) {
+            prettydiff.scopes = [];
+            if (prettydiff[modeValue][options.lexer] === undefined && ((options.mode !== "diff" && options.language === "text") || options.language !== "text")) {
                 result = `Error: Library prettydiff.${modeValue}.${options.lexer} does not exist.`;
             } else if (options.mode === "diff") {
                 let diffoutput:[string, number, number];
@@ -527,7 +528,7 @@
                     options.complete_document = false;
                 }
                 if (options.language === "text") {
-                    diffoutput = globalAPI.prettydiff.api.diffview(options);
+                    diffoutput = prettydiff.api.diffview(options);
                     result = diffoutput[0];
                 } else {
                     if (options.diff_rendered_html === true) {
@@ -656,7 +657,7 @@
                         globalAPI.sparser.options.source = options.diff;
                         diff_parsed = globalAPI.sparser.parser();
                         options.diff = diff_parsed.token;
-                        diffoutput = globalAPI.prettydiff.api.diffview(options);
+                        diffoutput = prettydiff.api.diffview(options);
                         json = JSON.parse(diffoutput[0]).diff;
                         len = json.length;
                         do {
@@ -698,17 +699,17 @@
                             a = a + 1;
                         } while (a < len);
                         summary();
-                        result = globalAPI.prettydiff.beautify.markup(options);
+                        result = prettydiff.beautify.markup(options);
                     } else {
                         // this silliness is required because the other libraries only recognize the 'source' option and not the 'diff' option but need to be equally modified
                         options.parsed = globalAPI.sparser.parser();
-                        options.source = globalAPI.prettydiff.beautify[options.lexer](options);
+                        options.source = prettydiff.beautify[options.lexer](options);
                         //options.source = options.parsed.token;
                         globalAPI.sparser.options.source = options.diff;
                         options.parsed = globalAPI.sparser.parser();
-                        options.diff = globalAPI.prettydiff.beautify[options.lexer](options);
+                        options.diff = prettydiff.beautify[options.lexer](options);
                         //options.diff = options.parsed.token;
-                        diffoutput = globalAPI.prettydiff.api.diffview(options);
+                        diffoutput = prettydiff.api.diffview(options);
                         result = diffoutput[0];
                     }
                 }
@@ -718,7 +719,7 @@
                 }
             } else {
                 options.parsed = globalAPI.sparser.parser();
-                result = globalAPI.prettydiff[modeValue][options.lexer](options);
+                result = prettydiff[modeValue][options.lexer](options);
             }
         }
         if (options.complete_document === true && options.jsscope !== "report") {
