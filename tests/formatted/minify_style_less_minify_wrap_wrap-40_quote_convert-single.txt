@@ -37,5 +37,5 @@ margin-top:2.75em;}
 display:none;}#prettydiff #webtool td{
 font-size:0.8em;white-space:normal;}
 #prettydiff div{width:100%;}}
-.adfasdfasdfasdfasdfasdfasdfasdfasdfasds
+ladfasdfasdfasdfasdfasdfasdfasdfasdfasds
 {color:red;}
