@@ -9,13 +9,12 @@ test_script:
   # Output useful info for debugging.
   - node --version
   # setup
-  - npm install -g typescript
   - npm install -g eslint
   - npm cache clean --force
   - rm -f package-lock.json
   - npm install
-  - dir
-  - tsc --pretty
+  - npm install --dev typescript@latest
+  - node_modules\.bin\tsc --pretty
   - node js/services build
   # run tests
   - npm test
