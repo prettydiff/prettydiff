@@ -1045,6 +1045,7 @@ interface readFile {
                 libraries: function node_apps_build_libraries():void {
                     let finalFile:string = "",
                         libraries:string = "",
+                        language:string = "",
                         mode:string = "",
                         saveas:string = "",
                         parser:string = "";
@@ -1279,7 +1280,7 @@ interface readFile {
                                 } else if (fileFlag === "mode") {
                                     modify({
                                         end: "// prettydiff file insertion end",
-                                        injectFlag: `prettydiff={};${libraries}`,
+                                        injectFlag: `prettydiff={};${libraries + language}`,
                                         start: "// prettydiff file insertion start"
                                     });
                                     modify({
@@ -1323,6 +1324,7 @@ interface readFile {
                         libraryFiles = function node_apps_build_libraries_libraryFiles() {
                             libFiles.push(`${projectPath}node_modules${sep}file-saver${sep}FileSaver.min.js`);
                             libFiles.push(`${projectPath}node_modules${sep}sparser${sep}js${sep}browser.js`);
+                            libFiles.push(`${projectPath}node_modules${sep}sparser${sep}js${sep}libs${sep}language.js`);
                             const appendFile = function node_apps_build_libraries_libraryFiles_appendFile(filePath:string):void {
                                     node.fs.readFile(filePath, "utf8", function node_apps_build_libraries_libraryFiles_appendFile_read(errr:Error, filedata:string):void {
                                         const filenames:string[] = filePath.split(sep),
@@ -1360,6 +1362,8 @@ interface readFile {
                                                     .replace(/,\s*\/\/\s*prettydiff file insertion start\s+prettydiff\s*=\s*\{\};/, ";");
                                             } else if (filename === "finalFile.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
                                                 finalFile = filedata;
+                                            } else if (filename === "language.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
+                                                language = filedata.replace("global.sparser.libs.language", "prettydiff.api.language");
                                             } else {
                                                 libraries = libraries + filedata;
                                             }
