@@ -14,7 +14,8 @@ test_script:
   - npm cache clean --force
   - rm -f package-lock.json
   - npm install
-  - tsc
+  - dir
+  - tsc --pretty
   - node js/services build
   # run tests
   - npm test
