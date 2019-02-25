@@ -46,6 +46,7 @@
                         b:number = 0,
                         quote:string = "",
                         item:string = "",
+                        valkey:string[] = [],
                         op:string[] = [];
                     const ops:string[] = [],
                         source:string = (pdcom > -1)
@@ -175,10 +176,11 @@
                                     }
                                 } else {
                                     if (prettydiff.api.optionDef[op[0]].values !== undefined) {
-                                        b = prettydiff.api.optionDef[op[0]].values.length;
+                                        valkey = Object.keys(prettydiff.api.optionDef[op[0]].values);
+                                        b = valkey.length;
                                         do {
                                             b = b - 1;
-                                            if (prettydiff.api.optionDef[op[0]].values[b] === op[1]) {
+                                            if (valkey[b] === op[1]) {
                                                 options[op[0]] = op[1];
                                                 break;
                                             }

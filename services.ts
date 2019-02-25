@@ -1045,7 +1045,6 @@ interface readFile {
                 libraries: function node_apps_build_libraries():void {
                     let finalFile:string = "",
                         libraries:string = "",
-                        language:string = "",
                         mode:string = "",
                         saveas:string = "",
                         parser:string = "";
@@ -1280,7 +1279,7 @@ interface readFile {
                                 } else if (fileFlag === "mode") {
                                     modify({
                                         end: "// prettydiff file insertion end",
-                                        injectFlag: `prettydiff={};${libraries + language}`,
+                                        injectFlag: `prettydiff={};${libraries}`,
                                         start: "// prettydiff file insertion start"
                                     });
                                     modify({
@@ -1296,7 +1295,7 @@ interface readFile {
                                     }
                                     flag[fileFlag] = true;
                                     if (flag.documentation === true && flag.html === true && flag.node === true && flag.webtool === true) {
-                                        let thirdparty:string = `${parser + libraries + finalFile + mode.replace(/,\s*\/\/\s*prettydiff\s*file\s*insertion\s*start\s+prettydiff\s*=\s*\{\};\s*\/\/\s*prettydiff\s*file\s*insertion\s*end/, ";")}prettydiff.api.language=sparser.libs.language;`;
+                                        let thirdparty:string = parser + libraries + finalFile + mode.replace(/,\s*\/\/\s*prettydiff\s*file\s*insertion\s*start\s+prettydiff\s*=\s*\{\};\s*\/\/\s*prettydiff\s*file\s*insertion\s*end/, ";");
                                         node.fs.writeFile(`${js}browser.js`, `${thirdparty}window.prettydiff=prettydiff;}());`, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser(erbr:Error) {
                                             if (erbr !== null && erbr.toString() !== "") {
                                                 apps.errout([erbr.toString()]);
@@ -1363,7 +1362,7 @@ interface readFile {
                                             } else if (filename === "finalFile.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
                                                 finalFile = filedata;
                                             } else if (filename === "language.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
-                                                language = filedata.replace("global.sparser.libs.language", "prettydiff.api.language");
+                                                libraries = libraries + filedata.replace("global.sparser.libs.language", "prettydiff.api.language");
                                             } else {
                                                 libraries = libraries + filedata;
                                             }
@@ -4321,8 +4320,6 @@ interface readFile {
                 options.diff_context = 4;
                 options.end_comma    = "none";
                 options.lexerOptions = {};
-                options.lexerOptions[options.lexer] = {};
-                options.lexerOptions[options.lexer].object_sort = true;
                 options.mode         = "diff";
                 options.new_line     = true;
                 options.object_sort  = true;
