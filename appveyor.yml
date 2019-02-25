@@ -9,6 +9,7 @@ test_script:
   # Output useful info for debugging.
   - node --version
   # setup
+  - cd prettydiff
   - npm install -g typescript
   - npm install -g eslint
   - npm cache clean --force
