@@ -15,7 +15,7 @@ test_script:
   - npm install
   - npm install --dev typescript@latest
   - node_modules\.bin\tsc --pretty
-  - node js/services build
+  - node js/services build local
   # run tests
   - npm test
 

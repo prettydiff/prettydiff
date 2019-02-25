@@ -1585,8 +1585,11 @@ interface readFile {
                             services: false,
                             typescript: false
                         },
+                        command:string = (process.argv[0] === "local")
+                            ? "node_modules\\.bin\\tsc --pretty"
+                            : "tsc --pretty",
                         ts = function node_apps_build_typescript_ts() {
-                            node.child("tsc --pretty", {
+                            node.child(command, {
                                 cwd: projectPath
                             }, function node_apps_build_typescript_callback(err:Error, stdout:string, stderr:string):void {
                                 if (stdout !== "" && stdout.indexOf(` \u001b[91merror${text.none} `) > -1) {
