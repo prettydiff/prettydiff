@@ -1,3 +1,5 @@
+import { parse } from "path";
+
 /*global global, prettydiff*/
 (function beautify_script_init():void {
     "use strict";
@@ -41,30 +43,6 @@
                     assignlist:boolean[]    = [false], //are you in a list right now?
                     wordlist:boolean[]      = [],
                     count:number[]          = [],
-                    fixchain      = function beautify_script_level_fixchain():void {
-                        let bb:number = a - 1,
-                            cc:number = data.begin[a];
-                        if (indent < 1) {
-                            return;
-                        }
-                        do {
-                            if (cc !== data.begin[bb]) {
-                                bb = data.begin[bb];
-                            } else {
-                                if (data.types[bb] === "separator" || data.types[bb] === "operator") {
-                                    if (data.token[bb] === "." && level[bb - 1] > 0) {
-                                        if (data.token[cc - 1] === "if") {
-                                            indent = indent - 2;
-                                        } else {
-                                            indent = indent - 1;
-                                        }
-                                    }
-                                    break;
-                                }
-                            }
-                            bb = bb - 1;
-                        } while (bb > 0 && bb > cc);
-                    },
                     comment       = function beautify_script_level_comment():void {
                         destructfix(false, false);
                         let ind:number = (options.comments === true)
@@ -717,15 +695,44 @@
                             ei.push(-1);
                         }
                     },
-                    string       = function beautify_script_level_string():void {
-                        if (ctoke.indexOf("#!/") === 0) {
-                            level.push(indent);
-                        } else {
-                            level.push(-10);
+                    external      = function beautify_script_level_external():void {
+                        let skip = a;
+                        do {
+                            if (data.lexer[a + 1] === lexer && data.begin[a + 1] < skip) {
+                                break;
+                            }
+                            if (data.token[skip - 1] === "return" && data.types[a] === "end" && data.begin[a] === skip) {
+                                break;
+                            }
+                            level.push(0);
+                            a = a + 1;
+                        } while (a < b);
+                        externalIndex[skip] = a;
+                        level.push(indent - 1);
+                    },
+                    fixchain      = function beautify_script_level_fixchain():void {
+                        let bb:number = a - 1,
+                            cc:number = data.begin[a];
+                        if (indent < 1) {
+                            return;
                         }
-                        if ((ltoke === "," || ltype === "start") && (data.stack[a] === "object" || data.stack[a] === "array") && destruct[destruct.length - 1] === false && a > 0) {
-                            level[a - 1] = indent;
-                        }
+                        do {
+                            if (cc !== data.begin[bb]) {
+                                bb = data.begin[bb];
+                            } else {
+                                if (data.types[bb] === "separator" || data.types[bb] === "operator") {
+                                    if (data.token[bb] === "." && level[bb - 1] > 0) {
+                                        if (data.token[cc - 1] === "if") {
+                                            indent = indent - 2;
+                                        } else {
+                                            indent = indent - 1;
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+                            bb = bb - 1;
+                        } while (bb > 0 && bb > cc);
                     },
                     markup        = function beautify_script_level_markup():void {
                         if ((data.token[a + 1] !== "," && ctoke.indexOf("/>") !== ctoke.length - 2) || (data.token[a + 1] === "," && data.token[data.begin[a] - 3] !== "React")) {
@@ -1191,9 +1198,10 @@
                                 if (options.method_chain > 0) {
                                     let x:number = a,
                                         y:number = data.begin[a],
-                                        z:number[] = [],
+                                        z:number[] = [a],
                                         ify:boolean = (data.token[y - 1] === "if");
                                     do {
+                                        x = x - 1;
                                         if (data.types[x] === "end") {
                                             x = data.begin[x];
                                         }
@@ -1221,7 +1229,6 @@
                                                 break;
                                             }
                                         }
-                                        x = x - 1;
                                     } while (x > y);
                                     if (z.length < options.method_chain) {
                                         level[a - 1] = -20;
@@ -1440,7 +1447,7 @@
                                 level.push(indent - 1);
                                 return;
                             }
-                            if (varindex[varindex.length - 1] > -1) {
+                            if (varindex[varindex.length - 1] > -1 && data.stack[a] !== "expression") {
                                 let aa:number = a;
                                 do {
                                     aa = aa - 1;
@@ -1642,6 +1649,16 @@
                             } while (c < b);
                             level.push(-20);
                             return;
+                        }
+                    },
+                    string       = function beautify_script_level_string():void {
+                        if (ctoke.indexOf("#!/") === 0) {
+                            level.push(indent);
+                        } else {
+                            level.push(-10);
+                        }
+                        if ((ltoke === "," || ltype === "start") && (data.stack[a] === "object" || data.stack[a] === "array") && destruct[destruct.length - 1] === false && a > 0) {
+                            level[a - 1] = indent;
                         }
                     },
                     template      = function beautify_script_level_template():void {
@@ -1889,21 +1906,6 @@
                             level[a - 1] = indent + 1;
                         }
                         level.push(-10);
-                    },
-                    external      = function beautify_script_level_external():void {
-                        let skip = a;
-                        do {
-                            if (data.lexer[a + 1] === lexer && data.begin[a + 1] < skip) {
-                                break;
-                            }
-                            if (data.token[skip - 1] === "return" && data.types[a] === "end" && data.begin[a] === skip) {
-                                break;
-                            }
-                            level.push(0);
-                            a = a + 1;
-                        } while (a < b);
-                        externalIndex[skip] = a;
-                        level.push(indent - 1);
                     };
                 if (options.language === "titanium") {
                     indent = indent - 1;

@@ -1,0 +1,14 @@
+var a = [
+    function () {
+        s;
+    }.bind(x),
+    function () {
+        p;
+    }.bind(this),
+    function () {
+        y;
+    }.bind(this),
+    function () {
+        return !x;
+    }
+];

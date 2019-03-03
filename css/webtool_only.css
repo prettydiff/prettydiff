@@ -290,7 +290,9 @@
 
 /*webtool - link menu adjacent to functionGroup*/
 #prettydiff #infolinks{float:right;margin:0 0 -4em}
-#prettydiff #infolinks li{display:inline-block;font-size:1.4em;list-style:none;margin:0.5em 1em 0}
+#prettydiff #infolinks li{display:inline-block;font-size:1.4em;list-style:none;margin:0.75em 1em 0}
+#prettydiff .donate a{background:#f6c915;border-radius:0.25em;border-style:none;color:#111;font-weight:bold;padding:0.25em}
+#prettydiff .donate svg{margin:0 0 -0.25em;position:relative;z-index:2}
 
 /*webtool - minor notifications that appear after a code operation directly next to "[mode] Code" heading*/
 #prettydiff #announcement{height:auto;left:14em;margin:0;overflow:hidden;position:absolute;text-overflow:ellipsis;white-space:nowrap;width:40%;z-index:5}

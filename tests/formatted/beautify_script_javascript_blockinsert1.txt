@@ -1,0 +1,11 @@
+e.equalArray = function (t, e) {
+    if (t.length != e.length) {
+        return !1;
+    }
+    for (var i = 0, o = t.length; i < o; i = i + 1) {
+        if (t[i] != e[i]) {
+            return !1;
+        }
+    }
+    return !0;
+};
