@@ -1,0 +1,9 @@
+function () {
+    n.prototype.destroy = function () {
+        for (var t in this.listeners) {
+            p;
+        }
+        thislisteners = null,
+        thishammer    = null;
+    };
+}

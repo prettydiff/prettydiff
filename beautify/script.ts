@@ -1447,7 +1447,7 @@ import { parse } from "path";
                                 level.push(indent - 1);
                                 return;
                             }
-                            if (varindex[varindex.length - 1] > -1 && data.stack[a] !== "expression") {
+                            if (varindex[varindex.length - 1] > -1 && data.stack[varindex[varindex.length - 1]] !== "expression") {
                                 let aa:number = a;
                                 do {
                                     aa = aa - 1;
@@ -1462,8 +1462,8 @@ import { parse } from "path";
                                         aa = data.begin[aa];
                                     }
                                 } while (aa > 0 && aa > data.begin[a]);
-                                varindex[varindex.length - 1] = -1;
                             }
+                            varindex[varindex.length - 1] = -1;
                             endExtraInd();
                             if (data.token[data.begin[a] - 1] !== "for") {
                                 destructfix(false, false);

@@ -1,0 +1,5 @@
+function () {
+    o.prototype.order=function(){
+        for(var o;l;o)xc
+    }
+}
