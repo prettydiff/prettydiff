@@ -188,6 +188,13 @@ import { parse } from "path";
                                     } else {
                                         level[c] = indent;
                                     }
+                                } else if (data.stack[a] === "array" && data.types[a] === "operator") {
+                                    if (data.token[c] === ",") {
+                                        level[c] = indent;
+                                    }
+                                    if (c === data.begin[a]) {
+                                        break;
+                                    }
                                 }
                                 if (listFix === false) {
                                     break;
@@ -863,6 +870,11 @@ import { parse } from "path";
                             }
                         }
                         if (ctoke === ":") {
+                            if (data.stack[a] === "map" || data.types[a + 1] === "type" || data.types[a + 1] === "type_start") {
+                                level[a - 1] = -20;
+                                level.push(-10);
+                                return;
+                            }
                             if (ternary.length > 0 && data.begin[ternary[ternary.length - 1]] === data.begin[a]) {
                                 let c:number = a,
                                     d:number = data.begin[a];
@@ -1586,7 +1598,7 @@ import { parse } from "path";
                             } else if (deep === "method" || (data.token[a - 2] === "function" && ltype === "reference")) {
                                 if (ltoke === "import" || ltoke === "in" || options.function_name === true) {
                                     level[a - 1] = -10;
-                                } else if ((ltoke === "}" && data.stack[a - 1] === "function") || ltype === "word" || ltype === "reference") {
+                                } else if ((ltoke === "}" && data.stack[a - 1] === "function") || ltype === "word" || ltype === "reference" || ltype === "property") {
                                     level[a - 1] = -20;
                                 } else if (deeper !== "method" && deep !== "method") {
                                     level[a - 1] = indent;
@@ -1717,6 +1729,19 @@ import { parse } from "path";
                                 level[a - 2] = -20;
                                 level[a - 1] = -20;
                             }
+                        }
+                    },
+                    types        = function beautify_script_level_types():void {
+                        if (data.token[a - 1] === "," || (data.token[a - 1] === ":" && data.stack[a - 1] !== "data_type")) {
+                            level[a - 1] = -10;
+                        } else {
+                            level[a - 1] = -20;
+                        }
+                        if (data.types[a] === "type" || data.types[a] === "type_end") {
+                            level.push(-10);
+                        }
+                        if (data.types[a] === "type_start") {
+                            level.push(-20);
                         }
                     },
                     word          = function beautify_script_level_word():void {
@@ -1928,6 +1953,8 @@ import { parse } from "path";
                             start();
                         } else if (ctype === "end") {
                             end();
+                        } else if (ctype === "type" || ctype === "type_start" || ctype === "type_end") {
+                            types();
                         } else if (ctype === "operator") {
                             operator();
                         } else if (ctype === "word") {
@@ -2160,7 +2187,7 @@ import { parse } from "path";
                             } while (aa > 0);
                         }
                     };
-                    a = b - 1;
+                    a = b;
                     do {
                         a = a - 1;
                         if (data.lexer[a] === "script") {

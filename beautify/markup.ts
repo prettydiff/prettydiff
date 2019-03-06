@@ -205,7 +205,7 @@
                         }
                     },
                     external = function beautify_markup_levels_external():void {
-                        let skip = a;
+                        let skip:number = a;
                         do {
                             if (data.lexer[a + 1] === lexer && data.begin[a + 1] < skip && data.types[a + 1] !== "start" && data.types[a + 1] !== "singleton") {
                                 break;

@@ -1,0 +1,7 @@
+type directoryItem = [
+    string,
+    "file" | "directory" | "link" | "screen",
+    number,
+    number,
+    Stats
+];

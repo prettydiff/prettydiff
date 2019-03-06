@@ -1,5 +1,5 @@
 public static List<TestTable> ToListForEach(DataTable dt) {
-    Int6 = row.IsNull("Int6")
+    Int6     = row.IsNull("Int6")
         ? new int?()
         : new int?(Convert.ToInt32(row["Int6"]));
     var data = new List<TestTable>();

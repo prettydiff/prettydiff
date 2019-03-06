@@ -54,6 +54,7 @@
 #prettydiff.white .readonly .ace-tm .ace_indent-guide {background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQMAAAAl21bKAAAAA1BMVEXd3d3u346CAAAACklEQVR4nGNgAAAAAgABSK+kcQAAAABJRU5ErkJggg==") right repeat-y;}
 #prettydiff.white .ace_print-margin{background:#ddd}
 #prettydiff.white .readonly .ace_print-margin{background:#ccc}
+#prettydiff.white .donate a{background:#fea}
 
 /*color - canvas, webtool only*/
 #prettydiff.canvas .filefocus,
@@ -107,6 +108,7 @@
 #prettydiff.canvas #webtool .readonly textarea{background:#bbbbb8}
 #prettydiff.canvas .box h3 button{background:#eeeee8;border-color:#420;color:#900}
 #prettydiff.canvas .box h3 button:hover{background:#ccb;border-color:#630;color:#630}
+#prettydiff.canvas .donate a{background:#eda}
 
 /*ace theme colors - canvas*/
 #prettydiff.canvas .ace_print-margin{background:#ccc}
@@ -217,6 +219,7 @@
 #prettydiff.shadow .readonly .ace_active-line{background:#333}
 #prettydiff.shadow .ace_print-margin{background:#666}
 #prettydiff.shadow .readonly .ace_print-margin{background:#444}
+#prettydiff.shadow .donate a{background:#653;color:#db0}
 
 #prettydiff #security-warning{background:#fcc;border:0.2em solid #f00;font-family:"Century Gothic", "Trebuchet MS";padding:1em;text-align:left}
 #prettydiff #security-warning h1{margin:0}
@@ -291,7 +294,7 @@
 /*webtool - link menu adjacent to functionGroup*/
 #prettydiff #infolinks{float:right;margin:0 0 -4em}
 #prettydiff #infolinks li{display:inline-block;font-size:1.4em;list-style:none;margin:0.75em 1em 0}
-#prettydiff .donate a{background:#f6c915;border-radius:0.25em;border-style:none;color:#111;font-weight:bold;padding:0.25em}
+#prettydiff .donate a{border-radius:0.25em;border-style:none;color:#111;font-weight:bold;padding:0.25em}
 #prettydiff .donate svg{margin:0 0 -0.25em;position:relative;z-index:2}
 
 /*webtool - minor notifications that appear after a code operation directly next to "[mode] Code" heading*/
