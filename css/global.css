@@ -4,7 +4,7 @@
 #prettydiff{text-align: center;font-size:10px;overflow-y:scroll}
 
 /*global - contentarea, the only immediate child of body*/
-#prettydiff .contentarea{border-style:solid;border-width:0.1em;font-family:"Century Gothic","Trebuchet MS";margin:0 auto;max-width:93em;padding:1em;text-align:left}
+#prettydiff .contentarea{border-style:solid;border-width:0.1em;font-family:"Century Gothic","Trebuchet MS";margin:0 auto;max-width:93em;padding:1em;position:relative;text-align:left}
 
 /*global - text containers*/
 #prettydiff dd,
@@ -65,7 +65,7 @@
 #prettydiff select{border-style:inset;border-width:0.1em;width:13.5em}
 
 /*global - colorscheme field*/
-#prettydiff #dcolorScheme{float:right;margin:-3em 0 0}
+#prettydiff #dcolorScheme{margin:0;position:absolute;right:0.6em;top:0.5em}
 #prettydiff #dcolorScheme label,
 #prettydiff #dcolorScheme label{display:inline-block;font-size:1em}
 

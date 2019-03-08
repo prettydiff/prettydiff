@@ -64,7 +64,7 @@
 #prettydiff.canvas h2 button{background:#f8f8f8;box-shadow:0.1em 0.1em 0.25em #ddd}
 #prettydiff.canvas li h4,
 #prettydiff.canvas li h5{color:#06c}
-#prettydiff.canvas code{background:#eee;border-color:#eee;color:#009}
+#prettydiff.canvas code{background:#eed;border-color:#998;color:#009}
 #prettydiff.canvas ol.segment h4 strong{color:#c00}
 #prettydiff.canvas .data .delete{background:#ffd8d8}
 #prettydiff.canvas .data .delete em{background:#fff8f8;border-color:#c44;color:#900}

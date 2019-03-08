@@ -26,6 +26,7 @@
 #prettydiff.white #options,
 #prettydiff.white #addOptions,
 #prettydiff.white #footer{box-shadow:0 0.5em 1em #999}
+#prettydiff.white #page #input,
 #prettydiff.white #output{border-color:#999}
 #prettydiff.white .ace_gutter{background:#ddd;border-color:#999}
 #prettydiff.white #update{background:#ddd;border-color:#999}
@@ -79,6 +80,7 @@
 #prettydiff.canvas #input,
 #prettydiff.canvas #baseText,
 #prettydiff.canvas #newText{background:#f2f2f2;border-color:#999}
+#prettydiff.canvas #page #input,
 #prettydiff.canvas #output{border-color:#999}
 #prettydiff.canvas #update{background:#ddd;border-color:#999}
 #prettydiff.canvas .save{background:#fc0;border-color:#a30;color:#a30}
@@ -173,6 +175,7 @@
 #prettydiff.shadow #input,
 #prettydiff.shadow #input.ace_editor,
 #prettydiff.shadow #output.ace_editor{border-color:#666}
+#prettydiff.shadow #page #input,
 #prettydiff.shadow #output{border-color:#666}
 #prettydiff.shadow #textareaTabKey,
 #prettydiff.shadow #update{background:#666;border-color:#999}

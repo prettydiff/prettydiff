@@ -1,3 +1,4 @@
+import "../js/browser.js";
 (function () {
     let button = document.getElementsByTagName("button")[0],
         execute = function () {

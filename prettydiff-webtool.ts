@@ -132,6 +132,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                     const scripts:HTMLCollectionOf<HTMLScriptElement> = document.getElementsByTagName("script"),
                         exclusions:string[] = [
                             "js/prettydiff-webtool.js",
+                            "browser-demo.js",
                             "node_modules/ace-builds"
                         ],
                         len:number = scripts.length,
@@ -2429,7 +2430,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             .toLowerCase()
                             .split("?")[1]
                         : "";
-                const node    = id("colorScheme");
+                const node    = id("option-color");
                 colorOptions = node.getElementsByTagName("option");
                 olen    = colorOptions.length;
                 if (node !== null) {
@@ -3813,7 +3814,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 : 0,
             filled:boolean     = ((box === report.stat.box && test.filled.stat === true) || (box === report.feed.box && test.filled.feed === true) || (box === report.code.box && test.filled.code === true)),    
             drop       = function dom_event_grab_drop(e:Event):boolean {
-                const headingWidth = box.getElementsByTagName("h3")[0].clientWidth;
+                const headingWidth = box.getElementsByTagName("h3")[0].clientWidth,
+                    idval   = box.getAttribute("id").replace("report", "");
                 boxLeft = box.offsetLeft;
                 boxTop  = box.offsetTop;
                 if (touch === true) {
@@ -3833,6 +3835,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 if (boxLeft < ((headingWidth * -1) + 40)) {
                     box.style.left = `${((headingWidth * -1) + 40) / 10}em`;
                 }
+                data.settings.report[idval].top    = boxTop;
+                data.settings.report[idval].left   = boxLeft;
                 body.style.opacity = "1";
                 box.style.height   = "auto";
                 heading.style.top  = "100%";
@@ -3934,7 +3938,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             top:number,
             left:number,
             buttons:HTMLCollectionOf<HTMLButtonElement>,
-            resize:HTMLButtonElement;
+            resize:HTMLButtonElement,
+            textarea:HTMLCollectionOf<HTMLTextAreaElement>;
         if (node.nodeType !== 1) {
             return;
         }
@@ -4004,6 +4009,10 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 .app
                 .options(event);
         }
+        textarea = body.getElementsByTagName("textarea");
+        if (textarea.length === 1) {
+            textarea[0].style.height = `${(body.clientHeight - 140) / 12}em`;
+        }
     };
     //minimize report windows to the default size and location
     method.event.minimize = function dom_event_minimize(e:Event):boolean {
@@ -4043,6 +4052,10 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             method
                                 .app
                                 .options(e);
+                            if (textarea.length === 1) {
+                                textarea[0].style.display = "block";
+                                textarea[0].style.height = `${(body.clientHeight - 140) / 12}em`;
+                            }
                             return false;
                         }
                         return true;
@@ -4084,7 +4097,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 heightTarget = heightTarget - 3.55;
                 if (step === 1) {
                     box.style.left    = `${leftTarget}em`;
-                    box.style.top     = `${(window.innerHeight / 10) - 30}em`;
+                    box.style.top     = `${topTarget}em`;
                     body.style.width  = `${widthTarget}em`;
                     body.style.height = `${heightTarget}em`;
                     heading.style.width    = `${widthTarget - saveSpace}em`;
@@ -4094,6 +4107,10 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                     method
                         .app
                         .options(e);
+                    if (textarea.length === 1) {
+                        textarea[0].style.display = "block";
+                        textarea[0].style.height = `${(body.clientHeight - 140) / 12}em`;
+                    }
                     return false;
                 }
                 incW                    = (widthTarget > width)
@@ -4151,6 +4168,9 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 parentNode = <HTMLElement>box.parentNode;
                 incT = (((parentNode.offsetTop / 10) - top) / step);
                 buttonMin.innerHTML = "\u2191";
+                if (textarea.length === 1) {
+                    textarea[0].style.display = "none";
+                }
                 //if a maximized window is minimized
                 if (buttonMax.innerHTML === "\u2191") {
                     if (test.agent.indexOf("macintosh") > 0) {
@@ -4193,6 +4213,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             left:number      = 0,
             top:number       = 0,
             buttonRes:HTMLButtonElement,
+            textarea:HTMLCollectionOf<HTMLTextAreaElement>,
             step:number      = (parent.style.display === "none" && (options.mode === "diff" || (options.mode === "beautify" && options.jsscope === "report" && options.lang === "javascript")))
                 ? 1
                 : 50;
@@ -4209,6 +4230,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
         }
         idval                   = box.getAttribute("id").replace("report", "");
         body                    = box.getElementsByTagName("div")[0];
+        textarea                = body.getElementsByTagName("textarea");
         buttons                 = parent.getElementsByTagName("button");
         save                    = (parent.innerHTML.indexOf("save") > -1);
         buttonMin               = (save === true)

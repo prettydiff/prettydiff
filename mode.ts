@@ -724,7 +724,7 @@
         }
         if (options.complete_document === true && options.jsscope !== "report") {
             // finalFile insertion start
-            let finalFile:finalFile;
+            let finalFile:finalFile = prettydiff.api.finalFile;
             // finalFile insertion end
 
             finalFile.order[7] = options.color;

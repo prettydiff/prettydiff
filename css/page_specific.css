@@ -10,9 +10,10 @@
 
 #prettydiff #page h1{width:22.5em}
 #prettydiff #samples h2,
-#prettydiff #page h2{font-size:3em}
+#prettydiff #page h2{font-size:2em}
 #prettydiff #page > div{border-style:none}
 #prettydiff #page textarea{font-size:1.6em}
-#prettydiff #page code{font-size:1.2em}
+#prettydiff #page code{border-width:0.05em;font-size:1.6em;white-space:pre}
+#prettydiff #page li code{font-size:1em}
 #prettydiff #page .beautify{font-size: 1.2em}
 #prettydiff #page li .beautify{font-size:0.75em}

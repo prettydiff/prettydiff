@@ -66,7 +66,7 @@ To run the web tool in a browser with all capabilities launch a local web server
 To run Pretty Diff as a utility in a third party application simply include either *js/browser.js* or *js/prettydiff.js*.  Those two files are identical except for the very end where an object named `prettydiff` is assigned.  Both files provide all options with defaul values assigned to an object named `prettydiff.defaults`.
 
 #### Browser
-**js/browser.js** - In this file an object named `prettydiff` is assigned to the browser's *window* object.  To access Pretty Diff simply call `window.prettydiff.mode(myOptions);`.  The default options would be `window.prettydiff.defaults`.  See the [browser demo](browser.html) for an example.  This provides all the necessary code in a single file without any DOM bindings.
+**js/browser.js** - In this file an object named `prettydiff` is assigned to the browser's *window* object.  To access Pretty Diff simply call `window.prettydiff.mode(myOptions);`.  The default options would be `window.prettydiff.defaults`.  See the [browser demo](test/browser.html) for an example.  This provides all the necessary code in a single file without any DOM bindings.
 
 #### Node.js
 **js/prettydiff.js** - In this file an object named `prettydiff` is assigned to Node's *module.exports*.  To access Pretty Diff simply require the file: `let prettydiff = require("prettydiff");`.  Default options are available as `prettydiff.defaults`.  To execute simply call `prettydiff.mode(prettydiff.defaults);` where the *mode* property is the application and requires an options object.

@@ -1,0 +1,70 @@
+<!doctype html><html>
+<head><title>Pretty Diff - Third Party Browser Documentation</title><meta content="text/html;charset=UTF-8" http-equiv="Content-Type"/><link href="/css/index.css" media="all" rel="stylesheet" type="text/css"/></head>
+<body class="white" id="prettydiff"><div class="contentarea" id="page"><section role="heading">
+    <h1><svg height="2000.000000pt" id="pdlogo" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg"><g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)"><path d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g></svg>
+        <a href="/">Pretty Diff</a> - Third Party Browser Documentation</h1>
+    <p id="dcolorScheme"><label class="label" for="option-color">Color Scheme</label> <select id="option-color"><option>Canvas</option><option>Shadow</option><option selected="selected">White</option></select></p><p>Browse <a href="https://github.com/prettydiff/prettydiff">Pretty Diff on GitHub</a>.</p></section><section role="main">
+
+<p>In as few characters as possible this page demonstrates how to wire the Pretty Diff application to third party HTML in a browser.  Please not this guide is for directly using Pretty Diff in a browser and not through a Node.js application.</p>
+
+<div>
+<h2>Attaching the application</h2>
+<p>First we need to inject the necessary code into the page.  This can be done the traditional way with an HTML <em>script</em> tag or as an ECMAScript module import.  Below are examples of both:</p>
+<ul>
+    <li>HTML script tag:<code>    &lt;script src="prettydiff/js/browser.js" type="application/javascript"&gt;&lt;/script&gt;</code></li>
+    <li>A module import in your JavaScript code:<code>    import "prettydiff/js/browser.js";</code></li>
+</ul>
+<p>I have packaged everything into a single file.  This contains the parser, all the Pretty Diff application, and the generated option list with default values.</p>
+</div>
+
+<div>
+<h2>Configuring and executing the application</h2>
+<p>Configuring the application is as simple as creating the options object and passing that object into the application.</p>
+<code>    let prettydiff = window.prettydiff.mode,
+        options = {source:"var a=1;",wrap:80},
+        myResult = prettydiff(options);
+</code>
+<p>Please note that while that does work it is risky.  I always recommend building options off the default options object for more predictable options.  See the larger following example.</p>
+</div>
+
+<div>
+<h2>Demo</h2>
+<p>Here is an interactive demo with a demo wiring harness.</p>
+<code>    import "../js/browser.js";
+    (function () {
+        // first the dom interaction is defined with a target and handler
+        let button = document.getElementsByTagName("button")[0],
+            execute = function () {
+                // inside the application we gather the application
+                let prettydiff = window.prettydiff,
+                    // this provides all options set to their default values for safety
+                    options = prettydiff.defaults,
+                    output = "";
+                // here is where we overwrite the default options with custom values
+                options.api = "dom";
+                options.language = "auto";
+                options.lexer = "script";
+                options.mode = "beautify";
+                options.source = document.getElementById("input").value;
+
+                // this where the application executes and the string output is assigned
+                output = prettydiff.mode(options);
+
+                // output the generated string into the dom
+                document.getElementById("output").value = output;
+            };
+        // this uses a click event on a button
+        // for more excitement you can assign the handler to the input textarea's keyup event
+        button.onclick = execute;
+    }());</code>
+    <p><button>Execute</button></p>
+    <label for="input">Demo input</label>
+    <textarea id="input"></textarea>
+    <label for="output">Demo output</label>
+    <textarea id="output"></textarea>
+</div>
+
+
+</section></div>
+<script src="browser-demo.js" type="module"></script>
+<script src="/js/prettydiff-webtool.js" type="application/javascript"></script></body></html>

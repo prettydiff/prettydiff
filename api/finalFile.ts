@@ -1,4 +1,4 @@
-(function finalFile_init(): finalFile {
+(function finalFile_init(): void {
     "use strict";
     const finalFile: finalFile = {
         css   : {
@@ -1420,5 +1420,8 @@
         "\n", // 15 Empty line here from options.crlf
         finalFile.html.htmlEnd // 16
     ];
-    return finalFile;
+    global
+        .prettydiff
+        .api
+        .finalFile = finalFile;
 }());

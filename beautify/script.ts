@@ -2089,19 +2089,24 @@ import { parse } from "path";
                         }
                         do {
                             s = s - 1;
-                            if (data.token[a].replace(/\s+/, "") === scopes[s][0] && scopes[s][1] <= a) {
-                                t = scopes[s][1];
-                                if (t < 0 || data.stack[a] === "arguments" || t === a) {
-                                    applyScope();
-                                    return;
-                                }
-                                do {
-                                    t = t + 1;
-                                    if (data.types[t] === "end" && data.begin[t] === scopes[s][1]) {
-                                        break;
+                            if (data.token[a].replace(/\s+/, "") === scopes[s][0]) {
+                                if (scopes[s][1] <= a) {
+                                    t = scopes[s][1];
+                                    if (t < 0 || data.stack[a] === "arguments" || t === a) {
+                                        applyScope();
+                                        return;
                                     }
-                                } while (t < a);
-                                if (t === a) {
+                                    do {
+                                        t = t + 1;
+                                        if (data.types[t] === "end" && data.begin[t] === scopes[s][1]) {
+                                            break;
+                                        }
+                                    } while (t < a);
+                                    if (t === a) {
+                                        applyScope();
+                                        return;
+                                    }
+                                } else if (data.begin[scopes[s][1]] < data.begin[a]){
                                     applyScope();
                                     return;
                                 }

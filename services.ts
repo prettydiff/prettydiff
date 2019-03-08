@@ -638,7 +638,7 @@ interface readFile {
                                                 process.exit(1);
                                                 return;
                                             }
-                                            if (stats.isFile() === true && valpath.indexOf("finalFile.js") < 0) {
+                                            if (stats.isFile() === true && start === `${projectPath}js${sep}api${sep}`) {
                                                 require(valpath);
                                                 counts.items = counts.items + 1;
                                             } else if (stats.isDirectory() === true) {
@@ -1043,8 +1043,7 @@ interface readFile {
                 },
                 // phase libraries builds the JavaScript that is called for execution
                 libraries: function node_apps_build_libraries():void {
-                    let finalFile:string = "",
-                        libraries:string = "",
+                    let libraries:string = "",
                         mode:string = "",
                         saveas:string = "",
                         parser:string = "";
@@ -1264,11 +1263,6 @@ interface readFile {
                                         injectFlag: saveas + libraries + mode,
                                         start: "// prettydiff dom insertion start"
                                     });
-                                    modify({
-                                        end: "// finalFile insertion end",
-                                        injectFlag: `const finalFile=${finalFile}`,
-                                        start: "// finalFile insertion start"
-                                    });
                                     data = `${parser + data.replace(/("|')use strict("|');/g, "").replace(/window\.sparser/g, "sparser")}}());`;
                                 } else if (fileFlag === "node") {
                                     modify({
@@ -1282,11 +1276,6 @@ interface readFile {
                                         injectFlag: `prettydiff={};${libraries}`,
                                         start: "// prettydiff file insertion start"
                                     });
-                                    modify({
-                                        end: "// finalFile insertion end",
-                                        injectFlag: `const finalFile=${finalFile}`,
-                                        start: "// finalFile insertion start"
-                                    });
                                 }
                                 node.fs.writeFile(file, data, function node_apps_build_libraries_modifyFile_read_write(errw:Error) {
                                     if (errw !== null && errw.toString() !== "") {
@@ -1295,7 +1284,7 @@ interface readFile {
                                     }
                                     flag[fileFlag] = true;
                                     if (flag.documentation === true && flag.html === true && flag.node === true && flag.webtool === true) {
-                                        let thirdparty:string = parser + libraries + finalFile + mode.replace(/,\s*\/\/\s*prettydiff\s*file\s*insertion\s*start\s+prettydiff\s*=\s*\{\};\s*\/\/\s*prettydiff\s*file\s*insertion\s*end/, ";");
+                                        let thirdparty:string = parser + libraries + mode.replace(/,\s*\/\/\s*prettydiff\s*file\s*insertion\s*start\s+prettydiff\s*=\s*\{\};\s*\/\/\s*prettydiff\s*file\s*insertion\s*end/, ";");
                                         node.fs.writeFile(`${js}browser.js`, `${thirdparty}window.prettydiff=prettydiff;}());`, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser(erbr:Error) {
                                             if (erbr !== null && erbr.toString() !== "") {
                                                 apps.errout([erbr.toString()]);
@@ -1359,8 +1348,6 @@ interface readFile {
                                                     .replace(/globalAPI\s*=\s*\(options\.api\s*===\s*"dom"\)\s*\?\s*window\s*:\s*global,/, "")
                                                     .replace(/if\s*\(options\.api\s*===\s*"dom"\)\s*\{\s*globalAPI\s*=\s*window;\s*\}/, "")
                                                     .replace(/,\s*\/\/\s*prettydiff file insertion start\s+prettydiff\s*=\s*\{\};/, ";");
-                                            } else if (filename === "finalFile.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
-                                                finalFile = filedata;
                                             } else if (filename === "language.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
                                                 libraries = libraries + filedata.replace("global.sparser.libs.language", "prettydiff.api.language");
                                             } else {
@@ -3949,38 +3936,80 @@ interface readFile {
                 let quest:number = request.url.indexOf("?"),
                     uri:string = (quest > 0)
                         ? request.url.slice(0, quest)
-                        : request.url,
-                    file:string = projectPath + uri.slice(1).replace(/\//g, sep);
-                if (uri === "/") {
-                    file = `${projectPath + sep}index.xhtml`;
-                }
-                if (request.url.indexOf("favicon.ico") < 0 && request.url.indexOf("images/apple") < 0) {
-                    node.fs.readFile(file, "utf8", function node_apps_server_create_readFile(err:Error, data:string):void {
-                        if (err !== undefined && err !== null) {
-                            if (err.toString().indexOf("no such file or directory") > 0) {
-                                response.writeHead(404, {"Content-Type": "text/plain"});
-                                if (file.indexOf("apple-touch") < 0 && file.indexOf("favicon") < 0) {
-                                    console.log(`${text.angry}404${text.none} for ${file}`);
+                        : request.url;
+                const localpath:string = (uri === "/")
+                    ? `${projectPath}index.xhtml`
+                    : projectPath + uri.slice(1).replace(/\/$/, "").replace(/\//g, sep);
+                node.fs.stat(localpath, function node_apps_server_create_stat(ers:nodeError, stat:Stats):void {
+                    const random:number = Math.random(),
+                        page:string = `<!doctype html><html><head><title>Pretty Diff - Local Service</title><meta content="text/html;charset=UTF-8" http-equiv="Content-Type"/><link href="/css/index.css?${random}" media="all" rel="stylesheet" type="text/css"/></head><body class="white" id="prettydiff"><div class="contentarea" id="page"><section role="heading"><h1><svg height="2000.000000pt" id="pdlogo" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg"><g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)"><path d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g></svg> <a href="/">Pretty Diff</a> - Local Server</h1><p id="dcolorScheme"><label class="label" for="option-color">Color Scheme</label> <select id="option-color"><option>Canvas</option><option>Shadow</option><option selected="selected">White</option></select></p><p>Browse Pretty Diff on <a href="https://github.com/prettydiff/prettydiff">GitHub</a> or <a href="https://www.npmjs.com/package/prettydiff">NPM</a>.</p></section><section role="main">insertme</section></div><script src="/js/prettydiff-webtool.js?${random}" type="application/javascript"></script></body></html>`;
+                    if (ers !== null) {
+                        if (ers.code === "ENOENT") {
+                            console.log(`${text.angry}404${text.none} for ${uri}`);
+                            response.writeHead(200, {"Content-Type": "text/html"});
+                            response.write(page.replace("insertme", `<p>HTTP 404: ${uri}</p>`));
+                            response.end();
+                        } else {
+                            apps.errout([ers.toString()]);
+                        }
+                        return;
+                    }
+                    if (request.url.indexOf("favicon.ico") < 0 && request.url.indexOf("images/apple") < 0) {
+                        if (stat.isDirectory() === true) {
+                            node.fs.readdir(localpath, function node_apps_server_create_stat_dir(erd:Error, list:string[]) {
+                                const dirlist:string[] = [`<p>directory of ${localpath}</p> <ul>`];
+                                if (erd !== null) {
+                                    apps.errout([erd.toString()]);
+                                    return;
                                 }
-                                return;
-                            }
-                            response.write(JSON.stringify(err));
-                            console.log(err);
+                                list.forEach(function node_apps_server_create_stat_dir_list(value:string) {
+                                    if ((/\.x?html?$/).test(value.toLowerCase()) === true) {
+                                        dirlist.push(`<li><a href="${uri.replace(/\/$/, "")}/${value}">${value}</a></li>`);
+                                    } else {
+                                        dirlist.push(`<li><a href="${uri.replace(/\/$/, "")}/${value}?${random}">${value}</a></li>`);
+                                    }
+                                });
+                                dirlist.push("</ul></body></html>");
+                                response.writeHead(200, {"Content-Type": "text/html"});
+                                response.write(page.replace("insertme", dirlist.join("")));
+                                response.end();
+                            });
                             return;
                         }
-                        if (file.indexOf(".js") === file.length - 3) {
-                            response.writeHead(200, {"Content-Type": "application/javascript"});
-                        } else if (file.indexOf(".css") === file.length - 4) {
-                            response.writeHead(200, {"Content-Type": "text/css"});
-                        } else if (file.indexOf(".xhtml") === file.length - 6) {
-                            response.writeHead(200, {"Content-Type": "application/xhtml+xml"});
+                        if (stat.isFile() === true) {
+                            node.fs.readFile(localpath, "utf8", function node_apps_server_create_readFile(err:Error, data:string):void {
+                                if (err !== undefined && err !== null) {
+                                    if (err.toString().indexOf("no such file or directory") > 0) {
+                                        response.writeHead(404, {"Content-Type": "text/plain"});
+                                        if (localpath.indexOf("apple-touch") < 0 && localpath.indexOf("favicon") < 0) {
+                                            console.log(`${text.angry}404${text.none} for ${localpath}`);
+                                        }
+                                        return;
+                                    }
+                                    response.write(JSON.stringify(err));
+                                    console.log(err);
+                                    return;
+                                }
+                                if (localpath.indexOf(".js") === localpath.length - 3) {
+                                    response.writeHead(200, {"Content-Type": "application/javascript"});
+                                } else if (localpath.indexOf(".css") === localpath.length - 4) {
+                                    response.writeHead(200, {"Content-Type": "text/css"});
+                                } else if (localpath.indexOf(".xhtml") === localpath.length - 6) {
+                                    response.writeHead(200, {"Content-Type": "application/xhtml+xml"});
+                                } else if (localpath.indexOf(".html") === localpath.length - 5 || localpath.indexOf(".html") === localpath.length - 4) {
+                                    response.writeHead(200, {"Content-Type": "text/html"});
+                                } else {
+                                    response.writeHead(200, {"Content-Type": "text/plain"});
+                                }
+                                response.write(data);
+                                response.end();
+                            });
+                        } else {
+                            response.end();
                         }
-                        response.write(data);
-                        response.end();
-                    });
-                } else {
-                    response.end();
-                }
+                        return;
+                    }
+                });
             }),
             serverError = function node_apps_server_serverError(error):void {
                 if (error.code === "EADDRINUSE") {

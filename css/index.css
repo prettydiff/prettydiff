@@ -57,7 +57,7 @@
 #prettydiff.white h2 button{background:#f8f8f8;box-shadow:0.1em 0.1em 0.25em #ddd}
 #prettydiff.white li h4,
 #prettydiff.white li h5{color:#33c}
-#prettydiff.white code{background:#eee;border-color:#eee;color:#009}
+#prettydiff.white code{background:#eee;border-color:#666;color:#009}
 #prettydiff.white ol.segment h4 strong{color:#c00}
 #prettydiff.white .beautify li .new{background:#ee0;color:#c00;}
 #prettydiff.white .data .delete{background:#ffd8d8}
@@ -175,7 +175,7 @@
 #prettydiff.canvas h2 button{background:#f8f8f8;box-shadow:0.1em 0.1em 0.25em #ddd}
 #prettydiff.canvas li h4,
 #prettydiff.canvas li h5{color:#06c}
-#prettydiff.canvas code{background:#eee;border-color:#eee;color:#009}
+#prettydiff.canvas code{background:#eed;border-color:#998;color:#009}
 #prettydiff.canvas ol.segment h4 strong{color:#c00}
 #prettydiff.canvas .data .delete{background:#ffd8d8}
 #prettydiff.canvas .data .delete em{background:#fff8f8;border-color:#c44;color:#900}
@@ -276,7 +276,7 @@
 #prettydiff.shadow th{background:#000}
 #prettydiff.shadow h2 button{background:#585858;box-shadow:0.1em 0.1em 0.25em #000}
 #prettydiff.shadow li h4{color:#ff0}
-#prettydiff.shadow code{background:#585858;border-color:#585858;color:#ccf}
+#prettydiff.shadow code{background:#585858;border-color:#666;color:#ccf}
 #prettydiff.shadow ol.segment h4 strong{color:#f30}
 #prettydiff.shadow button{background-color:#333;border-color:#666;box-shadow:0 0.25em 0.5em #000;color:#ccc}
 #prettydiff.shadow button:hover{background-color:#777;border-color:#aaa;box-shadow:0 0.25em 0.5em #222;color:#fff}
@@ -353,7 +353,7 @@
 #prettydiff{text-align: center;font-size:10px;overflow-y:scroll}
 
 /*global - contentarea, the only immediate child of body*/
-#prettydiff .contentarea{border-style:solid;border-width:0.1em;font-family:"Century Gothic","Trebuchet MS";margin:0 auto;max-width:93em;padding:1em;text-align:left}
+#prettydiff .contentarea{border-style:solid;border-width:0.1em;font-family:"Century Gothic","Trebuchet MS";margin:0 auto;max-width:93em;padding:1em;position:relative;text-align:left}
 
 /*global - text containers*/
 #prettydiff dd,
@@ -414,7 +414,7 @@
 #prettydiff select{border-style:inset;border-width:0.1em;width:13.5em}
 
 /*global - colorscheme field*/
-#prettydiff #dcolorScheme{float:right;margin:-3em 0 0}
+#prettydiff #dcolorScheme{margin:0;position:absolute;right:0.6em;top:0.5em}
 #prettydiff #dcolorScheme label,
 #prettydiff #dcolorScheme label{display:inline-block;font-size:1em}
 
@@ -587,10 +587,11 @@
 
 #prettydiff #page h1{width:22.5em}
 #prettydiff #samples h2,
-#prettydiff #page h2{font-size:3em}
+#prettydiff #page h2{font-size:2em}
 #prettydiff #page > div{border-style:none}
 #prettydiff #page textarea{font-size:1.6em}
-#prettydiff #page code{font-size:1.2em}
+#prettydiff #page code{border-width:0.05em;font-size:1.6em;white-space:pre}
+#prettydiff #page li code{font-size:1em}
 #prettydiff #page .beautify{font-size: 1.2em}
 #prettydiff #page li .beautify{font-size:0.75em}
 
@@ -621,6 +622,7 @@
 #prettydiff.white #options,
 #prettydiff.white #addOptions,
 #prettydiff.white #footer{box-shadow:0 0.5em 1em #999}
+#prettydiff.white #page #input,
 #prettydiff.white #output{border-color:#999}
 #prettydiff.white .ace_gutter{background:#ddd;border-color:#999}
 #prettydiff.white #update{background:#ddd;border-color:#999}
@@ -674,6 +676,7 @@
 #prettydiff.canvas #input,
 #prettydiff.canvas #baseText,
 #prettydiff.canvas #newText{background:#f2f2f2;border-color:#999}
+#prettydiff.canvas #page #input,
 #prettydiff.canvas #output{border-color:#999}
 #prettydiff.canvas #update{background:#ddd;border-color:#999}
 #prettydiff.canvas .save{background:#fc0;border-color:#a30;color:#a30}
@@ -768,6 +771,7 @@
 #prettydiff.shadow #input,
 #prettydiff.shadow #input.ace_editor,
 #prettydiff.shadow #output.ace_editor{border-color:#666}
+#prettydiff.shadow #page #input,
 #prettydiff.shadow #output{border-color:#666}
 #prettydiff.shadow #textareaTabKey,
 #prettydiff.shadow #update{background:#666;border-color:#999}
