@@ -1,0 +1,21 @@
+<div>
+<%= form_with(model: @order) do |form| %>
+<% if @order.errors.any? %>
+<div id="error_explanation">
+<h4><%= pluralize(@order.errors.count, "error") %> prohibited this order from being saved:</h4>
+<ul>
+<% @order.errors.full_messages.each do |message| %>
+<li><%= message %></li>
+<% end %>
+</ul>
+</div>
+<% end %>
+<%= form.text_field :length, placeholder: "Length" %>
+<%= button_tag class: "ui button primary" do %>
+<div class="visible content">Get instant rate</div>
+<div class="hidden content">
+<i class="right arrow icon"></i>
+</div>
+<% end %>
+<% end %>
+</div>

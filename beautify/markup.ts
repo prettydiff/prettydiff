@@ -454,7 +454,7 @@
                                     level.push(indent);
                                 } else if (data.types[a] === "template_start" && data.types[next] === "template_end") {
                                     level.push(-20);
-                                } else if (data.lines[next] === 0 && (data.types[next] === "content" || data.types[next] === "singleton")) {
+                                } else if (data.lines[next] === 0 && (data.types[next] === "content" || data.types[next] === "singleton" || (data.types[a] === "start" && data.types[next] === "template"))) {
                                     level.push(-20);
                                 } else {
                                     level.push(indent);

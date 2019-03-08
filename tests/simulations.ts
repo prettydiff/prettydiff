@@ -474,27 +474,27 @@
                 test: "Parsed input from terminal."
             },
             {
-                command: "performance hash browser-demo.js",
+                command: `performance hash tests${sep}browser-demo.js`,
                 qualifier: "contains",
                 test: "] Character size"
             },
             {
-                command: "performance base64 browser-demo.js",
+                command: `performance base64 tests${sep}browser-demo.js`,
                 qualifier: "contains",
                 test: "] Milliseconds, \u00b1"
             },
             {
-                command: "performance beautify browser-demo.js",
+                command: `performance beautify tests${sep}browser-demo.js`,
                 qualifier: "contains",
                 test: "Pretty Diff version"
             },
             {
-                command: "performance build browser-demo.js",
+                command: `performance build tests${sep}browser-demo.js`,
                 qualifier: "contains",
                 test: "The performance tool cannot test the build command."
             },
             {
-                command: "performance performance browser-demo.js",
+                command: `performance performance tests${sep}browser-demo.js`,
                 qualifier: "contains",
                 test: "The performance tool cannot test itself."
             },
