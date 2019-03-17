@@ -353,12 +353,12 @@
             {
                 command: "opts",
                 qualifier: "contains",
-                test: `${text.angry}* ${text.none + text.cyan}space_close       ${text.none}: Markup self-closing tags end will end with ' />' instead of '/>'.`
+                test: `${text.angry}* ${text.none + text.cyan}space_close         ${text.none}: Markup self-closing tags end will end with ' />' instead of '/>'.`
             },
             {
                 command: "opts 2",
                 qualifier: "contains",
-                test: `${text.green}77${text.none} matching options.`
+                test: `${text.green}78${text.none} matching options.`
             },
             {
                 command: "opts api:node",

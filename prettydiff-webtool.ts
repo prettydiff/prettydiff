@@ -789,8 +789,9 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             : headline.getElementsByTagName("p")[0],
                         x           = Math.random(),
                         circulation = [
-                            "Now updated to <a href='https://www.npmjs.com/package/prettydiff'>NPM</a>.",
-                            "Check out the <a href='https://sparser.io/demo/'>parsing utility</a> that makes this possible."
+                            "Available in your editor with <a href=\"https://unibeautify.com/\">Unibeautify</a>",
+                            "Updated to <a href=\"https://www.npmjs.com/package/prettydiff\">NPM</a>.",
+                            "Check out the <a href=\"https://sparser.io/demo/\">parsing utility</a> that makes this possible."
                         ];
                     if (headline !== null) {
                         headtext.innerHTML = circulation[Math.floor(x * circulation.length)];
