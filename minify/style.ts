@@ -18,7 +18,7 @@
             countx:number   = 0;
 
         //beautification loop
-        if (options.top_comments === true && data.types[a] === "comment" && options.start === 0) {
+        if (options.top_comments === true && options.minify_keep_comments === false && data.types[a] === "comment" && options.start === 0) {
             if (a > 0) {
                 build.push(lf);
             }
@@ -30,7 +30,17 @@
         }
         if (a < len) {
             do {
-                if (data.types[a] !== "comment") {
+                if (data.types[a] === "comment" && options.minify_keep_comments === true) {
+                    if (data.types[a - 1] !== "comment" && a > 0) {
+                        build.push(lf);
+                        build.push(lf);
+                    }
+                    build.push(data.token[a]);
+                    if (data.types[a + 1] !== "comment") {
+                        build.push(lf);
+                    }
+                    build.push(lf);
+                } else if (data.types[a] !== "comment") {
                     build.push(data.token[a]);
                     if (options.wrap > 0 && options.minify_wrap === true) {
                         count = count + data.token[a].length;

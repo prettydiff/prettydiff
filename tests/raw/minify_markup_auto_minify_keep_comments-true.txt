@@ -1,0 +1,1 @@
+<div> <!-- test --><!-- second --><img class="asdf" src="qer"> asdf</div>

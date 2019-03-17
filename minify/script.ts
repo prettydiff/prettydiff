@@ -41,7 +41,7 @@
         let a:number        = options.start,
             count:number    = 0,
             external:string = "";
-        if (options.top_comments === true && data.types[a] === "comment" && options.start === 0) {
+        if (options.top_comments === true && options.minify_keep_comments === false && data.types[a] === "comment" && options.start === 0) {
             if (a > 0) {
                 build.push(lf);
             }
@@ -53,7 +53,17 @@
         }
         do {
             if (data.lexer[a] === lexer || prettydiff.minify[data.lexer[a]] === undefined) {
-                if (data.types[a] !== "comment") {
+                if (data.types[a] === "comment" && options.minify_keep_comments === true) {
+                    if (data.types[a - 1] !== "comment" && a > 0) {
+                        build.push(lf);
+                        build.push(lf);
+                    }
+                    build.push(data.token[a]);
+                    if (data.types[a + 1] !== "comment") {
+                        build.push(lf);
+                    }
+                    build.push(lf);
+                } else if (data.types[a] !== "comment") {
                     if (data.types[a - 1] === "operator" && data.types[a] === "operator" && data.token[a] !== "!") {
                         build.push(" ");
                         count = count + 1;

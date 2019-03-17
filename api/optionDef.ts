@@ -468,6 +468,15 @@
             mode      : "beautify",
             type      : "number"
         },
+        minify_keep_comments : {
+            api       : "any",
+            default   : false,
+            definition: "Prevents minification from stripping out comments.",
+            label     : "Keep Comments",
+            lexer     : "any",
+            mode      : "minify",
+            type      : "boolean"
+        },
         minify_wrap      : {
             api       : "any",
             default   : false,

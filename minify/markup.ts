@@ -109,11 +109,15 @@
                                 level.push(-10);
                             }
                         } else if (data.types[a] === "comment") {
-                            if (comstart < 0) {
-                                comstart = a;
-                            }
-                            if (data.types[a + 1] !== "comment") {
-                                comment();
+                            if (options.minify_keep_comments === true) {
+                                level.push(0);
+                            } else {
+                                if (comstart < 0) {
+                                    comstart = a;
+                                }
+                                if (data.types[a + 1] !== "comment") {
+                                    comment();
+                                }
                             }
                         } else if (data.types[a] !== "comment") {
                             if (data.types[a] === "content") {
@@ -202,8 +206,20 @@
                     if ((data.types[a] === "start" || data.types[a] === "singleton" || data.types[a] === "xml" || data.types[a] === "sgml") && data.types[a].indexOf("attribute") < 0 && a < c - 1 && data.types[a + 1] !== undefined && data.types[a + 1].indexOf("attribute") > -1) {
                         attributeEnd();
                     }
-                    if (data.types[a] !== "comment" && data.types[a] !== "comment_attribute") {
-                        build.push(data.token[a]);
+                    if (options.minify_keep_comments === true || (data.types[a] !== "comment" && data.types[a] !== "comment_attribute")) {
+                        if (data.types[a] === "comment") {
+                            if (data.types[a - 1] !== "comment") {
+                                build.push(lf);
+                                build.push(lf);
+                            }
+                            build.push(data.token[a]);
+                            if (data.types[a + 1] !== "comment") {
+                                build.push(lf);
+                            }
+                            build.push(lf);
+                        } else {
+                            build.push(data.token[a]);
+                        }
                         count = count + data.token[a].length;
                         if ((data.types[a] === "template" || data.types[a] === "template_start") && data.types[a - 1] === "content" && options.mode === "minify" && levels[a] === -20) {
                             build.push(" ");
@@ -217,7 +233,7 @@
                         }
                     }
                     next = a + 1;
-                    if (next < c - 1 && data.types[next].indexOf("comment") > -1) {
+                    if (next < c - 1 && data.types[next].indexOf("comment") > -1 && options.minify_keep_comments === false) {
                         do {
                             next = next + 1;
                         } while (next < c - 1 && data.types[next].indexOf("comment") > -1);

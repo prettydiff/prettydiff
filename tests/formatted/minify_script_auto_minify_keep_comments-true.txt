@@ -1,0 +1,6 @@
+function(){var a=1;
+
+// a comment retained
+// second comment here
+
+return a}
