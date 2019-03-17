@@ -191,8 +191,7 @@
                     }
                 } while (b > 0);
             };
-        let output:string     = "",
-            indent:number   = options.indent_level,
+        let indent:number   = options.indent_level,
             mixin:boolean    = false,
             a:number        = 0;
         if (options.vertical === true && options.compressed_css === false) {
@@ -376,11 +375,7 @@
             a = a + 1;
         } while (a < len);
         prettydiff.iterator = len - 1;
-        if (options.new_line === true && a === data.token.length && build[build.length - 1].indexOf(lf) < 0) {
-            build.push(lf);
-        }
-        output = build.join("");
-        return output;
+        return build.join("");
     };
     global.prettydiff.beautify.style = style;
 }());

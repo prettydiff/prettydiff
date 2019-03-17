@@ -598,15 +598,12 @@
                 lastLevel:number = options.indent_level;
             do {
                 if (data.lexer[a] === lexer || prettydiff.beautify[data.lexer[a]] === undefined) {
-                    if (data.token[a] === "</prettydiffli>" && options.correct === true) {
-                        data.token[a] = "</li>";
-                    }
                     if ((data.types[a] === "start" || data.types[a] === "singleton" || data.types[a] === "xml" || data.types[a] === "sgml") && data.types[a].indexOf("attribute") < 0 && a < c - 1 && data.types[a + 1] !== undefined && data.types[a + 1].indexOf("attribute") > -1) {
                         attributeEnd();
                     }
                     if (data.token[a] !== undefined && data.token[a].indexOf(lf) > 0 && ((data.types[a] === "content" && options.preserve_text === false) || data.types[a] === "comment" || data.types[a] === "attribute")) {
                         multiline();
-                    } else if (data.token[a] !== "</prettydiffli>") {
+                    } else {
                         build.push(data.token[a]);
                         if (levels[a] === -10 && a < c - 1) {
                             build.push(" ");
@@ -635,9 +632,6 @@
             prettydiff.iterator = c - 1;
             if (build[0] === lf || build[0] === " ") {
                 build[0] = "";
-            }
-            if (options.new_line === true && a === data.token.length && levels[a - 1] < 0) {
-                build.push(lf);
             }
             return build.join("");
         }());

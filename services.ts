@@ -3969,7 +3969,7 @@ interface readFile {
                                         dirlist.push(`<li><a href="${uri.replace(/\/$/, "")}/${value}?${random}">${value}</a></li>`);
                                     }
                                 });
-                                dirlist.push("</ul></body></html>");
+                                dirlist.push("</ul>");
                                 response.writeHead(200, {"Content-Type": "text/html"});
                                 response.write(page.replace("insertme", dirlist.join("")));
                                 response.end();
@@ -3996,7 +3996,7 @@ interface readFile {
                                     response.writeHead(200, {"Content-Type": "text/css"});
                                 } else if (localpath.indexOf(".xhtml") === localpath.length - 6) {
                                     response.writeHead(200, {"Content-Type": "application/xhtml+xml"});
-                                } else if (localpath.indexOf(".html") === localpath.length - 5 || localpath.indexOf(".html") === localpath.length - 4) {
+                                } else if (localpath.indexOf(".html") === localpath.length - 5 || localpath.indexOf(".htm") === localpath.length - 4) {
                                     response.writeHead(200, {"Content-Type": "text/html"});
                                 } else {
                                     response.writeHead(200, {"Content-Type": "text/plain"});
@@ -4346,6 +4346,7 @@ interface readFile {
                     a = a + 1;
                 } while (a < len);
                 options.correct      = true;
+                options.crlf         = false;
                 options.diff_context = 4;
                 options.end_comma    = "none";
                 options.lexerOptions = {};

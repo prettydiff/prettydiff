@@ -351,6 +351,9 @@
                     a = a + 1;
                 } while (a < len);
             },
+            lf:string = (options.crlf === true)
+                ? "\r\n"
+                : "\n",
             // prettydiff file insertion start
             prettydiff:any = {};
         // prettydiff file insertion end
@@ -721,6 +724,11 @@
                 options.parsed = globalAPI.sparser.parser();
                 result = prettydiff[modeValue][options.lexer](options);
             }
+        }
+        if (options.new_line === true) {
+            result = result.replace(/\s*$/, lf);
+        } else {
+            result = result.replace(/\s+$/, "");
         }
         if (options.complete_document === true && options.jsscope !== "report") {
             // finalFile insertion start

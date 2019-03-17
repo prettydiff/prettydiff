@@ -3149,11 +3149,6 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             return hourString + minuteString + secondString;
                         }());
                         meta.outsize = output.length;
-                        if (options.new_line === true) {
-                            output = output.replace(/(\s+)$/, "\r\n");
-                        } else {
-                            output = output.replace(/(\s+)$/, "");
-                        }
                         data.zIndex = data.zIndex + 1;
                         if (autolexer === true) {
                             options.lexer = "auto";

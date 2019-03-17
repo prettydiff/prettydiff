@@ -459,7 +459,7 @@
         },
         method_chain     : {
             api       : "any",
-            default   : "3",
+            default   : 3,
             definition: "When to break consecutively chained methods and properties onto separate lines. " +
                     "A negative value disables this option. A value of 0 ensures method chains are ne" +
                     "ver broken.",
