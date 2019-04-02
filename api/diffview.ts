@@ -103,8 +103,12 @@
                                 } else if (code[0] === "replace") {
                                     codes[len] = ["replace", code[1], code[1] + 1, prior[3], prior[4]];
                                     prior = codes[len];
-                                    c = prior[2];
-                                    d = prior[4];
+                                    c = (prior[2] > 0)
+                                        ? prior[2]
+                                        : 0;
+                                    d = (prior[4] > 0)
+                                        ? prior[4]
+                                        : 0;
                                     return;
                                 }
                             } else if (prior[0] === "insert" && code[0] === "delete" && code[2] - code[1] === 1) {
@@ -133,8 +137,12 @@
                                     code[3] = code[3] + 1;
                                 } else if (code[0] === "replace") {
                                     codes[len] = ["replace", prior[1], prior[2], code[3], code[4] + 1];
-                                    c = prior[2];
-                                    d = prior[4];
+                                    c = (prior[2] > 0)
+                                        ? prior[2]
+                                        : 0;
+                                    d = (prior[4] > 0)
+                                        ? prior[4]
+                                        : 0;
                                     return;
                                 }
                             } else if (prior[0] === "delete" && code[0] === "insert" && code[4] - code[3] === 1) {
@@ -142,14 +150,22 @@
                                 code = ["replace", prior[2], prior[2] + 1, code[3], code[4]];
                             } else if (prior[0] === "replace") {
                                 if (code[0] === "delete" && code[2] - 1 > a) {
-                                    c = code[2] - 1;
-                                    d = prior[3];
+                                    c = (code[2] - 1 > 0)
+                                        ? code[2] - 1
+                                        : 0;
+                                    d = (prior[3] > 0)
+                                        ? prior[3]
+                                        : 0;
                                     codes[len] = ["delete", prior[1], code[2] - 1, -1, -1];
                                     return;
                                 }
                                 if (code[0] === "insert" && code[4] - 1 > b) {
-                                    c = prior[1];
-                                    d = code[4] - 1;
+                                    c = (prior[1] > 0)
+                                        ? prior[1]
+                                        : 0;
+                                    d = (code[4] - 1 > 0)
+                                        ? code[4] - 1
+                                        : 0;
                                     codes[len] = ["insert", -1, -1, prior[3], code[4] - 1];
                                     return;
                                 }

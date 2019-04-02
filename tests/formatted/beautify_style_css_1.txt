@@ -8,8 +8,8 @@ $margin: 16px;
 }
 .border {
     border-color: $blue;
-    margin      : $margin/2;
-    padding     : $margin/2;
+    margin      : $margin / 2;
+    padding     : $margin / 2;
 }
 
 .styleguide-format {
@@ -32,8 +32,8 @@ ul.category-list {
         font-weight: bold;
         text-align : center;
     }
-    td,
-    th {
+    th,
+    td {
         padding: 2px;
     }
 }
@@ -73,9 +73,9 @@ a:hover {
 $defaultFont: Helvetica, Arial, sans-serif, "Courier New";
 $primaryColor: #80c040;
 #header h2,
-.favorite li,
+p,
 li,
-p {
+.favorite li {
     color      : $primaryColor;
     font-family: $defaultFont;
     font-size  : 24px;
@@ -97,7 +97,7 @@ a {
 $the-border: 1px;
 #header {
     border-left : $the-border;
-    border-right: $the-border*2;
+    border-right: $the-border * 2;
 }
 
 a.th {

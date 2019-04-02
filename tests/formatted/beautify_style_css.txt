@@ -5,27 +5,13 @@ $defaultFont: Helvetica, Arial, sans-serif, "Courier New";
 $margin: 16px;
 $primaryColor: #80c040;
 $the-border: 1px;
-@mixin left($dist) {
-    float      : left;
-    margin-left: $dist;
-}
-@mixin table-scaffolding {
-    td,
-    th {
-        padding: 2px;
-    }
-    th {
-        font-weight: bold;
-        text-align : center;
-    }
-}
 #data {
     @include left(10px);
     @include table-scaffolding;
 }
 #header {
     border-left : $the-border;
-    border-right: $the-border*2;
+    border-right: $the-border * 2;
 }
 #header h2,
 .favorite li,
@@ -37,8 +23,8 @@ p {
 }
 .border {
     border-color: $blue;
-    margin      : $margin/2;
-    padding     : $margin/2;
+    margin      : $margin / 2;
+    padding     : $margin / 2;
 }
 .button {
     -moz-transition   : all 0.25s ease-in-out;
@@ -60,6 +46,20 @@ p {
     background: rgba(0, 0, 0, 0.5);
     border    : 1px 2px 1px 2px solid #00FF00;
     color     : #000;
+}
+@mixin left($dist) {
+    float      : left;
+    margin-left: $dist;
+}
+@mixin table-scaffolding {
+    td,
+    th {
+        padding: 2px;
+    }
+    th {
+        font-weight: bold;
+        text-align : center;
+    }
 }
 a {
     margin-left : 0 !important;

@@ -337,7 +337,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             .sequence(event);
                     },
                     backspace       = function dom_load_backspace(event:KeyboardEvent):boolean {
-                        const bb:Element = event.srcElement || <Element>event.target;
+                        const bb:Element = <Element>event.srcElement || <Element>event.target;
                         if (event.keyCode === 8) {
                             if (bb.nodeName === "textarea" || (bb.nodeName === "input" && (bb.getAttribute("type") === "text" || bb.getAttribute("type") === "password"))) {
                                 return true;

@@ -46,6 +46,8 @@
                         b:number = 0,
                         quote:string = "",
                         item:string = "",
+                        lang:string = "",
+                        lex:string = "",
                         valkey:string[] = [],
                         op:string[] = [];
                     const ops:string[] = [],
@@ -186,11 +188,19 @@
                                             }
                                         } while (b > 0);
                                     } else {
+                                        if (op[0] === "language") {
+                                            lang = op[1];
+                                        } else if (op[0] === "lexer") {
+                                            lex = op[1];
+                                        }
                                         options[op[0]] = op[1];
                                     }
                                 }
                             }
                         } while (a > 0);
+                        if (lex === "" && lang !== "") {
+                            lex = prettydiff.api.language.setlexer(lang);
+                        }
                     }
                 }
         

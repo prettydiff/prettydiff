@@ -19,8 +19,8 @@
             width: 70%;
         }
         // Card Utility Classes
-        .alert span,
-        .itemportCodeDiffer {
+        .itemportCodeDiffer,
+        .alert span {
             background-color: lighten(@color-error, 20%);
             color           : @color-black;
         }
@@ -105,20 +105,20 @@
                 top        : -0.5em;
             }
         }
-        .sliceSummaryMessages,
-        .sliceSummaryOperatedBy,
         .thingCarrier,
         .thingLabelMultiCity,
         .thingOnd,
         .thingStopsDuration,
-        .thingTier {
+        .thingTier,
+        .sliceSummaryOperatedBy,
+        .sliceSummaryMessages {
             color      : @color-neutral-md;
             font-size  : @font-size-xs;
             line-height: @line-height-sm;
         }
-        .itemResultDetailsToggle,
+        .sliceSummaryOperatedBy,
         .sliceSummaryMessages,
-        .sliceSummaryOperatedBy {
+        .itemResultDetailsToggle {
             clear       : both;
             padding-left: @carrier-logo-width + @offset-horizontal-md; // match width of logo column to align with thing times
             padding-top : @offset-vertical-xs;
@@ -229,8 +229,8 @@
                 span.i {
                     text-indent: 0;
                     font-size  : @font-size-md;
-                    em,
-                    span {
+                    span,
+                    em {
                         display    : inline-block;
                         text-indent: -2000em;
                         visibility : hidden;
@@ -278,9 +278,9 @@
             @ie7-offset-horizontal-top   : 5px;
             @ie7-offset-horizontal-bottom: 2px;
             @button-line-height          : (@font-size-xl + 3); // make everything work like firefox
-            @vertical-padding            : (@input-height - (2 * @button-border-width) - @button-line-height) / 2;
+            @vertical-padding            : (@input-height -(2 * @button-border-width) - @button-line-height) / 2;
             @ie7-height                  : @input-height - @ie7-offset-horizontal-top - @ie7-offset-horizontal-bottom - @button-border-width;
-            @ie-height                   : @input-height - (2 * @vertical-padding) - (2 * @button-border-width);
+            @ie-height                   : @input-height -(2 * @vertical-padding) - (2 * @button-border-width);
 
             background-color             : @color-button;
             .background-image(linear-gradient(to bottom, lighten(@color-button, 10%) 0%, @color-button 100%));
@@ -427,10 +427,10 @@
         font-size  : @font-size-sm;
         line-height: @line-height-md;
     }
+    .soloLeg .timeline-group:first-child,
     .firstLeg .timeline-group:first-child,
-    .lastLeg .timeline-group.last-child,
     .soloLeg .timeline-group.last-child,
-    .soloLeg .timeline-group:first-child {
+    .lastLeg .timeline-group.last-child {
         .timeline-label {
             color: @color-black;
         }
@@ -438,8 +438,8 @@
             background: @color-brand-2;
         }
     }
-    .firstLeg .timeline-group:first-child .timeline-marker:before,
-    .soloLeg .timeline-group:first-child .timeline-marker:before {
+    .soloLeg .timeline-group:first-child .timeline-marker:before,
+    .firstLeg .timeline-group:first-child .timeline-marker:before {
         border-top: 5px solid @color-white-space;
         content   : "";
         height    : 0;
@@ -448,8 +448,8 @@
         top       : -7px;
         width     : 100%;
     }
-    .lastLeg .timeline-group.last-child .timeline-marker:before,
-    .soloLeg .timeline-group.last-child .timeline-marker:before {
+    .soloLeg .timeline-group.last-child .timeline-marker:before,
+    .lastLeg .timeline-group.last-child .timeline-marker:before {
         background: url("/image/global/vertical-dash.png") repeat-y 50% 0;
         content   : "";
         height    : 5px;
@@ -458,8 +458,8 @@
         top       : -7px;
         width     : 100%;
     }
-    .lastLeg .timeline-group.last-child .timeline-time,
-    .soloLeg .timeline-group.last-child .timeline-time {
+    .soloLeg .timeline-group.last-child .timeline-time,
+    .lastLeg .timeline-group.last-child .timeline-time {
         background: none;
     }
     .timeline-thingInfo {
@@ -518,8 +518,8 @@
                 margin-left: 0;
             }
         }
-        .lastLeg .timeline-group.last-child .timeline-item,
-        .soloLeg .timeline-group.last-child .timeline-item {
+        .soloLeg .timeline-group.last-child .timeline-item,
+        .lastLeg .timeline-group.last-child .timeline-item {
             background: none;
         }
     }
@@ -609,10 +609,10 @@
                 }
                 .itemCard-button .button-primary {
                     &,
-                    &:active,
+                    &:visited,
                     &:focus,
                     &:hover,
-                    &:visited {
+                    &:active {
                         // convert to an invisible button that covers the entire card at smallest
                         // breakpoints
                         background-color: transparent;
@@ -652,12 +652,12 @@
                 .sliceGroup-stopover {
                     width: 28%;
                 }
-                .sliceSummaryMessages,
-                .sliceSummaryOperatedBy {
+                .sliceSummaryOperatedBy,
+                .sliceSummaryMessages {
                     padding-left: 0;
                 }
-                [data-tooltip]:hover:after,
-                [data-tooltip]:hover:before {
+                [data-tooltip]:hover:before,
+                [data-tooltip]:hover:after {
                     content: " ";
                     display: none;
                 }
@@ -718,8 +718,8 @@
                     }
                 }
             }
-            .lastLeg .timeline-group.last-child .timeline-item,
-            .soloLeg .timeline-group.last-child .timeline-item {
+            .soloLeg .timeline-group.last-child .timeline-item,
+            .lastLeg .timeline-group.last-child .timeline-item {
                 background: none;
             }
             .itemcost .i-baggage-x {
@@ -737,10 +737,7 @@
     @xxs: {
         .@{targetClass} {
             .itemResultsCard {
-                font-size: @font-size-xs + 1px;
-                
-
-                // 13px
+                font-size: @font-size-xs + 1px; // 13px
 
                 .sliceGroup {
                     padding-right: 1px;
@@ -803,8 +800,8 @@
                         font-size: @font-size-xs + 1px; // 13px
                     }
                 }
-                .lastLeg .timeline-group.last-child .timeline-item,
-                .soloLeg .timeline-group.last-child .timeline-item {
+                .soloLeg .timeline-group.last-child .timeline-item,
+                .lastLeg .timeline-group.last-child .timeline-item {
                     background: none;
                 }
             }

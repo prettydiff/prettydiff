@@ -5,11 +5,17 @@
 @import url('reports.css');
 @import url('documentation.css');
 @import url('page_specific.css');
-@media (max-width: 1000px){
+@media print{#prettydiff #webtool p,
+#prettydiff #webtool ul,
+#prettydiff .options,#prettydiff ul{
+display:none;}#prettydiff #webtool td{
+font-size:0.8em;white-space:normal;}
+#prettydiff div{width:100%;}}
+@media(max-width: 1000px){
 #prettydiff #functionGroup{height:4em;}
 #prettydiff #webtool #infolinks{
 float:left;margin:4em 0 -8em;padding:0;}
-}@media (max-width: 575px){
+}@media(max-width: 575px){
 #prettydiff #webtool #functionGroup{
 height:6em;}
 #prettydiff #webtool #functionGroup span
@@ -17,8 +23,8 @@ height:6em;}
 #prettydiff #webtool #infolinks{
 float:left;margin:6em 0 -12em;padding:0;
 }#prettydiff #webtool .apiname,
-#prettydiff #webtool .option-description{
-display:none;}}@media (max-width: 640px)
+#prettydiff #webtool .option-description
+{display:none;}}@media(max-width: 640px)
 {#prettydiff #codeInput label{
 display:none;}#prettydiff #dcolorScheme{
 margin:0 0 1em;}#prettydiff #diffBase,
@@ -30,10 +36,5 @@ margin:0;}#prettydiff #reports{
 display:none;}#prettydiff #update{
 margin-top:2.75em;}
 #prettydiff .file input,
-#prettydiff .labeltext input{width:12em
-;}}@media print{#prettydiff #webtool p,
-#prettydiff #webtool ul,
-#prettydiff .options,#prettydiff ul{
-display:none;}#prettydiff #webtool td{
-font-size:0.8em;white-space:normal;}
-#prettydiff div{width:100%;}}
+#prettydiff .labeltext input{width:12em;
+}}

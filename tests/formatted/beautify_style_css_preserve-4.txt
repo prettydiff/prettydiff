@@ -6,7 +6,26 @@
 @import url("documentation.css");
 @import url("page_specific.css");
 
-@media (max-width: 1000px) {
+
+
+
+@media print {
+    #prettydiff #webtool p,
+    #prettydiff #webtool ul,
+    #prettydiff .options,
+    #prettydiff ul {
+        display: none;
+    }
+    #prettydiff #webtool td {
+        font-size  : 0.8em;
+        white-space: normal;
+    }
+    #prettydiff div {
+        width: 100%;
+    }
+}
+
+@media(max-width: 1000px) {
     #prettydiff #functionGroup {
         height: 4em;
     }
@@ -16,7 +35,7 @@
         padding: 0;
     }
 }
-@media (max-width: 575px) {
+@media(max-width: 575px) {
     #prettydiff #webtool #functionGroup {
         height: 6em;
     }
@@ -33,7 +52,7 @@
         display: none;
     }
 }
-@media (max-width: 640px) {
+@media(max-width: 640px) {
     #prettydiff #codeInput label {
         display: none;
     }
@@ -61,24 +80,5 @@
     #prettydiff .file input,
     #prettydiff .labeltext input {
         width: 12em;
-    }
-}
-
-
-
-
-@media print {
-    #prettydiff #webtool p,
-    #prettydiff #webtool ul,
-    #prettydiff .options,
-    #prettydiff ul {
-        display: none;
-    }
-    #prettydiff #webtool td {
-        font-size  : 0.8em;
-        white-space: normal;
-    }
-    #prettydiff div {
-        width: 100%;
     }
 }

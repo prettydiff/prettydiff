@@ -1,4 +1,6 @@
-#prettydiff .report .analysis .parseData td, #prettydiff table.code td, #prettydiff table.code th {
+#prettydiff .report .analysis .parseData td,
+#prettydiff table.code td,
+#prettydiff table.code th {
     font-family: 'Courier New', Courier, 'Lucida Console', monospace;
     text-align : left;
     white-space: pre;
