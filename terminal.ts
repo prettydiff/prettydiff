@@ -1,4 +1,4 @@
-import { Stats } from "fs";
+import { Stats, fstat } from "fs";
 import * as http from "http";
 import { Stream, Writable } from "stream";
 import { Hash } from "crypto";
@@ -42,14 +42,13 @@ interface readFile {
         js:string = `${projectPath}js${sep}`,
         api:string = `${js}api${sep}`,
         libFiles:string[] = [api, `${js}beautify${sep}`, `${js}minify${sep}`, `${js}mode.js`],
-        // node option default start
-        options:any = {},
+        // node version start
         version:any = {
             date: "",
             number: "",
             parse: ""
         },
-        // node option default end
+        // node version end
         text:any     = {
             angry    : "\u001b[1m\u001b[31m",
             blue     : "\u001b[34m",
@@ -73,7 +72,6 @@ interface readFile {
             diff: [],
             source: []
         },
-        prettydiff:any = {},
         commands:commandList = {
             //analysis: {
             //    description: "Perform Pretty Diff's code analysis operation.",
@@ -451,7 +449,217 @@ interface readFile {
             store: [],
             test: false
         },
-        apps:any = {};
+        apps:any = {},
+        args = function node_args():void {
+            const requireDir = function node_args_requireDir(item:string):void {
+                    let counts = {
+                        items: 0,
+                        total: 0
+                    };
+                    const dirlist:string[] = item.split(sep),
+                        dirname:string = (dirlist[dirlist.length - 1] === "")
+                            ? dirlist[dirlist.length - 2]
+                            : dirlist[dirlist.length - 1],
+                        completeTest = function node_args_requireDir_completeTest(filesLength:number):boolean {
+                            counts.total = counts.total + filesLength;
+                            if (counts.total === counts.items) {
+                                dirs = dirs + 1;
+                                if (dirs === dirstotal) {
+                                    if (process.argv.length > 0) {
+                                        readOptions();
+                                    }
+                                    prettydiff = global.prettydiff;
+                                    apps[command]();
+                                }
+                                return true;
+                            }
+                            return false;
+                        },
+                        readdir = function node_args_requireDir_dirwrapper(start:string):void {
+                            node.fs.stat(start, function node_args_requireDir_dirwrapper_stat(ers:Error, stat:Stats):void {
+                                if (ers !== null) {
+                                    console.log(ers.toString());
+                                    process.exit(1);
+                                    return;
+                                }
+                                if (stat.isDirectory() === true) {
+                                    prettydiff[dirname] = {};
+                                    node.fs.readdir(start, function node_args_requireDir_dirwrapper_stat_readdir(err:Error, files:string[]) {
+                                        if (err !== null) {
+                                            console.log(err.toString());
+                                            process.exit(1);
+                                            return;
+                                        }
+                                        if (completeTest(files.length) === true) {
+                                            return;
+                                        }
+                                        files.forEach(function node_args_requireDir_dirwrapper_stat_readdir_each(value:string) {
+                                            const valpath:string = start + value;
+                                            node.fs.stat(valpath, function node_args_requireDir_dirwrapper_stat_readdir_each_stat(errs:Error, stats:Stats):void {
+                                                if (errs !== null) {
+                                                    console.log(errs.toString());
+                                                    process.exit(1);
+                                                    return;
+                                                }
+                                                if (stats.isFile() === true && start === `${projectPath}js${sep}api${sep}`) {
+                                                    require(valpath);
+                                                    counts.items = counts.items + 1;
+                                                } else if (stats.isDirectory() === true) {
+                                                    node_args_requireDir_dirwrapper(valpath);
+                                                } else {
+                                                    counts.items = counts.items + 1;
+                                                }
+                                                if (completeTest(0) === true) {
+                                                    return;
+                                                }
+                                            });
+                                        });
+                                    });
+                                }
+                                if (stat.isFile() === true) {
+                                    require(item);
+                                    if (completeTest(0) === true) {
+                                        return;
+                                    }
+                                }
+                            });
+                        };
+                    dirstotal = dirstotal + 1;
+                    readdir(item);
+                },
+                readOptions = function node_args_readOptions():void {
+                    const list:string[] = process.argv,
+                        def:optionDef = prettydiff.api.optionDef,
+                        keys:string[] = (command === "options")
+                            ? Object.keys(def.mode)
+                            : [],
+                        obj = (command === "options")
+                            ? def.mode
+                            : options,
+                        optionName = function node_args_optionName(bindArgument:boolean):void {
+                            if (a === 0 || options[list[a]] === undefined) {
+                                if (keys.indexOf(list[a]) < 0 && def[list[a]] === undefined) {
+                                    list.splice(a, 1);
+                                    len = len - 1;
+                                    a = a - 1;
+                                }
+                                return;
+                            }
+                            if (bindArgument === true && list[a + 1] !== undefined && list[a + 1].length > 0) {
+                                list[a] = `${list[a]}:${list[a + 1]}`;
+                                list.splice(a + 1, 1);
+                                len = len - 1;
+                            }
+                            list.splice(0, 0, list[a]);
+                            list.splice(a + 1, 1);
+                        };
+                    let split:string = "",
+                        value:string = "",
+                        name:string = "",
+                        a:number = 0,
+                        si:number = 0,
+                        len:number = list.length;
+                    do {
+                        list[a] = list[a].replace(/^(-+)/, "");
+                        if (list[a] === "verbose") {
+                            verbose = true;
+                            list.splice(a, 1);
+                            len = len - 1;
+                            a = a - 1;
+                        } else {
+                            si = list[a].indexOf("=");
+                            if (
+                                si > 0 &&
+                                (list[a].indexOf("\"") < 0 || si < list[a].indexOf("\"")) &&
+                                (list[a].indexOf("'") < 0 || si < list[a].indexOf("'")) &&
+                                (si < list[a].indexOf(":") || list[a].indexOf(":") < 0)
+                            ) {
+                                split = "=";
+                            } else {
+                                split = ":";
+                            }
+                            if (list[a + 1] === undefined) {
+                                si = 99;
+                            } else {
+                                si = list[a + 1].indexOf(split);
+                            }
+                            if (
+                                obj[list[a]] !== undefined &&
+                                list[a + 1] !== undefined &&
+                                obj[list[a + 1]] === undefined &&
+                                (
+                                    si < 0 || 
+                                    (si > list[a + 1].indexOf("\"") && list[a + 1].indexOf("\"") > -1) ||
+                                    (si > list[a + 1].indexOf("'") && list[a + 1].indexOf("'") > -1)
+                                )
+                            ) {
+                                if (command === "options") {
+                                    optionName(true);
+                                } else {
+                                    options[list[a]] = list[a + 1];
+                                    a = a + 1;
+                                }
+                            } else if (list[a].indexOf(split) > 0 || (list[a].indexOf(split) < 0 && list[a + 1] !== undefined && (list[a + 1].charAt(0) === ":" || list[a + 1].charAt(0) === "="))) {
+                                if (list[a].indexOf(split) > 0) {
+                                    name = list[a].slice(0, list[a].indexOf(split)).toLowerCase();
+                                    value = list[a].slice(list[a].indexOf(split) + 1);
+                                } else {
+                                    name = list[a].toLowerCase();
+                                    value = list[a + 1].slice(1);
+                                    list.splice(a + 1, 1);
+                                    len = len - 1;
+                                }
+                                if (command === "options") {
+                                    if (keys.indexOf(name) > -1) {
+                                        if (value !== undefined && value.length > 0) {
+                                            list[a] = `${name}:${value}`;
+                                        } else {
+                                            list[a] = name;
+                                        }
+                                    } else {
+                                        list.splice(a, 1);
+                                        len = len - 1;
+                                    }
+                                } else if (options[name] !== undefined) {
+                                    if (value === "true" && def[name].type === "boolean") {
+                                        options[name] = true;
+                                    } else if (value === "false" && def[name].type === "boolean") {
+                                        options[name] = false;
+                                    } else if (isNaN(Number(value)) === false && def[name].type === "number") {
+                                        options[name] = Number(value);
+                                    } else if (def[name].values !== undefined && def[name].values[value] !== undefined) {
+                                        options[name] = value;
+                                    } else if (def[name].values === undefined) {
+                                        options[name] = value;
+                                    }
+                                }
+                            } else if (command === "options") {
+                                optionName(false);
+                            }
+                        }
+                        a = a + 1;
+                    } while (a < len);
+                    if (options.source === "" && process.argv.length > 0 && process.argv[0].indexOf("=") < 0 && process.argv[0].replace(/^[a-zA-Z]:\\/, "").indexOf(":") < 0) {
+                        if (command === "performance") {
+                            options.source = (process.argv.length < 1)
+                                ? ""
+                                : process.argv[1];
+                        } else {
+                            options.source = process.argv[0];
+                        }
+                    }
+                };
+            let dirs:number = 0,
+                dirstotal:number = 0;
+            options.binary_check = (
+                // eslint-disable-next-line
+                /\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u000b|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g
+            );
+            global.prettydiff = prettydiff;
+            libFiles.forEach(function node_args_each(value:string) {
+                requireDir(value);
+            });
+        };
     let verbose:boolean = false,
         errorflag:boolean = false,
         command:string = (function node_command():string {
@@ -586,216 +794,55 @@ interface readFile {
             }
             return filtered[0];
         }()),
+        prettydiff:pd,
+        options:any = {},
         writeflag:string = ""; // location of written assets in case of an error and they need to be deleted
 
-    (function node_args():void {
-        const requireDir = function node_args_requireDir(item:string):void {
-                let counts = {
-                    items: 0,
-                    total: 0
-                };
-                const dirlist:string[] = item.split(sep),
-                    dirname:string = (dirlist[dirlist.length - 1] === "")
-                        ? dirlist[dirlist.length - 2]
-                        : dirlist[dirlist.length - 1],
-                    completeTest = function node_args_requireDir_completeTest(filesLength:number):boolean {
-                        counts.total = counts.total + filesLength;
-                        if (counts.total === counts.items) {
-                            dirs = dirs + 1;
-                            if (dirs === dirstotal) {
-                                if (process.argv.length > 0) {
-                                    readOptions();
-                                }
-                                apps[command]();
-                            }
-                            return true;
-                        }
-                        return false;
-                    },
-                    readdir = function node_args_requireDir_dirwrapper(start:string):void {
-                        node.fs.stat(start, function node_args_requireDir_dirwrapper_stat(ers:Error, stat:Stats):void {
-                            if (ers !== null) {
-                                console.log(ers.toString());
-                                process.exit(1);
-                                return;
-                            }
-                            if (stat.isDirectory() === true) {
-                                prettydiff[dirname] = {};
-                                node.fs.readdir(start, function node_args_requireDir_dirwrapper_stat_readdir(err:Error, files:string[]) {
-                                    if (err !== null) {
-                                        console.log(err.toString());
-                                        process.exit(1);
-                                        return;
-                                    }
-                                    if (completeTest(files.length) === true) {
-                                        return;
-                                    }
-                                    files.forEach(function node_args_requireDir_dirwrapper_stat_readdir_each(value:string) {
-                                        const valpath:string = start + value;
-                                        node.fs.stat(valpath, function node_args_requireDir_dirwrapper_stat_readdir_each_stat(errs:Error, stats:Stats):void {
-                                            if (errs !== null) {
-                                                console.log(errs.toString());
-                                                process.exit(1);
-                                                return;
-                                            }
-                                            if (stats.isFile() === true && start === `${projectPath}js${sep}api${sep}`) {
-                                                require(valpath);
-                                                counts.items = counts.items + 1;
-                                            } else if (stats.isDirectory() === true) {
-                                                node_args_requireDir_dirwrapper(valpath);
-                                            } else {
-                                                counts.items = counts.items + 1;
-                                            }
-                                            if (completeTest(0) === true) {
-                                                return;
-                                            }
-                                        });
-                                    });
-                                });
-                            }
-                            if (stat.isFile() === true) {
-                                require(item);
-                                if (completeTest(0) === true) {
-                                    return;
-                                }
-                            }
-                        });
-                    };
-                dirstotal = dirstotal + 1;
-                readdir(item);
-            },
-            readOptions = function node_args_readOptions():void {
-                const list:string[] = process.argv,
-                    def:optionDef = prettydiff.api.optionDef,
-                    keys:string[] = (command === "options")
-                        ? Object.keys(def.mode)
-                        : [],
-                    obj = (command === "options")
-                        ? def.mode
-                        : options,
-                    optionName = function node_args_optionName(bindArgument:boolean):void {
-                        if (a === 0 || options[list[a]] === undefined) {
-                            if (keys.indexOf(list[a]) < 0 && def[list[a]] === undefined) {
-                                list.splice(a, 1);
-                                len = len - 1;
-                                a = a - 1;
-                            }
-                            return;
-                        }
-                        if (bindArgument === true && list[a + 1] !== undefined && list[a + 1].length > 0) {
-                            list[a] = `${list[a]}:${list[a + 1]}`;
-                            list.splice(a + 1, 1);
-                            len = len - 1;
-                        }
-                        list.splice(0, 0, list[a]);
-                        list.splice(a + 1, 1);
-                    };
-                let split:string = "",
-                    value:string = "",
-                    name:string = "",
-                    a:number = 0,
-                    si:number = 0,
-                    len:number = list.length;
-                do {
-                    list[a] = list[a].replace(/^(-+)/, "");
-                    if (list[a] === "verbose") {
-                        verbose = true;
-                        list.splice(a, 1);
-                        len = len - 1;
-                        a = a - 1;
+    (function prettytest():void {
+        node.fs.stat(`${js}prettydiff.js`, function prettytest_stat(ers:Error) {
+            if (ers !== null) {
+                let err:string = ers.toString();
+                if (err.indexOf("no such file or directory") > 0) {
+                    if (command === "build") {
+                        console.log(`This appears to be the first writing of js/prettydiff.js.  Please ${text.angry}run the build one more time${text.none}.`);
+                        global.prettydiff = (function prettytest_stat_dummy():pd {
+                            let func:any = function () {};
+                                func.api = {};
+                                func.beautify = {};
+                                func.iterator = 0;
+                                func.meta = {
+                                    error: "",
+                                    lang: ["", "", ""],
+                                    time: "",
+                                    insize: 0,
+                                    outsize: 0,
+                                    difftotal: 0,
+                                    difflines: 0
+                                };
+                                func.minify = {};
+                                func.options = {};
+                                func.scopes = []
+                            return func;
+                        }());
+                        prettydiff = global.prettydiff;
+                        args();
                     } else {
-                        si = list[a].indexOf("=");
-                        if (
-                            si > 0 &&
-                            (list[a].indexOf("\"") < 0 || si < list[a].indexOf("\"")) &&
-                            (list[a].indexOf("'") < 0 || si < list[a].indexOf("'")) &&
-                            (si < list[a].indexOf(":") || list[a].indexOf(":") < 0)
-                        ) {
-                            split = "=";
-                        } else {
-                            split = ":";
-                        }
-                        if (list[a + 1] === undefined) {
-                            si = 99;
-                        } else {
-                            si = list[a + 1].indexOf(split);
-                        }
-                        if (
-                            obj[list[a]] !== undefined &&
-                            list[a + 1] !== undefined &&
-                            obj[list[a + 1]] === undefined &&
-                            (
-                                si < 0 || 
-                                (si > list[a + 1].indexOf("\"") && list[a + 1].indexOf("\"") > -1) ||
-                                (si > list[a + 1].indexOf("'") && list[a + 1].indexOf("'") > -1)
-                            )
-                        ) {
-                            if (command === "options") {
-                                optionName(true);
-                            } else {
-                                options[list[a]] = list[a + 1];
-                                a = a + 1;
-                            }
-                        } else if (list[a].indexOf(split) > 0 || (list[a].indexOf(split) < 0 && list[a + 1] !== undefined && (list[a + 1].charAt(0) === ":" || list[a + 1].charAt(0) === "="))) {
-                            if (list[a].indexOf(split) > 0) {
-                                name = list[a].slice(0, list[a].indexOf(split)).toLowerCase();
-                                value = list[a].slice(list[a].indexOf(split) + 1);
-                            } else {
-                                name = list[a].toLowerCase();
-                                value = list[a + 1].slice(1);
-                                list.splice(a + 1, 1);
-                                len = len - 1;
-                            }
-                            if (command === "options") {
-                                if (keys.indexOf(name) > -1) {
-                                    if (value !== undefined && value.length > 0) {
-                                        list[a] = `${name}:${value}`;
-                                    } else {
-                                        list[a] = name;
-                                    }
-                                } else {
-                                    list.splice(a, 1);
-                                    len = len - 1;
-                                }
-                            } else if (options[name] !== undefined) {
-                                if (value === "true" && def[name].type === "boolean") {
-                                    options[name] = true;
-                                } else if (value === "false" && def[name].type === "boolean") {
-                                    options[name] = false;
-                                } else if (isNaN(Number(value)) === false && def[name].type === "number") {
-                                    options[name] = Number(value);
-                                } else if (def[name].values !== undefined && def[name].values[value] !== undefined) {
-                                    options[name] = value;
-                                } else if (def[name].values === undefined) {
-                                    options[name] = value;
-                                }
-                            }
-                        } else if (command === "options") {
-                            optionName(false);
-                        }
+                        console.log(`The file js/prettydiff.js has not been written.  Please run the build: ${text.cyan}node js/services build${text.none}`);
+                        process.exit(1);
+                        return;
                     }
-                    a = a + 1;
-                } while (a < len);
-                if (options.source === "" && process.argv.length > 0 && process.argv[0].indexOf("=") < 0 && process.argv[0].replace(/^[a-zA-Z]:\\/, "").indexOf(":") < 0) {
-                    if (command === "performance") {
-                        options.source = (process.argv.length < 1)
-                            ? ""
-                            : process.argv[1];
-                    } else {
-                        options.source = process.argv[0];
-                    }
+                } else {
+                    console.log(err);
+                    process.exit(1);
+                    return;
                 }
-            };
-        let dirs:number = 0,
-            dirstotal:number = 0;
-        options.api = "node";
-        options.binary_check = (
-            // eslint-disable-next-line
-            /\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u000b|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g
-        );
-        global.prettydiff = prettydiff;
-        libFiles.forEach(function node_args_each(value:string) {
-            requireDir(value);
+            } else {
+                global.prettydiff = require(`${js}prettydiff.js`);
+                prettydiff = global.prettydiff;
+                args();
+                options = prettydiff.options;
+                //options.api = "node";
+            }
         });
     }());
     apps.base64 = function node_apps_base64():void {
@@ -910,10 +957,10 @@ interface readFile {
                 build: [
                     "npminstall",
                     "sparser",
-                    "css",
-                    "optionsMarkdown",
                     "typescript",
-                    "libraries"
+                    "libraries",
+                    "css",
+                    "optionsMarkdown"
                 ],
                 test: [
                     "lint",
@@ -1046,13 +1093,16 @@ interface readFile {
                     let libraries:string = "",
                         mode:string = "",
                         saveas:string = "",
-                        parser:string = "";
+                        parser:string = "",
+                        defaults:string = "",
+                        webtool:string = "",
+                        terminal:string = "";
                     const flag = {
                             browser: false,
                             documentation: false,
                             html: false,
-                            node: false,
-                            prettydiff: false,
+                            mode: false,
+                            terminal: false,
                             webtool: false
                         },
                         date:number = Date.now(),
@@ -1096,23 +1146,6 @@ interface readFile {
                                             data = data.replace(new RegExp(ops.end + "\\s+"), ops.end + "\n");
                                         }
                                         data = [data.slice(0, start), ops.injectFlag + "\n", data.slice(end)].join("");
-                                    },
-                                    buildDefaults = function node_apps_build_libraries_modifyFile_read_buildDefault(api:"dom"|"node"):string {
-                                        const obj:any = {},
-                                            verse:string = (api === "node")
-                                                ? `version=${JSON.stringify(versionData)},`
-                                                : "";
-                                        let a:number = 0,
-                                            apikey = "";
-                                        do {
-                                            apikey = prettydiff.api.optionDef[optkeys[a]].api;
-                                            if (apikey === "any" || apikey === api) {
-                                                obj[optkeys[a]] = prettydiff.api.optionDef[optkeys[a]].default;
-                                            }
-                                            a = a + 1;
-                                        } while (a < keyslen);
-                                        obj.lexerOptions = {};
-                                        return `options=${JSON.stringify(obj)},${verse}`;
                                     },
                                     buildDocumentation = function node_apps_build_libraries_modifyFile_read_buildDocumentation():string {
                                         const allOptions:string[] = [];
@@ -1254,59 +1287,48 @@ interface readFile {
                                     data = data.replace(/(\.css\?\d*)/g, `.css?${date}`).replace(/(\.js\?\d*)/g, `.js?${date}`);
                                 } else if (fileFlag === "webtool") {
                                     modify({
-                                        end: "// end option defaults",
-                                        injectFlag: buildDefaults("dom"),
-                                        start:"// start option defaults"
-                                    });
-                                    modify({
                                         end: "// prettydiff dom insertion end",
-                                        injectFlag: saveas + libraries + mode,
+                                        injectFlag: saveas + libraries,
                                         start: "// prettydiff dom insertion start"
                                     });
-                                    data = `${parser + data.replace(/("|')use strict("|');/g, "").replace(/window\.sparser/g, "sparser")}}());`;
-                                } else if (fileFlag === "node") {
+                                    webtool = `${parser + data.replace(/("|')use strict("|');/g, "").replace(/window\.sparser/g, "sparser")}}());`;
+                                } else if (fileFlag === "terminal") {
                                     modify({
-                                        end: "// node option default end",
-                                        injectFlag: buildDefaults("node"),
-                                        start:"// node option default start"
+                                        end: "// node version end",
+                                        injectFlag: `version=${JSON.stringify(versionData)},`,
+                                        start:"// node version start"
                                     });
-                                } else if (fileFlag === "mode") {
-                                    modify({
-                                        end: "// prettydiff file insertion end",
-                                        injectFlag: `prettydiff={};${libraries}`,
-                                        start: "// prettydiff file insertion start"
-                                    });
+                                    terminal = data;
                                 }
-                                node.fs.writeFile(file, data, function node_apps_build_libraries_modifyFile_read_write(errw:Error) {
-                                    if (errw !== null && errw.toString() !== "") {
-                                        apps.errout([errw.toString()]);
-                                        return;
-                                    }
-                                    flag[fileFlag] = true;
-                                    if (flag.documentation === true && flag.html === true && flag.node === true && flag.webtool === true) {
-                                        let thirdparty:string = parser + libraries + mode.replace(/,\s*\/\/\s*prettydiff\s*file\s*insertion\s*start\s+prettydiff\s*=\s*\{\};\s*\/\/\s*prettydiff\s*file\s*insertion\s*end/, ";");
-                                        node.fs.writeFile(`${js}browser.js`, `${thirdparty}window.prettydiff=prettydiff;}());`, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser(erbr:Error) {
-                                            if (erbr !== null && erbr.toString() !== "") {
-                                                apps.errout([erbr.toString()]);
-                                                return;
-                                            }
-                                            flag.browser = true;
-                                            if (flag.prettydiff === true) {
-                                                next(`${text.green}Option details written to files.${text.none}`);
-                                            }
-                                        });
-                                        node.fs.writeFile(`${js}prettydiff.js`, `${thirdparty}module.exports=prettydiff;}());`, function node_apps_build_libraries_modifyFile_read_write_readParser_writePrettydiff(erth:Error) {
+                                flag[fileFlag] = true;
+                                if (flag.documentation === true && flag.html === true && flag.terminal === true && flag.webtool === true) {
+                                    let thirdparty:string = parser.replace(/const\s+parser\s*=/, "let prettydiff={};const parse=") + libraries;
+                                    node.fs.writeFile(`${js}prettydiff.js`, `${thirdparty}module.exports=prettydiff;return prettydiff;}());`, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser(erbr:Error) {
+                                        if (erbr !== null && erbr.toString() !== "") {
+                                            apps.errout([erbr.toString()]);
+                                            return;
+                                        }
+                                        node.fs.writeFile(`${js}browser.js`, `${thirdparty}window.prettydiff=prettydiff;return prettydiff;}());`, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser_writePrettydiff(erth:Error) {
                                             if (erth !== null && erth.toString() !== "") {
                                                 apps.errout([erth.toString()]);
                                                 return;
                                             }
-                                            flag.prettydiff = true;
-                                            if (flag.browser === true) {
-                                                next(`${text.green}Option details written to files.${text.none}`);
-                                            }
+                                            node.fs.writeFile(`${js}webtool.js`, webtool, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser_writePrettydiff_writeWebtool(erwb:Error) {
+                                                if (erwb !== null && erwb.toString() !== "") {
+                                                    apps.errout([erwb.toString()]);
+                                                    return;
+                                                }
+                                                node.fs.writeFile(`${js}services.js`, terminal, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser_writePrettydiff_writeWebtool_writeTerminal(ertr:Error) {
+                                                    if (ertr !== null && ertr.toString() !== "") {
+                                                        apps.errout([ertr.toString()]);
+                                                        return;
+                                                    }
+                                                    next(`${text.green}Application files built and written.${text.none}`);
+                                                });
+                                            });
                                         });
-                                    }
-                                });
+                                    });
+                                }
                             });
                         },
                         libraryFiles = function node_apps_build_libraries_libraryFiles() {
@@ -1332,7 +1354,7 @@ interface readFile {
                                             // both sparser and prettydiff contain a browser.js file, so it is important to target the correct one
                                             filedata = filedata
                                                 .replace(/("|')use strict("|');/g, "")
-                                                .replace(/\s*const\s+parser/, `"use strict";const prettydiff={api:{},beautify:{},defaults:${JSON.stringify(options)},minify:{}},parser`)
+                                                .replace(/\s*const\s+parser/, `"use strict";const parser`)
                                                 .replace(/window\.sparser/g, "sparser")
                                                 .replace(/sparser\s*=\s*sparser;\s*\}\(\)\);(prettydiff\.beautify=\{\};)?(prettydiff\.api=\{\};)?(prettydiff\.minify=\{\};)?/, "");
                                             parser = filedata;
@@ -1341,25 +1363,27 @@ interface readFile {
                                                 .replace(/(\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*)/, "")
                                                 .replace(/global\s*\.\s*prettydiff\s*\./g, "prettydiff.")
                                                 .replace(/("|')use strict("|');/, "");
-                                            if (filename === "mode.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
+                                            if (filename === "language.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
+                                                libraries = libraries + filedata.replace("global.sparser.libs.language", "prettydiff.api.language");
+                                            } else if (filename === "mode.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
                                                 mode = filedata
                                                     .replace(/global(API)?\./g, "")
                                                     .replace(/\/\*global\s+global(\s*,\s*window)?\*\//, "")
                                                     .replace(/globalAPI\s*=\s*\(options\.api\s*===\s*"dom"\)\s*\?\s*window\s*:\s*global,/, "")
                                                     .replace(/if\s*\(options\.api\s*===\s*"dom"\)\s*\{\s*globalAPI\s*=\s*window;\s*\}/, "")
-                                                    .replace(/,\s*\/\/\s*prettydiff file insertion start\s+prettydiff\s*=\s*\{\};/, ";");
-                                            } else if (filename === "language.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
-                                                libraries = libraries + filedata.replace("global.sparser.libs.language", "prettydiff.api.language");
+                                                    .replace(/,\s*\/\/\s*prettydiff file insertion start\s+prettydiff\s*=\s*\{\};/, ";")
+                                                    .replace(/\s*prettydiff\s*=\s*prettydiff;/, "")
+                                                    .replace(/pd\.options\s*=\s*\{\}/, `pd.options=${defaults}`);
                                             } else {
                                                 libraries = libraries + filedata;
                                             }
                                         }
                                         a = a + 1;
                                         if (a === filelen) {
-                                            modifyFile(`${js}services.js`, "node");
+                                            libraries = mode + libraries;
+                                            modifyFile(`${js}terminal.js`, "terminal");
                                             modifyFile(`${projectPath}index.xhtml`, "html");
                                             modifyFile(`${js}prettydiff-webtool.js`, "webtool");
-                                            modifyFile(`${js}mode.js`, "mode");
                                             modifyFile(`${projectPath}documentation.xhtml`, "documentation");
                                         }
                                     });
@@ -1376,9 +1400,6 @@ interface readFile {
                                                     apps.errout([errd.toString()]);
                                                     return;
                                                 }
-                                                const dirnames:string[] = pathitem.split(sep).filter(dirs => dirs !== ""),
-                                                    groupname:string = dirnames[dirnames.length - 1];
-                                                libraries = libraries + `prettydiff.${groupname}={};`;
                                                 filelen = filelen + (filelist.length - 1);
                                                 filelist.forEach(function node_apps_build_libraries_libraryFiles_stat_callback_readdir_each(value:string):void {
                                                     node_apps_build_libraries_libraryFiles_stat(pathitem + sep + value);
@@ -1419,6 +1440,20 @@ interface readFile {
                                         version.date = versionData.date;
                                         version.number = versionData.number;
                                         version.parse = versionData.parse;
+                                        defaults = (function node_apps_build_libraries_modifyFile_read_buildDefault():string {
+                                            const obj:any = {};
+                                            let a:number = 0,
+                                                apikey = "";
+                                            do {
+                                                apikey = prettydiff.api.optionDef[optkeys[a]].api;
+                                                if (apikey === "any" || apikey === api) {
+                                                    obj[optkeys[a]] = prettydiff.api.optionDef[optkeys[a]].default;
+                                                }
+                                                a = a + 1;
+                                            } while (a < keyslen);
+                                            obj.lexerOptions = {};
+                                            return JSON.stringify(obj);
+                                        }());
                                         libraryFiles();
                                     });
                                 });
@@ -3343,11 +3378,11 @@ interface readFile {
                                         differences: 0,
                                         lines: 0
                                     };
-                                    const result:string = prettydiff.mode(options, meta);
+                                    const result:string = prettydiff(meta);
                                     apps.log([""], result, `${meta.differences},${meta.lines}`);
                                 }
                             } else {
-                                apps.log([""], prettydiff.mode(options), "");
+                                apps.log([""], prettydiff(options), "");
                             }
                         },
                         resolveItem = function node_apps_readmethod_resolve_stat_resolveItem() {
@@ -3669,7 +3704,7 @@ interface readFile {
                                                             callback: function node_apps_readmethod_resolve_stat_resolveItem_callbackOther_readFiles_callback(args:readFile, dump:string|Buffer):void {
                                                                 if (typeof dump === "string") {
                                                                     options.source = dump;
-                                                                    const result:string = prettydiff.mode(options);
+                                                                    const result:string = prettydiff(options);
                                                                     if (result.indexOf("Error: ") === 0) {
                                                                         apps.errout([result.replace("Error: ", "")]);
                                                                         fail = true;
@@ -3740,7 +3775,7 @@ interface readFile {
                                                         differences: 0,
                                                         lines: 0
                                                     };
-                                                const result:string = prettydiff.mode(options, meta),
+                                                const result:string = prettydiff(meta),
                                                     path = (options.mode === "diff")
                                                         ? `${meta.differences},${meta.lines}`
                                                         : args.path;
@@ -3942,7 +3977,7 @@ interface readFile {
                     : projectPath + uri.slice(1).replace(/\/$/, "").replace(/\//g, sep);
                 node.fs.stat(localpath, function node_apps_server_create_stat(ers:nodeError, stat:Stats):void {
                     const random:number = Math.random(),
-                        page:string = `<!doctype html><html><head><title>Pretty Diff - Local Service</title><meta content="text/html;charset=UTF-8" http-equiv="Content-Type"/><link href="/css/index.css?${random}" media="all" rel="stylesheet" type="text/css"/></head><body class="white" id="prettydiff"><div class="contentarea" id="page"><section role="heading"><h1><svg height="2000.000000pt" id="pdlogo" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg"><g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)"><path d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g></svg> <a href="/">Pretty Diff</a> - Local Server</h1><p id="dcolorScheme"><label class="label" for="option-color">Color Scheme</label> <select id="option-color"><option>Canvas</option><option>Shadow</option><option selected="selected">White</option></select></p><p>Browse Pretty Diff on <a href="https://github.com/prettydiff/prettydiff">GitHub</a> or <a href="https://www.npmjs.com/package/prettydiff">NPM</a>.</p></section><section role="main">insertme</section></div><script src="/js/prettydiff-webtool.js?${random}" type="application/javascript"></script></body></html>`;
+                        page:string = `<!doctype html><html><head><title>Pretty Diff - Local Service</title><meta content="text/html;charset=UTF-8" http-equiv="Content-Type"/><link href="/css/index.css?${random}" media="all" rel="stylesheet" type="text/css"/></head><body class="white" id="prettydiff"><div class="contentarea" id="page"><section role="heading"><h1><svg height="2000.000000pt" id="pdlogo" preserveAspectRatio="xMidYMid meet" version="1.0" viewBox="0 0 2000.000000 2000.000000" width="2000.000000pt" xmlns="http://www.w3.org/2000/svg"><g fill="#999" stroke="none" transform="translate(0.000000,2000.000000) scale(0.100000,-0.100000)"><path d="M14871 18523 c-16 -64 -611 -2317 -946 -3588 -175 -660 -319 -1202 -320 -1204 -2 -2 -50 39 -107 91 -961 876 -2202 1358 -3498 1358 -1255 0 -2456 -451 -3409 -1279 -161 -140 -424 -408 -560 -571 -507 -607 -870 -1320 -1062 -2090 -58 -232 -386 -1479 -2309 -8759 -148 -563 -270 -1028 -270 -1033 0 -4 614 -8 1365 -8 l1364 0 10 38 c16 63 611 2316 946 3587 175 660 319 1202 320 1204 2 2 50 -39 107 -91 543 -495 1169 -862 1863 -1093 1707 -568 3581 -211 4965 946 252 210 554 524 767 796 111 143 312 445 408 613 229 406 408 854 525 1320 57 225 380 1451 2310 8759 148 563 270 1028 270 1033 0 4 -614 8 -1365 8 l-1364 0 -10 -37z m-4498 -5957 c477 -77 889 -256 1245 -542 523 -419 850 -998 954 -1689 18 -121 18 -549 0 -670 -80 -529 -279 -972 -612 -1359 -412 -480 -967 -779 -1625 -878 -121 -18 -549 -18 -670 0 -494 74 -918 255 -1283 548 -523 419 -850 998 -954 1689 -18 121 -18 549 0 670 104 691 431 1270 954 1689 365 293 828 490 1283 545 50 6 104 13 120 15 72 10 495 -3 588 -18z"/></g></svg> <a href="/">Pretty Diff</a> - Local Server</h1><p id="dcolorScheme"><label class="label" for="option-color">Color Scheme</label> <select id="option-color"><option>Canvas</option><option>Shadow</option><option selected="selected">White</option></select></p><p>Browse Pretty Diff on <a href="https://github.com/prettydiff/prettydiff">GitHub</a> or <a href="https://www.npmjs.com/package/prettydiff">NPM</a>.</p></section><section role="main">insertme</section></div><script src="/js/webtool.js?${random}" type="application/javascript"></script></body></html>`;
                     if (ers !== null) {
                         if (ers.code === "ENOENT") {
                             console.log(`${text.angry}404${text.none} for ${uri}`);
@@ -4451,7 +4486,7 @@ interface readFile {
                                 b = b + 1;
                             } while (b < noteslen);
                         }
-                        output = prettydiff.mode(options);
+                        output = prettydiff(options);
                         if (output === formatted[a][1]) {
                             filecount = filecount + 1;
                             console.log(`${apps.humantime(false) + text.green}Pass ${filecount}:${text.none} ${formatted[a][0]}`);

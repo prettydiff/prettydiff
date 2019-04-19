@@ -450,6 +450,8 @@
                                     }
                                 } else if (data.types[a] === "start" && data.types[next] === "end") {
                                     level.push(-20);
+                                } else if (data.types[a] === "start" && data.types[next] === "script_start") {
+                                    level.push(-10);
                                 } else if (options.force_indent === true) {
                                     level.push(indent);
                                 } else if (data.types[a] === "template_start" && data.types[next] === "template_end") {
