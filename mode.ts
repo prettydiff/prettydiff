@@ -776,9 +776,7 @@
         difflines: 0
     };
     pd.minify = {};
-    // pd options start
     pd.options = {};
-    // pd options end
     pd.scopes = [];
     prettydiff = pd;
 }());
