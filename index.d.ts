@@ -176,6 +176,7 @@ interface pd {
     options: any,
     saveAs?: Function;
     scopes: scriptScopes;
+    version: version;
 }
 interface readDirectory {
     callback: Function;
@@ -202,6 +203,11 @@ interface simulationItem {
     file?: string;
     qualifier: qualifier;
     test: string;
+}
+interface version {
+    date: string;
+    number: string;
+    parse: string;
 }
 interface Window {
     sparser: any;

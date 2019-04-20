@@ -41,14 +41,7 @@ interface readFile {
         }()),
         js:string = `${projectPath}js${sep}`,
         api:string = `${js}api${sep}`,
-        libFiles:string[] = [api, `${js}beautify${sep}`, `${js}minify${sep}`, `${js}mode.js`],
-        // node version start
-        version:any = {
-            date: "",
-            number: "",
-            parse: ""
-        },
-        // node version end
+        libFiles:string[] = [api, `${js}beautify${sep}`, `${js}minify${sep}`],
         text:any     = {
             angry    : "\u001b[1m\u001b[31m",
             blue     : "\u001b[34m",
@@ -529,7 +522,7 @@ interface readFile {
                 },
                 readOptions = function node_args_readOptions():void {
                     const list:string[] = process.argv,
-                        def:optionDef = prettydiff.api.optionDef,
+                        def:optionDef = global.prettydiff.api.optionDef,
                         keys:string[] = (command === "options")
                             ? Object.keys(def.mode)
                             : [],
@@ -825,6 +818,11 @@ interface readFile {
                             return func;
                         }());
                         prettydiff = global.prettydiff;
+                        prettydiff.version = {
+                            date: "",
+                            number: "",
+                            parse: ""
+                        };
                         args();
                     } else {
                         console.log(`The file js/prettydiff.js has not been written.  Please run the build: ${text.cyan}node js/services build${text.none}`);
@@ -839,9 +837,13 @@ interface readFile {
             } else {
                 global.prettydiff = require(`${js}prettydiff.js`);
                 prettydiff = global.prettydiff;
-                args();
                 options = prettydiff.options;
-                //options.api = "node";
+                options.api = "node";
+                options.binary_check = (
+                    // eslint-disable-next-line
+                    /\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u000b|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g
+                );
+                args();
             }
         });
     }());
@@ -1095,8 +1097,7 @@ interface readFile {
                         saveas:string = "",
                         parser:string = "",
                         defaults:string = "",
-                        webtool:string = "",
-                        terminal:string = "";
+                        webtool:string = "";
                     const flag = {
                             browser: false,
                             documentation: false,
@@ -1108,11 +1109,6 @@ interface readFile {
                         date:number = Date.now(),
                         optkeys:string[] = Object.keys(prettydiff.api.optionDef),
                         keyslen:number = optkeys.length,
-                        versionData:any = {
-                            date: "",
-                            number: "",
-                            parse: ""
-                        },
                         modifyFile = function node_apps_build_libraries_modifyFile(file:string, fileFlag:string):void {
                             node.fs.readFile(file, "utf8", function node_apps_build_libraries_modifyFile_read(err:Error, data:string):void {
                                 const modify = function node_apps_build_libraries_modifyFile_read_modify(ops:modifyOps):void {
@@ -1281,7 +1277,7 @@ interface readFile {
                                     });
                                     modify({
                                         end: "<!-- end version data -->",
-                                        injectFlag: `<strong>${versionData.date}</strong> <span>Version: <strong>${versionData.number}</strong></span>`,
+                                        injectFlag: `<strong>${prettydiff.version.date}</strong> <span>Version: <strong>${prettydiff.version.number}</strong></span>`,
                                         start: "<!-- start version data -->"
                                     });
                                     data = data.replace(/(\.css\?\d*)/g, `.css?${date}`).replace(/(\.js\?\d*)/g, `.js?${date}`);
@@ -1292,17 +1288,10 @@ interface readFile {
                                         start: "// prettydiff dom insertion start"
                                     });
                                     webtool = `${parser + data.replace(/("|')use strict("|');/g, "").replace(/window\.sparser/g, "sparser")}}());`;
-                                } else if (fileFlag === "terminal") {
-                                    modify({
-                                        end: "// node version end",
-                                        injectFlag: `version=${JSON.stringify(versionData)},`,
-                                        start:"// node version start"
-                                    });
-                                    terminal = data;
                                 }
                                 flag[fileFlag] = true;
-                                if (flag.documentation === true && flag.html === true && flag.terminal === true && flag.webtool === true) {
-                                    let thirdparty:string = parser.replace(/const\s+parser\s*=/, "let prettydiff={};const parse=") + libraries;
+                                if (flag.documentation === true && flag.html === true && flag.webtool === true) {
+                                    let thirdparty:string = `${parser.replace(/const\s+parser\s*=/, "let prettydiff={};const parser=") + libraries}prettydiff.api.language=sparser.libs.language;prettydiff.version=${JSON.stringify(prettydiff.version)};`;
                                     node.fs.writeFile(`${js}prettydiff.js`, `${thirdparty}module.exports=prettydiff;return prettydiff;}());`, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser(erbr:Error) {
                                         if (erbr !== null && erbr.toString() !== "") {
                                             apps.errout([erbr.toString()]);
@@ -1318,13 +1307,7 @@ interface readFile {
                                                     apps.errout([erwb.toString()]);
                                                     return;
                                                 }
-                                                node.fs.writeFile(`${js}services.js`, terminal, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser_writePrettydiff_writeWebtool_writeTerminal(ertr:Error) {
-                                                    if (ertr !== null && ertr.toString() !== "") {
-                                                        apps.errout([ertr.toString()]);
-                                                        return;
-                                                    }
-                                                    next(`${text.green}Application files built and written.${text.none}`);
-                                                });
+                                                next(`${text.green}Application files built and written.${text.none}`);
                                             });
                                         });
                                     });
@@ -1334,7 +1317,7 @@ interface readFile {
                         libraryFiles = function node_apps_build_libraries_libraryFiles() {
                             libFiles.push(`${projectPath}node_modules${sep}file-saver${sep}FileSaver.min.js`);
                             libFiles.push(`${projectPath}node_modules${sep}sparser${sep}js${sep}browser.js`);
-                            libFiles.push(`${projectPath}node_modules${sep}sparser${sep}js${sep}libs${sep}language.js`);
+                            libFiles.push(`${js}mode.js`);
                             const appendFile = function node_apps_build_libraries_libraryFiles_appendFile(filePath:string):void {
                                     node.fs.readFile(filePath, "utf8", function node_apps_build_libraries_libraryFiles_appendFile_read(errr:Error, filedata:string):void {
                                         const filenames:string[] = filePath.split(sep),
@@ -1363,12 +1346,11 @@ interface readFile {
                                                 .replace(/(\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*)/, "")
                                                 .replace(/global\s*\.\s*prettydiff\s*\./g, "prettydiff.")
                                                 .replace(/("|')use strict("|');/, "");
-                                            if (filename === "language.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
-                                                libraries = libraries + filedata.replace("global.sparser.libs.language", "prettydiff.api.language");
-                                            } else if (filename === "mode.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
+                                            if (filename === "mode.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
                                                 mode = filedata
                                                     .replace(/global(API)?\./g, "")
-                                                    .replace(/\/\*global\s+global(\s*,\s*window)?\*\//, "")
+                                                    .replace(/\/\*global\s+global(\s*,\s*prettydiff)?(\s*,\s*window)?\*\//, "")
+                                                    .replace(/globalAPI\.sparser/g, "sparser")
                                                     .replace(/globalAPI\s*=\s*\(options\.api\s*===\s*"dom"\)\s*\?\s*window\s*:\s*global,/, "")
                                                     .replace(/if\s*\(options\.api\s*===\s*"dom"\)\s*\{\s*globalAPI\s*=\s*window;\s*\}/, "")
                                                     .replace(/,\s*\/\/\s*prettydiff file insertion start\s+prettydiff\s*=\s*\{\};/, ";")
@@ -1381,7 +1363,6 @@ interface readFile {
                                         a = a + 1;
                                         if (a === filelen) {
                                             libraries = mode + libraries;
-                                            modifyFile(`${js}terminal.js`, "terminal");
                                             modifyFile(`${projectPath}index.xhtml`, "html");
                                             modifyFile(`${js}prettydiff-webtool.js`, "webtool");
                                             modifyFile(`${projectPath}documentation.xhtml`, "documentation");
@@ -1423,32 +1404,25 @@ interface readFile {
                                     return;
                                 }
                                 const date:string[] = stderr.slice(stderr.indexOf("Date:") + 12).split(" ");
-                                versionData.date = `${date[1]} ${date[0]} ${date[3]}`;
+                                prettydiff.version.date = `${date[1]} ${date[0]} ${date[3]}`;
                                 node.fs.readFile(`${projectPath}package.json`, "utf8", function node_apps_build_libraries_versionGather_child_readPackage(errp:Error, data:string):void {
                                     if (errp !== null) {
                                         apps.errout([errp.toString()]);
                                         return;
                                     }
-                                    versionData.number = JSON.parse(data).version;
+                                    prettydiff.version.number = JSON.parse(data).version;
                                     node.fs.readFile(`${projectPath}node_modules${sep}sparser${sep}package.json`, "utf8", function node_apps_build_libraries_versionGather_child_readPackage_readSparser(errf:Error, frameData:string):void {
                                         if (errf !== null) {
                                             apps.errout([errf.toString()]);
                                             return;
                                         }
-                                        versionData.parse = JSON.parse(frameData).version;
+                                        prettydiff.version.parse = JSON.parse(frameData).version;
                                         // update information for display in current build
-                                        version.date = versionData.date;
-                                        version.number = versionData.number;
-                                        version.parse = versionData.parse;
                                         defaults = (function node_apps_build_libraries_modifyFile_read_buildDefault():string {
                                             const obj:any = {};
-                                            let a:number = 0,
-                                                apikey = "";
+                                            let a:number = 0;
                                             do {
-                                                apikey = prettydiff.api.optionDef[optkeys[a]].api;
-                                                if (apikey === "any" || apikey === api) {
-                                                    obj[optkeys[a]] = prettydiff.api.optionDef[optkeys[a]].default;
-                                                }
+                                                obj[optkeys[a]] = prettydiff.api.optionDef[optkeys[a]].default;
                                                 a = a + 1;
                                             } while (a < keyslen);
                                             obj.lexerOptions = {};
@@ -2962,8 +2936,8 @@ interface readFile {
                 });
                 if (verbose === true) {
                     console.log("");
-                    console.log(`Sparser version ${text.angry + version.parse + text.none}`);
-                    console.log(`Pretty Diff version ${text.angry + version.number + text.none} dated ${text.cyan + version.date + text.none}`);
+                    console.log(`Sparser version ${text.angry + prettydiff.version.parse + text.none}`);
+                    console.log(`Pretty Diff version ${text.angry + prettydiff.version.number + text.none} dated ${text.cyan + prettydiff.version.date + text.none}`);
                     apps.humantime(true);
                 }
             };
@@ -3363,8 +3337,6 @@ interface readFile {
             return;
         }
         const readmethod:string = options.read_method,
-            //auto:boolean = (readmethod === "auto"),
-            all = require(`${projectPath}node_modules${sep}sparser${sep}js${sep}lexers${sep}all`),
             item:string = (diff === true)
                 ? "diff"
                 : "source",
@@ -3842,12 +3814,7 @@ interface readFile {
                     }
                 });
             };
-        if (global.sparser === undefined) {
-            require(`${projectPath}node_modules${sep}sparser${sep}js${sep}parse`);
-        }
-        all(options, function node_apps_readmethod_allLexers() {
-            resolve();
-        });
+        resolve();
     };
     // similar to posix "rm -rf" command
     apps.remove = function node_apps_remove(filepath:string, callback:Function):void {

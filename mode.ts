@@ -1,4 +1,4 @@
-/*global global, window*/
+/*global global, prettydiff, window*/
 (function mode_init() {
     "use strict";
     const pd = <pd>function prettydiff_(diffmeta?:diffmeta):string {
@@ -778,5 +778,6 @@
     pd.minify = {};
     pd.options = {};
     pd.scopes = [];
+    // eslint-disable-next-line
     prettydiff = pd;
 }());
