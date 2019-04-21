@@ -18,7 +18,6 @@
 
     .itemResultsCard {
         border: 1px solid @color-neutral-md-light;
-        .clearfix();
         color : @color-black;
 
         // Card Layout Sections
