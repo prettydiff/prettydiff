@@ -1,4 +1,4 @@
-/*global ace, ArrayBuffer, AudioContext, console, document, FileReader, localStorage, location, navigator, prettydiff, setTimeout, Uint8Array, window, XMLHttpRequest*/
+/*global ace, ArrayBuffer, AudioContext, console, document, FileReader, localStorage, location, navigator, setTimeout, Uint8Array, window, XMLHttpRequest*/
 /*jshint laxbreak: true*/
 /*jslint for: true*/
 /*****************************************************************************
@@ -2480,7 +2480,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             test.load = false;
         };
     let meta:any,
-        options:any;
+        options:any,
+        prettydiff:any;
     
     // builds the Pretty Diff options comment as options are updated
     method.app.commentString = function dom_app_commentString():void {
@@ -3436,8 +3437,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                 } else {
                                     pdlang = "characters";
                                 }
-                                if (window.sparser.parseerror !== "" && ann !== null) {
-                                    ann.innerHTML = `${ann.innerHTML}<span><strong>Parse Error:</strong> ${sanitize(window.sparser.parseerror)}</span>`;
+                                if (prettydiff.sparser.parseerror !== "" && ann !== null) {
+                                    ann.innerHTML = `${ann.innerHTML}<span><strong>Parse Error:</strong> ${sanitize(prettydiff.sparser.parseerror)}</span>`;
                                 } else if (meta.error === "" || meta.error === undefined) {
                                     ann.innerHTML = `${ann.innerHTML}<span><em>Execution time:</em> <strong>${sanitize(meta.time)}</strong>. <em>Output size:</em> <strong>${commanumb(meta.outsize)} ${pdlang}</strong></span>`;
                                 } else {

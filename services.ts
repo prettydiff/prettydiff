@@ -1016,7 +1016,8 @@ interface readFile {
                         saveas:string = "",
                         parser:string = "",
                         defaults:string = "",
-                        webtool:string = "";
+                        webtool:string = "",
+                        complete:string = "";
                     const flag = {
                             documentation: false,
                             html: false,
@@ -1172,6 +1173,29 @@ interface readFile {
                                             a = a + 1;
                                         } while (a < keyslen);
                                         return allItems.join("");
+                                    },
+                                    writeJavaScript = function node_apps_build_libraries_modifyFile_read_writeJavaScript():void {
+                                        if (flag.documentation === true && flag.html === true && flag.webtool === true) {
+                                            node.fs.writeFile(`${js}prettydiff.js`, `${complete}module.exports=prettydiff;return prettydiff;}());`, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser(erbr:Error) {
+                                                if (erbr !== null && erbr.toString() !== "") {
+                                                    apps.errout([erbr.toString()]);
+                                                    return;
+                                                }
+                                                node.fs.writeFile(`${js}browser.js`, `${complete}window.prettydiff=prettydiff;return prettydiff;}());`, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser_writePrettydiff(erth:Error) {
+                                                    if (erth !== null && erth.toString() !== "") {
+                                                        apps.errout([erth.toString()]);
+                                                        return;
+                                                    }
+                                                    node.fs.writeFile(`${js}webtool.js`, webtool, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser_writePrettydiff_writeWebtool(erwb:Error) {
+                                                        if (erwb !== null && erwb.toString() !== "") {
+                                                            apps.errout([erwb.toString()]);
+                                                            return;
+                                                        }
+                                                        next(`${text.green}Application files built and written.${text.none}`);
+                                                    });
+                                                });
+                                            });
+                                        }
                                     };
                                 if (err !== null && err.toString() !== "") {
                                     apps.errout([err.toString()]);
@@ -1200,36 +1224,23 @@ interface readFile {
                                 } else if (fileFlag === "webtool") {
                                     modify({
                                         end: "// prettydiff dom insertion end",
-                                        injectFlag: saveas + libraries,
+                                        injectFlag: `prettydiff=${complete.replace(/(\s*\/\*(\w|\s|\d|\.|:|-)+\*\/)+\s*/, "").replace(/\s*("|')use\s+strict("|');/g, "") + saveas}return prettydiff;}());`,
                                         start: "// prettydiff dom insertion start"
                                     });
-                                    webtool = `${parser + data.replace(/("|')use strict("|');/g, "").replace(/window\.sparser/g, "sparser")}}());`;
+                                    webtool = data;
                                 }
-                                flag[fileFlag] = true;
-                                if (flag.documentation === true && flag.html === true && flag.webtool === true) {
-                                    const inject = function node_apps_build_libraries_modifyFile_read_write_readParser_inject(version:string):string {
-                                            return `${version.slice(0, version.length - 1)},prettydiff=${mode}`;
-                                        },
-                                        thirdparty:string = `${parser.replace(/version:\{date:"\d+\s+\w+\s+\d{4}",number:"\d+\.\d+\.\d+"\}\s*\};/, inject) + libraries}prettydiff.version=${JSON.stringify(prettydiff.version)};`;
-                                    node.fs.writeFile(`${js}prettydiff.js`, `${thirdparty}module.exports=prettydiff;return prettydiff;}());`, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser(erbr:Error) {
-                                        if (erbr !== null && erbr.toString() !== "") {
-                                            apps.errout([erbr.toString()]);
+                                if (file.slice(file.length - 3) !== ".js") {
+                                    node.fs.writeFile(file, data, "utf8", function node_apps_build_libraries_modifyFile_write(err:Error) {
+                                        if (err !== null) {
+                                            apps.errout([err.toString()]);
                                             return;
                                         }
-                                        node.fs.writeFile(`${js}browser.js`, `${thirdparty}window.prettydiff=prettydiff;return prettydiff;}());`, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser_writePrettydiff(erth:Error) {
-                                            if (erth !== null && erth.toString() !== "") {
-                                                apps.errout([erth.toString()]);
-                                                return;
-                                            }
-                                            node.fs.writeFile(`${js}webtool.js`, webtool, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser_writePrettydiff_writeWebtool(erwb:Error) {
-                                                if (erwb !== null && erwb.toString() !== "") {
-                                                    apps.errout([erwb.toString()]);
-                                                    return;
-                                                }
-                                                next(`${text.green}Application files built and written.${text.none}`);
-                                            });
-                                        });
+                                        flag[fileFlag] = true;
+                                        writeJavaScript();
                                     });
+                                } else {
+                                    flag[fileFlag] = true;
+                                    writeJavaScript();
                                 }
                             });
                         },
@@ -1283,6 +1294,10 @@ interface readFile {
                                         }
                                         a = a + 1;
                                         if (a === filelen) {
+                                            const inject = function node_apps_build_libraries_appendFile_inject(version:string):string {
+                                                return `${version.slice(0, version.length - 1)},prettydiff=${mode}`;
+                                            };
+                                            complete = `${parser.replace(/version:\{date:"\d+\s+\w+\s+\d{4}",number:"\d+\.\d+\.\d+"\}\s*\};/, inject) + libraries}prettydiff.sparser=sparser;prettydiff.version=${JSON.stringify(prettydiff.version)};`;
                                             modifyFile(`${projectPath}index.xhtml`, "html");
                                             modifyFile(`${js}api${sep}prettydiff-webtool.js`, "webtool");
                                             modifyFile(`${projectPath}documentation.xhtml`, "documentation");
@@ -4249,11 +4264,9 @@ interface readFile {
     };
     // unit test validation runner for Pretty Diff mode commands
     apps.validation = function node_apps_validation(callback:Function):void {
-        require(`${projectPath}node_modules${sep}sparser${sep}js${sep}parse`);
         let count_raw = 0,
             count_formatted = 0;
-        const all = require(`${projectPath}node_modules${sep}sparser${sep}js${sep}lexers${sep}all`),
-            flag = {
+        const flag = {
                 raw: false,
                 formatted: false
             },
@@ -4468,10 +4481,8 @@ interface readFile {
         if (command === "validation") {
             verbose = true;
         }
-        all(options, function node_apps_validation_allLexers() {
-            readDir("raw");
-            readDir("formatted");
-        });
+        readDir("raw");
+        readDir("formatted");
     };
     // runs apps.log
     apps.version = function ():void {

@@ -177,6 +177,7 @@ interface pd {
     options: any,
     saveAs?: Function;
     scopes: scriptScopes;
+    sparser: any;
     start: number;
     version: version;
 }

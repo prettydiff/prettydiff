@@ -1,9 +1,7 @@
 # Pretty Diff version 101
 A language aware diff, beautification, and minification tool.
 
-## Try it out
-* Current version - https://prettydiff.com/
-* Prior version - https://prettydiff.com/2
+## Try it out - https://prettydiff.com/
 
 [![Build Status](https://semaphoreci.com/api/v1/prettydiff/prettydiff/branches/master/badge.svg)](https://semaphoreci.com/prettydiff/prettydiff)
 

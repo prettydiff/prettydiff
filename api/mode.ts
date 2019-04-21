@@ -2,7 +2,7 @@
 function mode(diffmeta?:diffmeta):string {
     "use strict";
     const pdcomment = function mode_pdcomment():void {
-            const ops:any = globalAPI.sparser.options;
+            const ops:any = prettydiff.sparser.options;
             let sindex:number = options.source.search(/((\/(\*|\/))|<!--*)\s*prettydiff\.com/),
                 dindex:number = options.diff.search(/((\/(\*|\/))|<!--*)\s*prettydiff\.com/),
                 a:number = 0,
@@ -197,10 +197,6 @@ function mode(diffmeta?:diffmeta):string {
                     }
                 }
             }
-    
-            if (options.api === "dom") {
-                globalAPI = window;
-            }
             if (options.mode === "diff") {
                 modeValue = "beautify";
             }
@@ -337,7 +333,7 @@ function mode(diffmeta?:diffmeta):string {
             } else if (options.api === "node" && options.read_method !== "file") {
                 options.diff_rendered_html = false;
             }
-            def = globalAPI.sparser.libs.optionDef;
+            def = prettydiff.sparser.libs.optionDef;
             keys = Object.keys(def);
             len = keys.length;
             do {
@@ -359,10 +355,7 @@ function mode(diffmeta?:diffmeta):string {
         lf:string = (options.crlf === true)
             ? "\r\n"
             : "\n";
-    let globalAPI:any = (options.api === "dom")
-            ? window
-            : global,
-        modeValue:"beautify"|"minify" = options.mode,
+    let modeValue:"beautify"|"minify" = options.mode,
         result:string = "";
     if (options.api === "node" && (options.read_method === "directory" || options.read_method === "subdirectory")) {
         if (options.mode === "parse" && options.parse_format === "table") {
@@ -411,7 +404,7 @@ function mode(diffmeta?:diffmeta):string {
                 ? "dom"
                 : options.api;
 
-        options.parsed = globalAPI.sparser.parser();
+        options.parsed = prettydiff.sparser.parser();
         if (parse_format === "table") {
             if (api === "dom") {
                 const parsLen:number = options.parsed.token.length,
@@ -662,13 +655,13 @@ function mode(diffmeta?:diffmeta):string {
                         body:number = 0,
                         head:boolean = false;
                     options.diff_format = "json";
-                    options.parsed = globalAPI.sparser.parser();
+                    options.parsed = prettydiff.sparser.parser();
                     options.source = options.parsed.token;
                     prettydiff.start = 0;
                     prettydiff.end = 0;
                     options.indent_level = ind;
-                    globalAPI.sparser.options.source = options.diff;
-                    diff_parsed = globalAPI.sparser.parser();
+                    prettydiff.sparser.options.source = options.diff;
+                    diff_parsed = prettydiff.sparser.parser();
                     options.diff = diff_parsed.token;
                     diffoutput = prettydiff.api.diffview(options);
                     json = JSON.parse(diffoutput[0]).diff;
@@ -714,14 +707,14 @@ function mode(diffmeta?:diffmeta):string {
                     summary();
                     result = prettydiff.beautify.markup(options);
                 } else {
-                    options.parsed = globalAPI.sparser.parser();
+                    options.parsed = prettydiff.sparser.parser();
                     options.source = prettydiff.beautify[options.lexer](options);
                     prettydiff.start = 0;
                     prettydiff.end = 0;
                     options.indent_level = ind;
                     // diff text formatting
-                    globalAPI.sparser.options.source = options.diff;
-                    options.parsed = globalAPI.sparser.parser();
+                    prettydiff.sparser.options.source = options.diff;
+                    options.parsed = prettydiff.sparser.parser();
                     options.diff = prettydiff.beautify[options.lexer](options);
                     // comparison
                     diffoutput = prettydiff.api.diffview(options);
@@ -733,7 +726,7 @@ function mode(diffmeta?:diffmeta):string {
                 diffmeta.lines = diffoutput[2];
             }
         } else {
-            options.parsed = globalAPI.sparser.parser();
+            options.parsed = prettydiff.sparser.parser();
             result = prettydiff[modeValue][options.lexer](options);
         }
     }

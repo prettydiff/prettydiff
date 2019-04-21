@@ -21,8 +21,8 @@
 <h2>Configuring and executing the application</h2>
 <p>Configuring the application is as simple as creating the options object and passing that object into the application.</p>
 <code>    let prettydiff = window.prettydiff;
-        window.prettydiff.options.source = "var a=1;";
-        window.prettydiff.options.wrap = 80;
+        prettydiff.options.source = "var a=1;";
+        prettydiff.options.wrap = 80;
         myResult = prettydiff();
 </code>
 <p>Please note that while that does work it is risky.  I always recommend building options off the default options object for more predictable options.  See the larger following example.</p>
