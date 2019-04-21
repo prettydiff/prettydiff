@@ -358,7 +358,7 @@
             {
                 command: "opts 2",
                 qualifier: "contains",
-                test: `${text.green}78${text.none} matching options.`
+                test: `${text.green}76${text.none} matching options.`
             },
             {
                 command: "opts api:node",

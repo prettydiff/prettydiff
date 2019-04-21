@@ -20,9 +20,10 @@
 <div>
 <h2>Configuring and executing the application</h2>
 <p>Configuring the application is as simple as creating the options object and passing that object into the application.</p>
-<code>    let prettydiff = window.prettydiff.mode,
-        options = {source:"var a=1;",wrap:80},
-        myResult = prettydiff(options);
+<code>    let prettydiff = window.prettydiff;
+        prettydiff.options.source = "var a=1;";
+        prettydiff.options.wrap = 80;
+        myResult = prettydiff();
 </code>
 <p>Please note that while that does work it is risky.  I always recommend building options off the default options object for more predictable options.  See the larger following example.</p>
 </div>
@@ -38,7 +39,7 @@
                 // inside the application we gather the application
                 let prettydiff = window.prettydiff,
                     // this provides all options set to their default values for safety
-                    options = prettydiff.defaults,
+                    options = prettydiff.options,
                     output = "";
                 // here is where we overwrite the default options with custom values
                 options.api = "dom";
@@ -48,7 +49,7 @@
                 options.source = document.getElementById("input").value;
 
                 // this where the application executes and the string output is assigned
-                output = prettydiff.mode(options);
+                output = prettydiff();
 
                 // output the generated string into the dom
                 document.getElementById("output").value = output;
@@ -67,4 +68,4 @@
 
 </section></div>
 <script src="browser-demo.js" type="module"></script>
-<script src="/js/prettydiff-webtool.js" type="application/javascript"></script></body></html>
+<script src="/js/webtool.js" type="application/javascript"></script></body></html>

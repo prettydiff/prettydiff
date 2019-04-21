@@ -1,0 +1,24 @@
+          var a = (
+          <FormItem
+            {...formItemLayout}
+            label="流程模板"
+            className={styles.intro_form_item_distance}
+          >
+            <Row>
+              <Col span={22}>
+                {getFieldDecorator('flow_path_id', {
+                  rules: [
+                    {
+                      required: true,
+                    },
+                  ],
+                  initialValue: value.FlowPathId ? value.FlowPathId : '',
+                })(<Input disabled />)}
+              </Col>
+              <Col span={1} offset={1}>
+                <a onClick={() => this.showFlowSteps(value.FlowPathId)}>
+                  <Icon style={{ color: '#4d4141' }} type="question-circle" theme="filled" />
+                </a>
+              </Col>
+            </Row>
+          </FormItem>);

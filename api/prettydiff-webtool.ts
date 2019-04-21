@@ -13,16 +13,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
 }
 (function dom_init():void {
     "use strict";
-    const meta:meta = {
-            error: "",
-            lang: ["", "", ""],
-            time: "",
-            insize: 0,
-            outsize: 0,
-            difftotal: 0,
-            difflines: 0
-        },
-        id = function dom_id(x:string):any {
+    const id = function dom_id(x:string):any {
             if (document.getElementById === undefined) {
                 return;
             }
@@ -39,13 +30,6 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             codeIn: id("input"),
             codeOut: id("output"),
         },
-        // start option defaults
-        options:any = {
-            lang: "",
-            lexer: "",
-            source: ""
-        },
-        // end option defaults
         aceStore:any = {
             codeIn: {},
             codeOut: {},
@@ -131,7 +115,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 security = function dom_load_security():void {
                     const scripts:HTMLCollectionOf<HTMLScriptElement> = document.getElementsByTagName("script"),
                         exclusions:string[] = [
-                            "js/prettydiff-webtool.js",
+                            "js/webtool.js",
                             "browser-demo.js",
                             "node_modules/ace-builds"
                         ],
@@ -736,8 +720,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         }
                     },
                     selectDescription = function dom_load_selectDescription(el:HTMLSelectElement):void {
-                        const options:HTMLCollectionOf<HTMLOptionElement> = el.getElementsByTagName("option"),
-                            desc:string = options[el.selectedIndex].getAttribute("data-description"),
+                        const opts:HTMLCollectionOf<HTMLOptionElement> = el.getElementsByTagName("option"),
+                            desc:string = opts[el.selectedIndex].getAttribute("data-description"),
                             opt:HTMLOptionElement = <HTMLOptionElement>el[el.selectedIndex],
                             value:string = opt.value,
                             parent:HTMLElement = <HTMLElement>el.parentNode,
@@ -2495,7 +2479,10 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             }
             test.load = false;
         };
-    prettydiff.meta = meta;
+    let meta:any,
+        options:any,
+        prettydiff:any;
+    
     // builds the Pretty Diff options comment as options are updated
     method.app.commentString = function dom_app_commentString():void {
         const comment:HTMLElement = id("commentString");
@@ -3450,8 +3437,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                 } else {
                                     pdlang = "characters";
                                 }
-                                if (window.sparser.parseerror !== "" && ann !== null) {
-                                    ann.innerHTML = `${ann.innerHTML}<span><strong>Parse Error:</strong> ${sanitize(window.sparser.parseerror)}</span>`;
+                                if (prettydiff.sparser.parseerror !== "" && ann !== null) {
+                                    ann.innerHTML = `${ann.innerHTML}<span><strong>Parse Error:</strong> ${sanitize(prettydiff.sparser.parseerror)}</span>`;
                                 } else if (meta.error === "" || meta.error === undefined) {
                                     ann.innerHTML = `${ann.innerHTML}<span><em>Execution time:</em> <strong>${sanitize(meta.time)}</strong>. <em>Output size:</em> <strong>${commanumb(meta.outsize)} ${pdlang}</strong></span>`;
                                 } else {
@@ -3486,12 +3473,12 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         lines: 0
                     };
                     meta.insize = options.source.length + options.diff.length;
-                    output = prettydiff.mode(options, diffmeta);
+                    output = prettydiff(diffmeta);
                     meta.difftotal = diffmeta.differences;
                     meta.difflines = diffmeta.lines;
                 } else {
                     meta.insize = options.source.length;
-                    output = prettydiff.mode(options);
+                    output = prettydiff();
                     if (output.indexOf("Error: ") === 0) {
                         ann.innerHTML = output.replace("Error: ", "");
                         output = options.source;
@@ -4627,5 +4614,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
     };
     // prettydiff dom insertion start
     // prettydiff dom insertion end
+    meta = prettydiff.meta;
+    options = prettydiff.options;
+    options.api = "dom";
     load();
 }());

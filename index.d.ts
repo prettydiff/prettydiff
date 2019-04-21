@@ -1,6 +1,6 @@
-declare var options: any;
 declare var ace: any;
-declare var prettydiff: any;
+declare var options: any;
+declare var prettydiff: pd;
 declare var window: Window;
 declare module NodeJS {
     interface Global {
@@ -155,7 +155,6 @@ interface optionDef {
 }
 interface optionFunctions {
     definitions?: {};
-
 }
 interface performance {
     codeLength: number;
@@ -166,6 +165,21 @@ interface performance {
     start: [number, number];
     store: number[];
     test: boolean;
+}
+interface pd {
+    (meta?): string;
+    api: any;
+    beautify: any;
+    end: number;
+    iterator: number;
+    meta: meta;
+    minify: any;
+    options: any,
+    saveAs?: Function;
+    scopes: scriptScopes;
+    sparser: any;
+    start: number;
+    version: version;
 }
 interface readDirectory {
     callback: Function;
@@ -192,6 +206,11 @@ interface simulationItem {
     file?: string;
     qualifier: qualifier;
     test: string;
+}
+interface version {
+    date: string;
+    number: string;
+    parse: string;
 }
 interface Window {
     sparser: any;

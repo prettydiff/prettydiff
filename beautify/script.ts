@@ -9,16 +9,16 @@ import { parse } from "path";
         const data:data = options.parsed,
             lexer:string = "script",
             scopes:scriptScopes = prettydiff.scopes,
-            b:number = (options.end < 1 || options.end > data.token.length)
+            b:number = (prettydiff.end < 1 || prettydiff.end > data.token.length)
                 ? data.token.length
-                : options.end + 1,
+                : prettydiff.end + 1,
             externalIndex:externalIndex = {},
             // levels sets the white space value between the current token and the next token
             // * -20 value means no white space
             // * -10 means to separate with a space
             // * 0 and above is the number of indentation to insert
             levels:number[] = (function beautify_script_level():number[] {
-                let a             = options.start, //will store the current level of indentation
+                let a             = prettydiff.start, //will store the current level of indentation
                     indent:number        = (isNaN(options.indent_level) === true)
                         ? 0
                         : Number(options.indent_level),
@@ -30,8 +30,8 @@ import { parse } from "path";
                     ltoke:string         = data.token[0]; //ltype stands for "last token"
                 const varindex:number[] = [-1], //index in current scope of last var, let, or const keyword
                     list:boolean[]          = [], //stores comma status of current block
-                    level:number[] = (options.start > 0)
-                        ? Array(options.start).fill(0, 0, options.start)
+                    level:number[] = (prettydiff.start > 0)
+                        ? Array(prettydiff.start).fill(0, 0, prettydiff.start)
                         : [],
                     ternary:number[]       = [], //used to identify ternary statments
                     extraindent   = [
@@ -2115,7 +2115,7 @@ import { parse } from "path";
                         build.push(data.token[a]);
                     },
                     invisibles:string[] = ["x;", "x}", "x{", "x(", "x)"];
-                let a:number = options.start,
+                let a:number = prettydiff.start,
                     external:string = "",
                     lastLevel:number = options.indent_level;
                 if (options.vertical === true) {
@@ -2211,7 +2211,7 @@ import { parse } from "path";
                         scoped:boolean[] = [],
                         indent:number             = options.indent_level,
                         foldindex:[number, number][] = [],
-                        start:number = options.start,
+                        start:number = prettydiff.start,
                         exlines:string[] = [],
                         exlevel:number = 0,
                         exline:RegExp;
@@ -2358,7 +2358,7 @@ import { parse } from "path";
                     scope = 0;
                     // this loops combines the white space as determined from the algorithm with the
                     // tokens to create the output
-                    a = options.start;
+                    a = prettydiff.start;
                     do {
                         if (data.lexer[a] === lexer || prettydiff.beautify[data.lexer[a]] === undefined) {
                             if (levels[a] > -1 && a < b - 1) {
@@ -2446,9 +2446,9 @@ import { parse } from "path";
                                     .replace(/&lt;strong class="new"&gt;this&lt;\/strong&gt;/g, "<strong class=\"new\">this</strong>")
                                     .replace(/&lt;strong class="new"&gt;new&lt;\/strong&gt;/g, "<strong class=\"new\">new</strong>"));
                             } else {
-                                options.end = externalIndex[a];
+                                prettydiff.end = externalIndex[a];
                                 options.indent_level = lastLevel;
-                                options.start = a;
+                                prettydiff.start = a;
                                 external = prettydiff.beautify[data.lexer[a]](options)
                                     .replace(/\s+$/, "")
                                     .replace(/&/g, "&amp;")
@@ -2533,7 +2533,7 @@ import { parse } from "path";
                         code.join("")
                     ].join("").replace(/(\s+)$/, "").replace(options.binary_check, "");
                 }
-                a = options.start;
+                a = prettydiff.start;
                 do {
                     if (data.lexer[a] === lexer || prettydiff.beautify[data.lexer[a]] === undefined) {
                         if (invisibles.indexOf(data.token[a]) < 0) {
@@ -2561,9 +2561,9 @@ import { parse } from "path";
                         if (externalIndex[a] === a) {
                             build.push(data.token[a]);
                         } else {
-                            options.end = externalIndex[a];
+                            prettydiff.end = externalIndex[a];
                             options.indent_level = lastLevel;
-                            options.start = a;
+                            prettydiff.start = a;
                             external = prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "");
                             build.push(external);
                             a = prettydiff.iterator;

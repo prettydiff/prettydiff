@@ -4,16 +4,16 @@
     const markup = function minify_markup(options:any):string {
         const data:data = options.parsed,
             lexer:string = "markup",
-            c:number            = (options.end < 1 || options.end > data.token.length)
+            c:number            = (prettydiff.end < 1 || prettydiff.end > data.token.length)
                 ? data.token.length
-                : options.end + 1,
+                : prettydiff.end + 1,
             lf:"\r\n"|"\n"      = (options.crlf === true)
                 ? "\r\n"
                 : "\n",
             externalIndex:externalIndex = {},
             levels:number[] = (function minify_markup_levels():number[] {
-                const level:number[]      = (options.start > 0)
-                        ? Array(options.start).fill(0, 0, options.start)
+                const level:number[]      = (prettydiff.start > 0)
+                        ? Array(prettydiff.start).fill(0, 0, prettydiff.start)
                         : [],
                     nextIndex = function minify_markup_levels_next():number {
                         let x:number = a + 1,
@@ -79,7 +79,7 @@
                         }
                         comstart = -1;
                     };
-                let a:number     = options.start,
+                let a:number     = prettydiff.start,
                     next:number = 0,
                     comstart:number = -1;
                 // data.lines -> space before token
@@ -183,7 +183,7 @@
                     }
                     data.token[y - 1] = data.token[y - 1] + end[0];
                 };
-            let a:number            = options.start,
+            let a:number            = prettydiff.start,
                 b:number         = 0,
                 next:number      = 0,
                 external:string = "",
@@ -191,7 +191,7 @@
                 count:number     = 0,
                 linelen:number   = 0,
                 lines:string[]   = [];
-            if (options.top_comments === true && data.types[a] === "comment" && options.start === 0) {
+            if (options.top_comments === true && data.types[a] === "comment" && prettydiff.start === 0) {
                 if (a > 0) {
                     build.push(lf);
                 }
@@ -280,9 +280,9 @@
                             count = count + data.token[a].length;
                         }
                     } else {
-                        options.end = externalIndex[a];
+                        prettydiff.end = externalIndex[a];
                         options.indent_level = lastLevel;
-                        options.start = a;
+                        prettydiff.start = a;
                         external = prettydiff.minify[data.lexer[a]](options).replace(/\s+$/, "");
                         if (options.wrap > 0 && options.minify_wrap === true) {
                             build.push(lf);

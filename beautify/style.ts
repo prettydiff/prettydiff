@@ -6,8 +6,8 @@
             lf:"\r\n"|"\n"         = (options.crlf === true)
                 ? "\r\n"
                 : "\n",
-            len:number      = (options.end > 0)
-                ? options.end + 1
+            len:number      = (prettydiff.end > 0)
+                ? prettydiff.end + 1
                 : data.token.length,
             build:string[]    = [],
             //a single unit of indentation
@@ -107,7 +107,7 @@
                 } while (b > 0);
             };
         let indent:number   = options.indent_level,
-            a:number        = options.start,
+            a:number        = prettydiff.start,
             when:string[] = ["", ""];
         if (options.vertical === true && options.compressed_css === false) {
             a = len;
@@ -117,7 +117,7 @@
                     vertical();
                 }
             } while (a > 0);
-            a = options.start;
+            a = prettydiff.start;
         }
 
         //beautification loop

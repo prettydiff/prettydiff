@@ -277,17 +277,6 @@ lexer      | script
 mode       | beautify
 type       | boolean
 
-## end
-property | value
------------|---
-api        | any
-default    | 0
-definition | The last index to process. This option is useful internally when recursively sliding between various libraries. The default value of 0 means to ignore this option.
-label      | End Index
-lexer      | any
-mode       | any
-type       | number
-
 ## end_comma
 property | value
 -----------|---
@@ -814,17 +803,6 @@ label      | Close Markup Self-Closing Tags with a Space
 lexer      | markup
 mode       | beautify
 type       | boolean
-
-## start
-property | value
------------|---
-api        | any
-default    | 0
-definition | The parse table index to start working from. This is internally used for code samples that require switching between different libraries.
-label      | Start Index
-lexer      | any
-mode       | any
-type       | number
 
 ## styleguide
 property | value
