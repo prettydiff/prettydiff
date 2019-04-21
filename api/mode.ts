@@ -1,4 +1,4 @@
-/*global global, prettydiff, window*/
+/*global prettydiff*/
 function mode(diffmeta?:diffmeta):string {
     "use strict";
     const pdcomment = function mode_pdcomment():void {

@@ -1278,7 +1278,7 @@ interface readFile {
                                                 .replace(/\s*("|')use strict("|');/, "");
                                             if (filename === "mode.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
                                                 mode = filedata
-                                                    .replace(/\/\*global\s+global\s*(\s*,\s*prettydiff)?(\s*,\s*window)?\*\//, "")
+                                                    .replace(/\/\*\s*global\s+prettydiff\s*\*\//, "")
                                                     .replace(/\s+/, "")
                                                     .replace(/\s+$/, ";")
                                                     .replace(/global(API)?\./g, "")
