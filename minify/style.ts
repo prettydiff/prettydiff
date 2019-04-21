@@ -6,11 +6,11 @@
             lf:"\r\n"|"\n"         = (options.crlf === true)
                 ? "\r\n"
                 : "\n",
-            len:number      = (options.end < 1 || options.end > data.token.length)
+            len:number      = (prettydiff.end < 1 || prettydiff.end > data.token.length)
                 ? data.token.length
-                : options.end + 1,
+                : prettydiff.end + 1,
             build:string[]    = [];
-        let a:number        = options.start,
+        let a:number        = prettydiff.start,
             b:number        = 0,
             c:number        = 0,
             list:string[]   = [],
@@ -18,7 +18,7 @@
             countx:number   = 0;
 
         //beautification loop
-        if (options.top_comments === true && options.minify_keep_comments === false && data.types[a] === "comment" && options.start === 0) {
+        if (options.top_comments === true && options.minify_keep_comments === false && data.types[a] === "comment" && prettydiff.start === 0) {
             if (a > 0) {
                 build.push(lf);
             }

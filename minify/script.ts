@@ -15,9 +15,9 @@
                 : "\n",
             lexer:string = "script",
             invisibles:string[] = ["x;", "x}", "x{", "x(", "x)"],
-            end:number  = (options.end < 1 || options.end > data.token.length)
+            end:number  = (prettydiff.end < 1 || prettydiff.end > data.token.length)
                 ? data.token.length
-                : options.end + 1,
+                : prettydiff.end + 1,
             build:string[]    = [],
             lastsemi = function minify_script_lastsemi() {
                 let aa:number = a,
@@ -38,10 +38,10 @@
                     aa = aa - 1;
                 } while (aa > -1);
             };
-        let a:number        = options.start,
+        let a:number        = prettydiff.start,
             count:number    = 0,
             external:string = "";
-        if (options.top_comments === true && options.minify_keep_comments === false && data.types[a] === "comment" && options.start === 0) {
+        if (options.top_comments === true && options.minify_keep_comments === false && data.types[a] === "comment" && prettydiff.start === 0) {
             if (a > 0) {
                 build.push(lf);
             }
@@ -121,12 +121,12 @@
                     }
                     a = a + 1;
                 } while (a < end);
-                options.start = skip;
-                options.end = a;
+                prettydiff.start = skip;
+                prettydiff.end = a;
                 if (a > end - 1) {
                     a = skip;
                     quit = true;
-                    options.end = end - 2;
+                    prettydiff.end = end - 2;
                 }
                 external = prettydiff.minify[data.lexer[a]](options).replace(/\s+$/, "");
                 if (options.wrap > 0 && options.minify_wrap === true && data.token[skip - 1] !== "return") {

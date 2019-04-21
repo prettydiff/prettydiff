@@ -4,16 +4,16 @@
     const markup = function beautify_markup(options:any):string {
         const data:data = options.parsed,
             lexer:string = "markup",
-            c:number            = (options.end < 1 || options.end > data.token.length)
+            c:number            = (prettydiff.end < 1 || prettydiff.end > data.token.length)
                 ? data.token.length
-                : options.end + 1,
+                : prettydiff.end + 1,
             lf:"\r\n"|"\n"      = (options.crlf === true)
                 ? "\r\n"
                 : "\n",
             externalIndex:externalIndex = {},
             levels:number[] = (function beautify_markup_levels():number[] {
-                const level:number[]      = (options.start > 0)
-                        ? Array(options.start).fill(0, 0, options.start)
+                const level:number[]      = (prettydiff.start > 0)
+                        ? Array(prettydiff.start).fill(0, 0, prettydiff.start)
                         : [],
                     nextIndex = function beautify_markup_levels_next():number {
                         let x:number = a + 1,
@@ -393,7 +393,7 @@
                             wrap(a);
                         }
                     };
-                let a:number     = options.start,
+                let a:number     = prettydiff.start,
                     comstart:number = -1,
                     next:number = 0,
                     count:number = 0,
@@ -595,7 +595,7 @@
                     }
                     data.token[y - 1] = data.token[y - 1] + space + end[0];
                 };
-            let a:number            = options.start,
+            let a:number            = prettydiff.start,
                 external:string = "",
                 lastLevel:number = options.indent_level;
             do {
@@ -618,9 +618,9 @@
                     if (externalIndex[a] === a && data.types[a] !== "reference") {
                         build.push(data.token[a]);
                     } else {
-                        options.end = externalIndex[a];
+                        prettydiff.end = externalIndex[a];
                         options.indent_level = lastLevel;
-                        options.start = a;
+                        prettydiff.start = a;
                         external = prettydiff.beautify[data.lexer[a]](options).replace(/\s+$/, "");
                         build.push(external);
                         if (levels[prettydiff.iterator] > -1 && externalIndex[a] > a) {

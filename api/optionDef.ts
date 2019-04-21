@@ -248,17 +248,6 @@
             mode      : "beautify",
             type      : "boolean"
         },
-        end              : {
-            api       : "any",
-            default   : 0,
-            definition: "The last index to process. This option is usefu" +
-                    "l internally when recursively sliding between various libraries. The default val" +
-                    "ue of 0 means to ignore this option.",
-            label     : "End Index",
-            lexer     : "any",
-            mode      : "any",
-            type      : "number"
-        },
         end_comma        : {
             api       : "any",
             default   : "never",
@@ -723,16 +712,6 @@
             lexer     : "markup",
             mode      : "beautify",
             type      : "boolean"
-        },
-        start            : {
-            api       : "any",
-            default   : 0,
-            definition: "The parse table index to start working from. This is internally used for code sa" +
-                    "mples that require switching between different libraries.",
-            label     : "Start Index",
-            lexer     : "any",
-            mode      : "any",
-            type      : "number"
         },
         styleguide       : {
             api       : "any",

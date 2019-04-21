@@ -170,12 +170,14 @@ interface pd {
     (meta?): string;
     api: any;
     beautify: any;
+    end: number;
     iterator: number;
     meta: meta;
     minify: any;
     options: any,
     saveAs?: Function;
     scopes: scriptScopes;
+    start: number;
     version: version;
 }
 interface readDirectory {

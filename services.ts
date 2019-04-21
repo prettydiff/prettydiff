@@ -444,85 +444,9 @@ interface readFile {
         },
         apps:any = {},
         args = function node_args():void {
-            const requireDir = function node_args_requireDir(item:string):void {
-                    let counts = {
-                        items: 0,
-                        total: 0
-                    };
-                    const dirlist:string[] = item.split(sep),
-                        dirname:string = (dirlist[dirlist.length - 1] === "")
-                            ? dirlist[dirlist.length - 2]
-                            : dirlist[dirlist.length - 1],
-                        completeTest = function node_args_requireDir_completeTest(filesLength:number):boolean {
-                            counts.total = counts.total + filesLength;
-                            if (counts.total === counts.items) {
-                                dirs = dirs + 1;
-                                if (dirs === dirstotal) {
-                                    if (process.argv.length > 0) {
-                                        readOptions();
-                                    }
-                                    prettydiff = global.prettydiff;
-                                    apps[command]();
-                                }
-                                return true;
-                            }
-                            return false;
-                        },
-                        readdir = function node_args_requireDir_dirwrapper(start:string):void {
-                            node.fs.stat(start, function node_args_requireDir_dirwrapper_stat(ers:Error, stat:Stats):void {
-                                if (ers !== null) {
-                                    console.log(ers.toString());
-                                    process.exit(1);
-                                    return;
-                                }
-                                if (stat.isDirectory() === true) {
-                                    prettydiff[dirname] = {};
-                                    node.fs.readdir(start, function node_args_requireDir_dirwrapper_stat_readdir(err:Error, files:string[]) {
-                                        if (err !== null) {
-                                            console.log(err.toString());
-                                            process.exit(1);
-                                            return;
-                                        }
-                                        if (completeTest(files.length) === true) {
-                                            return;
-                                        }
-                                        files.forEach(function node_args_requireDir_dirwrapper_stat_readdir_each(value:string) {
-                                            const valpath:string = start + value;
-                                            node.fs.stat(valpath, function node_args_requireDir_dirwrapper_stat_readdir_each_stat(errs:Error, stats:Stats):void {
-                                                if (errs !== null) {
-                                                    console.log(errs.toString());
-                                                    process.exit(1);
-                                                    return;
-                                                }
-                                                if (stats.isFile() === true && start === `${projectPath}js${sep}api${sep}`) {
-                                                    require(valpath);
-                                                    counts.items = counts.items + 1;
-                                                } else if (stats.isDirectory() === true) {
-                                                    node_args_requireDir_dirwrapper(valpath);
-                                                } else {
-                                                    counts.items = counts.items + 1;
-                                                }
-                                                if (completeTest(0) === true) {
-                                                    return;
-                                                }
-                                            });
-                                        });
-                                    });
-                                }
-                                if (stat.isFile() === true) {
-                                    require(item);
-                                    if (completeTest(0) === true) {
-                                        return;
-                                    }
-                                }
-                            });
-                        };
-                    dirstotal = dirstotal + 1;
-                    readdir(item);
-                },
-                readOptions = function node_args_readOptions():void {
+            const readOptions = function node_args_readOptions():void {
                     const list:string[] = process.argv,
-                        def:optionDef = global.prettydiff.api.optionDef,
+                        def:optionDef = prettydiff.api.optionDef,
                         keys:string[] = (command === "options")
                             ? Object.keys(def.mode)
                             : [],
@@ -642,16 +566,16 @@ interface readFile {
                         }
                     }
                 };
-            let dirs:number = 0,
-                dirstotal:number = 0;
+            options = prettydiff.options;
+            options.api = "node";
             options.binary_check = (
                 // eslint-disable-next-line
                 /\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u000b|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g
             );
-            global.prettydiff = prettydiff;
-            libFiles.forEach(function node_args_each(value:string) {
-                requireDir(value);
-            });
+            if (process.argv.length > 0) {
+                readOptions();
+            }
+            apps[command]();
         };
     let verbose:boolean = false,
         errorflag:boolean = false,
@@ -791,17 +715,17 @@ interface readFile {
         options:any = {},
         writeflag:string = ""; // location of written assets in case of an error and they need to be deleted
 
-    (function prettytest():void {
-        node.fs.stat(`${js}prettydiff.js`, function prettytest_stat(ers:Error) {
+    (function node_prettytest():void {
+        node.fs.stat(`${js}prettydiff.js`, function node_prettytest_stat(ers:Error) {
             if (ers !== null) {
                 let err:string = ers.toString();
                 if (err.indexOf("no such file or directory") > 0) {
                     if (command === "build") {
-                        console.log(`This appears to be the first writing of js/prettydiff.js.  Please ${text.angry}run the build one more time${text.none}.`);
-                        global.prettydiff = (function prettytest_stat_dummy():pd {
+                        global.prettydiff = (function node_prettytest_stat_dummy():pd {
                             let func:any = function () {};
                                 func.api = {};
                                 func.beautify = {};
+                                func.end = 0;
                                 func.iterator = 0;
                                 func.meta = {
                                     error: "",
@@ -814,15 +738,17 @@ interface readFile {
                                 };
                                 func.minify = {};
                                 func.options = {};
-                                func.scopes = []
+                                func.scopes = [];
+                                func.start = 0;
+                                func.version = {
+                                    date: "",
+                                    number: "",
+                                    parse: ""
+                                };
                             return func;
                         }());
-                        prettydiff = global.prettydiff;
-                        prettydiff.version = {
-                            date: "",
-                            number: "",
-                            parse: ""
-                        };
+                        require(`${js}api${sep}optionDef.js`);
+                        prettydiff = global.prettydiff
                         args();
                     } else {
                         console.log(`The file js/prettydiff.js has not been written.  Please run the build: ${text.cyan}node js/services build${text.none}`);
@@ -835,14 +761,7 @@ interface readFile {
                     return;
                 }
             } else {
-                global.prettydiff = require(`${js}prettydiff.js`);
-                prettydiff = global.prettydiff;
-                options = prettydiff.options;
-                options.api = "node";
-                options.binary_check = (
-                    // eslint-disable-next-line
-                    /\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u000b|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g
-                );
+                prettydiff = require(`${js}prettydiff.js`);
                 args();
             }
         });
@@ -1099,11 +1018,8 @@ interface readFile {
                         defaults:string = "",
                         webtool:string = "";
                     const flag = {
-                            browser: false,
                             documentation: false,
                             html: false,
-                            mode: false,
-                            terminal: false,
                             webtool: false
                         },
                         date:number = Date.now(),
@@ -1291,7 +1207,10 @@ interface readFile {
                                 }
                                 flag[fileFlag] = true;
                                 if (flag.documentation === true && flag.html === true && flag.webtool === true) {
-                                    let thirdparty:string = `${parser.replace(/const\s+parser\s*=/, "let prettydiff={};const parser=") + libraries}prettydiff.api.language=sparser.libs.language;prettydiff.version=${JSON.stringify(prettydiff.version)};`;
+                                    const inject = function node_apps_build_libraries_modifyFile_read_write_readParser_inject(version:string):string {
+                                            return `${version.slice(0, version.length - 1)},prettydiff=${mode}`;
+                                        },
+                                        thirdparty:string = `${parser.replace(/version:\{date:"\d+\s+\w+\s+\d{4}",number:"\d+\.\d+\.\d+"\}\s*\};/, inject) + libraries}prettydiff.version=${JSON.stringify(prettydiff.version)};`;
                                     node.fs.writeFile(`${js}prettydiff.js`, `${thirdparty}module.exports=prettydiff;return prettydiff;}());`, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser(erbr:Error) {
                                         if (erbr !== null && erbr.toString() !== "") {
                                             apps.errout([erbr.toString()]);
@@ -1317,7 +1236,6 @@ interface readFile {
                         libraryFiles = function node_apps_build_libraries_libraryFiles() {
                             libFiles.push(`${projectPath}node_modules${sep}file-saver${sep}FileSaver.min.js`);
                             libFiles.push(`${projectPath}node_modules${sep}sparser${sep}js${sep}browser.js`);
-                            libFiles.push(`${js}mode.js`);
                             const appendFile = function node_apps_build_libraries_libraryFiles_appendFile(filePath:string):void {
                                     node.fs.readFile(filePath, "utf8", function node_apps_build_libraries_libraryFiles_appendFile_read(errr:Error, filedata:string):void {
                                         const filenames:string[] = filePath.split(sep),
@@ -1336,35 +1254,37 @@ interface readFile {
                                         } else if (filePath === `${projectPath}node_modules${sep}sparser${sep}js${sep}browser.js`) {
                                             // both sparser and prettydiff contain a browser.js file, so it is important to target the correct one
                                             filedata = filedata
-                                                .replace(/("|')use strict("|');/g, "")
+                                                .replace(/\s*("|')use strict("|');/g, "")
                                                 .replace(/\s*const\s+parser/, `"use strict";const parser`)
                                                 .replace(/window\.sparser/g, "sparser")
-                                                .replace(/sparser\s*=\s*sparser;\s*\}\(\)\);(prettydiff\.beautify=\{\};)?(prettydiff\.api=\{\};)?(prettydiff\.minify=\{\};)?/, "");
+                                                .replace(/sparser\s*=\s*sparser;\s*\}\(\)\);(prettydiff\.beautify=\{\};)?(prettydiff\.api=\{\};)?(prettydiff\.minify=\{\};)?/, "")
+                                                .replace(/\s*sparser\.libs\.language\s*=\s*language;/, "sparser.libs.language=language;prettydiff.api.language=language;");
                                             parser = filedata;
                                         } else {
                                             filedata = filedata
                                                 .replace(/(\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*)/, "")
                                                 .replace(/global\s*\.\s*prettydiff\s*\./g, "prettydiff.")
-                                                .replace(/("|')use strict("|');/, "");
+                                                .replace(/\s*("|')use strict("|');/, "");
                                             if (filename === "mode.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
                                                 mode = filedata
+                                                    .replace(/\/\*global\s+global\s*(\s*,\s*prettydiff)?(\s*,\s*window)?\*\//, "")
+                                                    .replace(/\s+/, "")
+                                                    .replace(/\s+$/, ";")
                                                     .replace(/global(API)?\./g, "")
-                                                    .replace(/\/\*global\s+global(\s*,\s*prettydiff)?(\s*,\s*window)?\*\//, "")
                                                     .replace(/globalAPI\.sparser/g, "sparser")
                                                     .replace(/globalAPI\s*=\s*\(options\.api\s*===\s*"dom"\)\s*\?\s*window\s*:\s*global,/, "")
                                                     .replace(/if\s*\(options\.api\s*===\s*"dom"\)\s*\{\s*globalAPI\s*=\s*window;\s*\}/, "")
                                                     .replace(/,\s*\/\/\s*prettydiff file insertion start\s+prettydiff\s*=\s*\{\};/, ";")
-                                                    .replace(/\s*prettydiff\s*=\s*prettydiff;/, "")
-                                                    .replace(/pd\.options\s*=\s*\{\}/, `pd.options=${defaults}`);
-                                            } else {
-                                                libraries = libraries + filedata;
+                                                    .replace(/\s*mode\(\);/, "")
+                                                    .replace(/\s*prettydiff\s*=\s*prettydiff;/, "") + `prettydiff.api={};prettydiff.beautify={};prettydiff.end=0;prettydiff.iterator=0;prettydiff.meta={error:"",lang:["","",""],time:"",insize:0,outsize:0,difftotal:0,difflines:0};prettydiff.minify={};prettydiff.options=${defaults};prettydiff.scopes=[];prettydiff.start=0;`;
+                                            } else if (filename !== "prettydiff-webtool.js") {
+                                                libraries = libraries + filedata.replace(/\s*global\s*\.\s*prettydiff/, "prettydiff");
                                             }
                                         }
                                         a = a + 1;
                                         if (a === filelen) {
-                                            libraries = mode + libraries;
                                             modifyFile(`${projectPath}index.xhtml`, "html");
-                                            modifyFile(`${js}prettydiff-webtool.js`, "webtool");
+                                            modifyFile(`${js}api${sep}prettydiff-webtool.js`, "webtool");
                                             modifyFile(`${projectPath}documentation.xhtml`, "documentation");
                                         }
                                     });
