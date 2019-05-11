@@ -577,9 +577,6 @@ interface readFile {
             }
             apps[command]();
         };
-        class big {
-            how: () => {};
-        }
     let verbose:boolean = false,
         errorflag:boolean = false,
         command:string = (function node_command():string {
@@ -716,10 +713,8 @@ interface readFile {
         }()),
         prettydiff:pd,
         options:any = {},
-        writeflag:string = "", // location of written assets in case of an error and they need to be deleted
+        writeflag:string = ""; // location of written assets in case of an error and they need to be deleted
 
-        xx = new big();
-        xx.how;
     (function node_prettytest():void {
         node.fs.stat(`${js}prettydiff.js`, function node_prettytest_stat(ers:Error) {
             if (ers !== null) {
