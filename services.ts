@@ -577,6 +577,9 @@ interface readFile {
             }
             apps[command]();
         };
+        class big {
+            how: () => {};
+        }
     let verbose:boolean = false,
         errorflag:boolean = false,
         command:string = (function node_command():string {
@@ -713,8 +716,10 @@ interface readFile {
         }()),
         prettydiff:pd,
         options:any = {},
-        writeflag:string = ""; // location of written assets in case of an error and they need to be deleted
+        writeflag:string = "", // location of written assets in case of an error and they need to be deleted
 
+        xx = new big();
+        xx.how;
     (function node_prettytest():void {
         node.fs.stat(`${js}prettydiff.js`, function node_prettytest_stat(ers:Error) {
             if (ers !== null) {
@@ -1174,7 +1179,8 @@ interface readFile {
                                         } while (a < keyslen);
                                         return allItems.join("");
                                     },
-                                    writeJavaScript = function node_apps_build_libraries_modifyFile_read_writeJavaScript():void {
+                                    writeJavaScript = function node_apps_build_libraries_modifyFile_read_writeJavaScript(fileName:string):void {
+                                        flag[fileName] = true;
                                         if (flag.documentation === true && flag.html === true && flag.webtool === true) {
                                             node.fs.writeFile(`${js}prettydiff.js`, `${complete}module.exports=prettydiff;return prettydiff;}());`, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser(erbr:Error) {
                                                 if (erbr !== null && erbr.toString() !== "") {
@@ -1235,12 +1241,10 @@ interface readFile {
                                             apps.errout([err.toString()]);
                                             return;
                                         }
-                                        flag[fileFlag] = true;
-                                        writeJavaScript();
+                                        writeJavaScript(fileFlag);
                                     });
                                 } else {
-                                    flag[fileFlag] = true;
-                                    writeJavaScript();
+                                    writeJavaScript(fileFlag);
                                 }
                             });
                         },
@@ -4333,7 +4337,7 @@ interface readFile {
                         noteslen = notes.length;
                         options.language   = notes[2];
                         options.lexer      = notes[1];
-                        options.mode       = notes[0];
+                        options.mode       = notes[0].replace(/^\./, "");
                         options.source     = raw[a][1];
                         if (noteslen > 3) {
                             b = 3;

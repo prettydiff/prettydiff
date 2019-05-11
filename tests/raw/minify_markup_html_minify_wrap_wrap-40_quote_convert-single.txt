@@ -19,4 +19,4 @@
         <meta content="width=device-width, initial-scale=1" name="viewport"/>
         <meta content="index, follow" name="robots"/>
         <meta content="Pretty Diff - The difference tool" name="DC.title"/>
-        <meta content="#fff" name="theme-color"/></head></head>
+        <meta content="#fff" name="theme-color"/></head></html>

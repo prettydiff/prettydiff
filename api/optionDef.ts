@@ -369,7 +369,7 @@
         indent_size      : {
             api       : "any",
             default   : 4,
-            definition: "The number of 'inchar' values to comprise a single indentation.",
+            definition: "The number of 'indent_char' values to comprise a single indentation.",
             label     : "Indent Size",
             lexer     : "any",
             mode      : "beautify",
@@ -668,8 +668,8 @@
             api       : "any",
             default   : false,
             definition: "If true and mode is 'diff' and lang is 'javascript' all semicolon characters tha" +
-                    "t immediately preceed any white space containing a new line character will be re" +
-                    "moved so as to elimate some differences from the code comparison.",
+                    "t immediately precede any white space containing a new line character will be re" +
+                    "moved so as to eliminate some differences from the code comparison.",
             label     : "Indent Size",
             lexer     : "script",
             mode      : "diff",

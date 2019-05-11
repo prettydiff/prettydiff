@@ -33,4 +33,4 @@ initial-scale=1' name='viewport'/>
 name='robots'/> <metacontent='Pretty 
 Diff - The difference tool'
 name='DC.title'/> <meta content='#fff'
-name='theme-color'/></head></head>
+name='theme-color'/></head></html>

@@ -25,9 +25,33 @@
         "no-control-regex": 0,
         "no-else-return": "error",
         "no-empty": "error",
+        "no-extra-semi": "error",
         "no-invalid-this": "error",
         "no-new": "error",
         "no-plusplus": "error",
+        "no-restricted-syntax": [
+            "error",
+            {
+                "selector": "ThisExpression",
+                "message": "Use explicit reference names instead of 'this'."
+            },
+            {
+                "selector": "ThisStatement",
+                "message": "Use explicit reference names instead of 'this'."
+            },
+            {
+                "selector": "ClassDeclaration",
+                "message": "No classes. Inheritance imposes unseen complexity upon code extension."
+            },
+            {
+                "selector": "ClassExpression",
+                "message": "No classes. Inheritance imposes unseen complexity upon code extension."
+            },
+            {
+                "selector": "TryStatement",
+                "message": "Do not use try/catch blocks as these are performance bottlenecks."
+            }
+        ],
         "no-var": "error",
         "semi": [
             "error",
