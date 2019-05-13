@@ -3080,24 +3080,36 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             parent:HTMLElement,
                             chromeSave:boolean = false;
                         const commanumb  = function dom_event_execute_app_renderOutput_commanumb(numb):string {
-                            let str:string = "",
-                                len:number = 0,
-                                arr:string[] = [];
-                            if (typeof numb !== "number" || isNaN(numb) === true) {
-                                return numb;
-                            }
-                            str = String(numb);
-                            if (str.length < 4) {
-                                return str;
-                            }
-                            arr = str.split("");
-                            len = str.length - 4
-                            do {
-                                arr[len] = `${arr[len]},`;
-                                len = len - 3;
-                            } while (len > -1);
-                            return arr.join("");
-                        };
+                                let str:string = "",
+                                    len:number = 0,
+                                    arr:string[] = [];
+                                if (typeof numb !== "number" || isNaN(numb) === true) {
+                                    return numb;
+                                }
+                                str = String(numb);
+                                if (str.length < 4) {
+                                    return str;
+                                }
+                                arr = str.split("");
+                                len = str.length - 4
+                                do {
+                                    arr[len] = `${arr[len]},`;
+                                    len = len - 3;
+                                } while (len > -1);
+                                return arr.join("");
+                            },
+                            langtext = function dom_event_execute_app_renderOutput_langtext():string {
+                                if (autolang === true) {
+                                    return `Code type is set to <em>auto</em>. Presumed language is <strong>${data.langvalue[2]}</strong>.`;
+                                }
+                                if (autolexer === true) {
+                                    return `Language is set to <strong>${data.langvalue[2]}</strong>. Presumed lexer is <strong>${data.langvalue[1]}</strong>.`;
+                                }
+                                if (options.language === "text") {
+                                    return `Language set to <strong>Plain Text</strong>.`;
+                                }
+                                return `Language set to <strong>${data.langvalue[2]}</strong>.`;
+                            };
                         meta.time = (function dom_event_execute_app_renderOutput_proctime() {
                             const plural       = function dom_event_execute_app_renderOutput_proctime_plural(x:number, y:string):string {
                                     let a = x + y;
@@ -3264,12 +3276,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                         table.push("<div class='report'><h4>Parsed Output</h4>");
                                         table.push(output);
                                         table.push("</div>");
-                                        output = table.join("");
-                                        if (autolang === true) {
-                                            output = `<p>Code type is set to <strong>auto</strong>. <span>Presumed language is <em>${data.langvalue[2]}</em>.</span></p>${output}`;
-                                        } else if (autolexer === true) {
-                                            output = `<p>Lexer is set to <strong>auto</strong>. <span>Presumed lexer is <em>${data.langvalue[1]}</em>.</span></p>${output}`;
-                                        }
+                                        output = `<p>${langtext()}</p>${table.join("")}`;
                                         report.code.body.innerHTML = output;
                                         if (report.code.body.style.display === "none") {
                                             report.code.box.getElementsByTagName("h3")[0].getElementsByTagName("button")[0].focus();
@@ -3360,13 +3367,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             if (options.complete_document === true || options.diff_rendered_html === true) {
                                 output = `<textarea>${sanitize(output)}</textarea>`;
                             }
-                            if (autolang === true) {
-                                report.code.body.innerHTML = `<p>Code type is set to <strong>auto</strong>. Presumed language is <em>${data.langvalue[2]}</em>.</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
-                            } else if (autolexer === true) {
-                                report.code.body.innerHTML = `<p>Lexer is set to <strong>auto</strong>. Presumed lexer is <em>${data.langvalue[1]}</em>.</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
-                            } else {
-                                report.code.body.innerHTML = `<p>Language set to Plain Text.</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
-                            }
+                            report.code.body.innerHTML = `<p>${langtext()}</p><p><strong>Execution time:</strong> <em>${meta.time}</em></p>${output}`;
                             if ((autolang === true || autolexer === true) && report.code.body.firstChild !== null) {
                                 if (report.code.body.firstChild.nodeType > 1) {
                                     report
@@ -3421,17 +3422,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                     .getElementsByTagName("strong")[0]
                                     .innerHTML}</strong> <span>See 'Code Report' for details</span>`;
                             } else {
-                                if (autolang === true && options.language === "jsx") {
-                                    ann.innerHTML = "Code type is set to <em>auto</em>. Presumed language is <strong>React JSX</strong>.";
-                                } else if (autolang === true) {
-                                    ann.innerHTML = `Code type is set to <em>auto</em>. Presumed language is <strong>${data.langvalue[2]}</strong>.`;
-                                } else if (autolexer === true) {
-                                    ann.innerHTML = `Lexer is set to <em>auto</em>. Presumed lexer is <strong>${data.langvalue[1]}</strong>.`;
-                                } else if (options.language === "text") {
-                                    ann.innerHTML = "Language set to <strong>Plain Text</strong>.";
-                                } else {
-                                    ann.innerHTML = `Language set to <strong>${data.langvalue[2]}</strong>.`;
-                                }
+                                ann.innerHTML = langtext();
                                 if (options.mode === "parse" && options.parse_format !== "htmltable") {
                                     pdlang = "tokens";
                                 } else {

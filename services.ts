@@ -996,7 +996,18 @@ interface readFile {
                                 }
                                 filelen = filelen - 1;
                                 if (filelen < 1) {
-                                    const index:string = fileStore.color_white + fileStore.color_canvas + fileStore.color_shadow + fileStore.global + fileStore.reports + fileStore.documentation + fileStore.page_specific + fileStore.webtool_only + fileStore.media;
+                                    const files:string[] = [
+                                            fileStore.color_white,
+                                            fileStore.color_canvas,
+                                            fileStore.color_shadow,
+                                            fileStore.global,
+                                            fileStore.reports,
+                                            fileStore.documentation,
+                                            fileStore.page_specific,
+                                            fileStore.webtool_only,
+                                            fileStore.media
+                                        ],
+                                        index:string = `/* This file is dynamically written.  DO NOT EDIT!! */${node.os.EOL + node.os.EOL + files.join(node.os.EOL)}`;
                                     node.fs.writeFile(`${projectPath}css${sep}index.css`, index, "utf8", function node_apps_build_css_readdir_each_readfile_write(erw:Error):void {
                                         if (erw !== null) {
                                             apps.errout([erw.toString()]);
@@ -4024,7 +4035,7 @@ interface readFile {
                     timeStore = date.valueOf();
                     return timeStore;
                 };
-            if ((extension === "ts" || extension === "css") && timeStore < Date.now() - 1000) {
+            if ((extension === "ts" || extension === "css") && timeStore < Date.now() - 1000 && filename !== `css${sep}index.css`) {
                 let start:number,
                     compile:number,
                     duration = function node_apps_server_watch_duration(length:number):void {

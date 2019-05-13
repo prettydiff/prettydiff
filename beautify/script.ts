@@ -756,8 +756,118 @@ import { parse } from "path";
                     },
                     operator      = function beautify_script_level_operator():void {
                         const ei:number[] = (extraindent[extraindent.length - 1] === undefined)
-                            ? []
-                            : extraindent[extraindent.length - 1];
+                                ? []
+                                : extraindent[extraindent.length - 1],
+                            opWrap = function beautify_script_level_operator():void {
+                                const aa:string   = data.token[a + 1];
+                                let line:number = 0,
+                                    next:number = 0,
+                                    c:number    = a,
+                                    ind:number  = (ctoke === "+")
+                                        ? indent + 2
+                                        : indent,
+                                    meth:number = 0;
+                                if (options.wrap < 1) {
+                                    level.push(-10);
+                                    return;
+                                }
+                                do {
+                                    c = c - 1;
+                                    if (data.token[data.begin[a]] === "(") {
+                                        if (c === data.begin[a]) {
+                                            meth = line;
+                                        }
+                                        if (data.token[c] === "," && data.begin[c] === data.begin[a] && list[list.length - 1] === true) {
+                                            break;
+                                        }
+                                    }
+                                    if (line > options.wrap - 1) {
+                                        break;
+                                    }
+                                    if (level[c] > -9) {
+                                        break;
+                                    }
+                                    if (data.types[c] === "operator" && data.token[c] !== "=" && data.token[c] !== "+" && data.begin[c] === data.begin[a]) {
+                                        break;
+                                    }
+                                    line = line + data.token[c].length;
+                                    if (c === data.begin[a] && data.token[c] === "[" && line < options.wrap - 1) {
+                                        break;
+                                    }
+                                    if (data.token[c] === "." && level[c] > -9) {
+                                        break;
+                                    }
+                                    if (level[c] === -10) {
+                                        line = line + 1;
+                                    }
+                                } while (c > 0);
+                                if (meth > 0) {
+                                    meth = meth + aa.length;
+                                }
+                                line = line + aa.length;
+                                next = c;
+                                if (line > options.wrap - 1 && level[c] < -9) {
+                                    do {
+                                        next = next - 1;
+                                    } while (next > 0 && level[next] < -9);
+                                }
+                                if (data.token[next + 1] === "." && data.begin[a] <= data.begin[next]) {
+                                    ind = ind + 1;
+                                } else if (data.types[next] === "operator") {
+                                    ind = level[next];
+                                }
+                                next = aa.length;
+                                if (line + next < options.wrap) {
+                                    level.push(-10);
+                                    return;
+                                }
+                                if (data.token[data.begin[a]] === "(" && (data.token[ei[0]] === ":" || data.token[ei[0]] === "?")) {
+                                    ind = indent + 3;
+                                } else if (data.stack[a] === "method") {
+                                    level[data.begin[a]] = indent;
+                                    if (list[list.length - 1] === true) {
+                                        ind = indent + 3;
+                                    } else {
+                                        ind = indent + 1;
+                                    }
+                                } else if (data.stack[a] === "object" || data.stack[a] === "array") {
+                                    destructfix(true, false);
+                                }
+                                if (data.token[c] === "var" || data.token[c] === "let" || data.token[c] === "const") {
+                                    line = line - (options.indent_size * options.indent_char.length * 2);
+                                }
+                                if (meth > 0) {
+                                    c = options.wrap - meth;
+                                } else {
+                                    c = options.wrap - line;
+                                }
+                                if (c > 0 && c < 5) {
+                                    level.push(ind);
+                                    if (data.token[a].charAt(0) === "\"" || data.token[a].charAt(0) === "'") {
+                                        a = a + 1;
+                                        level.push(-10);
+                                    }
+                                    return;
+                                }
+                                if (data.token[data.begin[a]] !== "(" || meth > options.wrap - 1 || meth === 0) {
+                                    if (meth > 0) {
+                                        line = meth;
+                                    }
+                                    if (line - aa.length < options.wrap - 1 && (aa.charAt(0) === "\"" || aa.charAt(0) === "'")) {
+                                        a = a + 1;
+                                        line = line + 3;
+                                        if (line - aa.length > options.wrap - 4) {
+                                            level.push(ind);
+                                            return;
+                                        }
+                                        level.push(-10);
+                                        return;
+                                    }
+                                    level.push(ind);
+                                    return;
+                                }
+                                level.push(-10);
+                            };
                         fixchain();
                         if (ei.length > 0 && ei[ei.length - 1] > -1 && data.stack[a] === "array") {
                             arrbreak[arrbreak.length - 1] = true;
@@ -868,6 +978,8 @@ import { parse } from "path";
                                     } while (c > data.begin[a]);
                                 }
                             }
+                            level.push(-10);
+                            return;
                         }
                         if (ctoke === ":") {
                             if (data.stack[a] === "map" || data.types[a + 1] === "type" || data.types[a + 1] === "type_start") {
@@ -967,12 +1079,7 @@ import { parse } from "path";
                                 level.push(-10);
                                 return;
                             }
-                            let line:number = 0,
-                                next:number = 0,
-                                c:number    = a,
-                                ind:number  = indent + 2,
-                                aa:string   = data.token[a + 1],
-                                meth:number = 0;
+                            let aa:string   = data.token[a + 1];
                             if (aa === undefined) {
                                 level.push(-10);
                                 return;
@@ -987,103 +1094,7 @@ import { parse } from "path";
                                     return;
                                 }
                             }
-                            do {
-                                c = c - 1;
-                                if (data.token[data.begin[a]] === "(") {
-                                    if (c === data.begin[a]) {
-                                        meth = line;
-                                    }
-                                    if (data.token[c] === "," && data.begin[c] === data.begin[a] && list[list.length - 1] === true) {
-                                        break;
-                                    }
-                                }
-                                if (line > options.wrap - 1) {
-                                    break;
-                                }
-                                if (level[c] > -9) {
-                                    break;
-                                }
-                                if (data.types[c] === "operator" && data.token[c] !== "=" && data.token[c] !== "+" && data.begin[c] === data.begin[a]) {
-                                    break;
-                                }
-                                line = line + data.token[c].length;
-                                if (c === data.begin[a] && data.token[c] === "[" && line < options.wrap - 1) {
-                                    break;
-                                }
-                                if (data.token[c] === "." && level[c] > -9) {
-                                    break;
-                                }
-                                if (level[c] === -10) {
-                                    line = line + 1;
-                                }
-                            } while (c > 0);
-                            if (meth > 0) {
-                                meth = meth + aa.length;
-                            }
-                            line = line + aa.length;
-                            next = c;
-                            if (line > options.wrap - 1 && level[c] < -9) {
-                                do {
-                                    next = next - 1;
-                                } while (next > 0 && level[next] < -9);
-                            }
-                            if (data.token[next + 1] === "." && data.begin[a] <= data.begin[next]) {
-                                ind = ind + 1;
-                            } else if (data.token[next] === "+") {
-                                ind = level[next];
-                            }
-                            next = aa.length;
-                            if (line + next < options.wrap) {
-                                level.push(-10);
-                                return;
-                            }
-                            if (data.token[data.begin[a]] === "(" && (data.token[ei[0]] === ":" || data.token[ei[0]] === "?")) {
-                                ind = indent + 3;
-                            } else if (data.stack[a] === "method") {
-                                level[data.begin[a]] = indent;
-                                if (list[list.length - 1] === true) {
-                                    ind = indent + 3;
-                                } else {
-                                    ind = indent + 1;
-                                }
-                            } else if (data.stack[a] === "object" || data.stack[a] === "array") {
-                                destructfix(true, false);
-                            }
-                            if (data.token[c] === "var" || data.token[c] === "let" || data.token[c] === "const") {
-                                line = line - (options.indent_size * options.indent_char.length * 2);
-                            }
-                            if (meth > 0) {
-                                c = options.wrap - meth;
-                            } else {
-                                c = options.wrap - line;
-                            }
-                            if (c > 0 && c < 5) {
-                                level.push(ind);
-                                if (data.token[a].charAt(0) === "\"" || data.token[a].charAt(0) === "'") {
-                                    a = a + 1;
-                                    level.push(-10);
-                                }
-                                return;
-                            }
-                            if (data.token[data.begin[a]] !== "(" || meth > options.wrap - 1 || meth === 0) {
-                                if (meth > 0) {
-                                    line = meth;
-                                }
-                                if (line - aa.length < options.wrap - 1 && (aa.charAt(0) === "\"" || aa.charAt(0) === "'")) {
-                                    a = a + 1;
-                                    line = line + 3;
-                                    if (line - aa.length > options.wrap - 4) {
-                                        level.push(ind);
-                                        return;
-                                    }
-                                    level.push(-10);
-                                    return;
-                                }
-                                level.push(ind);
-                                return;
-                            }
-                            level.push(-10);
-                            return;
+                            return opWrap();
                         }
                         if (data.types[a - 1] !== "comment") {
                             if (ltoke === "(") {
@@ -1145,6 +1156,8 @@ import { parse } from "path";
                                 }
                                 c = c + 1;
                             } while (c < b);
+                            level.push(-10);
+                            return;
                         }
                         if ((ctoke === "-" && ltoke === "return") || ltoke === "=") {
                             level.push(-20);
@@ -1154,7 +1167,7 @@ import { parse } from "path";
                             level.push(-20);
                             return;
                         }
-                        level.push(-10);
+                        return opWrap();
                     },
                     reference     = function beautify_script_level_reference():void {
                         const hoist = function beautify_script_level_reference_hoist():void {
@@ -2517,6 +2530,7 @@ import { parse } from "path";
                         }
                     }
                     code.push("</ol>");
+                    code.push(lf);
                     code.push(last);
                     if (options.new_line === true) {
                         code.push(lf);
