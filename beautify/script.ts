@@ -1768,8 +1768,13 @@ import { parse } from "path";
                         if (ltoke === "}" || ltoke === "x}") {
                             level[a - 1] = indent;
                         }
-                        if (ctoke === "else" && ltoke === "}" && data.token[a - 2] === "x}") {
-                            level[a - 3] = level[a - 3] - 1;
+                        if (ctoke === "else" && ltoke === "}") {
+                            if (data.token[a - 2] === "x}") {
+                                level[a - 3] = level[a - 3] - 1;
+                            }
+                            if (options.braces === true) {
+                                level[a - 1] = indent;
+                            }
                         }
                         if (ctoke === "new") {
                             let apiword:string[] = [
@@ -1888,7 +1893,7 @@ import { parse } from "path";
                                 }
                                 c = c - 1;
                             } while (c > -1);
-                        } else if (ctoke === "in" || (((ctoke === "else" && options.else_line === false) || ctoke === "catch") && (ltoke === "}" || ltoke === "x}"))) {
+                        } else if (ctoke === "in" || (((ctoke === "else" && options.else_line === false && options.braces === false) || ctoke === "catch") && (ltoke === "}" || ltoke === "x}"))) {
                             level[a - 1] = -10;
                         } else if (ctoke === "var" || ctoke === "let" || ctoke === "const") {
                             varindex[varindex.length - 1] = a;

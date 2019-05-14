@@ -45,7 +45,7 @@ property | value
 -----------|---
 api        | any
 default    | false
-definition | Determines if opening curly braces will exist on the same line as their condition or be forced onto a new line.
+definition | Determines if opening curly braces will exist on the same line as their condition or be forced onto a new line. (Allman style indentation).
 label      | Style of Indent
 lexer      | script
 mode       | beautify

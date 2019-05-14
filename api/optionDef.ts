@@ -43,7 +43,7 @@
             api       : "any",
             default   : false,
             definition: "Determines if opening curly braces will exist on the same line as their conditio" +
-                    "n or be forced onto a new line.",
+                    "n or be forced onto a new line. (Allman style indentation).",
             label     : "Style of Indent",
             lexer     : "script",
             mode      : "beautify",

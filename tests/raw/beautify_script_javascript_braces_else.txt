@@ -1,0 +1,20 @@
+if (options.mode === "diff") {
+                    if (prettydiff.beautify[options.lexer] === undefined && options.lexer !== "text") {
+                        options.language = "text";
+                    }
+                    let diffmeta = {
+                        differences: 0,
+                        lines: 0
+                    };
+                    meta.insize = options.source.length + options.diff.length;
+                    output = prettydiff(diffmeta);
+                    meta.difftotal = diffmeta.differences;
+                    meta.difflines = diffmeta.lines;
+                } else {
+                    meta.insize = options.source.length;
+                    output = prettydiff();
+                    if (output.indexOf("Error: ") === 0) {
+                        ann.innerHTML = output.replace("Error: ", "");
+                        output = options.source;
+                    }
+                }
