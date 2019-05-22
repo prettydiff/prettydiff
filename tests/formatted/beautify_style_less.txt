@@ -280,7 +280,7 @@
             @button-line-height          : (@font-size-xl + 3); // make everything work like firefox
             @vertical-padding            : (@input-height -(2 * @button-border-width) - @button-line-height) / 2;
             @ie7-height                  : @input-height - @ie7-offset-horizontal-top - @ie7-offset-horizontal-bottom - @button-border-width;
-            @ie-height                   : @input-height -(2 * @vertical-padding) - (2 * @button-border-width);
+            @ie-height                   : @input-height -(2 * @vertical-padding) -(2 * @button-border-width);
 
             background-color             : @color-button;
             .background-image(linear-gradient(to bottom, lighten(@color-button, 10%) 0%, @color-button 100%));

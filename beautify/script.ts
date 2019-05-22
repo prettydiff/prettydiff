@@ -1045,7 +1045,11 @@ import { parse } from "path";
                             }
                             if (data.stack[a] === "switch" && (ternary.length < 1 || ternary[ternary.length - 1] < data.begin[a])) {
                                 level[a - 1] = -20;
-                                level.push(indent);
+                                if (options.case_space === true) {
+                                    level.push(-10);
+                                } else {
+                                    level.push(indent);
+                                }
                                 return;
                             }
                             if (data.stack[a] === "object") {

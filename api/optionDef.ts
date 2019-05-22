@@ -49,6 +49,15 @@
             mode      : "beautify",
             type      : "boolean"
         },
+        case_space        : {
+            api       : "any",
+            default   : false,
+            definition: "If the colon separating a case's expression (of a switch/case block) from its statement should be followed by a space instead of indentation, thereby keeping the case on a single line of code.",
+            label     : "Space Following Case",
+            lexer     : "script",
+            mode      : "beautify",
+            type      : "boolean"
+        },
         color            : {
             api       : "any",
             default   : "white",
