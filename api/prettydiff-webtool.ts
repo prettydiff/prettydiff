@@ -1186,14 +1186,25 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             }
                             lang.value = param[1];
                             if (test.ace === true && c > -1) {
-                                aceStore
-                                    .codeIn
-                                    .getSession()
-                                    .setMode(`ace/mode/${param[1]}`);
-                                aceStore
-                                    .codeOut
-                                    .getSession()
-                                    .setMode(`ace/mode/${param[1]}`);
+                                if (param[1] === "vapor") {
+                                    aceStore
+                                        .codeIn
+                                        .getSession()
+                                        .setMode("ace/mode/html");
+                                    aceStore
+                                        .codeOut
+                                        .getSession()
+                                        .setMode("ace/mode/html");
+                                } else {
+                                    aceStore
+                                        .codeIn
+                                        .getSession()
+                                        .setMode(`ace/mode/${param[1]}`);
+                                    aceStore
+                                        .codeOut
+                                        .getSession()
+                                        .setMode(`ace/mode/${param[1]}`);
+                                }
                             }
                             method.app.langkey({
                                 sample: aceStore.codeIn.getValue(),
@@ -1229,7 +1240,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             if (x !== null) {
                                 x.checked = true;
                             }
-                        } else if (param[0] === "html") {
+                        } else if (param[0] === "html" || param[0] === "vapor") {
                             param[1] = "true";
                             if (lang !== null) {
                                 lang.value = "html";
@@ -2586,16 +2597,30 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 value = ["css", value[1], value[2]];
             }
             if (textarea.codeIn !== null) {
-                aceStore
-                    .codeIn
-                    .getSession()
-                    .setMode(`ace/mode/${value[0]}`);
+                if (value[0] === "vapor") {
+                    aceStore
+                        .codeIn
+                        .getSession()
+                        .setMode("ace/mode/html");
+                } else {
+                    aceStore
+                        .codeIn
+                        .getSession()
+                        .setMode(`ace/mode/${value[0]}`);
+                }
             }
             if (textarea.codeOut !== null) {
-                aceStore
-                    .codeOut
-                    .getSession()
-                    .setMode(`ace/mode/${value[0]}`);
+                if (value[0] === "vapor") {
+                    aceStore
+                        .codeOut
+                        .getSession()
+                        .setMode("ace/mode/html");
+                } else {
+                    aceStore
+                        .codeOut
+                        .getSession()
+                        .setMode(`ace/mode/${value[0]}`);
+                }
             }
         }
         if (obj.name === "text") {
