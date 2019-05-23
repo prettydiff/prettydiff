@@ -404,6 +404,9 @@
                 // level -> space after token
                 do {
                     if (data.lexer[a] === lexer) {
+                        if (data.token[a].toLowerCase().indexOf("<!doctype") === 0) {
+                            level[a - 1] = indent;
+                        }
                         if (data.types[a].indexOf("attribute") > -1) {
                             attribute();
                         } else if (data.types[a] === "comment") {
