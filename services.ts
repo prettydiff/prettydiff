@@ -3299,7 +3299,7 @@ interface readFile {
                                     apps.log([""], result, `${meta.differences},${meta.lines}`);
                                 }
                             } else {
-                                apps.log([""], prettydiff(options), "");
+                                apps.log([""], prettydiff(), "");
                             }
                         },
                         resolveItem = function node_apps_readmethod_resolve_stat_resolveItem() {
@@ -3621,7 +3621,7 @@ interface readFile {
                                                             callback: function node_apps_readmethod_resolve_stat_resolveItem_callbackOther_readFiles_callback(args:readFile, dump:string|Buffer):void {
                                                                 if (typeof dump === "string") {
                                                                     options.source = dump;
-                                                                    const result:string = prettydiff(options);
+                                                                    const result:string = prettydiff();
                                                                     if (result.indexOf("Error: ") === 0) {
                                                                         apps.errout([result.replace("Error: ", "")]);
                                                                         fail = true;
@@ -4396,7 +4396,7 @@ interface readFile {
                                 b = b + 1;
                             } while (b < noteslen);
                         }
-                        output = prettydiff(options);
+                        output = prettydiff();
                         if (output === formatted[a][1]) {
                             filecount = filecount + 1;
                             console.log(`${apps.humantime(false) + text.green}Pass ${filecount}:${text.none} ${formatted[a][0]}`);

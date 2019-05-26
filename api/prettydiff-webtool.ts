@@ -545,7 +545,13 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                     },
                     indentchar   = function dom_load_indentchar():void {
                         const insize:HTMLInputElement = id("option-indent_size"),
-                            inchar:HTMLInputElement = id("option-indent_char");
+                            inchar:HTMLInputElement = id("option-indent_char"),
+                            tabSizeNumber:number = (insize === null || isNaN(Number(insize.value)) === true)
+                                ? 4
+                                : Number(insize.value),
+                            tabSize:number = (tabSizeNumber < 1)
+                                ? 4
+                                : tabSizeNumber;
                         if (test.ace === true) {
                             if (inchar !== null && inchar.value === " ") {
                                 aceStore
@@ -556,16 +562,14 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                     .codeOut
                                     .getSession()
                                     .setUseSoftTabs(true);
-                                if (insize !== null && isNaN(Number(insize.value)) === false) {
-                                    aceStore
-                                        .codeIn
-                                        .getSession()
-                                        .setTabSize(Number(inchar.value));
-                                    aceStore
-                                        .codeOut
-                                        .getSession()
-                                        .setTabSize(Number(inchar.value));
-                                }
+                                aceStore
+                                    .codeIn
+                                    .getSession()
+                                    .setTabSize(tabSize);
+                                aceStore
+                                    .codeOut
+                                    .getSession()
+                                    .setTabSize(tabSize);
                             } else {
                                 aceStore
                                     .codeIn
@@ -579,20 +583,22 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         }
                     },
                     insize   = function dom_load_insize():void {
-                        const el:HTMLInputElement = id("option-indent_size");
+                        const insize:HTMLInputElement = id("option-indent_size"),
+                            tabSizeNumber:number = (insize === null || isNaN(Number(insize.value)) === true)
+                                ? 4
+                                : Number(insize.value),
+                            tabSize:number = (tabSizeNumber < 1)
+                                ? 4
+                                : tabSizeNumber;
                         if (test.ace === true) {
-                            if (textarea.codeIn !== null) {
-                                aceStore
-                                    .codeIn
-                                    .getSession()
-                                    .setTabSize(el.value);
-                            }
-                            if (textarea.codeOut !== null) {
-                                aceStore
-                                    .codeOut
-                                    .getSession()
-                                    .setTabSize(el.value);
-                            }
+                            aceStore
+                                .codeIn
+                                .getSession()
+                                .setTabSize(tabSize);
+                            aceStore
+                                .codeOut
+                                .getSession()
+                                .setTabSize(tabSize);
                         }
                     },
                     modes = function dom_load_modes(event:Event):void {
@@ -805,9 +811,13 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
 
                 // build the Ace editors
                 if (test.ace === true) {
-                    const val:number = (data.settings["option-indent_size"] === undefined || isNaN(Number(data.settings["option-indent_size"])) === true)
-                        ? 4
-                        : Number(data.settings["option-indent_size"])
+                    const insize:HTMLInputElement = id("option-indent_size"),
+                        tabSizeNumber:number = (insize === null || isNaN(Number(insize.value)) === true)
+                            ? 4
+                            : Number(insize.value),
+                        tabSize:number = (tabSizeNumber < 1)
+                            ? 4
+                            : tabSizeNumber;
                     if (textarea.codeIn !== null) {
                         aceStore.codeIn = aceApply("codeIn", true);
                     }
@@ -817,11 +827,11 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                     aceStore
                         .codeIn
                         .getSession()
-                        .setTabSize(val);
+                        .setTabSize(tabSize);
                     aceStore
                         .codeOut
                         .getSession()
-                        .setTabSize(val);
+                        .setTabSize(tabSize);
                 }
                 x = id("ace-no");
                 if (test.ace === false && x !== null && x.checked === false) {
