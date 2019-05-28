@@ -124,8 +124,8 @@ interface readFile {
                         defined: "Lists all commands and their definitions to the shell."
                     },
                     {
-                        code: "prettydiff commands commands",
-                        defined: "Details the mentioned command with code examples."
+                        code: "prettydiff commands directory",
+                        defined: "Details the mentioned command with examples."
                     }
                 ]
             },

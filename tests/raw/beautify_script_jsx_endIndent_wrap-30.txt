@@ -13,9 +13,6 @@
   <!doctype>
 <html>
 <head><title>asdf</title>
-<style type="text/css">
-a{color:red}
-</style>
 </head>
 <body><h1>qwer</h1></body>
 </html>

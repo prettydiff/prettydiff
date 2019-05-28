@@ -1,0 +1,15 @@
+const Button = ({children, padding}) => (
+    <button style={
+        {padding};
+    }>
+        {children}
+        <style jsx>
+            {`
+        button {
+          padding: 20px;
+          background: #eee;
+          color: #999
+        }
+     `}</style>
+    </button>
+);

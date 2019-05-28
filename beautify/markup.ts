@@ -347,7 +347,11 @@
                             level[a - 1] = level[a - 1] - 1;
                         }
                         if (level[a] !== -20) {
-                            level[a] = level[parent];
+                            if (options.language === "jsx" && data.types[a + 1] === "script_start") {
+                                level[a] = lev;
+                            } else {
+                                level[a] = level[parent];
+                            }
                         }
                         if (options.force_attribute === true) {
                             count = 0;
