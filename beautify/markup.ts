@@ -347,7 +347,7 @@
                             level[a - 1] = level[a - 1] - 1;
                         }
                         if (level[a] !== -20) {
-                            if (options.language === "jsx" && data.types[a + 1] === "script_start") {
+                            if (options.language === "jsx" && data.types[parent].indexOf("start") > -1 && data.types[a + 1] === "script_start") {
                                 level[a] = lev;
                             } else {
                                 level[a] = level[parent];
