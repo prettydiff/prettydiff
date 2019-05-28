@@ -1,5 +1,7 @@
-# Pretty Diff version 101
+# Pretty Diff
 A language aware diff, beautification, and minification tool.
+
+Version - 101.0.11
 
 ## Try it out - https://prettydiff.com/
 
@@ -97,3 +99,54 @@ For supported option documentation you may read the *documentation.xhtml* file i
 * For option specific details specify the option's name: `prettydiff option mode` (global) or `node js/services options mode` (local)
 * The option list supports filtering against the documentation headings and values: `prettydiff options mode:diff api:node` (global) or `node js/services options mode:diff api:node` (local)
 * All options, configuration, and documentation are located in the file *api/optionsDef.ts* file.  All option related documentation, features, configurations, and defaults are built from this file for all supported environments.
+
+## Supported Languages
+- markup
+   * [Apache Velocity](https://velocity.apache.org/)
+   * [ASP Inline Expression](https://support.microsoft.com/en-us/help/976112/introduction-to-asp-net-inline-expressions-in-the-net-framework)
+   * [CFML (ColdFusion Markup Language)](https://www.adobe.com/products/coldfusion-family.html)
+   * [Django Inline HTML](https://docs.djangoproject.com/en/2.1/topics/forms/)
+   * [Dust.js](https://www.dustjs.com/)
+   * [EEX Elixir Templates](https://hexdocs.pm/eex/EEx.html)
+   * [EJS (Embedded JavaScript) Templates](https://www.ejs.co/)
+   * [ERB (Embedded Ruby)](https://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html)
+   * [FreeMarker](https://freemarker.apache.org/)
+   * [Genshi](https://genshi.edgewall.org/)
+   * [Handlebars](https://handlebarsjs.com/)
+   * [HTL (HTML Templating Language)](https://helpx.adobe.com/experience-manager/htl/using/getting-started.html)
+   * [HTML](https://www.w3.org/TR/html52/)
+   * [Jekyll](https://jekyllrb.com/docs/liquid/)
+   * [Jinja](http://jinja.pocoo.org/)
+   * [JSTL (Java Standard Tag Library)](https://github.com/eclipse-ee4j/jstl-api)
+   * [Liquid](https://shopify.github.io/liquid/)
+   * [Mustache](https://mustache.github.io/)
+   * [Nunjucks](https://mozilla.github.io/nunjucks/)
+   * [SGML](https://www.iso.org/standard/16387.html)
+   * [SilverStripe](https://docs.silverstripe.org/en/4/developer_guides/templates/syntax/)
+   * [Spacebars templates](http://blazejs.org/guide/spacebars.html)
+   * [ThymeLeaf](https://www.thymeleaf.org/doc/tutorials/3.0/usingthymeleaf.html)
+   * [Underscore Templates (TPL)](https://underscorejs.org/#template)
+   * [Twig](https://twig.symfony.com/)
+   * [Vapor Leaf](https://docs.vapor.codes/3.0/leaf/overview/)
+   * [Vash](https://github.com/kirbysayshi/vash)
+   * [Volt](https://phalcon-php-framework-documentation.readthedocs.io/en/latest/reference/volt.html)
+   * [XML](https://www.w3.org/TR/REC-xml/)
+   * [XSLT](https://www.w3.org/standards/xml/transformation)
+- script
+   * [Flow](https://flow.org/)
+   * [JavaScript / ECMAScript](https://www.ecma-international.org/publications/files/ECMA-ST/Ecma-262.pdf)
+   * [JSON](https://json.org/)
+   * [QML](https://doc.qt.io/qt-5/qmlfirststeps.html)
+   * [React JSX](https://reactjs.org/docs/introducing-jsx.html)
+   * [styled-components](https://www.styled-components.com/)
+   * [styled-jsx](https://github.com/zeit/styled-jsx#readme)
+   * [TSS (Titanium Style Sheets)](https://docs.appcelerator.com/platform/latest/#!/api/Titanium.UI.TextField)
+   * [TSX](https://www.typescriptlang.org/docs/handbook/jsx.html)
+   * [TypeScript](https://www.typescriptlang.org/)
+- style
+   * [CSS](https://www.w3.org/Style/CSS/#news)
+   * [LESS](http://lesscss.org/)
+   * [PostCSS](https://postcss.org/)
+   * [SCSS (Sass)](https://sass-lang.com/)
+
+**45** total languages

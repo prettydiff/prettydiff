@@ -1,4 +1,4 @@
-import { Stats, fstat } from "fs";
+import { Stats, fstat, ReadStream } from "fs";
 import * as http from "http";
 import { Stream, Writable } from "stream";
 import { Hash } from "crypto";
@@ -1022,16 +1022,19 @@ interface readFile {
                 },
                 // phase libraries builds the JavaScript that is called for execution
                 libraries: function node_apps_build_libraries():void {
-                    let libraries:string = "",
-                        mode:string = "",
-                        saveas:string = "",
-                        parser:string = "",
+                    let complete:string = "",
                         defaults:string = "",
-                        webtool:string = "",
-                        complete:string = "";
+                        langMarkdown:string = "",
+                        langHtml:string = "",
+                        libraries:string = "",
+                        mode:string = "",
+                        parser:string = "",
+                        saveas:string = "",
+                        webtool:string = "";
                     const flag = {
                             documentation: false,
                             html: false,
+                            readme: false,
                             webtool: false
                         },
                         date:number = Date.now(),
@@ -1049,7 +1052,9 @@ interface readFile {
                                                     : ops.start.length;
                                                 return data.indexOf(ops.start) + len;
                                             }()),
-                                            end:number = data.indexOf(ops.end);
+                                            end:number = (ops.end === "")
+                                                ? data.length
+                                                : data.indexOf(ops.end);
                                         if (start < 0) {
                                             apps.errout([
                                                 "The injection start is missing from the file:",
@@ -1058,7 +1063,7 @@ interface readFile {
                                             ]);
                                             return;
                                         }
-                                        if (end < start) {
+                                        if (end < start && ops.end !== "") {
                                             apps.errout([
                                                 "The injection end is missing from the file:",
                                                 `Injection end: ${ops.end}`,
@@ -1187,7 +1192,7 @@ interface readFile {
                                     },
                                     writeJavaScript = function node_apps_build_libraries_modifyFile_read_writeJavaScript(fileName:string):void {
                                         flag[fileName] = true;
-                                        if (flag.documentation === true && flag.html === true && flag.webtool === true) {
+                                        if (flag.documentation === true && flag.html === true && flag.readme === true && flag.webtool === true) {
                                             node.fs.writeFile(`${js}prettydiff.js`, `${complete}module.exports=prettydiff;return prettydiff;}());`, function node_apps_build_libraries_modifyFile_read_write_readParser_writeBrowser(erbr:Error) {
                                                 if (erbr !== null && erbr.toString() !== "") {
                                                     apps.errout([erbr.toString()]);
@@ -1220,7 +1225,14 @@ interface readFile {
                                         injectFlag: buildDocumentation(),
                                         start: "<!-- option list start -->"
                                     });
-                                    data = data.replace(/(\.css\?\d*)/g, `.css?${date}`).replace(/(\.js\?\d*)/g, `.js?${date}`);
+                                    modify({
+                                        end: "<!-- documentation languages end -->",
+                                        injectFlag: langHtml,
+                                        start: "<!-- documentation languages start -->"
+                                    })
+                                    data = data
+                                        .replace(/Version\s+-\s+(\d+\.){2}\d+/, `Version - ${prettydiff.version.number}`)
+                                        .replace(/(\.css\?\d*)/g, `.css?${date}`).replace(/(\.js\?\d*)/g, `.js?${date}`);
                                 } else if (fileFlag === "html") {
                                     modify({
                                         end: "<!-- documented options end -->",
@@ -1233,6 +1245,13 @@ interface readFile {
                                         start: "<!-- start version data -->"
                                     });
                                     data = data.replace(/(\.css\?\d*)/g, `.css?${date}`).replace(/(\.js\?\d*)/g, `.js?${date}`);
+                                } else if (fileFlag === "readme") {
+                                    modify({
+                                        end: "",
+                                        injectFlag: langMarkdown,
+                                        start: "## Supported Languages"
+                                    });
+                                    data = data.replace(/Version\s+-\s+(\d+\.){2}\d+/, `Version - ${prettydiff.version.number}`);
                                 } else if (fileFlag === "webtool") {
                                     modify({
                                         end: "// prettydiff dom insertion end",
@@ -1257,6 +1276,8 @@ interface readFile {
                         libraryFiles = function node_apps_build_libraries_libraryFiles() {
                             libFiles.push(`${projectPath}node_modules${sep}file-saver${sep}FileSaver.min.js`);
                             libFiles.push(`${projectPath}node_modules${sep}sparser${sep}js${sep}browser.js`);
+                            libFiles.push(`${projectPath}node_modules${sep}sparser${sep}docs-markdown${sep}language-support.md`);
+                            libFiles.push(`${projectPath}node_modules${sep}sparser${sep}docs-html${sep}language-support.xhtml`);
                             const appendFile = function node_apps_build_libraries_libraryFiles_appendFile(filePath:string):void {
                                     node.fs.readFile(filePath, "utf8", function node_apps_build_libraries_libraryFiles_appendFile_read(errr:Error, filedata:string):void {
                                         const filenames:string[] = filePath.split(sep),
@@ -1281,6 +1302,12 @@ interface readFile {
                                                 .replace(/sparser\s*=\s*sparser;\s*\}\(\)\);(prettydiff\.beautify=\{\};)?(prettydiff\.api=\{\};)?(prettydiff\.minify=\{\};)?/, "")
                                                 .replace(/\s*sparser\.libs\.language\s*=\s*language;/, "sparser.libs.language=language;prettydiff.api.language=language;");
                                             parser = filedata;
+                                        } else if (filePath === `${projectPath}node_modules${sep}sparser${sep}docs-markdown${sep}language-support.md`) {
+                                            langMarkdown = node.os.EOL + filedata.slice(filedata.indexOf("- markup"));
+                                            langMarkdown = `${langMarkdown + node.os.EOL + node.os.EOL}**${langMarkdown.split("](").length}** total languages`; 
+                                        } else if (filePath === `${projectPath}node_modules${sep}sparser${sep}docs-html${sep}language-support.xhtml`) {
+                                            langHtml = `<ul>${filedata.slice(filedata.indexOf("<li>markup "), filedata.indexOf("</ul></div></div><div id=\"blobs\">"))}</ul>`;
+                                            langHtml = `${langHtml}<p><strong>${langHtml.split("href").length}</strong> total languages</p>`
                                         } else {
                                             filedata = filedata
                                                 .replace(/(\/\*global\s+global(,\s*options)?(,\s*prettydiff)?\s*\*\/\s*)/, "")
@@ -1311,6 +1338,7 @@ interface readFile {
                                             modifyFile(`${projectPath}index.xhtml`, "html");
                                             modifyFile(`${js}api${sep}prettydiff-webtool.js`, "webtool");
                                             modifyFile(`${projectPath}documentation.xhtml`, "documentation");
+                                            modifyFile(`${projectPath}readme.md`, "readme");
                                         }
                                     });
                                 },
@@ -1469,6 +1497,14 @@ interface readFile {
                         next(`${text.green}Options documentation successfully written to markdown file.${text.none}`);
                     });
                 },
+                // phase simulation is merely a call to apps.simulation
+                simulation: function node_apps_build_simulation():void {
+                    const callback = function node_apps_build_lint_callback(message:string):void {
+                        next(message);
+                    };
+                    heading("Simulations of Node.js commands from js/services.js");
+                    apps.simulation(callback);
+                },
                 // phase sparser checks if the parser is built and builds it if necessary
                 sparser: function node_apps_build_sparser():void {
                     heading("Checking for built sparser (parser tool)");
@@ -1510,14 +1546,6 @@ interface readFile {
                             next(`${text.green}The Sparser dependency appears to already be built.${text.none}`);
                         }
                     });
-                },
-                // phase simulation is merely a call to apps.simulation
-                simulation: function node_apps_build_simulation():void {
-                    const callback = function node_apps_build_lint_callback(message:string):void {
-                        next(message);
-                    };
-                    heading("Simulations of Node.js commands from js/services.js");
-                    apps.simulation(callback);
                 },
                 // phase typescript compiles the working code into JavaScript
                 typescript: function node_apps_build_typescript():void {
