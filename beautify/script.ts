@@ -201,7 +201,7 @@ import { parse } from "path";
                                 }
                             }
                             if (d < 0) {
-                                if (data.types[c + 1] === "template_start") {
+                                if (data.types[c + 1] === "template_start" || data.types[c + 1] === "template_string_start") {
                                     if (data.lines[c] < 1) {
                                         level[c] = -20;
                                     } else {
@@ -376,29 +376,45 @@ import { parse } from "path";
                             level[a - 1]                  = indent;
                             level.push(-20);
                         } else if (ctoke === ")" || ctoke === "x)") {
-                            if (options.wrap > 0 && (data.stack[a] === "expression" || (data.stack[a] === "paren" && (data.stack[a + 1] === "paren" || data.stack[a + 1] === "expression"))) && ctoke === ")" && ltoke !== "(") {
-                                const countx:number = count.pop() + 1,
-                                    wrap:number = options.wrap,
+                            const countx:number = (ctoke === ")" && ltoke !== "(" && count.length > 0)
+                                    ? count.pop() + 1
+                                    : 0,
+                                countIf:number = (data.token[data.begin[a] - 1] === "if")
+                                    ? (function beautify_script_level_end_countIf():number {
+                                        let bb = a;
+                                        do {
+                                            bb = bb - 1;
+                                            if (data.token[bb] === ")" && level[bb - 1] > -1) {
+                                                return countx;
+                                            }
+                                        } while (bb > data.begin[a]);
+                                        return countx + 5;
+                                    }())
+                                    : countx;
+                            if (countx > 0 && (options.language !== "jsx" || (options.language === "jsx" && data.token[data.begin[a] - 1] !== "render"))) {
+                                const wrap:number = options.wrap,
                                     begin:number = data.begin[a],
                                     len:number = count.length;
-                                let aa:number = a - 1;
-                                if (countx > wrap) {
-                                    level[data.begin[a]] = indent + len + 1;
-                                    level[a - 1] = indent + len;
+                                let aa:number = a - 2;
+                                if (countIf > wrap) {
+                                    level[data.begin[a]] = indent + 1;
+                                    level[a - 1] = indent;
                                     do {
                                         if (data.begin[aa] === begin) {
                                             if (data.token[aa] === "&&" || data.token[aa] === "||") {
-                                                level[aa] = indent + len + 1;
+                                                level[aa] = indent + 1;
+                                            } else if (level[aa] > -1 && data.types[aa] !== "comment" && data.token[aa + 1] !== ".") {
+                                                level[aa] = level[aa] + 1;
                                             }
-                                        } else {
-                                            aa = data.begin[aa];
+                                        } else if (level[aa] > -1 && data.token[aa + 1] !== ".") {
+                                            level[aa] = level[aa] + 1;
                                         }
                                         aa = aa - 1;
                                     } while (aa > begin);
                                 } else if (len > 0) {
                                     count[len - 1] = count[len - 1] + countx;
                                 }
-                            } else if (ctoke === ")" && a > data.begin[a] - 2 && data.lexer[data.begin[a] + 1] === lexer && data.token[data.begin[a] + 1] !== "function") {
+                            } else if (ctoke === ")" && a > data.begin[a] + 2 && data.lexer[data.begin[a] + 1] === lexer && data.token[data.begin[a] + 1] !== "function") {
                                 const open:number = (data.begin[a] < 0)
                                     ? 0
                                     : data.begin[a];
@@ -1597,7 +1613,7 @@ import { parse } from "path";
                             return;
                         }
                         if (ctoke === "(" || ctoke === "x(") {
-                            if (options.wrap > 0 && (data.stack[a + 1] === "expression" || (data.stack[a + 1] === "paren" && (data.stack[a] === "paren" || data.stack[a] === "expression"))) && ctoke === "(" && data.token[a + 1] !== ")") {
+                            if (options.wrap > 0 && ctoke === "(" && data.token[a + 1] !== ")") {
                                 count.push(1);
                             }
                             if (ltoke === "-" && (data.token[a - 2] === "(" || data.token[a - 2] === "x(")) {
@@ -2003,10 +2019,16 @@ import { parse } from "path";
                             ltype = ctype;
                             ltoke = ctoke;
                         }
-                        if (options.wrap > 0 && (data.stack[a] === "expression" || (data.stack[a] === "paren" && (data.stack[data.begin[a]] === "paren" || data.stack[data.begin[a]] === "expression"))) && data.token[a] !== ")") {
-                            count[count.length - 1] = count[count.length - 1] + data.token[a].length;
-                            if (level[a] === -10) {
-                                count[count.length - 1] = count[count.length - 1] + 1;
+                        if (count.length > 0 && data.token[a] !== ")") {
+                            if (data.types[a] === "comment" && count[count.length - 1] > -1) {
+                                count[count.length - 1] = options.wrap + 1;
+                            } else if (level[a] > -1 || (data.token[a].charAt(0) === "`" && data.token[a].indexOf("\n") > 0)) {
+                                count[count.length - 1] = -1;
+                            } else if (count[count.length - 1] > -1) {
+                                count[count.length - 1] = count[count.length - 1] + data.token[a].length;
+                                if (level[a] === -10) {
+                                    count[count.length - 1] = count[count.length - 1] + 1;
+                                }
                             }
                         }
                     } else {

@@ -9,11 +9,10 @@ if (
 }
 
 if (data.stack[a] !== "attribute") {
-    if (
-        ctoke !== ")" &&
-        ctoke !== "x)" &&
-        (ltype !== "markup" || (ltype === "markup" && data.token[a - 2] !== "return"))
-    ) {
+    if (ctoke !== ")" && ctoke !== "x)" && (
+        ltype !== "markup" ||
+        (ltype === "markup" && data.token[a - 2] !== "return")
+    )) {
         indent = indent - 1;
     }
     if (

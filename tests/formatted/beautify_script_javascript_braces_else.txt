@@ -1,6 +1,9 @@
 if (options.mode === "diff")
 {
-    if (prettydiff.beautify[options.lexer] === undefined && options.lexer !== "text")
+    if (
+        prettydiff.beautify[options.lexer] === undefined &&
+        options.lexer !== "text"
+    )
     {
         options.language = "text";
     }

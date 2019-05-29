@@ -1,0 +1,46 @@
+if (tname.charAt(0) === "#" && data.types[parse.count] === "start" && (
+    tname === "#assign" ||
+    tname === "#break" ||
+    tname === "#case" ||
+    tname === "#default" ||
+    tname === "#fallback" ||
+    tname === "#flush" ||
+    tname === "#ftl" ||
+    tname === "#global" ||
+    tname === "#import" ||
+    tname === "#include" ||
+    tname === "#local" ||
+    tname === "#t" ||
+    tname === "#lt" ||
+    tname === "#rt" ||
+    tname === "#nested" ||
+    tname === "#nt" ||
+    tname === "#recover" ||
+    tname === "#recurse" ||
+    tname === "#return" ||
+    tname === "#sep" ||
+    tname === "#setting" ||
+    tname === "#stop" ||
+    tname === "#visit"
+)) {
+    simple = true;
+}
+
+// correction for dustjs tags to template singleton types
+if (
+    options.language === dustjs &&
+    data.types[parse.count] === template_startx
+) {
+    const first: string = element.charAt(1),
+        ending: string  = element.slice(element.length - 2);
+    if ((ending === "/}" || ending.charAt(0) === first) && (
+        first === "#" ||
+        first === "?" ||
+        first === "^" ||
+        first === "@" ||
+        first === "<" ||
+        first === "+"
+    )) {
+        data.types[parse.count] = "template";
+    }
+}
