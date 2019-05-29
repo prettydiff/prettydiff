@@ -1,7 +1,7 @@
 # Pretty Diff
 A language aware diff, beautification, and minification tool.
 
-Version - 101.0.11
+Version - 101.0.12
 
 ## Try it out - https://prettydiff.com/
 

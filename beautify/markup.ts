@@ -119,7 +119,7 @@
                             level.push(indent);
                             ind = ind + 1;
                             if (data.types[a] === "singleton" && a > 0 && data.types[a - 1].indexOf("attribute") > -1 && data.types[data.begin[a - 1]] === "singleton") {
-                                if (data.begin[a] < 0) {
+                                if (data.begin[a] < 0 || (data.types[data.begin[a - 1]] === "singleton" && data.begin[data.ender[a] - 1] !== a)) {
                                     level[a - 1] = indent;
                                 } else {
                                     level[a - 1] = indent + 1;

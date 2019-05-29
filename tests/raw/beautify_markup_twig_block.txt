@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+  <title>
+    {% if block('htmlTitle') is defined %}{{ block('htmlTitle') ~ ' - ' }}{% endif %}
+    Administration
+  </title>
+  <link rel="stylesheet" href="...link-to-file"/>
+
+  {% block head '' %}
+          <link href="images/apple-touch-icon-72.png" rel="apple-touch-icon" sizes="72x72"/>
+        <link href="images/apple-touch-icon-114.png" rel="apple-touch-icon"
+            sizes="114x114"/>
+        <link href="images/apple-touch-icon-144.png" rel="apple-touch-icon"
+            sizes="144x144"/>
+</head>
+
+<body>
+  {% include "@admin/includes/_alert.html" %}
+  {% block mainTitle 'CMS' %}
+  {% block leadText 'Lead text goes here...' %}
+
+  <section id="default" class="content-wrapper">
+    <div class="sidebar">
+      {% block sidebar '' %}
+    </div>
+
+    <main role="main" class="content">
+      {% block content '' %} asdf {% endblock %}
+    </main>
+  </section>
+{% endblock mainTitle %}
+  <script src="...link-to-file"></script>
+
+  {% block foot '' %}
+</body>
+
+</html>
