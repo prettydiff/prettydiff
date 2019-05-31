@@ -2466,7 +2466,11 @@ import { parse } from "path";
                                         if (data.types[a] === "start" && levels[a] > -1) {
                                             scoped.push(false);
                                         }
-                                        build.push(data.token[a]);
+                                        if (data.token[a] !== ";" || options.no_semicolon === false) {
+                                            build.push(data.token[a]);
+                                        } else if (levels[a] < 0 && data.types[a + 1] !== "comment") {
+                                            build.push(";");
+                                        }
                                     }
                                 }
                             }
@@ -2585,7 +2589,11 @@ import { parse } from "path";
                             if (data.types[a] === "reference" && options.jsscope === "interim") {
                                 reference();
                             } else {
-                                build.push(data.token[a]);
+                                if (data.token[a] !== ";" || options.no_semicolon === false) {
+                                    build.push(data.token[a]);
+                                } else if (levels[a] < 0 && data.types[a + 1] !== "comment") {
+                                    build.push(";");
+                                }
                             }
                         }
                         if (a < b - 1 && data.lexer[a + 1] !== lexer && data.begin[a] === data.begin[a + 1] && data.types[a + 1].indexOf("end") < 0 && data.token[a] !== ",") {

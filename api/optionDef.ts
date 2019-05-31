@@ -532,11 +532,20 @@
         no_lead_zero     : {
             api       : "any",
             default   : false,
-            definition: "Whether leading 0s in CSS values immediately preceeding a decimal should be remo" +
+            definition: "Whether leading 0s in CSS values immediately preceding a decimal should be remo" +
                     "ved or prevented.",
             label     : "Leading 0s",
             lexer     : "style",
             mode      : "any",
+            type      : "boolean"
+        },
+        no_semicolon     : {
+            api       : "any",
+            default   : false,
+            definition: "Removes semicolons that would be inserted by ASI. This option is in conflict with option 'correct' and takes precedence over conflicting features. Use of this option is a possible security/stability risk.",
+            label     : "No Semicolons",
+            lexer     : "script",
+            mode      : "beautify",
             type      : "boolean"
         },
         node_error       : {
@@ -560,7 +569,7 @@
         output           : {
             api       : "node",
             default   : "",
-            definition: "A file path for which to write output.  If this option is not specified output will be printed to the shell.",
+            definition: "A file path for which to write output. If this option is not specified output will be printed to the shell.",
             label     : "Output Location",
             lexer     : "any",
             mode      : "any",

@@ -1,0 +1,4 @@
+var a = 1
+for (a; a < g; a = a + 1) {
+    cat // great
+}
