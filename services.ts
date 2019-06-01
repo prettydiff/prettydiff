@@ -1231,7 +1231,8 @@ interface readFile {
                                         start: "<!-- documentation languages start -->"
                                     })
                                     data = data
-                                        .replace(/Version\s+-\s+(\d+\.){2}\d+/, `Version - ${prettydiff.version.number}`)
+                                        .replace(/Version\s+-\s+<strong>(\d+\.){2}\d+/, `Version - <strong>${prettydiff.version.number}`)
+                                        .replace(/Sparser<\/a>\s+<strong>(\d+\.){2}\d+/, `Sparser</a> - <strong>${prettydiff.version.parse}`)
                                         .replace(/(\.css\?\d*)/g, `.css?${date}`).replace(/(\.js\?\d*)/g, `.js?${date}`);
                                 } else if (fileFlag === "html") {
                                     modify({
@@ -1241,7 +1242,7 @@ interface readFile {
                                     });
                                     modify({
                                         end: "<!-- end version data -->",
-                                        injectFlag: `<strong>${prettydiff.version.date}</strong> <span>Version: <strong>${prettydiff.version.number}</strong></span>`,
+                                        injectFlag: `<strong>${prettydiff.version.date}</strong> <span>Version: <strong>${prettydiff.version.number}</strong></span> <span><a href="https://sparser.io">Sparser</a>: <strong>${prettydiff.version.parse}</strong></span>`,
                                         start: "<!-- start version data -->"
                                     });
                                     data = data.replace(/(\.css\?\d*)/g, `.css?${date}`).replace(/(\.js\?\d*)/g, `.js?${date}`);
@@ -1251,7 +1252,9 @@ interface readFile {
                                         injectFlag: langMarkdown,
                                         start: "## Supported Languages"
                                     });
-                                    data = data.replace(/Version\s+-\s+(\d+\.){2}\d+/, `Version - ${prettydiff.version.number}`);
+                                    data = data
+                                        .replace(/Version\s+-\s+(\d+\.){2}\d+/, `Version - ${prettydiff.version.number}`)
+                                        .replace(/\[Sparser\]\(https:\/\/sparser.io\)\s+-\s+(\d+\.){2}\d+/, `[Sparser](https://sparser.io) - ${prettydiff.version.parse}`);
                                 } else if (fileFlag === "webtool") {
                                     modify({
                                         end: "// prettydiff dom insertion end",

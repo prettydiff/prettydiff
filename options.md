@@ -607,7 +607,7 @@ lexer      | style
 mode       | any
 type       | boolean
 
-## no_semi
+## no_semicolon
 property | value
 -----------|---
 api        | any

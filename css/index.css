@@ -582,6 +582,7 @@
 #prettydiff #documentation li li em {font-weight:bold}
 #prettydiff #documentation #options ul {padding: 0 0 0 2em}
 #prettydiff #documentation #options ul li {padding: 0 0 0 2em}
+#prettydiff #documentation .doc-version span{display:block}
 
 
 /*page_specific.css*/
