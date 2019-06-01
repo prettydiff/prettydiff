@@ -1564,7 +1564,7 @@ interface readFile {
                             services: false,
                             typescript: false
                         },
-                        incremental = (process.argv.indexOf("incremental") > -1)
+                        incremental:string = (process.argv.indexOf("incremental") > -1)
                             ? "--incremental"
                             : "--pretty",
                         command:string = (process.argv.indexOf("local") > -1)
