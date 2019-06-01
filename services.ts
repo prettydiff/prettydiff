@@ -112,7 +112,15 @@ interface readFile {
                 example: [
                     {
                         code: "prettydiff build",
-                        defined: "Compiles from TypeScript into JavaScript and puts librarys together."
+                        defined: "Compiles from TypeScript into JavaScript and puts libraries together."
+                    },
+                    {
+                        code: "prettydiff build incremental",
+                        defined: "Use the TypeScript incremental build, which takes about half the time."
+                    },
+                    {
+                        code: "prettydiff build local",
+                        defined: "The default behavior assumes TypeScript is installed globally. Use the 'local' argument if TypeScript is locally installed in node_modules."
                     }
                 ]
             },
@@ -1556,9 +1564,12 @@ interface readFile {
                             services: false,
                             typescript: false
                         },
-                        command:string = (process.argv[0] === "local")
-                            ? "node_modules\\.bin\\tsc --pretty"
-                            : "tsc --pretty",
+                        incremental = (process.argv.indexOf("incremental") > -1)
+                            ? "--incremental"
+                            : "--pretty",
+                        command:string = (process.argv.indexOf("local") > -1)
+                            ? `node_modules\\.bin\\tsc ${incremental}`
+                            : `tsc ${incremental}`,
                         ts = function node_apps_build_typescript_ts() {
                             node.child(command, {
                                 cwd: projectPath
@@ -4108,7 +4119,7 @@ interface readFile {
                     };
                 console.log("");
                 start = time(`Compiling for ${text.green + filename + text.none}`);
-                node.child(`node js/services build`, {
+                node.child(`node js/services build incremental`, {
                     cwd: projectPath
                 }, function node_apps_server_watch_child(err:Error, stdout:string, stderr:string):void {
                     if (err !== null) {
@@ -4300,6 +4311,7 @@ interface readFile {
         }
         wrapper();
     };
+    // runs all the tests
     apps.test = function node_apps_test():void {
         apps.build(true);
     };
