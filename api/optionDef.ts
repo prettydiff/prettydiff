@@ -749,6 +749,7 @@
                 "mediawiki": "https://www.mediawiki.org/wiki/Manual:Coding_conventions/JavaScript",
                 "mrdoob"   : "https://github.com/mrdoob/three.js/wiki/Mr.doob's-Code-Style%E2%84%A2",
                 "none"     : "Ignores this option",
+                "semistandard": "https://github.com/Flet/semistandard",
                 "standard" : "https://standardjs.com/",
                 "yandex"   : "https://github.com/ymaps/codestyle/blob/master/javascript.md"
             }

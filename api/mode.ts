@@ -282,6 +282,24 @@ function mode(diffmeta?:diffmeta):string {
                             options.indent_size  = 2;
                             options.wrap    = 80;
                         },
+                        semistandard: function beautify_script_options_stylessemistandard() {
+                            options.brace_line = false;
+                            options.brace_padding = false;
+                            options.braces = false;
+                            options.correct = true;
+                            options.end_comma = "never";
+                            options.indent_char = " ";
+                            options.indent_size = 2;
+                            options.new_line = false;
+                            options.no_semicolon = false;
+                            options.preserve = 1;
+                            options.quote_convert = "single";
+                            options.space = true;
+                            options.ternary_line = false;
+                            options.variable_list = "each";
+                            options.vertical = false;
+                            options.wrap = 0;
+                        },
                         standard: function beautify_script_options_stylestandard() {
                             options.brace_line = false;
                             options.brace_padding = false;
