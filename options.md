@@ -836,7 +836,7 @@ label      | Script Styleguide
 lexer      | script
 mode       | beautify
 type       | string
-values | airbnb, crockford, google, jquery, jslint, mediawiki, mrdoob, none, standard, yandex
+values | airbnb, crockford, google, jquery, jslint, mediawiki, mrdoob, none, semistandard, standard, yandex
 
 ### Value Definitions
 * **airbnb** - https://github.com/airbnb/javascript
@@ -847,6 +847,7 @@ values | airbnb, crockford, google, jquery, jslint, mediawiki, mrdoob, none, sta
 * **mediawiki** - https://www.mediawiki.org/wiki/Manual:Coding_conventions/JavaScript
 * **mrdoob** - https://github.com/mrdoob/three.js/wiki/Mr.doob's-Code-Style%E2%84%A2
 * **none** - Ignores this option
+* **semistandard** - https://github.com/Flet/semistandard
 * **standard** - https://standardjs.com/
 * **yandex** - https://github.com/ymaps/codestyle/blob/master/javascript.md
 
