@@ -206,6 +206,11 @@
                 test: "folds from line XXXX to line 2"
             },
             {
+                command: `diff source:"${projectPath}tests${sep}diffbase${sep}diff_html_diffSpaceIgnore.txt" diff:"${projectPath}tests${sep}diffnew${sep}diff_html_diffSpaceIgnore.txt" read_method:file`,
+                qualifier: "contains",
+                test: `${text.green}<div${text.diffchar}class="h${text.clear}i${text.diffchar}yabubbaye"id="hello"${text.clear}>${text.diffchar}Hi,world!${text.clear}`
+            },
+            {
                 command: `diff source:"hello" diff:"shelo" readmethod:screen`,
                 qualifier: "contains",
                 test: `${text.cyan}Line: 1${text.none}\n${text.red}hel${text.diffchar}l${text.clear}o${text.none}\n${text.green + text.diffchar}s${text.clear}helo${text.none}`
