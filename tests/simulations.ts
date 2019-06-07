@@ -208,7 +208,7 @@
             {
                 command: `diff source:"${projectPath}tests${sep}diffbase${sep}diff_html_diffSpaceIgnore.txt" diff:"${projectPath}tests${sep}diffnew${sep}diff_html_diffSpaceIgnore.txt" read_method:file`,
                 qualifier: "contains",
-                test: `${text.green}<div${text.diffchar}class="h${text.clear}i${text.diffchar}yabubbaye"id="hello"${text.clear}>${text.diffchar}Hi,world!${text.clear}`
+                test: `${text.green}<div class="hiya laterz" id="hello">${text.none}\n${text.green}Hi, world!${text.none}`
             },
             {
                 command: `diff source:"hello" diff:"shelo" readmethod:screen`,

@@ -1,3 +1,4 @@
 <!--prettydiff.com diff_space_ignore:true -->
-<div id="hello" class="hiya bubbaye">Hi, world!
+<div id="hello" class="hiya laterz">
+  Hi, world!
 </div>
