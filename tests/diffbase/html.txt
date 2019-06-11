@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <title>Pretty Diff - The difference tool</title>
+    </head>
+    <body class="white" id="prettydiff">
+            <h1 class="content-hide">Pretty Diff, a language aware file comparison tool, beautifier, minifier and
+                parser.</h1>
+    </body>
+</html>

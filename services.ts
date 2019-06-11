@@ -43,12 +43,12 @@ interface readFile {
         api:string = `${js}api${sep}`,
         libFiles:string[] = [api, `${js}beautify${sep}`, `${js}minify${sep}`],
         text:any     = {
-            angry    : "\u001b[1m\u001b[31m",
+            angry    : "\u001b[1m\u001b[31m", // bold, red
             blue     : "\u001b[34m",
             bold     : "\u001b[1m",
-            clear    : "\u001b[24m\u001b[22m",
+            clear    : "\u001b[24m\u001b[22m", // remove color, remove underline
             cyan     : "\u001b[36m",
-            diffchar : "\u001b[1m\u001b[4m",
+            diffchar : "\u001b[1m\u001b[4m", // bold, underline
             green    : "\u001b[32m",
             nocolor  : "\u001b[39m",
             none     : "\u001b[0m",
