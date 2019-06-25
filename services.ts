@@ -20,7 +20,6 @@ interface readFile {
 /*jslint node:true */
 /*eslint-env node*/
 /*eslint no-console: 0*/
-/*global global */
 (function node():void {
     "use strict";
     const startTime:[number, number]      = process.hrtime(),
