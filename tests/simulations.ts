@@ -156,7 +156,7 @@
                 command: `copy ${projectPath}js ${projectPath}temp 2`,
                 file: `${projectPath}temp${sep}minify${sep}style.js`,
                 qualifier: "file begins",
-                test: "/*global global, prettydiff\u002a/"
+                test: "/*global prettydiff\u002a/"
             },
             {
                 command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" read_method:file`,
