@@ -1,4 +1,3 @@
-/*global global*/
 (function options_init(): void {
     "use strict";
     const optionDef:optionDef = {
