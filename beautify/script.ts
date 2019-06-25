@@ -1,5 +1,3 @@
-import { parse } from "path";
-
 /*global prettydiff*/
 (function beautify_script_init():void {
     "use strict";

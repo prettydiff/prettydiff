@@ -1336,7 +1336,7 @@ interface readFile {
                                                     .replace(/\s*mode\(\);/, "")
                                                     .replace(/\s*prettydiff\s*=\s*prettydiff;/, "") + `prettydiff.api={};prettydiff.beautify={};prettydiff.end=0;prettydiff.iterator=0;prettydiff.meta={error:"",lang:["","",""],time:"",insize:0,outsize:0,difftotal:0,difflines:0};prettydiff.minify={};prettydiff.options=${defaults};prettydiff.scopes=[];prettydiff.start=0;`;
                                             } else if (filename !== "prettydiff-webtool.js") {
-                                                libraries = libraries + filedata.replace(/\s*global\s*\.\s*prettydiff/, "prettydiff");
+                                                libraries = libraries + filedata.replace(/\/\*\s*global\s*prettydiff\s*\*\//, "");
                                             }
                                         }
                                         a = a + 1;
