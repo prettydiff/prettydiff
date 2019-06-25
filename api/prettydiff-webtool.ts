@@ -1,4 +1,4 @@
-/*global ace, ArrayBuffer, AudioContext, console, document, FileReader, localStorage, location, navigator, setTimeout, Uint8Array, window, XMLHttpRequest*/
+/*global ace*/
 /*jshint laxbreak: true*/
 /*jslint for: true*/
 /*****************************************************************************
