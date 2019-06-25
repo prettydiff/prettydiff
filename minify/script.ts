@@ -1,4 +1,4 @@
-/*global global, prettydiff*/
+/*global prettydiff*/
 (function minify_script_init():void {
     "use strict";
     const script = function minify_script(options:any):string {

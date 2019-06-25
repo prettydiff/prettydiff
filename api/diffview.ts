@@ -1,4 +1,3 @@
-/*global global*/
 (function diffview_init(): void {
     "use strict";
     const diffview = function diffview_(options : any): [string, number, number]{
