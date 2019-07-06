@@ -1,1 +1,17 @@
-node_modules
+# Source code
+api/
+beautify/
+minify/
+tests/
+serviceWorker.txt
+*.ts
+tsconfig.json
+
+# Node modules
+node_modules/
+
+# Project configuration
+.appveyor.yml
+.eslintrc.json
+.github/
+.gitignore
