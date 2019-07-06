@@ -48,6 +48,9 @@
                     c: number = 0,
                     d: number = 0,
                     codes: opcodes = [],
+                    clean = function diffview_opcodes_clean(ln:string): string {
+                        return options.diff_space_ignore === true ? ln.replace(/\s+/g, '') : ln;
+                    },
                     fix = function diffview_opcodes_fix(code:codes): void {
                         let len:number = codes.length - 1,
                             prior:[string, number, number, number, number] = codes[len];
@@ -251,9 +254,6 @@
                 // * First Pass, account for lines from first file
                 // * build the table from the second file
                 do {
-                    if (options.diff_space_ignore === true) {
-                        two[b] = two[b].replace(/\s+/g, "");
-                    }
                     if (table[two[b]] === undefined) {
                         table[two[b]] = [0, 1];
                     } else {
@@ -266,9 +266,6 @@
                 lena = one.length;
                 a = 0;
                 do {
-                    if (options.diff_space_ignore === true) {
-                        one[a] = one[a].replace(/\s+/g, "");
-                    }
                     if (table[one[a]] === undefined) {
                         table[one[a]] = [1, 0];
                     } else {
@@ -284,21 +281,21 @@
                 do {
                     c = a;
                     d = b;
-                    if (one[a] === two[b]) {
+                    if (clean(one[a]) === clean(two[b])) {
                         equality();
                     } else if (table[one[a]][1] < 1 && table[two[b]][0] < 1) {
                         replaceUniques();
-                    } else if (table[one[a]][1] < 1 && one[a + 1] !== two[b + 2]) {
+                    } else if (table[one[a]][1] < 1 && clean(one[a + 1]) !== clean(two[b + 2])) {
                         deletion();
-                    } else if (table[two[b]][0] < 1 && one[a + 2] !== two[b + 1]) {
+                    } else if (table[two[b]][0] < 1 && clean(one[a + 2]) !== clean(two[b + 1])) {
                         insertion();
-                    } else if (table[one[a]][0] - table[one[a]][1] === 1 && one[a + 1] !== two[b + 2]) {
+                    } else if (table[one[a]][0] - table[one[a]][1] === 1 && clean(one[a + 1]) !== clean(two[b + 2])) {
                         deletionStatic();
-                    } else if (table[two[b]][1] - table[two[b]][0] === 1 && one[a + 2] !== two[b + 1]) {
+                    } else if (table[two[b]][1] - table[two[b]][0] === 1 && clean(one[a + 2]) !== clean(two[b + 1])) {
                         insertionStatic();
-                    } else if (one[a + 1] === two[b]) {
+                    } else if (clean(one[a + 1]) === clean(two[b])) {
                         deletion();
-                    } else if (one[a] === two[b + 1]) {
+                    } else if (clean(one[a]) === clean(two[b + 1])) {
                         insertion();
                     } else {
                         replacement();
