@@ -13,8 +13,6 @@ test_script:
   - npm cache clean --force
   - rm -f package-lock.json
   - npm install
-  - npm install --dev typescript@latest
-  - node_modules\.bin\tsc --pretty
   - node js/services build local
   # run tests
   - npm test
