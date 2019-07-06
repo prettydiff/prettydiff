@@ -12,6 +12,7 @@
     "description": "A language aware diff tool.",
     "devDependencies": {
         "ace-builds": "^1.4.4",
+        "typescript": "^3.5.2",
         "ws": "^5.2.2"
     },
     "directories": {
@@ -35,6 +36,7 @@
         "url": "git+https://github.com/prettydiff/prettydiff.git"
     },
     "scripts": {
+        "postinstall": "tsc --pretty",
         "prepublishOnly": "node js/services test",
         "start": "node js/services build",
         "test": "node js/services test"

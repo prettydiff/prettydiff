@@ -14,10 +14,8 @@ Version - 101.1.3
 git clone https://github.com/prettydiff/prettydiff.git
 cd prettydiff
 
-npm install typescript -g
 npm install eslint -g
 npm install
-tsc --pretty
 
 node js/services build
 ```
@@ -38,10 +36,9 @@ npm test
 ```
 
 ### Global install with NPM
-The instructions for installing Pretty Diff globally via NPM do not indicate installing ESLint or Typescript, but the build and test commands will not work without them.
+The instructions for installing Pretty Diff globally via NPM do not indicate installing ESLint but the build and test commands will not work without them.
 
 ```
-npm install -g typescript
 npm install -g eslint
 prettydiff test
 ```
