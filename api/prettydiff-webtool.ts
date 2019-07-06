@@ -1,4 +1,4 @@
-/*global ace, ArrayBuffer, AudioContext, console, document, FileReader, localStorage, location, navigator, setTimeout, Uint8Array, window, XMLHttpRequest*/
+/*global ace*/
 /*jshint laxbreak: true*/
 /*jslint for: true*/
 /*****************************************************************************
@@ -3489,7 +3489,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 data.langvalue = lang;
 
                 if (options.mode === "diff") {
-                    if (prettydiff.beautify[options.lexer] === undefined && options.lexer !== "text") {
+                    if (prettydiff.beautify[options.lexer] === undefined && options.lexer !== "auto" && options.lexer !== "text") {
                         if (ann !== null) {
                             ann.innerHTML = `Library <em>prettydiff.beautify.${options.lexer}</em> is <strong>undefined</strong>.`;
                         }

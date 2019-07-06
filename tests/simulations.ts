@@ -18,12 +18,12 @@
             ? "\\\\"
             : sep,
         text:any     = {
-            angry    : "\u001b[1m\u001b[31m",
+            angry    : "\u001b[1m\u001b[31m", // bold, red
             blue     : "\u001b[34m",
             bold     : "\u001b[1m",
-            clear    : "\u001b[24m\u001b[22m",
+            clear    : "\u001b[24m\u001b[22m", // remove color, remove underline
             cyan     : "\u001b[36m",
-            diffchar : "\u001b[1m\u001b[4m",
+            diffchar : "\u001b[1m\u001b[4m", // bold, underline
             green    : "\u001b[32m",
             nocolor  : "\u001b[39m",
             none     : "\u001b[0m",
@@ -156,7 +156,7 @@
                 command: `copy ${projectPath}js ${projectPath}temp 2`,
                 file: `${projectPath}temp${sep}minify${sep}style.js`,
                 qualifier: "file begins",
-                test: "/*global global, prettydiff\u002a/"
+                test: "/*global prettydiff\u002a/"
             },
             {
                 command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" read_method:file`,
@@ -204,6 +204,11 @@
                 command: `diff source:"${projectPath}tests${sep}diffbase${sep}beautify_script_javascript_vertical.txt" diff:"${projectPath}tests${sep}diffnew${sep}beautify_script_javascript_vertical.txt" read_method:file diff_format:html 2`,
                 qualifier: "contains",
                 test: "folds from line XXXX to line 2"
+            },
+            {
+                command: `diff source:"${projectPath}tests${sep}diffbase${sep}html.txt" diff:"${projectPath}tests${sep}diffnew${sep}html.txt" language:html`,
+                qualifier: "ends",
+                test: `${text.green}Pretty Diff found no differences.${text.none}`
             },
             {
                 command: `diff source:"${projectPath}tests${sep}diffbase${sep}diff_html_diffSpaceIgnore.txt" diff:"${projectPath}tests${sep}diffnew${sep}diff_html_diffSpaceIgnore.txt" read_method:file`,

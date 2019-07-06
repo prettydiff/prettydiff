@@ -20,7 +20,6 @@ interface readFile {
 /*jslint node:true */
 /*eslint-env node*/
 /*eslint no-console: 0*/
-/*global global */
 (function node():void {
     "use strict";
     const startTime:[number, number]      = process.hrtime(),
@@ -43,12 +42,12 @@ interface readFile {
         api:string = `${js}api${sep}`,
         libFiles:string[] = [api, `${js}beautify${sep}`, `${js}minify${sep}`],
         text:any     = {
-            angry    : "\u001b[1m\u001b[31m",
+            angry    : "\u001b[1m\u001b[31m", // bold, red
             blue     : "\u001b[34m",
             bold     : "\u001b[1m",
-            clear    : "\u001b[24m\u001b[22m",
+            clear    : "\u001b[24m\u001b[22m", // remove color, remove underline
             cyan     : "\u001b[36m",
-            diffchar : "\u001b[1m\u001b[4m",
+            diffchar : "\u001b[1m\u001b[4m", // bold, underline
             green    : "\u001b[32m",
             nocolor  : "\u001b[39m",
             none     : "\u001b[0m",
@@ -1337,7 +1336,7 @@ interface readFile {
                                                     .replace(/\s*mode\(\);/, "")
                                                     .replace(/\s*prettydiff\s*=\s*prettydiff;/, "") + `prettydiff.api={};prettydiff.beautify={};prettydiff.end=0;prettydiff.iterator=0;prettydiff.meta={error:"",lang:["","",""],time:"",insize:0,outsize:0,difftotal:0,difflines:0};prettydiff.minify={};prettydiff.options=${defaults};prettydiff.scopes=[];prettydiff.start=0;`;
                                             } else if (filename !== "prettydiff-webtool.js") {
-                                                libraries = libraries + filedata.replace(/\s*global\s*\.\s*prettydiff/, "prettydiff");
+                                                libraries = libraries + filedata.replace(/\/\*\s*global\s*prettydiff\s*\*\//, "");
                                             }
                                         }
                                         a = a + 1;
@@ -3936,7 +3935,11 @@ interface readFile {
                         if (ers.code === "ENOENT") {
                             console.log(`${text.angry}404${text.none} for ${uri}`);
                             response.writeHead(200, {"Content-Type": "text/html"});
-                            response.write(page.replace("insertme", `<p>HTTP 404: ${uri}</p>`));
+                            if (request.headers.referer.indexOf("http") === 0 && (/((:\d+)|(\.\w+))\/?$/).test(request.headers.referer) === true) {
+                                response.write("");
+                            } else {
+                                response.write(page.replace("insertme", `<p>HTTP 404: ${uri}</p>`));
+                            }
                             response.end();
                         } else {
                             apps.errout([ers.toString()]);

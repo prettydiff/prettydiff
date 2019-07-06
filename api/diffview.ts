@@ -1,4 +1,3 @@
-/*global global*/
 (function diffview_init(): void {
     "use strict";
     const diffview = function diffview_(options : any): [string, number, number]{
@@ -387,6 +386,9 @@
                     return output;
                 },
                 htmlfix = function diffview_report_htmlfix(item:string): string {
+                    if (item === undefined) {
+                        return "";
+                    }
                     return item
                         .replace(/&/g, "&amp;")
                         .replace(/</g, "&lt;")
