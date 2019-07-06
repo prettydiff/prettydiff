@@ -36,7 +36,7 @@ npm test
 ```
 
 ### Global install with NPM
-The instructions for installing Pretty Diff globally via NPM do not indicate installing ESLint but the build and test commands will not work without them.
+The instructions for installing Pretty Diff globally via NPM do not indicate installing ESLint but the build and test commands will not work without it.
 
 ```
 npm install -g eslint
