@@ -47,7 +47,8 @@
                     c: number = 0,
                     d: number = 0,
                     codes: opcodes = [],
-                    clean = function diffview_opcodes_clean(ln:string): string {
+                    clean = function diffview_opcodes_clean(ln:string): string|void {
+                        if (ln === undefined) { return; }
                         return options.diff_space_ignore === true ? ln.replace(/\s+/g, '') : ln;
                     },
                     fix = function diffview_opcodes_fix(code:codes): void {
@@ -64,7 +65,7 @@
                                     prior[4] = code[4];
                                 }
                                 if (codes.length > 1 && prior[2] === code[2] && prior[4] === code[4]) {
-                                    if (prior[0] === "insert" && two[codes[codes.length - 2][4] - (prior[4] - prior[3])] === one[codes[codes.length - 2][1]]) {
+                                    if (prior[0] === "insert" && clean(two[codes[codes.length - 2][4] - (prior[4] - prior[3])]) === clean(one[codes[codes.length - 2][1]])) {
                                         codes.pop();
                                         len = len - 1;
                                         codes[len] = ["insert", -1, -1, codes[len][3], codes[len][4] - (prior[4] - prior[3])];
@@ -188,7 +189,7 @@
                             table[one[c]][1] = table[one[c]][1] - 1;
                             c = c + 1;
                             d = d + 1;
-                        } while (c < lena && d < lenb && one[c] === two[d]);
+                        } while (c < lena && d < lenb && clean(one[c]) === clean(two[d]));
                         fix(["equal", a, c, b, d]);
                         b = d - 1;
                         a = c - 1;
@@ -303,7 +304,7 @@
                     b = b + 1;
                 } while (a < lena && b < lenb);
                 if (lena - a === lenb - b) {
-                    if (one[a] === two[b]) {
+                    if (clean(one[a]) === clean(two[b])) {
                         fix(["equal", a, lena, b, lenb]);
                     } else {
                         fix(["replace", a, lena, b, lenb]);
