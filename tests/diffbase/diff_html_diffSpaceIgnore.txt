@@ -1,0 +1,3 @@
+<!--prettydiff.com diff_space_ignore:true -->
+<p id="whitespace-only" class="whitespace only">Whitespace only</p>
+<p></p>

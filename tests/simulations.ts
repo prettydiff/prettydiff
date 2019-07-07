@@ -211,6 +211,11 @@
                 test: `${text.green}Pretty Diff found no differences.${text.none}`
             },
             {
+                command: `diff source:"${projectPath}tests${sep}diffbase${sep}diff_html_diffSpaceIgnore.txt" diff:"${projectPath}tests${sep}diffnew${sep}diff_html_diffSpaceIgnore.txt" read_method:file`,
+                qualifier: "contains",
+                test: `${text.red}<p></p>${text.none}\n${text.green}<p${text.diffchar} id="diff"${text.clear}>${text.diffchar}Add id and text${text.clear}</p>${text.none}`
+            },
+            {
                 command: `diff source:"hello" diff:"shelo" readmethod:screen`,
                 qualifier: "contains",
                 test: `${text.cyan}Line: 1${text.none}\n${text.red}hel${text.diffchar}l${text.clear}o${text.none}\n${text.green + text.diffchar}s${text.clear}helo${text.none}`
