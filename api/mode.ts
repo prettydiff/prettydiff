@@ -557,6 +557,7 @@ function mode(diffmeta?:diffmeta):string {
             result = JSON.stringify(options.parsed);
         }
     } else {
+        options.parse_space = false; // parse mode only option
         if (prettydiff[modeValue][options.lexer] === undefined && ((options.mode !== "diff" && options.language === "text") || options.language !== "text")) {
             result = `Error: Library prettydiff.${modeValue}.${options.lexer} does not exist.`;
         } else if (options.mode === "diff") {
