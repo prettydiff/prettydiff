@@ -1,7 +1,8 @@
 {
     "compilerOptions": {
-        "target": "ES6",
-        "outDir": "js"
+        "outDir": "js",
+        "pretty": true,
+        "target": "ES6"
     },
     "include": [
         "*.ts",
@@ -11,7 +12,7 @@
         "2",
         "3",
         "js",
-        "node_modules",
-        "test"
+        "ignore",
+        "node_modules"
     ]
 }

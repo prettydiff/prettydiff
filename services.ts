@@ -439,7 +439,7 @@ interface readFile {
             }
             return [];
         }()),
-        performance:performance = {
+        performance:perform = {
             codeLength: 0,
             diff: "",
             end: [0,0],
@@ -1523,7 +1523,7 @@ interface readFile {
                         if (ers !== null) {
                             if (ers.code === "ENOENT") {
                                 console.log(`${apps.humantime(false)}Sparser does not appear to be built... building now.`);
-                                node.child(`tsc --pretty`, {
+                                node.child(`tsc`, {
                                     cwd: frame
                                 }, function node_apps_build_sparser_tsc(err:Error, stdout:string, stderr:string):void {
                                     if (err !== null) {
@@ -1564,11 +1564,11 @@ interface readFile {
                             typescript: false
                         },
                         incremental:string = (process.argv.indexOf("incremental") > -1)
-                            ? "--incremental"
-                            : "--pretty",
+                            ? " --incremental"
+                            : "",
                         command:string = (process.argv.indexOf("local") > -1)
                             ? `node_modules\\.bin\\tsc ${incremental}`
-                            : `tsc ${incremental}`,
+                            : `tsc${incremental}`,
                         ts = function node_apps_build_typescript_ts() {
                             node.child(command, {
                                 cwd: projectPath

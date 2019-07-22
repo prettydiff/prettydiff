@@ -8,15 +8,14 @@
 
 (function simulations() {
     "use strict";
-    const eol = require("os").EOL,
-        sep:string = require("path").sep,
+    const sep:string = require("path").sep,
         projectPath:string = (function node_project() {
             const dirs:string[] = __dirname.split(sep);
             return dirs.slice(0, dirs.length - 2).join(sep) + sep;
         }()),
         supersep:string = (sep === "\\")
             ? "\\\\"
-            : sep,
+            : sep,// 210-466-2782, 210-307-8781
         text:any     = {
             angry    : "\u001b[1m\u001b[31m", // bold, red
             blue     : "\u001b[34m",
@@ -51,7 +50,7 @@
             {
                 command: `base64 ${projectPath}tsconfig.json`,
                 qualifier: "is",
-                test: "ewogICAgImNvbXBpbGVyT3B0aW9ucyI6IHsKICAgICAgICAidGFyZ2V0IjogIkVTNiIsCiAgICAgICAgIm91dERpciI6ICJqcyIKICAgIH0sCiAgICAiaW5jbHVkZSI6IFsKICAgICAgICAiKi50cyIsCiAgICAgICAgIioqLyoudHMiCiAgICBdLAogICAgImV4Y2x1ZGUiOiBbCiAgICAgICAgIjIiLAogICAgICAgICIzIiwKICAgICAgICAianMiLAogICAgICAgICJub2RlX21vZHVsZXMiLAogICAgICAgICJ0ZXN0IgogICAgXQp9"
+                test: "ewogICAgImNvbXBpbGVyT3B0aW9ucyI6IHsKICAgICAgICAib3V0RGlyIjogImpzIiwKICAgICAgICAicHJldHR5IjogdHJ1ZSwKICAgICAgICAidGFyZ2V0IjogIkVTNiIKICAgIH0sCiAgICAiaW5jbHVkZSI6IFsKICAgICAgICAiKi50cyIsCiAgICAgICAgIioqLyoudHMiCiAgICBdLAogICAgImV4Y2x1ZGUiOiBbCiAgICAgICAgIjIiLAogICAgICAgICIzIiwKICAgICAgICAianMiLAogICAgICAgICJpZ25vcmUiLAogICAgICAgICJub2RlX21vZHVsZXMiCiAgICBdCn0="
             },
             {
                 command: "base64 decode string:\"bXkgYmlnIHN0cmluZyBzYW1wbGU=\"",
@@ -103,7 +102,7 @@
             {
                 command: `beautify source:"${projectPath}tsconfig.json" read_method:file`,
                 qualifier: "is",
-                test: `{\n    "compilerOptions": {\n        "target": "ES6",\n        "outDir": "js"\n    },\n    "include": [\n        "*.ts", "*\u002a/*.ts"\n    ],\n    "exclude": ["2", "3", "js", "node_modules", "test"]\n}`
+                test: `{\n    "compilerOptions": {\n        "outDir": "js",\n        "pretty": true,\n        "target": "ES6"\n    },\n    "include": [\n        "*.ts", "**/*.ts"\n    ],\n    "exclude": ["2", "3", "js", "ignore", "node_modules"]\n}`
             },
             {
                 command: `beautify source:"${projectPath}tsconfig.json" read_method:file language:text`,
@@ -303,12 +302,12 @@
             {
                 command: `hash ${projectPath} list ignore ["node_modules", ".git", ".DS_Store", "2", "3", "beta", "ignore", "sparser"]`,
                 qualifier: "contains",
-                test: `tsconfig.json":"8a02e6b682f96515abedc9f30096f2f3fce41fbe08e4b0400323f5fbd4b92cdd6a00b8515b25ca7c06d7840c71c08f1b00b070a068342a911939a1e21ef09a94"`
+                test: `tsconfig.json":"8546bfec8ef3570fbd4b4346d5dd68893eba57af2e1ecf835c248ddf1cfb39ffa2a2603060c48ec97f11c0891055bdfadec95d922db887ceea169d88e53f775e"`
             },
             {
                 command: `hash ${projectPath} list ignore [.git, "node_modules", ".DS_Store", "2", "3", "beta", "ignore", "sparser", "tests", "js", "api", "beautify", "minify", "css", 'space test']`,
                 qualifier: "contains",
-                test: `tsconfig.json":"8a02e6b682f96515abedc9f30096f2f3fce41fbe08e4b0400323f5fbd4b92cdd6a00b8515b25ca7c06d7840c71c08f1b00b070a068342a911939a1e21ef09a94"`
+                test: `tsconfig.json":"8546bfec8ef3570fbd4b4346d5dd68893eba57af2e1ecf835c248ddf1cfb39ffa2a2603060c48ec97f11c0891055bdfadec95d922db887ceea169d88e53f775e"`
             },
             {
                 command: `hash ${projectPath} list ignore [.git, "node_modules", ".DS_Store", "2", "3", "beta", "ignore", "sparser", "tests", "js", "api", "beautify", "minify", "css", "space test", "test"]`,
@@ -348,7 +347,7 @@
             {
                 command: `minify source:"${projectPath}tsconfig.json" read_method:file`,
                 qualifier: "is",
-                test: `{"compilerOptions":{"target":"ES6","outDir":"js"},"include":["*.ts","*\u002a/*.ts"],"exclude":["2","3","js","node_modules","test"]}`
+                test: `{"compilerOptions":{"outDir":"js","pretty":true,"target":"ES6"},"include":["*.ts","**/*.ts"],"exclude":["2","3","js","ignore","node_modules"]}`
             },
             {
                 command: `minify source:"${projectPath}tsconfig.json" read_method:file language:text`,
@@ -418,7 +417,7 @@
             {
                 command: `parse ${projectPath}tsconfig.json`,
                 qualifier: "contains",
-                test:  `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,23,23,23,23,0],"ender":[34,34,34,11,11,11,11,11,11,11,11,11,34,34,34,19,19,19,19,19,34,34,34,33,33,33,33,33,33,33,33,33,33,33,34],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,0,2,0,2,2,2],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"2\\"",",","\\"3\\"",",","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","separator","string","separator","string","end","end"]}`
+                test:  `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,0,0,0,0,19,19,19,19,0,0,0,0,27,27,27,27,27,27,27,27,27,27,0],"ender":[38,38,38,15,15,15,15,15,15,15,15,15,15,15,15,15,38,38,38,23,23,23,23,23,38,38,38,37,37,37,37,37,37,37,37,37,37,37,38],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,0,2,0,2,2,2],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"outDir\\"",":","\\"js\\"",",","\\"pretty\\"",":","true",",","\\"target\\"",":","\\"ES6\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"2\\"",",","\\"3\\"",",","\\"js\\"",",","\\"ignore\\"",",","\\"node_modules\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","word","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","separator","string","separator","string","end","end"]}`
             },
             {
                 command: `parse ${projectPath}tsconfig.json parse_format:table`,
@@ -428,14 +427,14 @@
             {
                 command: `parse ${projectPath}tsconfig.json parse_format:table 2`,
                 qualifier: "contains",
-                test: `index | begin | ender | lexer  | lines | stack       | types       | token${eol}------|-------|-------|--------|-------|-------------|-------------|------${eol + text.green}0     | -1    | XXXX    | script | XXXX     | global      | start       | {${text.none}`
+                test: `index | begin | ender | lexer  | lines | stack       | types       | token\n------|-------|-------|--------|-------|-------------|-------------|------\n${text.green}0     | -1    | XXXX    | script | XXXX     | global      | start       | {${text.none}`
             },
             {
                 artifact: `${projectPath}parsetest.txt`,
                 command: `parse ${projectPath}tsconfig.json read_method:file output:"parsetest.txt"`,
                 file: `${projectPath}parsetest.txt`,
                 qualifier: "file is",
-                test:  `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,23,23,23,23,0],"ender":[34,34,34,11,11,11,11,11,11,11,11,11,34,34,34,19,19,19,19,19,34,34,34,33,33,33,33,33,33,33,33,33,33,33,34],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,0,2,0,2,2,2],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"2\\"",",","\\"3\\"",",","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","separator","string","separator","string","end","end"]}`
+                test:  `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,0,0,0,0,19,19,19,19,0,0,0,0,27,27,27,27,27,27,27,27,27,27,0],"ender":[38,38,38,15,15,15,15,15,15,15,15,15,15,15,15,15,38,38,38,23,23,23,23,23,38,38,38,37,37,37,37,37,37,37,37,37,37,37,38],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,0,2,0,2,2,2],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"outDir\\"",":","\\"js\\"",",","\\"pretty\\"",":","true",",","\\"target\\"",":","\\"ES6\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"2\\"",",","\\"3\\"",",","\\"js\\"",",","\\"ignore\\"",",","\\"node_modules\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","word","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","separator","string","separator","string","end","end"]}`
             },
             {
                 artifact: `${projectPath}parsetest.txt`,
@@ -446,7 +445,7 @@
             {
                 command: `parse ${projectPath}tsconfig.json read_method:file`,
                 qualifier: "is",
-                test:  `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0,15,15,15,15,0,0,0,0,23,23,23,23,23,23,23,23,23,23,0],"ender":[34,34,34,11,11,11,11,11,11,11,11,11,34,34,34,19,19,19,19,19,34,34,34,33,33,33,33,33,33,33,33,33,33,33,34],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,0,2,0,2,2,2],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"target\\"",":","\\"ES6\\"",",","\\"outDir\\"",":","\\"js\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"2\\"",",","\\"3\\"",",","\\"js\\"",",","\\"node_modules\\"",",","\\"test\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","separator","string","separator","string","end","end"]}`
+                test:  `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,0,0,0,0,19,19,19,19,0,0,0,0,27,27,27,27,27,27,27,27,27,27,0],"ender":[38,38,38,15,15,15,15,15,15,15,15,15,15,15,15,15,38,38,38,23,23,23,23,23,38,38,38,37,37,37,37,37,37,37,37,37,37,37,38],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,0,2,0,2,2,2],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"outDir\\"",":","\\"js\\"",",","\\"pretty\\"",":","true",",","\\"target\\"",":","\\"ES6\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"2\\"",",","\\"3\\"",",","\\"js\\"",",","\\"ignore\\"",",","\\"node_modules\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","word","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","separator","string","separator","string","end","end"]}`
             },
             {
                 command: `parse source:"${projectPath}api" read_method:file`,

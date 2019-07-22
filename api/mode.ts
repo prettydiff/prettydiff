@@ -380,7 +380,9 @@ function mode(diffmeta?:diffmeta):string {
                         b = def[keys[a]].lexer.length;
                         do {
                             b = b - 1;
-                            ops.lexer_options[def[keys[a]].lexer[b]][keys[a]] = options[keys[a]];
+                            if (keys[a] !== "parse_space" || (options.mode === "parse" && keys[a] === "parse_space" && options[keys[a]] === true)) {
+                                ops.lexer_options[def[keys[a]].lexer[b]][keys[a]] = options[keys[a]];
+                            }
                         } while (b > 0);
                     }
                 }
@@ -489,8 +491,7 @@ function mode(diffmeta?:diffmeta):string {
             } else {
                 let a:number   = 0,
                     str:string[] = [];
-                const os = require("os"),
-                    outputArrays:data = options.parsed,
+                const outputArrays:data = options.parsed,
                     nodeText:any     = {
                         angry    : "\u001b[1m\u001b[31m",
                         blue     : "\u001b[34m",
@@ -551,13 +552,12 @@ function mode(diffmeta?:diffmeta):string {
                     output.push(str.join(""));
                     a = a + 1;
                 } while (a < b);
-                result = output.join(os.EOL);
+                result = output.join(lf);
             }
         } else {
             result = JSON.stringify(options.parsed);
         }
     } else {
-        options.parse_space = false; // parse mode only option
         if (prettydiff[modeValue][options.lexer] === undefined && ((options.mode !== "diff" && options.language === "text") || options.language !== "text")) {
             result = `Error: Library prettydiff.${modeValue}.${options.lexer} does not exist.`;
         } else if (options.mode === "diff") {

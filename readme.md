@@ -1,8 +1,8 @@
 # Pretty Diff
 A language aware diff, beautification, and minification tool.
 
-* Version - 101.1.7
-* [Sparser](https://sparser.io) - 1.4.3
+* Version - 101.1.8
+* [Sparser](https://sparser.io) - 1.4.4
 
 ## Try it out - https://prettydiff.com/
 
