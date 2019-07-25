@@ -196,6 +196,21 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         edit                            = ace.edit(div);
                         textarea[nodeName]          = div.getElementsByTagName("textarea")[0];
                         edit[`${dollar}blockScrolling`] = Infinity;
+                        if (nodeName === "codeIn") {
+                            const slider:HTMLElement = document.createElement("span"),
+                                span:HTMLElement = document.createElement("span"),
+                                p:HTMLElement = document.createElement("p"),
+                                description:string = "Slide this control left and right to adjust the 'options.wrap' value for word wrapping the code.";
+                            p.innerHTML = description;
+                            p.setAttribute("id", "ace-slider-description");
+                            p.style.display = "none";
+                            span.innerHTML = `<button title="${description}" aria-describedby="ace-slider-description">\u25bc</button>`;
+                            slider.appendChild(span);
+                            slider.appendChild(p);
+                            slider.setAttribute("id", "slider");
+                            span.onmousedown = method.event.aceSlider;
+                            parent.insertBefore(slider, div);
+                        }
                         return edit;
                     },
                     aces = function dom_load_aces(event:Event):void {
@@ -2318,6 +2333,23 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         x.onclick = clearComment;
                     }
                 }
+
+                // set the ace wrap slider load conditions
+                if (test.ace === true) {
+                    const slide:HTMLElement = id("slider"),
+                        input:HTMLElement = id("input"),
+                        gutter:HTMLElement = <HTMLElement>input.getElementsByClassName("ace_gutter")[0],
+                        wrap:number = (options.wrap > 1)
+                            ? options.wrap
+                            : 80;
+                    setTimeout(function dom_load_aceGutter() {
+                        slide.style.marginLeft = gutter.style.width;
+                    }, 500);
+                    slide.getElementsByTagName("span")[0].style.left = `${wrap * 1.0035}em`;
+                    if (options.mode !== "beautify") {
+                        slide.style.display = "none";
+                    }
+                }
             }
             if (pages === "documentation") {
                 let a:number = 0,
@@ -2802,6 +2834,94 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
         }
     };
 
+    //ace wrap slider
+    method.event.aceSlider = function dom_app_aceSlider(event:Event):boolean {
+        let subOffset:number = 0,
+            node:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
+            slide:HTMLElement = <HTMLElement>node.parentNode,
+            parent:HTMLElement = <HTMLElement>slide.parentNode,
+            value:number = 0;
+        const touch:boolean       = (event !== null && event.type === "touchstart"),
+            width:number = parent.clientWidth,
+            scale:number = 8.35,
+            max:number = Math.round(((parent.offsetLeft + width) / scale) - scale),
+            wrap = id("option-wrap");
+        if (node.nodeName === "button") {
+            node = slide;
+            slide = parent;
+            parent = <HTMLElement>parent.parentNode;
+        }
+        if (touch === true) {
+            document.ontouchmove  = function dom_event_colSliderGrab_Touchboxmove(f:TouchEvent):void {
+                f.preventDefault();
+                subOffset = Math.round((f.touches[0].clientX / scale) - scale);
+                if (subOffset > max) {
+                    node.style.left = `${max}em`;
+                    status          = "e";
+                    value = max;
+                } else if (subOffset < 0) {
+                    node.style.left = "0";
+                    status          = "w";
+                    value = 0;
+                } else if (subOffset < max && subOffset > 0) {
+                    node.style.left = `${subOffset * 1.0035}em`;
+                    status          = "ew";
+                    value = subOffset;
+                }
+                aceStore.codeIn.setPrintMarginColumn(value);
+                aceStore.codeOut.setPrintMarginColumn(value);
+                document.ontouchend = function dom_event_colSliderGrab_Touchboxmove_drop(f:TouchEvent):void {
+                    f.preventDefault();
+                    node.style.cursor = `${status}-resize`;
+                    node.getElementsByTagName("button")[0].style.cursor = `${status}-resize`;
+                    document.onmousemove = null;
+                    document.onmouseup   = null;
+                    wrap.value = value;
+                    data.settings["option-wrap"] = value;
+                    if (test.store === true) {
+                        localStorage.setItem("settings", JSON.stringify(data.settings));
+                    }
+                    method.event.execute();
+                };
+            };
+            document.ontouchstart = null;
+        } else {
+            document.onmousemove = function dom_event_colSliderGrab_Mouseboxmove(f:MouseEvent):void {
+                f.preventDefault();
+                subOffset = Math.round((f.clientX / scale) - scale);
+                if (subOffset > max) {
+                    node.style.left = `${max}em`;
+                    status          = "e";
+                    value = max;
+                } else if (subOffset < 0) {
+                    node.style.left = "0";
+                    status          = "w";
+                    value = 0;
+                } else if (subOffset < max && subOffset > 0) {
+                    node.style.left = `${subOffset * 1.0035}em`;
+                    status          = "ew";
+                    value = subOffset;
+                }
+                aceStore.codeIn.setPrintMarginColumn(value);
+                aceStore.codeOut.setPrintMarginColumn(value);
+                document.onmouseup = function dom_event_colSliderGrab_Mouseboxmove_drop(f:MouseEvent):void {
+                    f.preventDefault();
+                    node.style.cursor = `${status}-resize`;
+                    node.getElementsByTagName("button")[0].style.cursor = `${status}-resize`;
+                    document.onmousemove = null;
+                    document.onmouseup   = null;
+                    wrap.value = value;
+                    data.settings["option-wrap"] = value;
+                    if (test.store === true) {
+                        localStorage.setItem("settings", JSON.stringify(data.settings));
+                    }
+                    method.event.execute();
+                };
+            };
+            document.onmousedown = null;
+        }
+        return false;
+    };
     //allows visual folding of function in the JSPretty jsscope HTML output
     method.event.beaufold = function dom_event_beaufold(event:Event):void {
         let a:number     = 0,
@@ -4378,6 +4498,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                     sourceLabel.style.display = "block";
                     outputLabel.style.display = "block";
                     outputFile.style.display = "block";
+                    id("slider").style.display = "none";
                     if (options.color === "white") {
                         output.style.background = "#fff";
                     } else if (options.color === "shadow") {
@@ -4415,6 +4536,11 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                     outputLabel.style.display = "none";
                     outputFile.style.display = "none";
                     input.onkeyup = method.event.execute;
+                    if (options.mode === "beautify") {
+                        id("slider").style.display = "block";
+                    } else {
+                        id("slider").style.display = "none";
+                    }
                     if (options.color === "white") {
                         output.style.background = "#f2f2f2";
                     } else if (options.color === "shadow") {
