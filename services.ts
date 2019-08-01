@@ -451,137 +451,137 @@ interface readFile {
         },
         apps:any = {},
         args = function node_args():void {
-            const readOptions = function node_args_readOptions():void {
-                    const list:string[] = process.argv,
-                        def:optionDef = prettydiff.api.optionDef,
-                        keys:string[] = (command === "options")
-                            ? Object.keys(def.mode)
-                            : [],
-                        obj = (command === "options")
-                            ? def.mode
-                            : options,
-                        optionName = function node_args_optionName(bindArgument:boolean):void {
-                            if (a === 0 || options[list[a]] === undefined) {
-                                if (keys.indexOf(list[a]) < 0 && def[list[a]] === undefined) {
-                                    list.splice(a, 1);
-                                    len = len - 1;
-                                    a = a - 1;
-                                }
-                                return;
+            const terminalOptions = function node_args_terminalOptions():void {
+                const list:string[] = process.argv,
+                    def:optionDef = prettydiff.api.optionDef,
+                    keys:string[] = (command === "options")
+                        ? Object.keys(def.mode)
+                        : [],
+                    obj = (command === "options")
+                        ? def.mode
+                        : options,
+                    optionName = function node_args_optionName(bindArgument:boolean):void {
+                        if (a === 0 || options[list[a]] === undefined) {
+                            if (keys.indexOf(list[a]) < 0 && def[list[a]] === undefined) {
+                                list.splice(a, 1);
+                                len = len - 1;
+                                a = a - 1;
                             }
-                            if (bindArgument === true && list[a + 1] !== undefined && list[a + 1].length > 0) {
-                                list[a] = `${list[a]}:${list[a + 1]}`;
+                            return;
+                        }
+                        if (bindArgument === true && list[a + 1] !== undefined && list[a + 1].length > 0) {
+                            list[a] = `${list[a]}:${list[a + 1]}`;
+                            list.splice(a + 1, 1);
+                            len = len - 1;
+                        }
+                        list.splice(0, 0, list[a]);
+                        list.splice(a + 1, 1);
+                    };
+                let split:string = "",
+                    value:string = "",
+                    name:string = "",
+                    a:number = 0,
+                    si:number = 0,
+                    len:number = list.length;
+                do {
+                    list[a] = list[a].replace(/^(-+)/, "");
+                    if (list[a] === "verbose") {
+                        verbose = true;
+                        list.splice(a, 1);
+                        len = len - 1;
+                        a = a - 1;
+                    } else {
+                        si = list[a].indexOf("=");
+                        if (
+                            si > 0 &&
+                            (list[a].indexOf("\"") < 0 || si < list[a].indexOf("\"")) &&
+                            (list[a].indexOf("'") < 0 || si < list[a].indexOf("'")) &&
+                            (si < list[a].indexOf(":") || list[a].indexOf(":") < 0)
+                        ) {
+                            split = "=";
+                        } else {
+                            split = ":";
+                        }
+                        if (list[a + 1] === undefined) {
+                            si = 99;
+                        } else {
+                            si = list[a + 1].indexOf(split);
+                        }
+                        if (
+                            obj[list[a]] !== undefined &&
+                            list[a + 1] !== undefined &&
+                            obj[list[a + 1]] === undefined &&
+                            (
+                                si < 0 || 
+                                (si > list[a + 1].indexOf("\"") && list[a + 1].indexOf("\"") > -1) ||
+                                (si > list[a + 1].indexOf("'") && list[a + 1].indexOf("'") > -1)
+                            )
+                        ) {
+                            if (command === "options") {
+                                optionName(true);
+                            } else {
+                                options[list[a]] = list[a + 1];
+                                a = a + 1;
+                            }
+                        } else if (list[a].indexOf(split) > 0 || (list[a].indexOf(split) < 0 && list[a + 1] !== undefined && (list[a + 1].charAt(0) === ":" || list[a + 1].charAt(0) === "="))) {
+                            if (list[a].indexOf(split) > 0) {
+                                name = list[a].slice(0, list[a].indexOf(split)).toLowerCase();
+                                value = list[a].slice(list[a].indexOf(split) + 1);
+                            } else {
+                                name = list[a].toLowerCase();
+                                value = list[a + 1].slice(1);
                                 list.splice(a + 1, 1);
                                 len = len - 1;
                             }
-                            list.splice(0, 0, list[a]);
-                            list.splice(a + 1, 1);
-                        };
-                    let split:string = "",
-                        value:string = "",
-                        name:string = "",
-                        a:number = 0,
-                        si:number = 0,
-                        len:number = list.length;
-                    do {
-                        list[a] = list[a].replace(/^(-+)/, "");
-                        if (list[a] === "verbose") {
-                            verbose = true;
-                            list.splice(a, 1);
-                            len = len - 1;
-                            a = a - 1;
-                        } else {
-                            si = list[a].indexOf("=");
-                            if (
-                                si > 0 &&
-                                (list[a].indexOf("\"") < 0 || si < list[a].indexOf("\"")) &&
-                                (list[a].indexOf("'") < 0 || si < list[a].indexOf("'")) &&
-                                (si < list[a].indexOf(":") || list[a].indexOf(":") < 0)
-                            ) {
-                                split = "=";
-                            } else {
-                                split = ":";
-                            }
-                            if (list[a + 1] === undefined) {
-                                si = 99;
-                            } else {
-                                si = list[a + 1].indexOf(split);
-                            }
-                            if (
-                                obj[list[a]] !== undefined &&
-                                list[a + 1] !== undefined &&
-                                obj[list[a + 1]] === undefined &&
-                                (
-                                    si < 0 || 
-                                    (si > list[a + 1].indexOf("\"") && list[a + 1].indexOf("\"") > -1) ||
-                                    (si > list[a + 1].indexOf("'") && list[a + 1].indexOf("'") > -1)
-                                )
-                            ) {
-                                if (command === "options") {
-                                    optionName(true);
+                            if (command === "options") {
+                                if (keys.indexOf(name) > -1) {
+                                    if (value !== undefined && value.length > 0) {
+                                        list[a] = `${name}:${value}`;
+                                    } else {
+                                        list[a] = name;
+                                    }
                                 } else {
-                                    options[list[a]] = list[a + 1];
-                                    a = a + 1;
-                                }
-                            } else if (list[a].indexOf(split) > 0 || (list[a].indexOf(split) < 0 && list[a + 1] !== undefined && (list[a + 1].charAt(0) === ":" || list[a + 1].charAt(0) === "="))) {
-                                if (list[a].indexOf(split) > 0) {
-                                    name = list[a].slice(0, list[a].indexOf(split)).toLowerCase();
-                                    value = list[a].slice(list[a].indexOf(split) + 1);
-                                } else {
-                                    name = list[a].toLowerCase();
-                                    value = list[a + 1].slice(1);
-                                    list.splice(a + 1, 1);
+                                    list.splice(a, 1);
                                     len = len - 1;
                                 }
-                                if (command === "options") {
-                                    if (keys.indexOf(name) > -1) {
-                                        if (value !== undefined && value.length > 0) {
-                                            list[a] = `${name}:${value}`;
-                                        } else {
-                                            list[a] = name;
-                                        }
-                                    } else {
-                                        list.splice(a, 1);
-                                        len = len - 1;
-                                    }
-                                } else if (options[name] !== undefined) {
-                                    if (value === "true" && def[name].type === "boolean") {
-                                        options[name] = true;
-                                    } else if (value === "false" && def[name].type === "boolean") {
-                                        options[name] = false;
-                                    } else if (isNaN(Number(value)) === false && def[name].type === "number") {
-                                        options[name] = Number(value);
-                                    } else if (def[name].values !== undefined && def[name].values[value] !== undefined) {
-                                        options[name] = value;
-                                    } else if (def[name].values === undefined) {
-                                        options[name] = value;
-                                    }
+                            } else if (options[name] !== undefined) {
+                                if (value === "true" && def[name].type === "boolean") {
+                                    options[name] = true;
+                                } else if (value === "false" && def[name].type === "boolean") {
+                                    options[name] = false;
+                                } else if (isNaN(Number(value)) === false && def[name].type === "number") {
+                                    options[name] = Number(value);
+                                } else if (def[name].values !== undefined && def[name].values[value] !== undefined) {
+                                    options[name] = value;
+                                } else if (def[name].values === undefined) {
+                                    options[name] = value;
                                 }
-                            } else if (command === "options") {
-                                optionName(false);
                             }
-                        }
-                        a = a + 1;
-                    } while (a < len);
-                    if (options.source === "" && process.argv.length > 0 && process.argv[0].indexOf("=") < 0 && process.argv[0].replace(/^[a-zA-Z]:\\/, "").indexOf(":") < 0) {
-                        if (command === "performance") {
-                            options.source = (process.argv.length < 1)
-                                ? ""
-                                : process.argv[1];
-                        } else {
-                            options.source = process.argv[0];
+                        } else if (command === "options") {
+                            optionName(false);
                         }
                     }
-                };
+                    a = a + 1;
+                } while (a < len);
+                if (options.source === "" && process.argv.length > 0 && process.argv[0].indexOf("=") < 0 && process.argv[0].replace(/^[a-zA-Z]:\\/, "").indexOf(":") < 0) {
+                    if (command === "performance") {
+                        options.source = (process.argv.length < 1)
+                            ? ""
+                            : process.argv[1];
+                    } else {
+                        options.source = process.argv[0];
+                    }
+                }
+            };
             options = prettydiff.options;
+            if (process.argv.length > 0) {
+                terminalOptions();
+            }
             options.api = "node";
             options.binary_check = (
                 // eslint-disable-next-line
                 /\u0000|\u0001|\u0002|\u0003|\u0004|\u0005|\u0006|\u0007|\u000b|\u000e|\u000f|\u0010|\u0011|\u0012|\u0013|\u0014|\u0015|\u0016|\u0017|\u0018|\u0019|\u001a|\u001c|\u001d|\u001e|\u001f|\u007f|\u0080|\u0081|\u0082|\u0083|\u0084|\u0085|\u0086|\u0087|\u0088|\u0089|\u008a|\u008b|\u008c|\u008d|\u008e|\u008f|\u0090|\u0091|\u0092|\u0093|\u0094|\u0095|\u0096|\u0097|\u0098|\u0099|\u009a|\u009b|\u009c|\u009d|\u009e|\u009f/g
             );
-            if (process.argv.length > 0) {
-                readOptions();
-            }
             apps[command]();
         };
     let verbose:boolean = false,
@@ -758,7 +758,7 @@ interface readFile {
                         prettydiff = global.prettydiff
                         args();
                     } else {
-                        console.log(`The file js/prettydiff.js has not been written.  Please run the build: ${text.cyan}node js/services build${text.none}`);
+                        console.log(`The file js/prettydiff.js has not been written.  Please run the build: ${text.cyan}node ${projectPath}js${sep}services build${text.none}`);
                         process.exit(1);
                         return;
                     }
@@ -1015,7 +1015,7 @@ interface readFile {
                                             fileStore.media
                                         ],
                                         index:string = `/* This file is dynamically written.  DO NOT EDIT!! */${node.os.EOL + node.os.EOL + files.join(node.os.EOL)}`;
-                                    node.fs.writeFile(`${projectPath}css${sep}index.css`, index, "utf8", function node_apps_build_css_readdir_each_readfile_write(erw:Error):void {
+                                    node.fs.writeFile(`${projectPath}css${sep}index.css`, index, function node_apps_build_css_readdir_each_readfile_write(erw:Error):void {
                                         if (erw !== null) {
                                             apps.errout([erw.toString()]);
                                             return;
@@ -1271,7 +1271,7 @@ interface readFile {
                                     webtool = data;
                                 }
                                 if (file.slice(file.length - 3) !== ".js") {
-                                    node.fs.writeFile(file, data, "utf8", function node_apps_build_libraries_modifyFile_write(err:Error) {
+                                    node.fs.writeFile(file, data, function node_apps_build_libraries_modifyFile_write(err:Error) {
                                         if (err !== null) {
                                             apps.errout([err.toString()]);
                                             return;
@@ -1379,45 +1379,42 @@ interface readFile {
                             libFiles.forEach(function node_apps_build_libraries_libraryFiles_each(value:string) {
                                 stat(value);
                             });
-                        },
-                        versionGather = function node_apps_build_libraries_versionGather():void {
-                            node.child(`git log -1 --branches`, function node_apps_build_libraries_versionGather_child(err:Error, stderr:string):void {
-                                if (err !== null) {
-                                    apps.errout([err.toString()]);
-                                    return;
-                                }
-                                const date:string[] = stderr.slice(stderr.indexOf("Date:") + 12).split(" ");
-                                prettydiff.version.date = `${date[1]} ${date[0]} ${date[3]}`;
-                                node.fs.readFile(`${projectPath}package.json`, "utf8", function node_apps_build_libraries_versionGather_child_readPackage(errp:Error, data:string):void {
-                                    if (errp !== null) {
-                                        apps.errout([errp.toString()]);
-                                        return;
-                                    }
-                                    prettydiff.version.number = JSON.parse(data).version;
-                                    node.fs.readFile(`${projectPath}node_modules${sep}sparser${sep}package.json`, "utf8", function node_apps_build_libraries_versionGather_child_readPackage_readSparser(errf:Error, frameData:string):void {
-                                        if (errf !== null) {
-                                            apps.errout([errf.toString()]);
-                                            return;
-                                        }
-                                        prettydiff.version.parse = JSON.parse(frameData).version;
-                                        // update information for display in current build
-                                        defaults = (function node_apps_build_libraries_modifyFile_read_buildDefault():string {
-                                            const obj:any = {};
-                                            let a:number = 0;
-                                            do {
-                                                obj[optkeys[a]] = prettydiff.api.optionDef[optkeys[a]].default;
-                                                a = a + 1;
-                                            } while (a < keyslen);
-                                            obj.lexerOptions = {};
-                                            return JSON.stringify(obj);
-                                        }());
-                                        libraryFiles();
-                                    });
-                                });
-                            })
                         };
                     heading("Building Options");
-                    versionGather();
+                    node.child(`git log -1 --branches`, function node_apps_build_libraries_child(err:Error, stderr:string):void {
+                        if (err !== null) {
+                            apps.errout([err.toString()]);
+                            return;
+                        }
+                        const date:string[] = stderr.slice(stderr.indexOf("Date:") + 12).split(" ");
+                        prettydiff.version.date = `${date[1]} ${date[0]} ${date[3]}`;
+                        node.fs.readFile(`${projectPath}package.json`, "utf8", function node_apps_build_libraries_child_readPackage(errp:Error, data:string):void {
+                            if (errp !== null) {
+                                apps.errout([errp.toString()]);
+                                return;
+                            }
+                            prettydiff.version.number = JSON.parse(data).version;
+                            node.fs.readFile(`${projectPath}node_modules${sep}sparser${sep}package.json`, "utf8", function node_apps_build_libraries_child_readPackage_readSparser(errf:Error, frameData:string):void {
+                                if (errf !== null) {
+                                    apps.errout([errf.toString()]);
+                                    return;
+                                }
+                                prettydiff.version.parse = JSON.parse(frameData).version;
+                                // update information for display in current build
+                                defaults = (function node_apps_build_libraries_modifyFile_read_buildDefault():string {
+                                    const obj:any = {};
+                                    let a:number = 0;
+                                    do {
+                                        obj[optkeys[a]] = prettydiff.api.optionDef[optkeys[a]].default;
+                                        a = a + 1;
+                                    } while (a < keyslen);
+                                    obj.lexerOptions = {};
+                                    return JSON.stringify(obj);
+                                }());
+                                libraryFiles();
+                            });
+                        });
+                    });
                 },
                 // phase lint is merely a call to apps.lint
                 lint     : function node_apps_build_lint():void {
@@ -1499,7 +1496,7 @@ interface readFile {
                         }
                         a = a + 1;
                     } while (a < len);
-                    node.fs.writeFile("options.md", doc.join("\n"), "utf8", function node_apps_build_optionsMarkdown_writeFile(err:Error) {
+                    node.fs.writeFile("options.md", doc.join("\n"), function node_apps_build_optionsMarkdown_writeFile(err:Error) {
                         if (err !== null) {
                             apps.errout([err.toString()]);
                             return;
@@ -2191,7 +2188,7 @@ interface readFile {
     apps.errout = function node_apps_errout(errtext:string[]):void {
         const bell = function node_apps_errout_bell():void {
                 apps.humantime(true);
-                if (command === "build" || command === "simulation" || command === "validation") {
+                if (command === "build" || command === "simulation" || command === "test" || command === "validation") {
                     console.log("\u0007"); // bell sound
                 } else {
                     console.log("");
@@ -3309,7 +3306,7 @@ interface readFile {
                     );
             });
     };
-    // processes Pretty Diff mode commands
+    // processes Pretty Diff mode commands, the primary functionality
     apps.readMethod = function node_apps_readMethod(diff:boolean):void {
         if (options.source === "") {
             apps.errout([
@@ -3322,30 +3319,121 @@ interface readFile {
             apps.errout([`Language value ${text.angry}text${text.none} is not compatible with command ${text.green + command + text.none}.`]);
             return;
         }
-        const readmethod:string = options.read_method,
-            item:string = (diff === true)
+        let rcdata:Object = {};
+        const item:string = (diff === true)
                 ? "diff"
                 : "source",
-            resolve = function node_apps_readmethod_resolve() {
-                node.fs.stat(options[item], function node_apps_readmethod_resolve_stat(err:Error, stat:Stats):void {
-                    const screen = function node_apps_readmethod_resolve_stat_screen():void {
-                            diffStatus[item] = true;
-                            if (options.mode === "diff") {
-                                if (diffStatus.source === true && diffStatus.diff === true) {
-                                    let meta:any = {
-                                        differences: 0,
-                                        lines: 0
-                                    };
-                                    const result:string = prettydiff(meta);
-                                    apps.log([""], result, `${meta.differences},${meta.lines}`);
+            def:optionDef = prettydiff.api.optionDef,
+            prettydiffrc = function node_apps_readMethod_prettydiffrc_stat_read_applyRC(callback:Function):void {
+                const keys:string[] = Object.keys(rcdata),
+                    len:number = keys.length;
+                let a:number = 0;
+                if (len < 1) {
+                    callback();
+                    return;
+                }
+                do {
+                    if (keys[a] !== "api" && keys[a] !== "source" && keys[a] !== "diff" && def[keys[a]] !== undefined && def[keys[a]].type === typeof rcdata[keys[a]]) {
+                        if (def[keys[a]].values === undefined || def[keys[a]].values[rcdata[keys[a]]] !== undefined) {
+                            options[keys[a]] = rcdata[keys[a]];
+                        }
+                    }
+                    a = a + 1;
+                } while (a < len);
+                callback();
+            },
+            
+            // check for optional file .prettydiffrc
+            createrc = function node_apps_readMethod_prettydiffrc():void {
+                const rc:string = `${projectPath}.prettydiffrc`;
+                if (diff === true) {
+                    resolve();
+                    return;
+                }
+                node.fs.stat(rc, function node_apps_readMethod_prettydiffrc_stat(ers:Error):void {
+                    if (ers !== null) {
+                        const erstring:string = ers.toString();
+                        if (erstring.indexOf("no such file or directory") > 0) {
+                            // continue silently if .prettydiffrc is removed
+                            resolve();
+                        } else {
+                            apps.errout([erstring]);
+                        }
+                        return;
+                    }
+                    node.fs.readFile(rc, "utf8", function node_apps_readMethod_prettydiffrc_stat_read(err:Error, fileData:string):void {
+                        if (err !== null) {
+                            apps.errout([err.toString()]);
+                            return;
+                        }
+
+                        const nospace:string = fileData.replace(/\s+/g, "");
+                        
+                        // process .prettydiffrc as JSON
+                        if (nospace.charAt(0) === "{" && nospace.charAt(nospace.length - 1) === "}") {
+                            rcdata = JSON.parse(fileData);
+                            resolve();
+                            return;
+                        }
+
+                        // process as JavaScript logic
+                        if (
+                            nospace.indexOf("constrclogic=functionrc_logic(options){") > 0 &&
+                            nospace.indexOf("returnoptions;};module.exports=rclogic;") > 0 &&
+                            nospace.indexOf("require") < 0 &&
+                            nospace.replace("returnoptions;};module.exports=rclogic;", "").indexOf("export") < 0 &&
+                            nospace.indexOf("import") < 0
+                        ) {
+                            const rcLogic:any = require(rc),
+                                defkeys:string[] = Object.keys(def),
+                                deflen:number = defkeys.length;
+                            let a:number = 0;
+                            do {
+                                if (options[defkeys[a]] !== def[defkeys[a]].default) {
+                                    rcdata[defkeys[a]] = options[defkeys[a]];
+                                } else {
+                                    rcdata[defkeys[a]] = def[defkeys[a]].default;
                                 }
-                            } else {
-                                apps.log([""], prettydiff(), "");
-                            }
-                        },
-                        resolveItem = function node_apps_readmethod_resolve_stat_resolveItem() {
+                                a = a + 1;
+                            } while (a < deflen);
+                            rcdata = rcLogic(rcdata);
+                            resolve();
+                            return;
+                        }
+
+                        // ignoring .prettydiffrc file
+                        console.log(`${text.angry}Ignoring .prettydiffrc file.${text.none} The file is present, but not in a supported format.`);
+                        resolve();
+                    });
+                });
+            },
+            resolve = function node_apps_readMethod_resolve() {
+                const screen = function node_apps_readMethod_resolve_stat_screen():void {
+                    diffStatus[item] = true;
+                    if (options.mode === "diff") {
+                        if (diffStatus.source === true && diffStatus.diff === true) {
+                            prettydiffrc(function node_apps_readMethod_resolve_stat_screen_diffrc():void {
+                                let meta:any = {
+                                    differences: 0,
+                                    lines: 0
+                                };
+                                const result:string = prettydiff(meta);
+                                apps.log([""], result, `${meta.differences},${meta.lines}`);
+                            });
+                        }
+                    } else {
+                        prettydiffrc(function node_apps_readMethod_resolve_stat_screen_rc():void {
+                            apps.log([""], prettydiff(), "");
+                        });
+                    }
+                };
+                if (options.read_method === "screen") {
+                    screen();
+                } else {
+                    node.fs.stat(options[item], function node_apps_readMethod_resolve_stat(err:Error, stat:Stats):void {
+                        const resolveItem = function node_apps_readMethod_resolve_stat_resolveItem() {
                             if (options.read_method === "directory" || options.read_method === "subdirectory") {
-                                const callback_diff = function node_apps_readmethod_resolve_stat_resolveItem_callbackDiff(list:directoryList):void {
+                                const callback_diff = function node_apps_readMethod_resolve_stat_resolveItem_callbackDiff(list:directoryList):void {
                                         diffStatus[item] = true;
                                         diffStore[item] = list;
                                         if (diffStatus.diff === true && diffStatus.source === true) {
@@ -3369,7 +3457,7 @@ interface readFile {
                                                     diff: diffStore.diff[0][0] + sep,
                                                     source: diffStore.source[0][0] + sep
                                                 },
-                                                sort = function node_apps_readmethod_resolve_stat_resolveItem_callbackDiff_sort(a, b):number {
+                                                sort = function node_apps_readMethod_resolve_stat_resolveItem_callbackDiff_sort(a, b):number {
                                                     if (a[1] > b[1]) {
                                                         return 1;
                                                     }
@@ -3378,7 +3466,7 @@ interface readFile {
                                                     }
                                                     return -1;
                                                 },
-                                                populate = function node_apps_readmethod_resolve_stat_resolveItem_callbackDiff_populate(diffitem:"source"|"diff"):void {
+                                                populate = function node_apps_readMethod_resolve_stat_resolveItem_callbackDiff_populate(diffitem:"source"|"diff"):void {
                                                     let len:number = diffStore[diffitem].length,
                                                         aa:number = 1;
                                                     do {
@@ -3408,13 +3496,13 @@ interface readFile {
                                                         } while (aa < len && diffStore[diffitem][aa][1] === "link");
                                                     }
                                                 },
-                                                byType = function node_apps_readmethod_resolve_stat_resolveItem_callbackDiff_byType(type:"directory"|"file"|"link"):void {
+                                                byType = function node_apps_readMethod_resolve_stat_resolveItem_callbackDiff_byType(type:"directory"|"file"|"link"):void {
                                                     let del:string[] = [],
                                                         ins:string[] = [],
                                                         aa:number = 0,
                                                         dlen:number = del.length,
                                                         ilen:number = ins.length;
-                                                    const formal = function node_apps_readmethod_resolve_stat_resolveItem_callbackDiff_byType_formal(arr:string[]):string {
+                                                    const formal = function node_apps_readMethod_resolve_stat_resolveItem_callbackDiff_byType_formal(arr:string[]):string {
                                                         if (type === "directory") {
                                                             if (arr.length === 1) {
                                                                 return "directory";
@@ -3460,20 +3548,20 @@ interface readFile {
                                                     ilen = ins.length;
                                                     output.push(`${dlen} ${formal(del)} ${text.angry}deleted${text.none}.`);
                                                     if (dlen > 0) {
-                                                        del.forEach(function node_apps_readmethod_resolve_stat_resolveItem_callbackDiff_byType_delEach(value:string):void {
+                                                        del.forEach(function node_apps_readMethod_resolve_stat_resolveItem_callbackDiff_byType_delEach(value:string):void {
                                                             output.push(`  ${text.angry}*${text.none} ${value}`);
                                                         });
                                                     }
                                                     output.push("");
                                                     output.push(`${ilen} ${formal(ins)} ${text.green + text.bold}inserted${text.none}.`);
                                                     if (ilen > 0) {
-                                                        ins.forEach(function node_apps_readmethod_resolve_stat_resolveItem_callbackDiff_byType_insEach(value:string):void {
+                                                        ins.forEach(function node_apps_readMethod_resolve_stat_resolveItem_callbackDiff_byType_insEach(value:string):void {
                                                             output.push(`  ${text.green + text.bold}*${text.none} ${value}`);
                                                         });
                                                     }
                                                     output.push("");
                                                 },
-                                                fileCompare = function node_apps_readmethod_resolve_stat_resolveItem_callbackDiff_fileCompare(fileArgs:readFile, filedata:string|Buffer):void {
+                                                fileCompare = function node_apps_readMethod_resolve_stat_resolveItem_callbackDiff_fileCompare(fileArgs:readFile, filedata:string|Buffer):void {
                                                     const fd:string = (typeof filedata === "string")
                                                         ? filedata
                                                         : filedata.toString("utf8");
@@ -3501,7 +3589,7 @@ interface readFile {
                                                             }
                                                             output.push(`${len} file${plural} ${text.cyan + text.bold}modified${text.none}.`);
                                                             if (len > 0) {
-                                                                modified.forEach(function node_apps_readmethod_resolve_stat_resolveItem_callbackDiff_fileCompare_each(value:string) {
+                                                                modified.forEach(function node_apps_readMethod_resolve_stat_resolveItem_callbackDiff_fileCompare_each(value:string) {
                                                                     output.push(`  ${text.cyan + text.bold}*${text.none} ${value}`);
                                                                 });
                                                             }
@@ -3529,8 +3617,8 @@ interface readFile {
                                             len = json.length;
                                             
                                             if (options.read_method === "subdirectory") {
-                                                const sanitize = function node_apps_readmethod_resolve_stat_resolveItem_callbackDiff_sanitize(item_type:"source"|"diff", string_purge:string):void {
-                                                    const arrays = function node_apps_readmethod_resolve_stat_resolveItem_callbackDiff_sanitize_arrays(arr:string[]):void {
+                                                const sanitize = function node_apps_readMethod_resolve_stat_resolveItem_callbackDiff_sanitize(item_type:"source"|"diff", string_purge:string):void {
+                                                    const arrays = function node_apps_readMethod_resolve_stat_resolveItem_callbackDiff_sanitize_arrays(arr:string[]):void {
                                                         let c:number = 0,
                                                             d:number = -1,
                                                             flen:number = arr.length;
@@ -3629,7 +3717,7 @@ interface readFile {
                                             // 7. diff of modified files
                                         }
                                     },
-                                    callback_other = function node_apps_readmethod_resolve_stat_resolveItem_callbackOther(list:directoryList):void {
+                                    callback_other = function node_apps_readMethod_resolve_stat_resolveItem_callbackOther(list:directoryList):void {
                                         const source:string = options.source.slice(0, options.source.lastIndexOf(sep) + 1),
                                             listlen:number = list.length,
                                             out:string = node.path.resolve(options.output),
@@ -3639,36 +3727,38 @@ interface readFile {
                                             parse:string = (options.mode === "parse")
                                                 ? ".parse"
                                                 : "",
-                                            address = function node_apps_readmethod_resolve_stat_resolveItem_callbackOther_address(addy:string, directory:boolean):string {
+                                            address = function node_apps_readMethod_resolve_stat_resolveItem_callbackOther_address(addy:string, directory:boolean):string {
                                                 if (directory === true) {
                                                     return out + sep + addy.replace(source, "");
                                                 }
                                                 return out + sep + addy.replace(source, "") + parse;
                                             },
-                                            writeFile = function node_apps_readmethod_resolve_stat_resolveItem_callbackOther_writeWrapper(itempath:string, dump:string|Buffer):void {
-                                                node.fs.writeFile(itempath, dump, function ode_apps_readmethod_resolve_stat_resolveItem_callbackOther_writeWrapper_writeFile():void {
+                                            writeFile = function node_apps_readMethod_resolve_stat_resolveItem_callbackOther_writeWrapper(itempath:string, dump:string|Buffer):void {
+                                                node.fs.writeFile(itempath, dump, function ode_apps_readMethod_resolve_stat_resolveItem_callbackOther_writeWrapper_writeFile():void {
                                                     b = b + 1;
                                                     if (b === listlen) {
                                                         apps.log([`${text.green + c + text.none} file${plural} written to ${text.cyan + out + text.none}.`], "", "");
                                                     }
                                                 });
                                             },
-                                            readFiles = function node_apps_readmethod_resolve_stat_resolveItem_callbackOther_readFiles():void {
+                                            readFiles = function node_apps_readMethod_resolve_stat_resolveItem_callbackOther_readFiles():void {
                                                 a = 0;
                                                 do {
                                                     if (list[a][1] === "file") {
                                                         c = c + 1;
                                                         apps.readFile({
-                                                            callback: function node_apps_readmethod_resolve_stat_resolveItem_callbackOther_readFiles_callback(args:readFile, dump:string|Buffer):void {
+                                                            callback: function node_apps_readMethod_resolve_stat_resolveItem_callbackOther_readFiles_callback(args:readFile, dump:string|Buffer):void {
                                                                 if (typeof dump === "string") {
-                                                                    options.source = dump;
-                                                                    const result:string = prettydiff();
-                                                                    if (result.indexOf("Error: ") === 0) {
-                                                                        apps.errout([result.replace("Error: ", "")]);
-                                                                        fail = true;
-                                                                        return;
-                                                                    }
-                                                                    writeFile(address(args.path, false), result);
+                                                                    prettydiffrc(function node_apps_readMethod_resolve_stat_resolveItem_callbackOther_readFiles_callback_rc():void {
+                                                                        options.source = dump;
+                                                                        const result:string = prettydiff();
+                                                                        if (result.indexOf("Error: ") === 0) {
+                                                                            apps.errout([result.replace("Error: ", "")]);
+                                                                            fail = true;
+                                                                            return;
+                                                                        }
+                                                                        writeFile(address(args.path, false), result);
+                                                                    });
                                                                 } else {
                                                                     writeFile(address(args.path, false), dump);
                                                                 }
@@ -3689,12 +3779,12 @@ interface readFile {
                                                     apps.log([`${text.green}0${text.none} files written to ${text.cyan + source + text.none}.`], "", "");
                                                 }
                                             },
-                                            makedir = function node_apps_readmethod_resolve_stat_resolveItem_callbackOther_makedir():void {
+                                            makedir = function node_apps_readMethod_resolve_stat_resolveItem_callbackOther_makedir():void {
                                                 do {
                                                     if (list[a][1] === "directory") {
-                                                        apps.makedir(address(list[a][0], true), function node_apps_readmethod_resolve_stat_resolveItem_callbackOther_makedir_callback():void {
+                                                        apps.makedir(address(list[a][0], true), function node_apps_readMethod_resolve_stat_resolveItem_callbackOther_makedir_callback():void {
                                                             if (a < listlen) {
-                                                                node_apps_readmethod_resolve_stat_resolveItem_callbackOther_makedir();
+                                                                node_apps_readMethod_resolve_stat_resolveItem_callbackOther_makedir();
                                                             } else {
                                                                 readFiles();
                                                             }
@@ -3724,20 +3814,22 @@ interface readFile {
                                 });
                             } else {
                                 apps.readFile({
-                                    callback: function node_apps_readmethod_resolve_stat_resolveItem_fileCallback(args:readFile, dump:string|Buffer):void {
+                                    callback: function node_apps_readMethod_resolve_stat_resolveItem_fileCallback(args:readFile, dump:string|Buffer):void {
                                         if (typeof dump === "string") {
                                             options[item] = dump;
                                             diffStatus[item] = true;
                                             if (options.mode !== "diff" || (diffStatus.diff === true && diffStatus.source === true)) {
-                                                let meta:any = {
-                                                        differences: 0,
-                                                        lines: 0
-                                                    };
-                                                const result:string = prettydiff(meta),
-                                                    path = (options.mode === "diff")
-                                                        ? `${meta.differences},${meta.lines}`
-                                                        : args.path;
-                                                apps.log([""], result, path);
+                                                prettydiffrc(function node_apps_readMethod_resolve_stat_resolveItem_fileCallback_diffrc():void {
+                                                    let meta:any = {
+                                                            differences: 0,
+                                                            lines: 0
+                                                        };
+                                                    const result:string = prettydiff(meta),
+                                                        path = (options.mode === "diff")
+                                                            ? `${meta.differences},${meta.lines}`
+                                                            : args.path;
+                                                    apps.log([""], result, path);
+                                                });
                                             }
                                         } else {
                                             apps.log([`The file at ${args.path} contains a binary buffer.  Pretty Diff does not analyze binary at this time.`], "", args.path);
@@ -3749,58 +3841,55 @@ interface readFile {
                                 });
                             }
                         };
-                    if (readmethod === "auto") {
-                        if (err !== null) {
-                            const index:any = {
-                                "sep": options[item].indexOf(sep),
-                                "<": options[item].indexOf("<"),
-                                "=": options[item].indexOf("="),
-                                ";": options[item].indexOf(";"),
-                                "{": options[item].indexOf("}")
-                            };
-                            if (err.toString().indexOf("ENOENT") > -1 && (
-                                index["sep"] < 0 ||
-                                index["<"] > -1 ||
-                                index["="] > -1 ||
-                                index[";"] > -1 ||
-                                index["{"] > -1
-                            )) {
-                                // read_method:auto evaluated as "screen"
-                                options.read_method = "screen";
-                                screen();
-                            } else {
-                                // read_method:auto evaluated as filesystem path pointing to missing resource
-                                apps.errout([err.toString()]);
+                        if (options.read_method === "auto") {
+                            if (err !== null) {
+                                const index:any = {
+                                    "sep": options[item].indexOf(sep),
+                                    "<": options[item].indexOf("<"),
+                                    "=": options[item].indexOf("="),
+                                    ";": options[item].indexOf(";"),
+                                    "{": options[item].indexOf("}")
+                                };
+                                if (err.toString().indexOf("ENOENT") > -1 && (
+                                    index["sep"] < 0 ||
+                                    index["<"] > -1 ||
+                                    index["="] > -1 ||
+                                    index[";"] > -1 ||
+                                    index["{"] > -1
+                                )) {
+                                    // read_method:auto evaluated as "screen"
+                                    options.read_method = "screen";
+                                    screen();
+                                } else {
+                                    // read_method:auto evaluated as filesystem path pointing to missing resource
+                                    apps.errout([err.toString()]);
+                                }
+                                return;
                             }
+                            if (stat.isDirectory() === true) {
+                                options.read_method = "subdirectory";
+                            } else if (stat.isDirectory() === false && stat.isSymbolicLink() === false && stat.isFIFO() === false) {
+                                options.read_method = "file";
+                            }
+                        }
+                        if (err !== null) {
+                            apps.errout([err.toString()]);
                             return;
                         }
-                        if (stat.isDirectory() === true) {
-                            options.read_method = "subdirectory";
-                        } else if (stat.isDirectory() === false && stat.isSymbolicLink() === false && stat.isFIFO() === false) {
-                            options.read_method = "file";
+                        options[item] = node.path.resolve(options[item]);
+                        if (stat.isDirectory() === false && (options.read_method === "directory" || options.read_method === "subdirectory")) {
+                            apps.errout([`Option ${text.cyan}read_method${text.none} has value ${text.green + options.read_method + text.none} but ${text.angry}option ${item} does not point to a directory${text.none}.`]);
+                            return;
                         }
-                    }
-                    if (err !== null) {
-                        apps.errout([err.toString()]);
-                        return;
-                    }
-                    options[item] = node.path.resolve(options[item]);
-                    if (stat.isDirectory() === false && (options.read_method === "directory" || options.read_method === "subdirectory")) {
-                        apps.errout([`Option ${text.cyan}read_method${text.none} has value ${text.green + options.read_method + text.none} but ${text.angry}option ${item} does not point to a directory${text.none}.`]);
-                        return;
-                    }
-                    if ((stat.isDirectory() === true || stat.isSymbolicLink() === true || stat.isFIFO() === true) && options.read_method === "file") {
-                        apps.errout([`Option ${text.cyan}read_method${text.none} has value ${text.green + options.read_method + text.none} but ${text.angry}option ${item} does not point to a file${text.none}.`]);
-                        return;
-                    }
-                    if (options.read_method === "screen") {
-                        screen();
-                    } else {
+                        if ((stat.isDirectory() === true || stat.isSymbolicLink() === true || stat.isFIFO() === true) && options.read_method === "file") {
+                            apps.errout([`Option ${text.cyan}read_method${text.none} has value ${text.green + options.read_method + text.none} but ${text.angry}option ${item} does not point to a file${text.none}.`]);
+                            return;
+                        }
                         resolveItem();
-                    }
-                });
+                    });
+                }
             };
-        resolve();
+        createrc();
     };
     // similar to posix "rm -rf" command
     apps.remove = function node_apps_remove(filepath:string, callback:Function):void {
@@ -4145,17 +4234,55 @@ interface readFile {
     };
     // tests the commands of the services file
     apps.simulation = function node_apps_simulation(callback:Function):void {
-        const tests:simulationItem[] = require(`${js}tests${sep}simulations.js`),
-            len:number = tests.length,
+        const rc:string = `${projectPath}.prettydiffrc`,
+            tests:simulationItem[] = require(`${js}tests${sep}simulations.js`),
+            len:number = tests.length - 2, // all tests except the last two, which are reserved for testing the .prettydiffrc file
             cwd:string = __dirname.replace(/(\/|\\)js$/, ""),
+            writerc = function node_apps_simulation_writerc(message:string):void {
+                node.fs.writeFile(rc, rcfile, function node_apps_simulation_increment_interval_writerc(erw:Error) {
+                    if (erw !== null) {
+                        apps.errout([erw.toString()]);
+                        return;
+                    }
+                    if (a === len + 2) {
+                        callback(message);
+                    } else {
+                        apps.errout([message]);
+                    }
+                });
+            },
             increment = function node_apps_simulation_increment(irr:string):void {
                 const interval = function node_apps_simulation_increment_interval():void {
                     a = a + 1;
                     if (a < len) {
                         wrapper();
                     } else {
-                        console.log("");
-                        callback(`${text.green}Successfully completed all ${text.cyan + len + text.green} simulation tests.${text.none}`);
+                        if (a < len + 2 && tests[a].command.indexOf("prettydiffrc-json") > 0) {
+                            // test .prettydiffrc in json format
+                            node.fs.writeFile(rc, "{\"indent_size\": 6}", function node_apps_simulation_increment_interval_rcjson(erjson:Error) {
+                                if (erjson !== null) {
+                                    writerc(erjson.toString());
+                                    return;
+                                }
+                                wrapper();
+                            });
+                        } else if (a < len + 2 && tests[a].command.indexOf("prettydiffrc-javascript") > 0) {
+                            // test .prettydiffrc in json format
+                            node.fs.writeFile(rc, `(function rc() {"use strict";const rclogic = function rc_logic(options) {options.indent_size = 8;return options;};module.exports = rclogic;}());`, function node_apps_simulation_increment_interval_rcjs(erjs:Error) {
+                                if (erjs !== null) {
+                                    writerc(erjs.toString());
+                                    return;
+                                }
+                                wrapper();
+                            });
+                        } else {
+                            console.log("");
+                            if (rcfile === "") {
+                                callback(`${text.green}Successfully completed all ${text.cyan + len + text.green} simulation tests.${text.none}`);
+                            } else {
+                                writerc(`${text.green}Successfully completed all ${text.cyan + len + text.green} simulation tests.${text.none}`);
+                            }
+                        }
                     }
                 };
                 if (irr !== "") {
@@ -4172,14 +4299,14 @@ interface readFile {
                 }
             },
             errout = function node_apps_simulation_errout(message:string, stdout:string) {
-                apps.errout([
+                writerc([
                     `Simulation test string ${text.angry + tests[a].command + text.none} ${message}:`,
                     tests[a].test,
                     "",
                     "",
                     `${text.green}Actual output:${text.none}`,
                     stdout
-                ]);
+                ].join(node.os.EOL));
             },
             wrapper = function node_apps_simulation_wrapper():void {
                 node.child(`node js/services ${tests[a].command}`, {cwd: cwd, maxBuffer: 2048 * 500}, function node_apps_simulation_wrapper_child(errs:nodeError, stdout:string, stderror:string|Buffer) {
@@ -4199,12 +4326,12 @@ interface readFile {
                             return;
                         }
                         if (stdout === "") {
-                            apps.errout([errs.toString()]);
+                            writerc(errs.toString());
                             return;
                         }
                     }
                     if (stderror !== "") {
-                        apps.errout([stderror]);
+                        writerc(stderror.toString());
                         return;
                     }
                     if (typeof stdout === "string") {
@@ -4212,7 +4339,7 @@ interface readFile {
                     }
                     if (tests[a].qualifier.indexOf("file") === 0) {
                         if (tests[a].artifact === "" || tests[a].artifact === undefined) {
-                            apps.errout([`Tests ${text.cyan + tests[a].command + text.none} uses ${text.angry + tests[a].qualifier + text.none} as a qualifier but does not mention an artifact to remove.`]);
+                            writerc(`Tests ${text.cyan + tests[a].command + text.none} uses ${text.angry + tests[a].qualifier + text.none} as a qualifier but does not mention an artifact to remove.`);
                             return;
                         }
                         if (tests[a].qualifier.indexOf("file ") === 0) {
@@ -4253,20 +4380,20 @@ interface readFile {
                             node.fs.stat(tests[a].test, function node_apps_simulation_wrapper_filesystem(ers:Error) {
                                 if (ers !== null) {
                                     if (tests[a].qualifier === "filesystem contains" && ers.toString().indexOf("ENOENT") > -1) {
-                                        apps.errout([
+                                        writerc([
                                             `Simulation test string ${text.angry + tests[a].command + text.none} does not see this address in the local file system:`,
                                             text.cyan + tests[a].test + text.none
-                                        ]);
+                                        ].join(node.os.EOL));
                                         return;
                                     }
-                                    apps.errout([ers.toString()]);
+                                    writerc(ers.toString());
                                     return;
                                 }
                                 if (tests[a].qualifier === "filesystem not contains") {
-                                    apps.errout([
+                                    writerc([
                                         `Simulation test string ${text.angry + tests[a].command + text.none} sees the following address in the local file system, but shouldn't:`,
                                         text.cyan + tests[a].test + text.none
-                                    ]);
+                                    ].join(node.os.EOL));
                                     return;
                                 }
                                 increment("");
@@ -4302,7 +4429,8 @@ interface readFile {
                 });
             };
 
-        let a:number = 0;
+        let a:number = 0,
+            rcfile:string = "";
         if (command === "simulation") {
             callback = function node_apps_lint_callback(message:string):void {
                 apps.log([message, "\u0007"], "", ""); // bell sound
@@ -4312,7 +4440,31 @@ interface readFile {
             console.log(`${text.underline + text.bold}Pretty Diff - services.ts simulation tests${text.none}`);
             console.log("");
         }
-        wrapper();
+        node.fs.stat(rc, function node_apps_simulation_rcstat(ers:Error):void {
+            if (ers !== null) {
+                const erstring:string = ers.toString();
+                if (erstring.indexOf("no such file or directory") > 0) {
+                    wrapper();
+                    return;
+                }
+                apps.errout([erstring]);
+                return;
+            }
+            node.fs.readFile(rc, "utf8", function node_apps_simulation_rcstat_read(err:Error, fileData:string):void {
+                if (err !== null) {
+                    apps.errout([err.toString()]);
+                    return;
+                }
+                rcfile = fileData;
+                node.fs.unlink(rc, function node_apps_simulation_rcstat_read_unlink(eru:Error) {
+                    if (eru !== null) {
+                        apps.errout([eru.toString()]);
+                        return;
+                    }
+                    wrapper();
+                });
+            });
+        });
     };
     // runs all the tests
     apps.test = function node_apps_test():void {

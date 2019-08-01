@@ -381,6 +381,7 @@
 #prettydiff textarea{display:block;font-size:0.8em;width:100%}
 #prettydiff code span{display:block;white-space:pre}
 #prettydiff code{border-style:solid;border-width:0.2em;line-height:1em}
+#prettydiff #documentation code{border-style:none;white-space:pre}
 #prettydiff textarea{line-height:1.4em}
 #prettydiff label{display:inline;font-size:1.4em}
 #prettydiff legend{border-radius:1em;border-style:solid;border-width:0.1em;font-size:1.4em;font-weight:bold;margin-left:-0.25em;padding:0 0.5em}
@@ -853,7 +854,7 @@
 /*webtool - ace slider arrow*/
 #prettydiff #slider{display:block;font-size:0.835em;line-height:1;margin:0;padding:0;position:relative}
 #prettydiff #slider span{cursor:ew-resize;display:inline-block;font-family:"Courier New",Courier,"Lucida Console",monospace;position:absolute;top:-1.4em}
-#prettydiff #slider button{background:transparent;border-style:none;box-shadow:none;cursor:ew-resize;font-size:1.4em;margin:0;padding:0}
+#prettydiff #slider button{background:transparent;border-style:none;box-shadow:none;cursor:ew-resize;display:inline;font-size:1.4em;margin:0;padding:0}
 
 /*webtool - headings*/
 #prettydiff #loadmask span{background:none;display:block;text-align:center;}

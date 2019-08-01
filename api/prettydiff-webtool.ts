@@ -2837,6 +2837,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
     //ace wrap slider
     method.event.aceSlider = function dom_app_aceSlider(event:Event):boolean {
         let subOffset:number = 0,
+            cursorStatus:string = "ew",
             node:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target,
             slide:HTMLElement = <HTMLElement>node.parentNode,
             parent:HTMLElement = <HTMLElement>slide.parentNode,
@@ -2857,23 +2858,23 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 subOffset = Math.round((f.touches[0].clientX / scale) - scale);
                 if (subOffset > max) {
                     node.style.left = `${max}em`;
-                    status          = "e";
+                    cursorStatus    = "e";
                     value = max;
                 } else if (subOffset < 0) {
                     node.style.left = "0";
-                    status          = "w";
+                    cursorStatus    = "w";
                     value = 0;
                 } else if (subOffset < max && subOffset > 0) {
                     node.style.left = `${subOffset * 1.0035}em`;
-                    status          = "ew";
+                    cursorStatus    = "ew";
                     value = subOffset;
                 }
                 aceStore.codeIn.setPrintMarginColumn(value);
                 aceStore.codeOut.setPrintMarginColumn(value);
                 document.ontouchend = function dom_event_colSliderGrab_Touchboxmove_drop(f:TouchEvent):void {
                     f.preventDefault();
-                    node.style.cursor = `${status}-resize`;
-                    node.getElementsByTagName("button")[0].style.cursor = `${status}-resize`;
+                    node.style.cursor = `${cursorStatus}-resize`;
+                    node.getElementsByTagName("button")[0].style.cursor = `${cursorStatus}-resize`;
                     document.onmousemove = null;
                     document.onmouseup   = null;
                     wrap.value = value;
@@ -2891,23 +2892,23 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 subOffset = Math.round((f.clientX / scale) - scale);
                 if (subOffset > max) {
                     node.style.left = `${max}em`;
-                    status          = "e";
+                    cursorStatus    = "e";
                     value = max;
                 } else if (subOffset < 0) {
                     node.style.left = "0";
-                    status          = "w";
+                    cursorStatus    = "w";
                     value = 0;
                 } else if (subOffset < max && subOffset > 0) {
                     node.style.left = `${subOffset * 1.0035}em`;
-                    status          = "ew";
+                    cursorStatus    = "ew";
                     value = subOffset;
                 }
                 aceStore.codeIn.setPrintMarginColumn(value);
                 aceStore.codeOut.setPrintMarginColumn(value);
                 document.onmouseup = function dom_event_colSliderGrab_Mouseboxmove_drop(f:MouseEvent):void {
                     f.preventDefault();
-                    node.style.cursor = `${status}-resize`;
-                    node.getElementsByTagName("button")[0].style.cursor = `${status}-resize`;
+                    node.style.cursor = `${cursorStatus}-resize`;
+                    node.getElementsByTagName("button")[0].style.cursor = `${cursorStatus}-resize`;
                     document.onmousemove = null;
                     document.onmouseup   = null;
                     wrap.value = value;
@@ -3047,7 +3048,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
         let subOffset:number   = 0,
             withinRange:boolean = false,
             offset:number      = 0,
-            status:string      = "ew",
+            cursorStatus:string      = "ew",
             diffLeft:HTMLElement,
             node:HTMLElement = <HTMLElement>event.srcElement || <HTMLElement>event.target;
         const touch:boolean       = (event !== null && event.type === "touchstart"),
@@ -3102,17 +3103,17 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 }
                 if (withinRange === true && subOffset > maxAdjust) {
                     diffRight.style.width = `${(total - counter - 2) / 10}em`;
-                    status                = "e";
+                    cursorStatus          = "e";
                 } else if (withinRange === true && subOffset < minAdjust) {
                     diffRight.style.width = `${(total - counter - data - 2) / 10}em`;
-                    status                = "w";
+                    cursorStatus          = "w";
                 } else if (subOffset < max && subOffset > min) {
                     diffRight.style.width = `${(width + subOffset) / 10}em`;
-                    status                = "ew";
+                    cursorStatus          = "ew";
                 }
                 document.ontouchend = function dom_event_colSliderGrab_Touchboxmove_drop(f:TouchEvent):void {
                     f.preventDefault();
-                    node.style.cursor = `${status}-resize`;
+                    node.style.cursor = `${cursorStatus}-resize`;
                     document.ontouchmove = null;
                     document.ontouchend  = null;
                 };
@@ -3127,17 +3128,17 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 }
                 if (withinRange === true && subOffset > maxAdjust) {
                     diffRight.style.width = `${(total - counter - 2) / 10}em`;
-                    status                = "e";
+                    cursorStatus          = "e";
                 } else if (withinRange === true && subOffset < minAdjust) {
                     diffRight.style.width = `${(total - counter - data - 2) / 10}em`;
-                    status                = "w";
+                    cursorStatus          = "w";
                 } else if (subOffset < max && subOffset > min) {
                     diffRight.style.width = `${(width + subOffset) / 10}em`;
-                    status                = "ew";
+                    cursorStatus          = "ew";
                 }
                 document.onmouseup = function dom_event_colSliderGrab_Mouseboxmove_drop(f:MouseEvent):void {
                     f.preventDefault();
-                    node.style.cursor = `${status}-resize`;
+                    node.style.cursor = `${cursorStatus}-resize`;
                     document.onmousemove = null;
                     document.onmouseup   = null;
                 };
@@ -3676,7 +3677,12 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
             return false;
         }
         if (test.store === true) {
-            localStorage.setItem("source", options.source);
+            if (options.source.length > 4800000) {
+                // eslint-disable-next-line
+                console.warn("Source sample too large to save in browser localStorage.");
+            } else {
+                localStorage.setItem("source", options.source);
+            }
         }
 
         //gather updated dom nodes

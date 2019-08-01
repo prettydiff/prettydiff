@@ -15,7 +15,7 @@
         }()),
         supersep:string = (sep === "\\")
             ? "\\\\"
-            : sep,// 210-466-2782, 210-307-8781
+            : sep,
         text:any     = {
             angry    : "\u001b[1m\u001b[31m", // bold, red
             blue     : "\u001b[34m",
@@ -215,17 +215,17 @@
                 test: `${text.red}<p></p>${text.none}\n${text.green}<p${text.diffchar} id="diff"${text.clear}>${text.diffchar}Add id and text${text.clear}</p>${text.none}`
             },
             {
-                command: `diff source:"hello" diff:"shelo" readmethod:screen`,
+                command: `diff source:"hello" diff:"shelo" read_method:screen`,
                 qualifier: "contains",
                 test: `${text.cyan}Line: 1${text.none}\n${text.red}hel${text.diffchar}l${text.clear}o${text.none}\n${text.green + text.diffchar}s${text.clear}helo${text.none}`
             },
             {
-                command: `diff source:"hello" diff:"shelo" readmethod:screen 2`,
+                command: `diff source:"hello" diff:"shelo" read_method:screen 2`,
                 qualifier: "contains",
                 test: `Pretty Diff found ${text.cyan}1${text.none} difference on ${text.cyan}1${text.none} line.`
             },
             {
-                command: `diff source:"hello" diff:"shelo" readmethod:screen crlf:true language:text`,
+                command: `diff source:"hello" diff:"shelo" read_method:screen crlf:true language:text`,
                 qualifier: "contains",
                 test: `${text.cyan}Line: 1${text.none}\r\n${text.red}hel${text.diffchar}l${text.clear}o${text.none}\r\n${text.green + text.diffchar}s${text.clear}helo${text.none}`
             },
@@ -521,6 +521,18 @@
                 command: "version 2",
                 qualifier: "begins",
                 test: `Sparser version ${text.angry}`
+            },
+
+            // final two tests validate the application and JSON formats of the .prettydiffrc file
+            {
+                command: `beautify source:"${projectPath}tsconfig.json" prettydiffrc-json`,
+                qualifier: "contains",
+                test: "\n      \"compilerOptions\":"
+            },
+            {
+                command: `beautify source:"${projectPath}tsconfig.json" prettydiffrc-javascript`,
+                qualifier: "contains",
+                test: "\n        \"compilerOptions\":"
             }
         ];
     module.exports = tests;
