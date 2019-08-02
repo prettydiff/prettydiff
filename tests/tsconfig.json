@@ -5,10 +5,14 @@
         "target": "ES6"
     },
     "include": [
+        "*.ts",
         "**/*.ts"
     ],
     "exclude": [
+        "2",
+        "3",
         "js",
+        "ignore",
         "node_modules"
     ]
 }

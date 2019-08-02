@@ -48,7 +48,7 @@
                 test: "No path to encode."
             },
             {
-                command: `base64 ${projectPath}tsconfig.json`,
+                command: `base64 ${projectPath}tests${sep}tsconfig.json`,
                 qualifier: "is",
                 test: "ewogICAgImNvbXBpbGVyT3B0aW9ucyI6IHsKICAgICAgICAib3V0RGlyIjogImpzIiwKICAgICAgICAicHJldHR5IjogdHJ1ZSwKICAgICAgICAidGFyZ2V0IjogIkVTNiIKICAgIH0sCiAgICAiaW5jbHVkZSI6IFsKICAgICAgICAiKi50cyIsCiAgICAgICAgIioqLyoudHMiCiAgICBdLAogICAgImV4Y2x1ZGUiOiBbCiAgICAgICAgIjIiLAogICAgICAgICIzIiwKICAgICAgICAianMiLAogICAgICAgICJpZ25vcmUiLAogICAgICAgICJub2RlX21vZHVsZXMiCiAgICBdCn0="
             },
@@ -95,22 +95,22 @@
                 test: ` files written to ${text.cyan + projectPath}test${text.none}.`
             },
             {
-                command: `beautify source:"${projectPath}tsconfig.json" read_method:directory`,
+                command: `beautify source:"${projectPath}tests${sep}tsconfig.json" read_method:directory`,
                 qualifier: "contains",
                 test: `Option ${text.cyan}read_method${text.none} has value ${text.green}directory${text.none} but ${text.angry}option source does not point to a directory${text.none}.`
             },
             {
-                command: `beautify source:"${projectPath}tsconfig.json" read_method:file`,
+                command: `beautify source:"${projectPath}tests${sep}tsconfig.json" read_method:file`,
                 qualifier: "is",
                 test: `{\n    "compilerOptions": {\n        "outDir": "js",\n        "pretty": true,\n        "target": "ES6"\n    },\n    "include": [\n        "*.ts", "**/*.ts"\n    ],\n    "exclude": ["2", "3", "js", "ignore", "node_modules"]\n}`
             },
             {
-                command: `beautify source:"${projectPath}tsconfig.json" read_method:file language:text`,
+                command: `beautify source:"${projectPath}tests${sep}tsconfig.json" read_method:file language:text`,
                 qualifier: "contains",
                 test: `Language value ${text.angry}text${text.none} is not compatible with command ${text.green}beautify${text.none}.`
             },
             {
-                command: `beautify source:"${projectPath}tsconfig.json" read_method:subdirectory`,
+                command: `beautify source:"${projectPath}tests${sep}tsconfig.json" read_method:subdirectory`,
                 qualifier: "contains",
                 test: `Option ${text.cyan}read_method${text.none} has value ${text.green}subdirectory${text.none} but ${text.angry}option source does not point to a directory${text.none}.`
             },
@@ -290,24 +290,24 @@
                 test: `${sep}asdf${text.none} is not a file or directory.`
             },
             {
-                command: `hash ${projectPath}tsconfig.json`,
+                command: `hash ${projectPath}tests${sep}tsconfig.json`,
                 qualifier: "is",
                 test: "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e"
             },
             {
-                command: `hash ${projectPath}tsconfig.json --verbose`,
+                command: `hash ${projectPath}tests${sep}tsconfig.json --verbose`,
                 qualifier: "contains",
                 test: "Sparser version "
             },
             {
                 command: `hash ${projectPath} list ignore ["node_modules", ".git", ".DS_Store", "2", "3", "beta", "ignore", "sparser"]`,
                 qualifier: "contains",
-                test: `tsconfig.json":"8546bfec8ef3570fbd4b4346d5dd68893eba57af2e1ecf835c248ddf1cfb39ffa2a2603060c48ec97f11c0891055bdfadec95d922db887ceea169d88e53f775e"`
+                test: `tsconfig.json":"19dfdba0b65a45ce3d27be1720acf98835cda3b0059da7672df3e5146e81af23fefc86532819f3798c50e1a716f0971a40ed27ca103fb288667d631997f80bc4"`
             },
             {
                 command: `hash ${projectPath} list ignore [.git, "node_modules", ".DS_Store", "2", "3", "beta", "ignore", "sparser", "tests", "js", "api", "beautify", "minify", "css", 'space test']`,
                 qualifier: "contains",
-                test: `tsconfig.json":"8546bfec8ef3570fbd4b4346d5dd68893eba57af2e1ecf835c248ddf1cfb39ffa2a2603060c48ec97f11c0891055bdfadec95d922db887ceea169d88e53f775e"`
+                test: `tsconfig.json":"19dfdba0b65a45ce3d27be1720acf98835cda3b0059da7672df3e5146e81af23fefc86532819f3798c50e1a716f0971a40ed27ca103fb288667d631997f80bc4"`
             },
             {
                 command: `hash ${projectPath} list ignore [.git, "node_modules", ".DS_Store", "2", "3", "beta", "ignore", "sparser", "tests", "js", "api", "beautify", "minify", "css", "space test", "test"]`,
@@ -340,22 +340,22 @@
                 test: `Option ${text.cyan}read_method${text.none} has value ${text.green}file${text.none} but ${text.angry}option source does not point to a file${text.none}.`
             },
             {
-                command: `minify source:"${projectPath}tsconfig.json" read_method:directory`,
+                command: `minify source:"${projectPath}tests${sep}tsconfig.json" read_method:directory`,
                 qualifier: "contains",
                 test: `Option ${text.cyan}read_method${text.none} has value ${text.green}directory${text.none} but ${text.angry}option source does not point to a directory${text.none}.`
             },
             {
-                command: `minify source:"${projectPath}tsconfig.json" read_method:file`,
+                command: `minify source:"${projectPath}tests${sep}tsconfig.json" read_method:file`,
                 qualifier: "is",
                 test: `{"compilerOptions":{"outDir":"js","pretty":true,"target":"ES6"},"include":["*.ts","**/*.ts"],"exclude":["2","3","js","ignore","node_modules"]}`
             },
             {
-                command: `minify source:"${projectPath}tsconfig.json" read_method:file language:text`,
+                command: `minify source:"${projectPath}tests${sep}tsconfig.json" read_method:file language:text`,
                 qualifier: "contains",
                 test: `Language value ${text.angry}text${text.none} is not compatible with command ${text.green}minify${text.none}.`
             },
             {
-                command: `minify source:"${projectPath}tsconfig.json" read_method:subdirectory`,
+                command: `minify source:"${projectPath}tests${sep}tsconfig.json" read_method:subdirectory`,
                 qualifier: "contains",
                 test: `Option ${text.cyan}read_method${text.none} has value ${text.green}subdirectory${text.none} but ${text.angry}option source does not point to a directory${text.none}.`
             },
@@ -415,35 +415,35 @@
                 test: `Pretty Diff requires option ${text.cyan}source${text.none} when using command ${text.green}parse${text.none}. Example:`
             },
             {
-                command: `parse ${projectPath}tsconfig.json`,
+                command: `parse ${projectPath}tests${sep}tsconfig.json`,
                 qualifier: "contains",
                 test:  `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,0,0,0,0,19,19,19,19,0,0,0,0,27,27,27,27,27,27,27,27,27,27,0],"ender":[38,38,38,15,15,15,15,15,15,15,15,15,15,15,15,15,38,38,38,23,23,23,23,23,38,38,38,37,37,37,37,37,37,37,37,37,37,37,38],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,0,2,0,2,2,2],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"outDir\\"",":","\\"js\\"",",","\\"pretty\\"",":","true",",","\\"target\\"",":","\\"ES6\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"2\\"",",","\\"3\\"",",","\\"js\\"",",","\\"ignore\\"",",","\\"node_modules\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","word","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","separator","string","separator","string","end","end"]}`
             },
             {
-                command: `parse ${projectPath}tsconfig.json parse_format:table`,
+                command: `parse ${projectPath}tests${sep}tsconfig.json parse_format:table`,
                 qualifier: "contains",
-                test: `Parsed input from file ${text.cyan + projectPath}tsconfig.json${text.none}`
+                test: `Parsed input from file ${text.cyan + projectPath}tests${sep}tsconfig.json${text.none}`
             },
             {
-                command: `parse ${projectPath}tsconfig.json parse_format:table 2`,
+                command: `parse ${projectPath}tests${sep}tsconfig.json parse_format:table 2`,
                 qualifier: "contains",
                 test: `index | begin | ender | lexer  | lines | stack       | types       | token\n------|-------|-------|--------|-------|-------------|-------------|------\n${text.green}0     | -1    | XXXX    | script | XXXX     | global      | start       | {${text.none}`
             },
             {
                 artifact: `${projectPath}parsetest.txt`,
-                command: `parse ${projectPath}tsconfig.json read_method:file output:"parsetest.txt"`,
+                command: `parse ${projectPath}tests${sep}tsconfig.json read_method:file output:"parsetest.txt"`,
                 file: `${projectPath}parsetest.txt`,
                 qualifier: "file is",
                 test:  `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,0,0,0,0,19,19,19,19,0,0,0,0,27,27,27,27,27,27,27,27,27,27,0],"ender":[38,38,38,15,15,15,15,15,15,15,15,15,15,15,15,15,38,38,38,23,23,23,23,23,38,38,38,37,37,37,37,37,37,37,37,37,37,37,38],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,0,2,0,2,2,2],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"outDir\\"",":","\\"js\\"",",","\\"pretty\\"",":","true",",","\\"target\\"",":","\\"ES6\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"2\\"",",","\\"3\\"",",","\\"js\\"",",","\\"ignore\\"",",","\\"node_modules\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","word","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","separator","string","separator","string","end","end"]}`
             },
             {
                 artifact: `${projectPath}parsetest.txt`,
-                command: `parse ${projectPath}tsconfig.json read_method:file output:"${projectPath}parsetest.txt"`,
+                command: `parse ${projectPath}tests${sep}tsconfig.json read_method:file output:"${projectPath}parsetest.txt"`,
                 qualifier: "begins",
                 test: `Wrote output to ${text.green + projectPath}parsetest.txt${text.none} at`
             },
             {
-                command: `parse ${projectPath}tsconfig.json read_method:file`,
+                command: `parse ${projectPath}tests${sep}tsconfig.json read_method:file`,
                 qualifier: "is",
                 test:  `{"begin":[-1,0,0,0,3,3,3,3,3,3,3,3,3,3,3,3,0,0,0,0,19,19,19,19,0,0,0,0,27,27,27,27,27,27,27,27,27,27,0],"ender":[38,38,38,15,15,15,15,15,15,15,15,15,15,15,15,15,38,38,38,23,23,23,23,23,38,38,38,37,37,37,37,37,37,37,37,37,37,37,38],"lexer":["script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script","script"],"lines":[0,2,0,1,2,0,1,0,2,0,1,0,2,0,1,2,0,2,0,1,2,0,2,2,0,2,0,1,2,0,2,0,2,0,2,0,2,2,2],"stack":["global","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","object","array","array","array","array","object","object","object","object","array","array","array","array","array","array","array","array","array","array","object"],"token":["{","\\"compilerOptions\\"",":","{","\\"outDir\\"",":","\\"js\\"",",","\\"pretty\\"",":","true",",","\\"target\\"",":","\\"ES6\\"","}",",","\\"include\\"",":","[","\\"*.ts\\"",",","\\"**/*.ts\\"","]",",","\\"exclude\\"",":","[","\\"2\\"",",","\\"3\\"",",","\\"js\\"",",","\\"ignore\\"",",","\\"node_modules\\"","]","}"],"types":["start","string","operator","start","string","operator","string","separator","string","operator","word","separator","string","operator","string","end","separator","string","operator","start","string","separator","string","end","separator","string","operator","start","string","separator","string","separator","string","separator","string","separator","string","end","end"]}`
             },
@@ -453,17 +453,17 @@
                 test: `Option ${text.cyan}read_method${text.none} has value ${text.green}file${text.none} but ${text.angry}option source does not point to a file${text.none}.`
             },
             {
-                command: `parse source:"${projectPath}tsconfig.json" read_method:directory`,
+                command: `parse source:"${projectPath}tests${sep}tsconfig.json" read_method:directory`,
                 qualifier: "contains",
                 test: `Option ${text.cyan}read_method${text.none} has value ${text.green}directory${text.none} but ${text.angry}option source does not point to a directory${text.none}.`
             },
             {
-                command: `parse source:"${projectPath}tsconfig.json" read_method:file language:text`,
+                command: `parse source:"${projectPath}tests${sep}tsconfig.json" read_method:file language:text`,
                 qualifier: "contains",
                 test: `Language value ${text.angry}text${text.none} is not compatible with command ${text.green}parse${text.none}.`
             },
             {
-                command: `parse source:"${projectPath}tsconfig.json" read_method:subdirectory`,
+                command: `parse source:"${projectPath}tests${sep}tsconfig.json" read_method:subdirectory`,
                 qualifier: "contains",
                 test: `Option ${text.cyan}read_method${text.none} has value ${text.green}subdirectory${text.none} but ${text.angry}option source does not point to a directory${text.none}.`
             },
@@ -525,12 +525,12 @@
 
             // final two tests validate the application and JSON formats of the .prettydiffrc file
             {
-                command: `beautify source:"${projectPath}tsconfig.json" prettydiffrc-json`,
+                command: `beautify source:"${projectPath}tests${sep}tsconfig.json" prettydiffrc-json`,
                 qualifier: "contains",
                 test: "\n      \"compilerOptions\":"
             },
             {
-                command: `beautify source:"${projectPath}tsconfig.json" prettydiffrc-javascript`,
+                command: `beautify source:"${projectPath}tests${sep}tsconfig.json" prettydiffrc-javascript`,
                 qualifier: "contains",
                 test: "\n        \"compilerOptions\":"
             }
