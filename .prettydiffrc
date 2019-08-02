@@ -1,0 +1,1 @@
+(function rc() {"use strict";const rclogic = function rc_logic(options) {options.indent_size = 8;return options;};module.exports = rclogic;}());

@@ -1,4 +1,4 @@
-/*global global, prettydiff*/
+/*global prettydiff*/
 (function minify_markup_init():void {
     "use strict";
     const markup = function minify_markup(options:any):string {

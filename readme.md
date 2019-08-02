@@ -1,8 +1,8 @@
 # Pretty Diff
 A language aware diff, beautification, and minification tool.
 
-Version - 101.1.3
-[Sparser](https://sparser.io) - 1.3.1
+* Version - 101.2.0
+* [Sparser](https://sparser.io) - 1.4.5
 
 ## Try it out - https://prettydiff.com/
 
@@ -64,7 +64,7 @@ To run the web tool in a browser with all capabilities launch a local web server
 To run Pretty Diff as a utility in a third party application simply include either *js/browser.js* or *js/prettydiff.js*.  Those two files are identical except for the very end where an object named `prettydiff` is assigned.  Both files provide all options with default values assigned to an object named `prettydiff.options`.
 
 #### Browser
-**js/browser.js** - In this file an object named `prettydiff` is assigned to the browser's *window* object.  To access Pretty Diff simply call `window.prettydiff();`.  The options exist as `window.prettydiff.options`.  See the [browser demo](test/browser.html) for an example.  This provides all the necessary code in a single file without any DOM bindings.
+**js/browser.js** - In this file an object named `prettydiff` is assigned to the browser's *window* object.  To access Pretty Diff simply call `window.prettydiff();`.  The options exist as `window.prettydiff.options`.  See the [browser demo](tests/browser.html) for an example.  This provides all the necessary code in a single file without any DOM bindings.
 
 #### Node.js
 **js/prettydiff.js** - In this file an object named `prettydiff` is assigned to Node's *module.exports*.  To access Pretty Diff simply require the file: `let prettydiff = require("prettydiff");`.  Default options are available as `prettydiff.options`.  To execute simply call `prettydiff();`.

@@ -1,6 +1,4 @@
-import { parse } from "path";
-
-/*global global, prettydiff*/
+/*global prettydiff*/
 (function beautify_script_init():void {
     "use strict";
     const script = function beautify_script(options:any):string {

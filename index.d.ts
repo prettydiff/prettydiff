@@ -1,7 +1,6 @@
 declare var ace: any;
 declare var options: any;
 declare var prettydiff: pd;
-declare var window: Window;
 declare module NodeJS {
     interface Global {
         sparser: any;
@@ -156,7 +155,7 @@ interface optionDef {
 interface optionFunctions {
     definitions?: {};
 }
-interface performance {
+interface perform {
     codeLength: number;
     diff: string;
     end: [number, number];

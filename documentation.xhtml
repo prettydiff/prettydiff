@@ -12,7 +12,7 @@
             rel="meta"
             title="ICRA labels"
             type="application/rdf+xml"/>
-        <link href="css/index.css?1559746008847" media="all" rel="stylesheet" type="text/css"/>
+        <link href="css/index.css?1564678229399" media="all" rel="stylesheet" type="text/css"/>
         <link rel="apple-touch-icon" sizes="57x57" href="favicon/apple-icon-57x57.png"/>
         <link rel="apple-touch-icon" sizes="60x60" href="favicon/apple-icon-60x60.png"/>
         <link rel="apple-touch-icon" sizes="72x72" href="favicon/apple-icon-72x72.png"/>
@@ -73,7 +73,7 @@
                     </svg>
                     <a href="/">Pretty Diff</a>
                     - Documentation</h1>
-                <p class="doc-version"><span>Version - <strong>101.1.3</strong></span> <span><a href="https://sparser.io">Sparser</a> - <strong>1.2.0</strong></span></p>
+                <p class="doc-version"><span>Version - <strong>101.2.0</strong></span> <span><a href="https://sparser.io">Sparser</a> - <strong>1.2.0</strong></span></p>
                 <p id="dcolorScheme">
                     <label class="label" for="option-color">Color Scheme</label>
                     <select id="option-color">
@@ -272,7 +272,57 @@
                             </ol>
                             <p>To get started with the application on the command line try the <em>commands</em> command to see a list of available features and detailed instructions: <code>node js/services commands</code></p>
                             <p>To run the application in a web browser with Pretty Diff's HTML execute the <em>server</em> command: <code>node js/services server</code> or simply navigate your browser to the project's <em>index.xhtml</em> file in the local filesystem.</p>
-                            <p>To run the application in a different browser application simply reference or include the built <em>js/browser.js</em> file. See the <a href="test/browser.html">third party demo</a> for an example.</p>
+                            <p>To run the application in a different browser application simply reference or include the built <em>js/browser.js</em> file. See the <a href="tests/browser.html">third party demo</a> for an example.</p>
+                        </div>
+                        <div class="segment" id="prettydiffrc">
+                            <h3>The .prettydiffrc File</h3>
+                            <p>To ease configuration Pretty Diff provides support for a <a href=".prettydiffrc">.prettydiffrc</a> file that stores option settings as a sort of saved preferences.  The .prettydiffrc file is only used when the application is executed via Node.js, whether from the terminal directly or through another application, but is checked each time the application executes.  This file supports two formats: JavaScript logic and JSON. Options <strong>api</strong>, <strong>diff</strong>, and <strong>source</strong> are not supported in the .prettydiffrc file.</p>
+                            <h4>JSON Format</h4>
+                            <p>In order for the options to be accepted by the application the provided options must match a defined option name and the corresponding value must be the proper data type.  In the case where an option is string type and accepts a specified set of values the specified value much match one of the supported value names.  Here are some examples:</p>
+                            <p><strong>Good</strong> <code>{"indent_size": 6, "format_object": "inline"}</code></p>
+                            <p><strong>Bad</strong> <code>{"indent_size": " ", "format_object": "inline"}</code> This is bad, because the "indent_size" option is provided a value with the incorrect data type. It will be ignored from the application, but the specified "format_object" option will be accepted.</p>
+                            <p><strong>Bad</strong> <code>{"indent_size": 3, "format_object": "never"}</code> The value for option "format_object" is the correct data type, but that option accepts one of three values and "never" is not a supported value. Pretty Diff will accept the "indent_size" option with value 3, but will ignore the specified "format_object".</p>
+                            <h4>JavaScript Format</h4>
+                            <p>To give users greater control and flexibility over the application a JavaScript format is also accepted.  This will allow users to specify options conditionally.  Please start with this following template:</p>
+                            <p>
+                                <code>(function rc() {</code>
+                                <code>    "use strict";</code>
+                                <code>    const rclogic = function rc_logic(options) {</code>
+                                <code>        // edit below this line</code>
+                                <code> </code>
+                                <code> </code>
+                                <code> </code>
+                                <code> </code>
+                                <code> </code>
+                                <code> </code>
+                                <code> </code>
+                                <code>        // edit above this line</code>
+                                <code>        return options;</code>
+                                <code>    };</code>
+                                <code>    module.exports = rclogic;</code>
+                                <code>}());</code>
+                            </p>
+                            <p>JavaScript logic that deviates from the template may result in an error causing the Pretty Diff application to no longer run. For security concerns no use of <em>require</em>, <em>import</em>, and no other use of <em>export</em> is permitted.  Ignoring these security concerns will cause the file to be ignored. The options must be assigned with conforming value data types exactly as specified under the <em>JSON Format</em> section in order to be accepted. Examples:</p>
+                            <p>
+                                <code>(function rc() {</code>
+                                <code>    "use strict";</code>
+                                <code>    const rclogic = function rc_logic(options) {</code>
+                                <code>        // edit below this line</code>
+                                <code> </code>
+                                <code>        if (options.mode === "beautify" &amp;&amp; options.lexer === "style") {</code>
+                                <code>            options.indent_size = 6;</code>
+                                <code>        }</code>
+                                <code> </code>
+                                <code>        if (options.source.length > 2500) {</code>
+                                <code>            options.indent_size = 2;</code>
+                                <code>        }</code>
+                                <code> </code>
+                                <code>        // edit above this line</code>
+                                <code>        return options;</code>
+                                <code>    };</code>
+                                <code>    module.exports = rclogic;</code>
+                                <code>}());</code>
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -435,6 +485,6 @@
                 </div>
             </section>
         </div>
-        <script src="js/webtool.js?1559746008847" type="application/javascript"></script>
+        <script src="js/webtool.js?1564678229399" type="application/javascript"></script>
     </body>
 </html>

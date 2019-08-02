@@ -1,4 +1,3 @@
-/*global global*/
 (function diffview_init(): void {
     "use strict";
     const diffview = function diffview_(options : any): [string, number, number]{
@@ -48,6 +47,10 @@
                     c: number = 0,
                     d: number = 0,
                     codes: opcodes = [],
+                    clean = function diffview_opcodes_clean(ln:string): string|void {
+                        if (ln === undefined) { return; }
+                        return options.diff_space_ignore === true ? ln.replace(/\s+/g, '') : ln;
+                    },
                     fix = function diffview_opcodes_fix(code:codes): void {
                         let len:number = codes.length - 1,
                             prior:[string, number, number, number, number] = codes[len];
@@ -62,7 +65,7 @@
                                     prior[4] = code[4];
                                 }
                                 if (codes.length > 1 && prior[2] === code[2] && prior[4] === code[4]) {
-                                    if (prior[0] === "insert" && two[codes[codes.length - 2][4] - (prior[4] - prior[3])] === one[codes[codes.length - 2][1]]) {
+                                    if (prior[0] === "insert" && clean(two[codes[codes.length - 2][4] - (prior[4] - prior[3])]) === clean(one[codes[codes.length - 2][1]])) {
                                         codes.pop();
                                         len = len - 1;
                                         codes[len] = ["insert", -1, -1, codes[len][3], codes[len][4] - (prior[4] - prior[3])];
@@ -186,7 +189,7 @@
                             table[one[c]][1] = table[one[c]][1] - 1;
                             c = c + 1;
                             d = d + 1;
-                        } while (c < lena && d < lenb && one[c] === two[d]);
+                        } while (c < lena && d < lenb && clean(one[c]) === clean(two[d]));
                         fix(["equal", a, c, b, d]);
                         b = d - 1;
                         a = c - 1;
@@ -251,9 +254,6 @@
                 // * First Pass, account for lines from first file
                 // * build the table from the second file
                 do {
-                    if (options.diff_space_ignore === true) {
-                        two[b] = two[b].replace(/\s+/g, "");
-                    }
                     if (table[two[b]] === undefined) {
                         table[two[b]] = [0, 1];
                     } else {
@@ -266,9 +266,6 @@
                 lena = one.length;
                 a = 0;
                 do {
-                    if (options.diff_space_ignore === true) {
-                        one[a] = one[a].replace(/\s+/g, "");
-                    }
                     if (table[one[a]] === undefined) {
                         table[one[a]] = [1, 0];
                     } else {
@@ -284,21 +281,21 @@
                 do {
                     c = a;
                     d = b;
-                    if (one[a] === two[b]) {
+                    if (clean(one[a]) === clean(two[b])) {
                         equality();
                     } else if (table[one[a]][1] < 1 && table[two[b]][0] < 1) {
                         replaceUniques();
-                    } else if (table[one[a]][1] < 1 && one[a + 1] !== two[b + 2]) {
+                    } else if (table[one[a]][1] < 1 && clean(one[a + 1]) !== clean(two[b + 2])) {
                         deletion();
-                    } else if (table[two[b]][0] < 1 && one[a + 2] !== two[b + 1]) {
+                    } else if (table[two[b]][0] < 1 && clean(one[a + 2]) !== clean(two[b + 1])) {
                         insertion();
-                    } else if (table[one[a]][0] - table[one[a]][1] === 1 && one[a + 1] !== two[b + 2]) {
+                    } else if (table[one[a]][0] - table[one[a]][1] === 1 && clean(one[a + 1]) !== clean(two[b + 2])) {
                         deletionStatic();
-                    } else if (table[two[b]][1] - table[two[b]][0] === 1 && one[a + 2] !== two[b + 1]) {
+                    } else if (table[two[b]][1] - table[two[b]][0] === 1 && clean(one[a + 2]) !== clean(two[b + 1])) {
                         insertionStatic();
-                    } else if (one[a + 1] === two[b]) {
+                    } else if (clean(one[a + 1]) === clean(two[b])) {
                         deletion();
-                    } else if (one[a] === two[b + 1]) {
+                    } else if (clean(one[a]) === clean(two[b + 1])) {
                         insertion();
                     } else {
                         replacement();
@@ -307,7 +304,7 @@
                     b = b + 1;
                 } while (a < lena && b < lenb);
                 if (lena - a === lenb - b) {
-                    if (one[a] === two[b]) {
+                    if (clean(one[a]) === clean(two[b])) {
                         fix(["equal", a, lena, b, lenb]);
                     } else {
                         fix(["replace", a, lena, b, lenb]);
@@ -390,6 +387,9 @@
                     return output;
                 },
                 htmlfix = function diffview_report_htmlfix(item:string): string {
+                    if (item === undefined) {
+                        return "";
+                    }
                     return item
                         .replace(/&/g, "&amp;")
                         .replace(/</g, "&lt;")

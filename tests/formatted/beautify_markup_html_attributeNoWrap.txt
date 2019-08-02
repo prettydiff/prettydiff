@@ -1,4 +1,4 @@
-<?xml encoding="UTF-8" version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <!-- prettydiff.com wrap:0 space_close:true -->
 <html xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">

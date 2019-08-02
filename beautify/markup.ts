@@ -1,4 +1,4 @@
-/*global global, prettydiff*/
+/*global prettydiff*/
 (function beautify_markup_init():void {
     "use strict";
     const markup = function beautify_markup(options:any):string {
@@ -359,7 +359,7 @@
                         } else {
                             level[parent] = -10;
                         }
-                        if (earlyexit === true || options.unformatted === true || data.token[parent] === "<%xml%>") {
+                        if (earlyexit === true || options.unformatted === true || data.token[parent] === "<%xml%>" || data.token[parent] === "<?xml?>") {
                             count = 0;
                             return;
                         }
@@ -424,6 +424,9 @@
                             next = nextIndex();
                             if (data.types[next] === "end" || data.types[next] === "template_end") {
                                 indent = indent - 1;
+                                if (data.types[next] === "template_end" && data.types[data.begin[next] + 1] === "template_else") {
+                                    indent = indent - 1;
+                                }
                                 if (data.token[a] === "</ol>" || data.token[a] === "</ul>") {
                                     anchorList();
                                 }
@@ -449,6 +452,9 @@
                                 }
                             } else if (data.types[a] === "start" || data.types[a] === "template_start") {
                                 indent = indent + 1;
+                                if (data.types[a] === "template_start" && data.types[a + 1] === "template_else") {
+                                    indent = indent + 1;
+                                }
                                 if (options.language === "jsx" && data.token[a + 1] === "{") {
                                     if (data.lines[a + 1] === 0) {
                                         level.push(-20);
@@ -473,7 +479,11 @@
                             } else if (data.types[a + 2] === "script_end") {
                                 level.push(-20);
                             } else if (data.types[a] === "template_else") {
-                                level[a - 1] = indent - 1;
+                                if (data.types[next] === "template_end") {
+                                    level[a - 1] = indent + 1;
+                                } else {
+                                    level[a - 1] = indent - 1;
+                                }
                                 level.push(indent);
                             } else {
                                 level.push(indent);
@@ -509,7 +519,7 @@
                 nl           = function beautify_markup_apply_nl(tabs:number):string {
                     const linesout:string[] = [],
                         pres:number = options.preserve + 1,
-                        total:number = Math.min((data.lines[a + 1] - 1), pres);
+                        total:number = Math.min(data.lines[a + 1] - 1, pres);
                     let index = 0;
                     if (tabs < 0) {
                         tabs = 0;
