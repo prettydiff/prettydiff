@@ -2,6 +2,7 @@ import { Stats, fstat, ReadStream } from "fs";
 import * as http from "http";
 import { Stream, Writable } from "stream";
 import { Hash } from "crypto";
+import { SSL_OP_NETSCAPE_DEMO_CIPHER_CHANGE_BUG } from "constants";
 type directoryItem = [string, "file" | "directory" | "link" | "screen", number, number, Stats];
 interface directoryList extends Array<directoryItem> {
     [key:number]: directoryItem;
@@ -3324,7 +3325,7 @@ interface readFile {
                 ? "diff"
                 : "source",
             def:optionDef = prettydiff.api.optionDef,
-            prettydiffrc = function node_apps_readMethod_prettydiffrc_stat_read_applyRC(callback:Function):void {
+            prettydiffrc = function node_apps_readMethod_resolve_createrc_stat_read_applyRC(callback:Function):void {
                 const keys:string[] = Object.keys(rcdata),
                     len:number = keys.length;
                 let a:number = 0;
@@ -3342,93 +3343,110 @@ interface readFile {
                 } while (a < len);
                 callback();
             },
-            
-            // check for optional file .prettydiffrc
-            createrc = function node_apps_readMethod_prettydiffrc():void {
-                const rc:string = `${projectPath}.prettydiffrc`;
-                if (diff === true) {
-                    resolve();
-                    return;
-                }
-                node.fs.stat(rc, function node_apps_readMethod_prettydiffrc_stat(ers:Error):void {
-                    if (ers !== null) {
-                        const erstring:string = ers.toString();
-                        if (erstring.indexOf("no such file or directory") > 0) {
-                            // continue silently if .prettydiffrc is removed
-                            resolve();
-                        } else {
-                            apps.errout([erstring]);
-                        }
-                        return;
-                    }
-                    node.fs.readFile(rc, "utf8", function node_apps_readMethod_prettydiffrc_stat_read(err:Error, fileData:string):void {
-                        if (err !== null) {
-                            apps.errout([err.toString()]);
-                            return;
-                        }
-
-                        const nospace:string = fileData.replace(/\s+/g, "");
-                        
-                        // process .prettydiffrc as JSON
-                        if (nospace.charAt(0) === "{" && nospace.charAt(nospace.length - 1) === "}") {
-                            rcdata = JSON.parse(fileData);
-                            resolve();
-                            return;
-                        }
-
-                        // process as JavaScript logic
-                        if (
-                            nospace.indexOf("constrclogic=functionrc_logic(options){") > 0 &&
-                            nospace.indexOf("returnoptions;};module.exports=rclogic;") > 0 &&
-                            nospace.indexOf("require") < 0 &&
-                            nospace.replace("returnoptions;};module.exports=rclogic;", "").indexOf("export") < 0 &&
-                            nospace.indexOf("import") < 0
-                        ) {
-                            const rcLogic:any = require(rc),
-                                defkeys:string[] = Object.keys(def),
-                                deflen:number = defkeys.length;
-                            let a:number = 0;
-                            do {
-                                if (options[defkeys[a]] !== def[defkeys[a]].default) {
-                                    rcdata[defkeys[a]] = options[defkeys[a]];
-                                } else {
-                                    rcdata[defkeys[a]] = def[defkeys[a]].default;
-                                }
-                                a = a + 1;
-                            } while (a < deflen);
-                            rcdata = rcLogic(rcdata);
-                            resolve();
-                            return;
-                        }
-
-                        // ignoring .prettydiffrc file
-                        console.log(`${text.angry}Ignoring .prettydiffrc file.${text.none} The file is present, but not in a supported format.`);
-                        resolve();
-                    });
-                });
-            },
             resolve = function node_apps_readMethod_resolve() {
-                const screen = function node_apps_readMethod_resolve_stat_screen():void {
-                    diffStatus[item] = true;
-                    if (options.mode === "diff") {
-                        if (diffStatus.source === true && diffStatus.diff === true) {
-                            prettydiffrc(function node_apps_readMethod_resolve_stat_screen_diffrc():void {
-                                let meta:any = {
-                                    differences: 0,
-                                    lines: 0
-                                };
-                                const result:string = prettydiff(meta);
-                                apps.log([""], result, `${meta.differences},${meta.lines}`);
+                const screen = function node_apps_readMethod_resolve_screen():void {
+                        diffStatus[item] = true;
+                        if (options.mode === "diff") {
+                            if (diffStatus.source === true && diffStatus.diff === true) {
+                                prettydiffrc(function node_apps_readMethod_resolve_screen_diffrc():void {
+                                    let meta:any = {
+                                        differences: 0,
+                                        lines: 0
+                                    };
+                                    const result:string = prettydiff(meta);
+                                    apps.log([""], result, `${meta.differences},${meta.lines}`);
+                                });
+                            }
+                        } else {
+                            prettydiffrc(function node_apps_readMethod_resolve_screen_rc():void {
+                                apps.log([""], prettydiff(), "");
                             });
                         }
-                    } else {
-                        prettydiffrc(function node_apps_readMethod_resolve_stat_screen_rc():void {
-                            apps.log([""], prettydiff(), "");
-                        });
-                    }
-                };
+                    },
+                    createrc = function node_apps_readMethod_resolve_createrc(callback:Function):void {
+                        const start:string = (callback === screen)
+                                ? process.cwd()
+                                : (options.read_method === "directory" || options.read_method === "subdirectory")
+                                    ? node.path.resolve(options.source)
+                                    : (function node_apps_readMethod_resolve_createrc_fileStart():string {
+                                        const dirs:string[] = options.source.replace(/\\/g, "/").split("/");
+                                        dirs.pop();
+                                        return node.path.resolve(dirs.join(sep));
+                                    }()),
+                            stat = function node_apps_readMethod_resolve_createrc_wrapper(location:string) {
+                                const rc:string = `${location + sep}.prettydiffrc`;
+                                node.fs.stat(rc, function node_apps_readMethod_resolve_createrc_wrapper_stat(ers:Error):void {
+                                    if (ers !== null) {
+                                        const erstring:string = ers.toString();
+                                        if (erstring.indexOf("no such file or directory") > 0) {
+                                            const locations:string[] = location.split(sep);
+                                            if (locations.length < 2) {
+                                                // continue silently if .prettydiffrc is not found
+                                                callback();
+                                            } else {
+                                                // try the parent directory if not at root
+                                                locations.pop();
+                                                node_apps_readMethod_resolve_createrc_wrapper(locations.join(sep));
+                                            }
+                                        } else {
+                                            apps.errout([erstring]);
+                                        }
+                                        return;
+                                    }
+                                    node.fs.readFile(rc, "utf8", function node_apps_readMethod_resolve_createrc_wrapper_stat_read(err:Error, fileData:string):void {
+                                        if (err !== null) {
+                                            apps.errout([err.toString()]);
+                                            return;
+                                        }
+                
+                                        const nospace:string = fileData.replace(/\s+/g, "");
+                                        
+                                        // process .prettydiffrc as JSON
+                                        if (nospace.charAt(0) === "{" && nospace.charAt(nospace.length - 1) === "}") {
+                                            rcdata = JSON.parse(fileData);
+                                            callback();
+                                            return;
+                                        }
+                
+                                        // process as JavaScript logic
+                                        if (
+                                            nospace.indexOf("constrclogic=functionrc_logic(options){") > 0 &&
+                                            nospace.indexOf("returnoptions;};module.exports=rclogic;") > 0 &&
+                                            nospace.indexOf("require") < 0 &&
+                                            nospace.replace("returnoptions;};module.exports=rclogic;", "").indexOf("export") < 0 &&
+                                            nospace.indexOf("import") < 0
+                                        ) {
+                                            const rcLogic:any = require(rc),
+                                                defkeys:string[] = Object.keys(def),
+                                                deflen:number = defkeys.length;
+                                            let a:number = 0;
+                                            do {
+                                                if (options[defkeys[a]] !== def[defkeys[a]].default) {
+                                                    rcdata[defkeys[a]] = options[defkeys[a]];
+                                                } else {
+                                                    rcdata[defkeys[a]] = def[defkeys[a]].default;
+                                                }
+                                                a = a + 1;
+                                            } while (a < deflen);
+                                            rcdata = rcLogic(rcdata);
+                                            callback();
+                                            return;
+                                        }
+                
+                                        // ignoring .prettydiffrc file
+                                        console.log(`${text.angry}Ignoring .prettydiffrc file.${text.none} The file is present, but not in a supported format.`);
+                                        callback();
+                                    });
+                                });
+                            };
+                        if (diff === true) {
+                            callback();
+                            return;
+                        }
+                        stat(start);
+                    };
                 if (options.read_method === "screen") {
-                    screen();
+                    createrc(screen);
                 } else {
                     node.fs.stat(options[item], function node_apps_readMethod_resolve_stat(err:Error, stat:Stats):void {
                         const resolveItem = function node_apps_readMethod_resolve_stat_resolveItem() {
@@ -3859,7 +3877,7 @@ interface readFile {
                                 )) {
                                     // read_method:auto evaluated as "screen"
                                     options.read_method = "screen";
-                                    screen();
+                                    createrc(screen);
                                 } else {
                                     // read_method:auto evaluated as filesystem path pointing to missing resource
                                     apps.errout([err.toString()]);
@@ -3885,11 +3903,11 @@ interface readFile {
                             apps.errout([`Option ${text.cyan}read_method${text.none} has value ${text.green + options.read_method + text.none} but ${text.angry}option ${item} does not point to a file${text.none}.`]);
                             return;
                         }
-                        resolveItem();
+                        createrc(resolveItem);
                     });
                 }
             };
-        createrc();
+        resolve();
     };
     // similar to posix "rm -rf" command
     apps.remove = function node_apps_remove(filepath:string, callback:Function):void {
@@ -4236,15 +4254,16 @@ interface readFile {
     apps.simulation = function node_apps_simulation(callback:Function):void {
         const rc:string = `${projectPath}.prettydiffrc`,
             tests:simulationItem[] = require(`${js}tests${sep}simulations.js`),
-            len:number = tests.length - 2, // all tests except the last two, which are reserved for testing the .prettydiffrc file
+            len:number = tests.length, // all tests except the last two, which are reserved for testing the .prettydiffrc file
             cwd:string = __dirname.replace(/(\/|\\)js$/, ""),
+            fileContents:string = `{\n    "compilerOptions": {\n        "outDir": "js",\n        "pretty": true,\n        "target": "ES6"\n    },\n    "include": [\n        "*.ts", "**/*.ts"\n    ],\n    "exclude": ["2", "3", "js", "ignore", "node_modules"]\n}`,
             writerc = function node_apps_simulation_writerc(message:string):void {
                 node.fs.writeFile(rc, rcfile, function node_apps_simulation_writerc_writeFile(erw:Error) {
                     if (erw !== null) {
                         apps.errout([erw.toString()]);
                         return;
                     }
-                    if (a === len + 2) {
+                    if (a === len) {
                         callback(message);
                     } else {
                         apps.errout([message]);
@@ -4255,34 +4274,29 @@ interface readFile {
                 const interval = function node_apps_simulation_increment_interval():void {
                     a = a + 1;
                     if (a < len) {
-                        wrapper();
-                    } else {
-                        if (a < len + 2 && tests[a].command.indexOf("prettydiffrc-json") > 0) {
-                            // test .prettydiffrc in json format
-                            node.fs.writeFile(rc, "{\"indent_size\": 6}", function node_apps_simulation_increment_interval_rcjson(erjson:Error) {
-                                if (erjson !== null) {
-                                    writerc(erjson.toString());
+                        // rctest function provides special instructions for testing the .prettydiffrc file
+                        if (tests[a].command.indexOf("prettydiffrc-json-file-child") > 0) {
+                            rctest(cwd, `${projectPath}tests${sep}.prettydiffrc`, "{\"indent_size\": 6}");
+                        } else if (tests[a].command.indexOf("prettydiffrc-json-file-local") > 0) {
+                            rctest(cwd, rc, "{\"indent_size\": 3}");
+                        } else if (tests[a].command.indexOf("prettydiffrc-json-file-parent") > 0) {
+                            node.fs.writeFile(`${projectPath}tests${sep}test.txt`, fileContents, function node_apps_simulation_increment_writeParent(erw:Error):void {
+                                if (erw !== null) {
+                                    apps.errout([erw.toString()]);
                                     return;
                                 }
-                                wrapper();
+                                rctest(cwd, rc, "{\"indent_size\": 6}");
                             });
-                        } else if (a < len + 2 && tests[a].command.indexOf("prettydiffrc-javascript") > 0) {
-                            // test .prettydiffrc in json format
-                            node.fs.writeFile(rc, `(function rc() {"use strict";const rclogic = function rc_logic(options) {options.indent_size = 8;return options;};module.exports = rclogic;}());`, function node_apps_simulation_increment_interval_rcjs(erjs:Error) {
-                                if (erjs !== null) {
-                                    writerc(erjs.toString());
-                                    return;
-                                }
-                                wrapper();
-                            });
+                        } else if (tests[a].command.indexOf("prettydiffrc-json-screen-parent") > 0) {
+                            rctest(`${projectPath}tests`, rc, "{\"indent_size\": 10}");
+                        } else if (tests[a].command.indexOf("prettydiffrc-javascript-file-local") > 0) {
+                            rctest(cwd, rc, `(function rc() {"use strict";const rclogic = function rc_logic(options) {options.indent_size = 8;return options;};module.exports = rclogic;}());`);
                         } else {
-                            console.log("");
-                            if (rcfile === "") {
-                                callback(`${text.green}Successfully completed all ${text.cyan + len + text.green} simulation tests.${text.none}`);
-                            } else {
-                                writerc(`${text.green}Successfully completed all ${text.cyan + len + text.green} simulation tests.${text.none}`);
-                            }
+                            wrapper(cwd, increment);
                         }
+                    } else {
+                        console.log("");
+                        writerc(`${text.green}Successfully completed all ${text.cyan + len + text.green} simulation tests.${text.none}`);
                     }
                 };
                 if (irr !== "") {
@@ -4298,6 +4312,23 @@ interface readFile {
                     });
                 }
             },
+            rctest = function node_apps_simulation_rctest(dir:string, path:string, contents:string):void {
+                node.fs.writeFile(path, contents, function node_apps_simulation_rctest_write(erw:Error):void {
+                    if (erw !== null) {
+                        writerc(erw.toString());
+                        return;
+                    }
+                    wrapper(dir, function node_apps_simulation_rctest_write_wrapper():void {
+                        node.fs.unlink(path, function node_apps_simulation_rctest_write_wrapper_unlink(eru:Error):void {
+                            if (eru !== null) {
+                                apps.errout([eru.toString()]);
+                                return;
+                            }
+                            increment("");
+                        });
+                    });
+                });
+            },
             errout = function node_apps_simulation_errout(message:string, stdout:string) {
                 writerc([
                     `Simulation test string ${text.angry + tests[a].command + text.none} ${message}:`,
@@ -4308,8 +4339,8 @@ interface readFile {
                     stdout
                 ].join(node.os.EOL));
             },
-            wrapper = function node_apps_simulation_wrapper():void {
-                node.child(`node js/services ${tests[a].command}`, {cwd: cwd, maxBuffer: 2048 * 500}, function node_apps_simulation_wrapper_child(errs:nodeError, stdout:string, stderror:string|Buffer) {
+            wrapper = function node_apps_simulation_wrapper(cwd:string, callback:Function):void {
+                node.child(`node ${projectPath}js/services ${tests[a].command}`, {cwd: cwd, maxBuffer: 2048 * 500}, function node_apps_simulation_wrapper_child(errs:nodeError, stdout:string, stderror:string|Buffer) {
                     if (tests[a].artifact === "" || tests[a].artifact === undefined) {
                         writeflag = "";
                     } else {
@@ -4373,7 +4404,7 @@ interface readFile {
                                     errout(`is contained in this file, but shouldn't be: ${text.green + tests[a].file + text.none}`, dump);
                                     return;
                                 }
-                                increment("");
+                                callback("");
                             });
                         } else if (tests[a].qualifier.indexOf("filesystem ") === 0) {
                             tests[a].test = node.path.resolve(tests[a].test);
@@ -4396,7 +4427,7 @@ interface readFile {
                                     ].join(node.os.EOL));
                                     return;
                                 }
-                                increment("");
+                                callback("");
                             });
                         }
                     } else {
@@ -4424,7 +4455,7 @@ interface readFile {
                             errout("must not contain this output", stdout)
                             return;
                         }
-                        increment("");
+                        callback("");
                     }
                 });
             };
@@ -4444,7 +4475,7 @@ interface readFile {
             if (ers !== null) {
                 const erstring:string = ers.toString();
                 if (erstring.indexOf("no such file or directory") > 0) {
-                    wrapper();
+                    wrapper(cwd, increment);
                     return;
                 }
                 apps.errout([erstring]);
@@ -4461,7 +4492,7 @@ interface readFile {
                         apps.errout([eru.toString()]);
                         return;
                     }
-                    wrapper();
+                    wrapper(cwd, increment);
                 });
             });
         });

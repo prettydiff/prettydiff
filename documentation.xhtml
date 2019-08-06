@@ -12,7 +12,7 @@
             rel="meta"
             title="ICRA labels"
             type="application/rdf+xml"/>
-        <link href="css/index.css?1565091642213" media="all" rel="stylesheet" type="text/css"/>
+        <link href="css/index.css?1565135394356" media="all" rel="stylesheet" type="text/css"/>
         <link rel="apple-touch-icon" sizes="57x57" href="favicon/apple-icon-57x57.png"/>
         <link rel="apple-touch-icon" sizes="60x60" href="favicon/apple-icon-60x60.png"/>
         <link rel="apple-touch-icon" sizes="72x72" href="favicon/apple-icon-72x72.png"/>
@@ -73,7 +73,7 @@
                     </svg>
                     <a href="/">Pretty Diff</a>
                     - Documentation</h1>
-                <p class="doc-version"><span>Version - <strong>101.2.0</strong></span> <span><a href="https://sparser.io">Sparser</a> - <strong>1.2.0</strong></span></p>
+                <p class="doc-version"><span>Version - <strong>101.2.1</strong></span> <span><a href="https://sparser.io">Sparser</a> - <strong>1.2.0</strong></span></p>
                 <p id="dcolorScheme">
                     <label class="label" for="option-color">Color Scheme</label>
                     <select id="option-color">
@@ -276,7 +276,8 @@
                         </div>
                         <div class="segment" id="prettydiffrc">
                             <h3>The .prettydiffrc File</h3>
-                            <p>To ease configuration Pretty Diff provides support for a <a href=".prettydiffrc">.prettydiffrc</a> file that stores option settings as a sort of saved preferences.  The .prettydiffrc file is only used when the application is executed via Node.js, whether from the terminal directly or through another application, but is checked each time the application executes.  This file supports two formats: JavaScript logic and JSON. Options <strong>api</strong>, <strong>diff</strong>, and <strong>source</strong> are not supported in the .prettydiffrc file.</p>
+                            <p>To ease configuration Pretty Diff provides support for a <a href=".prettydiffrc">.prettydiffrc</a> file that stores option settings as a sort of saved preferences.  The .prettydiffrc file is only used when the application is executed via Node.js via the supplied <em>js/services.js</em> file, but is checked each time the application executes.  This file supports two formats: JavaScript logic and JSON. Options <strong>api</strong>, <strong>diff</strong>, and <strong>source</strong> are not supported in the .prettydiffrc file.</p>
+                            <p>Pretty Diff will look for the .prettydiffrc file starting in the directory specified or the directory containing a specified file.  If no .prettydiffrc file is present Pretty Diff will check the next higher directory until reaching root.  If the option <em>read_method</em> is value <em>screen</em> or <em>auto</em> and resolves to value screen then the starting location to look for the .prettydiffrc file will be the terminal's current working directory.</p>
                             <h4>JSON Format</h4>
                             <p>In order for the options to be accepted by the application the provided options must match a defined option name and the corresponding value must be the proper data type.  In the case where an option is string type and accepts a specified set of values the specified value much match one of the supported value names.  Here are some examples:</p>
                             <p><strong>Good</strong> <code>{"indent_size": 6, "format_object": "inline"}</code></p>
@@ -485,6 +486,6 @@
                 </div>
             </section>
         </div>
-        <script src="js/webtool.js?1565091642213" type="application/javascript"></script>
+        <script src="js/webtool.js?1565135394356" type="application/javascript"></script>
     </body>
 </html>

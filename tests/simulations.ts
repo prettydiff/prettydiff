@@ -95,6 +95,32 @@
                 test: ` files written to ${text.cyan + projectPath}test${text.none}.`
             },
             {
+                command: `beautify source:"${projectPath}tsconfig.json" prettydiffrc-json-file-child`,
+                qualifier: "contains",
+                test: "\n    \"compilerOptions\":"
+            },
+            {
+                command: `beautify source:"${projectPath}tsconfig.json" prettydiffrc-json-file-local`,
+                qualifier: "contains",
+                test: "\n   \"compilerOptions\":"
+            },
+            {
+                artifact: `${projectPath}tests${sep}test.txt`,
+                command: `beautify source:"${projectPath}tsconfig.json" prettydiffrc-json-file-parent`,
+                qualifier: "contains",
+                test: "\n      \"compilerOptions\":"
+            },
+            {
+                command: `beautify source:"{\\"compilerOptions\\": {\\"outDir\\": \\"js\\",\\"pretty\\": true,\\"target\\": \\"ES6\\"}}" read_method:"screen" prettydiffrc-json-screen-parent`,
+                qualifier: "contains",
+                test: "\n          \"compilerOptions\":"
+            },
+            {
+                command: `beautify source:"${projectPath}tsconfig.json" prettydiffrc-javascript-file-local`,
+                qualifier: "contains",
+                test: "\n        \"compilerOptions\":"
+            },
+            {
                 command: `beautify source:"${projectPath}tsconfig.json" read_method:directory`,
                 qualifier: "contains",
                 test: `Option ${text.cyan}read_method${text.none} has value ${text.green}directory${text.none} but ${text.angry}option source does not point to a directory${text.none}.`
@@ -521,18 +547,6 @@
                 command: "version 2",
                 qualifier: "begins",
                 test: `Sparser version ${text.angry}`
-            },
-
-            // final two tests validate the application and JSON formats of the .prettydiffrc file
-            {
-                command: `beautify source:"${projectPath}tsconfig.json" prettydiffrc-json`,
-                qualifier: "contains",
-                test: "\n      \"compilerOptions\":"
-            },
-            {
-                command: `beautify source:"${projectPath}tsconfig.json" prettydiffrc-javascript`,
-                qualifier: "contains",
-                test: "\n        \"compilerOptions\":"
             }
         ];
     module.exports = tests;
