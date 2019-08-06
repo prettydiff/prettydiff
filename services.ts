@@ -460,7 +460,7 @@ interface readFile {
                     obj = (command === "options")
                         ? def.mode
                         : options,
-                    optionName = function node_args_optionName(bindArgument:boolean):void {
+                    optionName = function node_args_terminalOptions_optionName(bindArgument:boolean):void {
                         if (a === 0 || options[list[a]] === undefined) {
                             if (keys.indexOf(list[a]) < 0 && def[list[a]] === undefined) {
                                 list.splice(a, 1);
@@ -1300,8 +1300,8 @@ interface readFile {
                                             filedata = filedata
                                                 .replace(/var\s+saveAs\s*=\s*saveAs\s*\|\|\s*function\(/, `// eslint-disable-next-line${node.os.EOL}prettydiff.saveAs=function prettydiff_saveAs(`)
                                                 .replace(/(\{|\}|;|(\*\/))\s*var\s/g, function node_apps_build_libraries_libraryFiles_appendFile_read_saveAsFix(str:string):string {
-                                                return str.replace("var", "let");
-                                            });
+                                                    return str.replace("var", "let");
+                                                });
                                             saveas = filedata;
                                         } else if (filePath === `${projectPath}node_modules${sep}sparser${sep}js${sep}browser.js`) {
                                             // both sparser and prettydiff contain a browser.js file, so it is important to target the correct one
@@ -1341,7 +1341,7 @@ interface readFile {
                                         }
                                         a = a + 1;
                                         if (a === filelen) {
-                                            const inject = function node_apps_build_libraries_appendFile_inject(version:string):string {
+                                            const inject = function node_apps_build_libraries_libraryFiles_appendFile_read_inject(version:string):string {
                                                 return `${version.slice(0, version.length - 1)},prettydiff=${mode}`;
                                             };
                                             complete = `${parser.replace(/version:\{date:"\d+\s+\w+\s+\d{4}",number:"\d+\.\d+\.\d+"\}\s*\};/, inject) + libraries}prettydiff.sparser=sparser;prettydiff.version=${JSON.stringify(prettydiff.version)};`;
@@ -1401,7 +1401,7 @@ interface readFile {
                                 }
                                 prettydiff.version.parse = JSON.parse(frameData).version;
                                 // update information for display in current build
-                                defaults = (function node_apps_build_libraries_modifyFile_read_buildDefault():string {
+                                defaults = (function node_apps_build_libraries_child_readPackage_readSparser_buildDefault():string {
                                     const obj:any = {};
                                     let a:number = 0;
                                     do {
@@ -1506,7 +1506,7 @@ interface readFile {
                 },
                 // phase simulation is merely a call to apps.simulation
                 simulation: function node_apps_build_simulation():void {
-                    const callback = function node_apps_build_lint_callback(message:string):void {
+                    const callback = function node_apps_build_simulation_callback(message:string):void {
                         next(message);
                     };
                     heading("Simulations of Node.js commands from js/services.js");
@@ -1516,13 +1516,13 @@ interface readFile {
                 sparser: function node_apps_build_sparser():void {
                     heading("Checking for built sparser (parser tool)");
                     const frame:string = `node_modules${sep}sparser`;
-                    node.fs.stat(`${frame + sep}js${sep}parse.js`, function node_apps_build_sparser(ers:nodeError):void {
+                    node.fs.stat(`${frame + sep}js${sep}parse.js`, function node_apps_build_sparser_stat(ers:nodeError):void {
                         if (ers !== null) {
                             if (ers.code === "ENOENT") {
                                 console.log(`${apps.humantime(false)}Sparser does not appear to be built... building now.`);
                                 node.child(`tsc`, {
                                     cwd: frame
-                                }, function node_apps_build_sparser_tsc(err:Error, stdout:string, stderr:string):void {
+                                }, function node_apps_build_sparser_stat_tsc(err:Error, stdout:string, stderr:string):void {
                                     if (err !== null) {
                                         apps.errout([err.toString()]);
                                         return;
@@ -1533,7 +1533,7 @@ interface readFile {
                                     }
                                     node.child(`node js${sep}services build`, {
                                         cwd: frame
-                                    }, function node_apps_build_sparser_tsc_build(erb:Error, stbout:string, stberr:string):void {
+                                    }, function node_apps_build_sparser_stat_tsc_build(erb:Error, stbout:string, stberr:string):void {
                                         if (erb !== null) {
                                             apps.errout([erb.toString()]);
                                             return;
@@ -1569,7 +1569,7 @@ interface readFile {
                         ts = function node_apps_build_typescript_ts() {
                             node.child(command, {
                                 cwd: projectPath
-                            }, function node_apps_build_typescript_callback(err:Error, stdout:string, stderr:string):void {
+                            }, function node_apps_build_typescript_ts_callback(err:Error, stdout:string, stderr:string):void {
                                 if (stdout !== "" && stdout.indexOf(` \u001b[91merror${text.none} `) > -1) {
                                     console.log(`${text.red}TypeScript reported warnings.${text.none}`);
                                     apps.errout([stdout]);
@@ -1631,7 +1631,7 @@ interface readFile {
                 },
                 // phase validation is merely a call to apps.validation
                 validation: function node_apps_build_validation():void {
-                    const callback = function node_apps_build_lint_callback(message:string):void {
+                    const callback = function node_apps_build_validation_callback(message:string):void {
                         next(message);
                     };
                     heading("Pretty Diff validation tests");
@@ -1724,7 +1724,7 @@ interface readFile {
         util.dir      = function node_apps_copy_dir(item:string):void {
             node
                 .fs
-                .readdir(item, function node_apps_copy_dir_makedir_readdir(er:Error, files:string[]):void {
+                .readdir(item, function node_apps_copy_dir_readdir(er:Error, files:string[]):void {
                     const place:string = (item === start)
                         ? dest
                         : dest + item.replace(start + sep, "");
@@ -1732,7 +1732,7 @@ interface readFile {
                         util.eout(er);
                         return;
                     }
-                    apps.makedir(place, function node_apps_copy_dir_makedir():void {
+                    apps.makedir(place, function node_apps_copy_dir_readdir_makedir():void {
                         const a = files.length;
                         let b = 0;
                         if (a > 0) {
@@ -1907,7 +1907,7 @@ interface readFile {
                 return;
             }
             params = {
-                callback: function node_copy_callback() {
+                callback: function node_apps_copy_callback() {
                     const out:string[] = ["Pretty Diff copied "];
                     out.push("");
                     out.push(text.green);
@@ -2233,7 +2233,7 @@ interface readFile {
                     console.log(`${text.yellow}No error message supplied${text.none}`);
                 } else {
                     console.log("```");
-                    errtext.forEach(function node_apps_errout_each(value:string):void {
+                    errtext.forEach(function node_apps_errout_debug_each(value:string):void {
                         // eslint-disable-next-line
                         console.log(value.replace(/\u001b/g, "\\u001b"));
                     });
@@ -2415,7 +2415,7 @@ interface readFile {
                                 stat: list[index][4],
                                 index: index,
                                 callback: function node_apps_hash_dirComplete_typehash_callback(data:readFile, item:string|Buffer):void {
-                                    hashback(data, item, function node_apps_hash_dirComplete_typeHash_callback(hashstring:string, item:number) {
+                                    hashback(data, item, function node_apps_hash_dirComplete_typeHash_callback_hashback(hashstring:string, item:number) {
                                         hashes[item[0]] = hashstring;
                                         if (hashlist === true) {
                                             listObject[data.path] = hashstring;
@@ -2643,13 +2643,13 @@ interface readFile {
                 }
                 return output;
             },
-            plural       = function node_proctime_plural(x:number, y:string):string {
+            plural       = function node_apps_humantime_plural(x:number, y:string):string {
                 if (x !== 1) {
                     return `${numberString(x) + y}s `;
                 }
                 return `${numberString(x) + y} `;
             },
-            minute       = function node_proctime_minute():void {
+            minute       = function node_apps_humantime_minute():void {
                 minutes      = parseInt((elapsed / 60).toString(), 10);
                 minuteString = (finished === true)
                     ? plural(minutes, " minute")
@@ -2706,7 +2706,7 @@ interface readFile {
     };
     // wrapper for ESLint usage
     apps.lint = function node_apps_lint(callback:Function):void {
-        node.child("eslint", function node_apps_build_lint_eslintCheck(eserr:Error) {
+        node.child("eslint", function node_apps_lint_eslintCheck(eserr:Error) {
             const lintpath:string = (command === "lint" && process.argv[0] !== undefined)
                 ? node.path.resolve(process.argv[0])
                 : js;
@@ -2723,23 +2723,23 @@ interface readFile {
             }
             if (command === "lint") {
                 verbose = true;
-                callback = function node_apps_lint_callback():void {
+                callback = function node_apps_lint_eslintCheck_callback():void {
                     apps.log([`Lint complete for ${lintpath}`], "", lintpath);
                 };
             }
-            (function node_apps_build_lint_getFiles():void {
-                const lintrun         = function node_apps_build_lint_lintrun(list:directoryList) {
+            (function node_apps_lint_eslintCheck_getFiles():void {
+                const lintrun         = function node_apps_lint_eslintCheck_getFiles_lintrun(list:directoryList) {
                     let filesRead:number = 0,
                         filesLinted:number = 0,
                         a:number = 0,
                         first:boolean = false;
                     const len = list.length,
-                        lintit = function node_apps_build_lint_lintrun_lintit(val:string):void {
+                        lintit = function node_apps_lint_eslintCheck_getFiles_lintrun_lintit(val:string):void {
                             console.log(`${apps.humantime(false)}Starting lint: ${val}`);
                             filesRead = filesRead + 1;
                             node.child(`eslint ${val}`, {
                                 cwd: projectPath
-                            }, function node_apps_build_lint_lintrun_lintit_eslint(err:Error, stdout:string, stderr:string) {
+                            }, function node_apps_lint_eslintCheck_getFiles_lintrun_lintit_eslint(err:Error, stdout:string, stderr:string) {
                                 if (stdout === "" || stdout.indexOf("0:0  warning  File ignored because of a matching ignore pattern.") > -1) {
                                     if (err !== null) {
                                         apps.errout([err.toString()]);
@@ -2914,7 +2914,7 @@ interface readFile {
                 if (output[output.length - 1] === "") {
                     output.pop();
                 }
-                output.forEach(function node_apps_log_each(value:string) {
+                output.forEach(function node_apps_log_conclusion_each(value:string) {
                     console.log(value);
                 });
                 if (verbose === true) {
@@ -2960,7 +2960,7 @@ interface readFile {
                 conclusion();
             } else {
                 const out:string = node.path.resolve(options.output);
-                node.fs.writeFile(out, code, function node_apps_output_writeFile(err:Error):void {
+                node.fs.writeFile(out, code, function node_apps_log_writeFile(err:Error):void {
                     if (err !== null) {
                         apps.errout([err.toString()]);
                         return;
@@ -3291,12 +3291,12 @@ interface readFile {
                                     .fs
                                     .readFile(args.path, {
                                         encoding: "utf8"
-                                    }, function node_apps_readFile_wrapper_stat_file_open_read_readFile(errc:Error, dump:string):void {
+                                    }, function node_apps_readFile_file_open_read_readFile(errc:Error, dump:string):void {
                                         if (errc !== null && errc !== undefined) {
                                             failure(errc.toString());
                                             return;
                                         }
-                                        node.fs.close(fd, function node_apps_readFile_wrapper_stat_file_open_read_readFile_close() {
+                                        node.fs.close(fd, function node_apps_readFile_file_open_read_readFile_close() {
                                             args.callback(args, dump);
                                         });
                                     });
@@ -4058,7 +4058,7 @@ interface readFile {
                             return;
                         }
                         if (stat.isFile() === true) {
-                            node.fs.readFile(localpath, "utf8", function node_apps_server_create_readFile(err:Error, data:string):void {
+                            node.fs.readFile(localpath, "utf8", function node_apps_server_create_stat_readFile(err:Error, data:string):void {
                                 if (err !== undefined && err !== null) {
                                     if (err.toString().indexOf("no such file or directory") > 0) {
                                         response.writeHead(404, {"Content-Type": "text/plain"});
@@ -4239,7 +4239,7 @@ interface readFile {
             len:number = tests.length - 2, // all tests except the last two, which are reserved for testing the .prettydiffrc file
             cwd:string = __dirname.replace(/(\/|\\)js$/, ""),
             writerc = function node_apps_simulation_writerc(message:string):void {
-                node.fs.writeFile(rc, rcfile, function node_apps_simulation_increment_interval_writerc(erw:Error) {
+                node.fs.writeFile(rc, rcfile, function node_apps_simulation_writerc_writeFile(erw:Error) {
                     if (erw !== null) {
                         apps.errout([erw.toString()]);
                         return;
@@ -4293,7 +4293,7 @@ interface readFile {
                 if (tests[a].artifact === "" || tests[a].artifact === undefined) {
                     interval();
                 } else {
-                    apps.remove(tests[a].artifact, function node_apps_simulation_wrapper_remove():void {
+                    apps.remove(tests[a].artifact, function node_apps_simulation_increment_remove():void {
                         interval();
                     });
                 }
@@ -4432,7 +4432,7 @@ interface readFile {
         let a:number = 0,
             rcfile:string = "";
         if (command === "simulation") {
-            callback = function node_apps_lint_callback(message:string):void {
+            callback = function node_apps_simulation_callback(message:string):void {
                 apps.log([message, "\u0007"], "", ""); // bell sound
             };
             verbose = true;
@@ -4698,10 +4698,10 @@ interface readFile {
         apps.log([""], "", "");
     };
     // performs word wrap when printing text to the shell
-    apps.wrapit = function node_apps_lists_wrapit(outputArray:string[], string:string):void {
+    apps.wrapit = function node_apps_wrapit(outputArray:string[], string:string):void {
         const wrap:number = 100;
         if (string.length > wrap) {
-            const indent:string = (function node_apps_options_wrapit_indent():string {
+            const indent:string = (function node_apps_wrapit_indent():string {
                     const len:number = string.length;
                     let inc:number = 0,
                         num:number = 2,
@@ -4732,7 +4732,7 @@ interface readFile {
                     } while (inc < num);
                     return str;
                 }()),
-                formLine = function node_apps_options_wrapit_formLine():void {
+                formLine = function node_apps_wrapit_formLine():void {
                     let inc:number = 0,
                         wrapper:number = wrap;
                     do {
@@ -4758,7 +4758,7 @@ interface readFile {
                     string = string.slice(wrapper + 1);
                     if (string.length + indent.length > wrap && string.replace(/\s+/g, "").length < wrap) {
                         string = indent + string;
-                        node_apps_options_wrapit_formLine();
+                        node_apps_wrapit_formLine();
                     } else if (string !== "") {
                         outputArray.push(indent + string);
                     }

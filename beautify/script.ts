@@ -772,7 +772,7 @@
                         const ei:number[] = (extraindent[extraindent.length - 1] === undefined)
                                 ? []
                                 : extraindent[extraindent.length - 1],
-                            opWrap = function beautify_script_level_operator():void {
+                            opWrap = function beautify_script_level_operator_opWrap():void {
                                 const aa:string   = data.token[a + 1];
                                 let line:number = 0,
                                     next:number = 0,
@@ -2310,7 +2310,7 @@
                         //a function for calculating indentation after each new line
                         nlscope            = function beautify_script_output_scope_nlscope(x:number):void {
                             let dd = 0;
-                            const total:number = (function beautify_script_output_outnl_total():number {
+                            const total:number = (function beautify_script_output_scope_nlscope_total():number {
                                     if (a === b - 1) {
                                         return 0;
                                     }
