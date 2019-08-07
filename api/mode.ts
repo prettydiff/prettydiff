@@ -205,7 +205,7 @@ function mode(diffmeta?:diffmeta):string {
             }
             if (options.lexer === "script") {
                 let styleguide = {
-                        airbnb: function beautify_script_options_styleairbnb() {
+                        airbnb: function mode_pdcomment_styleairbnb() {
                             options.brace_padding = true;
                             options.correct      = true;
                             options.lexerOptions.script.end_comma     = "always";
@@ -216,7 +216,7 @@ function mode(diffmeta?:diffmeta):string {
                             options.variable_list      = "each";
                             options.wrap         = 80;
                         },
-                        crockford: function beautify_script_options_stylecrockford() {
+                        crockford: function mode_pdcomment_stylecrockford() {
                             options.brace_padding  = false;
                             options.correct       = true;
                             options.else_line      = false;
@@ -228,7 +228,7 @@ function mode(diffmeta?:diffmeta):string {
                             options.variable_list      = "each";
                             options.vertical            = false;
                         },
-                        google: function beautify_script_options_stylegoogle() {
+                        google: function mode_pdcomment_stylegoogle() {
                             options.correct      = true;
                             options.indent_char       = " ";
                             options.indent_size       = 4;
@@ -237,7 +237,7 @@ function mode(diffmeta?:diffmeta):string {
                             options.vertical           = false;
                             options.wrap         = -1;
                         },
-                        jquery: function beautify_script_options_stylejquery() {
+                        jquery: function mode_pdcomment_stylejquery() {
                             options.brace_padding = true;
                             options.correct      = true;
                             options.indent_char       = "\u0009";
@@ -246,7 +246,7 @@ function mode(diffmeta?:diffmeta):string {
                             options.variable_list      = "each";
                             options.wrap         = 80;
                         },
-                        jslint: function beautify_script_options_stylejslint() {
+                        jslint: function mode_pdcomment_stylejslint() {
                             options.brace_padding  = false;
                             options.correct       = true;
                             options.else_line      = false;
@@ -258,7 +258,7 @@ function mode(diffmeta?:diffmeta):string {
                             options.variable_list       = "each";
                             options.vertical            = false;
                         },
-                        mrdoobs: function beautify_script_options_stylemrdoobs() {
+                        mrdoobs: function mode_pdcomment_stylemrdoobs() {
                             options.brace_line    = true;
                             options.brace_padding = true;
                             options.correct      = true;
@@ -266,7 +266,7 @@ function mode(diffmeta?:diffmeta):string {
                             options.indent_size       = 1;
                             options.vertical           = false;
                         },
-                        mediawiki: function beautify_script_options_stylemediawiki() {
+                        mediawiki: function mode_pdcomment_stylemediawiki() {
                             options.brace_padding = true;
                             options.correct      = true;
                             options.indent_char       = "\u0009";
@@ -276,13 +276,13 @@ function mode(diffmeta?:diffmeta):string {
                             options.space        = false;
                             options.wrap         = 80;
                         },
-                        meteor: function beautify_script_options_stylemeteor() {
+                        meteor: function mode_pdcomment_stylemeteor() {
                             options.correct = true;
                             options.indent_char  = " ";
                             options.indent_size  = 2;
                             options.wrap    = 80;
                         },
-                        semistandard: function beautify_script_options_stylessemistandard() {
+                        semistandard: function mode_pdcomment_stylessemistandard() {
                             options.brace_line = false;
                             options.brace_padding = false;
                             options.braces = false;
@@ -300,7 +300,7 @@ function mode(diffmeta?:diffmeta):string {
                             options.vertical = false;
                             options.wrap = 0;
                         },
-                        standard: function beautify_script_options_stylestandard() {
+                        standard: function mode_pdcomment_stylestandard() {
                             options.brace_line = false;
                             options.brace_padding = false;
                             options.braces = false;
@@ -318,7 +318,7 @@ function mode(diffmeta?:diffmeta):string {
                             options.vertical = false;
                             options.wrap = 0;
                         },
-                        yandex: function beautify_script_options_styleyandex() {
+                        yandex: function mode_pdcomment_styleyandex() {
                             options.brace_padding = false;
                             options.correct      = true;
                             options.quote_convert = "single";
@@ -327,21 +327,21 @@ function mode(diffmeta?:diffmeta):string {
                         }
                     },
                     brace_style = {
-                        collapse: function beautify_brace_options_collapse() {
+                        collapse: function mode_pdcomment_collapse() {
                             options.brace_line    = false;
                             options.brace_padding = false;
                             options.braces       = false;
                             options.format_object = "indent";
                             options.never_flatten = true;
                         },
-                        "collapse-preserve-inline": function beautify_brace_options_collapseInline() {
+                        "collapse-preserve-inline": function mode_pdcomment_collapseInline() {
                             options.brace_line    = false;
                             options.brace_padding = true;
                             options.braces       = false;
                             options.format_object = "inline";
                             options.never_flatten = false;
                         },
-                        expand: function beautify_brace_options_expand() {
+                        expand: function mode_pdcomment_expand() {
                             options.brace_line    = false;
                             options.brace_padding = false;
                             options.braces       = true;

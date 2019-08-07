@@ -216,7 +216,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                     aces = function dom_load_aces(event:Event):void {
                         const el:HTMLInputElement = <HTMLInputElement>event.srcElement || <HTMLInputElement>event.target,
                             elId:string   = el.getAttribute("id"),
-                            acedisable      = function dom_load_acedisable():void {
+                            acedisable      = function dom_load_aces_acedisable():void {
                                 let addy:string   = "",
                                     loc:number    = location
                                         .href
@@ -357,7 +357,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         }
                     },
                     feeds = function dom_load_feeds(el:HTMLInputElement):void {
-                        const feedradio       = function dom_load_feedradio(event:Event):boolean {
+                        const feedradio       = function dom_load_feeds_feedradio(event:Event):boolean {
                             let parent:HTMLElement,
                                 aa:number,
                                 radios:HTMLCollectionOf<HTMLInputElement>;
@@ -381,7 +381,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                             return false;
                         };
                         el.onfocus = feedradio;
-                        el.onblur  = function dom_load_feedblur():void {
+                        el.onblur  = function dom_load_feeds_feedblur():void {
                             const item = <HTMLElement>el.parentNode;
                             item.setAttribute("class", "active");
                         },
@@ -3983,7 +3983,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 e.preventDefault();
                 return false;
             },
-            boxmoveTouch    = function dom_event_grab_boxmoveTouch(f:TouchEvent):boolean {
+            boxmoveTouch    = function dom_event_grab_touch(f:TouchEvent):boolean {
                 f.preventDefault();
                 box.style.right = "auto";
                 box.style.left      = `${(boxLeft + (f.touches[0].clientX - touchX)) / 10}em`;
@@ -3991,7 +3991,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                 document.ontouchend = drop;
                 return false;
             },
-            boxmoveClick = function dom_event_grab_boxmoveClick(f:MouseEvent):boolean {
+            boxmoveClick = function dom_event_grab_click(f:MouseEvent):boolean {
                 f.preventDefault();
                 box.style.right = "auto";
                 box.style.left     = `${(boxLeft + (f.clientX - mouseX)) / 10}em`;
