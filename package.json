@@ -39,5 +39,5 @@
         "start": "node js/services build",
         "test": "node js/services test"
     },
-    "version": "101.2.1"
+    "version": "101.2.2"
 }
