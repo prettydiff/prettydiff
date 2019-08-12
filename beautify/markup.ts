@@ -367,17 +367,6 @@
 
                         // second, ensure tag contains more than one attribute
                         if (y > parent + 1) {
-                            let z:number = 0;
-                            const atts:string[] = data.token.slice(parent + 1, y + 1),
-                                zz:number = atts.length;
-
-                            // third, sort attributes alphabetically
-                            atts.sort();
-                            data.token.splice(parent + 1, y - parent);
-                            do {
-                                data.token.splice((parent + 1) + z, 0, atts[z]);
-                                z = z + 1;
-                            } while (z < zz);
 
                             // finally, indent attributes if tag length exceeds the wrap limit
                             if (options.space_close === false) {

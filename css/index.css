@@ -584,6 +584,7 @@
 #prettydiff #documentation #options ul {padding: 0 0 0 2em}
 #prettydiff #documentation #options ul li {padding: 0 0 0 2em}
 #prettydiff #documentation .doc-version span{display:block}
+#prettydiff #documentation h4{border-style:none none solid;border-width:0.1em}
 
 
 /*page_specific.css*/

@@ -2456,9 +2456,9 @@
                                         scope = scope - 1;
                                     }
                                 } else {
-                                    if (data.types[a] === "string" && data.token[a].indexOf("\n") > 0) {
+                                    if (data.types[a].indexOf("string") > -1 && data.token[a].indexOf("\n") > 0) {
                                         multiline(data.token[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
-                                    } else if (data.types[a] === "operator" || data.types[a] === "comment" || data.types[a] === "string" || data.types[a] === "regex") {
+                                    } else if (data.types[a] === "operator" || data.types[a] === "comment" || data.types[a].indexOf("string") > -1 || data.types[a] === "regex") {
                                         build.push(data.token[a].replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
                                     } else {
                                         if (data.types[a] === "start" && levels[a] > -1) {

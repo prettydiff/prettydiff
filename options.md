@@ -1,5 +1,27 @@
 # Pretty Diff Options
 
+## attribute_sort
+property | value
+-----------|---
+api        | any
+default    | false
+definition | Alphanumerically sort markup attributes. Attribute sorting is ignored on tags that contain attributes template attributes.
+label      | Sort Attributes
+lexer      | markup
+mode       | any
+type       | boolean
+
+## attribute_sort_list
+property | value
+-----------|---
+api        | any
+default    | 
+definition | A comma separated list of attribute names. Attributes will be sorted according to this list and then alphanumerically. This option requires 'attribute_sort' have a value of true.
+label      | Sort Attribute List
+lexer      | markup
+mode       | any
+type       | string
+
 ## brace_line
 property | value
 -----------|---

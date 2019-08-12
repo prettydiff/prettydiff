@@ -2,7 +2,6 @@ import { Stats, fstat, ReadStream } from "fs";
 import * as http from "http";
 import { Stream, Writable } from "stream";
 import { Hash } from "crypto";
-import { SSL_OP_NETSCAPE_DEMO_CIPHER_CHANGE_BUG } from "constants";
 type directoryItem = [string, "file" | "directory" | "link" | "screen", number, number, Stats];
 interface directoryList extends Array<directoryItem> {
     [key:number]: directoryItem;
@@ -1285,7 +1284,7 @@ interface readFile {
                             });
                         },
                         libraryFiles = function node_apps_build_libraries_libraryFiles() {
-                            libFiles.push(`${projectPath}node_modules${sep}file-saver${sep}FileSaver.min.js`);
+                            libFiles.push(`${projectPath}node_modules${sep}file-saver${sep}dist${sep}FileSaver.min.js`);
                             libFiles.push(`${projectPath}node_modules${sep}sparser${sep}js${sep}browser.js`);
                             libFiles.push(`${projectPath}node_modules${sep}sparser${sep}docs-markdown${sep}language-support.md`);
                             libFiles.push(`${projectPath}node_modules${sep}sparser${sep}docs-html${sep}language-support.xhtml`);
@@ -1298,11 +1297,10 @@ interface readFile {
                                             return;
                                         }
                                         if (filename === "FileSaver.min.js" && filePath.indexOf(filename) === filePath.length - filename.length) {
+                                            filedata = `// eslint-disable-next-line${node.os.EOL}(${filedata.slice(filedata.indexOf("function(){\"use strict\""))}`;
                                             filedata = filedata
-                                                .replace(/var\s+saveAs\s*=\s*saveAs\s*\|\|\s*function\(/, `// eslint-disable-next-line${node.os.EOL}prettydiff.saveAs=function prettydiff_saveAs(`)
-                                                .replace(/(\{|\}|;|(\*\/))\s*var\s/g, function node_apps_build_libraries_libraryFiles_appendFile_read_saveAsFix(str:string):string {
-                                                    return str.replace("var", "let");
-                                                });
+                                                .replace(/,"undefined"!=typeof module&&\(module\.exports=a\)\}\)/, ";}());")
+                                                .replace("//# sourceMappingURL=FileSaver.min.js.map", "prettydiff.saveAs=window.saveAs;");
                                             saveas = filedata;
                                         } else if (filePath === `${projectPath}node_modules${sep}sparser${sep}js${sep}browser.js`) {
                                             // both sparser and prettydiff contain a browser.js file, so it is important to target the correct one
@@ -4288,7 +4286,7 @@ interface readFile {
                                 rctest(cwd, rc, "{\"indent_size\": 6}");
                             });
                         } else if (tests[a].command.indexOf("prettydiffrc-json-screen-parent") > 0) {
-                            rctest(`${projectPath}tests`, rc, "{\"indent_size\": 10}");
+                            rctest(`${projectPath}tests${sep}diffbase`, rc, "{\"indent_size\": 10}");
                         } else if (tests[a].command.indexOf("prettydiffrc-javascript-file-local") > 0) {
                             rctest(cwd, rc, `(function rc() {"use strict";const rclogic = function rc_logic(options) {options.indent_size = 8;return options;};module.exports = rclogic;}());`);
                         } else {
@@ -4776,18 +4774,21 @@ interface readFile {
                         }
                         inc = inc + 1;
                     } while (inc < wrapper);
+                    inc = wrapper;
                     if (string.charAt(wrapper) !== " " && string.length > wrapper) {
                         do {
                             wrapper = wrapper - 1;
                         } while (wrapper > 0 && string.charAt(wrapper) !== " ");
-                        if (wrapper === 0) {
-                            outputArray.push(string);
-                            return;
+                        if (wrapper === 0 || wrapper === indent.length - 1) {
+                            wrapper = inc;
+                            do {
+                                wrapper = wrapper + 1;
+                            } while (wrapper < string.length && string.charAt(wrapper) !== " ");
                         }
                     }
-                    outputArray.push(string.slice(0, wrapper).replace(/ $/, ""));
-                    string = string.slice(wrapper + 1);
-                    if (string.length + indent.length > wrap && string.replace(/\s+/g, "").length < wrap) {
+                    outputArray.push(string.slice(0, wrapper).replace(/\s+$/, ""));
+                    string = string.slice(wrapper + 1).replace(/^\s+/, "");
+                    if (string.length + indent.length > wrap) {
                         string = indent + string;
                         node_apps_wrapit_formLine();
                     } else if (string !== "") {

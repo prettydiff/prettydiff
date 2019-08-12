@@ -4,8 +4,8 @@
     <head>
         <meta charset="utf-8"/>
         <meta
-            content="width=device-width, initial-scale=1, shrink-to-fit=no"
-            name="viewport"/>
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
         <title>
             {% if block('htmlTitle') is defined %}
@@ -13,7 +13,7 @@
             {% endif %}
             Administration
         </title>
-        <link href="...link-to-file" rel="stylesheet"/>
+        <link rel="stylesheet" href="...link-to-file"/>
 
         {% block head '' %} <link
             href="images/apple-touch-icon-72.png"
@@ -34,12 +34,12 @@
         {% block mainTitle 'CMS' %}
             {% block leadText 'Lead text goes here...' %}
 
-            <section class="content-wrapper" id="default">
+            <section id="default" class="content-wrapper">
                 <div class="sidebar">
                     {% block sidebar '' %}
                 </div>
 
-                <main class="content" role="main">
+                <main role="main" class="content">
                     {% block content '' %}
                         asdf
                     {% endblock %}

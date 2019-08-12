@@ -4668,7 +4668,8 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
     };
     //tell the browser to "save as"
     method.event.save = function dom_event_save():void {
-        prettydiff.saveAs(new File([report.code.body.innerHTML], "prettydiff.xhtml", {type: "application/xhtml+xml;charset=utf-8"}));
+        let blob = new Blob([report.code.body.innerHTML], {type: "application/xhtml+xml;charset=utf-8"});
+        prettydiff.saveAs(blob, "prettydiff.xhtml", {autoBom: true});
     };
     //analyzes combinations of consecutive key presses
     method.event.sequence = function dom_event_sequence(event:KeyboardEvent):void {
