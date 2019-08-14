@@ -122,10 +122,17 @@
 
         //beautification loop
         do {
-            if (data.types[a + 1] === "end" || data.types[a + 1] === "template_end") {
+            if (data.types[a + 1] === "end" || data.types[a + 1] === "template_end" || data.types[a + 1] === "template_else") {
                 indent = indent - 1;
             }
-            if (data.types[a] === "start" || data.types[a] === "template_start") {
+            if (data.types[a] === "template" && data.lines[a] > 0) {
+                build.push(data.token[a]);
+                nl(indent);
+            } else if (data.types[a] === "template_else") {
+                build.push(data.token[a]);
+                indent = indent + 1;
+                nl(indent);
+            } else if (data.types[a] === "start" || data.types[a] === "template_start") {
                 indent = indent + 1;
                 build.push(data.token[a]);
                 if (data.types[a + 1] !== "end" && data.types[a + 1] !== "template_end" && (options.compressed_css === false || (options.compressed_css === true && data.types[a + 1] === "selector"))) {

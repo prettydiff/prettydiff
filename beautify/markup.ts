@@ -131,6 +131,18 @@
                             level.push(-10);
                         } else if (data.lines[next] === 0) {
                             level.push(-20);
+                        } else if (
+                            // wrap if
+                            // * options.wrap is 0
+                            // * next token is singleton with an attribute and exceeds wrap
+                            // * next token is template or singleton and exceeds wrap
+                            (
+                                options.wrap === 0 ||
+                                (a < c - 2 && data.token[a].length + data.token[a + 1].length + data.token[a + 2].length + 1 > options.wrap && data.types[a + 2].indexOf("attribute") > -1) ||
+                                (data.token[a].length + data.token[a + 1].length > options.wrap)
+                            ) &&
+                            (data.types[a + 1] === "singleton" || data.types[a + 1] === "template")) {
+                            level.push(indent);
                         } else {
                             count = count + 1;
                             level.push(-10);

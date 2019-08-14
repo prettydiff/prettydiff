@@ -1695,7 +1695,12 @@
                         }
                     },
                     string       = function beautify_script_level_string():void {
-                        if (ctoke.indexOf("#!/") === 0) {
+                        if (ctoke.length === 1) {
+                            level.push(-20);
+                            if (data.lines[a] === 0) {
+                                level[a - 1] = -20;
+                            }
+                        } else if (ctoke.indexOf("#!/") === 0) {
                             level.push(indent);
                         } else {
                             level.push(-10);
@@ -1713,7 +1718,7 @@
                             if (data.lines[a - 1] < 1) {
                                 level[a - 1] = -20;
                             }
-                            if (data.lines[a] > 0) {
+                            if (data.lines[a] > 0 || ltoke.length === 1 && ltype === "string") {
                                 level.push(indent);
                             } else {
                                 level.push(-20);
