@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <title>
+    <?php if ($title) { ?>
+      <?= $title ?>
+    <?php } else if ($title_a) { ?>
+      <?= $title_a ?>
+    <?php } else { ?>
+      <?= $something ?>
+    <?php } ?>
+    Administration
+  </title>
+  <link rel="stylesheet" href="...link-to-file">
+
+  <script>
+    let config = {
+      dateFormat: "<?= date('Y-m-d') ?>",
+      weekStart: <?= $weekstart ? 0 : 1 ?>,
+      csrfTokenName: "<?= $csrf_name ?>",
+      csrfTokenValue: "<?php if ($tokentest) { ?>
+      <?= $tokentest ?>
+    <?php } else if ($tokentest_a) { ?>
+      <?= $tokentest_a ?>
+    <?php } else { ?>
+      <?= $tokentest_b ?>
+    <?php } ?>",
+    };
+    let demovar = <?= json_encode($demovar) ?>;
+    let test = <?php if ($width) { ?>
+      <?= $width ?>
+    <?php } else if ($width_a) { ?>
+      <?= $width_a ?>
+    <?php } else { ?>
+      <?= $width_b ?>
+    <?php } ?>;
+  </script>
+  <style type="text/css">
+    a {
+      width: 
+    <?php if ($width) { ?>
+      <?= $width ?>
+    <?php } else if ($width_a) { ?>
+      <?= $width_a ?>
+    <?php } else { ?>
+      <?= $width_b ?>
+    <?php } ?>px;
+    }
+  </style>
+  <?php foreach ($styles as $style) { ?>
+    <link rel="stylesheet" href="<?= $style ?>">
+  <?php } ?>
+</head>
+
+<body>
+  <?php include "admin/includes/_alert.php" ?>
+
+  <section id="default" class="content-wrapper">
+    <div class="sidebar">
+      <?= $sidebar ?>
+    </div>
+
+    <main role="main" class="content">
+      <?= $content ?>
+    </main>
+  </section>
+
+  <script src="...link-to-file"></script>
+
+  <?= $footer ?>
+  <li><a href="<?= $home->url ?>">Home</a></li>
+  <?= $var ?>
+  <a routerLink="/detail/<?= $hero->id ?>"/>
+</body>
+
+</html>

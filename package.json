@@ -5,9 +5,9 @@
         "url": "https://github.com/prettydiff/prettydiff/issues"
     },
     "dependencies": {
-        "@types/node": "^12.7.1",
+        "@types/node": "^12.7.2",
         "file-saver": "^2.0.2",
-        "sparser": "^1.4.8"
+        "sparser": "^1.4.11"
     },
     "description": "A language aware diff tool.",
     "devDependencies": {
@@ -39,5 +39,5 @@
         "start": "node js/services build",
         "test": "node js/services test"
     },
-    "version": "101.2.3"
+    "version": "101.2.5"
 }

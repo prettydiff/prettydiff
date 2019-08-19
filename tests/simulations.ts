@@ -95,6 +95,11 @@
                 test: ` files written to ${text.cyan + projectPath}test${text.none}.`
             },
             {
+                command: `beautify source:"${projectPath}tsconfig.json" config:"${projectPath}tests${sep}config.txt"`,
+                qualifier: "contains",
+                test: "\n  \"compilerOptions\":"
+            },
+            {
                 command: `beautify source:"${projectPath}tsconfig.json" prettydiffrc-json-file-child`,
                 qualifier: "contains",
                 test: "\n    \"compilerOptions\":"
@@ -128,7 +133,7 @@
             {
                 command: `beautify source:"${projectPath}tsconfig.json" read_method:file`,
                 qualifier: "is",
-                test: `{\n    "compilerOptions": {\n        "outDir": "js",\n        "pretty": true,\n        "target": "ES6"\n    },\n    "include": [\n        "*.ts", "**/*.ts"\n    ],\n    "exclude": ["2", "3", "js", "ignore", "node_modules"]\n}`
+                test: `{\n    "compilerOptions": {\n        "outDir": "js",\n        "pretty": true,\n        "target": "ES6"\n    },\n    "include": [\n        "*.ts", "**/*.ts"\n    ],\n    "exclude": [\n        "2",\n        "3",\n        "js",\n        "ignore",\n        "node_modules"\n    ]\n}`
             },
             {
                 command: `beautify source:"${projectPath}tsconfig.json" read_method:file language:text`,
@@ -393,7 +398,7 @@
             {
                 command: "opts 2",
                 qualifier: "contains",
-                test: `${text.green}80${text.none} matching options.`
+                test: `${text.green}81${text.none} matching options.`
             },
             {
                 command: "opts api:node",
@@ -537,6 +542,16 @@
                 command: "prettydiff_debug",
                 qualifier: "contains",
                 test: `${text.green}## Command Line Instruction${text.none}`
+            },
+            {
+                command: `source:"${projectPath}tsconfig.json"`,
+                qualifier: "is",
+                test: `No supported command found.  Pretty Diff is assuming command ${text.bold + text.cyan}beautify${text.none}.\n\n{\n    "compilerOptions": {\n        "outDir": "js",\n        "pretty": true,\n        "target": "ES6"\n    },\n    "include": [\n        "*.ts", "**/*.ts"\n    ],\n    "exclude": [\n        "2",\n        "3",\n        "js",\n        "ignore",\n        "node_modules"\n    ]\n}`
+            },
+            {
+                command: `source:"${projectPath}tests${sep}diffbase${sep}html.txt" diff:"${projectPath}tests${sep}diffnew${sep}html.txt"`,
+                qualifier: "contains",
+                test: `Pretty Diff found no differences.`
             },
             {
                 command: "version",

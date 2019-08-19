@@ -140,7 +140,13 @@
                 }
             } else if ((data.token[a] === ";" && (options.compressed_css === false || (options.compressed_css === true && data.types[a + 1] === "selector"))) || data.types[a] === "end" || data.types[a] === "template_end" || data.types[a] === "comment") {
                 build.push(data.token[a]);
-                if (data.types[a + 1] !== "separator") {
+                if (data.types[a + 1] === "value") {
+                    if (data.lines[a + 1] === 1) {
+                        build.push(" ");
+                    } else if (data.lines[a + 1] > 1) {
+                        nl(indent);
+                    }
+                } else if (data.types[a + 1] !== "separator") {
                     if (data.types[a + 1] !== "comment" || (data.types[a + 1] === "comment" && data.lines[a + 1] > 1)) {
                         nl(indent);
                     } else {

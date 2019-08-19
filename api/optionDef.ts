@@ -138,6 +138,15 @@
             mode      : "minify",
             type      : "boolean"
         },
+        config           : {
+            api       : "node",
+            default   : "",
+            definition: "By default Pretty Diff will look into the directory structure contain the value of option 'source' for a file named `.prettydiffrc` for saved option settings. This option allows a user to specify any file at any location in the local file system for configuration settings. A value of 'none' tells the application to bypass reading any configuration file.",
+            label     : "Custom Config File Location",
+            lexer     : "any",
+            mode      : "any",
+            type      : "string"
+        },
         content          : {
             api       : "any",
             default   : false,

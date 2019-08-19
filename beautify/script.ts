@@ -1201,8 +1201,12 @@
                                     scopes.push([data.token[a], func]);
                                 }
                             };
-                        if (ltype !== "separator" && ltype !== "start" && ltype !== "end" && ltype.indexOf("template_string") < 0) {
-                            if (ltype === "word" || ltype === "operator") {
+                        if (data.types[a - 1] === "comment") {
+                            level[a - 1] = indent;
+                        } else if (ltype === "end" && ltoke !== ")" && data.token[data.begin[a - 1] - 1] !== ")") {
+                            level[a - 1] = -10;
+                        } else if (ltype !== "separator" && ltype !== "start" && ltype !== "end" && ltype.indexOf("template_string") < 0) {
+                            if (ltype === "word" || ltype === "operator" || ltype === "property" || ltype === "type" || ltype === "reference") {
                                 level[a - 1] = -10;
                             } else {
                                 level[a - 1] = -20;
@@ -1233,7 +1237,6 @@
                         level.push(-10);
                     },
                     separator     = function beautify_script_level_separator():void {
-                        let methtest:boolean      = false;
                         const ei:number[]           = (extraindent[extraindent.length - 1] === undefined)
                                 ? []
                                 : extraindent[extraindent.length - 1],
@@ -1375,7 +1378,9 @@
                                 return;
                             }
                             level[a - 1]                    = -20;
-                            itemcount[itemcount.length - 1] = itemcount[itemcount.length - 1] + 1;
+                            if (data.types[a + 1] !== "end") {
+                                itemcount[itemcount.length - 1] = itemcount[itemcount.length - 1] + 1;
+                            }
                             if ((data.token[data.begin[a]] === "(" || data.token[data.begin[a]] === "x(") && options.language !== "jsx" && data.stack[a] !== "global" && ((data.types[a - 1] !== "string" && data.types[a - 1] !== "number") || data.token[a - 2] !== "+" || (data.types[a - 1] === "string" && data.types[a - 1] !== "number" && data.token[a - 2] === "+" && data.types[a - 3] !== "string" && data.types[a - 3] !== "number"))) {
                                 level.push(-10);
                                 return;
@@ -1389,8 +1394,30 @@
                                 level.push(-10);
                                 return;
                             }
-                            if (destruct[destruct.length - 1] === true && itemcount[itemcount.length - 1] > 4 && (data.stack[a] === "array" || data.stack[a] === "object")) {
-                                destructfix(true, true);
+                            if (itemcount[itemcount.length - 1] > 3 && (data.stack[a] === "array" || data.stack[a] === "object")) {
+                                if (destruct[destruct.length - 1] === true) {
+                                    destructfix(true, true);
+                                }
+                                level[a - 1] = -20;
+                                if (arrbreak[arrbreak.length - 1] === true) {
+                                    level.push(indent);
+                                    return;
+                                }
+                                let begin:number = data.begin[a],
+                                    c:number = a;
+                                do {
+                                    if (data.types[c] === "end") {
+                                        c = data.begin[c];
+                                    } else {
+                                        if (data.token[c] === "," && data.types[c + 1] !== "comment") {
+                                            level[c] = indent;
+                                        }
+                                    }
+                                    c = c - 1;
+                                } while (c > begin);
+                                level[begin] = indent;
+                                arrbreak[arrbreak.length - 1] = true;
+                                return;
                             }
                             if (data.stack[a] === "object") {
                                 if (destruct[destruct.length - 1] === true && data.types[data.begin[a] - 1] !== "word" && data.types[data.begin[a] - 1] !== "reference" && data.token[data.begin[a] - 1] !== "(" && data.token[data.begin[a] - 1] !== "x(") {
@@ -1429,54 +1456,11 @@
                                 level.push(indent);
                                 return;
                             }
-                            if (list[list.length - 1] === true) {
-                                let c:number = 0,
-                                    d:number = 0;
-                                do {
-                                    if (data.types[c] === "end") {
-                                        d = d + 1;
-                                    }
-                                    if (data.types[c] === "start") {
-                                        d = d - 1;
-                                    }
-                                    if (d === -1) {
-                                        if (data.token[c] === "[" && data.token[c + 1] !== "]" && data.token[c + 2] !== "]") {
-                                            if (destruct[destruct.length - 1] === false || arrbreak[arrbreak.length - 1] === true) {
-                                                level[c] = indent;
-                                            } else if (methtest === false && destruct[destruct.length - 1] === true) {
-                                                level[c] = -20;
-                                            }
-                                            if (data.token[a - 2] === "+" && ltype === "string" && level[a - 2] > 0 && (ltoke.charAt(0) === "\"" || ltoke.charAt(0) === "'")) {
-                                                d = a - 2;
-                                                do {
-                                                    if (data.token[d] !== "+") {
-                                                        break;
-                                                    }
-                                                    if (data.token[d - 1].charAt(0) !== "\"" && data.token[d - 1].charAt(0) !== "'") {
-                                                        level[d] = -10;
-                                                    }
-                                                    d = d - 2;
-                                                } while (d > c);
-                                                break;
-                                            }
-                                        }
-                                        if (arrbreak[arrbreak.length - 1] === true) {
-                                            level.push(indent);
-                                            return;
-                                        }
-                                        level.push(-10);
-                                        return;
-                                    }
-                                    c = c - 1;
-                                } while (c > -1);
-                                if (arrbreak[arrbreak.length - 1] === true) {
-                                    level.push(indent);
-                                    return;
-                                }
+                            if (destruct[destruct.length - 1] === true && data.stack[a] !== "object") {
                                 level.push(-10);
                                 return;
                             }
-                            if (destruct[destruct.length - 1] === true && data.stack[a] !== "object") {
+                            if (itemcount[itemcount.length - 1] < 4 && (data.stack[a] === "array" || data.stack[a] === "object")) {
                                 level.push(-10);
                                 return;
                             }

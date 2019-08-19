@@ -2214,6 +2214,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                         const source:AudioBufferSourceNode  = test
                                 .audio
                                 .createBufferSource(),
+                            focused:HTMLElement = <HTMLElement>document.activeElement,
                             buff:ArrayBuffer   = new ArrayBuffer(data.audio.binary.length),
                             bytes:Uint8Array   = new Uint8Array(buff),
                             bytelen:number = buff.byteLength;
@@ -2234,6 +2235,7 @@ if ((/^http:\/\/((\w|-)+\.)*prettydiff\.com/).test(location.href) === true || lo
                                 source.start(0, 0, 1.8);
                                 // eslint-disable-next-line
                                 console.log("You found a secret!");
+                                focused.focus();
                             });
                     };
                 }

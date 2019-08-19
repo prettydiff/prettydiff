@@ -671,7 +671,8 @@ interface readFile {
                 process.argv = process.argv.slice(3);
                 return "prettydiff_debug";
             }
-            process.argv = process.argv.slice(3);
+
+            process.argv = process.argv.slice(2);
 
             // trim empty values
             b = process.argv.length;
@@ -716,6 +717,7 @@ interface readFile {
                 console.log(`${boldarg} is not a supported command. Pretty Diff is assuming command ${text.bold + text.cyan + filtered[0] + text.none}.`);
                 console.log("");
             }
+            process.argv = process.argv.slice(1);
             return filtered[0];
         }()),
         prettydiff:pd,
@@ -3323,7 +3325,7 @@ interface readFile {
                 ? "diff"
                 : "source",
             def:optionDef = prettydiff.api.optionDef,
-            prettydiffrc = function node_apps_readMethod_resolve_createrc_stat_read_applyRC(callback:Function):void {
+            prettydiffrc = function node_apps_readMethod_prettydiffrc(callback:Function):void {
                 const keys:string[] = Object.keys(rcdata),
                     len:number = keys.length;
                 let a:number = 0;
@@ -3362,17 +3364,21 @@ interface readFile {
                         }
                     },
                     createrc = function node_apps_readMethod_resolve_createrc(callback:Function):void {
-                        const start:string = (callback === screen)
-                                ? process.cwd()
-                                : (options.read_method === "directory" || options.read_method === "subdirectory")
-                                    ? node.path.resolve(options.source)
-                                    : (function node_apps_readMethod_resolve_createrc_fileStart():string {
-                                        const dirs:string[] = options.source.replace(/\\/g, "/").split("/");
-                                        dirs.pop();
-                                        return node.path.resolve(dirs.join(sep));
-                                    }()),
+                        const start:string = (options.config !== "")
+                                ? options.config
+                                : (callback === screen)
+                                    ? process.cwd()
+                                    : (options.read_method === "directory" || options.read_method === "subdirectory")
+                                        ? node.path.resolve(options.source)
+                                        : (function node_apps_readMethod_resolve_createrc_fileStart():string {
+                                            const dirs:string[] = options.source.replace(/\\/g, "/").split("/");
+                                            dirs.pop();
+                                            return node.path.resolve(dirs.join(sep));
+                                        }()),
                             stat = function node_apps_readMethod_resolve_createrc_wrapper(location:string) {
-                                const rc:string = `${location + sep}.prettydiffrc`;
+                                const rc:string = (start === options.config)
+                                    ? start
+                                    : `${location + sep}.prettydiffrc`;
                                 node.fs.stat(rc, function node_apps_readMethod_resolve_createrc_wrapper_stat(ers:Error):void {
                                     if (ers !== null) {
                                         const erstring:string = ers.toString();
@@ -3381,7 +3387,7 @@ interface readFile {
                                             if (locations.length < 2) {
                                                 // continue silently if .prettydiffrc is not found
                                                 callback();
-                                            } else {
+                                            } else if (start !== options.config) {
                                                 // try the parent directory if not at root
                                                 locations.pop();
                                                 node_apps_readMethod_resolve_createrc_wrapper(locations.join(sep));
@@ -3441,7 +3447,11 @@ interface readFile {
                             callback();
                             return;
                         }
-                        stat(start);
+                        if (options.config === "none") {
+                            callback();
+                        } else {
+                            stat(start);
+                        }
                     };
                 if (options.read_method === "screen") {
                     createrc(screen);

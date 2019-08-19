@@ -1,4 +1,4 @@
-/*prettydiff.com formatArray:default, formatObject:indent*/
+/*prettydiff.com format_array:default, format_object:indent*/
 var a = [1,2,3],
 b = [aa,ab,ac,ad,ae,af,ag,ah],
 c = [

@@ -1,4 +1,4 @@
-/*prettydiff.com formatArray:default, formatObject:indent*/
+/*prettydiff.com format_array:default, format_object:indent*/
 var a = [
         1, 2, 3
     ],
@@ -24,8 +24,14 @@ var a = [
         cat: "meow",
         dog: "bark"
     },
-    f = ({cat, dog}),
-    g = import ({cat: "meow", dog: "bark"}) from dog,
+    f = ({
+        cat,
+        dog
+    }),
+    g = import ({
+        cat: "meow",
+        dog: "bark"
+    }) from dog,
     h = {
         cat: "meow",
         cub: "bear",
