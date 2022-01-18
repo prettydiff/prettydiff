@@ -1,5 +1,8 @@
 # Austin Cheney
 
+## New Location
+Please see the panoply fork of Pretty Diff for all future maintenance and enhancements: https://github.com/panoply/prettydiff
+
 ## Focus
 I am currently working on https://github.com/prettydiff/share-file-systems
 
