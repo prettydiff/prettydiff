@@ -31,4 +31,4 @@ Email, and especially webmail, is the school of extreme hard knocks for CSS.
 
 In late 2007 I joined Travelocity as a designer.
 Travelocity had a lot of designers so after a few months of doing no work I was involuntarially ressigned to a developer position in early 2008.
-I have been writing JavaScript, and now TypeScript, full time ever since.
+I have been writing JavaScript fulltime ever since and also TypeScript since 2017.
