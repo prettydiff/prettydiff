@@ -1,11 +1,8 @@
 # Austin Cheney
 
 ## About Me
-I am a software developer at Bank of America working on UI for login and authentication controls.
 
-If you need a JavaScript/TypeScript developer that enjoys solving new and challenging problems email me at **info at prettydiff.com** but please understand that I have no experience or interest in writing ReactJS.
-React is great for junior developers to quickly publish dynamic content to the screen.
-I am not a junior developer, though, that is not a challenging software problem that interests me.
+If you need a JavaScript/TypeScript developer that enjoys solving new and challenging problems email me at **info at prettydiff.com**.
 
 ## Focus
 I am currently working on https://github.com/prettydiff/share-file-systems
